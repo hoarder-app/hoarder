@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@next-auth/prisma-adapter": "^1.0.7",
     "next": "14.1.0",
+    "next-auth": "^4.24.5",
     "prisma": "^5.9.1",
     "react": "^18",
     "react-dom": "^18"
