@@ -1,11 +1,8 @@
 import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { ZNewBookmarkedLinkRequest, ZGetLinksResponse, ZBookmarkedLink } from "@/lib/types/api/links";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-
-interface NewLinkRequest {
-    url: string,
-}
 
 export async function POST(request: NextRequest) {
     // TODO: We probably should be using an API key here instead of the session;
@@ -14,17 +11,24 @@ export async function POST(request: NextRequest) {
         return new Response(null, { status: 401 });
     }
 
-    // TODO: We need proper type assertion here
-    const body: NewLinkRequest = await request.json();
+    const linkRequest = ZNewBookmarkedLinkRequest.safeParse(await request.json());
+
+    if (!linkRequest.success) {
+        return NextResponse.json({
+            error: linkRequest.error.toString(),
+        }, { status: 400 });
+    }
 
     const link = await prisma.bookmarkedLink.create({
         data: {
-            url: body.url,
+            url: linkRequest.data.url,
             userId: session.user.id,
         }
-    })
+    });
 
-    return NextResponse.json(link, { status: 201 });
+    let response: ZBookmarkedLink = { ...link };
+
+    return NextResponse.json(response, { status: 201 });
 }
 
 export async function GET() {
@@ -37,7 +41,10 @@ export async function GET() {
         where: {
             userId: session.user.id,
         },
-        include: {
+        select: {
+            id: true,
+            url: true,
+            createdAt: true,
             details: {
                 select: {
                     title: true,
@@ -46,7 +53,8 @@ export async function GET() {
                 }
             },
         }
-    })
+    });
 
-    return NextResponse.json({links});
+    let response: ZGetLinksResponse = { links };
+    return NextResponse.json(response);
 }
