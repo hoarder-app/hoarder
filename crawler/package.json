@@ -1,0 +1,8 @@
+{
+  "name": "@remember/crawler",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@remember/shared": "workspace:*"
+  }
+}

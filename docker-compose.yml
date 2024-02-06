@@ -1,0 +1,11 @@
+version: "3.8"
+name: remember
+services:
+  redis:
+    image: redis:7.2-alpine
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data
+volumes:
+  redis:
