@@ -1,10 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@remember/shared",
+  "name": "@remember/db",
   "version": "0.1.0",
   "private": true,
-  "dependencies": {
-    "winston": "^3.11.0"
-  },
-  "main": "index.ts"
+  "main": "index.ts",
+  "dependencies": {}
 }

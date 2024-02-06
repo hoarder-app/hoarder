@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "@remember/web",
   "version": "0.1.0",
   "private": true,
@@ -18,7 +19,6 @@
     "next": "14.1.0",
     "next-auth": "^4.24.5",
     "prettier": "^3.2.5",
-    "prisma": "^5.9.1",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.2.1",

@@ -72,9 +72,10 @@ model BookmarkedLink {
 
 model BookmarkedLinkDetails {
   id          String   @id
-  title       String
-  description String
-  imageUrl    String
+  title       String?
+  description String?
+  imageUrl    String?
+  favicon     String?
   createdAt   DateTime @default(now())
 
   link BookmarkedLink @relation(fields: [id], references: [id], onDelete: Cascade)

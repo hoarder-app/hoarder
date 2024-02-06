@@ -1,7 +1,9 @@
 import { authOptions } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { LinkCrawlerQueue } from "@remember/shared/queues";
+import prisma from "@remember/db";
+
 import {
-  ZNewBookmarkedLinkRequest,
+  zNewBookmarkedLinkRequestSchema,
   ZGetLinksResponse,
   ZBookmarkedLink,
 } from "@/lib/types/api/links";
@@ -15,7 +17,9 @@ export async function POST(request: NextRequest) {
     return new Response(null, { status: 401 });
   }
 
-  const linkRequest = ZNewBookmarkedLinkRequest.safeParse(await request.json());
+  const linkRequest = zNewBookmarkedLinkRequestSchema.safeParse(
+    await request.json(),
+  );
 
   if (!linkRequest.success) {
     return NextResponse.json(
@@ -33,8 +37,13 @@ export async function POST(request: NextRequest) {
     },
   });
 
-  let response: ZBookmarkedLink = { ...link };
+  // Enqueue crawling request
+  await LinkCrawlerQueue.add("crawl", {
+    linkId: link.id,
+    url: link.url,
+  });
 
+  let response: ZBookmarkedLink = { ...link };
   return NextResponse.json(response, { status: 201 });
 }
 
@@ -57,6 +66,7 @@ export async function GET() {
           title: true,
           description: true,
           imageUrl: true,
+          favicon: true,
         },
       },
     },

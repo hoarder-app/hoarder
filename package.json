@@ -1,11 +1,13 @@
 {
+  "$schema": "https://json.schemastore.org/package.json",
   "name": "remember",
   "version": "0.1.0",
   "private": true,
   "workspaces": [
     "web",
     "crawler",
-    "shared"
+    "shared",
+    "db"
   ],
   "dependencies": {
     "@next/eslint-plugin-next": "^14.1.0",
@@ -16,7 +18,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "winston": "^3.11.0"
+    "prisma": "^5.9.1"
   },
   "devDependencies": {
     "typescript": "^5",
