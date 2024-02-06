@@ -1,0 +1,21 @@
+name: my-workflow
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-lint:
+    name: Build and Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - name: Install deps
+        run: bun install --frozen-lockfile
+      - name: Lint
+        run: bunx eslint .
+      - name: Format
+        run: bunx prettier . --check
+      - name: Build web app
+        working-directory: web
+        run: bun run build
