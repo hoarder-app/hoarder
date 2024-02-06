@@ -11,18 +11,18 @@ datasource db {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -38,13 +38,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String           @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?          @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  links         BookmarkedLink[]
+  tags          BookmarkTags[]
 }
 
 model VerificationToken {
@@ -53,4 +55,51 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model BookmarkedLink {
+  id        String   @id @default(cuid())
+  url       String
+  createdAt DateTime @default(now())
+
+  userId String
+
+  details BookmarkedLinkDetails?
+
+  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags TagsOnLinks[]
+}
+
+model BookmarkedLinkDetails {
+  id          String   @id
+  title       String
+  description String
+  imageUrl    String
+  createdAt   DateTime @default(now())
+
+  link BookmarkedLink @relation(fields: [id], references: [id], onDelete: Cascade)
+}
+
+model BookmarkTags {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+
+  userId String
+
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachedLinks TagsOnLinks[]
+}
+
+model TagsOnLinks {
+  link   BookmarkedLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  linkId String
+
+  tag   BookmarkTags @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  tagId String
+
+  attachedAt     DateTime @default(now())
+  bookmarkTagsId String
+
+  @@unique([linkId, tagId])
 }
