@@ -1,5 +1,5 @@
-import NextAuth, { NextAuthOptions } from "next-auth"
-import { PrismaAdapter } from "@next-auth/prisma-adapter"
+import NextAuth, { NextAuthOptions } from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import AuthentikProvider from "next-auth/providers/authentik";
 import serverConfig from "@/lib/config";
 import prisma from "@/lib/prisma";
@@ -15,11 +15,11 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: providers,
   callbacks: {
-    session({ session, token, user }) {
+    session({ session, user }) {
       session.user = { ...user };
       return session;
-    }
-  }
+    },
+  },
 };
 
 export const authHandler = NextAuth(authOptions);

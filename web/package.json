@@ -10,11 +10,20 @@
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.7",
+    "@next/eslint-plugin-next": "^14.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "install": "^0.13.0",
     "lucide-react": "^0.322.0",
     "next": "14.1.0",
     "next-auth": "^4.24.5",
+    "prettier": "^3.2.5",
+    "prisma": "^5.9.1",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.2.1",
@@ -30,15 +39,6 @@
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
     "eslint": "^8.56.0",
-    "eslint-config-next": "14.1.0",
-    "@next/eslint-plugin-next": "^14.1.0",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "install": "^0.13.0",
-    "prettier": "^3.2.5",
-    "prisma": "^5.9.1"
+    "eslint-config-next": "14.1.0"
   }
 }

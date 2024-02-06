@@ -1,13 +1,4 @@
 {
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "project": "./tsconfig.json",
-    "ecmaFeatures": {
-      "jsx": true
-    },
-    "ecmaVersion": 12,
-    "sourceType": "module"
-  },
   "extends": [
     "next/core-web-vitals",
     "eslint:recommended",
@@ -15,8 +6,11 @@
     "plugin:react-hooks/recommended",
     "plugin:@next/next/recommended",
     "next",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "prettier"
-  ]
+  ],
+  "ignorePatterns": ["postcss.config.js"],
+  "rules": {
+    "no-redeclare": "off",
+    "@next/next/no-html-link-for-pages": "off"
+  }
 }
