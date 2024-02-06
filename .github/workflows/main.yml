@@ -1,4 +1,4 @@
-name: my-workflow
+name: Build and lint
 on:
   push:
     branches:
@@ -18,4 +18,6 @@ jobs:
         run: bunx prettier . --check
       - name: Build web app
         working-directory: web
-        run: bun run build
+        run: |
+          bunx prisma generate
+          bun run build
