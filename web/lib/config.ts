@@ -13,6 +13,7 @@ function buildAuthentikConfig() {
 }
 
 const serverConfig = {
+  api_url: process.env.API_URL || "http://localhost:3000",
   auth: {
     authentik: buildAuthentikConfig(),
   },

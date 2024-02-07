@@ -11,6 +11,14 @@
   "ignorePatterns": ["postcss.config.js"],
   "rules": {
     "no-redeclare": "off",
-    "@next/next/no-html-link-for-pages": "off"
+    "@next/next/no-html-link-for-pages": "off",
+    "no-undef": "off",
+    "no-unused-vars": [
+      "error",
+      {
+        "varsIgnorePattern": "^_",
+        "argsIgnorePattern": "^_"
+      }
+    ]
   }
 }

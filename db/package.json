@@ -4,5 +4,8 @@
   "version": "0.1.0",
   "private": true,
   "main": "index.ts",
-  "dependencies": {}
+  "dependencies": {
+    "prisma": "^5.9.1",
+    "@prisma/client": "^5.9.1"
+  }
 }

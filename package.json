@@ -17,8 +17,7 @@
     "class-variance-authority": "^0.7.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "prisma": "^5.9.1"
+    "eslint-plugin-react-hooks": "^4.6.0"
   },
   "devDependencies": {
     "typescript": "^5",

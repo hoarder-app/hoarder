@@ -1,6 +1,5 @@
 import { authOptions } from "@/lib/auth";
-import { LinkCrawlerQueue } from "@remember/shared/queues";
-import prisma from "@remember/db";
+import { bookmarkLink, getLinks } from "@/lib/services/links";
 
 import {
   zNewBookmarkedLinkRequestSchema,
@@ -30,18 +29,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const link = await prisma.bookmarkedLink.create({
-    data: {
-      url: linkRequest.data.url,
-      userId: session.user.id,
-    },
-  });
-
-  // Enqueue crawling request
-  await LinkCrawlerQueue.add("crawl", {
-    linkId: link.id,
-    url: link.url,
-  });
+  const link = await bookmarkLink(linkRequest.data.url, session.user.id);
 
   let response: ZBookmarkedLink = { ...link };
   return NextResponse.json(response, { status: 201 });
@@ -53,24 +41,8 @@ export async function GET() {
   if (!session) {
     return new Response(null, { status: 401 });
   }
-  const links = await prisma.bookmarkedLink.findMany({
-    where: {
-      userId: session.user.id,
-    },
-    select: {
-      id: true,
-      url: true,
-      createdAt: true,
-      details: {
-        select: {
-          title: true,
-          description: true,
-          imageUrl: true,
-          favicon: true,
-        },
-      },
-    },
-  });
+
+  const links = await getLinks(session.user.id);
 
   let response: ZGetLinksResponse = { links };
   return NextResponse.json(response);

@@ -7,10 +7,10 @@ export const zBookmarkedLinkSchema = z.object({
 
   details: z
     .object({
-      title: z.string(),
-      description: z.string().optional(),
-      imageUrl: z.string().url().optional(),
-      favicon: z.string().url().optional(),
+      title: z.string().nullish(),
+      description: z.string().nullish(),
+      imageUrl: z.string().url().nullish(),
+      favicon: z.string().url().nullish(),
     })
     .nullish(),
 });
@@ -20,6 +20,9 @@ export type ZBookmarkedLink = z.infer<typeof zBookmarkedLinkSchema>;
 export const zNewBookmarkedLinkRequestSchema = zBookmarkedLinkSchema.pick({
   url: true,
 });
+export type ZNewBookmarkedLinkRequest = z.infer<
+  typeof zNewBookmarkedLinkRequestSchema
+>;
 
 // GET /v1/links
 export const zGetLinksResponseSchema = z.object({
