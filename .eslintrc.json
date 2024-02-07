@@ -13,6 +13,7 @@
     "no-redeclare": "off",
     "@next/next/no-html-link-for-pages": "off",
     "no-undef": "off",
+    "react/jsx-no-undef": "off",
     "no-unused-vars": [
       "error",
       {
