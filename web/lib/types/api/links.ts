@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { zBookmarkTagSchema } from "@/lib/types/api/tags";
 
 export const zBookmarkedLinkSchema = z.object({
   id: z.string(),
@@ -13,6 +14,7 @@ export const zBookmarkedLinkSchema = z.object({
       favicon: z.string().url().nullish(),
     })
     .nullish(),
+  tags: z.array(zBookmarkTagSchema),
 });
 export type ZBookmarkedLink = z.infer<typeof zBookmarkedLinkSchema>;
 

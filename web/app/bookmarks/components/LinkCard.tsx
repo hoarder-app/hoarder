@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -73,7 +74,13 @@ export default function LinkCard({ link }: { link: ZBookmarkedLink }) {
           {link.details?.title ?? parsedUrl.host}
         </Link>
       </ImageCardTitle>
-      <ImageCardBody />
+      <ImageCardBody className="py-2 overflow-clip">
+        {link.tags.map((t) => (
+          <Badge variant="default" className="bg-gray-300 text-gray-500" key={t.id}>
+            #{t.name}
+          </Badge>
+        ))}
+      </ImageCardBody>
       <ImageCardFooter>
         <div className="flex justify-between text-gray-500">
           <div className="my-auto">

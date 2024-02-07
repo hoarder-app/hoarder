@@ -15,18 +15,6 @@ export type FetchError = {
   message?: string;
 };
 
-async function doRequest<Schema extends ZodTypeAny>(
-  _path: string,
-  respSchema: Schema,
-  _opts: RequestInit | undefined,
-): Promise<[z.infer<typeof respSchema>, undefined] | [undefined, FetchError]>;
-
-async function doRequest<_Schema>(
-  _path: string,
-  _respSchema: undefined,
-  _opts: RequestInit | undefined,
-): Promise<[undefined, undefined] | [undefined, FetchError]>;
-
 type InputSchema<T> = T extends ZodTypeAny ? T : undefined;
 
 async function doRequest<T>(
