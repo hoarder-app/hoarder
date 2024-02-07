@@ -1,6 +1,15 @@
 import { LinkCrawlerQueue } from "@remember/shared/queues";
 import prisma from "@remember/db";
 
+export async function unbookmarkLink(linkId: string, userId: string) {
+  await prisma.bookmarkedLink.delete({
+    where: {
+      id: linkId,
+      userId,
+    },
+  });
+}
+
 export async function bookmarkLink(url: string, userId: string) {
   const link = await prisma.bookmarkedLink.create({
     data: {

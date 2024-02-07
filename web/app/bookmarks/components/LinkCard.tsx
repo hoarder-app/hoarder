@@ -13,12 +13,34 @@ import {
   ImageCardFooter,
   ImageCardTitle,
 } from "@/components/ui/imageCard";
+import { useToast } from "@/components/ui/use-toast";
+import APIClient from "@/lib/api";
 import { ZBookmarkedLink } from "@/lib/types/api/links";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
-export function LinkOptions() {
-  // TODO: Implement deletion
+export function LinkOptions({ linkId }: { linkId: string }) {
+  const { toast } = useToast();
+  const router = useRouter();
+
+  const unbookmarkLink = async () => {
+    let [_, error] = await APIClient.unbookmarkLink(linkId);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "There was a problem with your request.",
+      });
+    } else {
+      toast({
+        description: "The link has been deleted!",
+      });
+    }
+
+    router.refresh();
+  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -27,10 +49,10 @@ export function LinkOptions() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
-          <DropdownMenuItem className="text-destructive">
-            <Trash2 className="mr-2 h-4 w-4" />
-            <span>Delete</span>
-          </DropdownMenuItem>
+        <DropdownMenuItem className="text-destructive" onClick={unbookmarkLink}>
+          <Trash2 className="mr-2 h-4 w-4" />
+          <span>Delete</span>
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -59,7 +81,7 @@ export default function LinkCard({ link }: { link: ZBookmarkedLink }) {
               {parsedUrl.host}
             </Link>
           </div>
-          <LinkOptions />
+          <LinkOptions linkId={link.id} />
         </div>
       </ImageCardFooter>
     </ImageCard>

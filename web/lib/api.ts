@@ -35,8 +35,8 @@ async function doRequest<T>(
   opts?: RequestInit,
 ): Promise<
   | (InputSchema<T> extends ZodTypeAny
-      ? [z.infer<InputSchema<T>>, undefined]
-      : [undefined, undefined])
+    ? [z.infer<InputSchema<T>>, undefined]
+    : [undefined, undefined])
   | [undefined, FetchError]
 > {
   try {
@@ -82,6 +82,12 @@ export default class APIClient {
     return await doRequest(`/links`, undefined, {
       method: "POST",
       body: JSON.stringify(body),
+    });
+  }
+
+  static async unbookmarkLink(linkId: string) {
+    return await doRequest(`/links/${linkId}`, undefined, {
+      method: "DELETE",
     });
   }
 }
