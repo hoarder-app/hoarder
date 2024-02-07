@@ -35,8 +35,8 @@ async function doRequest<T>(
   opts?: RequestInit,
 ): Promise<
   | (InputSchema<T> extends ZodTypeAny
-    ? [z.infer<InputSchema<T>>, undefined]
-    : [undefined, undefined])
+      ? [z.infer<InputSchema<T>>, undefined]
+      : [undefined, undefined])
   | [undefined, FetchError]
 > {
   try {
