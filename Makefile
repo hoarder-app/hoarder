@@ -8,8 +8,8 @@ prisma:
 	bunx prisma migrate dev; \
 	bunx prisma generate
 
-worker:
-	cd crawler; \
+workers:
+	cd workers; \
 	bun --watch index.ts
 web:
 	cd web; \

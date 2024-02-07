@@ -5,7 +5,7 @@
   "private": true,
   "workspaces": [
     "web",
-    "crawler",
+    "workers",
     "shared",
     "db"
   ],
