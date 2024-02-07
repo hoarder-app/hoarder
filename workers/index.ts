@@ -2,31 +2,57 @@ import { Worker } from "bullmq";
 
 import {
   LinkCrawlerQueue,
+  OpenAIQueue,
   ZCrawlLinkRequest,
+  ZOpenAIRequest,
   queueConnectionDetails,
 } from "@remember/shared/queues";
 import logger from "@remember/shared/logger";
 import runCrawler from "./crawler";
+import runOpenAI from "./openai";
 
-logger.info("Starting crawler worker ...");
+function crawlerWorker() {
+  logger.info("Starting crawler worker ...");
+  const worker = new Worker<ZCrawlLinkRequest, void>(
+    LinkCrawlerQueue.name,
+    runCrawler,
+    {
+      connection: queueConnectionDetails,
+      autorun: false,
+    },
+  );
 
-const crawlerWorker = new Worker<ZCrawlLinkRequest, void>(
-  LinkCrawlerQueue.name,
-  runCrawler,
-  {
+  worker.on("completed", (job) => {
+    const jobId = job?.id || "unknown";
+    logger.info(`[Crawler][${jobId}] Completed successfully`);
+  });
+
+  worker.on("failed", (job, error) => {
+    const jobId = job?.id || "unknown";
+    logger.error(`[Crawler][${jobId}] Crawling job failed: ${error}`);
+  });
+
+  return worker;
+}
+
+function openaiWorker() {
+  logger.info("Starting openai worker ...");
+  const worker = new Worker<ZOpenAIRequest, void>(OpenAIQueue.name, runOpenAI, {
     connection: queueConnectionDetails,
     autorun: false,
-  },
-);
+  });
 
-crawlerWorker.on("completed", (job) => {
-  const jobId = job?.id || "unknown";
-  logger.info(`[Crawler][${jobId}] Completed successfully`);
-});
+  worker.on("completed", (job) => {
+    const jobId = job?.id || "unknown";
+    logger.info(`[openai][${jobId}] Completed successfully`);
+  });
 
-crawlerWorker.on("failed", (job, error) => {
-  const jobId = job?.id || "unknown";
-  logger.error(`[Crawler][${jobId}] Crawling job failed: ${error}`);
-});
+  worker.on("failed", (job, error) => {
+    const jobId = job?.id || "unknown";
+    logger.error(`[openai][${jobId}] openai job failed: ${error}`);
+  });
 
-await Promise.all([crawlerWorker.run()]);
+  return worker;
+}
+
+await Promise.all([crawlerWorker().run(), openaiWorker().run()]);

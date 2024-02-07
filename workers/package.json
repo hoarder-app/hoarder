@@ -11,7 +11,8 @@
     "metascraper-logo": "^5.43.4",
     "metascraper-title": "^5.43.4",
     "metascraper-url": "^5.43.4",
-    "metascraper-logo-favicon": "^5.43.4"
+    "metascraper-logo-favicon": "^5.43.4",
+    "openai": "^4.26.1"
   },
   "devDependencies": {
     "@types/metascraper": "^5.14.3"

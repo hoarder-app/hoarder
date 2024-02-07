@@ -1,5 +1,6 @@
 import logger from "@remember/shared/logger";
 import {
+  OpenAIQueue,
   ZCrawlLinkRequest,
   zCrawlLinkRequestSchema,
 } from "@remember/shared/queues";
@@ -68,5 +69,10 @@ export default async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     include: {
       details: true,
     },
+  });
+
+  // Enqueue openai job
+  OpenAIQueue.add("openai", {
+    linkId,
   });
 }

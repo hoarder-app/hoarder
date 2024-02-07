@@ -100,7 +100,6 @@ model TagsOnLinks {
   tagId String
 
   attachedAt     DateTime @default(now())
-  bookmarkTagsId String
 
   @@unique([linkId, tagId])
 }
