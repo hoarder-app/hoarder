@@ -65,10 +65,19 @@ async function inferTags(
   }
 
   try {
-    const tags = openAIResponseSchema.parse(JSON.parse(response)).tags;
+    let tags = openAIResponseSchema.parse(JSON.parse(response)).tags;
     logger.info(
       `[openai][${jobId}] Inferring tag for url "${link.url}" used ${chatCompletion.usage?.total_tokens} tokens and inferred: ${tags}`,
     );
+
+    // Sometimes the tags contain the hashtag symbol, let's strip them out if they do.
+    tags = tags.map((t) => {
+      if (t.startsWith("#")) {
+        return t.slice(1);
+      }
+      return t;
+    });
+
     return tags;
   } catch (e) {
     throw new Error(
