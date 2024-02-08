@@ -8,9 +8,13 @@ export const metadata: Metadata = {
 
 export default async function Bookmarks() {
   return (
-    <>
-      <AddLink />
-      <LinksGrid />
-    </>
+    <div className="flex flex-col">
+      <div>
+        <AddLink />
+      </div>
+      <div>
+        <LinksGrid />
+      </div>
+    </div>
   );
 }
