@@ -1,5 +1,7 @@
 import { Worker } from "bullmq";
 
+import dotenv from "dotenv";
+
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
@@ -55,4 +57,9 @@ function openaiWorker() {
   return worker;
 }
 
-await Promise.all([crawlerWorker().run(), openaiWorker().run()]);
+async function main() {
+  dotenv.config();
+  await Promise.all([crawlerWorker().run(), openaiWorker().run()]);
+}
+
+main();

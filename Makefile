@@ -1,20 +1,20 @@
 MAKEFLAGS += --always-make
 
 format:
-	bunx prettier . --write && bunx eslint .
+	yarn prettier . --write && yarn exec 'eslint .'
 
 prisma:
 	cd packages/db; \
-	bunx prisma migrate dev; \
-	bunx prisma generate
+	yarn prisma migrate dev; \
+	yarn prisma generate
 
 workers:
 	cd packages/workers; \
-	bun --watch index.ts
+	yarn start
 web:
 	cd packages/web; \
-	bun run dev
+	yarn run dev
 
 studio:
 	cd packages/db; \
-	bunx prisma studio
+	yarn prisma studio

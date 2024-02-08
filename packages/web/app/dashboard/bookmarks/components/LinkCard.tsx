@@ -76,7 +76,11 @@ export default function LinkCard({ link }: { link: ZBookmarkedLink }) {
       </ImageCardTitle>
       <ImageCardBody className="py-2 overflow-clip">
         {link.tags.map((t) => (
-          <Badge variant="default" className="bg-gray-300 text-gray-500" key={t.id}>
+          <Badge
+            variant="default"
+            className="bg-gray-300 text-gray-500"
+            key={t.id}
+          >
             #{t.name}
           </Badge>
         ))}

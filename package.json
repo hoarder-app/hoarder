@@ -17,9 +17,10 @@
     "eslint-plugin-react-hooks": "^4.6.0"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "eslint": "^8.56.0",
-    "eslint-config-next": "14.1.0"
+    "eslint-config-next": "14.1.0",
+    "prettier": "3.2.5",
+    "typescript": "^5"
   }
 }

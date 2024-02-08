@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { authOptions } from "@/lib/auth";
-import { Archive, MoreHorizontal, Star, Tag, Home, Brain} from "lucide-react";
+import { Archive, MoreHorizontal, Star, Tag, Home, Brain } from "lucide-react";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";

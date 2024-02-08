@@ -9,16 +9,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          cache: 'yarn'
+          cache-dependency-path: 'yarn.lock'
       - name: Install deps
-        run: bun install --frozen-lockfile
+        run: yarn install --frozen-lockfile
       - name: Lint
-        run: bunx eslint .
+        run: yarn eslint .
       - name: Format
-        run: bunx prettier . --check
+        run: yarn prettier . --check
       - name: Prisma
         working-directory: packages/db
-        run: bunx prisma generate
+        run: yarn prisma generate
       - name: Build web app
         working-directory: packages/web
-        run: bun run build
+        run: yarn run build
