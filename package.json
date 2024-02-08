@@ -22,5 +22,6 @@
     "eslint-config-next": "14.1.0",
     "prettier": "3.2.5",
     "typescript": "^5"
-  }
+  },
+  "packageManager": "yarn@4.1.0"
 }

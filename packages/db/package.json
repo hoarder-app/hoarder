@@ -5,7 +5,7 @@
   "private": true,
   "main": "index.ts",
   "dependencies": {
-    "prisma": "^5.9.1",
-    "@prisma/client": "^5.9.1"
+    "@prisma/client": "^5.9.1",
+    "prisma": "^5.9.1"
   }
 }

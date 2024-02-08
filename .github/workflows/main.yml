@@ -9,13 +9,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # This is a workaround for: https://github.com/actions/setup-node/issues/899
+      - name: Enable Corepack before setting up Node
+        run: corepack enable
       - uses: actions/setup-node@v4
         with:
           node-version: 21
-          cache: 'yarn'
-          cache-dependency-path: 'yarn.lock'
+          cache: "yarn"
+          cache-dependency-path: "yarn.lock"
       - name: Install deps
-        run: yarn install --frozen-lockfile
+        run: yarn install --immutable
       - name: Lint
         run: yarn eslint .
       - name: Format
