@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@remember/shared": "workspace:*",
+    "@remember/shared": "workspace:packages/*",
     "metascraper": "^5.43.4",
     "metascraper-description": "^5.43.4",
     "metascraper-image": "^5.43.4",

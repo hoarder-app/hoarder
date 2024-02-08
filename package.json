@@ -4,10 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "workspaces": [
-    "web",
-    "workers",
-    "shared",
-    "db"
+    "packages/*"
   ],
   "dependencies": {
     "@next/eslint-plugin-next": "^14.1.0",

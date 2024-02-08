@@ -17,8 +17,8 @@ jobs:
       - name: Format
         run: bunx prettier . --check
       - name: Prisma
-        working-directory: db
+        working-directory: packages/db
         run: bunx prisma generate
       - name: Build web app
-        working-directory: web
+        working-directory: packages/web
         run: bun run build
