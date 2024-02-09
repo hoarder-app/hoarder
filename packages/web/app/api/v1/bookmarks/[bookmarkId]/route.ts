@@ -1,9 +1,44 @@
 import { authOptions } from "@/lib/auth";
-import { deleteBookmark } from "@/lib/services/bookmarks";
+import { deleteBookmark, updateBookmark } from "@/lib/services/bookmarks";
+import { ZBookmark, zUpdateBookmarksRequestSchema } from "@/lib/types/api/bookmarks";
 import { Prisma } from "@remember/db";
 
 import { getServerSession } from "next-auth";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: { bookmarkId: string } },
+) {
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    return new Response(null, { status: 401 });
+  }
+
+  const updateJson = await request.json();
+  const update = zUpdateBookmarksRequestSchema.safeParse(updateJson);
+  if (!update.success) {
+    return new Response(null, { status: 400 });
+  }
+
+  try {
+    const bookmark: ZBookmark = await updateBookmark(
+      params.bookmarkId,
+      session.user.id,
+      update.data,
+    );
+    return NextResponse.json(bookmark);
+  } catch (e: unknown) {
+    if (
+      e instanceof Prisma.PrismaClientKnownRequestError &&
+      e.code === "P2025" // RecordNotFound
+    ) {
+      return new Response(null, { status: 404 });
+    } else {
+      throw e;
+    }
+  }
+}
 
 export async function DELETE(
   _request: NextRequest,
@@ -28,5 +63,5 @@ export async function DELETE(
     }
   }
 
-  return new Response(null, { status: 201 });
+  return new Response(null, { status: 204 });
 }

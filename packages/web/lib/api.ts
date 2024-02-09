@@ -3,6 +3,8 @@
 import { ZodTypeAny, z } from "zod";
 import {
   ZNewBookmarkRequest,
+  ZUpdateBookmarksRequest,
+  zBookmarkSchema,
   zGetBookmarksResponseSchema,
 } from "./types/api/bookmarks";
 
@@ -77,6 +79,13 @@ export default class APIClient {
   static async deleteBookmark(id: string) {
     return await doRequest(`/bookmarks/${id}`, undefined, {
       method: "DELETE",
+    });
+  }
+
+  static async updateBookmark(id: string, update: ZUpdateBookmarksRequest) {
+    return await doRequest(`/bookmarks/${id}`, zBookmarkSchema, {
+      method: "PATCH",
+      body: JSON.stringify(update),
     });
   }
 }

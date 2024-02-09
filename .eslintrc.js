@@ -27,7 +27,7 @@ module.exports = {
     "tailwindcss/migration-from-tailwind-2": "off",
 
     "@typescript-eslint/no-unused-vars": [
-      "error",
+      "off",
       {
         varsIgnorePattern: "^_",
         argsIgnorePattern: "^_",

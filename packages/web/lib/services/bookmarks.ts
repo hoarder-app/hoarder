@@ -4,6 +4,7 @@ import {
   ZBookmark,
   ZBookmarkContent,
   ZGetBookmarksRequest,
+  ZUpdateBookmarksRequest,
 } from "@/lib/types/api/bookmarks";
 
 const defaultBookmarkFields = {
@@ -51,6 +52,22 @@ function toZodSchema(
     content,
     ...rest,
   };
+}
+
+export async function updateBookmark(
+  bookmarkId: string,
+  userId: string,
+  req: ZUpdateBookmarksRequest,
+) {
+  const bookmark = await prisma.bookmark.update({
+    where: {
+      id: bookmarkId,
+      userId,
+    },
+    data: req,
+    select: defaultBookmarkFields,
+  });
+  return toZodSchema(bookmark);
 }
 
 export async function deleteBookmark(bookmarkId: string, userId: string) {
