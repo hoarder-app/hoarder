@@ -17,7 +17,7 @@ export default function BookmarksLayout({
         <AddLink />
       </div>
       <hr />
-      <div className="mt-4">{children}</div>
+      <div className="my-4">{children}</div>
     </div>
   );
 }
