@@ -11,9 +11,14 @@
     "metascraper-image": "^5.43.4",
     "metascraper-logo": "^5.43.4",
     "metascraper-logo-favicon": "^5.43.4",
+    "metascraper-readability": "^5.43.4",
     "metascraper-title": "^5.43.4",
+    "metascraper-twitter": "^5.43.4",
     "metascraper-url": "^5.43.4",
-    "openai": "^4.26.1"
+    "openai": "^4.26.1",
+    "puppeteer": "^22.0.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
     "@types/metascraper": "^5.14.3",
