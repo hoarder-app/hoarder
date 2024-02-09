@@ -1,20 +1,5 @@
-import AddLink from "./components/AddLink";
-import BookmarksGrid from "./components/BookmarksGrid";
-import type { Metadata } from "next";
+import Bookmarks from "./components/Bookmarks";
 
-export const metadata: Metadata = {
-  title: "Remember - Bookmarks",
-};
-
-export default async function Bookmarks() {
-  return (
-    <div className="flex flex-col">
-      <div>
-        <AddLink />
-      </div>
-      <div>
-        <BookmarksGrid />
-      </div>
-    </div>
-  );
+export default async function BookmarksPage() {
+  return <Bookmarks title="Bookmarks" archived={false} favourited={false} />;
 }

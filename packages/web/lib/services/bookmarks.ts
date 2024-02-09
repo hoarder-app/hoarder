@@ -1,6 +1,10 @@
 import { LinkCrawlerQueue } from "@remember/shared/queues";
 import prisma from "@remember/db";
-import { ZBookmark, ZBookmarkContent } from "@/lib/types/api/bookmarks";
+import {
+  ZBookmark,
+  ZBookmarkContent,
+  ZGetBookmarksRequest,
+} from "@/lib/types/api/bookmarks";
 
 const defaultBookmarkFields = {
   id: true,
@@ -80,11 +84,16 @@ export async function bookmarkLink(url: string, userId: string) {
   return toZodSchema(bookmark);
 }
 
-export async function getBookmarks(userId: string) {
+export async function getBookmarks(
+  userId: string,
+  { favourited, archived }: ZGetBookmarksRequest,
+) {
   return (
     await prisma.bookmark.findMany({
       where: {
         userId,
+        archived,
+        favourited,
       },
       select: defaultBookmarkFields,
     })

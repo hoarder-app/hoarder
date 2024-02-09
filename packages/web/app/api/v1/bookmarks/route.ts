@@ -5,6 +5,7 @@ import {
   zNewBookmarkRequestSchema,
   ZGetBookmarksResponse,
   ZBookmark,
+  zGetBookmarksRequestSchema,
 } from "@/lib/types/api/bookmarks";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -33,14 +34,21 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(response, { status: 201 });
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   // TODO: We probably should be using an API key here instead of the session;
   const session = await getServerSession(authOptions);
   if (!session) {
     return new Response(null, { status: 401 });
   }
 
-  const bookmarks = await getBookmarks(session.user.id);
+  const query = request.nextUrl.searchParams;
+  const params = zGetBookmarksRequestSchema.safeParse(query);
+
+  if (!params.success) {
+    return new Response(null, { status: 400 });
+  }
+
+  const bookmarks = await getBookmarks(session.user.id, params.data);
 
   const response: ZGetBookmarksResponse = { bookmarks };
   return NextResponse.json(response);

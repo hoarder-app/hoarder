@@ -31,6 +31,13 @@ export const zNewBookmarkRequestSchema = zBookmarkContentSchema;
 export type ZNewBookmarkRequest = z.infer<typeof zNewBookmarkRequestSchema>;
 
 // GET /v1/bookmarks
+
+export const zGetBookmarksRequestSchema = z.object({
+  archived: z.boolean().default(false),
+  favourited: z.boolean().default(false),
+});
+export type ZGetBookmarksRequest = z.infer<typeof zGetBookmarksRequestSchema>;
+
 export const zGetBookmarksResponseSchema = z.object({
   bookmarks: z.array(zBookmarkSchema),
 });

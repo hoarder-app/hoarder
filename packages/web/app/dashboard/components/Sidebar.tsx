@@ -2,27 +2,8 @@ import { Button } from "@/components/ui/button";
 import { authOptions } from "@/lib/auth";
 import { Archive, MoreHorizontal, Star, Tag, Home, Brain } from "lucide-react";
 import { getServerSession } from "next-auth";
-import Link from "next/link";
 import { redirect } from "next/navigation";
-
-function SidebarItem({
-  name,
-  logo,
-  path,
-}: {
-  name: string;
-  logo: React.ReactNode;
-  path: string;
-}) {
-  return (
-    <li className="rounded-lg px-3 py-2 hover:bg-slate-100">
-      <Link href={path} className="flex w-full space-x-2">
-        {logo}
-        <span className="my-auto"> {name} </span>
-      </Link>
-    </li>
-  );
-}
+import SidebarItem from "./SidebarItem";
 
 export default async function Sidebar() {
   const session = await getServerSession(authOptions);
@@ -39,9 +20,21 @@ export default async function Sidebar() {
       <hr />
       <div>
         <ul className="mt-5 space-y-2 text-sm font-medium">
-          <SidebarItem logo={<Home />} name="Home" path="#" />
-          <SidebarItem logo={<Star />} name="Favourites" path="#" />
-          <SidebarItem logo={<Archive />} name="Archived" path="#" />
+          <SidebarItem
+            logo={<Home />}
+            name="Home"
+            path="/dashboard/bookmarks"
+          />
+          <SidebarItem
+            logo={<Star />}
+            name="Favourites"
+            path="/dashboard/bookmarks/favourites"
+          />
+          <SidebarItem
+            logo={<Archive />}
+            name="Archive"
+            path="/dashboard/bookmarks/archive"
+          />
           <SidebarItem logo={<Tag />} name="Tags" path="#" />
         </ul>
       </div>
