@@ -43,10 +43,11 @@ export const zGetBookmarksResponseSchema = z.object({
 });
 export type ZGetBookmarksResponse = z.infer<typeof zGetBookmarksResponseSchema>;
 
-
 // PATCH /v1/bookmarks/[bookmarkId]
 export const zUpdateBookmarksRequestSchema = z.object({
   archived: z.boolean().optional(),
   favourited: z.boolean().optional(),
 });
-export type ZUpdateBookmarksRequest = z.infer<typeof zUpdateBookmarksRequestSchema>;
+export type ZUpdateBookmarksRequest = z.infer<
+  typeof zUpdateBookmarksRequestSchema
+>;

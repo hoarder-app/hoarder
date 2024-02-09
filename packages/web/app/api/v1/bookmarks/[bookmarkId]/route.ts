@@ -1,6 +1,9 @@
 import { authOptions } from "@/lib/auth";
 import { deleteBookmark, updateBookmark } from "@/lib/services/bookmarks";
-import { ZBookmark, zUpdateBookmarksRequestSchema } from "@/lib/types/api/bookmarks";
+import {
+  ZBookmark,
+  zUpdateBookmarksRequestSchema,
+} from "@/lib/types/api/bookmarks";
 import { Prisma } from "@remember/db";
 
 import { getServerSession } from "next-auth";

@@ -9,7 +9,6 @@ import { ZBookmark } from "@/lib/types/api/bookmarks";
 import Link from "next/link";
 import BookmarkOptions from "./BookmarkOptions";
 
-
 export default function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
   const link = bookmark.content;
   const parsedUrl = new URL(link.url);
@@ -30,7 +29,7 @@ export default function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
         {bookmark.tags.map((t) => (
           <Badge
             variant="default"
-            className="bg-gray-300 text-gray-500"
+            className="bg-gray-300 text-gray-500 hover:text-white"
             key={t.id}
           >
             #{t.name}
