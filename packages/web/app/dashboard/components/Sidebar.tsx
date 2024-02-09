@@ -31,14 +31,14 @@ export default async function Sidebar() {
   }
 
   return (
-    <aside className="flex flex-col h-full w-60 border-r p-4">
-      <div className="flex px-1 mb-5 items-center rounded-lg text-slate-900">
+    <aside className="flex h-full w-60 flex-col border-r p-4">
+      <div className="mb-5 flex items-center rounded-lg px-1 text-slate-900">
         <Brain />
         <span className="ml-2 text-base font-semibold">Remember</span>
       </div>
       <hr />
       <div>
-        <ul className="space-y-2 mt-5 text-sm font-medium">
+        <ul className="mt-5 space-y-2 text-sm font-medium">
           <SidebarItem logo={<Home />} name="Home" path="#" />
           <SidebarItem logo={<Star />} name="Favourites" path="#" />
           <SidebarItem logo={<Archive />} name="Archived" path="#" />
@@ -47,7 +47,7 @@ export default async function Sidebar() {
       </div>
       <div className="mt-auto flex justify-between">
         <div className="my-auto"> {session.user.name} </div>
-        <Button variant="ghost" className="h-10 w-30">
+        <Button variant="ghost" className="h-10">
           <MoreHorizontal />
         </Button>
       </div>

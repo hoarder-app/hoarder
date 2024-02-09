@@ -1,7 +1,10 @@
 MAKEFLAGS += --always-make
 
 format:
-	yarn prettier . --write && yarn exec 'eslint .'
+	yarn prettier . --write
+
+lint:
+	yarn eslint .
 
 prisma:
 	cd packages/db; \

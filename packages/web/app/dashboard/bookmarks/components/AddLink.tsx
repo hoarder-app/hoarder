@@ -43,7 +43,7 @@ export default function AddLink() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit, onError)}>
-        <div className="py-4 container flex w-full items-center space-x-2">
+        <div className="container flex w-full items-center space-x-2 py-4">
           <FormField
             control={form.control}
             name="url"

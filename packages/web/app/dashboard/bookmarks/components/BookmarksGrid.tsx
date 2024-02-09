@@ -20,7 +20,7 @@ export default async function BookmarksGrid() {
   const bookmarks = await getBookmarks(session.user.id);
 
   return (
-    <div className="container grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div className="container grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
       {bookmarks.map((b) => renderBookmark(b))}
     </div>
   );

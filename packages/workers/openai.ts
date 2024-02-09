@@ -46,7 +46,7 @@ async function inferTags(jobId: string, link: BookmarkedLink, openai: OpenAI) {
     response_format: { type: "json_object" },
   });
 
-  let response = chatCompletion.choices[0].message.content;
+  const response = chatCompletion.choices[0].message.content;
   if (!response) {
     throw new Error(`[openai][${jobId}] Got no message content from OpenAI`);
   }
@@ -89,10 +89,10 @@ async function createTags(tags: string[], userId: string) {
 
   const existingTagSet = new Set<string>(existingTags.map((t) => t.name));
 
-  let newTags = tags.filter((t) => !existingTagSet.has(t));
+  const newTags = tags.filter((t) => !existingTagSet.has(t));
 
   // TODO: Prisma doesn't support createMany in Sqlite
-  let newTagObjects = await Promise.all(
+  const newTagObjects = await Promise.all(
     newTags.map((t) => {
       return prisma.bookmarkTags.create({
         data: {

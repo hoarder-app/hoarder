@@ -26,7 +26,7 @@ export function LinkOptions({ linkId }: { linkId: string }) {
   const router = useRouter();
 
   const unbookmarkLink = async () => {
-    let [_, error] = await APIClient.deleteBookmark(linkId);
+    const [_, error] = await APIClient.deleteBookmark(linkId);
 
     if (error) {
       toast({
@@ -51,7 +51,7 @@ export function LinkOptions({ linkId }: { linkId: string }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
         <DropdownMenuItem className="text-destructive" onClick={unbookmarkLink}>
-          <Trash2 className="mr-2 h-4 w-4" />
+          <Trash2 className="mr-2 size-4" />
           <span>Delete</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
@@ -66,7 +66,7 @@ export default function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
   return (
     <ImageCard
       className={
-        "bg-gray-50 duration-300 ease-in border border-grey-100 hover:transition-all hover:border-blue-300"
+        "border-grey-100 border bg-gray-50 duration-300 ease-in hover:border-blue-300 hover:transition-all"
       }
       image={link?.imageUrl ?? undefined}
     >
@@ -75,7 +75,7 @@ export default function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
           {link?.title ?? parsedUrl.host}
         </Link>
       </ImageCardTitle>
-      <ImageCardBody className="py-2 overflow-clip">
+      <ImageCardBody className="overflow-clip py-2">
         {bookmark.tags.map((t) => (
           <Badge
             variant="default"

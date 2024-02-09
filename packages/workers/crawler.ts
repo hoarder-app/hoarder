@@ -10,12 +10,18 @@ import prisma from "@remember/db";
 
 import metascraper from "metascraper";
 
+import metascraperDescription from "metascraper-description";
+import metascraperImage from "metascraper-image";
+import metascraperLogo from "metascraper-logo-favicon";
+import metascraperTitle from "metascraper-title";
+import metascraperUrl from "metascraper-url";
+
 const metascraperParser = metascraper([
-  require("metascraper-description")(),
-  require("metascraper-image")(),
-  require("metascraper-logo-favicon")(),
-  require("metascraper-title")(),
-  require("metascraper-url")(),
+  metascraperDescription(),
+  metascraperImage(),
+  metascraperLogo(),
+  metascraperTitle(),
+  metascraperUrl(),
 ]);
 
 export default async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {

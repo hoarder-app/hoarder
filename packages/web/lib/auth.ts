@@ -4,7 +4,7 @@ import AuthentikProvider from "next-auth/providers/authentik";
 import serverConfig from "@/lib/config";
 import prisma from "@remember/db";
 
-let providers = [];
+const providers = [];
 
 if (serverConfig.auth.authentik) {
   providers.push(AuthentikProvider(serverConfig.auth.authentik));

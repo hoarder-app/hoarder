@@ -39,7 +39,7 @@ async function doRequest<T>(
       return [undefined, undefined] as const;
     }
 
-    let parsed = respSchema.safeParse(await res.json());
+    const parsed = respSchema.safeParse(await res.json());
     if (!parsed.success) {
       return [
         undefined,
@@ -48,7 +48,7 @@ async function doRequest<T>(
     }
 
     return [parsed.data, undefined] as const;
-  } catch (error: any) {
+  } catch (error) {
     return [
       undefined,
       { message: `Failed to execute fetch request: ${error}` },

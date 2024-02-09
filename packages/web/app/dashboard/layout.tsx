@@ -3,7 +3,7 @@ import Sidebar from "@/app/dashboard/components/Sidebar";
 
 export default async function Dashboard() {
   return (
-    <div className="flex w-screen h-screen">
+    <div className="flex h-screen w-screen">
       <div className="flex-none">
         <Sidebar />
       </div>

@@ -1,5 +1,5 @@
 function buildAuthentikConfig() {
-  let { AUTHENTIK_ID, AUTHENTIK_SECRET, AUTHENTIK_ISSUER } = process.env;
+  const { AUTHENTIK_ID, AUTHENTIK_SECRET, AUTHENTIK_ISSUER } = process.env;
 
   if (!AUTHENTIK_ID || !AUTHENTIK_SECRET || !AUTHENTIK_ISSUER) {
     return undefined;

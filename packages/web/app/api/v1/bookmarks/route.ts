@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
   const bookmark = await bookmarkLink(linkRequest.data.url, session.user.id);
 
-  let response: ZBookmark = { ...bookmark };
+  const response: ZBookmark = { ...bookmark };
   return NextResponse.json(response, { status: 201 });
 }
 
@@ -42,6 +42,6 @@ export async function GET() {
 
   const bookmarks = await getBookmarks(session.user.id);
 
-  let response: ZGetBookmarksResponse = { bookmarks };
+  const response: ZGetBookmarksResponse = { bookmarks };
   return NextResponse.json(response);
 }
