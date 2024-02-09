@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/imageCard";
 import { useToast } from "@/components/ui/use-toast";
 import APIClient from "@/lib/api";
-import { ZBookmarkedLink } from "@/lib/types/api/links";
+import { ZBookmark } from "@/lib/types/api/bookmarks";
 import { MoreHorizontal, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,7 +26,7 @@ export function LinkOptions({ linkId }: { linkId: string }) {
   const router = useRouter();
 
   const unbookmarkLink = async () => {
-    let [_, error] = await APIClient.unbookmarkLink(linkId);
+    let [_, error] = await APIClient.deleteBookmark(linkId);
 
     if (error) {
       toast({
@@ -59,7 +59,8 @@ export function LinkOptions({ linkId }: { linkId: string }) {
   );
 }
 
-export default function LinkCard({ link }: { link: ZBookmarkedLink }) {
+export default function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
+  const link = bookmark.content;
   const parsedUrl = new URL(link.url);
 
   return (
@@ -67,15 +68,15 @@ export default function LinkCard({ link }: { link: ZBookmarkedLink }) {
       className={
         "bg-gray-50 duration-300 ease-in border border-grey-100 hover:transition-all hover:border-blue-300"
       }
-      image={link.details?.imageUrl ?? undefined}
+      image={link?.imageUrl ?? undefined}
     >
       <ImageCardTitle>
         <Link className="line-clamp-3" href={link.url}>
-          {link.details?.title ?? parsedUrl.host}
+          {link?.title ?? parsedUrl.host}
         </Link>
       </ImageCardTitle>
       <ImageCardBody className="py-2 overflow-clip">
-        {link.tags.map((t) => (
+        {bookmark.tags.map((t) => (
           <Badge
             variant="default"
             className="bg-gray-300 text-gray-500"
@@ -92,7 +93,7 @@ export default function LinkCard({ link }: { link: ZBookmarkedLink }) {
               {parsedUrl.host}
             </Link>
           </div>
-          <LinkOptions linkId={link.id} />
+          <LinkOptions linkId={bookmark.id} />
         </div>
       </ImageCardFooter>
     </ImageCard>

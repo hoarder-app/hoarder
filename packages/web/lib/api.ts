@@ -2,9 +2,9 @@
 
 import { ZodTypeAny, z } from "zod";
 import {
-  ZNewBookmarkedLinkRequest,
-  zGetLinksResponseSchema,
-} from "./types/api/links";
+  ZNewBookmarkRequest,
+  zGetBookmarksResponseSchema,
+} from "./types/api/bookmarks";
 
 import serverConfig from "./config";
 
@@ -57,24 +57,25 @@ async function doRequest<T>(
 }
 
 export default class APIClient {
-  static async getLinks() {
-    return await doRequest(`/links`, zGetLinksResponseSchema, {
+  static async getBookmarks() {
+    return await doRequest(`/bookmarks`, zGetBookmarksResponseSchema, {
       next: { tags: ["links"] },
     });
   }
 
   static async bookmarkLink(url: string) {
-    const body: ZNewBookmarkedLinkRequest = {
+    const body: ZNewBookmarkRequest = {
+      type: "link",
       url,
     };
-    return await doRequest(`/links`, undefined, {
+    return await doRequest(`/bookmarks`, undefined, {
       method: "POST",
       body: JSON.stringify(body),
     });
   }
 
-  static async unbookmarkLink(linkId: string) {
-    return await doRequest(`/links/${linkId}`, undefined, {
+  static async deleteBookmark(id: string) {
+    return await doRequest(`/bookmarks/${id}`, undefined, {
       method: "DELETE",
     });
   }

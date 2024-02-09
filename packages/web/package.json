@@ -13,6 +13,7 @@
     "@hookform/resolvers": "^3.3.4",
     "@next-auth/prisma-adapter": "^1.0.7",
     "@next/eslint-plugin-next": "^14.1.0",
+    "@prisma/client": "^5.9.1",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",

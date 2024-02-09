@@ -29,10 +29,10 @@ export default async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     return;
   }
 
-  const { url, linkId } = request.data;
+  const { url, bookmarkId } = request.data;
 
   logger.info(
-    `[Crawler][${jobId}] Will crawl "${url}" for link with id "${linkId}"`,
+    `[Crawler][${jobId}] Will crawl "${url}" for link with id "${bookmarkId}"`,
   );
   // TODO(IMPORTANT): Run security validations on the input URL (e.g. deny localhost, etc)
 
@@ -46,33 +46,19 @@ export default async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
 
   await prisma.bookmarkedLink.update({
     where: {
-      id: linkId,
+      id: bookmarkId,
     },
     data: {
-      details: {
-        upsert: {
-          create: {
-            title: meta.title,
-            description: meta.description,
-            imageUrl: meta.image,
-            favicon: meta.logo,
-          },
-          update: {
-            title: meta.title,
-            description: meta.description,
-            imageUrl: meta.image,
-            favicon: meta.logo,
-          },
-        },
-      },
-    },
-    include: {
-      details: true,
+      title: meta.title,
+      description: meta.description,
+      imageUrl: meta.image,
+      favicon: meta.logo,
+      crawledAt: new Date(),
     },
   });
 
   // Enqueue openai job
   OpenAIQueue.add("openai", {
-    linkId,
+    bookmarkId,
   });
 }

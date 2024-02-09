@@ -8,7 +8,7 @@ export const queueConnectionDetails = {
 
 // Link Crawler
 export const zCrawlLinkRequestSchema = z.object({
-  linkId: z.string(),
+  bookmarkId: z.string(),
   url: z.string().url(),
 });
 export type ZCrawlLinkRequest = z.infer<typeof zCrawlLinkRequestSchema>;
@@ -20,7 +20,7 @@ export const LinkCrawlerQueue = new Queue<ZCrawlLinkRequest, void>(
 
 // OpenAI Worker
 export const zOpenAIRequestSchema = z.object({
-  linkId: z.string(),
+  bookmarkId: z.string(),
 });
 export type ZOpenAIRequest = z.infer<typeof zOpenAIRequestSchema>;
 

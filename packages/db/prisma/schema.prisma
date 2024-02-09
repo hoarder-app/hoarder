@@ -38,15 +38,15 @@ model Session {
 }
 
 model User {
-  id            String           @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  email         String?          @unique
+  email         String?        @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
-  links         BookmarkedLink[]
   tags          BookmarkTags[]
+  bookmarks     Bookmark[]
 }
 
 model VerificationToken {
@@ -57,28 +57,34 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model BookmarkedLink {
-  id        String   @id @default(cuid())
-  url       String
-  createdAt DateTime @default(now())
+model Bookmark {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  archived   Boolean  @default(false)
+  favourited Boolean  @default(false)
+  userId     String
 
-  userId String
+  // Content relation
+  link BookmarkedLink?
 
-  details BookmarkedLinkDetails?
-
-  user User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  tags TagsOnLinks[]
+  // Other relations
+  user User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tags TagsOnBookmarks[]
 }
 
-model BookmarkedLinkDetails {
-  id          String   @id
+model BookmarkedLink {
+  id  String @id
+  url String
+
+  // Crawled info
   title       String?
   description String?
   imageUrl    String?
   favicon     String?
-  createdAt   DateTime @default(now())
+  crawledAt   DateTime?
 
-  link BookmarkedLink @relation(fields: [id], references: [id], onDelete: Cascade)
+  // Relations
+  parentBookmark Bookmark @relation(fields: [id], references: [id], onDelete: Cascade)
 }
 
 model BookmarkTags {
@@ -88,18 +94,20 @@ model BookmarkTags {
 
   userId String
 
-  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  attachedLinks TagsOnLinks[]
+  // Relations
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  bookmarks TagsOnBookmarks[]
 }
 
-model TagsOnLinks {
-  link   BookmarkedLink @relation(fields: [linkId], references: [id], onDelete: Cascade)
-  linkId String
+model TagsOnBookmarks {
+  bookmark   Bookmark @relation(fields: [bookmarkId], references: [id], onDelete: Cascade)
+  bookmarkId String
 
   tag   BookmarkTags @relation(fields: [tagId], references: [id], onDelete: Cascade)
   tagId String
 
-  attachedAt     DateTime @default(now())
+  attachedAt DateTime @default(now())
+  attachedBy String // "human" or "ai" (if only prisma sqlite supported enums)
 
-  @@unique([linkId, tagId])
+  @@unique([bookmarkId, tagId])
 }

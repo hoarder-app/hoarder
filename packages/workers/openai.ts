@@ -1,4 +1,4 @@
-import prisma, { BookmarkedLink, BookmarkedLinkDetails } from "@remember/db";
+import prisma, { BookmarkedLink } from "@remember/db";
 import logger from "@remember/shared/logger";
 import { ZOpenAIRequest, zOpenAIRequestSchema } from "@remember/shared/queues";
 import { Job } from "bullmq";
@@ -8,14 +8,6 @@ import { z } from "zod";
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
 });
-
-let openai: OpenAI | undefined;
-
-if (process.env.OPENAI_API_KEY && process.env.OPENAI_ENABLED) {
-  openai = new OpenAI({
-    apiKey: process.env["OPENAI_API_KEY"], // This is the default and can be omitted
-  });
-}
 
 function buildPrompt(url: string, description: string) {
   return `
@@ -27,24 +19,19 @@ Description: ${description}
   `;
 }
 
-async function fetchLink(linkId: string) {
-  return await prisma.bookmarkedLink.findUnique({
+async function fetchBookmark(linkId: string) {
+  return await prisma.bookmark.findUnique({
     where: {
       id: linkId,
     },
     include: {
-      details: true,
+      link: true,
     },
   });
 }
 
-async function inferTags(
-  jobId: string,
-  link: BookmarkedLink,
-  linkDetails: BookmarkedLinkDetails | null,
-  openai: OpenAI,
-) {
-  const linkDescription = linkDetails?.description;
+async function inferTags(jobId: string, link: BookmarkedLink, openai: OpenAI) {
+  const linkDescription = link?.description;
   if (!linkDescription) {
     throw new Error(
       `[openai][${jobId}] No description found for link "${link.id}". Skipping ...`,
@@ -119,14 +106,15 @@ async function createTags(tags: string[], userId: string) {
   return existingTags.map((t) => t.id).concat(newTagObjects.map((t) => t.id));
 }
 
-async function connectTags(linkId: string, tagIds: string[]) {
+async function connectTags(bookmarkId: string, tagIds: string[]) {
   // TODO: Prisma doesn't support createMany in Sqlite
   await Promise.all(
     tagIds.map((tagId) => {
-      return prisma.tagsOnLinks.create({
+      return prisma.tagsOnBookmarks.create({
         data: {
           tagId,
-          linkId,
+          bookmarkId,
+          attachedBy: "ai",
         },
       });
     }),
@@ -136,6 +124,13 @@ async function connectTags(linkId: string, tagIds: string[]) {
 export default async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
   const jobId = job.id || "unknown";
 
+  if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_ENABLED) {
+    return;
+  }
+
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
   if (!openai) {
     logger.debug(
       `[openai][${jobId}] OpenAI is not configured, nothing to do now`,
@@ -150,14 +145,22 @@ export default async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
     );
   }
 
-  const { linkId } = request.data;
-  const link = await fetchLink(linkId);
-  if (!link) {
-    throw new Error(`[openai][${jobId}] link with id ${linkId} was not found`);
+  const { bookmarkId } = request.data;
+  const bookmark = await fetchBookmark(bookmarkId);
+  if (!bookmark) {
+    throw new Error(
+      `[openai][${jobId}] bookmark with id ${bookmarkId} was not found`,
+    );
   }
 
-  const tags = await inferTags(jobId, link, link.details, openai);
+  if (!bookmark.link) {
+    throw new Error(
+      `[openai][${jobId}] bookmark with id ${bookmarkId} doesn't have a link`,
+    );
+  }
 
-  const tagIds = await createTags(tags, link.userId);
-  await connectTags(linkId, tagIds);
+  const tags = await inferTags(jobId, bookmark.link, openai);
+
+  const tagIds = await createTags(tags, bookmark.userId);
+  await connectTags(bookmarkId, tagIds);
 }

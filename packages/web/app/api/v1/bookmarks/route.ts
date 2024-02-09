@@ -1,11 +1,11 @@
 import { authOptions } from "@/lib/auth";
-import { bookmarkLink, getLinks } from "@/lib/services/links";
+import { bookmarkLink, getBookmarks } from "@/lib/services/bookmarks";
 
 import {
-  zNewBookmarkedLinkRequestSchema,
-  ZGetLinksResponse,
-  ZBookmarkedLink,
-} from "@/lib/types/api/links";
+  zNewBookmarkRequestSchema,
+  ZGetBookmarksResponse,
+  ZBookmark,
+} from "@/lib/types/api/bookmarks";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -16,9 +16,7 @@ export async function POST(request: NextRequest) {
     return new Response(null, { status: 401 });
   }
 
-  const linkRequest = zNewBookmarkedLinkRequestSchema.safeParse(
-    await request.json(),
-  );
+  const linkRequest = zNewBookmarkRequestSchema.safeParse(await request.json());
 
   if (!linkRequest.success) {
     return NextResponse.json(
@@ -29,9 +27,9 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const link = await bookmarkLink(linkRequest.data.url, session.user.id);
+  const bookmark = await bookmarkLink(linkRequest.data.url, session.user.id);
 
-  let response: ZBookmarkedLink = { ...link };
+  let response: ZBookmark = { ...bookmark };
   return NextResponse.json(response, { status: 201 });
 }
 
@@ -42,8 +40,8 @@ export async function GET() {
     return new Response(null, { status: 401 });
   }
 
-  const links = await getLinks(session.user.id);
+  const bookmarks = await getBookmarks(session.user.id);
 
-  let response: ZGetLinksResponse = { links };
+  let response: ZGetBookmarksResponse = { bookmarks };
   return NextResponse.json(response);
 }

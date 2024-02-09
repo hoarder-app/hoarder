@@ -1,5 +1,5 @@
 import { authOptions } from "@/lib/auth";
-import { unbookmarkLink } from "@/lib/services/links";
+import { deleteBookmark } from "@/lib/services/bookmarks";
 import { Prisma } from "@remember/db";
 
 import { getServerSession } from "next-auth";
@@ -7,7 +7,7 @@ import { NextRequest } from "next/server";
 
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { linkId: string } },
+  { params }: { params: { bookmarkId: string } },
 ) {
   // TODO: We probably should be using an API key here instead of the session;
   const session = await getServerSession(authOptions);
@@ -16,7 +16,7 @@ export async function DELETE(
   }
 
   try {
-    await unbookmarkLink(params.linkId, session.user.id);
+    await deleteBookmark(params.bookmarkId, session.user.id);
   } catch (e: unknown) {
     if (
       e instanceof Prisma.PrismaClientKnownRequestError &&

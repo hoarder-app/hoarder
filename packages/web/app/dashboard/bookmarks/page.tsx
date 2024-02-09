@@ -1,5 +1,5 @@
 import AddLink from "./components/AddLink";
-import LinksGrid from "./components/LinksGrid";
+import BookmarksGrid from "./components/BookmarksGrid";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export default async function Bookmarks() {
         <AddLink />
       </div>
       <div>
-        <LinksGrid />
+        <BookmarksGrid />
       </div>
     </div>
   );
