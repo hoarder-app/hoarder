@@ -1169,6 +1169,11 @@ __metadata:
     "@radix-ui/react-label": "npm:^2.0.2"
     "@radix-ui/react-slot": "npm:^1.0.2"
     "@radix-ui/react-toast": "npm:^1.1.5"
+    "@tanstack/react-query": "npm:^5.18.1"
+    "@trpc/client": "npm:11.0.0-next-beta.274"
+    "@trpc/next": "npm:11.0.0-next-beta.274"
+    "@trpc/react-query": "npm:11.0.0-next-beta.274"
+    "@trpc/server": "npm:11.0.0-next-beta.274"
     "@types/react": "npm:^18"
     "@types/react-dom": "npm:^18"
     autoprefixer: "npm:^10.0.1"
@@ -1246,10 +1251,77 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-core@npm:5.18.1":
+  version: 5.18.1
+  resolution: "@tanstack/query-core@npm:5.18.1"
+  checksum: 10c0/3fca6ae577ce39a14971ac60c8540f04a0c5a22e96cecaed1da7b47bdba79f2d8dc09c572995d068e2dc9bf685edb4114f1ca1317680b3acb398ceabd95a74bb
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query@npm:^5.18.1":
+  version: 5.18.1
+  resolution: "@tanstack/react-query@npm:5.18.1"
+  dependencies:
+    "@tanstack/query-core": "npm:5.18.1"
+  peerDependencies:
+    react: ^18.0.0
+  checksum: 10c0/e017f6d3f57a7690707868955c1a630838f5225f42ea4c63d41a2ed15813b2b156a4e2be99f3c4a4590916564d289d4c8f084e68ef12c68bce9216215b0026ff
+  languageName: node
+  linkType: hard
+
 "@tootallnate/quickjs-emscripten@npm:^0.23.0":
   version: 0.23.0
   resolution: "@tootallnate/quickjs-emscripten@npm:0.23.0"
   checksum: 10c0/2a939b781826fb5fd3edd0f2ec3b321d259d760464cf20611c9877205aaca3ccc0b7304dea68416baa0d568e82cd86b17d29548d1e5139fa3155a4a86a2b4b49
+  languageName: node
+  linkType: hard
+
+"@trpc/client@npm:11.0.0-next-beta.274":
+  version: 11.0.0-next-beta.274
+  resolution: "@trpc/client@npm:11.0.0-next-beta.274"
+  peerDependencies:
+    "@trpc/server": 11.0.0-next-beta.274+bc5196e28
+  checksum: 10c0/e6e03d39407db93e7ac1160d9ef9085e5ff7505030e36d97903f0a8f0119cc261be3ed0c7f5292089f9a96dd9116dff37e2df59f3cc23353c5d9d16a7963e25b
+  languageName: node
+  linkType: hard
+
+"@trpc/next@npm:11.0.0-next-beta.274":
+  version: 11.0.0-next-beta.274
+  resolution: "@trpc/next@npm:11.0.0-next-beta.274"
+  peerDependencies:
+    "@tanstack/react-query": ^5.0.0
+    "@trpc/client": 11.0.0-next-beta.274+bc5196e28
+    "@trpc/react-query": 11.0.0-next-beta.274+bc5196e28
+    "@trpc/server": 11.0.0-next-beta.274+bc5196e28
+    next: "*"
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  peerDependenciesMeta:
+    "@tanstack/react-query":
+      optional: true
+    "@trpc/react-query":
+      optional: true
+  checksum: 10c0/b1b8f6f2b8aa17abf528f2b9ffff4ac363cdcb1fe02e560f94fce2066530ec877f30648df64c9e159e7621292e05875539a4095b0b9e03263cd364c30079384c
+  languageName: node
+  linkType: hard
+
+"@trpc/react-query@npm:11.0.0-next-beta.274":
+  version: 11.0.0-next-beta.274
+  resolution: "@trpc/react-query@npm:11.0.0-next-beta.274"
+  peerDependencies:
+    "@tanstack/react-query": ^5.0.0
+    "@trpc/client": 11.0.0-next-beta.274+bc5196e28
+    "@trpc/server": 11.0.0-next-beta.274+bc5196e28
+    react: ">=18.2.0"
+    react-dom: ">=18.2.0"
+  checksum: 10c0/a8fcfc4ae076d48548c4dacd22105483009047f5f17c26281d594e282487eafde4165f9e06d1add09e892805309aa5bc56e1adf1ce963280b1814da5470f4248
+  languageName: node
+  linkType: hard
+
+"@trpc/server@npm:11.0.0-next-beta.274":
+  version: 11.0.0-next-beta.274
+  resolution: "@trpc/server@npm:11.0.0-next-beta.274"
+  checksum: 10c0/fe81b762d852b4eb3a55d5b2c2e2f98dbb35445ce2e1c3a63bdd113ead4acd769aa6adf92c7f932e818d71a5a2a105af9a4862010c629924c213fa1c3096c3f9
   languageName: node
   linkType: hard
 
