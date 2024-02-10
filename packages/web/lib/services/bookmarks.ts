@@ -112,6 +112,9 @@ export async function getBookmarks(
         archived,
         favourited,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
       select: defaultBookmarkFields,
     })
   ).map(toZodSchema);
