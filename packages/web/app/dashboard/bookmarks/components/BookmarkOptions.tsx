@@ -1,7 +1,7 @@
 "use client";
 
 import { useToast } from "@/components/ui/use-toast";
-import APIClient from "@/lib/api";
+import { api } from "@/lib/trpc";
 import { ZBookmark, ZUpdateBookmarksRequest } from "@/lib/types/api/bookmarks";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -19,17 +19,19 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const linkId = bookmark.id;
 
   const unbookmarkLink = async () => {
-    const [_, error] = await APIClient.deleteBookmark(linkId);
+    try {
+      await api.bookmarks.deleteBookmark.mutate({
+        bookmarkId: linkId,
+      });
 
-    if (error) {
+      toast({
+        description: "The bookmark has been deleted!",
+      });
+    } catch (e) {
       toast({
         variant: "destructive",
         title: "Something went wrong",
         description: "There was a problem with your request.",
-      });
-    } else {
-      toast({
-        description: "The bookmark has been deleted!",
       });
     }
 
@@ -37,17 +39,16 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   };
 
   const updateBookmark = async (req: ZUpdateBookmarksRequest) => {
-    const [_, error] = await APIClient.updateBookmark(linkId, req);
-
-    if (error) {
+    try {
+      await api.bookmarks.updateBookmark.mutate(req);
+      toast({
+        description: "The bookmark has been updated!",
+      });
+    } catch (e) {
       toast({
         variant: "destructive",
         title: "Something went wrong",
         description: "There was a problem with your request.",
-      });
-    } else {
-      toast({
-        description: "The bookmark has been updated!",
       });
     }
 
@@ -63,13 +64,20 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
         <DropdownMenuItem
-          onClick={() => updateBookmark({ favourited: !bookmark.favourited })}
+          onClick={() =>
+            updateBookmark({
+              bookmarkId: linkId,
+              favourited: !bookmark.favourited,
+            })
+          }
         >
           <Star className="mr-2 size-4" />
           <span>{bookmark.favourited ? "Un-favourite" : "Favourite"}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() => updateBookmark({ archived: !bookmark.archived })}
+          onClick={() =>
+            updateBookmark({ bookmarkId: linkId, archived: !bookmark.archived })
+          }
         >
           <Archive className="mr-2 size-4" />
           <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>

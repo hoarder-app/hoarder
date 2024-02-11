@@ -1,25 +1,26 @@
 import { redirect } from "next/navigation";
 import BookmarksGrid from "./BookmarksGrid";
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
-import { getBookmarks } from "@/lib/services/bookmarks";
 import { ZGetBookmarksRequest } from "@/lib/types/api/bookmarks";
+import { api } from "@/server/api/client";
+import { getServerAuthSession } from "@/server/auth";
 
 export default async function Bookmarks({
   favourited,
   archived,
   title,
 }: ZGetBookmarksRequest & { title: string }) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerAuthSession();
   if (!session) {
     redirect("/");
   }
-  const bookmarks = await getBookmarks(session.user.id, {
+
+  // TODO: Migrate to a server side call in trpc instead
+  const bookmarks = await api.bookmarks.getBookmarks({
     favourited,
     archived,
   });
 
-  if (bookmarks.length == 0) {
+  if (bookmarks.bookmarks.length == 0) {
     // TODO: This needs to be polished
     return (
       <>
@@ -32,7 +33,7 @@ export default async function Bookmarks({
   return (
     <>
       <div className="container pb-4 text-2xl">{title}</div>
-      <BookmarksGrid bookmarks={bookmarks} />
+      <BookmarksGrid bookmarks={bookmarks.bookmarks} />
     </>
   );
 }

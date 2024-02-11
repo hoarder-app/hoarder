@@ -3,13 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import APIClient from "@/lib/api";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitErrorHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
+import { api } from "@/lib/trpc";
 
 const formSchema = z.object({
   url: z.string().url({ message: "The link must be a valid URL" }),
@@ -23,9 +23,10 @@ export default function AddLink() {
   });
 
   async function onSubmit(value: z.infer<typeof formSchema>) {
-    const [_resp, error] = await APIClient.bookmarkLink(value.url);
-    if (error) {
-      toast({ description: error.message, variant: "destructive" });
+    try {
+      await api.bookmarks.bookmarkLink.mutate({ url: value.url, type: "link" });
+    } catch (e) {
+      toast({ description: "Something went wrong", variant: "destructive" });
       return;
     }
     router.refresh();
