@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@remember/db": "0.1.0",
     "@remember/shared": "0.1.0",
     "dotenv": "^16.4.1",
     "metascraper": "^5.43.4",
@@ -21,10 +22,12 @@
     "puppeteer-extra-plugin-stealth": "^2.11.2"
   },
   "devDependencies": {
+    "@tsconfig/node21": "^21.0.1",
     "@types/metascraper": "^5.14.3",
     "ts-node": "^10.9.2"
   },
   "scripts": {
-    "start": "ts-node index.ts"
+    "start": "ts-node index.ts",
+    "typecheck": "tsc --noEmit"
   }
 }

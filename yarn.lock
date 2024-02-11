@@ -1199,7 +1199,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@remember/workers@workspace:packages/workers"
   dependencies:
+    "@remember/db": "npm:0.1.0"
     "@remember/shared": "npm:0.1.0"
+    "@tsconfig/node21": "npm:^21.0.1"
     "@types/metascraper": "npm:^5.14.3"
     dotenv: "npm:^16.4.1"
     metascraper: "npm:^5.43.4"
@@ -1319,6 +1321,13 @@ __metadata:
   version: 1.0.4
   resolution: "@tsconfig/node16@npm:1.0.4"
   checksum: 10c0/05f8f2734e266fb1839eb1d57290df1664fe2aa3b0fdd685a9035806daa635f7519bf6d5d9b33f6e69dd545b8c46bd6e2b5c79acb2b1f146e885f7f11a42a5bb
+  languageName: node
+  linkType: hard
+
+"@tsconfig/node21@npm:^21.0.1":
+  version: 21.0.1
+  resolution: "@tsconfig/node21@npm:21.0.1"
+  checksum: 10c0/435335bea2e7c5ecf48e4a3c3f297632f4f21a22c4630b16b02a6869a03e60e952451bee9b82b5e6a3de44c5199fdb4cb1a6e437693074edd862deaa79d5e27d
   languageName: node
   linkType: hard
 

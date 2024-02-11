@@ -1,12 +1,16 @@
 import logger from "@remember/shared/logger";
 import {
+  LinkCrawlerQueue,
   OpenAIQueue,
   ZCrawlLinkRequest,
+  queueConnectionDetails,
   zCrawlLinkRequestSchema,
 } from "@remember/shared/queues";
+
+import { Worker } from "bullmq";
 import { Job } from "bullmq";
 
-import prisma from "@remember/db";
+import { prisma } from "@remember/db";
 
 import { Browser } from "puppeteer";
 import puppeteer from "puppeteer-extra";
@@ -32,14 +36,44 @@ const metascraperParser = metascraper([
   metascraperUrl(),
 ]);
 
-let browser: Browser;
-(async () => {
-  puppeteer.use(StealthPlugin());
-  // TODO: Configure the browser mode via an env variable
-  browser = await puppeteer.launch({ headless: true });
-})();
+let browser: Browser | undefined;
+
+export class CrawlerWorker {
+  static async build() {
+    if (!browser) {
+      puppeteer.use(StealthPlugin());
+      console.log("HERE");
+      browser = await puppeteer.launch({ headless: true });
+    }
+
+    logger.info("Starting crawler worker ...");
+    const worker = new Worker<ZCrawlLinkRequest, void>(
+      LinkCrawlerQueue.name,
+      runCrawler,
+      {
+        connection: queueConnectionDetails,
+        autorun: false,
+      },
+    );
+
+    worker.on("completed", (job) => {
+      const jobId = job?.id || "unknown";
+      logger.info(`[Crawler][${jobId}] Completed successfully`);
+    });
+
+    worker.on("failed", (job, error) => {
+      const jobId = job?.id || "unknown";
+      logger.error(`[Crawler][${jobId}] Crawling job failed: ${error}`);
+    });
+
+    return worker;
+  }
+}
 
 async function crawlPage(url: string) {
+  if (!browser) {
+    throw new Error("The browser must have been initalized by this point.");
+  }
   const context = await browser.createBrowserContext();
   const page = await context.newPage();
 
@@ -53,7 +87,7 @@ async function crawlPage(url: string) {
   return htmlContent;
 }
 
-export default async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
+async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   const jobId = job.id || "unknown";
 
   const request = zCrawlLinkRequestSchema.safeParse(job.data);

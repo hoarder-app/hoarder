@@ -12,3 +12,5 @@ export const prisma =
         ? ["query", "error", "warn"]
         : ["error"],
   });
+
+export * from "@prisma/client";

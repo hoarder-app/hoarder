@@ -26,6 +26,9 @@ jobs:
       - name: Prisma
         working-directory: packages/db
         run: yarn prisma generate
+      - name: Build the workers package
+        working-directory: packages/workers
+        run: yarn typecheck
       - name: Build web app
         working-directory: packages/web
         run: yarn run build
