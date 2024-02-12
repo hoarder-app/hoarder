@@ -1,5 +1,13 @@
 import { Button } from "@/components/ui/button";
-import { Archive, MoreHorizontal, Star, Tag, Home, Brain } from "lucide-react";
+import {
+  Archive,
+  MoreHorizontal,
+  Star,
+  Tag,
+  Home,
+  Brain,
+  Settings,
+} from "lucide-react";
 import { redirect } from "next/navigation";
 import SidebarItem from "./SidebarItem";
 import { getServerAuthSession } from "@/server/auth";
@@ -35,6 +43,11 @@ export default async function Sidebar() {
             path="/dashboard/bookmarks/archive"
           />
           <SidebarItem logo={<Tag />} name="Tags" path="#" />
+          <SidebarItem
+            logo={<Settings />}
+            name="Settings"
+            path="/dashboard/settings"
+          />
         </ul>
       </div>
       <div className="mt-auto flex justify-between">

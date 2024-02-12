@@ -47,6 +47,7 @@ model User {
   sessions      Session[]
   tags          BookmarkTags[]
   bookmarks     Bookmark[]
+  apiKeys       ApiKey[]
 }
 
 model VerificationToken {
@@ -55,6 +56,18 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  keyId     String   @unique
+  keyHash   String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([name, userId])
 }
 
 model Bookmark {

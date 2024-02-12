@@ -1,6 +1,11 @@
 import { prisma, BookmarkedLink } from "@remember/db";
 import logger from "@remember/shared/logger";
-import { OpenAIQueue, ZOpenAIRequest, queueConnectionDetails, zOpenAIRequestSchema } from "@remember/shared/queues";
+import {
+  OpenAIQueue,
+  ZOpenAIRequest,
+  queueConnectionDetails,
+  zOpenAIRequestSchema,
+} from "@remember/shared/queues";
 import { Job } from "bullmq";
 import OpenAI from "openai";
 import { z } from "zod";
@@ -9,7 +14,6 @@ import { Worker } from "bullmq";
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
 });
-  
 
 export class OpenAiWorker {
   static async build() {

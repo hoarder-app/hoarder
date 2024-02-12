@@ -14,6 +14,7 @@
     "@next-auth/prisma-adapter": "^1.0.7",
     "@next/eslint-plugin-next": "^14.1.0",
     "@prisma/client": "^5.9.1",
+    "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
@@ -22,6 +23,7 @@
     "@trpc/client": "11.0.0-next-beta.274",
     "@trpc/next": "11.0.0-next-beta.274",
     "@trpc/server": "11.0.0-next-beta.274",
+    "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "install": "^0.13.0",
@@ -38,6 +40,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
