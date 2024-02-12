@@ -1,8 +1,8 @@
 import { TRPCError, initTRPC } from "@trpc/server";
-import { Session } from "next-auth";
+import { User } from "next-auth";
 
 export type Context = {
-  session: Session | null;
+  user: User | null;
 };
 
 // Avoid exporting the entire t-object
@@ -17,7 +17,7 @@ export const procedure = t.procedure;
 export const publicProcedure = t.procedure;
 
 export const authedProcedure = t.procedure.use(function isAuthed(opts) {
-  const user = opts.ctx.session?.user;
+  const user = opts.ctx.user;
 
   if (!user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });

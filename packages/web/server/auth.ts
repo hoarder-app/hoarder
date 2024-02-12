@@ -108,7 +108,5 @@ export async function authenticateApiKey(key: string) {
     throw new Error("Invalid API Key");
   }
 
-  return {
-    user: apiKey.user,
-  };
+  return apiKey.user;
 }

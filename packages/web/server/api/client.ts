@@ -5,7 +5,7 @@ import { Context, createCallerFactory } from "./trpc";
 export const createContext = async (): Promise<Context> => {
   const session = await getServerAuthSession();
   return {
-    session,
+    user: session?.user ?? null,
   };
 };
 
