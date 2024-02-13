@@ -11,6 +11,8 @@ import {
 import { redirect } from "next/navigation";
 import SidebarItem from "./SidebarItem";
 import { getServerAuthSession } from "@/server/auth";
+import Link from "next/link";
+import SidebarProfileOptions from "./SidebarProfileOptions";
 
 export default async function Sidebar() {
   const session = await getServerAuthSession();
@@ -20,10 +22,12 @@ export default async function Sidebar() {
 
   return (
     <aside className="flex h-full w-60 flex-col border-r p-4">
-      <div className="mb-5 flex items-center rounded-lg px-1 text-slate-900">
-        <Brain />
-        <span className="ml-2 text-base font-semibold">Remember</span>
-      </div>
+      <Link href={"/dashboard/bookmarks"}>
+        <div className="mb-5 flex items-center rounded-lg px-1 text-slate-900">
+          <Brain />
+          <span className="ml-2 text-base font-semibold">Remember</span>
+        </div>
+      </Link>
       <hr />
       <div>
         <ul className="mt-5 space-y-2 text-sm font-medium">
@@ -52,9 +56,7 @@ export default async function Sidebar() {
       </div>
       <div className="mt-auto flex justify-between">
         <div className="my-auto"> {session.user.name} </div>
-        <Button variant="ghost" className="h-10">
-          <MoreHorizontal />
-        </Button>
+        <SidebarProfileOptions />
       </div>
     </aside>
   );

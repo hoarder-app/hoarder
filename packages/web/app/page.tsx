@@ -1,19 +1,12 @@
-import { LoginButton } from "@/components/auth/login";
-import { LogoutButton } from "@/components/auth/logout";
-import Link from "next/link";
+import { getServerAuthSession } from "@/server/auth";
+import { redirect } from "next/navigation";
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div>
-        <LoginButton />
-        <br />
-        <br />
-        <LogoutButton />
-        <br />
-        <br />
-        <Link href="/bookmarks">Bookmarks</Link>
-      </div>
-    </main>
-  );
+export default async function Home() {
+  // TODO: Home currently just redirects between pages until we build a proper landing page
+  const session = await getServerAuthSession();
+  if (!session) {
+    redirect("/signin");
+  }
+
+  redirect("/dashboard/bookmarks");
 }
