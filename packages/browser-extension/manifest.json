@@ -6,7 +6,9 @@
   "action": {
     "default_popup": "index.html"
   },
-  "permissions": [
-        "storage"
-  ]
+  "options_ui": {
+    "page": "index.html#options",
+    "open_in_tab": false
+  },
+  "permissions": ["storage", "activeTab", "tabs"]
 }

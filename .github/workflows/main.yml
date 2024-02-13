@@ -32,3 +32,6 @@ jobs:
       - name: Build web app
         working-directory: packages/web
         run: yarn run build
+      - name: Build the browser extension
+        working-directory: packages/browser-extension
+        run: yarn build

@@ -1,9 +1,7 @@
 import { useRef } from "react";
 import usePluginSettings from "./settings";
-import { useNavigate } from "react-router-dom";
 
-export default function SettingsPage() {
-  const navigate = useNavigate();
+export default function OptionsPage() {
   const [settings, setSettings, _1, _2, _3] = usePluginSettings();
 
   const apiKeyRef = useRef<HTMLInputElement>(null);
@@ -36,17 +34,8 @@ export default function SettingsPage() {
           className="h-8 flex-1 rounded-lg border border-gray-300 p-2"
         />
       </div>
-      <button
-        className="rounded-lg border border-gray-200"
-        onClick={onSave}
-      >
+      <button className="rounded-lg border border-gray-200" onClick={onSave}>
         Save
-      </button>
-      <button
-        className="rounded-lg border border-gray-200"
-        onClick={() => navigate("/")}
-      >
-        Back
       </button>
     </div>
   );

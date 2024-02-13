@@ -1,4 +1,3 @@
-import { redirect } from "react-router-dom";
 import SavePage from "./SavePage";
 import usePluginSettings from "./settings";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +11,7 @@ function App() {
   }
 
   if (!settings.apiKey || !settings.address) {
-    navigate("/settings");
+    navigate("/notconfigured");
     return;
   }
 
@@ -21,7 +20,7 @@ function App() {
       <SavePage settings={settings} />
       <hr />
       <div className="flex justify-end">
-        <button className="w-2/6" onClick={() => navigate("/settings")}>
+        <button className="w-2/6" onClick={() => navigate("/options")}>
           Settings
         </button>
       </div>
