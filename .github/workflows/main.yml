@@ -20,12 +20,11 @@ jobs:
       - name: Install deps
         run: yarn install --immutable
       - name: Lint
-        run: yarn eslint .
+        run: yarn lint
       - name: Format
-        run: yarn prettier . --check
+        run: yarn format:check
       - name: Prisma
-        working-directory: packages/db
-        run: yarn prisma generate
+        run: yarn prisma:generate
       - name: Build the workers package
         working-directory: packages/workers
         run: yarn typecheck
