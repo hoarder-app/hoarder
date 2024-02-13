@@ -27,13 +27,14 @@ export default function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
       </ImageCardTitle>
       <ImageCardBody className="overflow-clip py-2">
         {bookmark.tags.map((t) => (
-          <Badge
-            variant="default"
-            className="bg-gray-300 text-gray-500 hover:text-white"
-            key={t.id}
-          >
-            #{t.name}
-          </Badge>
+          <Link key={t.id} href={`/dashboard/tags/${t.name}`}>
+            <Badge
+              variant="default"
+              className="bg-gray-300 text-gray-500 hover:text-white"
+            >
+              #{t.name}
+            </Badge>
+          </Link>
         ))}
       </ImageCardBody>
       <ImageCardFooter>

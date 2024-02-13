@@ -20,20 +20,17 @@ export default async function Bookmarks({
     archived,
   });
 
-  if (bookmarks.bookmarks.length == 0) {
-    // TODO: This needs to be polished
-    return (
-      <>
-        <div className="container pb-4 text-2xl">{title}</div>
-        <div className="container">No bookmarks</div>
-      </>
-    );
-  }
-
+  // TODO: This needs to be polished
   return (
     <>
       <div className="container pb-4 text-2xl">{title}</div>
-      <BookmarksGrid bookmarks={bookmarks.bookmarks} />
+      <div className="container">
+        {bookmarks.bookmarks.length == 0 ? (
+          "No bookmarks"
+        ) : (
+          <BookmarksGrid bookmarks={bookmarks.bookmarks} />
+        )}
+      </div>
     </>
   );
 }

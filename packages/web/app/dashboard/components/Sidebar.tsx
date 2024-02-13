@@ -1,13 +1,4 @@
-import { Button } from "@/components/ui/button";
-import {
-  Archive,
-  MoreHorizontal,
-  Star,
-  Tag,
-  Home,
-  Brain,
-  Settings,
-} from "lucide-react";
+import { Archive, Star, Tag, Home, Brain, Settings } from "lucide-react";
 import { redirect } from "next/navigation";
 import SidebarItem from "./SidebarItem";
 import { getServerAuthSession } from "@/server/auth";
@@ -46,7 +37,7 @@ export default async function Sidebar() {
             name="Archive"
             path="/dashboard/bookmarks/archive"
           />
-          <SidebarItem logo={<Tag />} name="Tags" path="#" />
+          <SidebarItem logo={<Tag />} name="Tags" path="/dashboard/tags" />
           <SidebarItem
             logo={<Settings />}
             name="Settings"

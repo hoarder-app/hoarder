@@ -102,6 +102,7 @@ model BookmarkedLink {
 
 model BookmarkTags {
   id        String   @id @default(cuid())
+  // TODO: Tags are unique per user not globally
   name      String   @unique
   createdAt DateTime @default(now())
 
