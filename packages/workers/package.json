@@ -28,6 +28,7 @@
   },
   "scripts": {
     "start": "ts-node index.ts",
+    "start:prod": "ts-node -T index.ts",
     "typecheck": "tsc --noEmit"
   }
 }
