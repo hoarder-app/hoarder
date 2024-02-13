@@ -1,3 +1,4 @@
+import { Settings, X } from "lucide-react";
 import SavePage from "./SavePage";
 import usePluginSettings from "./settings";
 import { useNavigate } from "react-router-dom";
@@ -19,9 +20,12 @@ function App() {
     <div className="flex flex-col space-y-2">
       <SavePage settings={settings} />
       <hr />
-      <div className="flex justify-end">
-        <button className="w-2/6" onClick={() => navigate("/options")}>
-          Settings
+      <div className="flex justify-end space-x-3">
+        <button onClick={() => navigate("/options")}>
+          <Settings className="w-4" />
+        </button>
+        <button onClick={() => window.close()}>
+          <X className="w-4" />
         </button>
       </div>
     </div>
