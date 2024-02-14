@@ -102,8 +102,7 @@ model BookmarkedLink {
 
 model BookmarkTags {
   id        String   @id @default(cuid())
-  // TODO: Tags are unique per user not globally
-  name      String   @unique
+  name      String
   createdAt DateTime @default(now())
 
   userId String
@@ -111,6 +110,8 @@ model BookmarkTags {
   // Relations
   user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   bookmarks TagsOnBookmarks[]
+
+  @@unique([userId, name])
 }
 
 model TagsOnBookmarks {
