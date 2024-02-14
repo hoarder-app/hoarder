@@ -140,6 +140,7 @@ async function createTags(tags: string[], userId: string) {
 
 async function connectTags(bookmarkId: string, tagIds: string[]) {
   // TODO: Prisma doesn't support createMany in Sqlite
+  // TODO: This could fail on refetch if the tags are already there
   await Promise.all(
     tagIds.map((tagId) => {
       return prisma.tagsOnBookmarks.create({

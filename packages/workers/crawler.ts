@@ -70,6 +70,17 @@ export class CrawlerWorker {
   }
 }
 
+async function getBookmarkUrl(bookmarkId: string) {
+  const bookmark = await prisma.bookmarkedLink.findUnique({
+    where: { id: bookmarkId },
+  });
+
+  if (!bookmark) {
+    throw new Error("The bookmark either doesn't exist or not a link");
+  }
+  return bookmark.url;
+}
+
 async function crawlPage(url: string) {
   if (!browser) {
     throw new Error("The browser must have been initalized by this point.");
@@ -98,7 +109,8 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     return;
   }
 
-  const { url, bookmarkId } = request.data;
+  const { bookmarkId } = request.data;
+  const url = await getBookmarkUrl(bookmarkId);
 
   logger.info(
     `[Crawler][${jobId}] Will crawl "${url}" for link with id "${bookmarkId}"`,

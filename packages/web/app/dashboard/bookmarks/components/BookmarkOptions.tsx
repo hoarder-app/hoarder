@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Archive, MoreHorizontal, Star, Trash2 } from "lucide-react";
+import { Archive, MoreHorizontal, RotateCw, Star, Trash2 } from "lucide-react";
 
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
@@ -55,6 +55,25 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
     router.refresh();
   };
 
+  const crawlBookmark = async () => {
+    try {
+      await api.bookmarks.recrawlBookmark.mutate({
+        bookmarkId: linkId,
+      });
+      toast({
+        description: "Re-fetch has been enqueued!",
+      });
+    } catch (e) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+        description: "There was a problem with your request.",
+      });
+    }
+
+    router.refresh();
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -81,6 +100,10 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
         >
           <Archive className="mr-2 size-4" />
           <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={crawlBookmark}>
+          <RotateCw className="mr-2 size-4" />
+          <span>Refresh</span>
         </DropdownMenuItem>
         <DropdownMenuItem className="text-destructive" onClick={unbookmarkLink}>
           <Trash2 className="mr-2 size-4" />

@@ -11,6 +11,8 @@ import {
 } from "@/lib/types/api/bookmarks";
 import { prisma } from "@remember/db";
 import { LinkCrawlerQueue } from "@remember/shared/queues";
+import { TRPCError, experimental_trpcMiddleware } from "@trpc/server";
+import { User } from "next-auth";
 
 const defaultBookmarkFields = {
   id: true,
@@ -32,6 +34,32 @@ const defaultBookmarkFields = {
     },
   },
 };
+
+const ensureBookmarkOwnership = experimental_trpcMiddleware<{
+  ctx: { user: User };
+  input: { bookmarkId: string };
+}>().create(async (opts) => {
+  const bookmark = await prisma.bookmark.findUnique({
+    where: { id: opts.input.bookmarkId },
+    select: {
+      userId: true,
+    },
+  });
+  if (!bookmark) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Bookmark not found",
+    });
+  }
+  if (bookmark.userId != opts.ctx.user.id) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "User is not allowed to access resource",
+    });
+  }
+
+  return opts.next();
+});
 
 async function dummyPrismaReturnType() {
   const x = await prisma.bookmark.findFirstOrThrow({
@@ -82,7 +110,6 @@ export const bookmarksAppRouter = router({
       // Enqueue crawling request
       await LinkCrawlerQueue.add("crawl", {
         bookmarkId: bookmark.id,
-        url: url,
       });
 
       return toZodSchema(bookmark);
@@ -91,6 +118,7 @@ export const bookmarksAppRouter = router({
   updateBookmark: authedProcedure
     .input(zUpdateBookmarksRequestSchema)
     .output(zBookmarkSchema)
+    .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
       const bookmark = await prisma.bookmark.update({
         where: {
@@ -108,12 +136,21 @@ export const bookmarksAppRouter = router({
 
   deleteBookmark: authedProcedure
     .input(z.object({ bookmarkId: z.string() }))
+    .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
       await prisma.bookmark.delete({
         where: {
           id: input.bookmarkId,
           userId: ctx.user.id,
         },
+      });
+    }),
+  recrawlBookmark: authedProcedure
+    .input(z.object({ bookmarkId: z.string() }))
+    .use(ensureBookmarkOwnership)
+    .mutation(async ({ input }) => {
+      await LinkCrawlerQueue.add("crawl", {
+        bookmarkId: input.bookmarkId,
       });
     }),
   getBookmarks: authedProcedure
