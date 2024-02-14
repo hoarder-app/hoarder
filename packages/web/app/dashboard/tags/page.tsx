@@ -20,10 +20,10 @@ export default async function TagsPage() {
     <div className="container mt-2 space-y-3">
       <span className="text-2xl">All Tags</span>
       <hr />
-      <div className="flex flex-wrap space-x-2">
+      <div className="flex flex-wrap">
         {tags.map((t) => (
           <Link
-            className="block rounded-xl bg-black p-2 text-white"
+            className="m-1 block min-w-16 rounded-xl bg-black p-2 text-center text-white"
             key={t.id}
             href={`/dashboard/tags/${t.name}`}
           >
