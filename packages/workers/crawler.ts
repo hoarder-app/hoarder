@@ -25,6 +25,8 @@ import metascraperTitle from "metascraper-title";
 import metascraperUrl from "metascraper-url";
 import metascraperTwitter from "metascraper-twitter";
 import metascraperReadability from "metascraper-readability";
+import { Mutex } from "async-mutex";
+import assert from "assert";
 
 const metascraperParser = metascraper([
   metascraperReadability(),
@@ -37,14 +39,27 @@ const metascraperParser = metascraper([
 ]);
 
 let browser: Browser | undefined;
+// Guards the interactions with the browser instance.
+// This is needed given that most of the browser APIs are async.
+const browserMutex = new Mutex();
+
+async function launchBrowser() {
+  browser = undefined;
+  await browserMutex.runExclusive(async () => {
+    browser = await puppeteer.launch({ headless: true });
+    browser.on("disconnected", async () => {
+      logger.info(
+        "The puppeteer browser got disconnected. Will attempt to launch it again.",
+      );
+      await launchBrowser();
+    });
+  });
+}
 
 export class CrawlerWorker {
   static async build() {
-    if (!browser) {
-      puppeteer.use(StealthPlugin());
-      console.log("HERE");
-      browser = await puppeteer.launch({ headless: true });
-    }
+    puppeteer.use(StealthPlugin());
+    await launchBrowser();
 
     logger.info("Starting crawler worker ...");
     const worker = new Worker<ZCrawlLinkRequest, void>(
@@ -82,20 +97,22 @@ async function getBookmarkUrl(bookmarkId: string) {
 }
 
 async function crawlPage(url: string) {
-  if (!browser) {
-    throw new Error("The browser must have been initalized by this point.");
-  }
+  assert(browser);
   const context = await browser.createBrowserContext();
-  const page = await context.newPage();
 
-  await page.goto(url, {
-    timeout: 10000, // 10 seconds
-    waitUntil: "networkidle2",
-  });
+  try {
+    const page = await context.newPage();
 
-  const htmlContent = await page.content();
-  await context.close();
-  return htmlContent;
+    await page.goto(url, {
+      timeout: 10000, // 10 seconds
+      waitUntil: "networkidle2",
+    });
+
+    const htmlContent = await page.content();
+    return htmlContent;
+  } finally {
+    await context.close();
+  }
 }
 
 async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {

@@ -1684,6 +1684,7 @@ __metadata:
     "@remember/shared": "npm:0.1.0"
     "@tsconfig/node21": "npm:^21.0.1"
     "@types/metascraper": "npm:^5.14.3"
+    async-mutex: "npm:^0.4.1"
     dotenv: "npm:^16.4.1"
     metascraper: "npm:^5.43.4"
     metascraper-description: "npm:^5.43.4"
@@ -2800,6 +2801,15 @@ __metadata:
   dependencies:
     tslib: "npm:^2.0.1"
   checksum: 10c0/3a1a409764faa1471601a0ad01b3aa699292991aa9c8a30c7717002cabdf5d98008e7b53ae61f6e058f757fc6ba965e147967a93c13e62692c907d79cfb245f8
+  languageName: node
+  linkType: hard
+
+"async-mutex@npm:^0.4.1":
+  version: 0.4.1
+  resolution: "async-mutex@npm:0.4.1"
+  dependencies:
+    tslib: "npm:^2.4.0"
+  checksum: 10c0/3c412736c0bc4a9a2cfd948276a8caab8686aa615866a5bd20986e616f8945320acb310058a17afa1b31b8de6f634a78b7ec2217a33d7559b38f68bb85a95854
   languageName: node
   linkType: hard
 

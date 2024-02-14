@@ -6,6 +6,7 @@
   "dependencies": {
     "@remember/db": "0.1.0",
     "@remember/shared": "0.1.0",
+    "async-mutex": "^0.4.1",
     "dotenv": "^16.4.1",
     "metascraper": "^5.43.4",
     "metascraper-description": "^5.43.4",
