@@ -1,9 +1,10 @@
 import { Queue } from "bullmq";
 import { z } from "zod";
+import serverConfig from "./config";
 
 export const queueConnectionDetails = {
-  host: process.env.REDIS_HOST || "localhost",
-  port: parseInt(process.env.REDIS_PORT || "6379"),
+  host: serverConfig.bullMQ.redisHost,
+  port: serverConfig.bullMQ.redisPort,
 };
 
 // Link Crawler

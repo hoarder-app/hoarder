@@ -1,5 +1,6 @@
 import { prisma, BookmarkedLink } from "@remember/db";
 import logger from "@remember/shared/logger";
+import serverConfig from "@remember/shared/config";
 import {
   OpenAIQueue,
   ZOpenAIRequest,
@@ -157,19 +158,18 @@ async function connectTags(bookmarkId: string, tagIds: string[]) {
 async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
   const jobId = job.id || "unknown";
 
-  if (!process.env.OPENAI_API_KEY || !process.env.OPENAI_ENABLED) {
-    return;
-  }
+  const { openAI } = serverConfig;
 
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-  if (!openai) {
+  if (!openAI.apiKey) {
     logger.debug(
       `[openai][${jobId}] OpenAI is not configured, nothing to do now`,
     );
     return;
   }
+
+  const openai = new OpenAI({
+    apiKey: openAI.apiKey,
+  });
 
   const request = zOpenAIRequestSchema.safeParse(job.data);
   if (!request.success) {

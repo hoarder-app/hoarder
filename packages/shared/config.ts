@@ -13,10 +13,18 @@ function buildAuthentikConfig() {
 }
 
 const serverConfig = {
-  api_url: process.env.API_URL || "http://localhost:3000",
+  apiUrl: process.env.API_URL || "http://localhost:3000",
   auth: {
     authentik: buildAuthentikConfig(),
   },
+  openAI: {
+    apiKey: process.env.OPENAI_API_KEY,
+  },
+  bullMQ: {
+    redisHost: process.env.REDIS_HOST || "localhost",
+    redisPort: parseInt(process.env.REDIS_PORT || "6379"),
+  },
+  logLevel: process.env.LOG_LEVEL || "debug",
 };
 
 export default serverConfig;
