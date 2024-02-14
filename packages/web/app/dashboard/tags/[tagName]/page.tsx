@@ -15,8 +15,10 @@ export default async function TagPage({
   }
   const tag = await prisma.bookmarkTags.findUnique({
     where: {
-      userId: session.user.id,
-      name: params.tagName,
+      userId_name: {
+        userId: session.user.id,
+        name: params.tagName,
+      },
     },
     select: {
       id: true,
