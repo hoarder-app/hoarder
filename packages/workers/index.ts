@@ -1,10 +1,9 @@
 import dotenv from "dotenv";
+dotenv.config();
 import { CrawlerWorker } from "./crawler";
 import { OpenAiWorker } from "./openai";
 
 async function main() {
-  dotenv.config();
-
   const [crawler, openai] = [
     await CrawlerWorker.build(),
     await OpenAiWorker.build(),

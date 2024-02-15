@@ -44,8 +44,12 @@ export class OpenAiWorker {
 
 function buildPrompt(url: string, description: string) {
   return `
-You are a bot who given an article, extracts relevant "hashtags" out of them.
-You must respond in JSON with the key "tags" and the value is list of tags.
+
+I'm building a read-it-later app and I need your help with automatic tagging.
+Please analyze the following text and suggest relevant tags that describe its key themes, topics, and main ideas.
+Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. If it's a famous website
+you may also include a tag for the website. Tags should be lowercases and don't contain spaces. If the tag is not generic enough, don't
+include it. Aim for 3-5 tags. You must respond in JSON with the key "tags" and the value is list of tags.
 ----
 URL: ${url}
 Description: ${description}
