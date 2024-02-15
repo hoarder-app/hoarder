@@ -3,24 +3,43 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 export function ImageCard({
-  children,
-  image,
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & { image?: string }) {
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn("h-96 overflow-hidden rounded-lg shadow-md", className)}
       {...props}
-    >
-      <div
-        className="h-3/5 bg-cover bg-center"
-        style={{
-          backgroundImage: image ? `url(${image})` : undefined,
-        }}
-      ></div>
-      <div className="flex h-2/5 flex-col p-2">{children}</div>
-    </div>
+    />
+  );
+}
+
+export function ImageCardBanner({
+  className,
+  ...props
+}: React.ImgHTMLAttributes<HTMLImageElement>) {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      className={cn("h-56 min-h-56 w-full object-cover", className)}
+      alt="card banner"
+      {...props}
+    />
+  );
+}
+
+export function ImageCardContent({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        "flex h-40 min-h-40 flex-col justify-between p-2",
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
@@ -40,12 +59,7 @@ export function ImageCardBody({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) {
-  return (
-    <div
-      className={cn("order-1 grow text-lg font-bold", className)}
-      {...props}
-    />
-  );
+  return <div className={cn("order-1", className)} {...props} />;
 }
 
 export function ImageCardFooter({
