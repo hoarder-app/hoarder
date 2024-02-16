@@ -13,9 +13,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { api } from "@/lib/trpc";
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
+import { api } from "@/lib/trpc";
 
 export default function DeleteApiKey({
   name,
@@ -25,13 +25,15 @@ export default function DeleteApiKey({
   id: string;
 }) {
   const router = useRouter();
-  const deleteKey = async () => {
-    await api.apiKeys.revoke.mutate({ id });
-    toast({
-      description: "Key was successfully deleted",
-    });
-    router.refresh();
-  };
+  const mutator = api.apiKeys.revoke.useMutation({
+    onSuccess: () => {
+      toast({
+        description: "Key was successfully deleted",
+      });
+      router.refresh();
+    },
+  });
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -54,7 +56,11 @@ export default function DeleteApiKey({
             </Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button type="button" variant="destructive" onClick={deleteKey}>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={() => mutator.mutate({ id })}
+            >
               Delete
             </Button>
           </DialogClose>

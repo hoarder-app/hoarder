@@ -17,20 +17,18 @@ const formSchema = z.object({
 
 export default function AddLink() {
   const router = useRouter();
+  const bookmarkLinkMutator = api.bookmarks.bookmarkLink.useMutation({
+    onSuccess: () => {
+      router.refresh();
+    },
+    onError: () => {
+      toast({ description: "Something went wrong", variant: "destructive" });
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
-
-  async function onSubmit(value: z.infer<typeof formSchema>) {
-    try {
-      await api.bookmarks.bookmarkLink.mutate({ url: value.url, type: "link" });
-    } catch (e) {
-      toast({ description: "Something went wrong", variant: "destructive" });
-      return;
-    }
-    router.refresh();
-  }
 
   const onError: SubmitErrorHandler<z.infer<typeof formSchema>> = (errors) => {
     toast({
@@ -43,7 +41,13 @@ export default function AddLink() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit, onError)}>
+      <form
+        onSubmit={form.handleSubmit(
+          (value) =>
+            bookmarkLinkMutator.mutate({ url: value.url, type: "link" }),
+          onError,
+        )}
+      >
         <div className="container flex w-full items-center space-x-2 py-4">
           <FormField
             control={form.control}

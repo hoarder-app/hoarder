@@ -18,61 +18,45 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const router = useRouter();
   const linkId = bookmark.id;
 
-  const unbookmarkLink = async () => {
-    try {
-      await api.bookmarks.deleteBookmark.mutate({
-        bookmarkId: linkId,
-      });
-
+  const onError = () => {
+    toast({
+      variant: "destructive",
+      title: "Something went wrong",
+      description: "There was a problem with your request.",
+    });
+  };
+  const onSettled = () => {
+    router.refresh();
+  };
+  const deleteBookmarkMutator = api.bookmarks.deleteBookmark.useMutation({
+    onSuccess: () => {
       toast({
         description: "The bookmark has been deleted!",
       });
-    } catch (e) {
-      toast({
-        variant: "destructive",
-        title: "Something went wrong",
-        description: "There was a problem with your request.",
-      });
-    }
+    },
+    onError,
+    onSettled,
+  });
 
-    router.refresh();
-  };
-
-  const updateBookmark = async (req: ZUpdateBookmarksRequest) => {
-    try {
-      await api.bookmarks.updateBookmark.mutate(req);
+  const updateBookmarkMutator = api.bookmarks.updateBookmark.useMutation({
+    onSuccess: () => {
       toast({
         description: "The bookmark has been updated!",
       });
-    } catch (e) {
-      toast({
-        variant: "destructive",
-        title: "Something went wrong",
-        description: "There was a problem with your request.",
-      });
-    }
+    },
+    onError,
+    onSettled,
+  });
 
-    router.refresh();
-  };
-
-  const crawlBookmark = async () => {
-    try {
-      await api.bookmarks.recrawlBookmark.mutate({
-        bookmarkId: linkId,
-      });
+  const crawlBookmarkMutator = api.bookmarks.recrawlBookmark.useMutation({
+    onSuccess: () => {
       toast({
         description: "Re-fetch has been enqueued!",
       });
-    } catch (e) {
-      toast({
-        variant: "destructive",
-        title: "Something went wrong",
-        description: "There was a problem with your request.",
-      });
-    }
-
-    router.refresh();
-  };
+    },
+    onError,
+    onSettled,
+  });
 
   return (
     <DropdownMenu>
@@ -84,7 +68,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       <DropdownMenuContent className="w-fit">
         <DropdownMenuItem
           onClick={() =>
-            updateBookmark({
+            updateBookmarkMutator.mutate({
               bookmarkId: linkId,
               favourited: !bookmark.favourited,
             })
@@ -95,17 +79,29 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() =>
-            updateBookmark({ bookmarkId: linkId, archived: !bookmark.archived })
+            updateBookmarkMutator.mutate({
+              bookmarkId: linkId,
+              archived: !bookmark.archived,
+            })
           }
         >
           <Archive className="mr-2 size-4" />
           <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={crawlBookmark}>
+        <DropdownMenuItem
+          onClick={() =>
+            crawlBookmarkMutator.mutate({ bookmarkId: bookmark.id })
+          }
+        >
           <RotateCw className="mr-2 size-4" />
           <span>Refresh</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className="text-destructive" onClick={unbookmarkLink}>
+        <DropdownMenuItem
+          className="text-destructive"
+          onClick={() =>
+            deleteBookmarkMutator.mutate({ bookmarkId: bookmark.id })
+          }
+        >
           <Trash2 className="mr-2 size-4" />
           <span>Delete</span>
         </DropdownMenuItem>

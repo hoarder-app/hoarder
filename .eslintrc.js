@@ -13,8 +13,9 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "next",
     "prettier",
+    "plugin:@tanstack/eslint-plugin-query/recommended",
   ],
-  plugins: ["tailwindcss", "@typescript-eslint"],
+  plugins: ["tailwindcss", "@typescript-eslint", "@tanstack/query"],
   parserOptions: {
     ecmaVersion: "latest",
     sourceType: "module",

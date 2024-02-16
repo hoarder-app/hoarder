@@ -53,20 +53,22 @@ function AddApiKeyForm({ onSuccess }: { onSuccess: (key: string) => void }) {
     name: z.string(),
   });
   const router = useRouter();
+  const mutator = api.apiKeys.create.useMutation({
+    onSuccess: (resp) => {
+      onSuccess(resp.key);
+      router.refresh();
+    },
+    onError: () => {
+      toast({ description: "Something went wrong", variant: "destructive" });
+    },
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
 
   async function onSubmit(value: z.infer<typeof formSchema>) {
-    try {
-      const resp = await api.apiKeys.create.mutate({ name: value.name });
-      onSuccess(resp.key);
-    } catch (e) {
-      toast({ description: "Something went wrong", variant: "destructive" });
-      return;
-    }
-    router.refresh();
+    mutator.mutate({ name: value.name });
   }
 
   const onError: SubmitErrorHandler<z.infer<typeof formSchema>> = (errors) => {
