@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
@@ -10,6 +9,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
+import { ActionButton } from "@/components/ui/action-button";
 
 const formSchema = z.object({
   url: z.string().url({ message: "The link must be a valid URL" }),
@@ -62,9 +62,9 @@ export default function AddLink() {
               );
             }}
           />
-          <Button type="submit">
+          <ActionButton type="submit" loading={bookmarkLinkMutator.isPending}>
             <Plus />
-          </Button>
+          </ActionButton>
         </div>
       </form>
     </Form>

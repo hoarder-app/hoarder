@@ -16,6 +16,8 @@ import {
 import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
+import { ActionButton } from "@/components/ui/action-button";
+import { useState } from "react";
 
 export default function DeleteApiKey({
   name,
@@ -24,18 +26,20 @@ export default function DeleteApiKey({
   name: string;
   id: string;
 }) {
+  const [isDialogOpen, setDialogOpen] = useState(false);
   const router = useRouter();
   const mutator = api.apiKeys.revoke.useMutation({
     onSuccess: () => {
       toast({
         description: "Key was successfully deleted",
       });
+      setDialogOpen(false);
       router.refresh();
     },
   });
 
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button variant="destructive">
           <Trash className="size-5" />
@@ -55,15 +59,14 @@ export default function DeleteApiKey({
               Close
             </Button>
           </DialogClose>
-          <DialogClose asChild>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={() => mutator.mutate({ id })}
-            >
-              Delete
-            </Button>
-          </DialogClose>
+          <ActionButton
+            type="button"
+            variant="destructive"
+            loading={mutator.isPending}
+            onClick={() => mutator.mutate({ id })}
+          >
+            Delete
+          </ActionButton>
         </DialogFooter>
       </DialogContent>
     </Dialog>

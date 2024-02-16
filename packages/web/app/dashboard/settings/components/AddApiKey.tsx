@@ -29,9 +29,19 @@ import { useForm, SubmitErrorHandler } from "react-hook-form";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { useState } from "react";
-import { Copy } from "lucide-react";
+import { Check, Copy } from "lucide-react";
+import LoadingSpinner from "@/components/ui/spinner";
+import { ActionButton } from "@/components/ui/action-button";
 
 function ApiKeySuccess({ apiKey }: { apiKey: string }) {
+  const [isCopied, setCopied] = useState(false);
+
+  const onCopy = () => {
+    navigator.clipboard.writeText(apiKey);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   return (
     <div>
       <div className="py-4">
@@ -40,8 +50,12 @@ function ApiKeySuccess({ apiKey }: { apiKey: string }) {
       </div>
       <div className="flex space-x-2 pt-2">
         <Input value={apiKey} readOnly />
-        <Button onClick={() => navigator.clipboard.writeText(apiKey)}>
-          <Copy className="size-4" />
+        <Button onClick={onCopy}>
+          {!isCopied ? (
+            <Copy className="size-4" />
+          ) : (
+            <Check className="size-4" />
+          )}
         </Button>
       </div>
     </div>
@@ -104,9 +118,13 @@ function AddApiKeyForm({ onSuccess }: { onSuccess: (key: string) => void }) {
             );
           }}
         />
-        <Button className="h-full" type="submit">
+        <ActionButton
+          className="h-full"
+          type="submit"
+          loading={mutator.isPending}
+        >
           Create
-        </Button>
+        </ActionButton>
       </form>
     </Form>
   );
