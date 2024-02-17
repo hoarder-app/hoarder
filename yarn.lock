@@ -1676,6 +1676,7 @@ __metadata:
     tailwindcss: "npm:^3.3.0"
     tailwindcss-animate: "npm:^1.0.7"
     zod: "npm:^3.22.4"
+    zustand: "npm:^4.5.1"
   languageName: unknown
   linkType: soft
 
@@ -9324,6 +9325,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"use-sync-external-store@npm:1.2.0":
+  version: 1.2.0
+  resolution: "use-sync-external-store@npm:1.2.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0
+  checksum: 10c0/ac4814e5592524f242921157e791b022efe36e451fe0d4fd4d204322d5433a4fc300d63b0ade5185f8e0735ded044c70bcf6d2352db0f74d097a238cebd2da02
+  languageName: node
+  linkType: hard
+
 "util-deprecate@npm:^1.0.1, util-deprecate@npm:^1.0.2":
   version: 1.0.2
   resolution: "util-deprecate@npm:1.0.2"
@@ -9741,5 +9751,25 @@ __metadata:
   version: 3.22.4
   resolution: "zod@npm:3.22.4"
   checksum: 10c0/7578ab283dac0eee66a0ad0fc4a7f28c43e6745aadb3a529f59a4b851aa10872b3890398b3160f257f4b6817b4ce643debdda4fb21a2c040adda7862cab0a587
+  languageName: node
+  linkType: hard
+
+"zustand@npm:^4.5.1":
+  version: 4.5.1
+  resolution: "zustand@npm:4.5.1"
+  dependencies:
+    use-sync-external-store: "npm:1.2.0"
+  peerDependencies:
+    "@types/react": ">=16.8"
+    immer: ">=9.0.6"
+    react: ">=16.8"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    immer:
+      optional: true
+    react:
+      optional: true
+  checksum: 10c0/3c928236f716f026760ddfff9910c37f9e3696169650cd677139dc2fe2623fa215dc31c899caf5b9b6a0668ed003c505918c2a953dbbd295fe7f90092634a90c
   languageName: node
   linkType: hard

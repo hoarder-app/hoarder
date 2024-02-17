@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { ActionButton } from "@/components/ui/action-button";
+import { useLoadingCard } from "@/lib/hooks/use-loading-card";
 
 const formSchema = z.object({
   url: z.string().url({ message: "The link must be a valid URL" }),
@@ -17,12 +18,19 @@ const formSchema = z.object({
 
 export default function AddLink() {
   const router = useRouter();
+  const {setLoading} = useLoadingCard();
   const bookmarkLinkMutator = api.bookmarks.bookmarkLink.useMutation({
+    onMutate: () => {
+      setLoading(true);
+    },
     onSuccess: () => {
       router.refresh();
     },
     onError: () => {
       toast({ description: "Something went wrong", variant: "destructive" });
+    },
+    onSettled: () => {
+      setLoading(false);
     },
   });
 

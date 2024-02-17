@@ -14,7 +14,6 @@ export default async function Bookmarks({
     redirect("/");
   }
 
-  // TODO: Migrate to a server side call in trpc instead
   const bookmarks = await api.bookmarks.getBookmarks({
     favourited,
     archived,
