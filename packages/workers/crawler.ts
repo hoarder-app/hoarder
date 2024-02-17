@@ -27,6 +27,7 @@ import metascraperTwitter from "metascraper-twitter";
 import metascraperReadability from "metascraper-readability";
 import { Mutex } from "async-mutex";
 import assert from "assert";
+import serverConfig from "@remember/shared/config";
 
 const metascraperParser = metascraper([
   metascraperReadability(),
@@ -46,7 +47,7 @@ const browserMutex = new Mutex();
 async function launchBrowser() {
   browser = undefined;
   await browserMutex.runExclusive(async () => {
-    browser = await puppeteer.launch({ headless: true });
+    browser = await puppeteer.launch({ headless: serverConfig.crawler.headlessBrowser });
     browser.on("disconnected", async () => {
       logger.info(
         "The puppeteer browser got disconnected. Will attempt to launch it again.",
@@ -105,8 +106,17 @@ async function crawlPage(url: string) {
 
     await page.goto(url, {
       timeout: 10000, // 10 seconds
-      waitUntil: "networkidle2",
     });
+
+    // Wait until there's at most two connections for 2 seconds
+    // Attempt to wait only for 5 seconds
+    await Promise.race([
+      page.waitForNetworkIdle({
+        idleTime: 1000, // 1 sec
+        concurrency: 2,
+      }),
+      new Promise((f) => setTimeout(f, 5000)),
+    ]);
 
     const htmlContent = await page.content();
     return htmlContent;

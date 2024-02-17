@@ -24,6 +24,9 @@ const serverConfig = {
     redisHost: process.env.REDIS_HOST || "localhost",
     redisPort: parseInt(process.env.REDIS_PORT || "6379"),
   },
+  crawler: {
+    headlessBrowser: (process.env.CRAWLER_HEADLESS_BROWSER ?? "true") == "true",
+  },
   logLevel: process.env.LOG_LEVEL || "debug",
 };
 
