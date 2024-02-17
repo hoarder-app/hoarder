@@ -47,7 +47,11 @@ const browserMutex = new Mutex();
 async function launchBrowser() {
   browser = undefined;
   await browserMutex.runExclusive(async () => {
-    browser = await puppeteer.launch({ headless: serverConfig.crawler.headlessBrowser });
+    browser = await puppeteer.launch({
+      headless: serverConfig.crawler.headlessBrowser,
+      executablePath: serverConfig.crawler.browserExecutablePath,
+      userDataDir: serverConfig.crawler.browserUserDataDir,
+    });
     browser.on("disconnected", async () => {
       logger.info(
         "The puppeteer browser got disconnected. Will attempt to launch it again.",

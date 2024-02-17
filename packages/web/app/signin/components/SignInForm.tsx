@@ -1,4 +1,4 @@
-import { getProviders, signIn } from "next-auth/react";
+import { getProviders } from "next-auth/react";
 import SignInProviderButton from "./SignInProviderButton";
 
 export default async function SignInForm() {

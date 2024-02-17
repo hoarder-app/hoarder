@@ -45,6 +45,7 @@ services:
       DATABASE_URL: "file:/data/db.db"
     volumes:
       - data:/data
+
 volumes:
   redis:
   data:

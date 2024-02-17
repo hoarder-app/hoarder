@@ -38,16 +38,13 @@ RUN cd packages/db && \
 
 RUN corepack enable && \
     cd packages/web/ && \
-    yarn run build
+    yarn next experimental-compile
 
 FROM base AS web
 WORKDIR /app
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
-
-# RUN addgroup --system --gid 1001 nodejs
-# RUN adduser --system --uid 1001 nextjs
 
 COPY --from=web_builder --chown=node:node /app/packages/web/.next/standalone ./
 COPY --from=web_builder /app/packages/web/public ./packages/web/public
@@ -61,9 +58,7 @@ RUN chown node:node ./packages/web/.next
 COPY --from=web_builder --chown=node:node /app/packages/web/.next/static ./packages/web/.next/static
 
 WORKDIR /app/packages/web
-
-USER node
-
+USER root
 EXPOSE 3000
 
 ENV PORT 3000
@@ -89,10 +84,9 @@ RUN cd packages/db && \
     yarn prisma generate
 
 WORKDIR /app/packages/db
-USER node
+USER root
 
 CMD ["yarn", "prisma", "migrate", "deploy"]
-# CMD ["ls",  "-la", "/data"]
 
 
 ################# The workers ##############
@@ -100,11 +94,22 @@ CMD ["yarn", "prisma", "migrate", "deploy"]
 FROM base AS workers
 WORKDIR /app
 
-# Install chromium needed for puppeteer
-RUN apk add chromium
-env PUPPETEER_EXECUTABLE_PATH "/usr/bin/chromium-browser"
-
 COPY --from=deps /app/node_modules ./node_modules
+
+# Install chromium needed for puppeteer
+RUN apk add --no-cache chromium runuser
+ENV PUPPETEER_SKIP_DOWNLOAD true
+ENV CHROME_PATH "/usr/bin/chromium-browser"
+ENV BROWSER_EXECUTABLE_PATH "/app/start-chrome.sh"
+ENV BROWSER_USER_DATA_DIR="/tmp/chrome"
+
+RUN echo '#!/bin/sh' >> /app/start-chrome.sh && \
+    echo 'set -x;' >> /app/start-chrome.sh && \
+    echo 'id -u chrome &>/dev/null || adduser -S chrome' >> /app/start-chrome.sh && \
+    echo 'mkdir -p /tmp/chrome && chown chrome /tmp/chrome' >> /app/start-chrome.sh && \
+    echo 'runuser -u chrome -- $CHROME_PATH $@' >> /app/start-chrome.sh && \
+    chmod +x /app/start-chrome.sh
+
 COPY packages packages
 COPY package.json yarn.lock .yarnrc.yml .
 
@@ -112,6 +117,6 @@ RUN cd packages/db && \
     yarn prisma generate
 
 WORKDIR /app/packages/workers
-USER node
+USER root
 
 CMD ["yarn", "run", "start:prod"]

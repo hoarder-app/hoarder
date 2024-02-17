@@ -26,6 +26,8 @@ const serverConfig = {
   },
   crawler: {
     headlessBrowser: (process.env.CRAWLER_HEADLESS_BROWSER ?? "true") == "true",
+    browserExecutablePath: process.env.BROWSER_EXECUTABLE_PATH, // If not set, the system's browser will be used
+    browserUserDataDir: process.env.BROWSER_USER_DATA_DIR,
   },
   logLevel: process.env.LOG_LEVEL || "debug",
 };
