@@ -24,7 +24,8 @@
     "class-variance-authority": "^0.7.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0"
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "typescript": "^5"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.20.1",
@@ -35,8 +36,7 @@
     "eslint-plugin-tailwindcss": "^3.14.2",
     "install": "^0.13.0",
     "prettier": "3.2.5",
-    "prettier-plugin-tailwindcss": "^0.5.11",
-    "typescript": "^5"
+    "prettier-plugin-tailwindcss": "^0.5.11"
   },
   "packageManager": "yarn@4.1.0"
 }

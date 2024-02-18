@@ -20,13 +20,16 @@
     "openai": "^4.26.1",
     "puppeteer": "^22.0.0",
     "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5",
+    "@tsconfig/node21": "^21.0.1",
+    "bullmq": "^5.1.9",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@tsconfig/node21": "^21.0.1",
     "@types/metascraper": "^5.14.3",
-    "nodemon": "^3.0.3",
-    "ts-node": "^10.9.2"
+    "nodemon": "^3.0.3"
   },
   "scripts": {
     "start": "nodemon index.ts",

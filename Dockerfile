@@ -1,46 +1,27 @@
-FROM node:21-alpine AS base
-
-# Install dependencies only when needed
-FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat \
-        make \
-        g++ \
-        py3-pip \
-        linux-headers
-WORKDIR /app
-
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY packages/web/package.json ./packages/web/package.json
-COPY packages/db/package.json ./packages/db/package.json
-COPY packages/shared/package.json ./packages/shared/package.json
-COPY packages/workers/package.json ./packages/workers/package.json
-COPY packages/browser-extension/package.json ./packages/browser-extension/package.json
-RUN corepack enable && \
-        yarn install --immutable && \
-        cd packages/web && \
-        yarn install --immutable
-
 ################# The Web App ##############
 
 # Rebuild the source code only when needed
-FROM base AS web_builder
+FROM node:21-alpine AS web_builder
+
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+
 WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY packages packages
+COPY packages/db packages/db
+COPY packages/web packages/web
+COPY packages/shared packages/shared
 COPY package.json yarn.lock .yarnrc.yml .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN cd packages/db && \
-    yarn prisma generate
-
 RUN corepack enable && \
-    cd packages/web/ && \
+    cd /app/packages/db && \
+    yarn dlx prisma generate && \
+    cd /app/packages/web/ && \
+    yarn install --immutable && \
     yarn next experimental-compile
 
-FROM base AS web
+FROM node:21-alpine AS web
 WORKDIR /app
 
 ENV NODE_ENV production
@@ -72,29 +53,46 @@ CMD ["node", "server.js"]
 
 ################# Db migrations ##############
 
-FROM base AS db
+FROM node:21-alpine AS db
 WORKDIR /app
 
-COPY --from=deps /app/node_modules ./node_modules
-COPY packages packages
+
+COPY packages/db packages/db
 COPY package.json yarn.lock .yarnrc.yml .
-
-
-RUN cd packages/db && \
-    yarn prisma generate
-
 WORKDIR /app/packages/db
+
+RUN corepack enable && \
+    yarn workspaces focus --production && \
+    yarn dlx prisma generate
+
 USER root
 
-CMD ["yarn", "prisma", "migrate", "deploy"]
+CMD ["yarn", "dlx", "prisma", "migrate", "deploy"]
+
+################# The workers builder ##############
+
+FROM node:21-alpine AS workers_builder
+WORKDIR /app
+
+# Install chromium needed for puppeteer
+RUN apk add --no-cache make g++ py3-pip linux-headers
+
+COPY packages/db/package.json packages/db/package.json
+COPY packages/shared/package.json packages/shared/package.json
+COPY packages/workers/package.json packages/workers/package.json
+COPY package.json yarn.lock .yarnrc.yml .
+
+RUN corepack enable && \
+    cd /app/packages/workers && \
+    yarn workspaces focus --production && \
+    cd /app/packages/db && \
+    yarn dlx prisma generate
 
 
 ################# The workers ##############
 
-FROM base AS workers
+FROM node:21-alpine AS workers
 WORKDIR /app
-
-COPY --from=deps /app/node_modules ./node_modules
 
 # Install chromium needed for puppeteer
 RUN apk add --no-cache chromium runuser
@@ -110,11 +108,13 @@ RUN echo '#!/bin/sh' >> /app/start-chrome.sh && \
     echo 'runuser -u chrome -- $CHROME_PATH $@' >> /app/start-chrome.sh && \
     chmod +x /app/start-chrome.sh
 
-COPY packages packages
+COPY packages/db packages/db
+COPY packages/shared packages/shared
+COPY packages/workers packages/workers
 COPY package.json yarn.lock .yarnrc.yml .
+COPY --from=workers_builder /app/node_modules /app/node_modules
 
-RUN cd packages/db && \
-    yarn prisma generate
+RUN corepack enable && cd packages/db && yarn dlx prisma generate
 
 WORKDIR /app/packages/workers
 USER root
