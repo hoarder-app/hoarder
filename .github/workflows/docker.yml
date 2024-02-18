@@ -17,7 +17,6 @@ jobs:
         run: |
           docker build . --target workers --tag remember-workers
           docker build . --target web --tag remember-web
-          docker build . --target db --tag remember-migration
 
       - name: Log in to registry
         # This is where you will update the PAT to GITHUB_TOKEN
@@ -28,7 +27,5 @@ jobs:
           OWNER=$(echo ${{github.repository_owner}} | tr '[A-Z]' '[a-z]')
           docker tag remember-workers ghcr.io/$OWNER/remember-workers:latest
           docker tag remember-web ghcr.io/$OWNER/remember-web:latest
-          docker tag remember-migration ghcr.io/$OWNER/remember-migration:latest
           docker push ghcr.io/$OWNER/remember-workers:latest
           docker push ghcr.io/$OWNER/remember-web:latest
-          docker push ghcr.io/$OWNER/remember-migration:latest

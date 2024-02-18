@@ -50,25 +50,6 @@ ENV HOSTNAME "0.0.0.0"
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
 CMD ["node", "server.js"]
 
-
-################# Db migrations ##############
-
-FROM node:21-alpine AS db
-WORKDIR /app
-
-
-COPY packages/db packages/db
-COPY package.json yarn.lock .yarnrc.yml .
-WORKDIR /app/packages/db
-
-RUN corepack enable && \
-    yarn workspaces focus --production && \
-    yarn dlx prisma generate
-
-USER root
-
-CMD ["yarn", "dlx", "prisma", "migrate", "deploy"]
-
 ################# The workers builder ##############
 
 FROM node:21-alpine AS workers_builder

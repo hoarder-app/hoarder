@@ -40,11 +40,15 @@ services:
   migration:
     build:
       context: .
-      target: db
+      target: workers
     environment:
       DATABASE_URL: "file:/data/db.db"
     volumes:
       - data:/data
+    command:
+      - /bin/sh
+      - -c
+      - "cd /app/packages/db && yarn dlx prisma migrate deploy"
 
 volumes:
   redis:
