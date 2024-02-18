@@ -1,0 +1,34 @@
+name: Build and Push Docker
+on:
+  push:
+    branches:
+      - main
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: |
+          docker build . --target workers --tag remember-workers
+          docker build . --target web --tag remember-web
+          docker build . --target db --tag remember-migration
+
+      - name: Log in to registry
+        # This is where you will update the PAT to GITHUB_TOKEN
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        run: |
+          OWNER=$(echo ${{github.repository_owner}} | tr '[A-Z]' '[a-z]')
+          docker tag remember-workers ghcr.io/$OWNER/remember-workers:latest
+          docker tag remember-web ghcr.io/$OWNER/remember-web:latest
+          docker tag remember-migration ghcr.io/$OWNER/remember-migration:latest
+          docker push ghcr.io/$OWNER/remember-workers:latest
+          docker push ghcr.io/$OWNER/remember-web:latest
+          docker push ghcr.io/$OWNER/remember-migration:latest

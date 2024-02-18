@@ -1689,6 +1689,7 @@ __metadata:
     "@tsconfig/node21": "npm:^21.0.1"
     "@types/metascraper": "npm:^5.14.3"
     async-mutex: "npm:^0.4.1"
+    bullmq: "npm:^5.1.9"
     dotenv: "npm:^16.4.1"
     metascraper: "npm:^5.43.4"
     metascraper-description: "npm:^5.43.4"
@@ -1705,6 +1706,8 @@ __metadata:
     puppeteer-extra: "npm:^3.3.6"
     puppeteer-extra-plugin-stealth: "npm:^2.11.2"
     ts-node: "npm:^10.9.2"
+    typescript: "npm:^5"
+    zod: "npm:^3.22.4"
   languageName: unknown
   linkType: soft
 

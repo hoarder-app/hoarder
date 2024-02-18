@@ -6,7 +6,9 @@
   "dependencies": {
     "@remember/db": "0.1.0",
     "@remember/shared": "0.1.0",
+    "@tsconfig/node21": "^21.0.1",
     "async-mutex": "^0.4.1",
+    "bullmq": "^5.1.9",
     "dotenv": "^16.4.1",
     "metascraper": "^5.43.4",
     "metascraper-description": "^5.43.4",
@@ -23,8 +25,6 @@
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "ts-node": "^10.9.2",
     "typescript": "^5",
-    "@tsconfig/node21": "^21.0.1",
-    "bullmq": "^5.1.9",
     "zod": "^3.22.4"
   },
   "devDependencies": {
