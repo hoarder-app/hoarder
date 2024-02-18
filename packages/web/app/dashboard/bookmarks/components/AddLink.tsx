@@ -18,7 +18,7 @@ const formSchema = z.object({
 
 export default function AddLink() {
   const router = useRouter();
-  const {setLoading} = useLoadingCard();
+  const { setLoading } = useLoadingCard();
   const bookmarkLinkMutator = api.bookmarks.bookmarkLink.useMutation({
     onMutate: () => {
       setLoading(true);

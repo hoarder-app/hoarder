@@ -17,15 +17,13 @@ export default function BookmarkCardSkeleton() {
     >
       <ImageCardBanner src="/blur.avif" />
       <ImageCardContent>
-        <ImageCardTitle>
-        </ImageCardTitle>
+        <ImageCardTitle></ImageCardTitle>
         <ImageCardBody className="space-y-2">
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-full" />
         </ImageCardBody>
-        <ImageCardFooter>
-        </ImageCardFooter>
+        <ImageCardFooter></ImageCardFooter>
       </ImageCardContent>
     </ImageCard>
   );
