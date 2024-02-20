@@ -2,8 +2,7 @@
 
 import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-import { ZBookmark, ZUpdateBookmarksRequest } from "@/lib/types/api/bookmarks";
-import { useRouter } from "next/navigation";
+import { ZBookmark } from "@/lib/types/api/bookmarks";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -15,8 +14,9 @@ import { Archive, MoreHorizontal, RotateCw, Star, Trash2 } from "lucide-react";
 
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
-  const router = useRouter();
   const linkId = bookmark.id;
+
+  const invalidateBookmarksCache = api.useUtils().bookmarks.invalidate;
 
   const onError = () => {
     toast({
@@ -26,7 +26,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
     });
   };
   const onSettled = () => {
-    router.refresh();
+    invalidateBookmarksCache();
   };
   const deleteBookmarkMutator = api.bookmarks.deleteBookmark.useMutation({
     onSuccess: () => {

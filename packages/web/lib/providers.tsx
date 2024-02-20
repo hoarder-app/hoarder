@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { api } from "./trpc";
 import { loggerLink } from "@trpc/client";
 import { httpBatchLink } from "@trpc/client";
+import superjson from "superjson";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = React.useState(() => new QueryClient());
@@ -20,6 +21,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         httpBatchLink({
           // TODO: Change this to be a full URL exposed as a client side setting
           url: `/api/trpc`,
+          transformer: superjson,
         }),
       ],
     }),

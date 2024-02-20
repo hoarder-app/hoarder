@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import ApiKeySettings from "./components/ApiKeySettings";
 export default async function Settings() {
   return (

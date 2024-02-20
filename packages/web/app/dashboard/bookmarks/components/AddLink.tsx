@@ -3,7 +3,6 @@
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useForm, SubmitErrorHandler } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,14 +16,14 @@ const formSchema = z.object({
 });
 
 export default function AddLink() {
-  const router = useRouter();
   const { setLoading } = useLoadingCard();
+  const invalidateBookmarksCache = api.useUtils().bookmarks.invalidate;
   const bookmarkLinkMutator = api.bookmarks.bookmarkLink.useMutation({
     onMutate: () => {
       setLoading(true);
     },
     onSuccess: () => {
-      router.refresh();
+      invalidateBookmarksCache();
     },
     onError: () => {
       toast({ description: "Something went wrong", variant: "destructive" });

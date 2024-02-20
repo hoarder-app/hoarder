@@ -14,10 +14,12 @@ export default async function Bookmarks({
     redirect("/");
   }
 
-  const bookmarks = await api.bookmarks.getBookmarks({
+  const query = {
     favourited,
     archived,
-  });
+  };
+
+  const bookmarks = await api.bookmarks.getBookmarks(query);
 
   // TODO: This needs to be polished
   return (
@@ -27,7 +29,7 @@ export default async function Bookmarks({
         {bookmarks.bookmarks.length == 0 ? (
           "No bookmarks"
         ) : (
-          <BookmarksGrid bookmarks={bookmarks.bookmarks} />
+          <BookmarksGrid query={query} bookmarks={bookmarks.bookmarks} />
         )}
       </div>
     </>
