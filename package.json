@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "remember",
+  "name": "hoarder",
   "version": "0.1.0",
   "private": true,
   "workspaces": [
@@ -10,11 +10,11 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint .",
-    "prisma:migrate:dev": "yarn workspace @remember/db prisma migrate dev",
-    "prisma:generate": "yarn workspace @remember/db prisma generate",
-    "workers": "yarn workspace @remember/workers run start",
-    "web": "yarn workspace @remember/web run dev",
-    "studio": "yarn workspace @remember/db prisma studio"
+    "prisma:migrate:dev": "yarn workspace @hoarder/db prisma migrate dev",
+    "prisma:generate": "yarn workspace @hoarder/db prisma generate",
+    "workers": "yarn workspace @hoarder/workers run start",
+    "web": "yarn workspace @hoarder/web run dev",
+    "studio": "yarn workspace @hoarder/db prisma studio"
   },
   "dependencies": {
     "@next/eslint-plugin-next": "^14.1.0",

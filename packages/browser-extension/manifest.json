@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Remember",
-  "description": "An extension to bookmark links to remember app",
+  "name": "Hoarder",
+  "description": "An extension to bookmark links to hoarder.app",
   "version": "1.0",
   "action": {
     "default_popup": "index.html"

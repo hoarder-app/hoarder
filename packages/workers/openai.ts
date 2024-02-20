@@ -1,12 +1,12 @@
-import { prisma, BookmarkedLink } from "@remember/db";
-import logger from "@remember/shared/logger";
-import serverConfig from "@remember/shared/config";
+import { prisma, BookmarkedLink } from "@hoarder/db";
+import logger from "@hoarder/shared/logger";
+import serverConfig from "@hoarder/shared/config";
 import {
   OpenAIQueue,
   ZOpenAIRequest,
   queueConnectionDetails,
   zOpenAIRequestSchema,
-} from "@remember/shared/queues";
+} from "@hoarder/shared/queues";
 import { Job } from "bullmq";
 import OpenAI from "openai";
 import { z } from "zod";

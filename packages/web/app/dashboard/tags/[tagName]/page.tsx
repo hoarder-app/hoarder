@@ -1,5 +1,5 @@
 import { getServerAuthSession } from "@/server/auth";
-import { prisma } from "@remember/db";
+import { prisma } from "@hoarder/db";
 import { notFound, redirect } from "next/navigation";
 import BookmarksGrid from "../../bookmarks/components/BookmarksGrid";
 import { api } from "@/server/api/client";

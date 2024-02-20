@@ -15,8 +15,8 @@ jobs:
 
       - name: Build image
         run: |
-          docker build . --target workers --tag remember-workers
-          docker build . --target web --tag remember-web
+          docker build . --target workers --tag hoarder-workers
+          docker build . --target web --tag hoarder-web
 
       - name: Log in to registry
         # This is where you will update the PAT to GITHUB_TOKEN
@@ -25,7 +25,7 @@ jobs:
       - name: Push image
         run: |
           OWNER=$(echo ${{github.repository_owner}} | tr '[A-Z]' '[a-z]')
-          docker tag remember-workers ghcr.io/$OWNER/remember-workers:latest
-          docker tag remember-web ghcr.io/$OWNER/remember-web:latest
-          docker push ghcr.io/$OWNER/remember-workers:latest
-          docker push ghcr.io/$OWNER/remember-web:latest
+          docker tag hoarder-workers ghcr.io/$OWNER/hoarder-workers:latest
+          docker tag hoarder-web ghcr.io/$OWNER/hoarder-web:latest
+          docker push ghcr.io/$OWNER/hoarder-workers:latest
+          docker push ghcr.io/$OWNER/hoarder-web:latest

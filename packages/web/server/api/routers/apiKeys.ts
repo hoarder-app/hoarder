@@ -1,6 +1,6 @@
 import { generateApiKey } from "@/server/auth";
 import { authedProcedure, router } from "../trpc";
-import { prisma } from "@remember/db";
+import { prisma } from "@hoarder/db";
 import { z } from "zod";
 
 export const apiKeysAppRouter = router({

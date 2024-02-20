@@ -1,4 +1,4 @@
-import { Archive, Star, Tag, Home, Brain, Settings } from "lucide-react";
+import { Archive, Star, Tag, Home, PackageOpen, Settings } from "lucide-react";
 import { redirect } from "next/navigation";
 import SidebarItem from "./SidebarItem";
 import { getServerAuthSession } from "@/server/auth";
@@ -15,8 +15,8 @@ export default async function Sidebar() {
     <aside className="flex h-full w-60 flex-col border-r p-4">
       <Link href={"/dashboard/bookmarks"}>
         <div className="mb-5 flex items-center rounded-lg px-1 text-slate-900">
-          <Brain />
-          <span className="ml-2 text-base font-semibold">Remember</span>
+          <PackageOpen />
+          <span className="ml-2 text-base font-semibold">Hoarder</span>
         </div>
       </Link>
       <hr />

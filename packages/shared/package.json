@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@remember/shared",
+  "name": "@hoarder/shared",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

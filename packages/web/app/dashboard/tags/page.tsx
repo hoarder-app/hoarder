@@ -1,5 +1,5 @@
 import { getServerAuthSession } from "@/server/auth";
-import { prisma } from "@remember/db";
+import { prisma } from "@hoarder/db";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 

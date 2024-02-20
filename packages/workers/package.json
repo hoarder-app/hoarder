@@ -1,11 +1,11 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@remember/workers",
+  "name": "@hoarder/workers",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@remember/db": "0.1.0",
-    "@remember/shared": "0.1.0",
+    "@hoarder/db": "0.1.0",
+    "@hoarder/shared": "0.1.0",
     "@tsconfig/node21": "^21.0.1",
     "async-mutex": "^0.4.1",
     "bullmq": "^5.1.9",

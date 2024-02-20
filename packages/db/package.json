@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@remember/db",
+  "name": "@hoarder/db",
   "version": "0.1.0",
   "private": true,
   "main": "index.ts",

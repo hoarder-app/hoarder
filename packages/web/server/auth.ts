@@ -1,8 +1,8 @@
 import NextAuth, { NextAuthOptions, getServerSession } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import AuthentikProvider from "next-auth/providers/authentik";
-import serverConfig from "@remember/shared/config";
-import { prisma } from "@remember/db";
+import serverConfig from "@hoarder/shared/config";
+import { prisma } from "@hoarder/db";
 import { DefaultSession } from "next-auth";
 import * as bcrypt from "bcrypt";
 

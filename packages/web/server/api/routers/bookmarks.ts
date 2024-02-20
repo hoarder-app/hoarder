@@ -9,8 +9,8 @@ import {
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "@/lib/types/api/bookmarks";
-import { prisma } from "@remember/db";
-import { LinkCrawlerQueue } from "@remember/shared/queues";
+import { prisma } from "@hoarder/db";
+import { LinkCrawlerQueue } from "@hoarder/shared/queues";
 import { TRPCError, experimental_trpcMiddleware } from "@trpc/server";
 import { User } from "next-auth";
 

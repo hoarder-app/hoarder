@@ -3,7 +3,7 @@ import AddLink from "./components/AddLink";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Remember - Bookmarks",
+  title: "Hoarder - Bookmarks",
 };
 
 export default function BookmarksLayout({

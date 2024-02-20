@@ -1,16 +1,16 @@
-import logger from "@remember/shared/logger";
+import logger from "@hoarder/shared/logger";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
   ZCrawlLinkRequest,
   queueConnectionDetails,
   zCrawlLinkRequestSchema,
-} from "@remember/shared/queues";
+} from "@hoarder/shared/queues";
 
 import { Worker } from "bullmq";
 import { Job } from "bullmq";
 
-import { prisma } from "@remember/db";
+import { prisma } from "@hoarder/db";
 
 import { Browser } from "puppeteer";
 import puppeteer from "puppeteer-extra";
@@ -27,7 +27,7 @@ import metascraperTwitter from "metascraper-twitter";
 import metascraperReadability from "metascraper-readability";
 import { Mutex } from "async-mutex";
 import assert from "assert";
-import serverConfig from "@remember/shared/config";
+import serverConfig from "@hoarder/shared/config";
 
 const metascraperParser = metascraper([
   metascraperReadability(),
