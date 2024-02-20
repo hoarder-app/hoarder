@@ -1,8 +1,8 @@
 name: Build and Push Docker
 on:
-  push:
-    branches:
-      - main
+  release:
+    types:
+      - created
 jobs:
   push:
     runs-on: ubuntu-latest
@@ -15,8 +15,10 @@ jobs:
 
       - name: Build image
         run: |
-          docker build . --target workers --tag hoarder-workers -f docker/Dockerfile
-          docker build . --target web --tag hoarder-web -f docker/Dockerfile
+          OWNER=$(echo ${{github.repository_owner}} | tr '[A-Z]' '[a-z]')
+          TAG="${{github.event.release.name}}"
+          docker build . --target workers --tag ghcr.io/$OWNER/hoarder-workers:$TAG -f docker/Dockerfile
+          docker build . --target web --tag ghcr.io/$OWNER/hoarder-web:$TAG -f docker/Dockerfile
 
       - name: Log in to registry
         # This is where you will update the PAT to GITHUB_TOKEN
@@ -25,7 +27,6 @@ jobs:
       - name: Push image
         run: |
           OWNER=$(echo ${{github.repository_owner}} | tr '[A-Z]' '[a-z]')
-          docker tag hoarder-workers ghcr.io/$OWNER/hoarder-workers:latest
-          docker tag hoarder-web ghcr.io/$OWNER/hoarder-web:latest
-          docker push ghcr.io/$OWNER/hoarder-workers:latest
-          docker push ghcr.io/$OWNER/hoarder-web:latest
+          TAG="${{github.event.release.name}}"
+          docker push ghcr.io/$OWNER/hoarder-workers:$TAG
+          docker push ghcr.io/$OWNER/hoarder-web:$TAG
