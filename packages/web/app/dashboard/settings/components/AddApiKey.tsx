@@ -30,7 +30,6 @@ import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { useState } from "react";
 import { Check, Copy } from "lucide-react";
-import LoadingSpinner from "@/components/ui/spinner";
 import { ActionButton } from "@/components/ui/action-button";
 
 function ApiKeySuccess({ apiKey }: { apiKey: string }) {

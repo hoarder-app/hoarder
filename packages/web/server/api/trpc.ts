@@ -1,3 +1,4 @@
+import serverConfig from "@hoarder/shared/config";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { User } from "next-auth";
 import superjson from "superjson";
@@ -16,10 +17,18 @@ const t = initTRPC.context<Context>().create({
 export const createCallerFactory = t.createCallerFactory;
 // Base router and procedure helpers
 export const router = t.router;
-export const procedure = t.procedure;
-export const publicProcedure = t.procedure;
+export const procedure = t.procedure.use(function isDemoMode(opts) {
+  if (serverConfig.demoMode && opts.type == "mutation") {
+    throw new TRPCError({
+      message: "Mutations are not allowed in demo mode",
+      code: "FORBIDDEN",
+    });
+  }
+  return opts.next();
+});
+export const publicProcedure = procedure;
 
-export const authedProcedure = t.procedure.use(function isAuthed(opts) {
+export const authedProcedure = procedure.use(function isAuthed(opts) {
   const user = opts.ctx.user;
 
   if (!user) {

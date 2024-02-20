@@ -30,6 +30,7 @@ const serverConfig = {
     browserUserDataDir: process.env.BROWSER_USER_DATA_DIR,
   },
   logLevel: process.env.LOG_LEVEL || "debug",
+  demoMode: (process.env.DEMO_MODE ?? "false") == "true",
 };
 
 export default serverConfig;
