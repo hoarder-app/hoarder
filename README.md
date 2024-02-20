@@ -20,6 +20,19 @@ Docker is the recommended way for deploying the app. A docker compose file is pr
 
 Run `docker compose up` then head to `http://localhost:3000` to access the app.
 
+> NOTE: You'll need to set the env variable `OPENAI_API_KEY` without your own openai key for automatic tagging to work. Check the next section for config details.
+
+## Configuration
+
+The app is configured with env variables.
+
+| Name           | Default   | Description                                                                                                                                                                                                                                       |
+| -------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OPENAI_API_KEY | Not set   | The OpenAI key used for automatic tagging. If not set, automatic tagging won't be enabled. The app currently uses `gpt-3.5-turbo-0125` which is [extremely cheap](https://openai.com/pricing). You'll be able to bookmark 1000+ for less than $1. |
+| DATABASE_FILE  | Not set   | The path for the sqlite database.                                                                                                                                                                                                                 |
+| REDIS_HOST     | localhost | The address of redis used by background jobs                                                                                                                                                                                                      |
+| REDIS_POST     | 6379      | The port of redis used by background jobs                                                                                                                                                                                                         |
+
 ## Stack
 
 - [NextJS](https://nextjs.org/) for the web app. Using app router.
