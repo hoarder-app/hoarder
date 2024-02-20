@@ -15,8 +15,8 @@ jobs:
 
       - name: Build image
         run: |
-          docker build . --target workers --tag hoarder-workers
-          docker build . --target web --tag hoarder-web
+          docker build . --target workers --tag hoarder-workers -f docker/Dockerfile
+          docker build . --target web --tag hoarder-web -f docker/Dockerfile
 
       - name: Log in to registry
         # This is where you will update the PAT to GITHUB_TOKEN

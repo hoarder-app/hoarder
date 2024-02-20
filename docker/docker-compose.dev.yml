@@ -1,0 +1,58 @@
+version: "3.8"
+services:
+  web:
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - data:/data
+      - ..:/app
+    ports:
+      - 3000:3000
+    environment:
+      REDIS_HOST: redis
+      DATABASE_URL: "file:/data/db.db"
+    command:
+      - yarn
+      - web
+    working_dir: /app
+    depends_on:
+      prep:
+        condition: service_completed_successfully
+  redis:
+    image: redis:7.2-alpine
+    volumes:
+      - redis:/data
+  workers:
+    build:
+      dockerfile: Dockerfile.dev
+    volumes:
+      - data:/data
+      - ..:/app
+    working_dir: /app
+    environment:
+      REDIS_HOST: redis
+      DATABASE_URL: "file:/data/db.db"
+      # OPENAI_API_KEY: ...
+    command:
+      - yarn
+      - workers
+    depends_on:
+      prep:
+        condition: service_completed_successfully
+  prep:
+    build:
+      dockerfile: Dockerfile.dev
+    working_dir: /app
+    environment:
+      DATABASE_URL: "file:/data/db.db"
+    volumes:
+      - data:/data
+      - ..:/app
+    command:
+      - /bin/sh
+      - -c
+      - "corepack enable && yarn install --immutable && yarn prisma:generate && yarn prisma:migrate:dev"
+
+volumes:
+  redis:
+  data:

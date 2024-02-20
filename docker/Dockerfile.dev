@@ -1,0 +1,11 @@
+FROM node:21-alpine
+
+RUN apk add --no-cache libc6-compat chromium runuser make g++ py3-pip linux-headers
+ENV PUPPETEER_SKIP_DOWNLOAD true
+ENV CHROME_PATH "/usr/bin/chromium-browser"
+ENV BROWSER_EXECUTABLE_PATH "/bin/start-chrome.sh"
+ENV BROWSER_USER_DATA_DIR="/tmp/chrome"
+
+WORKDIR /app
+ADD start-chrome.sh /bin
+RUN chmod +x /bin/start-chrome.sh

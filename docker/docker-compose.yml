@@ -23,6 +23,7 @@ services:
     environment:
       REDIS_HOST: redis
       DATABASE_URL: "file:/data/db.db"
+      # OPENAI_API_KEY: ...
     depends_on:
       migration:
         condition: service_completed_successfully

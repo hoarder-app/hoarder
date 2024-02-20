@@ -60,6 +60,15 @@ I'm a systems engineer in my day job (and have been for the past 7 years). I did
 
 ## Development
 
+### Docker
+
+You can turnup the whole development environment with:
+`docker compose -f docker/docker-compose.dev.yml up`
+
+### Manual
+
+Or if you have nodejs installed locally, you can do:
+
 - `yarn install` in the root of the repo.
 - `yarn prisma:migrate:dev` then `yarn prisma:generate` to generate prisma's data and run the database migrations.
 - `yarn web` to start the web app.
@@ -75,3 +84,7 @@ I'm a systems engineer in my day job (and have been for the past 7 years). I did
 - `packages/shared`: Shared utilities and code between the workers and the web app.
 - `packages/web`: Where the nextjs based web app lives.
 - `packages/workers`: Where the background job workers (crawler and openai as of now) run.
+
+### Submitting PRs
+
+- Before submitting PRs, you'll want to run `yarn format` and include its changes in the commit. Also make sure `yarn lint` is successful.

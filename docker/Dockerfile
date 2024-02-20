@@ -82,12 +82,8 @@ ENV CHROME_PATH "/usr/bin/chromium-browser"
 ENV BROWSER_EXECUTABLE_PATH "/app/start-chrome.sh"
 ENV BROWSER_USER_DATA_DIR="/tmp/chrome"
 
-RUN echo '#!/bin/sh' >> /app/start-chrome.sh && \
-    echo 'set -x;' >> /app/start-chrome.sh && \
-    echo 'id -u chrome &>/dev/null || adduser -S chrome' >> /app/start-chrome.sh && \
-    echo 'mkdir -p /tmp/chrome && chown chrome /tmp/chrome' >> /app/start-chrome.sh && \
-    echo 'runuser -u chrome -- $CHROME_PATH $@' >> /app/start-chrome.sh && \
-    chmod +x /app/start-chrome.sh
+ADD docker/start-chrome.sh .
+RUN chmod +x /app/start-chrome.sh
 
 COPY packages/db packages/db
 COPY packages/shared packages/shared
