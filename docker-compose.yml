@@ -1,15 +1,11 @@
 version: "3.8"
 services:
   web:
-    build:
-      context: .
-      target: web
+    image: ghcr.io/mohamedbassem/hoarder-web:latest
     volumes:
       - data:/data
     ports:
       - 3000:3000
-    env_file:
-      - "packages/web/.env.local"
     environment:
       REDIS_HOST: redis
       DATABASE_URL: "file:/data/db.db"
@@ -18,18 +14,12 @@ services:
         condition: service_completed_successfully
   redis:
     image: redis:7.2-alpine
-    ports:
-      - 6379:6379
     volumes:
       - redis:/data
   workers:
-    build:
-      context: .
-      target: workers
+    image: ghcr.io/mohamedbassem/hoarder-workers:latest
     volumes:
       - data:/data
-    env_file:
-      - "packages/workers/.env"
     environment:
       REDIS_HOST: redis
       DATABASE_URL: "file:/data/db.db"
@@ -37,9 +27,7 @@ services:
       migration:
         condition: service_completed_successfully
   migration:
-    build:
-      context: .
-      target: workers
+    image: ghcr.io/mohamedbassem/hoarder-workers:latest
     environment:
       DATABASE_URL: "file:/data/db.db"
     volumes:
