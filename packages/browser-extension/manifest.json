@@ -3,6 +3,11 @@
   "name": "Hoarder",
   "description": "An extension to bookmark links to hoarder.app",
   "version": "1.0",
+  "icons": {
+    "16": "public/logo-16.png",
+    "48": "public/logo-48.png",
+    "128": "public/logo-128.png"
+  },
   "action": {
     "default_popup": "index.html"
   },
