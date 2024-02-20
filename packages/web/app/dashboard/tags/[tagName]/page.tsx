@@ -39,15 +39,17 @@ export default async function TagPage({
     },
   });
 
-  const bookmarks = await api.bookmarks.getBookmarksById({
+  const query = {
     ids: bookmarkIds.map((b) => b.bookmarkId),
     archived: false,
-  });
+  };
+
+  const bookmarks = await api.bookmarks.getBookmarks(query);
 
   return (
     <div className="flex flex-col">
       <span className="container py-4 text-2xl">#{params.tagName}</span>
-      <BookmarksGrid bookmarks={bookmarks.bookmarks} />
+      <BookmarksGrid query={query} bookmarks={bookmarks.bookmarks} />
     </div>
   );
 }

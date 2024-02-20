@@ -33,6 +33,7 @@ export type ZNewBookmarkRequest = z.infer<typeof zNewBookmarkRequestSchema>;
 // GET /v1/bookmarks
 
 export const zGetBookmarksRequestSchema = z.object({
+  ids: z.array(z.string()).optional(),
   archived: z.boolean().optional(),
   favourited: z.boolean().optional(),
 });

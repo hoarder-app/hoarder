@@ -163,35 +163,11 @@ export const bookmarksAppRouter = router({
             userId: ctx.user.id,
             archived: input.archived,
             favourited: input.favourited,
-          },
-          orderBy: {
-            createdAt: "desc",
-          },
-          select: defaultBookmarkFields,
-        })
-      ).map(toZodSchema);
-
-      return { bookmarks };
-    }),
-  getBookmarksById: authedProcedure
-    .input(
-      zGetBookmarksRequestSchema.merge(
-        z.object({
-          ids: z.array(z.string()),
-        }),
-      ),
-    )
-    .output(zGetBookmarksResponseSchema)
-    .query(async ({ input, ctx }) => {
-      const bookmarks = (
-        await prisma.bookmark.findMany({
-          where: {
-            id: {
-              in: input.ids,
-            },
-            userId: ctx.user.id,
-            archived: input.archived,
-            favourited: input.favourited,
+            id: input.ids
+              ? {
+                in: input.ids,
+              }
+              : undefined,
           },
           orderBy: {
             createdAt: "desc",
