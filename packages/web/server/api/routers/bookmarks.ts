@@ -165,8 +165,8 @@ export const bookmarksAppRouter = router({
             favourited: input.favourited,
             id: input.ids
               ? {
-                in: input.ids,
-              }
+                  in: input.ids,
+                }
               : undefined,
           },
           orderBy: {

@@ -56,8 +56,8 @@ I'm a systems engineer in my day job (and have been for the past 7 years). I did
   - An easy way to get redis running is by using docker `docker run -p 5379:5379 redis`.
   - You can run the web app without the workers, but link fetching and automatic tagging won't work.
 
-
 ### Codebase structure
+
 - `packages/db`: Where prisma's schema lives. Shared between packages.
 - `packages/shared`: Shared utilities and code between the workers and the web app.
 - `packages/web`: Where the nextjs based web app lives.
