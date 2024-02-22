@@ -1,17 +1,23 @@
 import { PackageOpen } from "lucide-react";
 import SignInForm from "./components/SignInForm";
+import { redirect } from "next/dist/client/components/navigation";
+import { getServerAuthSession } from "@/server/auth";
 
 export default async function SignInPage() {
-  // TODO Add support for email and credential signin form
+  const session = await getServerAuthSession();
+  if (session) {
+    redirect("/");
+  }
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center">
-      <div className="flex space-x-2">
+    <div className="grid min-h-screen grid-rows-6 justify-center">
+      <div className="row-span-2 flex w-96 items-center justify-center space-x-2">
         <span>
-          <PackageOpen size="30" className="h-full" />
+          <PackageOpen size="60" className="" />
         </span>
-        <span className="text-4xl">Hoarder</span>
+        <p className="text-6xl">Hoarder</p>
       </div>
-      <div className="mt-20 flex w-96 flex-col items-center rounded-xl border border-gray-300 p-20">
+      <div className="row-span-4 w-96">
         <SignInForm />
       </div>
     </div>

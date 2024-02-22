@@ -5,8 +5,18 @@ import serverConfig from "@hoarder/shared/config";
 import { prisma } from "@hoarder/db";
 import { DefaultSession } from "next-auth";
 import * as bcrypt from "bcrypt";
+import CredentialsProvider from "next-auth/providers/credentials";
 
 import { randomBytes } from "crypto";
+import { Provider } from "next-auth/providers/index";
+
+declare module "next-auth/jwt" {
+  export interface JWT {
+    user: {
+      id: string;
+    } & DefaultSession["user"];
+  }
+}
 
 declare module "next-auth" {
   /**
@@ -19,19 +29,55 @@ declare module "next-auth" {
   }
 }
 
-const providers = [];
+const providers: Provider[] = [
+  CredentialsProvider({
+    // The name to display on the sign in form (e.g. "Sign in with...")
+    name: "Credentials",
+    credentials: {
+      email: { label: "Email", type: "email", placeholder: "Email" },
+      password: { label: "Password", type: "password" },
+    },
+    async authorize(credentials) {
+      if (!credentials) {
+        return null;
+      }
+
+      try {
+        return await validatePassword(
+          credentials?.email,
+          credentials?.password,
+        );
+      } catch (e) {
+        return null;
+      }
+    },
+  }),
+];
 
 if (serverConfig.auth.authentik) {
   providers.push(AuthentikProvider(serverConfig.auth.authentik));
 }
 
 export const authOptions: NextAuthOptions = {
-  // Configure one or more authentication providers
   adapter: PrismaAdapter(prisma),
   providers: providers,
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    session({ session, user }) {
-      session.user = { ...user };
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+        };
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      session.user = { ...token.user };
       return session;
     },
   },
@@ -109,4 +155,31 @@ export async function authenticateApiKey(key: string) {
   }
 
   return apiKey.user;
+}
+
+export async function hashPassword(password: string) {
+  return bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
+}
+
+export async function validatePassword(email: string, password: string) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  if (!user.password) {
+    throw new Error("This user doesn't have a password defined");
+  }
+
+  const validation = await bcrypt.compare(password, user.password);
+  if (!validation) {
+    throw new Error("Wrong password");
+  }
+
+  return user;
 }

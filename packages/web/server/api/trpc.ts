@@ -31,7 +31,7 @@ export const publicProcedure = procedure;
 export const authedProcedure = procedure.use(function isAuthed(opts) {
   const user = opts.ctx.user;
 
-  if (!user) {
+  if (!user || !user.id) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
