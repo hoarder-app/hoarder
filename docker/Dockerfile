@@ -13,6 +13,7 @@ COPY packages/shared packages/shared
 COPY package.json yarn.lock .yarnrc.yml .
 
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV PUPPETEER_SKIP_DOWNLOAD true
 
 RUN corepack enable && \
     cd /app/packages/db && \
@@ -62,6 +63,7 @@ COPY packages/db/package.json packages/db/package.json
 COPY packages/shared/package.json packages/shared/package.json
 COPY packages/workers/package.json packages/workers/package.json
 COPY package.json yarn.lock .yarnrc.yml .
+ENV PUPPETEER_SKIP_DOWNLOAD true
 
 RUN corepack enable && \
     cd /app/packages/workers && \
@@ -77,7 +79,6 @@ WORKDIR /app
 
 # Install chromium needed for puppeteer
 RUN apk add --no-cache chromium runuser
-ENV PUPPETEER_SKIP_DOWNLOAD true
 ENV CHROME_PATH "/usr/bin/chromium-browser"
 ENV BROWSER_EXECUTABLE_PATH "/app/start-chrome.sh"
 ENV BROWSER_USER_DATA_DIR="/tmp/chrome"

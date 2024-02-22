@@ -19,6 +19,8 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "yarn.lock"
       - name: Install deps
+        env:
+          PUPPETEER_SKIP_DOWNLOAD: true
         run: yarn install --immutable
       - name: Lint
         run: yarn lint
