@@ -8,6 +8,7 @@ export const zBookmarkedLinkSchema = z.object({
   description: z.string().nullish(),
   imageUrl: z.string().url().nullish(),
   favicon: z.string().url().nullish(),
+  crawledAt: z.date().nullish(),
 });
 export type ZBookmarkedLink = z.infer<typeof zBookmarkedLinkSchema>;
 
@@ -18,7 +19,7 @@ export type ZBookmarkContent = z.infer<typeof zBookmarkContentSchema>;
 
 export const zBookmarkSchema = z.object({
   id: z.string(),
-  createdAt: z.coerce.date(),
+  createdAt: z.date(),
   archived: z.boolean(),
   favourited: z.boolean(),
   tags: z.array(zBookmarkTagSchema),

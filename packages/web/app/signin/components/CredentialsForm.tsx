@@ -84,7 +84,7 @@ function SignIn() {
               );
             }}
           />
-          <ActionButton type="submit" loading={false}>
+          <ActionButton type="submit" loading={form.formState.isSubmitting}>
             Sign In
           </ActionButton>
         </div>
@@ -195,7 +195,7 @@ function SignUp() {
               );
             }}
           />
-          <ActionButton type="submit" loading={false}>
+          <ActionButton type="submit" loading={form.formState.isSubmitting}>
             Sign Up
           </ActionButton>
         </div>

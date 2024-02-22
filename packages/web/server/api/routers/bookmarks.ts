@@ -26,6 +26,7 @@ const defaultBookmarkFields = {
       description: true,
       imageUrl: true,
       favicon: true,
+      crawledAt: true,
     },
   },
   tags: {
@@ -152,6 +153,30 @@ export const bookmarksAppRouter = router({
       await LinkCrawlerQueue.add("crawl", {
         bookmarkId: input.bookmarkId,
       });
+    }),
+  getBookmark: authedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+      }),
+    )
+    .output(zBookmarkSchema)
+    .query(async ({ input, ctx }) => {
+      const bookmark = await prisma.bookmark.findUnique({
+        where: {
+          userId: ctx.user.id,
+          id: input.id,
+        },
+        select: defaultBookmarkFields,
+      });
+      if (!bookmark) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Bookmark not found",
+        });
+      }
+
+      return toZodSchema(bookmark);
     }),
   getBookmarks: authedProcedure
     .input(zGetBookmarksRequestSchema)

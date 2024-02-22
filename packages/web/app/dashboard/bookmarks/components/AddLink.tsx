@@ -9,32 +9,24 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { ActionButton } from "@/components/ui/action-button";
-import { useLoadingCard } from "@/lib/hooks/use-loading-card";
 
 const formSchema = z.object({
   url: z.string().url({ message: "The link must be a valid URL" }),
 });
 
 export default function AddLink() {
-  const { setLoading } = useLoadingCard();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
+
   const invalidateBookmarksCache = api.useUtils().bookmarks.invalidate;
   const bookmarkLinkMutator = api.bookmarks.bookmarkLink.useMutation({
-    onMutate: () => {
-      setLoading(true);
-    },
     onSuccess: () => {
       invalidateBookmarksCache();
     },
     onError: () => {
       toast({ description: "Something went wrong", variant: "destructive" });
     },
-    onSettled: () => {
-      setLoading(false);
-    },
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
   });
 
   const onError: SubmitErrorHandler<z.infer<typeof formSchema>> = (errors) => {
