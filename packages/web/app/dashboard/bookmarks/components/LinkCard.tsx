@@ -17,7 +17,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 function isStillCrawling(bookmark: ZBookmark) {
   return (
-    !bookmark.content.crawledAt && Date.now() - bookmark.createdAt < 30 * 1000
+    !bookmark.content.crawledAt &&
+    Date.now().valueOf() - bookmark.createdAt.valueOf() < 30 * 1000
   );
 }
 
