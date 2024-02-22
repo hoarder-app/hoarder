@@ -21,6 +21,9 @@ export default function BookmarksGrid({
   const { data } = api.bookmarks.getBookmarks.useQuery(query, {
     initialData: { bookmarks: initialBookmarks },
   });
+  if (data.bookmarks.length == 0) {
+    return <p>No bookmarks</p>;
+  }
   return (
     <div className="container grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
       {data.bookmarks.map((b) => renderBookmark(b))}

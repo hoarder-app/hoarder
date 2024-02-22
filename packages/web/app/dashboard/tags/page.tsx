@@ -37,17 +37,24 @@ export default async function TagsPage() {
   });
 
   // Sort tags by usage desc
-  tags.sort((a, b) => b._count.bookmarks - a._count.bookmarks);
+  tags
+    .filter((t) => t._count.bookmarks > 0)
+    .sort((a, b) => b._count.bookmarks - a._count.bookmarks);
+
+  let tagPill;
+  if (tags.length) {
+    tagPill = tags.map((t) => (
+      <TagPill key={t.id} name={t.name} count={t._count.bookmarks} />
+    ));
+  } else {
+    tagPill = "No Tags";
+  }
 
   return (
     <div className="container mt-2 space-y-3">
       <span className="text-2xl">All Tags</span>
       <hr />
-      <div className="flex flex-wrap">
-        {tags.map((t) => (
-          <TagPill key={t.id} name={t.name} count={t._count.bookmarks} />
-        ))}
-      </div>
+      <div className="flex flex-wrap">{tagPill}</div>
     </div>
   );
 }

@@ -21,16 +21,11 @@ export default async function Bookmarks({
 
   const bookmarks = await api.bookmarks.getBookmarks(query);
 
-  // TODO: This needs to be polished
   return (
     <>
       <div className="container pb-4 text-2xl">{title}</div>
       <div className="container">
-        {bookmarks.bookmarks.length == 0 ? (
-          "No bookmarks"
-        ) : (
-          <BookmarksGrid query={query} bookmarks={bookmarks.bookmarks} />
-        )}
+        <BookmarksGrid query={query} bookmarks={bookmarks.bookmarks} />
       </div>
     </>
   );

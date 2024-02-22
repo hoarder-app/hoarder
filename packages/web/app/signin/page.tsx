@@ -17,7 +17,7 @@ export default async function SignInPage() {
         </span>
         <p className="text-6xl">Hoarder</p>
       </div>
-      <div className="row-span-4 w-96">
+      <div className="row-span-4 px-3">
         <SignInForm />
       </div>
     </div>
