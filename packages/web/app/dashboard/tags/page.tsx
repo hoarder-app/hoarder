@@ -23,7 +23,7 @@ export default async function TagsPage() {
     redirect("/");
   }
 
-  const tags = await prisma.bookmarkTags.findMany({
+  let tags = await prisma.bookmarkTags.findMany({
     where: {
       userId: session.user.id,
     },
@@ -37,7 +37,7 @@ export default async function TagsPage() {
   });
 
   // Sort tags by usage desc
-  tags
+  tags = tags
     .filter((t) => t._count.bookmarks > 0)
     .sort((a, b) => b._count.bookmarks - a._count.bookmarks);
 
