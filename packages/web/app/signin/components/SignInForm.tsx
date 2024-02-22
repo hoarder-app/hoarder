@@ -16,7 +16,7 @@ export default async function SignInForm() {
     <div className="flex flex-col items-center space-y-2">
       <CredentialsForm />
 
-      {providerValues && (
+      {providerValues && providerValues.length > 0 && (
         <>
           <div className="flex w-full items-center">
             <div className="flex-1 grow border-t-2 border-gray-200"></div>
