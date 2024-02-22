@@ -45,7 +45,7 @@ export default async function Sidebar() {
           />
         </ul>
       </div>
-      <div className="mt-auto flex justify-between">
+      <div className="mt-auto flex justify-between justify-self-end">
         <div className="my-auto"> {session.user.name} </div>
         <SidebarProfileOptions />
       </div>

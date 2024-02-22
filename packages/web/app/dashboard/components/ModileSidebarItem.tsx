@@ -4,12 +4,10 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export default function SidebarItem({
-  name,
+export default function MobileSidebarItem({
   logo,
   path,
 }: {
-  name: string;
   logo: React.ReactNode;
   path: string;
 }) {
@@ -17,13 +15,12 @@ export default function SidebarItem({
   return (
     <li
       className={cn(
-        "rounded-lg  hover:bg-slate-100",
+        "flex w-full rounded-lg hover:bg-gray-50",
         path == currentPath ? "bg-gray-50" : "",
       )}
     >
-      <Link href={path} className="flex w-full space-x-2 px-3 py-2">
+      <Link href={path} className="mx-auto px-3 py-2">
         {logo}
-        <span className="my-auto"> {name} </span>
       </Link>
     </li>
   );
