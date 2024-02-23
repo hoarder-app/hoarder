@@ -1,8 +1,10 @@
 import { getServerAuthSession } from "@/server/auth";
-import { prisma } from "@hoarder/db";
+import { db } from "@hoarder/db";
 import { notFound, redirect } from "next/navigation";
 import BookmarksGrid from "../../bookmarks/components/BookmarksGrid";
 import { api } from "@/server/api/client";
+import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
+import { and, eq } from "drizzle-orm";
 
 export default async function TagPage({
   params,
@@ -13,14 +15,12 @@ export default async function TagPage({
   if (!session) {
     redirect("/");
   }
-  const tag = await prisma.bookmarkTags.findUnique({
-    where: {
-      userId_name: {
-        userId: session.user.id,
-        name: params.tagName,
-      },
-    },
-    select: {
+  const tag = await db.query.bookmarkTags.findFirst({
+    where: and(
+      eq(bookmarkTags.userId, session.user.id),
+      eq(bookmarkTags.name, params.tagName),
+    ),
+    columns: {
       id: true,
     },
   });
@@ -30,11 +30,9 @@ export default async function TagPage({
     notFound();
   }
 
-  const bookmarkIds = await prisma.tagsOnBookmarks.findMany({
-    where: {
-      tagId: tag.id,
-    },
-    select: {
+  const bookmarkIds = await db.query.tagsOnBookmarks.findMany({
+    where: eq(tagsOnBookmarks.tagId, tag.id),
+    columns: {
       bookmarkId: true,
     },
   });

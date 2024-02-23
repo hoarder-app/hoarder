@@ -51,7 +51,7 @@ services:
     command:
       - /bin/sh
       - -c
-      - "corepack enable && yarn install --immutable && yarn prisma:generate && yarn prisma:migrate:dev"
+      - "corepack enable && yarn install --immutable && yarn run db:migrate"
 
 volumes:
   redis:

@@ -17,14 +17,19 @@ export const zBookmarkContentSchema = z.discriminatedUnion("type", [
 ]);
 export type ZBookmarkContent = z.infer<typeof zBookmarkContentSchema>;
 
-export const zBookmarkSchema = z.object({
+export const zBareBookmarkSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
   archived: z.boolean(),
   favourited: z.boolean(),
-  tags: z.array(zBookmarkTagSchema),
-  content: zBookmarkContentSchema,
 });
+
+export const zBookmarkSchema = zBareBookmarkSchema.merge(
+  z.object({
+    tags: z.array(zBookmarkTagSchema),
+    content: zBookmarkContentSchema,
+  }),
+);
 export type ZBookmark = z.infer<typeof zBookmarkSchema>;
 
 // POST /v1/bookmarks

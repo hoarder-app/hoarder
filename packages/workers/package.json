@@ -10,6 +10,7 @@
     "async-mutex": "^0.4.1",
     "bullmq": "^5.1.9",
     "dotenv": "^16.4.1",
+    "drizzle-orm": "^0.29.4",
     "metascraper": "^5.43.4",
     "metascraper-description": "^5.43.4",
     "metascraper-image": "^5.43.4",
@@ -23,17 +24,16 @@
     "puppeteer": "^22.0.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.7.1",
     "typescript": "^5",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/metascraper": "^5.14.3",
-    "nodemon": "^3.0.3"
+    "@types/metascraper": "^5.14.3"
   },
   "scripts": {
-    "start": "nodemon index.ts",
-    "start:prod": "ts-node -T index.ts",
+    "start": "tsx watch index.ts",
+    "start:prod": "tsx index.ts",
     "typecheck": "tsc --noEmit"
   }
 }

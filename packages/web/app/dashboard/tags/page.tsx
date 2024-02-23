@@ -1,5 +1,7 @@
 import { getServerAuthSession } from "@/server/auth";
-import { prisma } from "@hoarder/db";
+import { db } from "@hoarder/db";
+import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
+import { count, eq } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -23,28 +25,24 @@ export default async function TagsPage() {
     redirect("/");
   }
 
-  let tags = await prisma.bookmarkTags.findMany({
-    where: {
-      userId: session.user.id,
-    },
-    include: {
-      _count: {
-        select: {
-          bookmarks: true,
-        },
-      },
-    },
-  });
+  let tags = await db
+    .select({
+      id: tagsOnBookmarks.tagId,
+      name: bookmarkTags.name,
+      count: count(),
+    })
+    .from(tagsOnBookmarks)
+    .where(eq(bookmarkTags.userId, session.user.id))
+    .groupBy(tagsOnBookmarks.tagId)
+    .innerJoin(bookmarkTags, eq(bookmarkTags.id, tagsOnBookmarks.tagId));
 
   // Sort tags by usage desc
-  tags = tags
-    .filter((t) => t._count.bookmarks > 0)
-    .sort((a, b) => b._count.bookmarks - a._count.bookmarks);
+  tags = tags.sort((a, b) => b.count - a.count);
 
   let tagPill;
   if (tags.length) {
     tagPill = tags.map((t) => (
-      <TagPill key={t.id} name={t.name} count={t._count.bookmarks} />
+      <TagPill key={t.id} name={t.name} count={t.count} />
     ));
   } else {
     tagPill = "No Tags";

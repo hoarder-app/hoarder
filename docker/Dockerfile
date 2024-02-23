@@ -16,8 +16,6 @@ ENV NEXT_TELEMETRY_DISABLED 1
 ENV PUPPETEER_SKIP_DOWNLOAD true
 
 RUN corepack enable && \
-    cd /app/packages/db && \
-    yarn dlx prisma generate && \
     cd /app/packages/web/ && \
     yarn install --immutable && \
     yarn next experimental-compile
@@ -67,9 +65,7 @@ ENV PUPPETEER_SKIP_DOWNLOAD true
 
 RUN corepack enable && \
     cd /app/packages/workers && \
-    yarn workspaces focus --production && \
-    cd /app/packages/db && \
-    yarn dlx prisma generate
+    yarn workspaces focus --production
 
 
 ################# The workers ##############
@@ -91,8 +87,6 @@ COPY packages/shared packages/shared
 COPY packages/workers packages/workers
 COPY package.json yarn.lock .yarnrc.yml .
 COPY --from=workers_builder /app/node_modules /app/node_modules
-
-RUN corepack enable && cd packages/db && yarn dlx prisma generate
 
 WORKDIR /app/packages/workers
 USER root

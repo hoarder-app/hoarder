@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1708710681721,
+      "tag": "0000_luxuriant_johnny_blaze",
+      "breakpoints": true
+    }
+  ]
+}

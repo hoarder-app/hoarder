@@ -3,46 +3,28 @@ import { authedProcedure, router } from "../trpc";
 import {
   ZBookmark,
   ZBookmarkContent,
+  zBareBookmarkSchema,
   zBookmarkSchema,
   zGetBookmarksRequestSchema,
   zGetBookmarksResponseSchema,
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "@/lib/types/api/bookmarks";
-import { prisma } from "@hoarder/db";
+import { db } from "@hoarder/db";
+import { bookmarkLinks, bookmarks } from "@hoarder/db/schema";
 import { LinkCrawlerQueue } from "@hoarder/shared/queues";
 import { TRPCError, experimental_trpcMiddleware } from "@trpc/server";
 import { User } from "next-auth";
-
-const defaultBookmarkFields = {
-  id: true,
-  favourited: true,
-  archived: true,
-  createdAt: true,
-  link: {
-    select: {
-      url: true,
-      title: true,
-      description: true,
-      imageUrl: true,
-      favicon: true,
-      crawledAt: true,
-    },
-  },
-  tags: {
-    include: {
-      tag: true,
-    },
-  },
-};
+import { and, desc, eq, inArray } from "drizzle-orm";
+import { ZBookmarkTags } from "@/lib/types/api/tags";
 
 const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: { user: User };
   input: { bookmarkId: string };
 }>().create(async (opts) => {
-  const bookmark = await prisma.bookmark.findUnique({
-    where: { id: opts.input.bookmarkId },
-    select: {
+  const bookmark = await db.query.bookmarks.findFirst({
+    where: eq(bookmarks.id, opts.input.bookmarkId),
+    columns: {
       userId: true,
     },
   });
@@ -62,17 +44,27 @@ const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   return opts.next();
 });
 
-async function dummyPrismaReturnType() {
-  const x = await prisma.bookmark.findFirstOrThrow({
-    select: defaultBookmarkFields,
+async function dummyDrizzleReturnType() {
+  const x = await db.query.bookmarks.findFirst({
+    with: {
+      tagsOnBookmarks: {
+        with: {
+          tag: true,
+        },
+      },
+      link: true,
+    },
   });
+  if (!x) {
+    throw new Error();
+  }
   return x;
 }
 
 function toZodSchema(
-  bookmark: Awaited<ReturnType<typeof dummyPrismaReturnType>>,
+  bookmark: Awaited<ReturnType<typeof dummyDrizzleReturnType>>,
 ): ZBookmark {
-  const { tags, link, ...rest } = bookmark;
+  const { tagsOnBookmarks, link, ...rest } = bookmark;
 
   let content: ZBookmarkContent;
   if (link) {
@@ -82,7 +74,7 @@ function toZodSchema(
   }
 
   return {
-    tags: tags.map((t) => t.tag),
+    tags: tagsOnBookmarks.map((t) => t.tag),
     content,
     ...rest,
   };
@@ -94,18 +86,37 @@ export const bookmarksAppRouter = router({
     .output(zBookmarkSchema)
     .mutation(async ({ input, ctx }) => {
       const { url } = input;
-      const userId = ctx.user.id;
 
-      const bookmark = await prisma.bookmark.create({
-        data: {
-          link: {
-            create: {
+      const bookmark = await db.transaction(async (tx): Promise<ZBookmark> => {
+        const bookmark = (
+          await tx
+            .insert(bookmarks)
+            .values({
+              userId: ctx.user.id,
+            })
+            .returning()
+        )[0];
+
+        const link = (
+          await tx
+            .insert(bookmarkLinks)
+            .values({
+              id: bookmark.id,
               url,
-            },
-          },
-          userId,
-        },
-        select: defaultBookmarkFields,
+            })
+            .returning()
+        )[0];
+
+        const content: ZBookmarkContent = {
+          type: "link",
+          ...link,
+        };
+
+        return {
+          tags: [] as ZBookmarkTags[],
+          content,
+          ...bookmark,
+        };
       });
 
       // Enqueue crawling request
@@ -113,38 +124,48 @@ export const bookmarksAppRouter = router({
         bookmarkId: bookmark.id,
       });
 
-      return toZodSchema(bookmark);
+      return bookmark;
     }),
 
   updateBookmark: authedProcedure
     .input(zUpdateBookmarksRequestSchema)
-    .output(zBookmarkSchema)
+    .output(zBareBookmarkSchema)
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      const bookmark = await prisma.bookmark.update({
-        where: {
-          id: input.bookmarkId,
-          userId: ctx.user.id,
-        },
-        data: {
+      const res = await db
+        .update(bookmarks)
+        .set({
           archived: input.archived,
           favourited: input.favourited,
-        },
-        select: defaultBookmarkFields,
-      });
-      return toZodSchema(bookmark);
+        })
+        .where(
+          and(
+            eq(bookmarks.userId, ctx.user.id),
+            eq(bookmarks.id, input.bookmarkId),
+          ),
+        )
+        .returning();
+      if (res.length == 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Bookmark not found",
+        });
+      }
+      return res[0];
     }),
 
   deleteBookmark: authedProcedure
     .input(z.object({ bookmarkId: z.string() }))
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      await prisma.bookmark.delete({
-        where: {
-          id: input.bookmarkId,
-          userId: ctx.user.id,
-        },
-      });
+      await db
+        .delete(bookmarks)
+        .where(
+          and(
+            eq(bookmarks.userId, ctx.user.id),
+            eq(bookmarks.id, input.bookmarkId),
+          ),
+        );
     }),
   recrawlBookmark: authedProcedure
     .input(z.object({ bookmarkId: z.string() }))
@@ -162,12 +183,19 @@ export const bookmarksAppRouter = router({
     )
     .output(zBookmarkSchema)
     .query(async ({ input, ctx }) => {
-      const bookmark = await prisma.bookmark.findUnique({
-        where: {
-          userId: ctx.user.id,
-          id: input.id,
+      const bookmark = await db.query.bookmarks.findFirst({
+        where: and(
+          eq(bookmarks.userId, ctx.user.id),
+          eq(bookmarks.id, input.id),
+        ),
+        with: {
+          tagsOnBookmarks: {
+            with: {
+              tag: true,
+            },
+          },
+          link: true,
         },
-        select: defaultBookmarkFields,
       });
       if (!bookmark) {
         throw new TRPCError({
@@ -182,25 +210,28 @@ export const bookmarksAppRouter = router({
     .input(zGetBookmarksRequestSchema)
     .output(zGetBookmarksResponseSchema)
     .query(async ({ input, ctx }) => {
-      const bookmarks = (
-        await prisma.bookmark.findMany({
-          where: {
-            userId: ctx.user.id,
-            archived: input.archived,
-            favourited: input.favourited,
-            id: input.ids
-              ? {
-                  in: input.ids,
-                }
-              : undefined,
+      const results = await db.query.bookmarks.findMany({
+        where: and(
+          eq(bookmarks.userId, ctx.user.id),
+          input.archived !== undefined
+            ? eq(bookmarks.archived, input.archived)
+            : undefined,
+          input.favourited !== undefined
+            ? eq(bookmarks.favourited, input.favourited)
+            : undefined,
+          input.ids ? inArray(bookmarks.id, input.ids) : undefined,
+        ),
+        orderBy: [desc(bookmarks.createdAt)],
+        with: {
+          tagsOnBookmarks: {
+            with: {
+              tag: true,
+            },
           },
-          orderBy: {
-            createdAt: "desc",
-          },
-          select: defaultBookmarkFields,
-        })
-      ).map(toZodSchema);
+          link: true,
+        },
+      });
 
-      return { bookmarks };
+      return { bookmarks: results.map(toZodSchema) };
     }),
 });

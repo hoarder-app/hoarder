@@ -1,7 +1,9 @@
 import { generateApiKey } from "@/server/auth";
 import { authedProcedure, router } from "../trpc";
-import { prisma } from "@hoarder/db";
+import { db } from "@hoarder/db";
 import { z } from "zod";
+import { apiKeys } from "@hoarder/db/schema";
+import { eq, and } from "drizzle-orm";
 
 export const apiKeysAppRouter = router({
   create: authedProcedure
@@ -29,13 +31,10 @@ export const apiKeysAppRouter = router({
     )
     .output(z.object({}))
     .mutation(async ({ input, ctx }) => {
-      const resp = await prisma.apiKey.delete({
-        where: {
-          id: input.id,
-          userId: ctx.user.id,
-        },
-      });
-      return resp;
+      await db
+        .delete(apiKeys)
+        .where(and(eq(apiKeys.id, input.id), eq(apiKeys.userId, ctx.user.id)))
+        .returning();
     }),
   list: authedProcedure
     .output(
@@ -51,11 +50,9 @@ export const apiKeysAppRouter = router({
       }),
     )
     .query(async ({ ctx }) => {
-      const resp = await prisma.apiKey.findMany({
-        where: {
-          userId: ctx.user.id,
-        },
-        select: {
+      const resp = await db.query.apiKeys.findMany({
+        where: eq(apiKeys.userId, ctx.user.id),
+        columns: {
           id: true,
           name: true,
           createdAt: true,

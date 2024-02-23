@@ -26,8 +26,6 @@ jobs:
         run: yarn lint
       - name: Format
         run: yarn format:check
-      - name: Prisma
-        run: yarn prisma:generate
       - name: Build the workers package
         working-directory: packages/workers
         run: yarn typecheck

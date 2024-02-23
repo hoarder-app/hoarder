@@ -1,14 +1,16 @@
 import NextAuth, { NextAuthOptions, getServerSession } from "next-auth";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import type { Adapter } from "next-auth/adapters";
 import AuthentikProvider from "next-auth/providers/authentik";
 import serverConfig from "@hoarder/shared/config";
-import { prisma } from "@hoarder/db";
+import { db } from "@hoarder/db";
 import { DefaultSession } from "next-auth";
 import * as bcrypt from "bcrypt";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
 
 import { randomBytes } from "crypto";
 import { Provider } from "next-auth/providers/index";
+import { apiKeys } from "@hoarder/db/schema";
 
 declare module "next-auth/jwt" {
   export interface JWT {
@@ -59,7 +61,8 @@ if (serverConfig.auth.authentik) {
 }
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  // https://github.com/nextauthjs/next-auth/issues/9493
+  adapter: DrizzleAdapter(db) as Adapter,
   providers: providers,
   session: {
     strategy: "jwt",
@@ -99,14 +102,17 @@ export async function generateApiKey(name: string, userId: string) {
 
   const plain = `${API_KEY_PREFIX}_${id}_${secret}`;
 
-  const key = await prisma.apiKey.create({
-    data: {
-      name: name,
-      userId: userId,
-      keyId: id,
-      keyHash: secretHash,
-    },
-  });
+  const key = (
+    await db
+      .insert(apiKeys)
+      .values({
+        name: name,
+        userId: userId,
+        keyId: id,
+        keyHash: secretHash,
+      })
+      .returning()
+  )[0];
 
   return {
     id: key.id,
@@ -134,11 +140,9 @@ function parseApiKey(plain: string) {
 
 export async function authenticateApiKey(key: string) {
   const { keyId, keySecret } = parseApiKey(key);
-  const apiKey = await prisma.apiKey.findUnique({
-    where: {
-      keyId,
-    },
-    include: {
+  const apiKey = await db.query.apiKeys.findFirst({
+    where: (k, { eq }) => eq(k.keyId, keyId),
+    with: {
       user: true,
     },
   });
@@ -162,10 +166,8 @@ export async function hashPassword(password: string) {
 }
 
 export async function validatePassword(email: string, password: string) {
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
+  const user = await db.query.users.findFirst({
+    where: (u, { eq }) => eq(u.email, email),
   });
 
   if (!user) {

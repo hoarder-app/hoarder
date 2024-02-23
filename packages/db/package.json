@@ -4,10 +4,18 @@
   "version": "0.1.0",
   "private": true,
   "main": "index.ts",
+  "scripts": {
+    "migrate": "ts-node migrate.ts",
+    "studio": "drizzle-kit studio"
+  },
   "dependencies": {
-    "@prisma/client": "^5.9.1"
+    "@auth/drizzle-adapter": "^0.7.0",
+    "@paralleldrive/cuid2": "^2.2.2",
+    "better-sqlite3": "^9.4.3",
+    "drizzle-orm": "^0.29.4"
   },
   "devDependencies": {
-    "prisma": "^5.9.1"
+    "@types/better-sqlite3": "^7.6.9",
+    "drizzle-kit": "^0.20.14"
   }
 }

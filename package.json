@@ -10,11 +10,10 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint .",
-    "prisma:migrate:dev": "yarn workspace @hoarder/db prisma migrate dev",
-    "prisma:generate": "yarn workspace @hoarder/db prisma generate",
+    "db:migrate": "yarn workspace @hoarder/db run migrate",
+    "db:studio": "yarn workspace @hoarder/db studio",
     "workers": "yarn workspace @hoarder/workers run start",
-    "web": "yarn workspace @hoarder/web run dev",
-    "studio": "yarn workspace @hoarder/db prisma studio"
+    "web": "yarn workspace @hoarder/web run dev"
   },
   "dependencies": {
     "@next/eslint-plugin-next": "^14.1.0",

@@ -10,7 +10,7 @@ import {
 import { Worker } from "bullmq";
 import { Job } from "bullmq";
 
-import { prisma } from "@hoarder/db";
+import { db } from "@hoarder/db";
 
 import { Browser } from "puppeteer";
 import puppeteer from "puppeteer-extra";
@@ -28,6 +28,8 @@ import metascraperReadability from "metascraper-readability";
 import { Mutex } from "async-mutex";
 import assert from "assert";
 import serverConfig from "@hoarder/shared/config";
+import { bookmarkLinks } from "@hoarder/db/schema";
+import { eq } from "drizzle-orm";
 
 const metascraperParser = metascraper([
   metascraperReadability(),
@@ -91,8 +93,8 @@ export class CrawlerWorker {
 }
 
 async function getBookmarkUrl(bookmarkId: string) {
-  const bookmark = await prisma.bookmarkedLink.findUnique({
-    where: { id: bookmarkId },
+  const bookmark = await db.query.bookmarkLinks.findFirst({
+    where: eq(bookmarkLinks.id, bookmarkId),
   });
 
   if (!bookmark) {
@@ -155,18 +157,16 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     html: htmlContent,
   });
 
-  await prisma.bookmarkedLink.update({
-    where: {
-      id: bookmarkId,
-    },
-    data: {
+  await db
+    .update(bookmarkLinks)
+    .set({
       title: meta.title,
       description: meta.description,
       imageUrl: meta.image,
       favicon: meta.logo,
       crawledAt: new Date(),
-    },
-  });
+    })
+    .where(eq(bookmarkLinks.id, bookmarkId));
 
   // Enqueue openai job
   OpenAIQueue.add("openai", {

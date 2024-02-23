@@ -1,5 +1,4 @@
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
 import { CrawlerWorker } from "./crawler";
 import { OpenAiWorker } from "./openai";
 

@@ -50,12 +50,12 @@ To mitigate those risks, you can do one of the following:
 1. Limit access to trusted users
 2. Let the browser traffic go through some VPN with restricted network policies.
 3. Host the browser container outside of your network.
-4. Use a hosted browser as a service (e.g. [browserless](browserless.io)). Note: I've never used them before.
+4. Use a hosted browser as a service (e.g. [browserless](https://browserless.io)). Note: I've never used them before.
 
 ## Stack
 
 - [NextJS](https://nextjs.org/) for the web app. Using app router.
-- [Prisma](https://www.prisma.io/) for the database and its migrations.
+- [Drizzle](https://orm.drizzle.team/) for the database and its migrations.
 - [NextAuth](https://next-auth.js.org) for authentication.
 - [tRPC](https://trpc.io) for client->server communication.
 - [Puppeteer](https://pptr.dev/) for crawling the bookmarks.
@@ -89,7 +89,7 @@ You can turnup the whole development environment with:
 Or if you have nodejs installed locally, you can do:
 
 - `yarn install` in the root of the repo.
-- `yarn prisma:migrate:dev` then `yarn prisma:generate` to generate prisma's data and run the database migrations.
+- `yarn db:migrate` to run the db migrations.
 - `yarn web` to start the web app.
   - Access it over `http://localhost:3000`.
 - `yarn workers` to start the crawler and the openai worker.
@@ -99,7 +99,7 @@ Or if you have nodejs installed locally, you can do:
 
 ### Codebase structure
 
-- `packages/db`: Where prisma's schema lives. Shared between packages.
+- `packages/db`: Where drizzle's schema lives. Shared between packages.
 - `packages/shared`: Shared utilities and code between the workers and the web app.
 - `packages/web`: Where the nextjs based web app lives.
 - `packages/workers`: Where the background job workers (crawler and openai as of now) run.

@@ -1,4 +1,4 @@
-import { prisma, BookmarkedLink } from "@hoarder/db";
+import { db } from "@hoarder/db";
 import logger from "@hoarder/shared/logger";
 import serverConfig from "@hoarder/shared/config";
 import {
@@ -11,6 +11,13 @@ import { Job } from "bullmq";
 import OpenAI from "openai";
 import { z } from "zod";
 import { Worker } from "bullmq";
+import {
+  bookmarkLinks,
+  bookmarkTags,
+  bookmarks,
+  tagsOnBookmarks,
+} from "@hoarder/db/schema";
+import { eq } from "drizzle-orm";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
@@ -57,17 +64,19 @@ Description: ${description}
 }
 
 async function fetchBookmark(linkId: string) {
-  return await prisma.bookmark.findUnique({
-    where: {
-      id: linkId,
-    },
-    include: {
+  return await db.query.bookmarks.findFirst({
+    where: eq(bookmarks.id, linkId),
+    with: {
       link: true,
     },
   });
 }
 
-async function inferTags(jobId: string, link: BookmarkedLink, openai: OpenAI) {
+async function inferTags(
+  jobId: string,
+  link: typeof bookmarkLinks.$inferSelect,
+  openai: OpenAI,
+) {
   const linkDescription = link?.description;
   if (!linkDescription) {
     throw new Error(
@@ -111,51 +120,26 @@ async function inferTags(jobId: string, link: BookmarkedLink, openai: OpenAI) {
 }
 
 async function createTags(tags: string[], userId: string) {
-  const existingTags = await prisma.bookmarkTags.findMany({
-    select: {
-      id: true,
-      name: true,
-    },
-    where: {
-      userId,
-      name: {
-        in: tags,
-      },
-    },
-  });
-
-  const existingTagSet = new Set<string>(existingTags.map((t) => t.name));
-
-  const newTags = tags.filter((t) => !existingTagSet.has(t));
-
-  // TODO: Prisma doesn't support createMany in Sqlite
-  const newTagObjects = await Promise.all(
-    newTags.map((t) => {
-      return prisma.bookmarkTags.create({
-        data: {
-          name: t,
-          userId: userId,
-        },
-      });
-    }),
-  );
-
-  return existingTags.map((t) => t.id).concat(newTagObjects.map((t) => t.id));
+  const res = await db
+    .insert(bookmarkTags)
+    .values(
+      tags.map((t) => ({
+        name: t,
+        userId,
+      })),
+    )
+    .onConflictDoNothing()
+    .returning({ id: bookmarkTags.id });
+  return res.map((r) => r.id);
 }
 
 async function connectTags(bookmarkId: string, tagIds: string[]) {
-  // TODO: Prisma doesn't support createMany in Sqlite
-  // TODO: This could fail on refetch if the tags are already there
-  await Promise.all(
-    tagIds.map((tagId) => {
-      return prisma.tagsOnBookmarks.create({
-        data: {
-          tagId,
-          bookmarkId,
-          attachedBy: "ai",
-        },
-      });
-    }),
+  await db.insert(tagsOnBookmarks).values(
+    tagIds.map((tagId) => ({
+      tagId,
+      bookmarkId,
+      attachedBy: "ai" as const,
+    })),
   );
 }
 
