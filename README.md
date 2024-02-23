@@ -1,6 +1,10 @@
-# Hoarder
+# <img width="25px" src="./screenshots/logo.png" /> Hoarder
 
-A self-hostable bookmarking app with a touch of AI for the data hoarders out there.
+A self-hostable bookmark-everything app with a touch of AI for the data hoarders out there.
+
+![homepage screenshot](https://github.com/MohamedBassem/hoarder-app/blob/main/screenshots/homepage.png?raw=true)
+
+## Features
 
 - 🔗 Bookmark links.
 - ⬇️ Automatic fetching for link titles, descriptions and images.
