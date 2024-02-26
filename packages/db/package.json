@@ -9,7 +9,7 @@
     "studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@auth/drizzle-adapter": "^0.7.0",
+    "@auth/core": "^0.27.0",
     "@paralleldrive/cuid2": "^2.2.2",
     "better-sqlite3": "^9.4.3",
     "drizzle-orm": "^0.29.4"

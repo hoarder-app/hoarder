@@ -12,7 +12,7 @@ services:
       REDIS_HOST: redis
       DATABASE_URL: "file:/data/db.db"
     command:
-      - yarn
+      - pnpm
       - web
     working_dir: /app
     depends_on:
@@ -34,7 +34,7 @@ services:
       DATABASE_URL: "file:/data/db.db"
       # OPENAI_API_KEY: ...
     command:
-      - yarn
+      - pnpm
       - workers
     depends_on:
       prep:
@@ -51,7 +51,7 @@ services:
     command:
       - /bin/sh
       - -c
-      - "corepack enable && yarn install --immutable && yarn run db:migrate"
+      - "corepack enable && pnpm install --frozen-lockfile && pnpm run db:migrate"
 
 volumes:
   redis:

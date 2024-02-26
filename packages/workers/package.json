@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@hoarder/db": "0.1.0",
-    "@hoarder/shared": "0.1.0",
+    "@hoarder/db": "workspace:*",
+    "@hoarder/shared": "workspace:*",
     "@tsconfig/node21": "^21.0.1",
     "async-mutex": "^0.4.1",
     "bullmq": "^5.1.9",

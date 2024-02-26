@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@hoarder/db": "0.1.0",
+    "@hoarder/shared": "0.1.0",
+    "@auth/drizzle-adapter": "^0.7.0",
     "@hookform/resolvers": "^3.3.4",
     "@next/eslint-plugin-next": "^14.1.0",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -27,6 +29,7 @@
     "@trpc/react-query": "^11.0.0-next-beta.289",
     "@trpc/server": "11.0.0-next-beta.274",
     "bcrypt": "^5.1.1",
+    "better-sqlite3": "^9.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "drizzle-orm": "^0.29.4",

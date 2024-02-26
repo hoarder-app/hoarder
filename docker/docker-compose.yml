@@ -36,7 +36,7 @@ services:
     command:
       - /bin/sh
       - -c
-      - "cd /app/packages/db && yarn run migrate"
+      - "cd /app/packages/db && pnpm run migrate"
 
 volumes:
   redis:

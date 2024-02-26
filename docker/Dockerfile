@@ -1,24 +1,29 @@
-################# The Web App ##############
-
-# Rebuild the source code only when needed
-FROM node:21-alpine AS web_builder
-
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+################# Base Builder ##############
+FROM node:21-alpine AS base
 
 WORKDIR /app
-COPY packages/db packages/db
-COPY packages/web packages/web
-COPY packages/shared packages/shared
-COPY package.json yarn.lock .yarnrc.yml .
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat make g++ py3-pip linux-headers
+
+COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV PUPPETEER_SKIP_DOWNLOAD true
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
-RUN corepack enable && \
-    cd /app/packages/web/ && \
-    yarn install --immutable && \
-    yarn next experimental-compile
+################# The Web builder ##############
+
+# Rebuild the source code only when needed
+FROM base AS web_builder
+
+WORKDIR /app/packages/web
+
+RUN pnpm next experimental-compile
+
+################# The Web App ##############
 
 FROM node:21-alpine AS web
 WORKDIR /app
@@ -51,22 +56,9 @@ CMD ["node", "server.js"]
 
 ################# The workers builder ##############
 
-FROM node:21-alpine AS workers_builder
-WORKDIR /app
+FROM base AS workers_builder
 
-# Install chromium needed for puppeteer
-RUN apk add --no-cache make g++ py3-pip linux-headers
-
-COPY packages/db/package.json packages/db/package.json
-COPY packages/shared/package.json packages/shared/package.json
-COPY packages/workers/package.json packages/workers/package.json
-COPY package.json yarn.lock .yarnrc.yml .
-ENV PUPPETEER_SKIP_DOWNLOAD true
-
-RUN corepack enable && \
-    cd /app/packages/workers && \
-    yarn workspaces focus --production
-
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm deploy --filter @hoarder/workers --prod /prod
 
 ################# The workers ##############
 
@@ -79,16 +71,15 @@ ENV CHROME_PATH "/usr/bin/chromium-browser"
 ENV BROWSER_EXECUTABLE_PATH "/app/start-chrome.sh"
 ENV BROWSER_USER_DATA_DIR="/tmp/chrome"
 
-ADD docker/start-chrome.sh .
-RUN chmod +x /app/start-chrome.sh
+COPY --from=workers_builder /prod packages/workers
 
-COPY packages/db packages/db
-COPY packages/shared packages/shared
-COPY packages/workers packages/workers
-COPY package.json yarn.lock .yarnrc.yml .
-COPY --from=workers_builder /app/node_modules /app/node_modules
+RUN corepack enable
+
+ADD docker/start-chrome.sh .
+RUN chmod +x start-chrome.sh
 
 WORKDIR /app/packages/workers
+
 USER root
 
-CMD ["yarn", "run", "start:prod"]
+CMD ["pnpm", "run", "start:prod"]

@@ -88,11 +88,11 @@ You can turnup the whole development environment with:
 
 Or if you have nodejs installed locally, you can do:
 
-- `yarn install` in the root of the repo.
-- `yarn db:migrate` to run the db migrations.
-- `yarn web` to start the web app.
+- `pnpm install` in the root of the repo.
+- `pnpm db:migrate` to run the db migrations.
+- `pnpm web` to start the web app.
   - Access it over `http://localhost:3000`.
-- `yarn workers` to start the crawler and the openai worker.
+- `pnpm workers` to start the crawler and the openai worker.
   - You'll need to have redis running at `localhost:5379` (configurable with env variables).
   - An easy way to get redis running is by using docker `docker run -p 5379:5379 redis`.
   - You can run the web app without the workers, but link fetching and automatic tagging won't work.
@@ -106,4 +106,4 @@ Or if you have nodejs installed locally, you can do:
 
 ### Submitting PRs
 
-- Before submitting PRs, you'll want to run `yarn format` and include its changes in the commit. Also make sure `yarn lint` is successful.
+- Before submitting PRs, you'll want to run `pnpm format` and include its changes in the commit. Also make sure `pnpm lint` is successful.

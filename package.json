@@ -3,17 +3,14 @@
   "name": "hoarder",
   "version": "0.1.0",
   "private": true,
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint .",
-    "db:migrate": "yarn workspace @hoarder/db run migrate",
-    "db:studio": "yarn workspace @hoarder/db studio",
-    "workers": "yarn workspace @hoarder/workers run start",
-    "web": "yarn workspace @hoarder/web run dev"
+    "db:migrate": "pnpm --filter @hoarder/db run migrate",
+    "db:studio": "pnpm --filter @hoarder/db studio",
+    "workers": "pnpm --filter @hoarder/workers run start",
+    "web": "pnpm --filter @hoarder/web run dev"
   },
   "dependencies": {
     "@next/eslint-plugin-next": "^14.1.0",
@@ -37,5 +34,5 @@
     "prettier": "3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11"
   },
-  "packageManager": "yarn@4.1.0"
+  "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2"
 }

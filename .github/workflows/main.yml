@@ -16,22 +16,21 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 21
-          cache: "yarn"
-          cache-dependency-path: "yarn.lock"
+          cache: "pnpm"
       - name: Install deps
         env:
           PUPPETEER_SKIP_DOWNLOAD: true
-        run: yarn install --immutable
-      - name: Lint
-        run: yarn lint
+        run: pnpm install
       - name: Format
-        run: yarn format:check
+        run: pnpm format:check
+      - name: Lint
+        run: pnpm lint
       - name: Build the workers package
         working-directory: packages/workers
-        run: yarn typecheck
+        run: pnpm typecheck
       - name: Build web app
         working-directory: packages/web
-        run: yarn run build
+        run: pnpm run build
       - name: Build the browser extension
         working-directory: packages/browser-extension
-        run: yarn build
+        run: pnpm build
