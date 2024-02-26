@@ -156,7 +156,7 @@ export const tagsOnBookmarks = sqliteTable(
     attachedAt: integer("attachedAt", { mode: "timestamp" }).$defaultFn(
       () => new Date(),
     ),
-    attachedBy: text("attachedBy", { enum: ["ai", "human"] }),
+    attachedBy: text("attachedBy", { enum: ["ai", "human"] }).notNull(),
   },
   (tb) => ({
     pk: primaryKey({ columns: [tb.bookmarkId, tb.tagId] }),

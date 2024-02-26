@@ -10,11 +10,21 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Archive, MoreHorizontal, RotateCw, Star, Trash2 } from "lucide-react";
+import {
+  Archive,
+  MoreHorizontal,
+  RotateCw,
+  Star,
+  Tags,
+  Trash2,
+} from "lucide-react";
+import { useTagModel } from "./TagModal";
 
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const linkId = bookmark.id;
+
+  const [_, setTagModalIsOpen, tagModal] = useTagModel(bookmark);
 
   const invalidateBookmarksCache = api.useUtils().bookmarks.invalidate;
 
@@ -59,53 +69,60 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   });
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost">
-          <MoreHorizontal />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-fit">
-        <DropdownMenuItem
-          onClick={() =>
-            updateBookmarkMutator.mutate({
-              bookmarkId: linkId,
-              favourited: !bookmark.favourited,
-            })
-          }
-        >
-          <Star className="mr-2 size-4" />
-          <span>{bookmark.favourited ? "Un-favourite" : "Favourite"}</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() =>
-            updateBookmarkMutator.mutate({
-              bookmarkId: linkId,
-              archived: !bookmark.archived,
-            })
-          }
-        >
-          <Archive className="mr-2 size-4" />
-          <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={() =>
-            crawlBookmarkMutator.mutate({ bookmarkId: bookmark.id })
-          }
-        >
-          <RotateCw className="mr-2 size-4" />
-          <span>Refresh</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="text-destructive"
-          onClick={() =>
-            deleteBookmarkMutator.mutate({ bookmarkId: bookmark.id })
-          }
-        >
-          <Trash2 className="mr-2 size-4" />
-          <span>Delete</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      {tagModal}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost">
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-fit">
+          <DropdownMenuItem
+            onClick={() =>
+              updateBookmarkMutator.mutate({
+                bookmarkId: linkId,
+                favourited: !bookmark.favourited,
+              })
+            }
+          >
+            <Star className="mr-2 size-4" />
+            <span>{bookmark.favourited ? "Un-favourite" : "Favourite"}</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() =>
+              updateBookmarkMutator.mutate({
+                bookmarkId: linkId,
+                archived: !bookmark.archived,
+              })
+            }
+          >
+            <Archive className="mr-2 size-4" />
+            <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setTagModalIsOpen(true)}>
+            <Tags className="mr-2 size-4" />
+            <span>Edit Tags</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() =>
+              crawlBookmarkMutator.mutate({ bookmarkId: bookmark.id })
+            }
+          >
+            <RotateCw className="mr-2 size-4" />
+            <span>Refresh</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="text-destructive"
+            onClick={() =>
+              deleteBookmarkMutator.mutate({ bookmarkId: bookmark.id })
+            }
+          >
+            <Trash2 className="mr-2 size-4" />
+            <span>Delete</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 }

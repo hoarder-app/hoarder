@@ -11,7 +11,12 @@ import {
   zUpdateBookmarksRequestSchema,
 } from "@/lib/types/api/bookmarks";
 import { db } from "@hoarder/db";
-import { bookmarkLinks, bookmarks } from "@hoarder/db/schema";
+import {
+  bookmarkLinks,
+  bookmarkTags,
+  bookmarks,
+  tagsOnBookmarks,
+} from "@hoarder/db/schema";
 import { LinkCrawlerQueue } from "@hoarder/shared/queues";
 import { TRPCError, experimental_trpcMiddleware } from "@trpc/server";
 import { User } from "next-auth";
@@ -74,7 +79,10 @@ function toZodSchema(
   }
 
   return {
-    tags: tagsOnBookmarks.map((t) => t.tag),
+    tags: tagsOnBookmarks.map((t) => ({
+      attachedBy: t.attachedBy,
+      ...t.tag,
+    })),
     content,
     ...rest,
   };
@@ -233,5 +241,82 @@ export const bookmarksAppRouter = router({
       });
 
       return { bookmarks: results.map(toZodSchema) };
+    }),
+
+  updateTags: authedProcedure
+    .input(
+      z.object({
+        bookmarkId: z.string(),
+        attach: z.array(
+          z.object({
+            tagId: z.string().optional(), // If the tag already exists and we know its id
+            tag: z.string(),
+          }),
+        ),
+        detach: z.array(z.string()),
+      }),
+    )
+    .use(ensureBookmarkOwnership)
+    .mutation(async ({ input, ctx }) => {
+      await db.transaction(async (tx) => {
+        // Detaches
+        if (input.detach.length > 0) {
+          await db
+            .delete(tagsOnBookmarks)
+            .where(
+              and(
+                eq(tagsOnBookmarks.bookmarkId, input.bookmarkId),
+                inArray(tagsOnBookmarks.tagId, input.detach),
+              ),
+            );
+        }
+
+        if (input.attach.length == 0) {
+          return;
+        }
+
+        // New Tags
+        const toBeCreatedTags = input.attach
+          .filter((i) => i.tagId === undefined)
+          .map((i) => ({
+            name: i.tag,
+            userId: ctx.user.id,
+          }));
+
+        if (toBeCreatedTags.length > 0) {
+          await db
+            .insert(bookmarkTags)
+            .values(toBeCreatedTags)
+            .onConflictDoNothing()
+            .returning();
+        }
+
+        const allIds = (
+          await db.query.bookmarkTags.findMany({
+            where: and(
+              eq(bookmarkTags.userId, ctx.user.id),
+              inArray(
+                bookmarkTags.name,
+                input.attach.map((t) => t.tag),
+              ),
+            ),
+            columns: {
+              id: true,
+            },
+          })
+        ).map((t) => t.id);
+
+        await db
+          .insert(tagsOnBookmarks)
+          .values(
+            allIds.map((i) => ({
+              tagId: i as string,
+              bookmarkId: input.bookmarkId,
+              attachedBy: "human" as const,
+              userId: ctx.user.id,
+            })),
+          )
+          .onConflictDoNothing();
+      });
     }),
 });
