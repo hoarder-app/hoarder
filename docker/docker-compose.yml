@@ -8,7 +8,7 @@ services:
       - 3000:3000
     environment:
       REDIS_HOST: redis
-      DATABASE_URL: "file:/data/db.db"
+      DATABASE_URL: "/data/db.db"
   redis:
     image: redis:7.2-alpine
     volumes:
@@ -19,7 +19,7 @@ services:
       - data:/data
     environment:
       REDIS_HOST: redis
-      DATABASE_URL: "file:/data/db.db"
+      DATABASE_URL: "/data/db.db"
       # OPENAI_API_KEY: ...
     depends_on:
       web:

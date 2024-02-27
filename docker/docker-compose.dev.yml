@@ -10,7 +10,7 @@ services:
       - 3000:3000
     environment:
       REDIS_HOST: redis
-      DATABASE_URL: "file:/data/db.db"
+      DATABASE_URL: "/data/db.db"
     command:
       - pnpm
       - web
@@ -31,7 +31,7 @@ services:
     working_dir: /app
     environment:
       REDIS_HOST: redis
-      DATABASE_URL: "file:/data/db.db"
+      DATABASE_URL: "/data/db.db"
       # OPENAI_API_KEY: ...
     command:
       - pnpm
@@ -44,7 +44,7 @@ services:
       dockerfile: Dockerfile.dev
     working_dir: /app
     environment:
-      DATABASE_URL: "file:/data/db.db"
+      DATABASE_URL: "/data/db.db"
     volumes:
       - data:/data
       - ..:/app
