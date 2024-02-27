@@ -29,12 +29,10 @@ export const apiKeysAppRouter = router({
         id: z.string(),
       }),
     )
-    .output(z.object({}))
     .mutation(async ({ input, ctx }) => {
       await db
         .delete(apiKeys)
-        .where(and(eq(apiKeys.id, input.id), eq(apiKeys.userId, ctx.user.id)))
-        .returning();
+        .where(and(eq(apiKeys.id, input.id), eq(apiKeys.userId, ctx.user.id)));
     }),
   list: authedProcedure
     .output(
