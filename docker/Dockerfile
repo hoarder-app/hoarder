@@ -14,6 +14,12 @@ ENV NEXT_TELEMETRY_DISABLED 1
 ENV PUPPETEER_SKIP_DOWNLOAD true
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
+# Build the db migration script
+RUN cd packages/db && \
+    pnpm dlx @vercel/ncc build migrate.ts -o /db_migrations && \
+    cp -R drizzle /db_migrations
+
+
 ################# The Web builder ##############
 
 # Rebuild the source code only when needed
@@ -33,6 +39,7 @@ ENV NEXT_TELEMETRY_DISABLED 1
 
 COPY --from=web_builder --chown=node:node /app/packages/web/.next/standalone ./
 COPY --from=web_builder /app/packages/web/public ./packages/web/public
+COPY --from=web_builder /db_migrations /db_migrations
 
 # Set the correct permission for prerender cache
 RUN mkdir -p ./package/web/.next
@@ -52,7 +59,7 @@ ENV HOSTNAME "0.0.0.0"
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["node", "server.js"]
+CMD ["/bin/sh", "-c", "(cd /db_migrations && node index.js) && node server.js"]
 
 ################# The workers builder ##############
 

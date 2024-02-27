@@ -9,9 +9,6 @@ services:
     environment:
       REDIS_HOST: redis
       DATABASE_URL: "file:/data/db.db"
-    depends_on:
-      migration:
-        condition: service_completed_successfully
   redis:
     image: redis:7.2-alpine
     volumes:
@@ -25,18 +22,8 @@ services:
       DATABASE_URL: "file:/data/db.db"
       # OPENAI_API_KEY: ...
     depends_on:
-      migration:
-        condition: service_completed_successfully
-  migration:
-    image: ghcr.io/mohamedbassem/hoarder-workers:latest
-    environment:
-      DATABASE_URL: "file:/data/db.db"
-    volumes:
-      - data:/data
-    command:
-      - /bin/sh
-      - -c
-      - "cd /app/packages/db && pnpm run migrate"
+      web:
+        condition: service_started
 
 volumes:
   redis:

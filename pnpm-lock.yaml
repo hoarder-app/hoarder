@@ -151,10 +151,16 @@ importers:
       better-sqlite3:
         specifier: ^9.4.3
         version: 9.4.3
+      dotenv:
+        specifier: ^16.4.1
+        version: 16.4.5
       drizzle-orm:
         specifier: ^0.29.4
         version: 0.29.4(@types/better-sqlite3@7.6.9)(better-sqlite3@9.4.3)
     devDependencies:
+      '@tsconfig/node21':
+        specifier: ^21.0.1
+        version: 21.0.1
       '@types/better-sqlite3':
         specifier: ^7.6.9
         version: 7.6.9
@@ -2533,7 +2539,6 @@ packages:
 
   /@tsconfig/node21@21.0.1:
     resolution: {integrity: sha512-2Khg79N+z2Qkb9SjLzOi8cz2PSa/oUpHIeQm1YWzmWXkoFcPXFZSHgs+Z8iPCDjIoXFqMNYntiTXxfLYQMcRhw==}
-    dev: false
 
   /@types/babel__core@7.20.5:
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
