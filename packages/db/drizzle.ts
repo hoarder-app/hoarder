@@ -4,9 +4,20 @@ import Database from "better-sqlite3";
 import * as schema from "./schema";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import path from "path";
+import { Logger } from "drizzle-orm";
+
+class MyLogger implements Logger {
+  logQuery(query: string, params: unknown[]): void {
+    let line = `Query: ${query}`;
+    if (process.env.NODE_ENV !== "production") {
+      line += ` , params: ${JSON.stringify(params)}`;
+    }
+    console.log(line);
+  }
+}
 
 const sqlite = new Database(process.env.DATABASE_URL);
-export const db = drizzle(sqlite, { schema, logger: true });
+export const db = drizzle(sqlite, { schema, logger: new MyLogger() });
 
 export function getInMemoryDB(runMigrations: boolean) {
   const mem = new Database(":memory:");
