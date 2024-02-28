@@ -14,6 +14,7 @@ import Link from "next/link";
 import BookmarkOptions from "./BookmarkOptions";
 import { api } from "@/lib/trpc";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Star } from "lucide-react";
 
 function isStillCrawling(bookmark: ZBookmark) {
   return (
@@ -92,6 +93,13 @@ export default function LinkCard({
         "border-grey-100 border bg-gray-50 duration-300 ease-in hover:border-blue-300 hover:transition-all"
       }
     >
+      {bookmark.favourited && (
+        <Star
+          className="absolute m-1 size-8 rounded bg-gray-100 p-1"
+          color="#ebb434"
+          fill="#ebb434"
+        />
+      )}
       <Link href={link.url}>
         <ImageCardBanner src={isCrawling ? "/blur.avif" : image} />
       </Link>
