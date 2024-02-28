@@ -2,7 +2,7 @@
 
 import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-import { ZBookmark } from "@/lib/types/api/bookmarks";
+import { ZBookmark, ZBookmarkedLink } from "@/lib/types/api/bookmarks";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -14,18 +14,23 @@ import {
   Archive,
   Link,
   MoreHorizontal,
+  Pencil,
   RotateCw,
   Star,
   Tags,
   Trash2,
 } from "lucide-react";
 import { useTagModel } from "./TagModal";
+import { useState } from "react";
+import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
 
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const linkId = bookmark.id;
 
   const [_, setTagModalIsOpen, tagModal] = useTagModel(bookmark);
+
+  const [isTextEditorOpen, setTextEditorOpen] = useState(false);
 
   const invalidateBookmarksCache = api.useUtils().bookmarks.invalidate;
 
@@ -72,13 +77,27 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   return (
     <>
       {tagModal}
+      <BookmarkedTextEditor
+        bookmark={bookmark}
+        open={isTextEditorOpen}
+        setOpen={setTextEditorOpen}
+      />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost">
+          <Button
+            variant="ghost"
+            className="focus-visible:ring-0 focus-visible:ring-offset-0"
+          >
             <MoreHorizontal />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-fit">
+          {bookmark.content.type === "text" && (
+            <DropdownMenuItem onClick={() => setTextEditorOpen(true)}>
+              <Pencil className="mr-2 size-4" />
+              <span>Edit</span>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             onClick={() =>
               updateBookmarkMutator.mutate({
@@ -101,29 +120,36 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             <Archive className="mr-2 size-4" />
             <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => {
-              navigator.clipboard.writeText(bookmark.content.url);
-              toast({
-                description: "Link was added to your clipboard!",
-              });
-            }}
-          >
-            <Link className="mr-2 size-4" />
-            <span>Copy Link</span>
-          </DropdownMenuItem>
+          {bookmark.content.type === "link" && (
+            <DropdownMenuItem
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  (bookmark.content as ZBookmarkedLink).url,
+                );
+                toast({
+                  description: "Link was added to your clipboard!",
+                });
+              }}
+            >
+              <Link className="mr-2 size-4" />
+              <span>Copy Link</span>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={() => setTagModalIsOpen(true)}>
             <Tags className="mr-2 size-4" />
             <span>Edit Tags</span>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() =>
-              crawlBookmarkMutator.mutate({ bookmarkId: bookmark.id })
-            }
-          >
-            <RotateCw className="mr-2 size-4" />
-            <span>Refresh</span>
-          </DropdownMenuItem>
+
+          {bookmark.content.type === "link" && (
+            <DropdownMenuItem
+              onClick={() =>
+                crawlBookmarkMutator.mutate({ bookmarkId: bookmark.id })
+              }
+            >
+              <RotateCw className="mr-2 size-4" />
+              <span>Refresh</span>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             className="text-destructive"
             onClick={() =>

@@ -6,7 +6,7 @@
   "main": "index.ts",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "migrate": "ts-node migrate.ts",
+    "migrate": "tsx migrate.ts",
     "studio": "drizzle-kit studio"
   },
   "dependencies": {
@@ -14,7 +14,8 @@
     "@paralleldrive/cuid2": "^2.2.2",
     "better-sqlite3": "^9.4.3",
     "dotenv": "^16.4.1",
-    "drizzle-orm": "^0.29.4"
+    "drizzle-orm": "^0.29.4",
+    "tsx": "^4.7.1"
   },
   "devDependencies": {
     "@tsconfig/node21": "^21.0.1",

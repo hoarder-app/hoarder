@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import {
   ImageCard,
   ImageCardBanner,
@@ -13,50 +12,24 @@ import { ZBookmark } from "@/lib/types/api/bookmarks";
 import Link from "next/link";
 import BookmarkOptions from "./BookmarkOptions";
 import { api } from "@/lib/trpc";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Star } from "lucide-react";
+import { cn } from "@/lib/utils";
+import TagList from "./TagList";
 
 function isStillCrawling(bookmark: ZBookmark) {
   return (
+    bookmark.content.type == "link" &&
     !bookmark.content.crawledAt &&
     Date.now().valueOf() - bookmark.createdAt.valueOf() < 30 * 1000
   );
 }
 
-function TagList(bookmark: ZBookmark, stillCrawling: boolean) {
-  if (stillCrawling) {
-    return (
-      <ImageCardBody className="space-y-2">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-full" />
-      </ImageCardBody>
-    );
-  }
-  return (
-    <ImageCardBody className="flex h-full flex-wrap space-x-1 overflow-hidden">
-      {bookmark.tags.map((t) => (
-        <Link
-          className="flex h-full flex-col justify-end"
-          key={t.id}
-          href={`/dashboard/tags/${t.name}`}
-        >
-          <Badge
-            variant="default"
-            className="text-nowrap bg-gray-300 text-gray-500 hover:text-white"
-          >
-            #{t.name}
-          </Badge>
-        </Link>
-      ))}
-    </ImageCardBody>
-  );
-}
-
 export default function LinkCard({
   bookmark: initialData,
+  className,
 }: {
   bookmark: ZBookmark;
+  className: string;
 }) {
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {
@@ -78,6 +51,9 @@ export default function LinkCard({
     },
   );
   const link = bookmark.content;
+  if (link.type != "link") {
+    throw new Error("Unexpected bookmark type");
+  }
   const isCrawling = isStillCrawling(bookmark);
   const parsedUrl = new URL(link.url);
 
@@ -88,11 +64,7 @@ export default function LinkCard({
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P///38ACfsD/QVDRcoAAAAASUVORK5CYII=";
 
   return (
-    <ImageCard
-      className={
-        "border-grey-100 border bg-gray-50 duration-300 ease-in hover:border-blue-300 hover:transition-all"
-      }
-    >
+    <ImageCard className={cn(className, "row-span-2")}>
       {bookmark.favourited && (
         <Star
           className="absolute m-1 size-8 rounded bg-gray-100 p-1"
@@ -111,7 +83,9 @@ export default function LinkCard({
         </ImageCardTitle>
         {/* There's a hack here. Every tag has the full hight of the container itself. That why, when we enable flex-wrap,
         the overflowed don't show up. */}
-        {TagList(bookmark, isCrawling)}
+        <ImageCardBody className="flex h-full flex-wrap space-x-1 overflow-hidden">
+          <TagList bookmark={bookmark} loading={isCrawling} />
+        </ImageCardBody>
         <ImageCardFooter>
           <div className="flex justify-between text-gray-500">
             <div className="my-auto">

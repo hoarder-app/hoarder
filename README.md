@@ -6,7 +6,7 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 
 ## Features
 
-- 🔗 Bookmark links.
+- 🔗 Bookmark links and take simple notes.
 - ⬇️ Automatic fetching for link titles, descriptions and images.
 - ✨ AI-based (aka chatgpt) automatic tagging.
 - 🔖 Chrome plugin for quick bookmarking.
@@ -14,7 +14,7 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 - 💾 Self-hostable first.
 - [Planned] Archiving the content for offline reading.
 - [Planned] Full text search of all the content stored.
-- [Planned] Store raw notes and images.
+- [Planned] Store raw images.
 
 **⚠️ This app is under heavy development and it's far from stable.**
 

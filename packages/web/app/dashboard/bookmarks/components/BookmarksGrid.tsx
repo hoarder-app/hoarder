@@ -3,11 +3,18 @@
 import LinkCard from "./LinkCard";
 import { ZBookmark, ZGetBookmarksRequest } from "@/lib/types/api/bookmarks";
 import { api } from "@/lib/trpc";
+import TextCard from "./TextCard";
 
-function renderBookmark(bookmark: ZBookmark) {
+function renderBookmark(bookmark: ZBookmark, className: string) {
   switch (bookmark.content.type) {
     case "link":
-      return <LinkCard key={bookmark.id} bookmark={bookmark} />;
+      return (
+        <LinkCard key={bookmark.id} bookmark={bookmark} className={className} />
+      );
+    case "text":
+      return (
+        <TextCard key={bookmark.id} bookmark={bookmark} className={className} />
+      );
   }
 }
 
@@ -25,8 +32,13 @@ export default function BookmarksGrid({
     return <p>No bookmarks</p>;
   }
   return (
-    <div className="container grid grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-      {data.bookmarks.map((b) => renderBookmark(b))}
+    <div className="container grid grid-flow-row-dense grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      {data.bookmarks.map((b) =>
+        renderBookmark(
+          b,
+          "border-grey-100 border bg-gray-50 duration-300 ease-in hover:border-blue-300 hover:transition-all",
+        ),
+      )}
     </div>
   );
 }

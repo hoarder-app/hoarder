@@ -1,5 +1,5 @@
 import React from "react";
-import AddLink from "./components/AddLink";
+import AddBookmark from "./components/AddBookmark";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -14,7 +14,7 @@ export default function BookmarksLayout({
   return (
     <div className="flex h-full flex-col">
       <div>
-        <AddLink />
+        <AddBookmark />
       </div>
       <hr />
       <div className="my-4 flex-1">{children}</div>

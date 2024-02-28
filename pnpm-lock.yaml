@@ -157,6 +157,9 @@ importers:
       drizzle-orm:
         specifier: ^0.29.4
         version: 0.29.4(@types/better-sqlite3@7.6.9)(better-sqlite3@9.4.3)
+      tsx:
+        specifier: ^4.7.1
+        version: 4.7.1
     devDependencies:
       '@tsconfig/node21':
         specifier: ^21.0.1

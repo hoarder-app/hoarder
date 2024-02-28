@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -168,10 +167,8 @@ export default function TagModal({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Tags</DialogTitle>
-          <DialogDescription>
-            <TagEditor tags={tags} setTags={setTags} />
-          </DialogDescription>
         </DialogHeader>
+        <TagEditor tags={tags} setTags={setTags} />
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
             <Button type="button" variant="secondary">

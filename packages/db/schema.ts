@@ -125,6 +125,15 @@ export const bookmarkLinks = sqliteTable("bookmarkLinks", {
   crawledAt: integer("crawledAt", { mode: "timestamp" }),
 });
 
+export const bookmarkTexts = sqliteTable("bookmarkTexts", {
+  id: text("id")
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => createId())
+    .references(() => bookmarks.id, { onDelete: "cascade" }),
+  text: text("text"),
+});
+
 export const bookmarkTags = sqliteTable(
   "bookmarkTags",
   {
@@ -178,6 +187,10 @@ export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
   link: one(bookmarkLinks, {
     fields: [bookmarks.id],
     references: [bookmarkLinks.id],
+  }),
+  text: one(bookmarkTexts, {
+    fields: [bookmarks.id],
+    references: [bookmarkTexts.id],
   }),
   tagsOnBookmarks: many(tagsOnBookmarks),
 }));

@@ -12,8 +12,15 @@ export const zBookmarkedLinkSchema = z.object({
 });
 export type ZBookmarkedLink = z.infer<typeof zBookmarkedLinkSchema>;
 
+export const zBookmarkedTextSchema = z.object({
+  type: z.literal("text"),
+  text: z.string().max(2000),
+});
+export type ZBookmarkedText = z.infer<typeof zBookmarkedTextSchema>;
+
 export const zBookmarkContentSchema = z.discriminatedUnion("type", [
   zBookmarkedLinkSchema,
+  zBookmarkedTextSchema,
 ]);
 export type ZBookmarkContent = z.infer<typeof zBookmarkContentSchema>;
 
