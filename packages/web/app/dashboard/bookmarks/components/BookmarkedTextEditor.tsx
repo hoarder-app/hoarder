@@ -3,6 +3,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -83,15 +84,16 @@ export function BookmarkedTextEditor({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="pb-4">
-            {isNewBookmark ? "New Note" : "Edit Note"}
-          </DialogTitle>
-          <Textarea
-            value={noteText}
-            onChange={(e) => setNoteText(e.target.value)}
-            className="h-52 grow"
-          />
+          <DialogTitle>{isNewBookmark ? "New Note" : "Edit Note"}</DialogTitle>
+          <DialogDescription>
+            Write your note with markdown support
+          </DialogDescription>
         </DialogHeader>
+        <Textarea
+          value={noteText}
+          onChange={(e) => setNoteText(e.target.value)}
+          className="h-52 grow"
+        />
         <DialogFooter className="flex-shrink gap-1 sm:justify-end">
           <DialogClose asChild>
             <Button type="button" variant="secondary">

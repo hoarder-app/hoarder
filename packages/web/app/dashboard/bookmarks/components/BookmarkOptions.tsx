@@ -86,7 +86,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="px-1 focus-visible:ring-0 focus-visible:ring-offset-0"
           >
             <MoreHorizontal />
           </Button>

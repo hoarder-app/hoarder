@@ -42,6 +42,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.50.1",
+    "react-markdown": "^9.0.1",
     "server-only": "^0.0.1",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.1",
@@ -50,6 +51,7 @@
     "zustand": "^4.5.1"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.10",
     "@types/bcrypt": "^5.0.2",
     "@types/react": "^18",
     "@types/react-dom": "^18",
