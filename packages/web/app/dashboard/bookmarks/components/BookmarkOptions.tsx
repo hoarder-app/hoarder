@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Archive,
+  Link,
   MoreHorizontal,
   RotateCw,
   Star,
@@ -99,6 +100,17 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
           >
             <Archive className="mr-2 size-4" />
             <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              navigator.clipboard.writeText(bookmark.content.url);
+              toast({
+                description: "Link was added to your clipboard!",
+              });
+            }}
+          >
+            <Link className="mr-2 size-4" />
+            <span>Copy Link</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setTagModalIsOpen(true)}>
             <Tags className="mr-2 size-4" />
