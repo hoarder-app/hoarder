@@ -65,13 +65,6 @@ export default function LinkCard({
 
   return (
     <ImageCard className={cn(className, "row-span-2")}>
-      {bookmark.favourited && (
-        <Star
-          className="absolute m-1 size-8 rounded bg-gray-100 p-1"
-          color="#ebb434"
-          fill="#ebb434"
-        />
-      )}
       <Link href={link.url}>
         <ImageCardBanner src={isCrawling ? "/blur.avif" : image} />
       </Link>
@@ -93,7 +86,16 @@ export default function LinkCard({
                 {parsedUrl.host}
               </Link>
             </div>
-            <BookmarkOptions bookmark={bookmark} />
+            <div className="flex">
+              {bookmark.favourited && (
+                <Star
+                  className="m-1 size-8 rounded p-1"
+                  color="#ebb434"
+                  fill="#ebb434"
+                />
+              )}
+              <BookmarkOptions bookmark={bookmark} />
+            </div>
           </div>
         </ImageCardFooter>
       </ImageCardContent>
