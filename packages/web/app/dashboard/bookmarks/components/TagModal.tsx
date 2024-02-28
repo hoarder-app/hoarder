@@ -130,7 +130,7 @@ export default function TagModal({
       toast({
         description: "Tags has been updated!",
       });
-      bookmarkInvalidationFunction({ id: bookmark.id });
+      bookmarkInvalidationFunction({ bookmarkId: bookmark.id });
     },
     onError: () => {
       toast({
@@ -153,7 +153,7 @@ export default function TagModal({
     }
     for (const t of bookmark.tags) {
       if (!tags.has(t.name)) {
-        detach.push(t.id);
+        detach.push({ tagId: t.id });
       }
     }
     mutate({

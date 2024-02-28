@@ -1,6 +1,6 @@
 import { zSignUpSchema } from "@/lib/types/api/users";
 import { publicProcedure, router } from "../trpc";
-import { SqliteError, db } from "@hoarder/db";
+import { SqliteError } from "@hoarder/db";
 import { z } from "zod";
 import { hashPassword } from "@/server/auth";
 import { TRPCError } from "@trpc/server";
@@ -15,9 +15,9 @@ export const usersAppRouter = router({
         email: z.string(),
       }),
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
-        const result = await db
+        const result = await ctx.db
           .insert(users)
           .values({
             name: input.name,

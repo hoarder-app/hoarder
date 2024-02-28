@@ -1,3 +1,4 @@
+import { db } from "@hoarder/db";
 import serverConfig from "@hoarder/shared/config";
 import { TRPCError, initTRPC } from "@trpc/server";
 import { User } from "next-auth";
@@ -5,6 +6,7 @@ import superjson from "superjson";
 
 export type Context = {
   user: User | null;
+  db: typeof db;
 };
 
 // Avoid exporting the entire t-object

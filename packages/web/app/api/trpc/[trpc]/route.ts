@@ -2,6 +2,7 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "@/server/api/routers/_app";
 import { createContext } from "@/server/api/client";
 import { authenticateApiKey } from "@/server/auth";
+import { db } from "@hoarder/db";
 
 const handler = (req: Request) =>
   fetchRequestHandler({
@@ -23,7 +24,7 @@ const handler = (req: Request) =>
         const token = authorizationHeader.split(" ")[1];
         try {
           const user = await authenticateApiKey(token);
-          return { user };
+          return { user, db };
         } catch (e) {
           // Fallthrough to cookie-based auth
         }

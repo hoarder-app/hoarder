@@ -60,7 +60,7 @@ export default function LinkCard({
 }) {
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {
-      id: initialData.id,
+      bookmarkId: initialData.id,
     },
     {
       initialData,

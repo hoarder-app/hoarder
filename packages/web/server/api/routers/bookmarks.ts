@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { authedProcedure, router } from "../trpc";
+import { Context, authedProcedure, router } from "../trpc";
 import {
   ZBookmark,
   ZBookmarkContent,
@@ -10,7 +10,6 @@ import {
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "@/lib/types/api/bookmarks";
-import { db } from "@hoarder/db";
 import {
   bookmarkLinks,
   bookmarkTags,
@@ -19,20 +18,27 @@ import {
 } from "@hoarder/db/schema";
 import { LinkCrawlerQueue } from "@hoarder/shared/queues";
 import { TRPCError, experimental_trpcMiddleware } from "@trpc/server";
-import { User } from "next-auth";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { ZBookmarkTags } from "@/lib/types/api/tags";
 
+import { db as DONT_USE_db } from "@hoarder/db";
+
 const ensureBookmarkOwnership = experimental_trpcMiddleware<{
-  ctx: { user: User };
+  ctx: Context;
   input: { bookmarkId: string };
 }>().create(async (opts) => {
-  const bookmark = await db.query.bookmarks.findFirst({
+  const bookmark = await opts.ctx.db.query.bookmarks.findFirst({
     where: eq(bookmarks.id, opts.input.bookmarkId),
     columns: {
       userId: true,
     },
   });
+  if (!opts.ctx.user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "User is not authorized",
+    });
+  }
   if (!bookmark) {
     throw new TRPCError({
       code: "NOT_FOUND",
@@ -50,7 +56,7 @@ const ensureBookmarkOwnership = experimental_trpcMiddleware<{
 });
 
 async function dummyDrizzleReturnType() {
-  const x = await db.query.bookmarks.findFirst({
+  const x = await DONT_USE_db.query.bookmarks.findFirst({
     with: {
       tagsOnBookmarks: {
         with: {
@@ -95,37 +101,39 @@ export const bookmarksAppRouter = router({
     .mutation(async ({ input, ctx }) => {
       const { url } = input;
 
-      const bookmark = await db.transaction(async (tx): Promise<ZBookmark> => {
-        const bookmark = (
-          await tx
-            .insert(bookmarks)
-            .values({
-              userId: ctx.user.id,
-            })
-            .returning()
-        )[0];
+      const bookmark = await ctx.db.transaction(
+        async (tx): Promise<ZBookmark> => {
+          const bookmark = (
+            await tx
+              .insert(bookmarks)
+              .values({
+                userId: ctx.user.id,
+              })
+              .returning()
+          )[0];
 
-        const link = (
-          await tx
-            .insert(bookmarkLinks)
-            .values({
-              id: bookmark.id,
-              url,
-            })
-            .returning()
-        )[0];
+          const link = (
+            await tx
+              .insert(bookmarkLinks)
+              .values({
+                id: bookmark.id,
+                url,
+              })
+              .returning()
+          )[0];
 
-        const content: ZBookmarkContent = {
-          type: "link",
-          ...link,
-        };
+          const content: ZBookmarkContent = {
+            type: "link",
+            ...link,
+          };
 
-        return {
-          tags: [] as ZBookmarkTags[],
-          content,
-          ...bookmark,
-        };
-      });
+          return {
+            tags: [] as ZBookmarkTags[],
+            content,
+            ...bookmark,
+          };
+        },
+      );
 
       // Enqueue crawling request
       await LinkCrawlerQueue.add("crawl", {
@@ -140,7 +148,7 @@ export const bookmarksAppRouter = router({
     .output(zBareBookmarkSchema)
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      const res = await db
+      const res = await ctx.db
         .update(bookmarks)
         .set({
           archived: input.archived,
@@ -166,7 +174,7 @@ export const bookmarksAppRouter = router({
     .input(z.object({ bookmarkId: z.string() }))
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      await db
+      await ctx.db
         .delete(bookmarks)
         .where(
           and(
@@ -186,15 +194,16 @@ export const bookmarksAppRouter = router({
   getBookmark: authedProcedure
     .input(
       z.object({
-        id: z.string(),
+        bookmarkId: z.string(),
       }),
     )
     .output(zBookmarkSchema)
+    .use(ensureBookmarkOwnership)
     .query(async ({ input, ctx }) => {
-      const bookmark = await db.query.bookmarks.findFirst({
+      const bookmark = await ctx.db.query.bookmarks.findFirst({
         where: and(
           eq(bookmarks.userId, ctx.user.id),
-          eq(bookmarks.id, input.id),
+          eq(bookmarks.id, input.bookmarkId),
         ),
         with: {
           tagsOnBookmarks: {
@@ -218,7 +227,7 @@ export const bookmarksAppRouter = router({
     .input(zGetBookmarksRequestSchema)
     .output(zGetBookmarksResponseSchema)
     .query(async ({ input, ctx }) => {
-      const results = await db.query.bookmarks.findMany({
+      const results = await ctx.db.query.bookmarks.findMany({
         where: and(
           eq(bookmarks.userId, ctx.user.id),
           input.archived !== undefined
@@ -253,22 +262,24 @@ export const bookmarksAppRouter = router({
             tag: z.string(),
           }),
         ),
-        detach: z.array(z.string()),
+        // Detach by tag ids
+        detach: z.array(z.object({ tagId: z.string() })),
       }),
     )
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      await db.transaction(async (tx) => {
+      await ctx.db.transaction(async (tx) => {
         // Detaches
         if (input.detach.length > 0) {
-          await db
-            .delete(tagsOnBookmarks)
-            .where(
-              and(
-                eq(tagsOnBookmarks.bookmarkId, input.bookmarkId),
-                inArray(tagsOnBookmarks.tagId, input.detach),
+          await ctx.db.delete(tagsOnBookmarks).where(
+            and(
+              eq(tagsOnBookmarks.bookmarkId, input.bookmarkId),
+              inArray(
+                tagsOnBookmarks.tagId,
+                input.detach.map((t) => t.tagId),
               ),
-            );
+            ),
+          );
         }
 
         if (input.attach.length == 0) {
@@ -284,7 +295,7 @@ export const bookmarksAppRouter = router({
           }));
 
         if (toBeCreatedTags.length > 0) {
-          await db
+          await ctx.db
             .insert(bookmarkTags)
             .values(toBeCreatedTags)
             .onConflictDoNothing()
@@ -292,7 +303,7 @@ export const bookmarksAppRouter = router({
         }
 
         const allIds = (
-          await db.query.bookmarkTags.findMany({
+          await ctx.db.query.bookmarkTags.findMany({
             where: and(
               eq(bookmarkTags.userId, ctx.user.id),
               inArray(
@@ -306,7 +317,7 @@ export const bookmarksAppRouter = router({
           })
         ).map((t) => t.id);
 
-        await db
+        await ctx.db
           .insert(tagsOnBookmarks)
           .values(
             allIds.map((i) => ({

@@ -1,6 +1,5 @@
 import { generateApiKey } from "@/server/auth";
 import { authedProcedure, router } from "../trpc";
-import { db } from "@hoarder/db";
 import { z } from "zod";
 import { apiKeys } from "@hoarder/db/schema";
 import { eq, and } from "drizzle-orm";
@@ -30,7 +29,7 @@ export const apiKeysAppRouter = router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      await db
+      await ctx.db
         .delete(apiKeys)
         .where(and(eq(apiKeys.id, input.id), eq(apiKeys.userId, ctx.user.id)));
     }),
@@ -48,7 +47,7 @@ export const apiKeysAppRouter = router({
       }),
     )
     .query(async ({ ctx }) => {
-      const resp = await db.query.apiKeys.findMany({
+      const resp = await ctx.db.query.apiKeys.findMany({
         where: eq(apiKeys.userId, ctx.user.id),
         columns: {
           id: true,
