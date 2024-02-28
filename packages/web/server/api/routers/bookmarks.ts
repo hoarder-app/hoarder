@@ -17,7 +17,7 @@ import {
   bookmarks,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
-import { LinkCrawlerQueue } from "@hoarder/shared/queues";
+import { LinkCrawlerQueue, OpenAIQueue } from "@hoarder/shared/queues";
 import { TRPCError, experimental_trpcMiddleware } from "@trpc/server";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { ZBookmarkTags } from "@/lib/types/api/tags";
@@ -157,10 +157,21 @@ export const bookmarksAppRouter = router({
       );
 
       // Enqueue crawling request
-      await LinkCrawlerQueue.add("crawl", {
-        bookmarkId: bookmark.id,
-      });
-
+      switch (bookmark.content.type) {
+        case "link": {
+          // The crawling job triggers openai when it's done
+          await LinkCrawlerQueue.add("crawl", {
+            bookmarkId: bookmark.id,
+          });
+          break;
+        }
+        case "text": {
+          await OpenAIQueue.add("openai", {
+            bookmarkId: bookmark.id,
+          });
+          break;
+        }
+      }
       return bookmark;
     }),
 
