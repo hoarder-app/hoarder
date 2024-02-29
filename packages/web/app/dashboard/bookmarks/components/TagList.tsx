@@ -28,10 +28,10 @@ export default function TagList({
           href={`/dashboard/tags/${t.name}`}
         >
           <Badge
-            variant="default"
-            className="text-nowrap bg-gray-300 text-gray-500 hover:text-white"
+            variant="outline"
+            className="text-nowrap hover:bg-foreground hover:text-secondary"
           >
-            #{t.name}
+            {t.name}
           </Badge>
         </Link>
       ))}
