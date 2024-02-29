@@ -1,3 +1,4 @@
+import { Separator } from "@/components/ui/separator";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@hoarder/db";
 import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
@@ -8,13 +9,10 @@ import { redirect } from "next/navigation";
 function TagPill({ name, count }: { name: string; count: number }) {
   return (
     <Link
-      className="mx-1.5 my-1 flex rounded-lg bg-gray-600 hover:bg-gray-700"
+      className="flex gap-2 rounded-md border border-gray-200 bg-white px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
       href={`/dashboard/tags/${name}`}
     >
-      <span className="p-1.5 text-gray-200">{name}</span>
-      <span className="rounded-r-lg bg-gray-300 p-1.5 text-gray-600">
-        {count}
-      </span>
+      {name} <Separator orientation="vertical" /> {count}
     </Link>
   );
 }
@@ -52,7 +50,7 @@ export default async function TagsPage() {
     <div className="container mt-2 space-y-3">
       <span className="text-2xl">All Tags</span>
       <hr />
-      <div className="flex flex-wrap">{tagPill}</div>
+      <div className="flex flex-wrap gap-3">{tagPill}</div>
     </div>
   );
 }
