@@ -46,10 +46,11 @@ export class OpenAiWorker {
 
 const PROMPT_BASE = `
 I'm building a read-it-later app and I need your help with automatic tagging.
-Please analyze the following text and suggest relevant tags that describe its key themes, topics, and main ideas.
+Please analyze the text after the sentence "CONTENT:" and suggest relevant tags that describe its key themes, topics, and main ideas.
 Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. If it's a famous website
 you may also include a tag for the website. Tags should be lowercases and don't contain spaces. If the tag is not generic enough, don't
-include it. Aim for 3-5 tags. You must respond in JSON with the key "tags" and the value is list of tags.
+include it. Aim for 3-5 tags. If there are no good tags, don't emit any. You must respond in JSON with the key "tags" and the value is list of tags.
+CONTENT:
 `;
 
 function buildPrompt(
@@ -63,7 +64,6 @@ function buildPrompt(
     }
     return `
 ${PROMPT_BASE}
----
 URL: ${bookmark.link.url}
 Description: ${bookmark.link.description}
   `;
@@ -73,8 +73,7 @@ Description: ${bookmark.link.description}
     // TODO: Ensure that the content doesn't exceed the context length of openai
     return `
 ${PROMPT_BASE}
----
-Content: ${bookmark.text.text}
+${bookmark.text.text}
   `;
   }
 
@@ -130,6 +129,9 @@ async function inferTags(
 }
 
 async function createTags(tags: string[], userId: string) {
+  if (tags.length == 0) {
+    return [];
+  }
   await db
     .insert(bookmarkTags)
     .values(
@@ -154,6 +156,9 @@ async function createTags(tags: string[], userId: string) {
 }
 
 async function connectTags(bookmarkId: string, tagIds: string[]) {
+  if (tagIds.length == 0) {
+    return;
+  }
   await db.insert(tagsOnBookmarks).values(
     tagIds.map((tagId) => ({
       tagId,
