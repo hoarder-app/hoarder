@@ -58,7 +58,6 @@ export function BookmarkedTextEditor({
           description: "Note updated!",
         });
         setOpen(false);
-        setNoteText("");
       },
       onError: () => {
         toast({ description: "Something went wrong", variant: "destructive" });

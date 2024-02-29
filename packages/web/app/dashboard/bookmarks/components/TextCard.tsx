@@ -32,8 +32,6 @@ export default function TextCard({
     throw new Error("Unexpected bookmark type");
   }
 
-  const numWords = bookmarkedText.text.split(" ").length;
-
   return (
     <>
       <BookmarkedTextViewer
@@ -45,15 +43,14 @@ export default function TextCard({
         className={cn(
           className,
           cn(
-            "flex flex-col gap-y-1 overflow-hidden rounded-lg p-2 shadow-md",
-            numWords > 12 ? "row-span-2 h-96" : "row-span-1 h-40",
+            "flex h-min max-h-96 flex-col gap-y-1 overflow-hidden rounded-lg p-2 shadow-md",
           ),
         )}
       >
         <Markdown className="prose grow overflow-hidden">
           {bookmarkedText.text}
         </Markdown>
-        <div className="flex flex-none flex-wrap gap-1 overflow-hidden">
+        <div className="mt-4 flex flex-none flex-wrap gap-1 overflow-hidden">
           <TagList bookmark={bookmark} />
         </div>
         <div className="flex w-full justify-between">

@@ -1,4 +1,3 @@
-import { ZBookmark } from "@/lib/types/api/bookmarks";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import Markdown from "react-markdown";
 

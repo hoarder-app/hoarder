@@ -32,11 +32,11 @@ export default function BookmarksGrid({
     return <p>No bookmarks</p>;
   }
   return (
-    <div className="container grid grid-flow-row-dense grid-cols-1 gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+    <div className="transition-all duration-300 columns-1 gap-4 md:columns-2 lg:columns-3">
       {data.bookmarks.map((b) =>
         renderBookmark(
           b,
-          "border-grey-100 border bg-gray-50 duration-300 ease-in hover:border-blue-300 hover:transition-all",
+          "border-grey-100 border bg-gray-50 duration-300 ease-in hover:border-blue-300 hover:transition-all mb-4",
         ),
       )}
     </div>
