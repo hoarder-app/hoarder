@@ -32,12 +32,16 @@ function AddLink() {
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      url: "",
+    },
   });
 
   const invalidateBookmarksCache = api.useUtils().bookmarks.invalidate;
   const createBookmarkMutator = api.bookmarks.createBookmark.useMutation({
     onSuccess: () => {
       invalidateBookmarksCache();
+      form.reset();
     },
     onError: () => {
       toast({ description: "Something went wrong", variant: "destructive" });
