@@ -70,7 +70,7 @@ export default function LinkCard({
       </Link>
       <ImageCardContent>
         <ImageCardTitle>
-          <Link className="line-clamp-2" href={link.url}>
+          <Link className="line-clamp-2" href={link.url} target="_blank">
             {link?.title ?? parsedUrl.host}
           </Link>
         </ImageCardTitle>
@@ -82,7 +82,11 @@ export default function LinkCard({
         <ImageCardFooter>
           <div className="flex justify-between text-gray-500">
             <div className="my-auto">
-              <Link className="line-clamp-1 hover:text-black" href={link.url}>
+              <Link
+                className="line-clamp-1 hover:text-black"
+                href={link.url}
+                target="_blank"
+              >
                 {parsedUrl.host}
               </Link>
             </div>
