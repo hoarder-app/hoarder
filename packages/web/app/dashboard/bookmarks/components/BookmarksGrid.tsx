@@ -32,7 +32,7 @@ export default function BookmarksGrid({
     return <p>No bookmarks</p>;
   }
   return (
-    <div className="transition-all duration-300 columns-1 gap-4 md:columns-2 lg:columns-3">
+    <div className="columns-1 gap-4 transition-all duration-300 md:columns-2 lg:columns-3">
       {data.bookmarks.map((b) =>
         renderBookmark(
           b,

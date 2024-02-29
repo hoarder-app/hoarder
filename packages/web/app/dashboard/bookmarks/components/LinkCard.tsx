@@ -13,7 +13,6 @@ import Link from "next/link";
 import BookmarkOptions from "./BookmarkOptions";
 import { api } from "@/lib/trpc";
 import { Star } from "lucide-react";
-import { cn } from "@/lib/utils";
 import TagList from "./TagList";
 
 function isStillCrawling(bookmark: ZBookmark) {
@@ -64,7 +63,7 @@ export default function LinkCard({
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P///38ACfsD/QVDRcoAAAAASUVORK5CYII=";
 
   return (
-    <ImageCard className={cn(className, "row-span-2")}>
+    <ImageCard className={className}>
       <Link href={link.url}>
         <ImageCardBanner src={isCrawling ? "/blur.avif" : image} />
       </Link>
