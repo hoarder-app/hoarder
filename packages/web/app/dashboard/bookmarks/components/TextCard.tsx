@@ -16,7 +16,7 @@ export default function TextCard({
   className,
 }: {
   bookmark: ZBookmark;
-  className: string;
+  className?: string;
 }) {
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {

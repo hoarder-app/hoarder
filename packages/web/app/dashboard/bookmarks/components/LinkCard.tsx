@@ -28,7 +28,7 @@ export default function LinkCard({
   className,
 }: {
   bookmark: ZBookmark;
-  className: string;
+  className?: string;
 }) {
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {
