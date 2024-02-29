@@ -1,7 +1,8 @@
-import { Badge } from "@/components/ui/badge";
+import { badgeVariants } from "@/components/ui/badge";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ZBookmark } from "@/lib/types/api/bookmarks";
+import { cn } from "@/lib/utils";
 
 export default function TagList({
   bookmark,
@@ -22,18 +23,17 @@ export default function TagList({
   return (
     <>
       {bookmark.tags.map((t) => (
-        <Link
-          className="flex h-full flex-col justify-end"
-          key={t.id}
-          href={`/dashboard/tags/${t.name}`}
-        >
-          <Badge
-            variant="outline"
-            className="text-nowrap hover:bg-foreground hover:text-secondary"
+        <div key={t.id} className="flex h-full flex-col justify-end">
+          <Link
+            className={cn(
+              badgeVariants({ variant: "outline" }),
+              "hover:bg-foreground hover:text-secondary text-nowrap",
+            )}
+            href={`/dashboard/tags/${t.name}`}
           >
             {t.name}
-          </Badge>
-        </Link>
+          </Link>
+        </div>
       ))}
     </>
   );
