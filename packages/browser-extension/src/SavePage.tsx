@@ -22,7 +22,7 @@ export default function SavePage({ settings }: { settings: Settings }) {
 
       try {
         const resp = await fetch(
-          `${settings.address}/api/trpc/bookmarks.bookmarkLink`,
+          `${settings.address}/api/trpc/bookmarks.createBookmark`,
           {
             method: "POST",
             headers: {
@@ -30,8 +30,10 @@ export default function SavePage({ settings }: { settings: Settings }) {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              type: "link",
-              url: currentUrl,
+              json: {
+                type: "link",
+                url: currentUrl,
+              },
             }),
           },
         );

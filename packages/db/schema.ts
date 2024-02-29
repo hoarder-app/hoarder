@@ -220,12 +220,9 @@ export const tagsOnBookmarksRelations = relations(
   }),
 );
 
-export const apiKeyRelations = relations(
-  apiKeys,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [apiKeys.userId],
-      references: [users.id],
-    }),
+export const apiKeyRelations = relations(apiKeys, ({ one }) => ({
+  user: one(users, {
+    fields: [apiKeys.userId],
+    references: [users.id],
   }),
-);
+}));
