@@ -7,11 +7,11 @@ import path from "path";
 import { Logger } from "drizzle-orm";
 
 class MyLogger implements Logger {
-  logQuery(query: string, params: unknown[]): void {
-    let line = `Query: ${query}`;
-    if (process.env.NODE_ENV !== "production") {
-      line += ` , params: ${JSON.stringify(params)}`;
+  logQuery(query: string, _params: unknown[]): void {
+    if (process.env.NODE_ENV === "production") {
+      return;
     }
+    const line = `Query: ${query}`;
     console.log(line);
   }
 }
