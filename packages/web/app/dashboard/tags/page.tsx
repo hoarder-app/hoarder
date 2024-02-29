@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 function TagPill({ name, count }: { name: string; count: number }) {
   return (
     <Link
-      className="flex gap-2 rounded-md border border-gray-200 bg-white px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
+      className="text-foreground hover:bg-foreground hover:text-background flex gap-2 rounded-md border border-gray-200 bg-white px-2 py-1"
       href={`/dashboard/tags/${name}`}
     >
       {name} <Separator orientation="vertical" /> {count}

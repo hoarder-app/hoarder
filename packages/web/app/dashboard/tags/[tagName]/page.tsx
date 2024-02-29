@@ -45,8 +45,9 @@ export default async function TagPage({
   const bookmarks = await api.bookmarks.getBookmarks(query);
 
   return (
-    <div className="flex flex-col">
-      <span className="container py-4 text-2xl">#{params.tagName}</span>
+    <div className="container flex flex-col gap-3">
+      <span className="pt-4 text-2xl">{params.tagName}</span>
+      <hr />
       <BookmarksGrid query={query} bookmarks={bookmarks.bookmarks} />
     </div>
   );
