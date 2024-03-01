@@ -173,6 +173,9 @@ importers:
 
   packages/shared:
     dependencies:
+      meilisearch:
+        specifier: ^0.37.0
+        version: 0.37.0
       winston:
         specifier: ^3.11.0
         version: 3.11.0
@@ -272,6 +275,9 @@ importers:
       lucide-react:
         specifier: ^0.322.0
         version: 0.322.0(react@18.2.0)
+      meilisearch:
+        specifier: ^0.37.0
+        version: 0.37.0
       next:
         specifier: 14.1.0
         version: 14.1.0(react-dom@18.2.0)(react@18.2.0)
@@ -4036,6 +4042,14 @@ packages:
       luxon: 3.4.4
     dev: false
 
+  /cross-fetch@3.1.8:
+    resolution: {integrity: sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==}
+    dependencies:
+      node-fetch: 2.7.0
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   /cross-fetch@4.0.0:
     resolution: {integrity: sha512-e4a5N8lVvuLgAWgnCrLr2PP0YyDOTHa9H/Rj54dirp61qXnNq46m82bRhNqIA5VccJtWBvPTFRV3TtvHUKPB1g==}
     dependencies:
@@ -6631,6 +6645,14 @@ packages:
     resolution: {integrity: sha512-0H44vDimn51F0YwvxSJSm0eCDOJTRlmN0R1yBh4HLj9wiV1Dn0QoXGbvFAWj2hSItVTlCmBF1hqKlIyUBVFLPg==}
     dependencies:
       '@types/mdast': 4.0.3
+    dev: false
+
+  /meilisearch@0.37.0:
+    resolution: {integrity: sha512-LdbK6JmRghCawrmWKJSEQF0OiE82md+YqJGE/U2JcCD8ROwlhTx0KM6NX4rQt0u0VpV0QZVG9umYiu3CSSIJAQ==}
+    dependencies:
+      cross-fetch: 3.1.8
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   /memoize-one@6.0.0:

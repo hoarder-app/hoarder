@@ -29,6 +29,12 @@ const serverConfig = {
     browserExecutablePath: process.env.BROWSER_EXECUTABLE_PATH, // If not set, the system's browser will be used
     browserUserDataDir: process.env.BROWSER_USER_DATA_DIR,
   },
+  meilisearch: process.env.MEILI_ADDR
+    ? {
+        address: process.env.MEILI_ADDR || "http://127.0.0.1:7700",
+        key: process.env.MEILI_MASTER_KEY || "",
+      }
+    : undefined,
   logLevel: process.env.LOG_LEVEL || "debug",
   demoMode: (process.env.DEMO_MODE ?? "false") == "true",
 };

@@ -3,6 +3,7 @@ import logger from "@hoarder/shared/logger";
 import serverConfig from "@hoarder/shared/config";
 import {
   OpenAIQueue,
+  SearchIndexingQueue,
   ZOpenAIRequest,
   queueConnectionDetails,
   zOpenAIRequestSchema,
@@ -159,13 +160,16 @@ async function connectTags(bookmarkId: string, tagIds: string[]) {
   if (tagIds.length == 0) {
     return;
   }
-  await db.insert(tagsOnBookmarks).values(
-    tagIds.map((tagId) => ({
-      tagId,
-      bookmarkId,
-      attachedBy: "ai" as const,
-    })),
-  );
+  await db
+    .insert(tagsOnBookmarks)
+    .values(
+      tagIds.map((tagId) => ({
+        tagId,
+        bookmarkId,
+        attachedBy: "ai" as const,
+      })),
+    )
+    .onConflictDoNothing();
 }
 
 async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
@@ -203,4 +207,10 @@ async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
 
   const tagIds = await createTags(tags, bookmark.userId);
   await connectTags(bookmarkId, tagIds);
+
+  // Update the search index
+  SearchIndexingQueue.add("search_indexing", {
+    bookmarkId,
+    type: "index",
+  });
 }

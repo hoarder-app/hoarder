@@ -41,6 +41,7 @@
     "drizzle-orm": "^0.29.4",
     "install": "^0.13.0",
     "lucide-react": "^0.322.0",
+    "meilisearch": "^0.37.0",
     "next": "14.1.0",
     "next-auth": "^4.24.5",
     "prettier": "^3.2.5",

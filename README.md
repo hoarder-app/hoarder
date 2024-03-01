@@ -13,8 +13,8 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 - 🔖 Chrome plugin for quick bookmarking.
 - 📱 iOS shortcut for bookmarking content from the phone. A minimal mobile app might come later.
 - 💾 Self-hostable first.
+- 🔎 Full text search of all the content stored.
 - [Planned] Archiving the content for offline reading.
-- [Planned] Full text search of all the content stored.
 - [Planned] Store raw images.
 
 **⚠️ This app is under heavy development and it's far from stable.**
@@ -37,6 +37,8 @@ The app is configured with env variables.
 | DATABASE_URL  | Not set   | The path for the sqlite database.                                                                                                                                                                                                                 |
 | REDIS_HOST     | localhost | The address of redis used by background jobs                                                                                                                                                                                                      |
 | REDIS_POST     | 6379      | The port of redis used by background jobs                                                                                                                                                                                                         |
+| MEILI_ADDR     | Not set      | The address of meilisearch. If not set, Search will be disabled. |
+| MEILI_MASTER_KEY     | Not set      | The master key configured for meili. Not needed in development. |
 
 ## Security Considerations
 
@@ -62,6 +64,7 @@ To mitigate those risks, you can do one of the following:
 - [Puppeteer](https://pptr.dev/) for crawling the bookmarks.
 - [OpenAI](https://openai.com/) because AI is so hot right now.
 - [BullMQ](https://bullmq.io) for scheduling the background jobs.
+- [Meilisearch](https://meilisearch.com) for the full content search.
 
 ## Why did I build it?
 

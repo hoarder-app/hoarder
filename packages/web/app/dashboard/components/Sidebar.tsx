@@ -1,4 +1,12 @@
-import { Archive, Star, Tag, Home, PackageOpen, Settings } from "lucide-react";
+import {
+  Archive,
+  Star,
+  Tag,
+  Home,
+  PackageOpen,
+  Settings,
+  Search,
+} from "lucide-react";
 import { redirect } from "next/navigation";
 import SidebarItem from "./SidebarItem";
 import { getServerAuthSession } from "@/server/auth";
@@ -6,6 +14,7 @@ import Link from "next/link";
 import SidebarProfileOptions from "./SidebarProfileOptions";
 import { Separator } from "@/components/ui/separator";
 import AllLists from "./AllLists";
+import serverConfig from "@hoarder/shared/config";
 
 export default async function Sidebar() {
   const session = await getServerAuthSession();
@@ -34,6 +43,13 @@ export default async function Sidebar() {
             name="Favourites"
             path="/dashboard/bookmarks/favourites"
           />
+          {serverConfig.meilisearch && (
+            <SidebarItem
+              logo={<Search />}
+              name="Search"
+              path="/dashboard/search"
+            />
+          )}
           <SidebarItem
             logo={<Archive />}
             name="Archive"

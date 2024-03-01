@@ -2,6 +2,7 @@ import logger from "@hoarder/shared/logger";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
+  SearchIndexingQueue,
   ZCrawlLinkRequest,
   queueConnectionDetails,
   zCrawlLinkRequestSchema,
@@ -30,6 +31,7 @@ import assert from "assert";
 import serverConfig from "@hoarder/shared/config";
 import { bookmarkLinks } from "@hoarder/db/schema";
 import { eq } from "drizzle-orm";
+import { SearchIndexingWorker } from "./search";
 
 const metascraperParser = metascraper([
   metascraperReadability(),
@@ -171,5 +173,11 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   // Enqueue openai job
   OpenAIQueue.add("openai", {
     bookmarkId,
+  });
+
+  // Update the search index
+  SearchIndexingQueue.add("search_indexing", {
+    bookmarkId,
+    type: "index",
   });
 }

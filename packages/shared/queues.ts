@@ -27,3 +27,25 @@ export type ZOpenAIRequest = z.infer<typeof zOpenAIRequestSchema>;
 export const OpenAIQueue = new Queue<ZOpenAIRequest, void>("openai_queue", {
   connection: queueConnectionDetails,
 });
+
+// Search Indexing Worker
+export const zSearchIndexingRequestSchema = z.object({
+  bookmarkId: z.string(),
+  type: z.enum(["index", "delete"]),
+});
+export type ZSearchIndexingRequest = z.infer<
+  typeof zSearchIndexingRequestSchema
+>;
+export const SearchIndexingQueue = new Queue<ZSearchIndexingRequest, void>(
+  "searching_indexing",
+  {
+    connection: queueConnectionDetails,
+    defaultJobOptions: {
+      attempts: 5,
+      backoff: {
+        type: "exponential",
+        delay: 1000,
+      },
+    },
+  },
+);

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Context, authedProcedure, router } from "../trpc";
+import { getSearchIdxClient } from "@hoarder/shared/search";
 import {
   ZBookmark,
   ZBookmarkContent,
@@ -17,7 +18,11 @@ import {
   bookmarks,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
-import { LinkCrawlerQueue, OpenAIQueue } from "@hoarder/shared/queues";
+import {
+  LinkCrawlerQueue,
+  OpenAIQueue,
+  SearchIndexingQueue,
+} from "@hoarder/shared/queues";
 import { TRPCError, experimental_trpcMiddleware } from "@trpc/server";
 import { and, desc, eq, inArray } from "drizzle-orm";
 import { ZBookmarkTags } from "@/lib/types/api/tags";
@@ -172,6 +177,10 @@ export const bookmarksAppRouter = router({
           break;
         }
       }
+      SearchIndexingQueue.add("search_indexing", {
+        bookmarkId: bookmark.id,
+        type: "index",
+      });
       return bookmark;
     }),
 
@@ -224,6 +233,10 @@ export const bookmarksAppRouter = router({
           message: "Bookmark not found",
         });
       }
+      SearchIndexingQueue.add("search_indexing", {
+        bookmarkId: input.bookmarkId,
+        type: "index",
+      });
     }),
 
   deleteBookmark: authedProcedure
@@ -238,6 +251,10 @@ export const bookmarksAppRouter = router({
             eq(bookmarks.id, input.bookmarkId),
           ),
         );
+      SearchIndexingQueue.add("search_indexing", {
+        bookmarkId: input.bookmarkId,
+        type: "delete",
+      });
     }),
   recrawlBookmark: authedProcedure
     .input(z.object({ bookmarkId: z.string() }))
@@ -279,6 +296,49 @@ export const bookmarksAppRouter = router({
       }
 
       return toZodSchema(bookmark);
+    }),
+  searchBookmarks: authedProcedure
+    .input(
+      z.object({
+        text: z.string(),
+      }),
+    )
+    .output(zGetBookmarksResponseSchema)
+    .query(async ({ input, ctx }) => {
+      const client = await getSearchIdxClient();
+      if (!client) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Search functionality is not configured",
+        });
+      }
+      const resp = await client.search(input.text, {
+        filter: [`userId = '${ctx.user.id}'`],
+      });
+
+      if (resp.hits.length == 0) {
+        return { bookmarks: [] };
+      }
+      const results = await ctx.db.query.bookmarks.findMany({
+        where: and(
+          eq(bookmarks.userId, ctx.user.id),
+          inArray(
+            bookmarks.id,
+            resp.hits.map((h) => h.id),
+          ),
+        ),
+        with: {
+          tagsOnBookmarks: {
+            with: {
+              tag: true,
+            },
+          },
+          link: true,
+          text: true,
+        },
+      });
+
+      return { bookmarks: results.map(toZodSchema) };
     }),
   getBookmarks: authedProcedure
     .input(zGetBookmarksRequestSchema)
