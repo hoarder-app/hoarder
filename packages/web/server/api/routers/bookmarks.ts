@@ -284,6 +284,9 @@ export const bookmarksAppRouter = router({
     .input(zGetBookmarksRequestSchema)
     .output(zGetBookmarksResponseSchema)
     .query(async ({ input, ctx }) => {
+      if (input.ids && input.ids.length == 0) {
+        return { bookmarks: [] };
+      }
       const results = await ctx.db.query.bookmarks.findMany({
         where: and(
           eq(bookmarks.userId, ctx.user.id),

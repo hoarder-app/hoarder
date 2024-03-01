@@ -172,6 +172,43 @@ export const tagsOnBookmarks = sqliteTable(
   }),
 );
 
+export const bookmarkLists = sqliteTable(
+  "bookmarkLists",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    name: text("name").notNull(),
+    icon: text("icon").notNull(),
+    createdAt: createdAtField(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (bl) => ({
+    unq: unique().on(bl.name, bl.userId),
+  }),
+);
+
+export const bookmarksInLists = sqliteTable(
+  "bookmarksInLists",
+  {
+    bookmarkId: text("bookmarkId")
+      .notNull()
+      .references(() => bookmarks.id, { onDelete: "cascade" }),
+    listId: text("listId")
+      .notNull()
+      .references(() => bookmarkLists.id, { onDelete: "cascade" }),
+    addedAt: integer("addedAt", { mode: "timestamp" }).$defaultFn(
+      () => new Date(),
+    ),
+  },
+  (tb) => ({
+    pk: primaryKey({ columns: [tb.bookmarkId, tb.listId] }),
+  }),
+);
+
 // Relations
 
 export const userRelations = relations(users, ({ many }) => ({
@@ -193,6 +230,7 @@ export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
     references: [bookmarkTexts.id],
   }),
   tagsOnBookmarks: many(tagsOnBookmarks),
+  bookmarksInLists: many(bookmarksInLists),
 }));
 
 export const bookmarkTagsRelations = relations(
@@ -226,3 +264,28 @@ export const apiKeyRelations = relations(apiKeys, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export const bookmarkListsRelations = relations(
+  bookmarkLists,
+  ({ one, many }) => ({
+    bookmarksInLists: many(bookmarksInLists),
+    user: one(users, {
+      fields: [bookmarkLists.userId],
+      references: [users.id],
+    }),
+  }),
+);
+
+export const bookmarksInListsRelations = relations(
+  bookmarksInLists,
+  ({ one }) => ({
+    bookmark: one(bookmarks, {
+      fields: [bookmarksInLists.bookmarkId],
+      references: [bookmarks.id],
+    }),
+    list: one(bookmarkLists, {
+      fields: [bookmarksInLists.listId],
+      references: [bookmarkLists.id],
+    }),
+  }),
+);

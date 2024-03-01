@@ -13,6 +13,7 @@ import {
 import {
   Archive,
   Link,
+  List,
   MoreHorizontal,
   Pencil,
   RotateCw,
@@ -23,12 +24,16 @@ import {
 import { useTagModel } from "./TagModal";
 import { useState } from "react";
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
+import { useAddToListModal } from "./AddToListModal";
 
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const linkId = bookmark.id;
 
   const [_, setTagModalIsOpen, tagModal] = useTagModel(bookmark);
+  const [_2, setAddToListModalOpen, addToListModal] = useAddToListModal(
+    bookmark.id,
+  );
 
   const [isTextEditorOpen, setTextEditorOpen] = useState(false);
 
@@ -77,6 +82,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   return (
     <>
       {tagModal}
+      {addToListModal}
       <BookmarkedTextEditor
         bookmark={bookmark}
         open={isTextEditorOpen}
@@ -138,6 +144,11 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
           <DropdownMenuItem onClick={() => setTagModalIsOpen(true)}>
             <Tags className="mr-2 size-4" />
             <span>Edit Tags</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem onClick={() => setAddToListModalOpen(true)}>
+            <List className="mr-2 size-4" />
+            <span>Add to List</span>
           </DropdownMenuItem>
 
           {bookmark.content.type === "link" && (

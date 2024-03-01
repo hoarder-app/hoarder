@@ -4,6 +4,8 @@ import SidebarItem from "./SidebarItem";
 import { getServerAuthSession } from "@/server/auth";
 import Link from "next/link";
 import SidebarProfileOptions from "./SidebarProfileOptions";
+import { Separator } from "@/components/ui/separator";
+import AllLists from "./AllLists";
 
 export default async function Sidebar() {
   const session = await getServerAuthSession();
@@ -12,16 +14,16 @@ export default async function Sidebar() {
   }
 
   return (
-    <aside className="flex h-full w-60 flex-col border-r p-4">
+    <aside className="flex h-screen w-60 flex-col gap-5 border-r p-4">
       <Link href={"/dashboard/bookmarks"}>
-        <div className="mb-5 flex items-center rounded-lg px-1 text-slate-900">
+        <div className="flex items-center rounded-lg px-1 text-slate-900">
           <PackageOpen />
           <span className="ml-2 text-base font-semibold">Hoarder</span>
         </div>
       </Link>
       <hr />
       <div>
-        <ul className="mt-5 space-y-2 text-sm font-medium">
+        <ul className="space-y-2 text-sm font-medium">
           <SidebarItem
             logo={<Home />}
             name="Home"
@@ -45,6 +47,8 @@ export default async function Sidebar() {
           />
         </ul>
       </div>
+      <Separator />
+      <AllLists />
       <div className="mt-auto flex justify-between justify-self-end">
         <div className="my-auto"> {session.user.name} </div>
         <SidebarProfileOptions />

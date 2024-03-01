@@ -8,6 +8,7 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 
 - 🔗 Bookmark links and take simple notes.
 - ⬇️ Automatic fetching for link titles, descriptions and images.
+- 📋 Sort your bookmarks into lists.
 - ✨ AI-based (aka chatgpt) automatic tagging.
 - 🔖 Chrome plugin for quick bookmarking.
 - 📱 iOS shortcut for bookmarking content from the phone. A minimal mobile app might come later.

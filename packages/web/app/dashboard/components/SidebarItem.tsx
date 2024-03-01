@@ -8,20 +8,23 @@ export default function SidebarItem({
   name,
   logo,
   path,
+  className,
 }: {
   name: string;
   logo: React.ReactNode;
   path: string;
+  className?: string;
 }) {
   const currentPath = usePathname();
   return (
     <li
       className={cn(
-        "rounded-lg  hover:bg-slate-100",
+        "rounded-lg px-3 py-2 hover:bg-slate-100",
         path == currentPath ? "bg-gray-50" : "",
+        className,
       )}
     >
-      <Link href={path} className="flex w-full space-x-2 px-3 py-2">
+      <Link href={path} className="flex w-full gap-x-2">
         {logo}
         <span className="my-auto"> {name} </span>
       </Link>
