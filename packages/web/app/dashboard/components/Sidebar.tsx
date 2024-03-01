@@ -6,6 +6,7 @@ import {
   PackageOpen,
   Settings,
   Search,
+  Shield,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import SidebarItem from "./SidebarItem";
@@ -61,6 +62,13 @@ export default async function Sidebar() {
             name="Settings"
             path="/dashboard/settings"
           />
+          {session.user.role == "admin" && (
+            <SidebarItem
+              logo={<Shield />}
+              name="Admin"
+              path="/dashboard/admin"
+            />
+          )}
         </ul>
       </div>
       <Separator />

@@ -2,7 +2,6 @@ import { users } from "@hoarder/db/schema";
 import { getInMemoryDB } from "@hoarder/db/drizzle";
 import { appRouter } from "@/server/api/routers/_app";
 import { createCallerFactory } from "@/server/api/trpc";
-import { beforeEach } from "vitest";
 
 export function getTestDB() {
   return getInMemoryDB(true);
@@ -31,6 +30,7 @@ export function getApiCaller(db: TestDB, userId: string) {
   return createCaller({
     user: {
       id: userId,
+      role: "user",
     },
     db,
   });

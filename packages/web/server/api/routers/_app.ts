@@ -1,4 +1,5 @@
 import { router } from "../trpc";
+import { adminAppRouter } from "./admin";
 import { apiKeysAppRouter } from "./apiKeys";
 import { bookmarksAppRouter } from "./bookmarks";
 import { listsAppRouter } from "./lists";
@@ -8,6 +9,7 @@ export const appRouter = router({
   apiKeys: apiKeysAppRouter,
   users: usersAppRouter,
   lists: listsAppRouter,
+  admin: adminAppRouter,
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;
