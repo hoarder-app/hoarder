@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Settings } from "./settings";
+import Spinner from "./Spinner";
 
 export default function SavePage({ settings }: { settings: Settings }) {
   const [loading, setLoading] = useState(true);
@@ -52,12 +53,16 @@ export default function SavePage({ settings }: { settings: Settings }) {
   }, [settings]);
 
   if (loading) {
-    return <div>Loading ...</div>;
+    return (
+      <div className="m-auto">
+        <Spinner />
+      </div>
+    );
   }
 
   if (error) {
     return <div className="text-red-500">{error} ...</div>;
   }
 
-  return <div>SAVED!</div>;
+  return <div className="m-auto text-lg">Bookmark Saved</div>;
 }
