@@ -6,12 +6,20 @@ import { Toaster } from "@/components/ui/toaster";
 import Providers from "@/lib/providers";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { getServerAuthSession } from "@/server/auth";
+import type { Viewport } from "next";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Hoarder",
   description: "Your AI powered second brain",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default async function RootLayout({
