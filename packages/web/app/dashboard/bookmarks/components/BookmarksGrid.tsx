@@ -5,15 +5,32 @@ import { ZBookmark, ZGetBookmarksRequest } from "@/lib/types/api/bookmarks";
 import { api } from "@/lib/trpc";
 import TextCard from "./TextCard";
 import { Slot } from "@radix-ui/react-slot";
+import Masonry from 'react-masonry-css';
+import resolveConfig from 'tailwindcss/resolveConfig'
+import tailwindConfig from '@/tailwind.config'
+import { useMemo } from "react";
+
+function getBreakpointConfig() {
+  const fullConfig = resolveConfig(tailwindConfig)
+
+  const breakpointColumnsObj: {[key: number]: number, default: number} = {
+    default: 3,
+  };
+  breakpointColumnsObj[parseInt(fullConfig.theme.screens.lg)] = 2;
+  breakpointColumnsObj[parseInt(fullConfig.theme.screens.md)] = 1;
+  breakpointColumnsObj[parseInt(fullConfig.theme.screens.sm)] = 1;
+  return breakpointColumnsObj;
+}
+
 
 function renderBookmark(bookmark: ZBookmark) {
   let comp;
   switch (bookmark.content.type) {
     case "link":
-      comp = <LinkCard key={bookmark.id} bookmark={bookmark} />;
+      comp = <LinkCard bookmark={bookmark} />;
       break;
     case "text":
-      comp = <TextCard key={bookmark.id} bookmark={bookmark} />;
+      comp = <TextCard bookmark={bookmark} />;
       break;
   }
   return (
@@ -36,12 +53,13 @@ export default function BookmarksGrid({
   const { data } = api.bookmarks.getBookmarks.useQuery(query, {
     initialData: { bookmarks: initialBookmarks },
   });
+  const breakpointConfig = useMemo(() => getBreakpointConfig(), []);
   if (data.bookmarks.length == 0) {
     return <p>No bookmarks</p>;
   }
   return (
-    <div className="columns-1 gap-4 transition-all duration-300 md:columns-2 lg:columns-3">
+    <Masonry className="flex gap-4" breakpointCols={breakpointConfig} >
       {data.bookmarks.map((b) => renderBookmark(b))}
-    </div>
+    </Masonry>
   );
 }
