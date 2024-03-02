@@ -15,10 +15,11 @@ export default async function TagPage({
   if (!session) {
     redirect("/");
   }
+  const tagName = decodeURIComponent(params.tagName);
   const tag = await db.query.bookmarkTags.findFirst({
     where: and(
       eq(bookmarkTags.userId, session.user.id),
-      eq(bookmarkTags.name, params.tagName),
+      eq(bookmarkTags.name, tagName),
     ),
     columns: {
       id: true,
@@ -46,7 +47,7 @@ export default async function TagPage({
 
   return (
     <div className="container flex flex-col gap-3">
-      <span className="pt-4 text-2xl">{params.tagName}</span>
+      <span className="pt-4 text-2xl">{tagName}</span>
       <hr />
       <BookmarksGrid query={query} bookmarks={bookmarks.bookmarks} />
     </div>
