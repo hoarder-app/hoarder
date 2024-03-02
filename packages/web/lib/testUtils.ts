@@ -25,13 +25,15 @@ export async function seedUsers(db: TestDB) {
     .returning();
 }
 
-export function getApiCaller(db: TestDB, userId: string) {
+export function getApiCaller(db: TestDB, userId?: string) {
   const createCaller = createCallerFactory(appRouter);
   return createCaller({
-    user: {
-      id: userId,
-      role: "user",
-    },
+    user: userId
+      ? {
+          id: userId,
+          role: "user",
+        }
+      : null,
     db,
   });
 }
@@ -40,20 +42,29 @@ export type APICallerType = ReturnType<typeof getApiCaller>;
 
 export interface CustomTestContext {
   apiCallers: APICallerType[];
+  unauthedAPICaller: APICallerType;
   db: TestDB;
 }
 
-export async function buildTestContext(): Promise<CustomTestContext> {
+export async function buildTestContext(
+  seedDB: boolean,
+): Promise<CustomTestContext> {
   const db = getTestDB();
-  const users = await seedUsers(db);
+  let users: Awaited<ReturnType<typeof seedUsers>> = [];
+  if (seedDB) {
+    users = await seedUsers(db);
+  }
   const callers = users.map((u) => getApiCaller(db, u.id));
 
   return {
     apiCallers: callers,
+    unauthedAPICaller: getApiCaller(db),
     db,
   };
 }
 
-export const defaultBeforeEach = async (context: object) => {
-  Object.assign(context, await buildTestContext());
-};
+export function defaultBeforeEach(seedDB: boolean = true) {
+  return async (context: object) => {
+    Object.assign(context, await buildTestContext(seedDB));
+  };
+}

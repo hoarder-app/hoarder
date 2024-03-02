@@ -1,7 +1,7 @@
 import { CustomTestContext, defaultBeforeEach } from "@/lib/testUtils";
 import { expect, describe, test, beforeEach, assert } from "vitest";
 
-beforeEach<CustomTestContext>(defaultBeforeEach);
+beforeEach<CustomTestContext>(defaultBeforeEach(true));
 
 describe("Bookmark Routes", () => {
   test<CustomTestContext>("create bookmark", async ({ apiCallers }) => {

@@ -5,6 +5,7 @@ import { z } from "zod";
 import { hashPassword } from "@/server/auth";
 import { TRPCError } from "@trpc/server";
 import { users } from "@hoarder/db/schema";
+import { count } from "drizzle-orm";
 
 export const usersAppRouter = router({
   create: publicProcedure
@@ -13,9 +14,13 @@ export const usersAppRouter = router({
       z.object({
         name: z.string(),
         email: z.string(),
+        role: z.enum(["user", "admin"]).nullable(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      const [{ count: userCount }] = await ctx.db
+        .select({ count: count() })
+        .from(users);
       try {
         const result = await ctx.db
           .insert(users)
@@ -23,10 +28,12 @@ export const usersAppRouter = router({
             name: input.name,
             email: input.email,
             password: await hashPassword(input.password),
+            role: userCount == 0 ? "admin" : "user",
           })
           .returning({
             name: users.name,
             email: users.email,
+            role: users.role,
           });
         return result[0];
       } catch (e) {
