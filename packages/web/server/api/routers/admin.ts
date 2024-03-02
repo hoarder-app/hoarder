@@ -1,6 +1,5 @@
-import { authedProcedure, router } from "../trpc";
+import { adminProcedure, router } from "../trpc";
 import { z } from "zod";
-import { TRPCError } from "@trpc/server";
 import { count } from "drizzle-orm";
 import { bookmarks, users } from "@hoarder/db/schema";
 import {
@@ -8,14 +7,6 @@ import {
   OpenAIQueue,
   SearchIndexingQueue,
 } from "@hoarder/shared/queues";
-
-const adminProcedure = authedProcedure.use(function isAdmin(opts) {
-  const user = opts.ctx.user;
-  if (user.role != "admin") {
-    throw new TRPCError({ code: "FORBIDDEN" });
-  }
-  return opts.next(opts);
-});
 
 export const adminAppRouter = router({
   stats: adminProcedure

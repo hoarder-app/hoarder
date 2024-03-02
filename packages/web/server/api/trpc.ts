@@ -43,3 +43,11 @@ export const authedProcedure = procedure.use(function isAuthed(opts) {
     },
   });
 });
+
+export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
+  const user = opts.ctx.user;
+  if (user.role != "admin") {
+    throw new TRPCError({ code: "FORBIDDEN" });
+  }
+  return opts.next(opts);
+});

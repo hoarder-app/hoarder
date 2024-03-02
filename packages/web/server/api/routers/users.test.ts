@@ -1,5 +1,9 @@
-import { CustomTestContext, defaultBeforeEach } from "@/lib/testUtils";
-import { expect, describe, test, beforeEach } from "vitest";
+import {
+  CustomTestContext,
+  defaultBeforeEach,
+  getApiCaller,
+} from "@/lib/testUtils";
+import { expect, describe, test, beforeEach, assert } from "vitest";
 
 beforeEach<CustomTestContext>(defaultBeforeEach(false));
 
@@ -53,5 +57,43 @@ describe("User Routes", () => {
         confirmPassword: "pass1234",
       }),
     ).rejects.toThrow(/Email is already taken/);
+  });
+
+  test<CustomTestContext>("privacy checks", async ({
+    db,
+    unauthedAPICaller,
+  }) => {
+    const adminUser = await unauthedAPICaller.users.create({
+      name: "Test User",
+      email: "test123@test.com",
+      password: "pass1234",
+      confirmPassword: "pass1234",
+    });
+    const [user1, user2] = await Promise.all(
+      ["test1234@test.com", "test12345@test.com"].map((e) =>
+        unauthedAPICaller.users.create({
+          name: "Test User",
+          email: e,
+          password: "pass1234",
+          confirmPassword: "pass1234",
+        }),
+      ),
+    );
+
+    assert(adminUser.role == "admin");
+    assert(user1.role == "user");
+    assert(user2.role == "user");
+
+    const user2Caller = getApiCaller(db, user2.id);
+
+    // A normal user can't delete other users
+    await expect(() =>
+      user2Caller.users.delete({
+        userId: user1.id,
+      }),
+    ).rejects.toThrow(/FORBIDDEN/);
+
+    // A normal user can't list all users
+    await expect(() => user2Caller.users.list()).rejects.toThrow(/FORBIDDEN/);
   });
 });
