@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import LoadingSpinner from "@/components/ui/spinner";
 import { api } from "@/lib/trpc";
 import { ZBookmarkList } from "@/lib/types/api/lists";
 import { keepPreviousData } from "@tanstack/react-query";
@@ -35,14 +34,13 @@ export default function AllListsView({
   initialData: ZBookmarkList[];
 }) {
   const { setOpen: setIsNewListModalOpen } = useNewListModal();
-  const { data: lists } = api.lists.list.useQuery(undefined, {
+  let { data: lists } = api.lists.list.useQuery(undefined, {
     initialData: { lists: initialData },
     placeholderData: keepPreviousData,
   });
 
-  if (!lists) {
-    return <LoadingSpinner />;
-  }
+  // TODO: This seems to be a bug in react query
+  lists ||= { lists: initialData };
 
   return (
     <div className="flex flex-col flex-wrap gap-2 md:flex-row">

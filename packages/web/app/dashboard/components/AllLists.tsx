@@ -2,17 +2,21 @@
 
 import { api } from "@/lib/trpc";
 import SidebarItem from "./SidebarItem";
-import LoadingSpinner from "@/components/ui/spinner";
 import NewListModal, { useNewListModal } from "./NewListModal";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { ZBookmarkList } from "@/lib/types/api/lists";
 
-export default function AllLists({initialData}: {initialData: {lists: ZBookmarkList[]}}) {
-  const { data: lists } = api.lists.list.useQuery(undefined, {
+export default function AllLists({
+  initialData,
+}: {
+  initialData: { lists: ZBookmarkList[] };
+}) {
+  let { data: lists } = api.lists.list.useQuery(undefined, {
     initialData,
   });
-
+  // TODO: This seems to be a bug in react query
+  lists ||= initialData;
   const { setOpen } = useNewListModal();
 
   return (

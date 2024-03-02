@@ -5,15 +5,15 @@ import { ZBookmark, ZGetBookmarksRequest } from "@/lib/types/api/bookmarks";
 import { api } from "@/lib/trpc";
 import TextCard from "./TextCard";
 import { Slot } from "@radix-ui/react-slot";
-import Masonry from 'react-masonry-css';
-import resolveConfig from 'tailwindcss/resolveConfig'
-import tailwindConfig from '@/tailwind.config'
+import Masonry from "react-masonry-css";
+import resolveConfig from "tailwindcss/resolveConfig";
+import tailwindConfig from "@/tailwind.config";
 import { useMemo } from "react";
 
 function getBreakpointConfig() {
-  const fullConfig = resolveConfig(tailwindConfig)
+  const fullConfig = resolveConfig(tailwindConfig);
 
-  const breakpointColumnsObj: {[key: number]: number, default: number} = {
+  const breakpointColumnsObj: { [key: number]: number; default: number } = {
     default: 3,
   };
   breakpointColumnsObj[parseInt(fullConfig.theme.screens.lg)] = 2;
@@ -21,7 +21,6 @@ function getBreakpointConfig() {
   breakpointColumnsObj[parseInt(fullConfig.theme.screens.sm)] = 1;
   return breakpointColumnsObj;
 }
-
 
 function renderBookmark(bookmark: ZBookmark) {
   let comp;
@@ -58,7 +57,7 @@ export default function BookmarksGrid({
     return <p>No bookmarks</p>;
   }
   return (
-    <Masonry className="flex gap-4" breakpointCols={breakpointConfig} >
+    <Masonry className="flex gap-4" breakpointCols={breakpointConfig}>
       {data.bookmarks.map((b) => renderBookmark(b))}
     </Masonry>
   );
