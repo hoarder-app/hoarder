@@ -26,6 +26,12 @@ export default function AllLists() {
         </Link>
       </li>
       <SidebarItem
+        logo={<span className="text-lg">📋</span>}
+        name="All Lists"
+        path={`/dashboard/lists`}
+        className="py-0.5"
+      />
+      <SidebarItem
         logo={<span className="text-lg">⭐️</span>}
         name="Favourties"
         path={`/dashboard/favourites`}
