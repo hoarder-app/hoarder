@@ -7,12 +7,15 @@ import SidebarProfileOptions from "./SidebarProfileOptions";
 import { Separator } from "@/components/ui/separator";
 import AllLists from "./AllLists";
 import serverConfig from "@hoarder/shared/config";
+import { api } from "@/server/api/client";
 
 export default async function Sidebar() {
   const session = await getServerAuthSession();
   if (!session) {
     redirect("/");
   }
+
+  const lists = await api.lists.list();
 
   return (
     <aside className="flex h-screen w-60 flex-col gap-5 border-r p-4">
@@ -53,7 +56,7 @@ export default async function Sidebar() {
         </ul>
       </div>
       <Separator />
-      <AllLists />
+      <AllLists initialData={lists} />
       <div className="mt-auto flex justify-between justify-self-end">
         <div className="my-auto"> {session.user.name} </div>
         <SidebarProfileOptions />

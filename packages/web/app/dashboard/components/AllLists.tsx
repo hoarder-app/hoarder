@@ -6,15 +6,14 @@ import LoadingSpinner from "@/components/ui/spinner";
 import NewListModal, { useNewListModal } from "./NewListModal";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { ZBookmarkList } from "@/lib/types/api/lists";
 
-export default function AllLists() {
-  const { data: lists } = api.lists.list.useQuery();
+export default function AllLists({initialData}: {initialData: {lists: ZBookmarkList[]}}) {
+  const { data: lists } = api.lists.list.useQuery(undefined, {
+    initialData,
+  });
 
   const { setOpen } = useNewListModal();
-
-  if (!lists) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <ul className="max-h-full gap-y-2 overflow-auto text-sm font-medium">
