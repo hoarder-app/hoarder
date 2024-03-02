@@ -1,10 +1,13 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/spinner";
 import { api } from "@/lib/trpc";
 import { ZBookmarkList } from "@/lib/types/api/lists";
 import { keepPreviousData } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
 import Link from "next/link";
+import { useNewListModal } from "../../components/NewListModal";
 
 function ListItem({
   name,
@@ -31,6 +34,7 @@ export default function AllListsView({
 }: {
   initialData: ZBookmarkList[];
 }) {
+  const { setOpen: setIsNewListModalOpen } = useNewListModal();
   const { data: lists } = api.lists.list.useQuery(undefined, {
     initialData: { lists: initialData },
     placeholderData: keepPreviousData,
@@ -41,7 +45,14 @@ export default function AllListsView({
   }
 
   return (
-    <div className="flex flex-col gap-2 md:flex-row">
+    <div className="flex flex-col flex-wrap gap-2 md:flex-row">
+      <Button
+        className="my-auto flex h-full"
+        onClick={() => setIsNewListModalOpen(true)}
+      >
+        <Plus />
+        <span className="my-auto">New List</span>
+      </Button>
       <ListItem name="Favourites" icon="⭐️" path={`/dashboard/favourites`} />
       <ListItem name="Archive" icon="🗄️" path={`/dashboard/archive`} />
       {lists.lists.map((l) => (

@@ -102,7 +102,7 @@ export default function NewListModal() {
             })}
           >
             <DialogHeader>
-              <DialogTitle>Create List</DialogTitle>
+              <DialogTitle>New List</DialogTitle>
             </DialogHeader>
             <div className="flex w-full gap-2 py-4">
               <FormField
