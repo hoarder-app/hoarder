@@ -36,6 +36,13 @@
       "when": 1709339866036,
       "tag": "0004_skinny_vengeance",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1709341990430,
+      "tag": "0005_quiet_gunslinger",
+      "breakpoints": true
     }
   ]
 }

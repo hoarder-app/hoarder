@@ -82,7 +82,7 @@ export const apiKeys = sqliteTable(
       .notNull()
       .primaryKey()
       .$defaultFn(() => createId()),
-    name: text("name").notNull().unique(),
+    name: text("name").notNull(),
     createdAt: createdAtField(),
     keyId: text("keyId").notNull().unique(),
     keyHash: text("keyHash").notNull(),
