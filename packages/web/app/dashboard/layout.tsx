@@ -8,11 +8,11 @@ export default async function Dashboard({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-screen w-screen flex-col sm:flex-row">
+    <div className="flex min-h-screen w-screen flex-col sm:h-screen sm:flex-row">
       <div className="hidden flex-none sm:flex">
         <Sidebar />
       </div>
-      <main className="flex-1 overflow-y-auto bg-gray-100">
+      <main className="flex-1 bg-gray-100 sm:overflow-y-auto">
         <div className="block w-full sm:hidden">
           <MobileSidebar />
           <Separator />
