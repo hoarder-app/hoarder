@@ -12,6 +12,10 @@ export default function AllLists() {
 
   const { setOpen } = useNewListModal();
 
+  if (!lists) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <ul className="max-h-full gap-y-2 overflow-auto text-sm font-medium">
       <NewListModal />
@@ -21,20 +25,16 @@ export default function AllLists() {
           <Plus />
         </Link>
       </li>
-      {lists && lists.lists.length == 0 && <li>No lists</li>}
-      {lists ? (
-        lists.lists.map((l) => (
-          <SidebarItem
-            key={l.id}
-            logo={<span className="text-lg"> {l.icon}</span>}
-            name={l.name}
-            path={`/dashboard/lists/${l.id}`}
-            className="py-0.5"
-          />
-        ))
-      ) : (
-        <LoadingSpinner />
-      )}
+      {lists.lists.length == 0 && <li>No lists</li>}
+      {lists.lists.map((l) => (
+        <SidebarItem
+          key={l.id}
+          logo={<span className="text-lg"> {l.icon}</span>}
+          name={l.name}
+          path={`/dashboard/lists/${l.id}`}
+          className="py-0.5"
+        />
+      ))}
     </ul>
   );
 }
