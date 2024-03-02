@@ -13,7 +13,7 @@ export default function AllLists() {
   const { setOpen } = useNewListModal();
 
   return (
-    <ul className="max-h-full gap-2 overflow-scroll text-sm font-medium">
+    <ul className="max-h-full gap-y-2 overflow-auto text-sm font-medium">
       <NewListModal />
       <li className="flex justify-between pb-2 font-bold">
         <p>Lists</p>

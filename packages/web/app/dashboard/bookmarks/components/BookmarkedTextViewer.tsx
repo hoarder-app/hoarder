@@ -12,7 +12,7 @@ export function BookmarkedTextViewer({
 }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-h-[75%] overflow-scroll">
+      <DialogContent className="max-h-[75%] overflow-auto">
         <Markdown className="prose">{content}</Markdown>
       </DialogContent>
     </Dialog>
