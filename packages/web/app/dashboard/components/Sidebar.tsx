@@ -1,13 +1,4 @@
-import {
-  Archive,
-  Star,
-  Tag,
-  Home,
-  PackageOpen,
-  Settings,
-  Search,
-  Shield,
-} from "lucide-react";
+import { Tag, Home, PackageOpen, Settings, Search, Shield } from "lucide-react";
 import { redirect } from "next/navigation";
 import SidebarItem from "./SidebarItem";
 import { getServerAuthSession } from "@/server/auth";
@@ -39,11 +30,6 @@ export default async function Sidebar() {
             name="Home"
             path="/dashboard/bookmarks"
           />
-          <SidebarItem
-            logo={<Star />}
-            name="Favourites"
-            path="/dashboard/bookmarks/favourites"
-          />
           {serverConfig.meilisearch && (
             <SidebarItem
               logo={<Search />}
@@ -51,11 +37,6 @@ export default async function Sidebar() {
               path="/dashboard/search"
             />
           )}
-          <SidebarItem
-            logo={<Archive />}
-            name="Archive"
-            path="/dashboard/bookmarks/archive"
-          />
           <SidebarItem logo={<Tag />} name="Tags" path="/dashboard/tags" />
           <SidebarItem
             logo={<Settings />}

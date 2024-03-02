@@ -25,7 +25,18 @@ export default function AllLists() {
           <Plus />
         </Link>
       </li>
-      {lists.lists.length == 0 && <li>No lists</li>}
+      <SidebarItem
+        logo={<span className="text-lg">⭐️</span>}
+        name="Favourties"
+        path={`/dashboard/favourites`}
+        className="py-0.5"
+      />
+      <SidebarItem
+        logo={<span className="text-lg">🗄️</span>}
+        name="Archive"
+        path={`/dashboard/archive`}
+        className="py-0.5"
+      />
       {lists.lists.map((l) => (
         <SidebarItem
           key={l.id}

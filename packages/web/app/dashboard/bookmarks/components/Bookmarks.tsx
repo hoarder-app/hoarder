@@ -8,7 +8,8 @@ export default async function Bookmarks({
   favourited,
   archived,
   title,
-}: ZGetBookmarksRequest & { title: string }) {
+  showDivider,
+}: ZGetBookmarksRequest & { title: string; showDivider?: boolean }) {
   const session = await getServerAuthSession();
   if (!session) {
     redirect("/");
@@ -22,11 +23,10 @@ export default async function Bookmarks({
   const bookmarks = await api.bookmarks.getBookmarks(query);
 
   return (
-    <>
-      <div className="container pb-4 text-2xl">{title}</div>
-      <div className="container">
-        <BookmarksGrid query={query} bookmarks={bookmarks.bookmarks} />
-      </div>
-    </>
+    <div className="container flex flex-col gap-3">
+      <div className="text-2xl">{title}</div>
+      {showDivider && <hr />}
+      <BookmarksGrid query={query} bookmarks={bookmarks.bookmarks} />
+    </div>
   );
 }
