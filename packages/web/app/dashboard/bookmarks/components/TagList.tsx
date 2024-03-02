@@ -13,8 +13,7 @@ export default function TagList({
 }) {
   if (loading) {
     return (
-      <div className="space-y-2">
-        <Skeleton className="h-4 w-full" />
+      <div className="flex w-full flex-col justify-end space-y-2 p-2">
         <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-full" />
       </div>

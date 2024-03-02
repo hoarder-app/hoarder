@@ -19,6 +19,26 @@ const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
 });
 
+async function attemptMarkTaggingStatus(
+  jobData: object | undefined,
+  status: "success" | "failure",
+) {
+  if (!jobData) {
+    return;
+  }
+  try {
+    const request = zOpenAIRequestSchema.parse(jobData);
+    await db
+      .update(bookmarks)
+      .set({
+        taggingStatus: status,
+      })
+      .where(eq(bookmarks.id, request.bookmarkId));
+  } catch (e) {
+    console.log(`Something went wrong when marking the tagging status: ${e}`);
+  }
+}
+
 export class OpenAiWorker {
   static async build() {
     logger.info("Starting openai worker ...");
@@ -31,14 +51,16 @@ export class OpenAiWorker {
       },
     );
 
-    worker.on("completed", (job) => {
+    worker.on("completed", async (job) => {
       const jobId = job?.id || "unknown";
       logger.info(`[openai][${jobId}] Completed successfully`);
+      await attemptMarkTaggingStatus(job?.data, "success");
     });
 
-    worker.on("failed", (job, error) => {
+    worker.on("failed", async (job, error) => {
       const jobId = job?.id || "unknown";
       logger.error(`[openai][${jobId}] openai job failed: ${error}`);
+      await attemptMarkTaggingStatus(job?.data, "failure");
     });
 
     return worker;
@@ -58,9 +80,9 @@ function buildPrompt(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
 ) {
   if (bookmark.link) {
-    if (!bookmark.link.description) {
+    if (!bookmark.link.description && !bookmark.link.content) {
       throw new Error(
-        `No description found for link "${bookmark.id}". Skipping ...`,
+        `No content found for link "${bookmark.id}". Skipping ...`,
       );
     }
 
@@ -75,7 +97,7 @@ function buildPrompt(
     return `
 ${PROMPT_BASE}
 URL: ${bookmark.link.url}
-Description: ${bookmark.link.description}
+Description: ${bookmark.link.description || ""}
 Content: ${content || ""}
   `;
   }

@@ -29,6 +29,7 @@ export const zBareBookmarkSchema = z.object({
   createdAt: z.date(),
   archived: z.boolean(),
   favourited: z.boolean(),
+  taggingStatus: z.enum(["success", "failure", "pending"]).nullable(),
 });
 
 export const zBookmarkSchema = zBareBookmarkSchema.merge(

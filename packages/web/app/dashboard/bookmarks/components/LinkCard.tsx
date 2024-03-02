@@ -23,6 +23,17 @@ function isStillCrawling(bookmark: ZBookmark) {
   );
 }
 
+function isStillTagging(bookmark: ZBookmark) {
+  return (
+    bookmark.taggingStatus == "pending" &&
+    Date.now().valueOf() - bookmark.createdAt.valueOf() < 30 * 1000
+  );
+}
+
+function isStillLoading(bookmark: ZBookmark) {
+  return isStillTagging(bookmark) || isStillCrawling(bookmark);
+}
+
 export default function LinkCard({
   bookmark: initialData,
   className,
@@ -41,8 +52,8 @@ export default function LinkCard({
         if (!data) {
           return false;
         }
-        // If the link is not crawled and
-        if (isStillCrawling(data)) {
+        // If the link is not crawled or not tagged
+        if (isStillLoading(data)) {
           return 1000;
         }
         return false;
@@ -53,7 +64,6 @@ export default function LinkCard({
   if (link.type != "link") {
     throw new Error("Unexpected bookmark type");
   }
-  const isCrawling = isStillCrawling(bookmark);
   const parsedUrl = new URL(link.url);
 
   // A dummy white pixel for when there's no image.
@@ -65,7 +75,9 @@ export default function LinkCard({
   return (
     <ImageCard className={className}>
       <Link href={link.url}>
-        <ImageCardBanner src={isCrawling ? "/blur.avif" : image} />
+        <ImageCardBanner
+          src={isStillCrawling(bookmark) ? "/blur.avif" : image}
+        />
       </Link>
       <ImageCardContent>
         <ImageCardTitle>
@@ -76,7 +88,7 @@ export default function LinkCard({
         {/* There's a hack here. Every tag has the full hight of the container itself. That why, when we enable flex-wrap,
         the overflowed don't show up. */}
         <ImageCardBody className="flex h-full flex-wrap space-x-1 overflow-hidden">
-          <TagList bookmark={bookmark} loading={isCrawling} />
+          <TagList bookmark={bookmark} loading={isStillTagging(bookmark)} />
         </ImageCardBody>
         <ImageCardFooter>
           <div className="flex justify-between text-gray-500">

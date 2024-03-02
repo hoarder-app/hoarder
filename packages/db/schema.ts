@@ -108,6 +108,9 @@ export const bookmarks = sqliteTable("bookmarks", {
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  taggingStatus: text("taggingStatus", {
+    enum: ["pending", "failure", "success"],
+  }).default("pending"),
 });
 
 export const bookmarkLinks = sqliteTable("bookmarkLinks", {

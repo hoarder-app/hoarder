@@ -11,6 +11,13 @@ import { useState } from "react";
 import { BookmarkedTextViewer } from "./BookmarkedTextViewer";
 import { Button } from "@/components/ui/button";
 
+function isStillTagging(bookmark: ZBookmark) {
+  return (
+    bookmark.taggingStatus == "pending" &&
+    Date.now().valueOf() - bookmark.createdAt.valueOf() < 30 * 1000
+  );
+}
+
 export default function TextCard({
   bookmark: initialData,
   className,
@@ -24,6 +31,16 @@ export default function TextCard({
     },
     {
       initialData,
+      refetchInterval: (query) => {
+        const data = query.state.data;
+        if (!data) {
+          return false;
+        }
+        if (isStillTagging(data)) {
+          return 1000;
+        }
+        return false;
+      },
     },
   );
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
@@ -51,7 +68,7 @@ export default function TextCard({
           {bookmarkedText.text}
         </Markdown>
         <div className="mt-4 flex flex-none flex-wrap gap-1 overflow-hidden">
-          <TagList bookmark={bookmark} />
+          <TagList bookmark={bookmark} loading={isStillTagging(bookmark)} />
         </div>
         <div className="flex w-full justify-between">
           <div />
