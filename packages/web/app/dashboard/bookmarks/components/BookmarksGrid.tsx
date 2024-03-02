@@ -17,7 +17,7 @@ function renderBookmark(bookmark: ZBookmark) {
       break;
   }
   return (
-    <Slot className="border-grey-100 mb-4 border bg-gray-50 duration-300 ease-in hover:border-blue-300 hover:transition-all">
+    <Slot key={bookmark.id} className="border-grey-100 mb-4 border bg-gray-50 duration-300 ease-in hover:border-blue-300 hover:transition-all">
       {comp}
     </Slot>
   );
