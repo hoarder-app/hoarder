@@ -63,10 +63,20 @@ function buildPrompt(
         `No description found for link "${bookmark.id}". Skipping ...`,
       );
     }
+
+    let content = bookmark.link.content;
+    if (content) {
+      let words = content.split(" ");
+      if (words.length > 2000) {
+        words = words.slice(2000);
+        content = words.join(" ");
+      }
+    }
     return `
 ${PROMPT_BASE}
 URL: ${bookmark.link.url}
 Description: ${bookmark.link.description}
+Content: ${content || ""}
   `;
   }
 

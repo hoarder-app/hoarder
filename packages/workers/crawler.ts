@@ -7,6 +7,8 @@ import {
   queueConnectionDetails,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
+import DOMPurify from "dompurify";
+import { JSDOM } from "jsdom";
 
 import { Worker } from "bullmq";
 import { Job } from "bullmq";
@@ -31,7 +33,7 @@ import assert from "assert";
 import serverConfig from "@hoarder/shared/config";
 import { bookmarkLinks } from "@hoarder/db/schema";
 import { eq } from "drizzle-orm";
-import { SearchIndexingWorker } from "./search";
+import { Readability } from "@mozilla/readability";
 
 const metascraperParser = metascraper([
   metascraperReadability(),
@@ -159,6 +161,14 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     html: htmlContent,
   });
 
+  const window = new JSDOM("").window;
+  const purify = DOMPurify(window);
+  const purifiedHTML = purify.sanitize(htmlContent);
+  const purifiedDOM = new JSDOM(purifiedHTML, { url });
+  const readableContent = new Readability(purifiedDOM.window.document).parse();
+
+  // TODO(important): Restrict the size of content to store
+
   await db
     .update(bookmarkLinks)
     .set({
@@ -166,6 +176,7 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
       description: meta.description,
       imageUrl: meta.image,
       favicon: meta.logo,
+      content: readableContent?.textContent,
       crawledAt: new Date(),
     })
     .where(eq(bookmarkLinks.id, bookmarkId));

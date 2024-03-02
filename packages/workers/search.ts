@@ -68,6 +68,7 @@ async function runIndex(
             url: bookmark.link.url,
             title: bookmark.link.title,
             description: bookmark.link.description,
+            content: bookmark.link.content,
           }
         : undefined),
       ...(bookmark.text ? { content: bookmark.text.text } : undefined),

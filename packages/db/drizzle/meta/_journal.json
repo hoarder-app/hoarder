@@ -29,6 +29,13 @@
       "when": 1709331420929,
       "tag": "0003_parallel_supernaut",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1709339866036,
+      "tag": "0004_skinny_vengeance",
+      "breakpoints": true
     }
   ]
 }

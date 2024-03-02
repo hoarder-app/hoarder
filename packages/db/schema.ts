@@ -123,6 +123,7 @@ export const bookmarkLinks = sqliteTable("bookmarkLinks", {
   description: text("description"),
   imageUrl: text("imageUrl"),
   favicon: text("favicon"),
+  content: text("content"),
   crawledAt: integer("crawledAt", { mode: "timestamp" }),
 });
 
