@@ -69,42 +69,46 @@ export default function AdminPage() {
       <p className="text-2xl">Admin</p>
       <hr />
       {data ? (
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Stats</TableHead>
-              <TableHead>Value</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>Num Users</TableCell>
-              <TableCell>{data.numUsers}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Num Bookmarks</TableCell>
-              <TableCell>{data.numBookmarks}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Pending Crawling Jobs</TableCell>
-              <TableCell>{data.pendingCrawls}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Pending Indexing Jobs</TableCell>
-              <TableCell>{data.pendingIndexing}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Pending OpenAI Jobs</TableCell>
-              <TableCell>{data.pendingOpenai}</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+        <>
+          <p className="text-xl">Server Stats</p>
+          <Table className="w-1/2">
+            <TableBody>
+              <TableRow>
+                <TableCell className="w-2/3">Num Users</TableCell>
+                <TableCell>{data.numUsers}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Num Bookmarks</TableCell>
+                <TableCell>{data.numBookmarks}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <hr />
+          <p className="text-xl">Background Jobs</p>
+          <Table className="w-1/2">
+            <TableBody>
+              <TableRow>
+                <TableCell className="w-2/3">Pending Crawling Jobs</TableCell>
+                <TableCell>{data.pendingCrawls}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Pending Indexing Jobs</TableCell>
+                <TableCell>{data.pendingIndexing}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Pending OpenAI Jobs</TableCell>
+                <TableCell>{data.pendingOpenai}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </>
       ) : (
         <LoadingSpinner />
       )}
       <hr />
       <p className="text-xl">Actions</p>
       <ActionButton
+        className="w-1/2"
         variant="destructive"
         loading={isRecrawlPending}
         onClick={() => recrawlLinks()}
@@ -112,6 +116,7 @@ export default function AdminPage() {
         Recrawl All Links
       </ActionButton>
       <ActionButton
+        className="w-1/2"
         variant="destructive"
         loading={isReindexPending}
         onClick={() => reindexBookmarks()}

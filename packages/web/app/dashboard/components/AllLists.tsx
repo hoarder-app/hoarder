@@ -1,7 +1,6 @@
 "use client";
 
 import { api } from "@/lib/trpc";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import SidebarItem from "./SidebarItem";
 import LoadingSpinner from "@/components/ui/spinner";
 import NewListModal, { useNewListModal } from "./NewListModal";
@@ -16,7 +15,7 @@ export default function AllLists() {
   return (
     <ul className="max-h-full gap-2 overflow-scroll text-sm font-medium">
       <NewListModal />
-      <li className="flex justify-between py-2 font-bold">
+      <li className="flex justify-between pb-2 font-bold">
         <p>Lists</p>
         <Link href="#" onClick={() => setOpen(true)}>
           <Plus />
