@@ -15,5 +15,5 @@
     "page": "index.html#options",
     "open_in_tab": false
   },
-  "permissions": ["storage", "activeTab", "tabs"]
+  "permissions": ["storage", "tabs"]
 }
