@@ -44,6 +44,7 @@
     "meilisearch": "^0.37.0",
     "next": "14.1.1",
     "next-auth": "^4.24.5",
+    "next-pwa": "^5.6.0",
     "prettier": "^3.2.5",
     "react": "^18",
     "react-dom": "^18",

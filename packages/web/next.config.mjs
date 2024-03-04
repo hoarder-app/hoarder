@@ -1,5 +1,12 @@
+import pwa from "next-pwa";
+
+const withPWA = pwa({
+  dest: "public",
+  disable: process.env.NODE_ENV != "production",
+});
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = withPWA({
   output: "standalone",
   async headers() {
     return [
@@ -27,6 +34,6 @@ const nextConfig = {
       },
     ];
   },
-};
+});
 
 export default nextConfig;

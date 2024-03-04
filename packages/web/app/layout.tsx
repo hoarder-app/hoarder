@@ -12,7 +12,16 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Hoarder",
+  applicationName: "Hoarder",
   description: "Your AI powered second brain",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    title: "Hoarder",
+  },
+  formatDetection: {
+    telephone: false,
+  },
 };
 
 export const viewport: Viewport = {
