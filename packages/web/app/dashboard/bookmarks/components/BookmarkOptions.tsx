@@ -37,8 +37,11 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
 
   const [isTextEditorOpen, setTextEditorOpen] = useState(false);
 
-  const invalidateBookmarksCache =
+  const invalidateAllBookmarksCache =
     api.useUtils().bookmarks.getBookmarks.invalidate;
+
+  const invalidateBookmarkCache =
+    api.useUtils().bookmarks.getBookmark.invalidate;
 
   const onError = () => {
     toast({
@@ -47,9 +50,6 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       description: "There was a problem with your request.",
     });
   };
-  const onSettled = () => {
-    invalidateBookmarksCache();
-  };
   const deleteBookmarkMutator = api.bookmarks.deleteBookmark.useMutation({
     onSuccess: () => {
       toast({
@@ -57,7 +57,9 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       });
     },
     onError,
-    onSettled,
+    onSettled: () => {
+      invalidateAllBookmarksCache();
+    },
   });
 
   const updateBookmarkMutator = api.bookmarks.updateBookmark.useMutation({
@@ -67,7 +69,10 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       });
     },
     onError,
-    onSettled,
+    onSettled: () => {
+      invalidateBookmarkCache({ bookmarkId: bookmark.id });
+      invalidateAllBookmarksCache();
+    },
   });
 
   const crawlBookmarkMutator = api.bookmarks.recrawlBookmark.useMutation({
@@ -77,7 +82,9 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       });
     },
     onError,
-    onSettled,
+    onSettled: () => {
+      invalidateBookmarkCache({ bookmarkId: bookmark.id });
+    },
   });
 
   return (
