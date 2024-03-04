@@ -6,11 +6,12 @@
   "scripts": {
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "lint": "eslint .",
+    "lint": "eslint . --ignore-path .gitignore",
     "db:migrate": "pnpm --filter @hoarder/db run migrate",
     "db:studio": "pnpm --filter @hoarder/db studio",
     "workers": "pnpm --filter @hoarder/workers run start",
-    "web": "pnpm --filter @hoarder/web run dev"
+    "web": "pnpm --filter @hoarder/web run dev",
+    "prepare": "husky"
   },
   "dependencies": {
     "@next/eslint-plugin-next": "^14.1.0",
@@ -30,6 +31,7 @@
     "eslint": "^8.56.0",
     "eslint-config-next": "14.1.0",
     "eslint-plugin-tailwindcss": "^3.14.2",
+    "husky": "^9.0.11",
     "install": "^0.13.0",
     "prettier": "3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11"
