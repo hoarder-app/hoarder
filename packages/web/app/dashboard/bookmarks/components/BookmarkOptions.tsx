@@ -30,14 +30,15 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const linkId = bookmark.id;
 
-  const {setOpen: setTagModalIsOpen, content: tagModal} = useTagModel(bookmark);
-  const {setOpen: setAddToListModalOpen, content: addToListModal} = useAddToListModal(
-    bookmark.id,
-  );
+  const { setOpen: setTagModalIsOpen, content: tagModal } =
+    useTagModel(bookmark);
+  const { setOpen: setAddToListModalOpen, content: addToListModal } =
+    useAddToListModal(bookmark.id);
 
   const [isTextEditorOpen, setTextEditorOpen] = useState(false);
 
-  const invalidateBookmarksCache = api.useUtils().bookmarks.getBookmarks.invalidate;
+  const invalidateBookmarksCache =
+    api.useUtils().bookmarks.getBookmarks.invalidate;
 
   const onError = () => {
     toast({

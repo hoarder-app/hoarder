@@ -161,10 +161,8 @@ export function useAddToListModal(bookmarkId: string) {
   return {
     open,
     setOpen,
-    content: <AddToListModal
-      bookmarkId={bookmarkId}
-      open={open}
-      setOpen={setOpen}
-    />,
+    content: (
+      <AddToListModal bookmarkId={bookmarkId} open={open} setOpen={setOpen} />
+    ),
   };
 }
