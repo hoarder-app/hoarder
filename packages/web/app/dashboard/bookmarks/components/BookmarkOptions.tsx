@@ -30,8 +30,8 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const linkId = bookmark.id;
 
-  const [_, setTagModalIsOpen, tagModal] = useTagModel(bookmark);
-  const [_2, setAddToListModalOpen, addToListModal] = useAddToListModal(
+  const {setOpen: setTagModalIsOpen, content: tagModal} = useTagModel(bookmark);
+  const {setOpen: setAddToListModalOpen, content: addToListModal} = useAddToListModal(
     bookmark.id,
   );
 

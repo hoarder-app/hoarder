@@ -158,14 +158,13 @@ export default function AddToListModal({
 export function useAddToListModal(bookmarkId: string) {
   const [open, setOpen] = useState(false);
 
-  return [
+  return {
     open,
     setOpen,
-    <AddToListModal
-      key={bookmarkId}
+    content: <AddToListModal
       bookmarkId={bookmarkId}
       open={open}
       setOpen={setOpen}
     />,
-  ] as const;
+  };
 }

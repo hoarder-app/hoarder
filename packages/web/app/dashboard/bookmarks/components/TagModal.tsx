@@ -15,7 +15,7 @@ import { ZBookmark } from "@/lib/types/api/bookmarks";
 import { ZAttachedByEnum } from "@/lib/types/api/tags";
 import { cn } from "@/lib/utils";
 import { Sparkles, X } from "lucide-react";
-import { useState, KeyboardEvent } from "react";
+import { useState, KeyboardEvent, useEffect } from "react";
 
 type EditableTag = { attachedBy: ZAttachedByEnum; id?: string; name: string };
 
@@ -113,13 +113,14 @@ export default function TagModal({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
-  const [tags, setTags] = useState(() => {
+  const [tags, setTags] = useState<Map<string, EditableTag>>(new Map());
+  useEffect(() => {
     const m = new Map<string, EditableTag>();
     for (const t of bookmark.tags) {
       m.set(t.name, { attachedBy: t.attachedBy, id: t.id, name: t.name });
     }
-    return m;
-  });
+    setTags(m);
+  }, [bookmark.tags]);
 
   const bookmarkInvalidationFunction =
     api.useUtils().bookmarks.getBookmark.invalidate;
@@ -191,14 +192,16 @@ export default function TagModal({
 export function useTagModel(bookmark: ZBookmark) {
   const [open, setOpen] = useState(false);
 
-  return [
+  return {
     open,
     setOpen,
-    <TagModal
-      key={bookmark.id}
-      bookmark={bookmark}
-      open={open}
-      setOpen={setOpen}
-    />,
-  ] as const;
+    content: (
+      <TagModal
+        key={bookmark.id}
+        bookmark={bookmark}
+        open={open}
+        setOpen={setOpen}
+      />
+    ),
+  };
 }
