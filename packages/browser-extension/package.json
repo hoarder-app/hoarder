@@ -11,13 +11,10 @@
   },
   "dependencies": {
     "@types/chrome": "^0.0.260",
-    "localforage": "^1.10.0",
     "lucide-react": "^0.330.0",
-    "match-sorter": "^6.3.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.22.0",
-    "sort-by": "^1.2.0",
     "use-chrome-storage": "^1.2.2",
     "zod": "^3.22.4"
   },
