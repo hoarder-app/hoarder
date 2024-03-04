@@ -37,7 +37,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
 
   const [isTextEditorOpen, setTextEditorOpen] = useState(false);
 
-  const invalidateBookmarksCache = api.useUtils().bookmarks.invalidate;
+  const invalidateBookmarksCache = api.useUtils().bookmarks.getBookmarks.invalidate;
 
   const onError = () => {
     toast({
