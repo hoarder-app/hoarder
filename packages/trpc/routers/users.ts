@@ -1,5 +1,10 @@
 import { zSignUpSchema } from "../types/users";
-import { adminProcedure, publicProcedure, router } from "../index";
+import {
+  adminProcedure,
+  authedProcedure,
+  publicProcedure,
+  router,
+} from "../index";
 import { SqliteError } from "@hoarder/db";
 import { z } from "zod";
 import { hashPassword } from "../auth";
@@ -89,5 +94,16 @@ export const usersAppRouter = router({
       if (res.changes == 0) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
+    }),
+  whoami: authedProcedure
+    .output(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        email: z.string(),
+      }),
+    )
+    .query(async ({ ctx }) => {
+      return { id: ctx.user.id, name: ctx.user.name, email: ctx.user.email };
     }),
 });

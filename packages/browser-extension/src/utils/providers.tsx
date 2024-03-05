@@ -10,12 +10,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
 
   const getTrpcClient = useCallback(() => {
-    console.log(settings);
     return api.createClient({
       links: [
         httpBatchLink({
           url: `${settings.address}/api/trpc`,
-          async headers() {
+          headers() {
             return {
               Authorization: `Bearer ${settings.apiKey}`,
             };
