@@ -163,47 +163,61 @@ async function inferTags(
   }
 }
 
-async function createTags(tags: string[], userId: string) {
-  if (tags.length == 0) {
-    return [];
-  }
-  await db
-    .insert(bookmarkTags)
-    .values(
-      tags.map((t) => ({
-        name: t,
-        userId,
-      })),
-    )
-    .onConflictDoNothing();
-
-  const res = await db.query.bookmarkTags.findMany({
-    where: and(
-      eq(bookmarkTags.userId, userId),
-      inArray(bookmarkTags.name, tags),
-    ),
-    columns: {
-      id: true,
-    },
-  });
-
-  return res.map((r) => r.id);
-}
-
-async function connectTags(bookmarkId: string, tagIds: string[]) {
-  if (tagIds.length == 0) {
+async function connectTags(
+  bookmarkId: string,
+  newTags: string[],
+  userId: string,
+) {
+  if (newTags.length == 0) {
     return;
   }
-  await db
-    .insert(tagsOnBookmarks)
-    .values(
-      tagIds.map((tagId) => ({
-        tagId,
-        bookmarkId,
-        attachedBy: "ai" as const,
-      })),
-    )
-    .onConflictDoNothing();
+
+  await db.transaction(async (tx) => {
+    // Create tags that didn't exist previously
+    await tx
+      .insert(bookmarkTags)
+      .values(
+        newTags.map((t) => ({
+          name: t,
+          userId,
+        })),
+      )
+      .onConflictDoNothing();
+
+    const newTagIds = (
+      await tx.query.bookmarkTags.findMany({
+        where: and(
+          eq(bookmarkTags.userId, userId),
+          inArray(bookmarkTags.name, newTags),
+        ),
+        columns: {
+          id: true,
+        },
+      })
+    ).map((r) => r.id);
+
+    // Delete old AI tags
+    await tx
+      .delete(tagsOnBookmarks)
+      .where(
+        and(
+          eq(tagsOnBookmarks.attachedBy, "ai"),
+          eq(tagsOnBookmarks.bookmarkId, bookmarkId),
+        ),
+      );
+
+    // Attach new ones
+    await tx
+      .insert(tagsOnBookmarks)
+      .values(
+        newTagIds.map((tagId) => ({
+          tagId,
+          bookmarkId,
+          attachedBy: "ai" as const,
+        })),
+      )
+      .onConflictDoNothing();
+  });
 }
 
 async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
@@ -239,8 +253,7 @@ async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
 
   const tags = await inferTags(jobId, bookmark, openai);
 
-  const tagIds = await createTags(tags, bookmark.userId);
-  await connectTags(bookmarkId, tagIds);
+  await connectTags(bookmarkId, tags, bookmark.userId);
 
   // Update the search index
   SearchIndexingQueue.add("search_indexing", {
