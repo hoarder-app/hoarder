@@ -1,8 +1,16 @@
-import { generateApiKey } from "../auth";
-import { authedProcedure, router } from "../index";
+import { generateApiKey, validatePassword } from "../auth";
+import { authedProcedure, publicProcedure, router } from "../index";
 import { z } from "zod";
 import { apiKeys } from "@hoarder/db/schema";
 import { eq, and } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
+
+const zApiKeySchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  key: z.string(),
+  createdAt: z.date(),
+});
 
 export const apiKeysAppRouter = router({
   create: authedProcedure
@@ -11,14 +19,7 @@ export const apiKeysAppRouter = router({
         name: z.string(),
       }),
     )
-    .output(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        key: z.string(),
-        createdAt: z.date(),
-      }),
-    )
+    .output(zApiKeySchema)
     .mutation(async ({ input, ctx }) => {
       return await generateApiKey(input.name, ctx.user.id);
     }),
@@ -57,5 +58,25 @@ export const apiKeysAppRouter = router({
         },
       });
       return { keys: resp };
+    }),
+  // Exchange the username and password with an API key.
+  // Homemade oAuth. This is used by the extension.
+  exchange: publicProcedure
+    .input(
+      z.object({
+        keyName: z.string(),
+        email: z.string(),
+        password: z.string(),
+      }),
+    )
+    .output(zApiKeySchema)
+    .mutation(async ({ input }) => {
+      let user;
+      try {
+        user = await validatePassword(input.email, input.password);
+      } catch (e) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      return await generateApiKey(input.keyName, user.id);
     }),
 });

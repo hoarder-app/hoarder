@@ -6,8 +6,17 @@ export type Settings = {
 };
 
 export default function usePluginSettings() {
-  return useChromeStorageSync("settings", {
-    apiKey: "",
-    address: "",
-  } as Settings);
+  const [settings, setSettings, _1, _2, isInit] = useChromeStorageSync(
+    "settings",
+    {
+      apiKey: "",
+      address: "",
+    } as Settings,
+  );
+
+  return { settings, setSettings, isPending: isInit };
+}
+
+export async function getPluginSettings() {
+  return (await chrome.storage.sync.get("settings")).settings as Settings;
 }

@@ -5,7 +5,7 @@ import usePluginSettings from "./utils/settings";
 
 export default function Layout() {
   const navigate = useNavigate();
-  const [settings, _1, _2, _3, isInit] = usePluginSettings();
+  const { settings, isPending: isInit } = usePluginSettings();
   if (!isInit) {
     return <div className="p-4">Loading ... </div>;
   }

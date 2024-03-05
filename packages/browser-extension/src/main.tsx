@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import OptionsPage from "./OptionsPage.tsx";
@@ -9,9 +8,10 @@ import { HashRouter, Routes, Route } from "react-router-dom";
 import Layout from "./Layout.tsx";
 import SavePage from "./SavePage.tsx";
 import BookmarkDeletedPage from "./BookmarkDeletedPage.tsx";
+import SignInPage from "./SignInPage.tsx";
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+function App() {
+  return (
     <div className="w-96 p-4">
       <Providers>
         <HashRouter>
@@ -29,9 +29,12 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </Route>
             <Route path="/notconfigured" element={<NotConfiguredPage />} />
             <Route path="/options" element={<OptionsPage />} />
+            <Route path="/signin" element={<SignInPage />} />
           </Routes>
         </HashRouter>
       </Providers>
     </div>
-  </React.StrictMode>,
-);
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
