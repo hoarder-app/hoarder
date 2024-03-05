@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import { api } from "./utils/trpc";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 export default function SavePage() {
-  const navigator = useNavigate();
   const [error, setError] = useState<string | undefined>(undefined);
 
   const {
@@ -44,8 +43,7 @@ export default function SavePage() {
       return <div className="text-red-500">{error}</div>;
     }
     case "success": {
-      navigator(`/bookmark/${data.id}`);
-      break;
+      return <Navigate to={`/bookmark/${data.id}`} />;
     }
     case "pending": {
       return (
