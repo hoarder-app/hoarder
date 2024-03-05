@@ -5,8 +5,8 @@ import superjson from "superjson";
 
 type User = {
   id: string;
-  name: string;
-  email: string;
+  name?: string | null | undefined;
+  email?: string | null | undefined;
   role: "admin" | "user" | null;
 };
 

@@ -32,7 +32,7 @@ export default function OptionsPage() {
       );
     }
   } else if (whoami) {
-    loggedInMessage = <span>{whoami.name}</span>;
+    loggedInMessage = <span>{whoami.email}</span>;
   } else {
     loggedInMessage = <Spinner />;
   }

@@ -99,8 +99,8 @@ export const usersAppRouter = router({
     .output(
       z.object({
         id: z.string(),
-        name: z.string(),
-        email: z.string(),
+        name: z.string().nullish(),
+        email: z.string().nullish(),
       }),
     )
     .query(async ({ ctx }) => {
