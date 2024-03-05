@@ -9,11 +9,12 @@ export default function OptionsPage() {
   const navigate = useNavigate();
   const { settings, setSettings } = usePluginSettings();
 
-  const {
-    data: whoami,
-    isPending: isWhoAmiPending,
-    error: whoAmIError,
-  } = api.users.whoami.useQuery();
+  const { data: whoami, error: whoAmIError } = api.users.whoami.useQuery(
+    undefined,
+    {
+      enabled: settings.address != "",
+    },
+  );
 
   const invalidateWhoami = api.useUtils().users.whoami.refetch;
 
@@ -30,12 +31,10 @@ export default function OptionsPage() {
         <span>Something went wrong: {whoAmIError.message}</span>
       );
     }
-  }
-  if (isWhoAmiPending) {
-    loggedInMessage = <Spinner />;
-  }
-  if (whoami) {
+  } else if (whoami) {
     loggedInMessage = <span>{whoami.name}</span>;
+  } else {
+    loggedInMessage = <Spinner />;
   }
 
   const onLogout = () => {

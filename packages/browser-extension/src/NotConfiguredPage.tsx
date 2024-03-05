@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import usePluginSettings from "./utils/settings";
-import { PackageOpen } from "lucide-react";
 import Logo from "./Logo";
 
 export default function NotConfiguredPage() {

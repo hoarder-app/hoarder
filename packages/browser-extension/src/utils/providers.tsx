@@ -35,7 +35,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }, [settings.address]);
 
   return (
-    <api.Provider client={trpcClient} queryClient={queryClient}>
+    <api.Provider
+      key={settings.address}
+      client={trpcClient}
+      queryClient={queryClient}
+    >
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </api.Provider>
   );
