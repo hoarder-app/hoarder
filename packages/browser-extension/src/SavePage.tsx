@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
-import { Settings } from "./settings";
 import Spinner from "./Spinner";
+import { api } from "./utils/trpc";
 
-export default function SavePage({ settings }: { settings: Settings }) {
-  const [loading, setLoading] = useState(true);
+export default function SavePage() {
   const [error, setError] = useState<string | undefined>(undefined);
 
+  const { mutate: createBookmark, status } =
+    api.bookmarks.createBookmark.useMutation({
+      onError: (e) => {
+        setError("Something went wrong: " + e.message);
+      },
+    });
+
   useEffect(() => {
-    async function runFetch() {
+    async function runSave() {
       let currentUrl;
       const [currentTab] = await chrome.tabs.query({
         active: true,
@@ -17,52 +23,37 @@ export default function SavePage({ settings }: { settings: Settings }) {
         currentUrl = currentTab.url;
       } else {
         setError("Couldn't find the URL of the current tab");
-        setLoading(false);
         return;
       }
 
-      try {
-        const resp = await fetch(
-          `${settings.address}/api/trpc/bookmarks.createBookmark`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${settings.apiKey}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              json: {
-                type: "link",
-                url: currentUrl,
-              },
-            }),
-          },
-        );
-        if (!resp.ok) {
-          setError(
-            "Something went wrong: " + JSON.stringify(await resp.json()),
-          );
-        }
-      } catch (e) {
-        setError("Message: " + (e as Error).message);
-      }
-
-      setLoading(false);
+      createBookmark({
+        type: "link",
+        url: currentUrl,
+      });
     }
-    runFetch();
-  }, [settings]);
+    runSave();
+  }, [createBookmark]);
 
-  if (loading) {
-    return (
-      <div className="m-auto">
-        <Spinner />
-      </div>
-    );
+  switch (status) {
+    case "error": {
+      return <div className="text-red-500">{error}</div>;
+    }
+    case "success": {
+      return <div className="m-auto text-lg">Bookmark Saved</div>;
+    }
+    case "pending": {
+      return (
+        <div className="m-auto">
+          <Spinner />
+        </div>
+      );
+    }
+    case "idle": {
+      return (
+        <div className="m-auto">
+          <Spinner />
+        </div>
+      );
+    }
   }
-
-  if (error) {
-    return <div className="text-red-500">{error} ...</div>;
-  }
-
-  return <div className="m-auto text-lg">Bookmark Saved</div>;
 }

@@ -1,6 +1,6 @@
-import { Settings, X } from "lucide-react";
+import { RefreshCw, Settings, X } from "lucide-react";
 import SavePage from "./SavePage";
-import usePluginSettings from "./settings";
+import usePluginSettings from "./utils/settings";
 import { useNavigate } from "react-router-dom";
 
 function App() {
@@ -18,9 +18,14 @@ function App() {
 
   return (
     <div className="flex flex-col space-y-2">
-      <SavePage settings={settings} />
+      <SavePage />
       <hr />
       <div className="flex justify-end space-x-3">
+        {process.env.NODE_ENV == "development" && (
+          <button onClick={() => navigate(0)}>
+            <RefreshCw className="w-4" />
+          </button>
+        )}
         <button onClick={() => navigate("/options")}>
           <Settings className="w-4" />
         </button>

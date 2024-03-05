@@ -5,6 +5,7 @@ import "./index.css";
 import { createHashRouter, RouterProvider } from "react-router-dom";
 import OptionsPage from "./OptionsPage.tsx";
 import NotConfiguredPage from "./NotConfiguredPage.tsx";
+import { Providers } from "./utils/providers.tsx";
 
 const router = createHashRouter([
   {
@@ -24,7 +25,9 @@ const router = createHashRouter([
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <div className="w-96 p-4">
-      <RouterProvider router={router} />
+      <Providers>
+        <RouterProvider router={router} />
+      </Providers>
     </div>
   </React.StrictMode>,
 );

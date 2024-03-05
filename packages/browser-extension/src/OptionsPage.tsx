@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import usePluginSettings from "./settings";
+import usePluginSettings from "./utils/settings";
 
 export default function OptionsPage() {
   const [settings, setSettings, _1, _2, _3] = usePluginSettings();
@@ -38,7 +38,7 @@ export default function OptionsPage() {
         <label className="m-auto h-full">Server Address</label>
         <input
           ref={addressRef}
-          defaultValue={settings.address || "https://demo.hoarder.app"}
+          value={settings.address || "https://demo.hoarder.app"}
           className="h-8 flex-1 rounded-lg border border-gray-300 p-2"
         />
       </div>
@@ -46,7 +46,7 @@ export default function OptionsPage() {
         <label className="m-auto h-full">API Key</label>
         <input
           ref={apiKeyRef}
-          defaultValue={settings.apiKey}
+          value={settings.apiKey}
           className="h-8 flex-1 rounded-lg border border-gray-300 p-2"
         />
       </div>
