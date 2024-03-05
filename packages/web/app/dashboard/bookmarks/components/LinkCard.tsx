@@ -14,25 +14,11 @@ import BookmarkOptions from "./BookmarkOptions";
 import { api } from "@/lib/trpc";
 import { Maximize2, Star } from "lucide-react";
 import TagList from "./TagList";
-
-function isStillCrawling(bookmark: ZBookmark) {
-  return (
-    bookmark.content.type == "link" &&
-    !bookmark.content.crawledAt &&
-    Date.now().valueOf() - bookmark.createdAt.valueOf() < 30 * 1000
-  );
-}
-
-function isStillTagging(bookmark: ZBookmark) {
-  return (
-    bookmark.taggingStatus == "pending" &&
-    Date.now().valueOf() - bookmark.createdAt.valueOf() < 30 * 1000
-  );
-}
-
-function isStillLoading(bookmark: ZBookmark) {
-  return isStillTagging(bookmark) || isStillCrawling(bookmark);
-}
+import {
+  isBookmarkStillCrawling,
+  isBookmarkStillLoading,
+  isBookmarkStillTagging,
+} from "@/lib/bookmarkUtils";
 
 export default function LinkCard({
   bookmark: initialData,
@@ -53,7 +39,7 @@ export default function LinkCard({
           return false;
         }
         // If the link is not crawled or not tagged
-        if (isStillLoading(data)) {
+        if (isBookmarkStillLoading(data)) {
           return 1000;
         }
         return false;
@@ -76,7 +62,7 @@ export default function LinkCard({
     <ImageCard className={className}>
       <Link href={link.url}>
         <ImageCardBanner
-          src={isStillCrawling(bookmark) ? "/blur.avif" : image}
+          src={isBookmarkStillCrawling(bookmark) ? "/blur.avif" : image}
         />
       </Link>
       <ImageCardContent>
@@ -88,7 +74,10 @@ export default function LinkCard({
         {/* There's a hack here. Every tag has the full hight of the container itself. That why, when we enable flex-wrap,
         the overflowed don't show up. */}
         <ImageCardBody className="flex h-full flex-wrap space-x-1 overflow-hidden">
-          <TagList bookmark={bookmark} loading={isStillTagging(bookmark)} />
+          <TagList
+            bookmark={bookmark}
+            loading={isBookmarkStillTagging(bookmark)}
+          />
         </ImageCardBody>
         <ImageCardFooter>
           <div className="mt-1 flex justify-between text-gray-500">

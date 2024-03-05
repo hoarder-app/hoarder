@@ -9,15 +9,8 @@ import TagList from "./TagList";
 import Markdown from "react-markdown";
 import { useState } from "react";
 import { BookmarkedTextViewer } from "./BookmarkedTextViewer";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-
-function isStillTagging(bookmark: ZBookmark) {
-  return (
-    bookmark.taggingStatus == "pending" &&
-    Date.now().valueOf() - bookmark.createdAt.valueOf() < 30 * 1000
-  );
-}
+import { isBookmarkStillTagging } from "@/lib/bookmarkUtils";
 
 export default function TextCard({
   bookmark: initialData,
@@ -37,7 +30,7 @@ export default function TextCard({
         if (!data) {
           return false;
         }
-        if (isStillTagging(data)) {
+        if (isBookmarkStillTagging(data)) {
           return 1000;
         }
         return false;
@@ -69,7 +62,10 @@ export default function TextCard({
           {bookmarkedText.text}
         </Markdown>
         <div className="mt-4 flex flex-none flex-wrap gap-1 overflow-hidden">
-          <TagList bookmark={bookmark} loading={isStillTagging(bookmark)} />
+          <TagList
+            bookmark={bookmark}
+            loading={isBookmarkStillTagging(bookmark)}
+          />
         </div>
         <div className="flex w-full justify-between">
           <div />
