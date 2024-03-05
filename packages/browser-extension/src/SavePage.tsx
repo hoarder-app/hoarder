@@ -1,16 +1,21 @@
 import { useEffect, useState } from "react";
 import Spinner from "./Spinner";
 import { api } from "./utils/trpc";
+import { useNavigate } from "react-router-dom";
 
 export default function SavePage() {
+  const navigator = useNavigate();
   const [error, setError] = useState<string | undefined>(undefined);
 
-  const { mutate: createBookmark, status } =
-    api.bookmarks.createBookmark.useMutation({
-      onError: (e) => {
-        setError("Something went wrong: " + e.message);
-      },
-    });
+  const {
+    data,
+    mutate: createBookmark,
+    status,
+  } = api.bookmarks.createBookmark.useMutation({
+    onError: (e) => {
+      setError("Something went wrong: " + e.message);
+    },
+  });
 
   useEffect(() => {
     async function runSave() {
@@ -39,21 +44,19 @@ export default function SavePage() {
       return <div className="text-red-500">{error}</div>;
     }
     case "success": {
-      return <div className="m-auto text-lg">Bookmark Saved</div>;
+      navigator(`/bookmark/${data.id}`);
+      break;
     }
     case "pending": {
       return (
-        <div className="m-auto">
+        <div className="flex justify-between text-lg">
+          <span>Saving Bookmark </span>
           <Spinner />
         </div>
       );
     }
     case "idle": {
-      return (
-        <div className="m-auto">
-          <Spinner />
-        </div>
-      );
+      return <div />;
     }
   }
 }
