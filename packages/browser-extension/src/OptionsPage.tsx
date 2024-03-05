@@ -3,6 +3,7 @@ import usePluginSettings from "./utils/settings";
 import { api } from "./utils/trpc";
 import Spinner from "./Spinner";
 import { useNavigate } from "react-router-dom";
+import Logo from "./Logo";
 
 export default function OptionsPage() {
   const navigate = useNavigate();
@@ -45,6 +46,7 @@ export default function OptionsPage() {
 
   return (
     <div className="flex flex-col space-y-2">
+      <Logo />
       <span className="text-lg">Settings</span>
       <hr />
       <div className="flex gap-2">

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import usePluginSettings from "./utils/settings";
+import { PackageOpen } from "lucide-react";
+import Logo from "./Logo";
 
 export default function NotConfiguredPage() {
   const navigate = useNavigate();
@@ -24,7 +26,10 @@ export default function NotConfiguredPage() {
 
   return (
     <div className="flex flex-col space-y-2">
-      <span>To use the plugin, you need to configure it first.</span>
+      <Logo />
+      <span className="pt-3">
+        To use the plugin, you need to configure it first.
+      </span>
       <p className="text-red-500">{error}</p>
       <div className="flex gap-2">
         <label className="my-auto">Server Address</label>

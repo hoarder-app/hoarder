@@ -2,6 +2,7 @@ import { useState } from "react";
 import { api } from "./utils/trpc";
 import usePluginSettings from "./utils/settings";
 import { useNavigate } from "react-router-dom";
+import Logo from "./Logo";
 
 export default function SignInPage() {
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ export default function SignInPage() {
 
   return (
     <div className="flex flex-col space-y-2">
+      <Logo />
       <p className="text-lg">Login</p>
       <p className="text-red-500">{errorMessage}</p>
       <form className="flex flex-col gap-y-2" onSubmit={onSubmit}>
