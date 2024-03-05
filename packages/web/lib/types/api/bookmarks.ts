@@ -8,6 +8,7 @@ export const zBookmarkedLinkSchema = z.object({
   description: z.string().nullish(),
   imageUrl: z.string().url().nullish(),
   favicon: z.string().url().nullish(),
+  htmlContent: z.string().nullish(),
   crawledAt: z.date().nullish(),
 });
 export type ZBookmarkedLink = z.infer<typeof zBookmarkedLinkSchema>;

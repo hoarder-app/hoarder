@@ -183,6 +183,7 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
       imageUrl: meta.image,
       favicon: meta.logo,
       content: readableContent?.textContent,
+      htmlContent: readableContent?.content,
       crawledAt: new Date(),
     })
     .where(eq(bookmarkLinks.id, bookmarkId));

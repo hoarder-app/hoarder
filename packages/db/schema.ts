@@ -127,6 +127,7 @@ export const bookmarkLinks = sqliteTable("bookmarkLinks", {
   imageUrl: text("imageUrl"),
   favicon: text("favicon"),
   content: text("content"),
+  htmlContent: text("htmlContent"),
   crawledAt: integer("crawledAt", { mode: "timestamp" }),
 });
 
