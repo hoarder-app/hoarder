@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ActionButton } from "@/components/ui/action-button";
-import { zSignUpSchema } from "@/lib/types/api/users";
+import { zSignUpSchema } from "@hoarder/trpc/types/users";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import { api } from "@/lib/trpc";

@@ -1,4 +1,4 @@
-import { adminProcedure, router } from "../trpc";
+import { adminProcedure, router } from "../index";
 import { z } from "zod";
 import { count } from "drizzle-orm";
 import { bookmarks, users } from "@hoarder/db/schema";

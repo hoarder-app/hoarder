@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/trpc";
-import { ZBookmarkList } from "@/lib/types/api/lists";
+import { ZBookmarkList } from "@hoarder/trpc/types/lists";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import Link from "next/link";

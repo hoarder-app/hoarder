@@ -8,7 +8,7 @@ import {
   ImageCardFooter,
   ImageCardTitle,
 } from "@/components/ui/imageCard";
-import { ZBookmark } from "@/lib/types/api/bookmarks";
+import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 import Link from "next/link";
 import BookmarkOptions from "./BookmarkOptions";
 import { api } from "@/lib/trpc";

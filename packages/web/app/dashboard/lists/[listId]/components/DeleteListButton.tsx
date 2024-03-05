@@ -16,7 +16,7 @@ import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { ActionButton } from "@/components/ui/action-button";
 import { useState } from "react";
-import { ZBookmarkList } from "@/lib/types/api/lists";
+import { ZBookmarkList } from "@hoarder/trpc/types/lists";
 
 export default function DeleteListButton({ list }: { list: ZBookmarkList }) {
   const [isDialogOpen, setDialogOpen] = useState(false);

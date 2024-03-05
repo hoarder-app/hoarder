@@ -5,7 +5,7 @@ import SidebarItem from "./SidebarItem";
 import NewListModal, { useNewListModal } from "./NewListModal";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { ZBookmarkList } from "@/lib/types/api/lists";
+import { ZBookmarkList } from "@hoarder/trpc/types/lists";
 
 export default function AllLists({
   initialData,

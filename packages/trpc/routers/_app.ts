@@ -1,4 +1,4 @@
-import { router } from "../trpc";
+import { router } from "../index";
 import { adminAppRouter } from "./admin";
 import { apiKeysAppRouter } from "./apiKeys";
 import { bookmarksAppRouter } from "./bookmarks";

@@ -2,7 +2,7 @@
 
 import { useToast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-import { ZBookmark, ZBookmarkedLink } from "@/lib/types/api/bookmarks";
+import { ZBookmark, ZBookmarkedLink } from "@hoarder/trpc/types/bookmarks";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

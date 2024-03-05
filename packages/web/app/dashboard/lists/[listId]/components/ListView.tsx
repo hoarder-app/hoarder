@@ -1,8 +1,8 @@
 "use client";
 
 import BookmarksGrid from "@/app/dashboard/bookmarks/components/BookmarksGrid";
-import { ZBookmark } from "@/lib/types/api/bookmarks";
-import { ZBookmarkListWithBookmarks } from "@/lib/types/api/lists";
+import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import { ZBookmarkListWithBookmarks } from "@hoarder/trpc/types/lists";
 import { api } from "@/lib/trpc";
 
 export default function ListView({

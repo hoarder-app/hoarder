@@ -1,5 +1,5 @@
-import { generateApiKey } from "@/server/auth";
-import { authedProcedure, router } from "../trpc";
+import { generateApiKey } from "../auth";
+import { authedProcedure, router } from "../index";
 import { z } from "zod";
 import { apiKeys } from "@hoarder/db/schema";
 import { eq, and } from "drizzle-orm";

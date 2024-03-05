@@ -1,7 +1,7 @@
 import { users } from "@hoarder/db/schema";
 import { getInMemoryDB } from "@hoarder/db/drizzle";
-import { appRouter } from "@/server/api/routers/_app";
-import { createCallerFactory } from "@/server/api/trpc";
+import { appRouter } from "./routers/_app";
+import { createCallerFactory } from "./index";
 
 export function getTestDB() {
   return getInMemoryDB(true);

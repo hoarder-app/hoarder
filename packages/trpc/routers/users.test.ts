@@ -2,7 +2,7 @@ import {
   CustomTestContext,
   defaultBeforeEach,
   getApiCaller,
-} from "@/lib/testUtils";
+} from "../testUtils";
 import { expect, describe, test, beforeEach, assert } from "vitest";
 
 beforeEach<CustomTestContext>(defaultBeforeEach(false));

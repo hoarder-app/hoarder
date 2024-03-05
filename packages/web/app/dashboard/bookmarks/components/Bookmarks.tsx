@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import BookmarksGrid from "./BookmarksGrid";
-import { ZGetBookmarksRequest } from "@/lib/types/api/bookmarks";
+import { ZGetBookmarksRequest } from "@hoarder/trpc/types/bookmarks";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
 

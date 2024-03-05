@@ -1,8 +1,12 @@
 import { db } from "@hoarder/db";
 import serverConfig from "@hoarder/shared/config";
 import { TRPCError, initTRPC } from "@trpc/server";
-import { User } from "next-auth";
 import superjson from "superjson";
+
+type User = {
+  id: string;
+  role: "admin" | "user" | null;
+};
 
 export type Context = {
   user: User | null;

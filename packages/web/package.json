@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest"
+    "test": "vitest",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^0.8.0",
@@ -16,6 +17,7 @@
     "@emoji-mart/react": "^1.1.1",
     "@hoarder/db": "0.1.0",
     "@hoarder/shared": "0.1.0",
+    "@hoarder/trpc": "0.1.0",
     "@hookform/resolvers": "^3.3.4",
     "@next/eslint-plugin-next": "^14.1.1",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -34,7 +36,6 @@
     "@trpc/next": "11.0.0-next-beta.304",
     "@trpc/react-query": "^11.0.0-next-beta.304",
     "@trpc/server": "11.0.0-next-beta.304",
-    "bcrypt": "^5.1.1",
     "better-sqlite3": "^9.4.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
@@ -60,7 +61,6 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
-    "@types/bcrypt": "^5.0.2",
     "@types/emoji-mart": "^3.0.14",
     "@types/react": "^18",
     "@types/react-dom": "^18",

@@ -1,7 +1,7 @@
 import { badgeVariants } from "@/components/ui/badge";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ZBookmark } from "@/lib/types/api/bookmarks";
+import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 import { cn } from "@/lib/utils";
 
 export default function TagList({

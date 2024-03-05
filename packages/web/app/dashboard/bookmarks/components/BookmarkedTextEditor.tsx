@@ -1,4 +1,4 @@
-import { ZBookmark } from "@/lib/types/api/bookmarks";
+import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 import {
   Dialog,
   DialogClose,

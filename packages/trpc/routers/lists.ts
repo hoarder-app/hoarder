@@ -1,10 +1,10 @@
-import { Context, authedProcedure, router } from "../trpc";
+import { Context, authedProcedure, router } from "../index";
 import { SqliteError } from "@hoarder/db";
 import { z } from "zod";
 import { TRPCError, experimental_trpcMiddleware } from "@trpc/server";
 import { bookmarkLists, bookmarksInLists } from "@hoarder/db/schema";
 import { and, eq } from "drizzle-orm";
-import { zBookmarkListSchema } from "@/lib/types/api/lists";
+import { zBookmarkListSchema } from "../types/lists";
 
 const ensureListOwnership = experimental_trpcMiddleware<{
   ctx: Context;

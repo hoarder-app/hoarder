@@ -1,8 +1,8 @@
-import { zSignUpSchema } from "@/lib/types/api/users";
-import { adminProcedure, publicProcedure, router } from "../trpc";
+import { zSignUpSchema } from "../types/users";
+import { adminProcedure, publicProcedure, router } from "../index";
 import { SqliteError } from "@hoarder/db";
 import { z } from "zod";
-import { hashPassword } from "@/server/auth";
+import { hashPassword } from "../auth";
 import { TRPCError } from "@trpc/server";
 import { users } from "@hoarder/db/schema";
 import { count, eq } from "drizzle-orm";

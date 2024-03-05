@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { zBookmarkTagSchema } from "@/lib/types/api/tags";
+import { zBookmarkTagSchema } from "./tags";
 
 export const zBookmarkedLinkSchema = z.object({
   type: z.literal("link"),

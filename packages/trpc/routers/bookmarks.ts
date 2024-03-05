@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Context, authedProcedure, router } from "../trpc";
+import { Context, authedProcedure, router } from "../index";
 import { getSearchIdxClient } from "@hoarder/shared/search";
 import {
   ZBookmark,
@@ -10,7 +10,7 @@ import {
   zGetBookmarksResponseSchema,
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
-} from "@/lib/types/api/bookmarks";
+} from "../types/bookmarks";
 import {
   bookmarkLinks,
   bookmarkTags,
@@ -25,7 +25,7 @@ import {
 } from "@hoarder/shared/queues";
 import { TRPCError, experimental_trpcMiddleware } from "@trpc/server";
 import { and, desc, eq, inArray } from "drizzle-orm";
-import { ZBookmarkTags } from "@/lib/types/api/tags";
+import { ZBookmarkTags } from "../types/tags";
 
 import { db as DONT_USE_db } from "@hoarder/db";
 

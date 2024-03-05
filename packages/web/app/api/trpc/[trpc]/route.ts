@@ -1,7 +1,7 @@
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { appRouter } from "@/server/api/routers/_app";
+import { appRouter } from "@hoarder/trpc/routers/_app";
 import { createContext } from "@/server/api/client";
-import { authenticateApiKey } from "@/server/auth";
+import { authenticateApiKey } from "@hoarder/trpc/auth";
 import { db } from "@hoarder/db";
 
 const handler = (req: Request) =>

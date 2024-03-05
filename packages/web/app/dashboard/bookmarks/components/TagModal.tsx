@@ -11,8 +11,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-import { ZBookmark } from "@/lib/types/api/bookmarks";
-import { ZAttachedByEnum } from "@/lib/types/api/tags";
+import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import { ZAttachedByEnum } from "@hoarder/trpc/types/tags";
 import { cn } from "@/lib/utils";
 import { Sparkles, X } from "lucide-react";
 import { useState, KeyboardEvent, useEffect } from "react";

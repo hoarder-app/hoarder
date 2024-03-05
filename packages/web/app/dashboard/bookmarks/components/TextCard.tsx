@@ -1,6 +1,6 @@
 "use client";
 
-import { ZBookmark } from "@/lib/types/api/bookmarks";
+import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 import BookmarkOptions from "./BookmarkOptions";
 import { api } from "@/lib/trpc";
 import { Maximize2, Star } from "lucide-react";

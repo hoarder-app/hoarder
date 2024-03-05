@@ -1,4 +1,4 @@
-import { CustomTestContext, defaultBeforeEach } from "@/lib/testUtils";
+import { CustomTestContext, defaultBeforeEach } from "../testUtils";
 import { expect, describe, test, beforeEach, assert } from "vitest";
 
 beforeEach<CustomTestContext>(defaultBeforeEach(true));

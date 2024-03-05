@@ -1,7 +1,7 @@
 "use client";
 
 import LinkCard from "./LinkCard";
-import { ZBookmark, ZGetBookmarksRequest } from "@/lib/types/api/bookmarks";
+import { ZBookmark, ZGetBookmarksRequest } from "@hoarder/trpc/types/bookmarks";
 import { api } from "@/lib/trpc";
 import TextCard from "./TextCard";
 import { Slot } from "@radix-ui/react-slot";
