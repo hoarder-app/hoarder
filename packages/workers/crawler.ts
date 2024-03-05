@@ -18,6 +18,7 @@ import { db } from "@hoarder/db";
 import { Browser } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 
 import metascraper from "metascraper";
 
@@ -70,6 +71,11 @@ async function launchBrowser() {
 export class CrawlerWorker {
   static async build() {
     puppeteer.use(StealthPlugin());
+    puppeteer.use(
+      AdblockerPlugin({
+        blockTrackersAndAnnoyances: true,
+      }),
+    );
     await launchBrowser();
 
     logger.info("Starting crawler worker ...");
