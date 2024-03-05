@@ -11,7 +11,7 @@ services:
     environment:
       REDIS_HOST: redis
       MEILI_ADDR: http://meilisearch:7700
-      DATABASE_URL: "/data/db.db"
+      DATA_DIR: /data
     command:
       - pnpm
       - web
@@ -37,7 +37,7 @@ services:
     environment:
       REDIS_HOST: redis
       MEILI_ADDR: http://meilisearch:7700
-      DATABASE_URL: "/data/db.db"
+      DATA_DIR: /data
       # OPENAI_API_KEY: ...
     command:
       - pnpm
@@ -50,7 +50,7 @@ services:
       dockerfile: Dockerfile.dev
     working_dir: /app
     environment:
-      DATABASE_URL: "/data/db.db"
+      DATA_DIR: /data
     volumes:
       - data:/data
       - ..:/app

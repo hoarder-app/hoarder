@@ -9,7 +9,7 @@ services:
     environment:
       REDIS_HOST: redis
       MEILI_ADDR: http://meilisearch:7700
-      DATABASE_URL: "/data/db.db"
+      DATA_DIR: /data
   redis:
     image: redis:7.2-alpine
     volumes:
@@ -25,7 +25,7 @@ services:
     environment:
       REDIS_HOST: redis
       MEILI_ADDR: http://meilisearch:7700
-      DATABASE_URL: "/data/db.db"
+      DATA_DIR: /data
       # OPENAI_API_KEY: ...
     depends_on:
       web:

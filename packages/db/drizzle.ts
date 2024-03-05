@@ -5,7 +5,9 @@ import * as schema from "./schema";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import path from "path";
 
-const sqlite = new Database(process.env.DATABASE_URL);
+import dbConfig from "./drizzle.config";
+
+const sqlite = new Database(dbConfig.dbCredentials.url);
 export const db = drizzle(sqlite, { schema });
 
 export function getInMemoryDB(runMigrations: boolean) {

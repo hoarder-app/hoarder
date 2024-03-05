@@ -37,7 +37,7 @@ yarn-error.log*
 next-env.d.ts
 
 # The sqlite database
-**/dev.db
+**/*.db
 
 # PWA Files
 **/public/sw.js
