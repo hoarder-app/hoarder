@@ -10,6 +10,7 @@ import Markdown from "react-markdown";
 import { useState } from "react";
 import { BookmarkedTextViewer } from "./BookmarkedTextViewer";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 function isStillTagging(bookmark: ZBookmark) {
   return (
@@ -82,13 +83,12 @@ export default function TextCard({
                 />
               )}
             </div>
-            <Button
-              className="px-2"
-              variant="ghost"
-              onClick={() => setPreviewModalOpen(true)}
+            <Link
+              className="my-auto block px-2"
+              href={`/dashboard/preview/${bookmark.id}`}
             >
               <Maximize2 size="20" />
-            </Button>
+            </Link>
             <BookmarkOptions bookmark={bookmark} />
           </div>
         </div>

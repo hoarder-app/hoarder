@@ -12,7 +12,7 @@ import { ZBookmark } from "@/lib/types/api/bookmarks";
 import Link from "next/link";
 import BookmarkOptions from "./BookmarkOptions";
 import { api } from "@/lib/trpc";
-import { Star } from "lucide-react";
+import { Maximize2, Star } from "lucide-react";
 import TagList from "./TagList";
 
 function isStillCrawling(bookmark: ZBookmark) {
@@ -91,7 +91,7 @@ export default function LinkCard({
           <TagList bookmark={bookmark} loading={isStillTagging(bookmark)} />
         </ImageCardBody>
         <ImageCardFooter>
-          <div className="flex justify-between text-gray-500">
+          <div className="mt-1 flex justify-between text-gray-500">
             <div className="my-auto">
               <Link
                 className="line-clamp-1 hover:text-black"
@@ -109,6 +109,12 @@ export default function LinkCard({
                   fill="#ebb434"
                 />
               )}
+              <Link
+                className="my-auto block px-2"
+                href={`/dashboard/preview/${bookmark.id}`}
+              >
+                <Maximize2 size="20" />
+              </Link>
               <BookmarkOptions bookmark={bookmark} />
             </div>
           </div>
