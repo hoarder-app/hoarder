@@ -128,7 +128,7 @@ export const bookmarksAppRouter = router({
                   .insert(bookmarkLinks)
                   .values({
                     id: bookmark.id,
-                    url: input.url,
+                    url: input.url.trim(),
                   })
                   .returning()
               )[0];
