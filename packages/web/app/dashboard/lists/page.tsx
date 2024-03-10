@@ -1,5 +1,5 @@
 import { api } from "@/server/api/client";
-import AllListsView from "./components/AllListsView";
+import AllListsView from "@/components/dashboard/lists/AllListsView";
 
 export default async function ListsPage() {
   const lists = await api.lists.list();

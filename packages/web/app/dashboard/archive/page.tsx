@@ -1,4 +1,4 @@
-import Bookmarks from "../bookmarks/components/Bookmarks";
+import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
 
 export default async function ArchivedBookmarkPage() {
   return (

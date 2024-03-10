@@ -6,7 +6,7 @@ import { ZBookmarkList } from "@hoarder/trpc/types/lists";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { useNewListModal } from "../../components/NewListModal";
+import { useNewListModal } from "@/components/dashboard/sidebar/NewListModal";
 
 function ListItem({
   name,

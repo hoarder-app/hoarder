@@ -1,6 +1,6 @@
 "use client";
 
-import BookmarksGrid from "@/app/dashboard/bookmarks/components/BookmarksGrid";
+import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
 import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 import { ZBookmarkListWithBookmarks } from "@hoarder/trpc/types/lists";
 import { api } from "@/lib/trpc";

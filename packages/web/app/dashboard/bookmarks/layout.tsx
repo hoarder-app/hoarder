@@ -1,5 +1,5 @@
 import React from "react";
-import AddBookmark from "./components/AddBookmark";
+import AddBookmark from "@/components/dashboard/bookmarks/AddBookmark";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

@@ -1,5 +1,5 @@
 import { PackageOpen } from "lucide-react";
-import SignInForm from "./components/SignInForm";
+import SignInForm from "@/components/signin/SignInForm";
 import { redirect } from "next/dist/client/components/navigation";
 import { getServerAuthSession } from "@/server/auth";
 

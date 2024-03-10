@@ -1,7 +1,7 @@
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@hoarder/db";
 import { notFound, redirect } from "next/navigation";
-import BookmarksGrid from "../../bookmarks/components/BookmarksGrid";
+import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
 import { api } from "@/server/api/client";
 import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 import { and, eq } from "drizzle-orm";

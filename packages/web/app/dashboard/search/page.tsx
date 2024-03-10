@@ -2,7 +2,7 @@
 
 import { api } from "@/lib/trpc";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import BookmarksGrid from "../bookmarks/components/BookmarksGrid";
+import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
 import { Input } from "@/components/ui/input";
 import Loading from "../bookmarks/loading";
 import { keepPreviousData } from "@tanstack/react-query";
