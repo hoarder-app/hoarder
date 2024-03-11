@@ -1,0 +1,9 @@
+import { View, Text } from "react-native";
+
+export default function Error() {
+  return (
+    <View className="flex-1 items-center justify-center gap-4">
+      <Text className="text-4xl">Error!</Text>
+    </View>
+  );
+}

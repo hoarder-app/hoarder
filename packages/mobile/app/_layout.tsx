@@ -16,7 +16,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (hasShareIntent) {
       router.replace({
-        pathname: "shareintent",
+        pathname: "sharing",
         params: { shareIntent: JSON.stringify(shareIntent) },
       });
       resetShareIntent();
