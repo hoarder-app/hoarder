@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "format": "prettier . --write",
-    "format:check": "prettier . --check",
+    "format": "prettier 'packages/**/*.{js,ts,tsx,mjs,cjs}' --write",
+    "format:check": "prettier 'packages/**/*.{js,ts,tsx,mjs,cjs}' --check",
     "lint": "eslint . --ignore-path .gitignore",
     "db:migrate": "pnpm --filter @hoarder/db run migrate",
     "db:studio": "pnpm --filter @hoarder/db studio",
@@ -36,5 +36,10 @@
     "prettier": "3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11"
   },
-  "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2"
+  "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2",
+  "pnpm": {
+    "patchedDependencies": {
+      "xcode@3.0.1": "patches/xcode@3.0.1.patch"
+    }
+  }
 }
