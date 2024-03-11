@@ -10,18 +10,22 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
     "expo": "~50.0.11",
     "expo-constants": "~15.4.5",
     "expo-linking": "~6.2.2",
     "expo-router": "~3.4.8",
     "expo-status-bar": "~1.11.1",
     "lucide-react-native": "^0.354.0",
-    "nativewind": "^2.0.11",
+    "nativewind": "^4.0.1",
     "react": "18.2.0",
     "react-native": "0.73.4",
+    "react-native-reanimated": "^3.8.0",
     "react-native-safe-area-context": "4.8.2",
     "react-native-screens": "~3.29.0",
-    "react-native-svg": "^15.1.0"
+    "react-native-svg": "^15.1.0",
+    "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
