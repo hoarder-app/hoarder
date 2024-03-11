@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Hoarder",
+    "name": "Hoarder App",
     "slug": "hoarder",
     "scheme": "hoarder",
     "version": "1.0.0",
@@ -17,7 +17,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "app.hoarder.hoardermobile"
+      "bundleIdentifier": "app.hoarder.hoardermobile",
+      "config": {
+        "usesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -28,15 +31,26 @@
     },
     "plugins": [
       "expo-router",
-      ["expo-share-intent", {
-        "iosActivationRules": {
+      [
+        "expo-share-intent",
+        {
+          "iosActivationRules": {
             "NSExtensionActivationSupportsWebURLWithMaxCount": 1,
             "NSExtensionActivationSupportsWebPageWithMaxCount": 0,
             "NSExtensionActivationSupportsImageWithMaxCount": 0,
             "NSExtensionActivationSupportsMovieWithMaxCount": 0
           }
-      }],
+        }
+      ],
       "expo-secure-store"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "d6d14643-ad43-4cd3-902a-92c5944d5e45"
+      }
+    }
   }
 }
