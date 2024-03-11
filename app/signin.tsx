@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/Input";
 
 export default function Signin() {
   return (
-    <View className="justify-center h-full flex flex-col gap-2 container">
+    <View className="container justify-center h-full flex flex-col gap-2">
       <View className="items-center">
         <Logo />
       </View>

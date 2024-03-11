@@ -30,6 +30,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@types/react": "~18.2.45",
+    "ajv": "latest",
     "eslint": "^8.57.0",
     "eslint-config-universe": "^12.0.0",
     "prettier": "^3.2.5",
