@@ -11,9 +11,7 @@ import { Providers } from "@/lib/providers";
 
 export default function RootLayout() {
   const router = useRouter();
-  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent({
-    debug: true,
-  });
+  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
 
   useEffect(() => {
     if (hasShareIntent) {

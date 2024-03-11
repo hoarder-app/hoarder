@@ -14,7 +14,10 @@ function getTRPCClient(address: string) {
         async headers() {
           const settings = await getAppSettings();
           return {
-            Authorization: settings ? `Bearer ${settings.apiKey}` : undefined,
+            Authorization:
+              settings && settings.apiKey
+                ? `Bearer ${settings.apiKey}`
+                : undefined,
           };
         },
         transformer: superjson,

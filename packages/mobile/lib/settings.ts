@@ -1,33 +1,23 @@
 import * as SecureStore from "expo-secure-store";
-import { useEffect, useState } from "react";
+
+import { useStorageState } from "./storage-state";
 
 const SETTING_NAME = "settings";
 
 export type Settings = {
-  apiKey: string;
+  apiKey?: string;
   address: string;
 };
 
 export default function useAppSettings() {
-  const [settings, setSettings] = useState<Settings>({
-    apiKey: "",
-    address: "",
-  });
+  let [[isLoading, settings], setSettings] =
+    useStorageState<Settings>(SETTING_NAME);
 
-  useEffect(() => {
-    SecureStore.setItemAsync(SETTING_NAME, JSON.stringify(settings));
-  }, [settings]);
+  settings ||= {
+    address: "https://demo.hoarder.app",
+  };
 
-  useEffect(() => {
-    SecureStore.getItemAsync(SETTING_NAME).then((val) => {
-      if (!val) {
-        return;
-      }
-      setSettings(JSON.parse(val));
-    });
-  }, []);
-
-  return { settings, setSettings };
+  return { settings, setSettings, isLoading };
 }
 
 export async function getAppSettings() {
