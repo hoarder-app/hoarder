@@ -31,6 +31,7 @@ export function useStorageState<T>(key: string): UseStateHook<T> {
   React.useEffect(() => {
     SecureStore.getItemAsync(key).then((value) => {
       if (!value) {
+        setState(null);
         return null;
       }
       setState(JSON.parse(value));

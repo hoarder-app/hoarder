@@ -4,24 +4,27 @@ import { Text, View } from "react-native";
 
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/Button";
-import useAppSettings from "@/lib/settings";
+import { useSession } from "@/lib/session";
 import { api } from "@/lib/trpc";
 
-export default function Main() {
+export default function Dashboard() {
   const router = useRouter();
-  const { settings, setSettings, isLoading } = useAppSettings();
+
+  const { isLoggedIn, logout } = useSession();
 
   useEffect(() => {
-    if (!isLoading && !settings.apiKey) {
+    if (isLoggedIn !== undefined && !isLoggedIn) {
       router.replace("signin");
     }
-  }, [settings, isLoading]);
+  }, [isLoggedIn]);
 
-  const onLogout = () => {
-    setSettings({ ...settings, apiKey: undefined });
-  };
+  const { data, error, isLoading } = api.users.whoami.useQuery();
 
-  const { data } = api.users.whoami.useQuery();
+  useEffect(() => {
+    if (error?.data?.code === "UNAUTHORIZED") {
+      logout();
+    }
+  }, [error]);
 
   return (
     <View className="flex h-full items-center justify-center gap-4 px-4">
@@ -29,7 +32,7 @@ export default function Main() {
       <Text className="justify-center">
         Logged in as: {isLoading ? "Loading ..." : data?.email}
       </Text>
-      <Button label="Log Out" onPress={onLogout} />
+      <Button label="Log Out" onPress={logout} />
     </View>
   );
 }
