@@ -1,16 +1,24 @@
+import { View, Text } from "react-native";
+
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { TextInput, View } from "react-native";
 
 export default function Signin() {
   return (
-    <View className="items-center justify-center h-full">
-      <Logo />
-
-      <Input  />
-      <Button label="Sign In"  />
-
+    <View className="justify-center h-full flex flex-col gap-2 container">
+      <View className="items-center">
+        <Logo />
+      </View>
+      <View className="gap-2">
+        <Text className="font-bold">Email</Text>
+        <Input className="w-full" placeholder="Email" />
+      </View>
+      <View className="gap-2">
+        <Text className="font-bold">Password</Text>
+        <Input className="w-full" placeholder="Password" secureTextEntry />
+      </View>
+      <Button className="w-full" label="Sign In" />
     </View>
   );
 }
