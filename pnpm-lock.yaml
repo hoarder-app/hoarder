@@ -193,6 +193,9 @@ importers:
 
   packages/mobile:
     dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.24.8
+        version: 5.24.8(react@18.2.0)
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -217,6 +220,9 @@ importers:
       expo-router:
         specifier: ~3.4.8
         version: 3.4.8(expo-constants@15.4.5)(expo-linking@6.2.2)(expo-modules-autolinking@1.10.3)(expo-status-bar@1.11.1)(expo@50.0.11)(react-dom@18.2.0)(react-native-reanimated@3.8.0)(react-native-safe-area-context@4.8.2)(react-native-screens@3.29.0)(react-native@0.73.4)(react@18.2.0)
+      expo-secure-store:
+        specifier: ^12.8.1
+        version: 12.8.1(expo@50.0.11)
       expo-share-intent:
         specifier: ^1.0.1
         version: 1.0.1(expo-constants@15.4.5)(expo-linking@6.2.2)(expo@50.0.11)(react-native@0.73.4)(react@18.2.0)
@@ -9311,6 +9317,14 @@ packages:
       - react-dom
       - react-native
       - supports-color
+    dev: false
+
+  /expo-secure-store@12.8.1(expo@50.0.11):
+    resolution: {integrity: sha512-Ju3jmkHby4w7rIzdYAt9kQyQ7HhHJ0qRaiQOInknhOLIltftHjEgF4I1UmzKc7P5RCfGNmVbEH729Pncp/sHXQ==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 50.0.11(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21)
     dev: false
 
   /expo-share-intent@1.0.1(expo-constants@15.4.5)(expo-linking@6.2.2)(expo@50.0.11)(react-native@0.73.4)(react@18.2.0):

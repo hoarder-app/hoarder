@@ -7,6 +7,8 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { View } from "react-native";
 
+import { Providers } from "@/lib/providers";
+
 export default function RootLayout() {
   const router = useRouter();
   const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent({
@@ -23,9 +25,11 @@ export default function RootLayout() {
     }
   }, [hasShareIntent]);
   return (
-    <View className="h-full w-full bg-white">
-      <Slot />
-      <StatusBar style="auto" />
-    </View>
+    <Providers>
+      <View className="h-full w-full bg-white">
+        <Slot />
+        <StatusBar style="auto" />
+      </View>
+    </Providers>
   );
 }

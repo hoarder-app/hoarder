@@ -4,12 +4,13 @@
   "main": "expo-router/entry",
   "scripts": {
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "eslint ."
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.24.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "expo": "~50.0.11",
@@ -18,6 +19,7 @@
     "expo-dev-client": "^3.3.9",
     "expo-linking": "~6.2.2",
     "expo-router": "~3.4.8",
+    "expo-secure-store": "^12.8.1",
     "expo-share-intent": "^1.0.1",
     "expo-status-bar": "~1.11.1",
     "lucide-react-native": "^0.354.0",
