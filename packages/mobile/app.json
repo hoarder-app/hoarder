@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "hoarder-mobile",
-    "slug": "hoarder-mobile",
+    "name": "Hoarder",
+    "slug": "hoarder",
     "scheme": "hoarder",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -17,26 +17,23 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.hoardermobile"
+      "bundleIdentifier": "app.hoarder.hoardermobile"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.hoardermobile"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      "package": "app.hoarder.hoardermobile"
     },
     "plugins": [
       "expo-router",
       ["expo-share-intent", {
         "iosActivationRules": {
             "NSExtensionActivationSupportsWebURLWithMaxCount": 1,
-            "NSExtensionActivationSupportsWebPageWithMaxCount": 1,
-            "NSExtensionActivationSupportsImageWithMaxCount": 1,
-            "NSExtensionActivationSupportsMovieWithMaxCount": 1
+            "NSExtensionActivationSupportsWebPageWithMaxCount": 0,
+            "NSExtensionActivationSupportsImageWithMaxCount": 0,
+            "NSExtensionActivationSupportsMovieWithMaxCount": 0
           }
       }],
       "expo-secure-store"
