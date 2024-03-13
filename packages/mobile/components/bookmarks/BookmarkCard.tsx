@@ -123,12 +123,12 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
   const imageComp = bookmark.content.imageUrl ? (
     <Image
       source={{ uri: bookmark.content.imageUrl }}
-      className="h-56 min-h-56 w-full rounded-t object-cover"
+      className="h-56 min-h-56 w-full rounded-t-lg object-cover"
     />
   ) : (
     <Image
       source={require("@/assets/blur.jpeg")}
-      className="h-56 w-full rounded-t"
+      className="h-56 w-full rounded-t-lg"
     />
   );
 
@@ -205,5 +205,9 @@ export default function BookmarkCard({
       break;
   }
 
-  return <View className="rounded bg-white">{comp}</View>;
+  return (
+    <View className="w-96 rounded-lg border border-gray-300 bg-white shadow-sm">
+      {comp}
+    </View>
+  );
 }

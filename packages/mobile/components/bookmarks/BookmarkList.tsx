@@ -46,17 +46,16 @@ export default function BookmarkList({
   }
 
   return (
-    <View className="px-3">
-      <FlatList
-        contentContainerStyle={{
-          marginTop: 10,
-          gap: 10,
-        }}
-        renderItem={(b) => <BookmarkCard key={b.item.id} bookmark={b.item} />}
-        data={data.bookmarks}
-        refreshing={refreshing}
-        onRefresh={onRefresh}
-      />
-    </View>
+    <FlatList
+      contentContainerStyle={{
+        gap: 15,
+        marginVertical: 15,
+        alignItems: "center",
+      }}
+      renderItem={(b) => <BookmarkCard key={b.item.id} bookmark={b.item} />}
+      data={data.bookmarks}
+      refreshing={refreshing}
+      onRefresh={onRefresh}
+    />
   );
 }

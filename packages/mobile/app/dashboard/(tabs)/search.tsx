@@ -4,6 +4,7 @@ import { View } from "react-native";
 import { useDebounce } from "use-debounce";
 
 import BookmarkList from "@/components/bookmarks/BookmarkList";
+import { Divider } from "@/components/ui/Divider";
 import { Input } from "@/components/ui/Input";
 import { api } from "@/lib/trpc";
 
@@ -18,15 +19,16 @@ export default function Search() {
   );
 
   return (
-    <View className="flex gap-2 p-2">
+    <View>
       <Input
         placeholder="Search"
-        className="bg-white"
+        className="mx-4 mt-4 bg-white"
         value={search}
         onChangeText={setSearch}
         autoFocus
         autoCapitalize="none"
       />
+      <Divider orientation="horizontal" className="mb-1 mt-4 w-full" />
       {data && <BookmarkList ids={data.bookmarks.map((b) => b.id)} />}
     </View>
   );
