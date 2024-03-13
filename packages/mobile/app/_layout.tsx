@@ -9,16 +9,22 @@ import { useEffect } from "react";
 import { View } from "react-native";
 
 import { Providers } from "@/lib/providers";
+import { useLastSharedIntent } from "@/lib/last-shared-intent";
 
 export default function RootLayout() {
   const router = useRouter();
   const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
 
+  const lastSharedIntent = useLastSharedIntent();
+
   useEffect(() => {
-    if (hasShareIntent) {
+    const intentJson = JSON.stringify(shareIntent);
+    if (hasShareIntent && !lastSharedIntent.isPreviouslyShared(intentJson)) {
+      // TODO: Remove once https://github.com/achorein/expo-share-intent/issues/14 is fixed
+      lastSharedIntent.setIntent(intentJson);
       router.replace({
         pathname: "sharing",
-        params: { shareIntent: JSON.stringify(shareIntent) },
+        params: { shareIntent: intentJson },
       });
       resetShareIntent();
     }

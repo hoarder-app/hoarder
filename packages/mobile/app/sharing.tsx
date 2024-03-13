@@ -1,5 +1,5 @@
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import { ShareIntent } from "expo-share-intent";
+import { ShareIntent, useShareIntent } from "expo-share-intent";
 import { useEffect, useMemo, useState } from "react";
 import { View, Text } from "react-native";
 import { z } from "zod";
@@ -12,6 +12,9 @@ type Mode =
   | { type: "error" };
 
 function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
+  // Desperate attempt to fix sharing duplication
+  const { hasShareIntent, resetShareIntent } = useShareIntent();
+
   const params = useLocalSearchParams();
 
   const shareIntent = useMemo(() => {
@@ -35,6 +38,9 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
       } else {
         mutate({ type: "text", text: shareIntent.text });
       }
+    }
+    if (hasShareIntent) {
+      resetShareIntent();
     }
   }, []);
 
