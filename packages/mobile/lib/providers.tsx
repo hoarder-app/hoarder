@@ -6,6 +6,8 @@ import superjson from "superjson";
 import useAppSettings, { getAppSettings } from "./settings";
 import { api } from "./trpc";
 
+import { ToastProvider } from "@/components/ui/Toast";
+
 function getTRPCClient(address: string) {
   return api.createClient({
     links: [
@@ -44,7 +46,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       client={trpcClient}
       queryClient={queryClient}
     >
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        <ToastProvider>{children}</ToastProvider>
+      </QueryClientProvider>
     </api.Provider>
   );
 }

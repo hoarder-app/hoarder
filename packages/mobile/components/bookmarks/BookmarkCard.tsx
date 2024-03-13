@@ -1,10 +1,12 @@
 import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 import * as WebBrowser from "expo-web-browser";
-import { Star, Archive, Trash } from "lucide-react-native";
+import { Star, Archive, Trash, ArchiveRestore } from "lucide-react-native";
 import { View, Text, Image, ScrollView, Pressable } from "react-native";
 import Markdown from "react-native-markdown-display";
 
+import { ActionButton } from "../ui/ActionButton";
 import { Skeleton } from "../ui/Skeleton";
+import { useToast } from "../ui/Toast";
 
 import { api } from "@/lib/trpc";
 
@@ -30,20 +32,39 @@ export function isBookmarkStillLoading(bookmark: ZBookmark) {
 }
 
 function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
+  const { toast } = useToast();
   const apiUtils = api.useUtils();
 
-  const { mutate: deleteBookmark } = api.bookmarks.deleteBookmark.useMutation({
-    onSuccess: () => {
-      apiUtils.bookmarks.getBookmarks.invalidate();
-    },
-  });
-  const { mutate: updateBookmark, variables } =
-    api.bookmarks.updateBookmark.useMutation({
+  const { mutate: deleteBookmark, isPending: isDeletionPending } =
+    api.bookmarks.deleteBookmark.useMutation({
       onSuccess: () => {
         apiUtils.bookmarks.getBookmarks.invalidate();
-        apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: bookmark.id });
+      },
+      onError: () => {
+        toast({
+          message: "Something went wrong",
+          variant: "destructive",
+          showProgress: false,
+        });
       },
     });
+  const {
+    mutate: updateBookmark,
+    variables,
+    isPending: isUpdatePending,
+  } = api.bookmarks.updateBookmark.useMutation({
+    onSuccess: () => {
+      apiUtils.bookmarks.getBookmarks.invalidate();
+      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: bookmark.id });
+    },
+    onError: () => {
+      toast({
+        message: "Something went wrong",
+        variant: "destructive",
+        showProgress: false,
+      });
+    },
+  });
 
   return (
     <View className="flex flex-row gap-4">
@@ -61,7 +82,8 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
           <Star />
         )}
       </Pressable>
-      <Pressable
+      <ActionButton
+        loading={isUpdatePending}
         onPress={() =>
           updateBookmark({
             bookmarkId: bookmark.id,
@@ -69,9 +91,10 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
           })
         }
       >
-        <Archive />
-      </Pressable>
-      <Pressable
+        {bookmark.archived ? <ArchiveRestore /> : <Archive />}
+      </ActionButton>
+      <ActionButton
+        loading={isDeletionPending}
         onPress={() =>
           deleteBookmark({
             bookmarkId: bookmark.id,
@@ -79,7 +102,7 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         }
       >
         <Trash />
-      </Pressable>
+      </ActionButton>
     </View>
   );
 }

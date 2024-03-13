@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { FlatList, Text, View } from "react-native";
+import { Text, View } from "react-native";
+import Animated, { LinearTransition } from "react-native-reanimated";
 
 import BookmarkCard from "./BookmarkCard";
 
@@ -37,25 +38,25 @@ export default function BookmarkList({
     apiUtils.bookmarks.getBookmark.invalidate();
   };
 
-  if (!data.bookmarks.length) {
-    return (
-      <View className="h-full items-center justify-center">
-        <Text className="text-xl">No Bookmarks</Text>
-      </View>
-    );
-  }
-
   return (
-    <FlatList
+    <Animated.FlatList
+      itemLayoutAnimation={LinearTransition}
       contentContainerStyle={{
         gap: 15,
         marginVertical: 15,
         alignItems: "center",
+        height: "100%",
       }}
-      renderItem={(b) => <BookmarkCard key={b.item.id} bookmark={b.item} />}
+      renderItem={(b) => <BookmarkCard bookmark={b.item} />}
+      ListEmptyComponent={
+        <View className="h-full items-center justify-center">
+          <Text className="text-xl">No Bookmarks</Text>
+        </View>
+      }
       data={data.bookmarks}
       refreshing={refreshing}
       onRefresh={onRefresh}
+      keyExtractor={(b) => b.id}
     />
   );
 }
