@@ -1,10 +1,10 @@
 import {
   ImageCard,
+  ImageCardBanner,
   ImageCardBody,
   ImageCardContent,
   ImageCardFooter,
   ImageCardTitle,
-  ImageCardBanner,
 } from "@/components/ui/imageCard";
 import { Skeleton } from "@/components/ui/skeleton";
 

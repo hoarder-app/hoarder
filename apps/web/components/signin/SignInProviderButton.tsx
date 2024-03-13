@@ -1,6 +1,8 @@
 "use client";
+
+import type { ClientSafeProvider } from "next-auth/react";
 import { Button } from "@/components/ui/button";
-import { ClientSafeProvider, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 export default function SignInProviderButton({
   provider,

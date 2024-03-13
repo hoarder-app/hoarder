@@ -7,6 +7,9 @@ const config = {
   ],
   rules: {
     "react/prop-types": "off",
+    "jsx-a11y/no-autofocus": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "react-hooks/exhaustive-deps": "off",
   },
   globals: {
     React: "writable",

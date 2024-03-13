@@ -17,7 +17,6 @@ export default function SignInPage() {
       setSettings((s) => ({ ...s, apiKey: resp.key }));
       navigate("/options");
     },
-    onError: () => {},
   });
 
   const [formData, setFormData] = useState<{

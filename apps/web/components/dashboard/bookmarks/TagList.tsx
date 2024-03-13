@@ -1,8 +1,9 @@
-import { badgeVariants } from "@/components/ui/badge";
 import Link from "next/link";
+import { badgeVariants } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 import { cn } from "@/lib/utils";
+
+import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
 export default function TagList({
   bookmark,
@@ -26,7 +27,7 @@ export default function TagList({
           <Link
             className={cn(
               badgeVariants({ variant: "outline" }),
-              "hover:bg-foreground hover:text-secondary text-nowrap",
+              "text-nowrap hover:bg-foreground hover:text-secondary",
             )}
             href={`/dashboard/tags/${t.name}`}
           >

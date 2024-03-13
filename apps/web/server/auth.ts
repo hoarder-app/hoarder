@@ -1,14 +1,17 @@
-import NextAuth, { NextAuthOptions, getServerSession } from "next-auth";
 import type { Adapter } from "next-auth/adapters";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import NextAuth, {
+  DefaultSession,
+  getServerSession,
+  NextAuthOptions,
+} from "next-auth";
 import AuthentikProvider from "next-auth/providers/authentik";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { Provider } from "next-auth/providers/index";
+
+import { db } from "@hoarder/db";
 import serverConfig from "@hoarder/shared/config";
 import { validatePassword } from "@hoarder/trpc/auth";
-import { db } from "@hoarder/db";
-import { DefaultSession } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-
-import { Provider } from "next-auth/providers/index";
 
 declare module "next-auth/jwt" {
   export interface JWT {

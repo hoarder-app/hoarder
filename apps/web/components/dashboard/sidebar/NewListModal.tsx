@@ -1,14 +1,5 @@
 "use client";
 
-import data from "@emoji-mart/data";
-import Picker from "@emoji-mart/react";
-
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-
 import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +9,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -27,15 +17,19 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import data from "@emoji-mart/data";
+import Picker from "@emoji-mart/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
-
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { create } from "zustand";
 
 export const useNewListModal = create<{
@@ -113,7 +107,7 @@ export default function NewListModal() {
                     <FormItem>
                       <FormControl>
                         <Popover>
-                          <PopoverTrigger className="border-input h-full rounded border px-2 text-2xl">
+                          <PopoverTrigger className="h-full rounded border border-input px-2 text-2xl">
                             {field.value}
                           </PopoverTrigger>
                           <PopoverContent>

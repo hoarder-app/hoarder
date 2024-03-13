@@ -1,7 +1,6 @@
-import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { FlatList, View } from "react-native";
-
+import { Link } from "expo-router";
 import { api } from "@/lib/trpc";
 
 export default function Lists() {

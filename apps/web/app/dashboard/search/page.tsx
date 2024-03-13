@@ -1,10 +1,11 @@
 "use client";
 
-import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
-import Loading from "../bookmarks/loading";
 import { Suspense, useRef } from "react";
+import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
 import { SearchInput } from "@/components/dashboard/search/SearchInput";
 import { useBookmarkSearch } from "@/lib/hooks/bookmark-search";
+
+import Loading from "../bookmarks/loading";
 
 function SearchComp() {
   const { data, isPending, isPlaceholderData } = useBookmarkSearch();

@@ -1,12 +1,13 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { api } from "@/lib/trpc";
-import { ZBookmarkList } from "@hoarder/trpc/types/lists";
-import { keepPreviousData } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useNewListModal } from "@/components/dashboard/sidebar/NewListModal";
+import { Button } from "@/components/ui/button";
+import { api } from "@/lib/trpc";
+import { keepPreviousData } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
+
+import type { ZBookmarkList } from "@hoarder/trpc/types/lists";
 
 function ListItem({
   name,
@@ -19,7 +20,7 @@ function ListItem({
 }) {
   return (
     <Link href={path}>
-      <div className="bg-background rounded-md border border-gray-200 px-4 py-2 text-lg">
+      <div className="rounded-md border border-gray-200 bg-background px-4 py-2 text-lg">
         <p className="text-nowrap">
           {icon} {name}
         </p>

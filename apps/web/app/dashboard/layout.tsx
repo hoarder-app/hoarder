@@ -1,6 +1,6 @@
-import { Separator } from "@/components/ui/separator";
 import MobileSidebar from "@/components/dashboard/sidebar/ModileSidebar";
 import Sidebar from "@/components/dashboard/sidebar/Sidebar";
+import { Separator } from "@/components/ui/separator";
 
 export default async function Dashboard({
   children,

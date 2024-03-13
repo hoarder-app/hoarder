@@ -1,9 +1,9 @@
+import { notFound, redirect } from "next/navigation";
+import DeleteListButton from "@/components/dashboard/lists/DeleteListButton";
+import ListView from "@/components/dashboard/lists/ListView";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
 import { TRPCError } from "@trpc/server";
-import { notFound, redirect } from "next/navigation";
-import ListView from "@/components/dashboard/lists/ListView";
-import DeleteListButton from "@/components/dashboard/lists/DeleteListButton";
 
 export default async function ListPage({
   params,

@@ -26,6 +26,7 @@ export default function Layout() {
           <a
             className="flex gap-2 text-black"
             target="_blank"
+            rel="noreferrer"
             href={`${settings.address}/dashboard/bookmarks`}
           >
             <Home />

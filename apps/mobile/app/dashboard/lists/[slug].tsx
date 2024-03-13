@@ -1,6 +1,5 @@
-import { useLocalSearchParams, Stack } from "expo-router";
 import { View } from "react-native";
-
+import { Stack, useLocalSearchParams } from "expo-router";
 import BookmarkList from "@/components/bookmarks/BookmarkList";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { api } from "@/lib/trpc";

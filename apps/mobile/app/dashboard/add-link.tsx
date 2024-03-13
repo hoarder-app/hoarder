@@ -1,7 +1,6 @@
-import { useRouter } from "expo-router";
 import { useState } from "react";
-import { View, Text } from "react-native";
-
+import { Text, View } from "react-native";
+import { useRouter } from "expo-router";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { api } from "@/lib/trpc";
@@ -24,9 +23,9 @@ export default function AddNote() {
     },
     onError: (e) => {
       let message;
-      if (e.data?.code === "BAD_REQUEST") {
-        const error = JSON.parse(e.message)[0];
-        message = error.message;
+      if (e.data?.zodError) {
+        const zodError = e.data.zodError;
+        message = JSON.stringify(zodError);
       } else {
         message = `Something went wrong: ${e.message}`;
       }

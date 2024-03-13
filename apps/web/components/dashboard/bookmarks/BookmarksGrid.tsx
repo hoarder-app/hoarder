@@ -1,14 +1,19 @@
 "use client";
 
-import LinkCard from "./LinkCard";
-import { ZBookmark, ZGetBookmarksRequest } from "@hoarder/trpc/types/bookmarks";
+import { useMemo } from "react";
 import { api } from "@/lib/trpc";
-import TextCard from "./TextCard";
+import tailwindConfig from "@/tailwind.config";
 import { Slot } from "@radix-ui/react-slot";
 import Masonry from "react-masonry-css";
 import resolveConfig from "tailwindcss/resolveConfig";
-import tailwindConfig from "@/tailwind.config";
-import { useMemo } from "react";
+
+import type {
+  ZBookmark,
+  ZGetBookmarksRequest,
+} from "@hoarder/trpc/types/bookmarks";
+
+import LinkCard from "./LinkCard";
+import TextCard from "./TextCard";
 
 function getBreakpointConfig() {
   const fullConfig = resolveConfig(tailwindConfig);

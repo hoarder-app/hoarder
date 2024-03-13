@@ -1,4 +1,6 @@
-import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import { useState } from "react";
+import { ActionButton } from "@/components/ui/action-button";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -8,12 +10,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ActionButton } from "@/components/ui/action-button";
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { api } from "@/lib/trpc";
-import { useState } from "react";
 import { toast } from "@/components/ui/use-toast";
+import { api } from "@/lib/trpc";
+
+import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
 export function BookmarkedTextEditor({
   bookmark,

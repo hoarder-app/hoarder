@@ -1,13 +1,15 @@
-import { Tag, Home, PackageOpen, Settings, Search, Shield } from "lucide-react";
-import { redirect } from "next/navigation";
-import SidebarItem from "./SidebarItem";
-import { getServerAuthSession } from "@/server/auth";
 import Link from "next/link";
-import SidebarProfileOptions from "./SidebarProfileOptions";
+import { redirect } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
-import AllLists from "./AllLists";
-import serverConfig from "@hoarder/shared/config";
 import { api } from "@/server/api/client";
+import { getServerAuthSession } from "@/server/auth";
+import { Home, PackageOpen, Search, Settings, Shield, Tag } from "lucide-react";
+
+import serverConfig from "@hoarder/shared/config";
+
+import AllLists from "./AllLists";
+import SidebarItem from "./SidebarItem";
+import SidebarProfileOptions from "./SidebarProfileOptions";
 
 export default async function Sidebar() {
   const session = await getServerAuthSession();

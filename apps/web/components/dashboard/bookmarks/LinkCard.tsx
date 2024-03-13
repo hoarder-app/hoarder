@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   ImageCard,
   ImageCardBanner,
@@ -8,17 +9,18 @@ import {
   ImageCardFooter,
   ImageCardTitle,
 } from "@/components/ui/imageCard";
-import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
-import Link from "next/link";
-import BookmarkOptions from "./BookmarkOptions";
-import { api } from "@/lib/trpc";
-import { Maximize2, Star } from "lucide-react";
-import TagList from "./TagList";
 import {
   isBookmarkStillCrawling,
   isBookmarkStillLoading,
   isBookmarkStillTagging,
 } from "@/lib/bookmarkUtils";
+import { api } from "@/lib/trpc";
+import { Maximize2, Star } from "lucide-react";
+
+import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+
+import BookmarkOptions from "./BookmarkOptions";
+import TagList from "./TagList";
 
 export default function LinkCard({
   bookmark: initialData,

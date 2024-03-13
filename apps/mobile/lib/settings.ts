@@ -4,14 +4,15 @@ import { useStorageState } from "./storage-state";
 
 const SETTING_NAME = "settings";
 
-export type Settings = {
+export interface Settings {
   apiKey?: string;
   address: string;
-};
+}
 
 export default function useAppSettings() {
-  let [[isLoading, settings], setSettings] =
-    useStorageState<Settings>(SETTING_NAME);
+  const [settingsState, setSettings] = useStorageState<Settings>(SETTING_NAME);
+  const [isLoading] = settingsState;
+  let [, settings] = settingsState;
 
   settings ||= {
     address: "https://demo.hoarder.app",

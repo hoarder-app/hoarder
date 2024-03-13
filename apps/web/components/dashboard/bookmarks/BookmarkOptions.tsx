@@ -1,8 +1,6 @@
 "use client";
 
-import { useToast } from "@/components/ui/use-toast";
-import { api } from "@/lib/trpc";
-import { ZBookmark, ZBookmarkedLink } from "@hoarder/trpc/types/bookmarks";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +8,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useToast } from "@/components/ui/use-toast";
+import { api } from "@/lib/trpc";
 import {
   Archive,
   Link,
@@ -21,10 +21,12 @@ import {
   Tags,
   Trash2,
 } from "lucide-react";
-import { useTagModel } from "./TagModal";
-import { useState } from "react";
-import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
+
+import type { ZBookmark, ZBookmarkedLink } from "@hoarder/trpc/types/bookmarks";
+
 import { useAddToListModal } from "./AddToListModal";
+import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
+import { useTagModel } from "./TagModal";
 
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();

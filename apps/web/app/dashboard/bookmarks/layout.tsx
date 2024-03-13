@@ -1,6 +1,6 @@
+import type { Metadata } from "next";
 import React from "react";
 import TopNav from "@/components/dashboard/bookmarks/TopNav";
-import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Hoarder - Bookmarks",

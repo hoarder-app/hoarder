@@ -2,11 +2,11 @@
 const { getDefaultConfig } = require("expo/metro-config");
 const { FileStore } = require("metro-cache");
 const { withNativeWind } = require("nativewind/metro");
-
 const path = require("path");
 
 module.exports = withTurborepoManagedCache(
   withMonorepoPaths(
+    // eslint-disable-next-line no-undef
     withNativeWind(getDefaultConfig(__dirname), {
       input: "./globals.css",
       configPath: "./tailwind.config.ts",
@@ -23,6 +23,7 @@ module.exports = withTurborepoManagedCache(
  * @returns {import('expo/metro-config').MetroConfig}
  */
 function withMonorepoPaths(config) {
+  // eslint-disable-next-line no-undef
   const projectRoot = __dirname;
   const workspaceRoot = path.resolve(projectRoot, "../..");
 
@@ -49,10 +50,8 @@ function withMonorepoPaths(config) {
  */
 function withTurborepoManagedCache(config) {
   config.cacheStores = [
+    // eslint-disable-next-line no-undef
     new FileStore({ root: path.join(__dirname, "node_modules/.cache/metro") }),
   ];
   return config;
 }
-
-
-

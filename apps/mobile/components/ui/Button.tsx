@@ -1,7 +1,7 @@
-import { type VariantProps, cva } from "class-variance-authority";
+import type { VariantProps } from "class-variance-authority";
 import { Text, TouchableOpacity } from "react-native";
-
 import { cn } from "@/lib/utils";
+import { cva } from "class-variance-authority";
 
 const buttonVariants = cva(
   "flex flex-row items-center justify-center rounded-md",

@@ -2,6 +2,7 @@ import { db } from "@hoarder/db";
 import serverConfig from "@hoarder/shared/config";
 import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
+import { ZodError } from "zod";
 
 type User = {
   id: string;
@@ -21,6 +22,19 @@ export type Context = {
 // is common in i18n libraries.
 const t = initTRPC.context<Context>().create({
   transformer: superjson,
+  errorFormatter(opts) {
+    const { shape, error } = opts;
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError:
+          error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
+            ? error.cause.flatten()
+            : null,
+      },
+    };
+  },
 });
 export const createCallerFactory = t.createCallerFactory;
 // Base router and procedure helpers

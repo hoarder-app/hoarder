@@ -1,13 +1,14 @@
 "use client";
 
+import Link from "next/link";
 import { BackButton } from "@/components/ui/back-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { isBookmarkStillCrawling } from "@/lib/bookmarkUtils";
 import { api } from "@/lib/trpc";
-import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 import { ArrowLeftCircle, CalendarDays, ExternalLink } from "lucide-react";
-import Link from "next/link";
 import Markdown from "react-markdown";
+
+import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
 export default function BookmarkPreview({
   initialData,
@@ -37,7 +38,7 @@ export default function BookmarkPreview({
   const linkHeader = bookmark.content.type == "link" && (
     <div className="flex flex-col space-y-2">
       <p className="text-center text-3xl">
-        {bookmark.content.title || bookmark.content.url}
+        {bookmark.content.title ?? bookmark.content.url}
       </p>
       <Link href={bookmark.content.url} className="mx-auto flex gap-2">
         <span className="my-auto">View Original</span>
@@ -72,7 +73,7 @@ export default function BookmarkPreview({
   }
 
   return (
-    <div className="bg-background m-4 min-h-screen space-y-4 rounded-md border p-4">
+    <div className="m-4 min-h-screen space-y-4 rounded-md border bg-background p-4">
       <div className="flex justify-between">
         <BackButton className="ghost" variant="ghost">
           <ArrowLeftCircle />

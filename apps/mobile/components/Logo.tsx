@@ -1,5 +1,5 @@
+import { Text, View } from "react-native";
 import { PackageOpen } from "lucide-react-native";
-import { View, Text } from "react-native";
 
 export default function Logo() {
   return (

@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
-
-import BookmarkCard from "./BookmarkCard";
-import FullPageSpinner from "../ui/FullPageSpinner";
-
 import { api } from "@/lib/trpc";
+
+import FullPageSpinner from "../ui/FullPageSpinner";
+import BookmarkCard from "./BookmarkCard";
 
 export default function BookmarkList({
   favourited,

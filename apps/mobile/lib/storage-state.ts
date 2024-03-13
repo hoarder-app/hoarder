@@ -1,5 +1,5 @@
-import * as SecureStore from "expo-secure-store";
 import * as React from "react";
+import * as SecureStore from "expo-secure-store";
 
 type UseStateHook<T> = [[boolean, T | null], (value: T | null) => void];
 
@@ -8,7 +8,7 @@ function useAsyncState<T>(
 ): UseStateHook<T> {
   return React.useReducer(
     (
-      state: [boolean, T | null],
+      _state: [boolean, T | null],
       action: T | null = null,
     ): [boolean, T | null] => [false, action],
     initialValue,
@@ -34,7 +34,7 @@ export function useStorageState<T>(key: string): UseStateHook<T> {
         setState(null);
         return null;
       }
-      setState(JSON.parse(value));
+      setState(JSON.parse(value) as T);
     });
   }, [key]);
 

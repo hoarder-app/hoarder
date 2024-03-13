@@ -1,6 +1,7 @@
 import { getProviders } from "next-auth/react";
-import SignInProviderButton from "./SignInProviderButton";
+
 import CredentialsForm from "./CredentialsForm";
+import SignInProviderButton from "./SignInProviderButton";
 
 export default async function SignInForm() {
   const providers = await getProviders();

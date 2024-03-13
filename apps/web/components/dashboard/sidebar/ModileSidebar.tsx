@@ -1,11 +1,12 @@
-import MobileSidebarItem from "./ModileSidebarItem";
 import {
-  Tag,
-  PackageOpen,
-  Settings,
-  Search,
   ClipboardList,
+  PackageOpen,
+  Search,
+  Settings,
+  Tag,
 } from "lucide-react";
+
+import MobileSidebarItem from "./ModileSidebarItem";
 import SidebarProfileOptions from "./SidebarProfileOptions";
 
 export default async function MobileSidebar() {

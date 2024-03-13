@@ -1,10 +1,10 @@
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import { ShareIntent, useShareIntent } from "expo-share-intent";
+import type { ShareIntent } from "expo-share-intent";
 import { useEffect, useMemo, useState } from "react";
-import { View, Text } from "react-native";
-import { z } from "zod";
-
+import { Text, View } from "react-native";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
+import { useShareIntent } from "expo-share-intent";
 import { api } from "@/lib/trpc";
+import { z } from "zod";
 
 type Mode =
   | { type: "idle" }
@@ -18,7 +18,7 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
   const params = useLocalSearchParams();
 
   const shareIntent = useMemo(() => {
-    if (params && params.shareIntent) {
+    if (params?.shareIntent) {
       if (typeof params.shareIntent === "string") {
         return JSON.parse(params.shareIntent) as ShareIntent;
       }
