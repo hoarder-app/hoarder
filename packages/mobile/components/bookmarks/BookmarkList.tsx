@@ -3,6 +3,7 @@ import { Text, View } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 
 import BookmarkCard from "./BookmarkCard";
+import FullPageSpinner from "../ui/FullPageSpinner";
 
 import { api } from "@/lib/trpc";
 
@@ -29,8 +30,7 @@ export default function BookmarkList({
   }, [isPending, isPlaceholderData]);
 
   if (isPending || !data) {
-    // TODO: Add a spinner
-    return;
+    return <FullPageSpinner />;
   }
 
   const onRefresh = () => {

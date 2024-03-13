@@ -2,6 +2,7 @@ import { useLocalSearchParams, Stack } from "expo-router";
 import { View } from "react-native";
 
 import BookmarkList from "@/components/bookmarks/BookmarkList";
+import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { api } from "@/lib/trpc";
 
 export default function ListView() {
@@ -12,8 +13,7 @@ export default function ListView() {
   const { data: list } = api.lists.get.useQuery({ listId: slug });
 
   if (!list) {
-    // TODO: Spinner
-    return <View />;
+    return <FullPageSpinner />;
   }
 
   return (
