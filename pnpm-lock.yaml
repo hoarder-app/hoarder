@@ -232,6 +232,9 @@ importers:
       lucide-react-native:
         specifier: ^0.354.0
         version: 0.354.0(react-native-svg@15.1.0)(react-native@0.73.4)(react@18.2.0)
+      metro-cache:
+        specifier: ^0.80.6
+        version: 0.80.6
       nativewind:
         specifier: ^4.0.1
         version: 4.0.36(@babel/core@7.23.9)(react-native-reanimated@3.8.0)(react-native-safe-area-context@4.8.2)(react-native-svg@15.1.0)(react-native@0.73.4)(react@18.2.0)(tailwindcss@3.3.2)

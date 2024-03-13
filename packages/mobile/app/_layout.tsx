@@ -1,11 +1,12 @@
 import "@/globals.css";
 import "expo-dev-client";
 
-import { Slot, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useShareIntent } from "expo-share-intent";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { View } from "react-native";
+import { Stack } from "expo-router/stack";
 
 import { Providers } from "@/lib/providers";
 
@@ -22,10 +23,22 @@ export default function RootLayout() {
       resetShareIntent();
     }
   }, [hasShareIntent]);
+
   return (
     <Providers>
       <View className="h-full w-full bg-white">
-        <Slot />
+        <Stack
+          screenOptions={{
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen
+            name="sharing"
+            options={{
+              presentation: "modal",
+            }}
+          />
+        </Stack>
         <StatusBar style="auto" />
       </View>
     </Providers>
