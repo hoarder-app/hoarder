@@ -27,12 +27,15 @@ export default function Dashboard() {
   }, [error]);
 
   return (
-    <View className="flex h-full items-center justify-center gap-4 px-4">
+    <View className="flex h-full w-full items-center gap-4 p-4">
       <Logo />
-      <Text className="justify-center">
-        Logged in as: {isLoading ? "Loading ..." : data?.email}
-      </Text>
-      <Button label="Log Out" onPress={logout} />
+      <View className="w-full rounded-lg bg-white px-4 py-2">
+        <Text className="text-lg">
+          {isLoading ? "Loading ..." : data?.email}
+        </Text>
+      </View>
+
+      <Button className="w-full" label="Log Out" onPress={logout} />
     </View>
   );
 }
