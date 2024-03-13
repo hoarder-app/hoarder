@@ -2,6 +2,7 @@ import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { ShareIntent } from "expo-share-intent";
 import { useEffect, useMemo, useState } from "react";
 import { View, Text } from "react-native";
+import { z } from "zod";
 
 import { api } from "@/lib/trpc";
 
@@ -27,7 +28,13 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
 
   useEffect(() => {
     if (!isPending && shareIntent?.text) {
-      mutate({ type: "link", url: shareIntent.text });
+      const val = z.string().url();
+      if (val.safeParse(shareIntent.text).success) {
+        // This is a URL, else treated as text
+        mutate({ type: "link", url: shareIntent.text });
+      } else {
+        mutate({ type: "text", text: shareIntent.text });
+      }
     }
   }, []);
 

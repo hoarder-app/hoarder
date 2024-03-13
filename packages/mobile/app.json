@@ -38,7 +38,8 @@
             "NSExtensionActivationSupportsWebURLWithMaxCount": 1,
             "NSExtensionActivationSupportsWebPageWithMaxCount": 0,
             "NSExtensionActivationSupportsImageWithMaxCount": 0,
-            "NSExtensionActivationSupportsMovieWithMaxCount": 0
+            "NSExtensionActivationSupportsMovieWithMaxCount": 0,
+            "NSExtensionActivationSupportsText": true
           }
         }
       ],

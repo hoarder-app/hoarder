@@ -193,6 +193,9 @@ importers:
 
   packages/mobile:
     dependencies:
+      '@hoarder/trpc':
+        specifier: 0.1.0
+        version: link:../trpc
       '@tanstack/react-query':
         specifier: ^5.24.8
         version: 5.24.8(react@18.2.0)
@@ -268,6 +271,9 @@ importers:
       use-debounce:
         specifier: ^10.0.0
         version: 10.0.0(react@18.2.0)
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
     devDependencies:
       '@babel/core':
         specifier: ^7.20.0
