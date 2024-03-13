@@ -23,6 +23,7 @@
     "expo-secure-store": "^12.8.1",
     "expo-share-intent": "^1.0.1",
     "expo-status-bar": "~1.11.1",
+    "expo-web-browser": "^12.8.2",
     "lucide-react-native": "^0.354.0",
     "nativewind": "^4.0.1",
     "react": "18.2.0",

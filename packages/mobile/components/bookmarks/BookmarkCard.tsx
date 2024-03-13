@@ -1,4 +1,5 @@
 import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import * as WebBrowser from "expo-web-browser";
 import { Star, Archive, Trash } from "lucide-react-native";
 import { View, Text, Image, ScrollView, Pressable } from "react-native";
 import Markdown from "react-native-markdown-display";
@@ -131,7 +132,10 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
     <View className="flex gap-2">
       {imageComp}
       <View className="flex gap-2">
-        <Text className="line-clamp-2 text-xl font-bold">
+        <Text
+          className="line-clamp-2 text-xl font-bold"
+          onPress={() => WebBrowser.openBrowserAsync(bookmark.content.url)}
+        >
           {bookmark.content.title || parsedUrl.host}
         </Text>
         <TagList bookmark={bookmark} />
