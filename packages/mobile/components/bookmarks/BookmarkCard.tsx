@@ -85,12 +85,18 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
 
   const parsedUrl = new URL(bookmark.content.url);
 
+  const imageComp = bookmark.content.imageUrl ? (
+    <Image
+      source={{ uri: bookmark.content.imageUrl }}
+      className="h-56 min-h-56 w-full"
+    />
+  ) : (
+    <View className="h-56" />
+  );
+
   return (
     <View className="flex gap-2">
-      <Image
-        source={{ uri: bookmark.content.imageUrl || "" }}
-        className="h-56 min-h-56 w-full"
-      />
+      {imageComp}
       <View className="flex gap-2">
         <Text className="line-clamp-2 text-xl font-bold">
           {bookmark.content.title || parsedUrl.host}

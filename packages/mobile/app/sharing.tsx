@@ -28,12 +28,12 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
   useEffect(() => {
     if (!isPending && shareIntent?.text) {
       mutate({ type: "link", url: shareIntent.text });
-      invalidateAllBookmarks();
     }
   }, []);
 
   const { mutate, isPending } = api.bookmarks.createBookmark.useMutation({
     onSuccess: (d) => {
+      invalidateAllBookmarks();
       setMode({ type: "success", bookmarkId: d.id });
     },
     onError: () => {
