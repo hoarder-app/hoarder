@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Home, Settings } from "lucide-react-native";
+import { ClipboardList, Home, Settings } from "lucide-react-native";
 import React from "react";
 
 export default function TabLayout() {
@@ -10,6 +10,13 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => <Home color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="lists"
+        options={{
+          title: "Lists",
+          tabBarIcon: ({ color }) => <ClipboardList color={color} />,
         }}
       />
       <Tabs.Screen

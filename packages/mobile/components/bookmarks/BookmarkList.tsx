@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList } from "react-native";
+import { FlatList, Text, View } from "react-native";
 
 import BookmarkCard from "./BookmarkCard";
 
@@ -8,9 +8,11 @@ import { api } from "@/lib/trpc";
 export default function BookmarkList({
   favourited,
   archived,
+  ids,
 }: {
   favourited?: boolean;
   archived?: boolean;
+  ids?: string[];
 }) {
   const apiUtils = api.useUtils();
   const [refreshing, setRefreshing] = useState(false);
@@ -18,6 +20,7 @@ export default function BookmarkList({
     api.bookmarks.getBookmarks.useQuery({
       favourited,
       archived,
+      ids,
     });
 
   useEffect(() => {
@@ -34,9 +37,18 @@ export default function BookmarkList({
     apiUtils.bookmarks.getBookmark.invalidate();
   };
 
+  if (!data.bookmarks.length) {
+    return (
+      <View className="h-full items-center justify-center">
+        <Text className="text-xl">No Bookmarks</Text>
+      </View>
+    );
+  }
+
   return (
     <FlatList
       contentContainerStyle={{
+        marginTop: 10,
         gap: 10,
       }}
       renderItem={(b) => <BookmarkCard key={b.item.id} bookmark={b.item} />}
