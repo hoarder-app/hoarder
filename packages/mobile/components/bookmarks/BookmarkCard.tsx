@@ -117,24 +117,28 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
     throw new Error("Wrong content type rendered");
   }
 
-  const parsedUrl = new URL(bookmark.content.url);
+  const url = bookmark.content.url;
+  const parsedUrl = new URL(url);
 
   const imageComp = bookmark.content.imageUrl ? (
     <Image
       source={{ uri: bookmark.content.imageUrl }}
-      className="h-56 min-h-56 w-full"
+      className="h-56 min-h-56 w-full rounded-t object-cover"
     />
   ) : (
-    <Image source={require("@/assets/blur.jpeg")} className="h-56 w-full" />
+    <Image
+      source={require("@/assets/blur.jpeg")}
+      className="h-56 w-full rounded-t"
+    />
   );
 
   return (
     <View className="flex gap-2">
       {imageComp}
-      <View className="flex gap-2">
+      <View className="flex gap-2 p-2">
         <Text
           className="line-clamp-2 text-xl font-bold"
-          onPress={() => WebBrowser.openBrowserAsync(bookmark.content.url)}
+          onPress={() => WebBrowser.openBrowserAsync(url)}
         >
           {bookmark.content.title || parsedUrl.host}
         </Text>
@@ -153,7 +157,7 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
     throw new Error("Wrong content type rendered");
   }
   return (
-    <View className="flex max-h-96 gap-2">
+    <View className="flex max-h-96 gap-2 p-2">
       <View className="max-h-56 overflow-hidden pb-2">
         <Markdown>{bookmark.content.text}</Markdown>
       </View>
@@ -201,5 +205,5 @@ export default function BookmarkCard({
       break;
   }
 
-  return <View className="rounded bg-white p-4">{comp}</View>;
+  return <View className="rounded bg-white">{comp}</View>;
 }

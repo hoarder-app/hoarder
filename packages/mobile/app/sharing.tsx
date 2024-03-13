@@ -48,8 +48,6 @@ export default function Sharing() {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>({ type: "idle" });
 
-  const isInModal = router.canGoBack();
-
   let comp;
   switch (mode.type) {
     case "idle": {
@@ -72,12 +70,8 @@ export default function Sharing() {
       return;
     }
 
-    if (!isInModal) {
-      return;
-    }
-
     const timeoutId = setTimeout(() => {
-      router.replace("../");
+      router.replace("dashboard");
     }, 2000);
 
     return () => clearTimeout(timeoutId);
@@ -86,7 +80,7 @@ export default function Sharing() {
   return (
     <View className="flex-1 items-center justify-center gap-4">
       {comp}
-      {isInModal ? <Link href="../">Dismiss</Link> : <Link href="/">Home</Link>}
+      <Link href="dashboard">Dismiss</Link>
     </View>
   );
 }
