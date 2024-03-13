@@ -1,7 +1,8 @@
-import { appRouter } from "@hoarder/trpc/routers/_app";
 import { getServerAuthSession } from "@/server/auth";
-import { Context, createCallerFactory } from "@hoarder/trpc";
+
 import { db } from "@hoarder/db";
+import { Context, createCallerFactory } from "@hoarder/trpc";
+import { appRouter } from "@hoarder/trpc/routers/_app";
 
 export const createContext = async (database?: typeof db): Promise<Context> => {
   const session = await getServerAuthSession();

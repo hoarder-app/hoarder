@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { api } from "@/lib/trpc";
 import { useRouter, useSearchParams } from "next/navigation";
+import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 
 function useSearchQuery() {
   const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("q") || "";
+  const searchQuery = searchParams.get("q") ?? "";
   return { searchQuery };
 }
 

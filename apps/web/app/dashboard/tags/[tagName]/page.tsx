@@ -1,10 +1,11 @@
-import { getServerAuthSession } from "@/server/auth";
-import { db } from "@hoarder/db";
 import { notFound, redirect } from "next/navigation";
 import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
 import { api } from "@/server/api/client";
-import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
+import { getServerAuthSession } from "@/server/auth";
 import { and, eq } from "drizzle-orm";
+
+import { db } from "@hoarder/db";
+import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 
 export default async function TagPage({
   params,

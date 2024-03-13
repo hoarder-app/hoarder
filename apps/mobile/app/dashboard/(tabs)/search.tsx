@@ -1,12 +1,11 @@
-import { keepPreviousData } from "@tanstack/react-query";
 import { useState } from "react";
 import { View } from "react-native";
-import { useDebounce } from "use-debounce";
-
 import BookmarkList from "@/components/bookmarks/BookmarkList";
 import { Divider } from "@/components/ui/Divider";
 import { Input } from "@/components/ui/Input";
 import { api } from "@/lib/trpc";
+import { keepPreviousData } from "@tanstack/react-query";
+import { useDebounce } from "use-debounce";
 
 export default function Search() {
   const [search, setSearch] = useState("");

@@ -1,8 +1,9 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
-
 import {
   Dialog,
   DialogClose,
@@ -13,11 +14,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-import { ActionButton } from "@/components/ui/action-button";
-import { useState } from "react";
+import { Trash } from "lucide-react";
 
 export default function DeleteApiKey({
   name,

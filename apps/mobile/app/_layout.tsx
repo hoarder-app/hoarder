@@ -1,13 +1,12 @@
 import "@/globals.css";
 import "expo-dev-client";
 
+import { useEffect } from "react";
+import { View } from "react-native";
 import { useRouter } from "expo-router";
 import { Stack } from "expo-router/stack";
 import { useShareIntent } from "expo-share-intent";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import { View } from "react-native";
-
 import { useLastSharedIntent } from "@/lib/last-shared-intent";
 import { Providers } from "@/lib/providers";
 

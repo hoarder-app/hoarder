@@ -1,7 +1,7 @@
+import React from "react";
 import { Input } from "@/components/ui/input";
 import { useDoBookmarkSearch } from "@/lib/hooks/bookmark-search";
 import { cn } from "@/lib/utils";
-import React from "react";
 
 const SearchInput = React.forwardRef<
   HTMLInputElement,

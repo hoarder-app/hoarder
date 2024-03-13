@@ -1,7 +1,6 @@
-import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { View } from "react-native";
-
+import { useRouter } from "expo-router";
 import { useSession } from "@/lib/session";
 
 export default function App() {

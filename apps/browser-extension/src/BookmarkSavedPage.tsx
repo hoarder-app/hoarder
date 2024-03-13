@@ -35,6 +35,7 @@ export default function BookmarkSavedPage() {
           <Link
             className="flex gap-2 rounded-md p-3 text-black hover:text-black"
             target="_blank"
+            rel="noreferrer"
             to={`${settings.address}/dashboard/preview/${bookmarkId}`}
           >
             <ArrowUpRightFromSquare className="my-auto" size="20" />

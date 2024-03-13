@@ -1,13 +1,13 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { Session } from "next-auth";
 import React, { useState } from "react";
-import { api } from "./trpc";
-import { loggerLink } from "@trpc/client";
-import { httpBatchLink } from "@trpc/client";
-import superjson from "superjson";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { httpBatchLink, loggerLink } from "@trpc/client";
 import { SessionProvider } from "next-auth/react";
-import { Session } from "next-auth";
+import superjson from "superjson";
+
+import { api } from "./trpc";
 
 function makeQueryClient() {
   return new QueryClient({

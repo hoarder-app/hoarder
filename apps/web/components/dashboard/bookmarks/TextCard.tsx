@@ -1,16 +1,18 @@
 "use client";
 
-import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
-import BookmarkOptions from "./BookmarkOptions";
-import { api } from "@/lib/trpc";
-import { Maximize2, Star } from "lucide-react";
-import { cn } from "@/lib/utils";
-import TagList from "./TagList";
-import Markdown from "react-markdown";
 import { useState } from "react";
-import { BookmarkedTextViewer } from "./BookmarkedTextViewer";
 import Link from "next/link";
 import { isBookmarkStillTagging } from "@/lib/bookmarkUtils";
+import { api } from "@/lib/trpc";
+import { cn } from "@/lib/utils";
+import { Maximize2, Star } from "lucide-react";
+import Markdown from "react-markdown";
+
+import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+
+import { BookmarkedTextViewer } from "./BookmarkedTextViewer";
+import BookmarkOptions from "./BookmarkOptions";
+import TagList from "./TagList";
 
 export default function TextCard({
   bookmark: initialData,

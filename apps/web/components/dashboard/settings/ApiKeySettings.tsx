@@ -7,8 +7,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { api } from "@/server/api/client";
-import DeleteApiKey from "./DeleteApiKey";
+
 import AddApiKey from "./AddApiKey";
+import DeleteApiKey from "./DeleteApiKey";
 
 export default async function ApiKeys() {
   const keys = await api.apiKeys.list();

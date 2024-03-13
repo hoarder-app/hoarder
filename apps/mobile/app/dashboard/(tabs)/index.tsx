@@ -1,8 +1,7 @@
-import { Link, Stack } from "expo-router";
-import { SquarePen, Link as LinkIcon } from "lucide-react-native";
 import { View } from "react-native";
-
+import { Link, Stack } from "expo-router";
 import BookmarkList from "@/components/bookmarks/BookmarkList";
+import { Link as LinkIcon, SquarePen } from "lucide-react-native";
 
 function HeaderRight() {
   return (

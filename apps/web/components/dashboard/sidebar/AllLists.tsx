@@ -1,11 +1,13 @@
 "use client";
 
-import { api } from "@/lib/trpc";
-import SidebarItem from "./SidebarItem";
-import NewListModal, { useNewListModal } from "./NewListModal";
-import { Plus } from "lucide-react";
 import Link from "next/link";
-import { ZBookmarkList } from "@hoarder/trpc/types/lists";
+import { api } from "@/lib/trpc";
+import { Plus } from "lucide-react";
+
+import type { ZBookmarkList } from "@hoarder/trpc/types/lists";
+
+import NewListModal, { useNewListModal } from "./NewListModal";
+import SidebarItem from "./SidebarItem";
 
 export default function AllLists({
   initialData,

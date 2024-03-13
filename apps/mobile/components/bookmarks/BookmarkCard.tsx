@@ -1,15 +1,15 @@
-import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
-import * as WebBrowser from "expo-web-browser";
-import { Star, Archive, Trash, ArchiveRestore } from "lucide-react-native";
-import { View, Text, Image, ScrollView, Pressable } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import Markdown from "react-native-markdown-display";
+import * as WebBrowser from "expo-web-browser";
+import { api } from "@/lib/trpc";
+import { Archive, ArchiveRestore, Star, Trash } from "lucide-react-native";
+
+import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
 import { ActionButton } from "../ui/ActionButton";
 import { Divider } from "../ui/Divider";
 import { Skeleton } from "../ui/Skeleton";
 import { useToast } from "../ui/Toast";
-
-import { api } from "@/lib/trpc";
 
 const MAX_LOADING_MSEC = 30 * 1000;
 
@@ -155,6 +155,7 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
     />
   ) : (
     <Image
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       source={require("@/assets/blur.jpeg")}
       className="h-56 w-full rounded-t-lg"
     />
@@ -168,7 +169,7 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
           className="line-clamp-2 text-xl font-bold"
           onPress={() => WebBrowser.openBrowserAsync(url)}
         >
-          {bookmark.content.title || parsedUrl.host}
+          {bookmark.content.title ?? parsedUrl.host}
         </Text>
         <TagList bookmark={bookmark} />
         <Divider orientation="vertical" className="mt-2 h-0.5 w-full" />

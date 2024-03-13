@@ -10,7 +10,7 @@ export function useSession() {
 
   const logout = useCallback(() => {
     setSettings({ ...settings, apiKey: undefined });
-  }, [settings]);
+  }, [settings, setSettings]);
 
   return {
     isLoggedIn,

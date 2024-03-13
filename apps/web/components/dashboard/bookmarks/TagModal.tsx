@@ -1,3 +1,5 @@
+import type { KeyboardEvent } from "react";
+import { useEffect, useState } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,13 +13,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
-import { ZAttachedByEnum } from "@hoarder/trpc/types/tags";
 import { cn } from "@/lib/utils";
 import { Sparkles, X } from "lucide-react";
-import { useState, KeyboardEvent, useEffect } from "react";
 
-type EditableTag = { attachedBy: ZAttachedByEnum; id?: string; name: string };
+import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZAttachedByEnum } from "@hoarder/trpc/types/tags";
+
+interface EditableTag {
+  attachedBy: ZAttachedByEnum;
+  id?: string;
+  name: string;
+}
 
 function TagAddInput({ addTag }: { addTag: (tag: string) => void }) {
   const onKeyUp = (e: KeyboardEvent<HTMLInputElement>) => {

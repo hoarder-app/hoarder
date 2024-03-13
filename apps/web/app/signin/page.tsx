@@ -1,7 +1,7 @@
-import { PackageOpen } from "lucide-react";
-import SignInForm from "@/components/signin/SignInForm";
 import { redirect } from "next/dist/client/components/navigation";
+import SignInForm from "@/components/signin/SignInForm";
 import { getServerAuthSession } from "@/server/auth";
+import { PackageOpen } from "lucide-react";
 
 export default async function SignInPage() {
   const session = await getServerAuthSession();

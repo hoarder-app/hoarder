@@ -1,9 +1,9 @@
 import { useChromeStorageSync } from "use-chrome-storage";
 
-export type Settings = {
+export interface Settings {
   apiKey: string;
   address: string;
-};
+}
 
 export default function usePluginSettings() {
   const [settings, setSettings, _1, _2, isInit] = useChromeStorageSync(

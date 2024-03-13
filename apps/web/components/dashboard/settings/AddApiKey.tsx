@@ -1,17 +1,10 @@
 "use client";
 
+import type { SubmitErrorHandler } from "react-hook-form";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-
 import {
   Dialog,
   DialogClose,
@@ -22,15 +15,22 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { z } from "zod";
-import { useRouter } from "next/navigation";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, SubmitErrorHandler } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-import { useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, Copy } from "lucide-react";
-import { ActionButton } from "@/components/ui/action-button";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 function ApiKeySuccess({ apiKey }: { apiKey: string }) {
   const [isCopied, setCopied] = useState(false);

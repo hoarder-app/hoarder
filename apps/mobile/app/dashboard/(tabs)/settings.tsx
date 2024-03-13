@@ -1,7 +1,6 @@
-import { useRouter } from "expo-router";
 import { useEffect } from "react";
 import { Text, View } from "react-native";
-
+import { useRouter } from "expo-router";
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/Button";
 import { useSession } from "@/lib/session";

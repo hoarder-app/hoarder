@@ -1,11 +1,12 @@
 "use client";
 
-import { Link, NotebookPen } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
 import { useState } from "react";
-import { AddLinkButton } from "./AddLinkButton";
+import { Button } from "@/components/ui/button";
+import { Link, NotebookPen } from "lucide-react";
+
 import { SearchInput } from "../search/SearchInput";
+import { AddLinkButton } from "./AddLinkButton";
+import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
 
 function AddText() {
   const [isEditorOpen, setEditorOpen] = useState(false);

@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,13 +13,11 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Trash } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-import { ActionButton } from "@/components/ui/action-button";
-import { useState } from "react";
-import { ZBookmarkList } from "@hoarder/trpc/types/lists";
+import { Trash } from "lucide-react";
+
+import type { ZBookmarkList } from "@hoarder/trpc/types/lists";
 
 export default function DeleteListButton({ list }: { list: ZBookmarkList }) {
   const [isDialogOpen, setDialogOpen] = useState(false);

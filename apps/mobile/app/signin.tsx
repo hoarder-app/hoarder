@@ -1,7 +1,6 @@
-import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import { View, Text } from "react-native";
-
+import { Text, View } from "react-native";
+import { useRouter } from "expo-router";
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";

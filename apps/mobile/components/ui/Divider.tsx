@@ -1,5 +1,4 @@
 import { View } from "react-native";
-
 import { cn } from "@/lib/utils";
 
 function Divider({

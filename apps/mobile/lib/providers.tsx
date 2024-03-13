@@ -1,12 +1,11 @@
+import { useEffect, useState } from "react";
+import { ToastProvider } from "@/components/ui/Toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink } from "@trpc/client";
-import { useEffect, useState } from "react";
 import superjson from "superjson";
 
 import useAppSettings, { getAppSettings } from "./settings";
 import { api } from "./trpc";
-
-import { ToastProvider } from "@/components/ui/Toast";
 
 function getTRPCClient(address: string) {
   return api.createClient({
@@ -16,10 +15,9 @@ function getTRPCClient(address: string) {
         async headers() {
           const settings = await getAppSettings();
           return {
-            Authorization:
-              settings && settings.apiKey
-                ? `Bearer ${settings.apiKey}`
-                : undefined,
+            Authorization: settings?.apiKey
+              ? `Bearer ${settings.apiKey}`
+              : undefined,
           };
         },
         transformer: superjson,

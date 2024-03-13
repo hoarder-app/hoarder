@@ -1,6 +1,6 @@
+import type { View } from "react-native";
 import { useEffect, useRef } from "react";
-import { Animated, type View } from "react-native";
-
+import { Animated } from "react-native";
 import { cn } from "@/lib/utils";
 
 function Skeleton({
@@ -28,7 +28,7 @@ function Skeleton({
 
   return (
     <Animated.View
-      className={cn("bg-muted rounded-md", className)}
+      className={cn("rounded-md bg-muted", className)}
       style={[{ opacity: fadeAnim }]}
       {...props}
     />

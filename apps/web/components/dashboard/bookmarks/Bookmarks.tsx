@@ -1,8 +1,10 @@
 import { redirect } from "next/navigation";
-import BookmarksGrid from "./BookmarksGrid";
-import { ZGetBookmarksRequest } from "@hoarder/trpc/types/bookmarks";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
+
+import type { ZGetBookmarksRequest } from "@hoarder/trpc/types/bookmarks";
+
+import BookmarksGrid from "./BookmarksGrid";
 
 export default async function Bookmarks({
   favourited,

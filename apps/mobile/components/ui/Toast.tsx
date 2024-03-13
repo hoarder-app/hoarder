@@ -1,6 +1,5 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { Animated, Text, View } from "react-native";
-
 import { cn } from "@/lib/utils";
 
 const toastVariants = {
@@ -67,7 +66,7 @@ function Toast({
         ],
       }}
     >
-      <Text className="text-background text-left font-semibold">{message}</Text>
+      <Text className="text-left font-semibold text-background">{message}</Text>
       {showProgress && (
         <View className="mt-2 rounded">
           <Animated.View

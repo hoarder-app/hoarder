@@ -1,15 +1,16 @@
-import { Separator } from "@/components/ui/separator";
-import { getServerAuthSession } from "@/server/auth";
-import { db } from "@hoarder/db";
-import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
-import { count, eq } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
+import { getServerAuthSession } from "@/server/auth";
+import { count, eq } from "drizzle-orm";
+
+import { db } from "@hoarder/db";
+import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 
 function TagPill({ name, count }: { name: string; count: number }) {
   return (
     <Link
-      className="text-foreground hover:bg-foreground hover:text-background flex gap-2 rounded-md border border-gray-200 bg-white px-2 py-1"
+      className="flex gap-2 rounded-md border border-gray-200 bg-white px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
       href={`/dashboard/tags/${name}`}
     >
       {name} <Separator orientation="vertical" /> {count}

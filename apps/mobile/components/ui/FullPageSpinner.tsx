@@ -1,4 +1,4 @@
-import { View, ActivityIndicator } from "react-native";
+import { ActivityIndicator, View } from "react-native";
 
 export default function FullPageSpinner() {
   return (

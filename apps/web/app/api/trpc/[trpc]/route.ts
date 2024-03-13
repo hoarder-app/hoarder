@@ -1,8 +1,9 @@
-import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
-import { appRouter } from "@hoarder/trpc/routers/_app";
 import { createContext } from "@/server/api/client";
-import { authenticateApiKey } from "@hoarder/trpc/auth";
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+
 import { db } from "@hoarder/db";
+import { authenticateApiKey } from "@hoarder/trpc/auth";
+import { appRouter } from "@hoarder/trpc/routers/_app";
 
 const handler = (req: Request) =>
   fetchRequestHandler({
@@ -21,7 +22,7 @@ const handler = (req: Request) =>
       // Check if the request has an Authorization token, if it does, assume that API key authentication is requested.
       const authorizationHeader = opts.req.headers.get("Authorization");
       if (authorizationHeader && authorizationHeader.startsWith("Bearer ")) {
-        const token = authorizationHeader.split(" ")[1]!;
+        const token = authorizationHeader.split(" ")[1];
         try {
           const user = await authenticateApiKey(token);
           return { user, db };

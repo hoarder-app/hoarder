@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,11 +16,6 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-
-import { toast } from "@/components/ui/use-toast";
-import { api } from "@/lib/trpc";
-import { useState } from "react";
-
 import {
   Select,
   SelectContent,
@@ -29,9 +25,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import LoadingSpinner from "@/components/ui/spinner";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { toast } from "@/components/ui/use-toast";
+import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 export default function AddToListModal({
   bookmarkId,
@@ -115,12 +113,11 @@ export default function AddToListModal({
                             </SelectTrigger>
                             <SelectContent>
                               <SelectGroup>
-                                {lists &&
-                                  lists.lists.map((l) => (
-                                    <SelectItem key={l.id} value={l.id}>
-                                      {l.icon} {l.name}
-                                    </SelectItem>
-                                  ))}
+                                {lists?.lists.map((l) => (
+                                  <SelectItem key={l.id} value={l.id}>
+                                    {l.icon} {l.name}
+                                  </SelectItem>
+                                ))}
                               </SelectGroup>
                             </SelectContent>
                           </Select>

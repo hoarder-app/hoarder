@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
 import LoadingSpinner from "@/components/ui/spinner";
 import {
@@ -15,7 +16,6 @@ import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Trash } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 function ActionsSection() {
   const { mutate: recrawlLinks, isPending: isRecrawlPending } =
