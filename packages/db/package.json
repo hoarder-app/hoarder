@@ -4,6 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "main": "index.ts",
+  "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
     "migrate": "tsx migrate.ts",
@@ -18,8 +19,18 @@
     "tsx": "^4.7.1"
   },
   "devDependencies": {
+    "@hoarder/eslint-config": "workspace:^0.2.0",
+    "@hoarder/prettier-config": "workspace:^0.1.0",
+    "@hoarder/tsconfig": "workspace:^0.1.0",
     "@tsconfig/node21": "^21.0.1",
     "@types/better-sqlite3": "^7.6.9",
     "drizzle-kit": "^0.20.14"
-  }
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@hoarder/eslint-config/base"
+    ]
+  },
+  "prettier": "@hoarder/prettier-config"
 }

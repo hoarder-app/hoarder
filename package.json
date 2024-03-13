@@ -4,38 +4,36 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "format": "prettier 'packages/**/*.{js,ts,tsx,mjs,cjs}' --write",
+    "build": "turbo build",
+    "dev": "turbo dev --parallel",
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo clean",
     "format:check": "prettier 'packages/**/*.{js,ts,tsx,mjs,cjs}' --check",
-    "lint": "eslint . --ignore-path .gitignore",
     "db:migrate": "pnpm --filter @hoarder/db run migrate",
     "db:studio": "pnpm --filter @hoarder/db studio",
     "workers": "pnpm --filter @hoarder/workers run start",
     "web": "pnpm --filter @hoarder/web run dev",
-    "prepare": "husky"
-  },
-  "dependencies": {
-    "@next/eslint-plugin-next": "^14.1.0",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "bullmq": "^5.1.9",
-    "class-variance-authority": "^0.7.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-react": "^7.33.2",
-    "eslint-plugin-react-hooks": "^4.6.0",
-    "typescript": "^5"
+    "prepare": "husky",
+    "format": "turbo format --continue -- --cache --cache-location node_modules/.cache/.prettiercache",
+    "format:fix": "turbo format --continue -- --write --cache --cache-location node_modules/.cache/.prettiercache",
+    "lint": "turbo lint --continue -- --cache --cache-location node_modules/.cache/.eslintcache",
+    "lint:fix": "turbo lint --continue -- --fix --cache --cache-location node_modules/.cache/.eslintcache",
+    "lint:ws": "pnpm dlx sherif@latest",
+    "postinstall": "pnpm lint:ws",
+    "typecheck": "turbo typecheck"
   },
   "devDependencies": {
+    "@hoarder/prettier-config": "workspace:^0.1.0",
     "@tanstack/eslint-plugin-query": "^5.20.1",
     "@types/node": "^20",
     "es-errors": "^1.3.0",
-    "eslint": "^8.56.0",
-    "eslint-config-next": "14.1.0",
-    "eslint-plugin-tailwindcss": "^3.14.2",
+    "eslint": "^8.57.0",
     "husky": "^9.0.11",
     "install": "^0.13.0",
     "prettier": "3.2.5",
-    "prettier-plugin-tailwindcss": "^0.5.11"
+    "turbo": "^1.12.4"
   },
+  "prettier": "@hoarder/prettier-config",
   "packageManager": "pnpm@8.15.4+sha256.cea6d0bdf2de3a0549582da3983c70c92ffc577ff4410cbf190817ddc35137c2",
   "pnpm": {
     "patchedDependencies": {

@@ -1,0 +1,55 @@
+{
+  "name": "browser-extension",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hoarder/trpc": "0.1.0",
+    "@tanstack/react-query": "^5.24.8",
+    "@trpc/client": "11.0.0-next-beta.308",
+    "@trpc/next": "11.0.0-next-beta.308",
+    "@trpc/react-query": "11.0.0-next-beta.308",
+    "@trpc/server": "11.0.0-next-beta.308",
+    "lucide-react": "^0.330.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.0",
+    "use-chrome-storage": "^1.2.2",
+    "superjson": "^2.2.1",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@hoarder/eslint-config": "workspace:^0.2.0",
+    "@hoarder/prettier-config": "workspace:^0.1.0",
+    "@hoarder/tailwind-config": "workspace:^0.1.0",
+    "@hoarder/tsconfig": "workspace:^0.1.0",
+    "@crxjs/vite-plugin": "^1.0.14",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@types/chrome": "^0.0.260",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
+    "postcss": "^8.4.35",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5.3.3",
+    "vite": "^5.1.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@hoarder/eslint-config/base",
+      "@hoarder/eslint-config/react"
+    ]
+  },
+  "prettier": "@hoarder/prettier-config"
+}
