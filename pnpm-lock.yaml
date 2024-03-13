@@ -265,6 +265,9 @@ importers:
       tailwind-merge:
         specifier: ^2.2.1
         version: 2.2.1
+      use-debounce:
+        specifier: ^10.0.0
+        version: 10.0.0(react@18.2.0)
     devDependencies:
       '@babel/core':
         specifier: ^7.20.0
@@ -16528,6 +16531,15 @@ packages:
     resolution: {integrity: sha512-zdeAAHU1zsjNSy78I8GCtcWJkbpG0Iqwiiv42c2sDQ0HXTGGZHh7pAsFiHdZFEBYBIJM+ENkpGOQ06MNouBRoA==}
     peerDependencies:
       react: ^16.9.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
+
+  /use-debounce@10.0.0(react@18.2.0):
+    resolution: {integrity: sha512-XRjvlvCB46bah9IBXVnq/ACP2lxqXyZj0D9hj4K5OzNroMDpTEBg8Anuh1/UfRTRs7pLhQ+RiNxxwZu9+MVl1A==}
+    engines: {node: '>= 16.0.0'}
+    peerDependencies:
+      react: '>=16.8.0'
     dependencies:
       react: 18.2.0
     dev: false
