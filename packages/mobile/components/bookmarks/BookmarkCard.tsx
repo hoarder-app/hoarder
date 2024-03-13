@@ -2,6 +2,7 @@ import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 import { ZBookmarkTags } from "@hoarder/trpc/types/tags";
 import { Star, Archive, Trash } from "lucide-react-native";
 import { View, Text, Image, ScrollView, Pressable } from "react-native";
+import Markdown from "react-native-markdown-display";
 
 import { api } from "@/lib/trpc";
 
@@ -65,7 +66,10 @@ function TagList({ tags }: { tags: ZBookmarkTags[] }) {
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       <View className="flex flex-row gap-2">
         {tags.map((t) => (
-          <View className="rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-semibold">
+          <View
+            key={t.id}
+            className="rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-semibold"
+          >
             <Text>{t.name}</Text>
           </View>
         ))}
@@ -82,25 +86,41 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
   const parsedUrl = new URL(bookmark.content.url);
 
   return (
-    <View className="flex gap-2 rounded bg-white p-4">
+    <View className="flex gap-2">
       <Image
         source={{ uri: bookmark.content.imageUrl || "" }}
         className="h-56 min-h-56 w-full"
       />
-      <Text className="line-clamp-2 text-xl font-bold">
-        {bookmark.content.title || parsedUrl.host}
-      </Text>
-      <TagList tags={bookmark.tags} />
-      <View className="mt-2 flex flex-row justify-between">
-        <Text className="my-auto line-clamp-1">{parsedUrl.host}</Text>
-        <ActionBar bookmark={bookmark} />
+      <View className="flex gap-2">
+        <Text className="line-clamp-2 text-xl font-bold">
+          {bookmark.content.title || parsedUrl.host}
+        </Text>
+        <TagList tags={bookmark.tags} />
+        <View className="mt-2 flex flex-row justify-between">
+          <Text className="my-auto line-clamp-1">{parsedUrl.host}</Text>
+          <ActionBar bookmark={bookmark} />
+        </View>
       </View>
     </View>
   );
 }
 
 function TextCard({ bookmark }: { bookmark: ZBookmark }) {
-  return <View />;
+  if (bookmark.content.type !== "text") {
+    throw new Error("Wrong content type rendered");
+  }
+  return (
+    <View className="flex max-h-96 gap-2">
+      <View className="max-h-56 overflow-hidden pb-2">
+        <Markdown>{bookmark.content.text}</Markdown>
+      </View>
+      <TagList tags={bookmark.tags} />
+      <View className="flex flex-row justify-between">
+        <View />
+        <ActionBar bookmark={bookmark} />
+      </View>
+    </View>
+  );
 }
 
 export default function BookmarkCard({
@@ -115,10 +135,15 @@ export default function BookmarkCard({
     { initialData },
   );
 
+  let comp;
   switch (bookmark.content.type) {
     case "link":
-      return <LinkCard bookmark={bookmark} />;
+      comp = <LinkCard bookmark={bookmark} />;
+      break;
     case "text":
-      return <TextCard bookmark={bookmark} />;
+      comp = <TextCard bookmark={bookmark} />;
+      break;
   }
+
+  return <View className="rounded bg-white p-4">{comp}</View>;
 }
