@@ -19,6 +19,20 @@ export default function Dashboard() {
           title: "🗄️ Archive",
         }}
       />
+      <Stack.Screen
+        name="add-link"
+        options={{
+          title: "New link",
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
+        name="add-note"
+        options={{
+          title: "New Note",
+          presentation: "modal",
+        }}
+      />
     </Stack>
   );
 }
