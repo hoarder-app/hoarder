@@ -5,6 +5,7 @@ import { View, Text, Image, ScrollView, Pressable } from "react-native";
 import Markdown from "react-native-markdown-display";
 
 import { ActionButton } from "../ui/ActionButton";
+import { Divider } from "../ui/Divider";
 import { Skeleton } from "../ui/Skeleton";
 import { useToast } from "../ui/Toast";
 
@@ -79,7 +80,7 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         {(variables ? variables.favourited : bookmark.favourited) ? (
           <Star fill="#ebb434" color="#ebb434" />
         ) : (
-          <Star />
+          <Star color="gray" />
         )}
       </Pressable>
       <ActionButton
@@ -91,7 +92,11 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
           })
         }
       >
-        {bookmark.archived ? <ArchiveRestore /> : <Archive />}
+        {bookmark.archived ? (
+          <ArchiveRestore color="gray" />
+        ) : (
+          <Archive color="gray" />
+        )}
       </ActionButton>
       <ActionButton
         loading={isDeletionPending}
@@ -101,7 +106,7 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
           })
         }
       >
-        <Trash />
+        <Trash color="gray" />
       </ActionButton>
     </View>
   );
@@ -166,7 +171,8 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
           {bookmark.content.title || parsedUrl.host}
         </Text>
         <TagList bookmark={bookmark} />
-        <View className="mt-2 flex flex-row justify-between">
+        <Divider orientation="vertical" className="mt-2 h-0.5 w-full" />
+        <View className="mt-2 flex flex-row justify-between px-2 pb-2">
           <Text className="my-auto line-clamp-1">{parsedUrl.host}</Text>
           <ActionBar bookmark={bookmark} />
         </View>
@@ -181,11 +187,12 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
   }
   return (
     <View className="flex max-h-96 gap-2 p-2">
-      <View className="max-h-56 overflow-hidden pb-2">
+      <View className="max-h-56 overflow-hidden p-2">
         <Markdown>{bookmark.content.text}</Markdown>
       </View>
       <TagList bookmark={bookmark} />
-      <View className="flex flex-row justify-between">
+      <Divider orientation="vertical" className="mt-2 h-0.5 w-full" />
+      <View className="flex flex-row justify-between p-2">
         <View />
         <ActionBar bookmark={bookmark} />
       </View>

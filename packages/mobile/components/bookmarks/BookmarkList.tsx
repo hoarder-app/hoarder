@@ -45,7 +45,6 @@ export default function BookmarkList({
         gap: 15,
         marginVertical: 15,
         alignItems: "center",
-        height: "100%",
       }}
       renderItem={(b) => <BookmarkCard bookmark={b.item} />}
       ListEmptyComponent={
