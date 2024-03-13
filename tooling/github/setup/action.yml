@@ -1,0 +1,19 @@
+name: "Setup and install"
+description: "Common setup steps for Actions"
+
+runs:
+  using: composite
+  steps:
+    - uses: pnpm/action-setup@v2
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 21
+        cache: "pnpm"
+
+    - shell: bash
+      run: pnpm add -g turbo
+
+    - shell: bash
+      run: pnpm install
+      env:
+        PUPPETEER_SKIP_DOWNLOAD: "true"

@@ -3,10 +3,23 @@
   "name": "@hoarder/shared",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "meilisearch": "^0.37.0",
     "winston": "^3.11.0",
     "zod": "^3.22.4"
   },
-  "main": "index.ts"
+  "devDependencies": {
+    "@hoarder/eslint-config": "workspace:^0.2.0",
+    "@hoarder/prettier-config": "workspace:^0.1.0",
+    "@hoarder/tsconfig": "workspace:^0.1.0"
+  },
+  "main": "index.ts",
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@hoarder/eslint-config/base"
+    ]
+  },
+  "prettier": "@hoarder/prettier-config"
 }
