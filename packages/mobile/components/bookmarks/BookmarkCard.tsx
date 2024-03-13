@@ -1,10 +1,32 @@
 import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
-import { ZBookmarkTags } from "@hoarder/trpc/types/tags";
 import { Star, Archive, Trash } from "lucide-react-native";
 import { View, Text, Image, ScrollView, Pressable } from "react-native";
 import Markdown from "react-native-markdown-display";
 
+import { Skeleton } from "../ui/Skeleton";
+
 import { api } from "@/lib/trpc";
+
+const MAX_LOADING_MSEC = 30 * 1000;
+
+export function isBookmarkStillCrawling(bookmark: ZBookmark) {
+  return (
+    bookmark.content.type === "link" &&
+    !bookmark.content.crawledAt &&
+    Date.now().valueOf() - bookmark.createdAt.valueOf() < MAX_LOADING_MSEC
+  );
+}
+
+export function isBookmarkStillTagging(bookmark: ZBookmark) {
+  return (
+    bookmark.taggingStatus === "pending" &&
+    Date.now().valueOf() - bookmark.createdAt.valueOf() < MAX_LOADING_MSEC
+  );
+}
+
+export function isBookmarkStillLoading(bookmark: ZBookmark) {
+  return isBookmarkStillTagging(bookmark) || isBookmarkStillCrawling(bookmark);
+}
 
 function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   const apiUtils = api.useUtils();
@@ -61,7 +83,18 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   );
 }
 
-function TagList({ tags }: { tags: ZBookmarkTags[] }) {
+function TagList({ bookmark }: { bookmark: ZBookmark }) {
+  const tags = bookmark.tags;
+
+  if (isBookmarkStillTagging(bookmark)) {
+    return (
+      <>
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-full" />
+      </>
+    );
+  }
+
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       <View className="flex flex-row gap-2">
@@ -91,7 +124,7 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
       className="h-56 min-h-56 w-full"
     />
   ) : (
-    <View className="h-56" />
+    <Image source={require("@/assets/blur.jpeg")} className="h-56 w-full" />
   );
 
   return (
@@ -101,7 +134,7 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
         <Text className="line-clamp-2 text-xl font-bold">
           {bookmark.content.title || parsedUrl.host}
         </Text>
-        <TagList tags={bookmark.tags} />
+        <TagList bookmark={bookmark} />
         <View className="mt-2 flex flex-row justify-between">
           <Text className="my-auto line-clamp-1">{parsedUrl.host}</Text>
           <ActionBar bookmark={bookmark} />
@@ -120,7 +153,7 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
       <View className="max-h-56 overflow-hidden pb-2">
         <Markdown>{bookmark.content.text}</Markdown>
       </View>
-      <TagList tags={bookmark.tags} />
+      <TagList bookmark={bookmark} />
       <View className="flex flex-row justify-between">
         <View />
         <ActionBar bookmark={bookmark} />
@@ -138,7 +171,20 @@ export default function BookmarkCard({
     {
       bookmarkId: initialData.id,
     },
-    { initialData },
+    {
+      initialData,
+      refetchInterval: (query) => {
+        const data = query.state.data;
+        if (!data) {
+          return false;
+        }
+        // If the link is not crawled or not tagged
+        if (isBookmarkStillLoading(data)) {
+          return 1000;
+        }
+        return false;
+      },
+    },
   );
 
   let comp;
