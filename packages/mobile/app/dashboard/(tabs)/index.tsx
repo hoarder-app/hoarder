@@ -1,8 +1,11 @@
 import { View } from "react-native";
 
+import BookmarkList from "@/components/bookmarks/BookmarkList";
+
 export default function Home() {
   return (
-    <View className="flex h-full items-center justify-center gap-4 px-4">
+    <View>
+      <BookmarkList archived={false} />
     </View>
   );
 }

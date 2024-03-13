@@ -22,9 +22,13 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
     return null;
   }, [params]);
 
+  const invalidateAllBookmarks =
+    api.useUtils().bookmarks.getBookmarks.invalidate;
+
   useEffect(() => {
     if (!isPending && shareIntent?.text) {
       mutate({ type: "link", url: shareIntent.text });
+      invalidateAllBookmarks();
     }
   }, []);
 
