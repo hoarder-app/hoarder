@@ -4,7 +4,6 @@
   "version": "0.1.0",
   "private": true,
   "main": "index.ts",
-  "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
     "migrate": "tsx migrate.ts",

@@ -5,5 +5,8 @@
   "files": [
     "base.json",
     "node.json"
-  ]
+  ],
+  "devDependencies": {
+    "@tsconfig/node21": "^21.0.1"
+  }
 }

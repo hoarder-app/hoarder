@@ -25,7 +25,7 @@ RUN cd packages/db && \
 # Rebuild the source code only when needed
 FROM base AS web_builder
 
-WORKDIR /app/packages/web
+WORKDIR /app/apps/web
 
 RUN pnpm next experimental-compile
 
@@ -37,19 +37,19 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
-COPY --from=web_builder --chown=node:node /app/packages/web/.next/standalone ./
-COPY --from=web_builder /app/packages/web/public ./packages/web/public
+COPY --from=web_builder --chown=node:node /app/apps/web/.next/standalone ./
+COPY --from=web_builder /app/apps/web/public ./apps/web/public
 COPY --from=web_builder /db_migrations /db_migrations
 
 # Set the correct permission for prerender cache
-RUN mkdir -p ./package/web/.next
-RUN chown node:node ./packages/web/.next
+RUN mkdir -p ./apps/web/.next
+RUN chown node:node ./apps/web/.next
 
 # Automatically leverage output traces to reduce image size
 # https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=web_builder --chown=node:node /app/packages/web/.next/static ./packages/web/.next/static
+COPY --from=web_builder --chown=node:node /app/apps/web/.next/static ./apps/web/.next/static
 
-WORKDIR /app/packages/web
+WORKDIR /app/apps/web
 USER root
 EXPOSE 3000
 
@@ -65,7 +65,7 @@ CMD ["/bin/sh", "-c", "(cd /db_migrations && node index.js) && node server.js"]
 
 FROM base AS workers_builder
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm deploy --filter @hoarder/workers --prod /prod
+RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-linker=isolated --filter @hoarder/workers --prod /prod
 
 ################# The workers ##############
 
@@ -78,14 +78,14 @@ ENV CHROME_PATH "/usr/bin/chromium-browser"
 ENV BROWSER_EXECUTABLE_PATH "/app/start-chrome.sh"
 ENV BROWSER_USER_DATA_DIR="/tmp/chrome"
 
-COPY --from=workers_builder /prod packages/workers
+COPY --from=workers_builder /prod apps/workers
 
 RUN corepack enable
 
 ADD docker/start-chrome.sh .
 RUN chmod +x start-chrome.sh
 
-WORKDIR /app/packages/workers
+WORKDIR /app/apps/workers
 
 USER root
 
