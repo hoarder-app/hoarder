@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "bullmq": "^5.1.9",
     "meilisearch": "^0.37.0",
     "winston": "^3.11.0",
     "zod": "^3.22.4"
