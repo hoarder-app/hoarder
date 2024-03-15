@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { FlatList, View, Text, Pressable } from "react-native";
+import { FlatList, Pressable, SafeAreaView, Text, View } from "react-native";
 import { Link } from "expo-router";
 import { api } from "@/lib/trpc";
 import { ChevronRight } from "lucide-react-native";
+import PageTitle from "@/components/ui/PageTitle";
 
 export default function Lists() {
   const [refreshing, setRefreshing] = useState(false);
@@ -47,24 +48,28 @@ export default function Lists() {
   );
 
   return (
-    <FlatList
-      contentContainerStyle={{
-        gap: 5,
-        marginTop: 5,
-      }}
-      renderItem={(l) => (
-        <Link asChild key={l.item.id} href={l.item.href}>
-          <Pressable className="mx-2 flex flex-row justify-between rounded-xl border border-gray-100 bg-white px-4 py-2">
-            <Text className="text-lg">
-              {l.item.logo} {l.item.name}
-            </Text>
-            <ChevronRight />
-          </Pressable>
-        </Link>
-      )}
-      data={links}
-      refreshing={refreshing}
-      onRefresh={onRefresh}
-    />
+    <SafeAreaView>
+      <FlatList
+        ListHeaderComponent={
+          <PageTitle title="Lists" />
+        }
+        contentContainerStyle={{
+          gap: 5,
+        }}
+        renderItem={(l) => (
+          <Link asChild key={l.item.id} href={l.item.href}>
+            <Pressable className="mx-2 flex flex-row justify-between rounded-xl border border-gray-100 bg-white px-4 py-2">
+              <Text className="text-lg">
+                {l.item.logo} {l.item.name}
+              </Text>
+              <ChevronRight />
+            </Pressable>
+          </Link>
+        )}
+        data={links}
+        refreshing={refreshing}
+        onRefresh={onRefresh}
+      />
+    </SafeAreaView>
   );
 }

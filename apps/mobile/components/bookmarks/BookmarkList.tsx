@@ -1,20 +1,22 @@
 import { useEffect, useRef, useState } from "react";
-import { Text, View, Keyboard } from "react-native";
+import { Keyboard, Text, View } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { api } from "@/lib/trpc";
+import { useScrollToTop } from "@react-navigation/native";
 
 import FullPageSpinner from "../ui/FullPageSpinner";
 import BookmarkCard from "./BookmarkCard";
-import { useScrollToTop } from '@react-navigation/native';
 
 export default function BookmarkList({
   favourited,
   archived,
   ids,
+  header
 }: {
   favourited?: boolean;
   archived?: boolean;
   ids?: string[];
+  header?: React.ReactElement;
 }) {
   const apiUtils = api.useUtils();
   const [refreshing, setRefreshing] = useState(false);
@@ -44,13 +46,14 @@ export default function BookmarkList({
     <Animated.FlatList
       ref={flatListRef}
       itemLayoutAnimation={LinearTransition}
+      ListHeaderComponent={header}
       contentContainerStyle={{
         gap: 15,
         marginBottom: 15,
       }}
       renderItem={(b) => <BookmarkCard bookmark={b.item} />}
       ListEmptyComponent={
-        <View className="h-full pt-4 items-center justify-center">
+        <View className="items-center justify-center pt-4">
           <Text className="text-xl">No Bookmarks</Text>
         </View>
       }

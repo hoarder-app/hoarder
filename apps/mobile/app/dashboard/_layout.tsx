@@ -10,13 +10,17 @@ export default function Dashboard() {
       <Stack.Screen
         name="favourites"
         options={{
-          title: "⭐️ Favourites",
+          headerTitle: "",
+          headerBackTitle: "Back",
+          headerTransparent: true,
         }}
       />
       <Stack.Screen
         name="archive"
         options={{
-          title: "🗄️ Archive",
+          headerTitle: "",
+          headerBackTitle: "Back",
+          headerTransparent: true,
         }}
       />
       <Stack.Screen

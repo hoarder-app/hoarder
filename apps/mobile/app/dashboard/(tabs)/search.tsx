@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { View } from "react-native";
+import { SafeAreaView, View } from "react-native";
 import BookmarkList from "@/components/bookmarks/BookmarkList";
-import { Divider } from "@/components/ui/Divider";
 import { Input } from "@/components/ui/Input";
 import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
+import PageTitle from "@/components/ui/PageTitle";
 
 export default function Search() {
   const [search, setSearch] = useState("");
@@ -18,17 +18,25 @@ export default function Search() {
   );
 
   return (
-    <View>
-      <Input
-        placeholder="Search"
-        className="mx-4 mt-4 bg-white"
-        value={search}
-        onChangeText={setSearch}
-        autoFocus
-        autoCapitalize="none"
-      />
-      <Divider orientation="horizontal" className="mt-4 w-full" />
-      {data && <BookmarkList ids={data.bookmarks.map((b) => b.id)} />}
-    </View>
+    <SafeAreaView>
+      {data && (
+        <BookmarkList
+          ids={data.bookmarks.map((b) => b.id)}
+          header={
+            <View>
+              <PageTitle title="Search" />
+              <Input
+                placeholder="Search"
+                className="mx-4 bg-white"
+                value={search}
+                onChangeText={setSearch}
+                autoFocus
+                autoCapitalize="none"
+              />
+            </View>
+          }
+        />
+      )}
+    </SafeAreaView>
   );
 }
