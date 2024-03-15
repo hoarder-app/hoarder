@@ -9,7 +9,6 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "lint": "eslint .",
-    "format": "prettier --check . --ignore-path .gitignore",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

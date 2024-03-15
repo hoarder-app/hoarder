@@ -27,7 +27,7 @@ export default function Search() {
         autoFocus
         autoCapitalize="none"
       />
-      <Divider orientation="horizontal" className="mb-1 mt-4 w-full" />
+      <Divider orientation="horizontal" className="mt-4 w-full" />
       {data && <BookmarkList ids={data.bookmarks.map((b) => b.id)} />}
     </View>
   );

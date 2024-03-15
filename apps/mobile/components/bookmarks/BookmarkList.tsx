@@ -42,12 +42,11 @@ export default function BookmarkList({
       itemLayoutAnimation={LinearTransition}
       contentContainerStyle={{
         gap: 15,
-        marginVertical: 15,
-        alignItems: "center",
+        marginBottom: 15,
       }}
       renderItem={(b) => <BookmarkCard bookmark={b.item} />}
       ListEmptyComponent={
-        <View className="h-full items-center justify-center">
+        <View className="h-full pt-4 items-center justify-center">
           <Text className="text-xl">No Bookmarks</Text>
         </View>
       }

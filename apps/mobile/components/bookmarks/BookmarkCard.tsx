@@ -151,7 +151,7 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
   const imageComp = bookmark.content.imageUrl ? (
     <Image
       source={{ uri: bookmark.content.imageUrl }}
-      className="h-56 min-h-56 w-full rounded-t-lg object-cover"
+      className="h-56 min-h-56 w-full object-cover"
     />
   ) : (
     <Image
@@ -237,7 +237,7 @@ export default function BookmarkCard({
   }
 
   return (
-    <View className="w-96 rounded-lg border border-gray-300 bg-white shadow-sm">
+    <View className="border-b border-gray-300 bg-white">
       {comp}
     </View>
   );

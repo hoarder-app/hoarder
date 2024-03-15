@@ -48,8 +48,8 @@ export default function Lists() {
   return (
     <FlatList
       contentContainerStyle={{
-        gap: 10,
-        marginTop: 10,
+        gap: 5,
+        marginTop: 5,
       }}
       renderItem={(l) => (
         <View className="mx-2 block rounded-xl border border-gray-100 bg-white px-4 py-2">
