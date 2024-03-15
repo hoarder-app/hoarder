@@ -11,20 +11,20 @@ export default function ListView() {
   }
   const { data: list } = api.lists.get.useQuery({ listId: slug });
 
-  if (!list) {
-    return <FullPageSpinner />;
-  }
-
   return (
     <>
       <Stack.Screen
         options={{
-          headerTitle: `${list.icon} ${list.name}`,
+          headerTitle: list ? `${list.icon} ${list.name}` : "Loading ...",
         }}
       />
-      <View>
-        <BookmarkList archived={false} ids={list.bookmarks} />
-      </View>
+      {list ? (
+        <View>
+          <BookmarkList archived={false} ids={list.bookmarks} />
+        </View>
+      ) : (
+        <FullPageSpinner />
+      )}
     </>
   );
 }
