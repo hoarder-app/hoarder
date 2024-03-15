@@ -5,48 +5,42 @@ import { useEffect } from "react";
 import { View } from "react-native";
 import { useRouter } from "expo-router";
 import { Stack } from "expo-router/stack";
-import { useShareIntent } from "expo-share-intent";
+import { ShareIntentProvider, useShareIntent } from "expo-share-intent";
 import { StatusBar } from "expo-status-bar";
-import { useLastSharedIntent } from "@/lib/last-shared-intent";
 import { Providers } from "@/lib/providers";
 
 export default function RootLayout() {
   const router = useRouter();
-  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntent();
-
-  const lastSharedIntent = useLastSharedIntent();
+  const { hasShareIntent } = useShareIntent();
 
   useEffect(() => {
-    const intentJson = JSON.stringify(shareIntent);
-    if (hasShareIntent && !lastSharedIntent.isPreviouslyShared(intentJson)) {
-      // TODO: Remove once https://github.com/achorein/expo-share-intent/issues/14 is fixed
-      lastSharedIntent.setIntent(intentJson);
+    if (hasShareIntent) {
       router.replace({
         pathname: "sharing",
-        params: { shareIntent: intentJson },
       });
-      resetShareIntent();
     }
   }, [hasShareIntent]);
 
   return (
-    <Providers>
-      <View className="h-full w-full bg-white">
-        <Stack
-          screenOptions={{
-            headerShown: false,
-          }}
-        >
-          <Stack.Screen name="index" />
-          <Stack.Screen
-            name="sharing"
-            options={{
-              presentation: "modal",
+    <ShareIntentProvider>
+      <Providers>
+        <View className="h-full w-full bg-white">
+          <Stack
+            screenOptions={{
+              headerShown: false,
             }}
-          />
-        </Stack>
-        <StatusBar style="auto" />
-      </View>
-    </Providers>
+          >
+            <Stack.Screen name="index" />
+            <Stack.Screen
+              name="sharing"
+              options={{
+                presentation: "modal",
+              }}
+            />
+          </Stack>
+          <StatusBar style="auto" />
+        </View>
+      </Providers>
+    </ShareIntentProvider>
   );
 }

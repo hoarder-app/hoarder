@@ -1,8 +1,7 @@
-import type { ShareIntent } from "expo-share-intent";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import { Link, useLocalSearchParams, useRouter } from "expo-router";
-import { useShareIntent } from "expo-share-intent";
+import { Link, useRouter } from "expo-router";
+import { useShareIntentContext } from "expo-share-intent";
 import { api } from "@/lib/trpc";
 import { z } from "zod";
 
@@ -12,19 +11,7 @@ type Mode =
   | { type: "error" };
 
 function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
-  // Desperate attempt to fix sharing duplication
-  const { hasShareIntent, resetShareIntent } = useShareIntent();
-
-  const params = useLocalSearchParams();
-
-  const shareIntent = useMemo(() => {
-    if (params?.shareIntent) {
-      if (typeof params.shareIntent === "string") {
-        return JSON.parse(params.shareIntent) as ShareIntent;
-      }
-    }
-    return null;
-  }, [params]);
+  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntentContext();
 
   const invalidateAllBookmarks =
     api.useUtils().bookmarks.getBookmarks.invalidate;

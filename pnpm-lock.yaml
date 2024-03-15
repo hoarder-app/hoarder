@@ -180,8 +180,8 @@ importers:
         specifier: ^12.8.1
         version: 12.8.1(expo@50.0.11)
       expo-share-intent:
-        specifier: ^1.0.1
-        version: 1.0.1(expo-constants@15.4.5)(expo-linking@6.2.2)(expo@50.0.11)(react-native@0.73.4)(react@18.2.0)
+        specifier: ^1.1.0
+        version: 1.1.0(expo-constants@15.4.5)(expo-linking@6.2.2)(expo@50.0.11)(react-native@0.73.4)(react@18.2.0)
       expo-status-bar:
         specifier: ~1.11.1
         version: 1.11.1
@@ -224,9 +224,6 @@ importers:
       zod:
         specifier: ^3.22.4
         version: 3.22.4
-      zustand:
-        specifier: ^4.5.1
-        version: 4.5.1(@types/react@18.2.58)(react@18.2.0)
     devDependencies:
       '@babel/core':
         specifier: ^7.20.0
@@ -9651,8 +9648,8 @@ packages:
       expo: 50.0.11(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21)
     dev: false
 
-  /expo-share-intent@1.0.1(expo-constants@15.4.5)(expo-linking@6.2.2)(expo@50.0.11)(react-native@0.73.4)(react@18.2.0):
-    resolution: {integrity: sha512-dMPoyEZlqKTS5FdQEytmnPHBXqHiXzzzzxuZ1p5S0AXJgZKeQ4mQspd6aLu7t+pt9T2l8yomtyUGBWagG3QNbw==}
+  /expo-share-intent@1.1.0(expo-constants@15.4.5)(expo-linking@6.2.2)(expo@50.0.11)(react-native@0.73.4)(react@18.2.0):
+    resolution: {integrity: sha512-k/epm+kmnrfEYHuEWaMeEZb+mBJklyTUoV5gD1wkXiwsK0TSh3Gp8G8xvKnB70RUiAv0/Yhbm15MsxtVZR6GwQ==}
     peerDependencies:
       expo: '>=50.0.0'
       expo-constants: '>=14.4.2'
