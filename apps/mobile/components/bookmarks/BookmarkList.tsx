@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Text, View, Keyboard } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { api } from "@/lib/trpc";
 
 import FullPageSpinner from "../ui/FullPageSpinner";
 import BookmarkCard from "./BookmarkCard";
+import { useScrollToTop } from '@react-navigation/native';
 
 export default function BookmarkList({
   favourited,
@@ -17,6 +18,8 @@ export default function BookmarkList({
 }) {
   const apiUtils = api.useUtils();
   const [refreshing, setRefreshing] = useState(false);
+  const flatListRef = useRef(null);
+  useScrollToTop(flatListRef);
   const { data, isPending, isPlaceholderData } =
     api.bookmarks.getBookmarks.useQuery({
       favourited,
@@ -39,6 +42,7 @@ export default function BookmarkList({
 
   return (
     <Animated.FlatList
+      ref={flatListRef}
       itemLayoutAnimation={LinearTransition}
       contentContainerStyle={{
         gap: 15,

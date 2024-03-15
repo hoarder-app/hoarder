@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, View } from "react-native";
+import { FlatList, View, Text, Pressable } from "react-native";
 import { Link } from "expo-router";
 import { api } from "@/lib/trpc";
 import { ChevronRight } from "lucide-react-native";
@@ -53,12 +53,14 @@ export default function Lists() {
         marginTop: 5,
       }}
       renderItem={(l) => (
-        <View className="mx-2 flex flex-row justify-between rounded-xl border border-gray-100 bg-white px-4 py-2">
-          <Link key={l.item.id} href={l.item.href} className="text-lg">
-            {l.item.logo} {l.item.name}
-          </Link>
-          <ChevronRight />
-        </View>
+        <Link asChild key={l.item.id} href={l.item.href}>
+          <Pressable className="mx-2 flex flex-row justify-between rounded-xl border border-gray-100 bg-white px-4 py-2">
+            <Text className="text-lg">
+              {l.item.logo} {l.item.name}
+            </Text>
+            <ChevronRight />
+          </Pressable>
+        </Link>
       )}
       data={links}
       refreshing={refreshing}
