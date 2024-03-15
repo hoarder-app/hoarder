@@ -48,7 +48,7 @@ export function ImageCardTitle({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("order-first flex-none text-lg font-bold", className)}
+      className={cn("order-first flex-none text-lg", className)}
       {...props}
     />
   );
