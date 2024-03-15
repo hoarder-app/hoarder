@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import Markdown from "react-native-markdown-display";
 import * as Haptics from "expo-haptics";
+import { Link } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { api } from "@/lib/trpc";
 import { MenuView } from "@react-native-menu/menu";
@@ -57,7 +58,7 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
     api.bookmarks.deleteBookmark.useMutation({
       onSuccess: () => {
         toast({
-          message: 'The bookmark has been deleted!',
+          message: "The bookmark has been deleted!",
           showProgress: false,
         });
         apiUtils.bookmarks.getBookmarks.invalidate();
@@ -169,7 +170,7 @@ function TagList({ bookmark }: { bookmark: ZBookmark }) {
             key={t.id}
             className="rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-semibold"
           >
-            <Text>{t.name}</Text>
+            <Link href={`dashboard/tags/${t.id}`}>{t.name}</Link>
           </View>
         ))}
       </View>
