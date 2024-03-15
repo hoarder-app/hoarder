@@ -2,10 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
-import { and, eq } from "drizzle-orm";
-
-import { db } from "@hoarder/db";
-import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
+import { TRPCError } from "@trpc/server";
 
 export default async function TagPage({
   params,
@@ -17,30 +14,21 @@ export default async function TagPage({
     redirect("/");
   }
   const tagName = decodeURIComponent(params.tagName);
-  const tag = await db.query.bookmarkTags.findFirst({
-    where: and(
-      eq(bookmarkTags.userId, session.user.id),
-      eq(bookmarkTags.name, tagName),
-    ),
-    columns: {
-      id: true,
-    },
-  });
 
-  if (!tag) {
-    // TODO: Better error message when the tag is not there
-    notFound();
+  let tag;
+  try {
+    tag = await api.tags.get({ tagName });
+  } catch (e) {
+    if (e instanceof TRPCError) {
+      if (e.code == "NOT_FOUND") {
+        notFound();
+      }
+    }
+    throw e;
   }
 
-  const bookmarkIds = await db.query.tagsOnBookmarks.findMany({
-    where: eq(tagsOnBookmarks.tagId, tag.id),
-    columns: {
-      bookmarkId: true,
-    },
-  });
-
   const query = {
-    ids: bookmarkIds.map((b) => b.bookmarkId),
+    ids: tag.bookmarks,
     archived: false,
   };
 
