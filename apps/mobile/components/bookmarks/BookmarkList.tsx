@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Text, View, Keyboard } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { api } from "@/lib/trpc";
 
@@ -53,6 +53,7 @@ export default function BookmarkList({
       data={data.bookmarks}
       refreshing={refreshing}
       onRefresh={onRefresh}
+      onScrollBeginDrag={Keyboard.dismiss}
       keyExtractor={(b) => b.id}
     />
   );
