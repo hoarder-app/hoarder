@@ -1,12 +1,21 @@
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import Markdown from "react-native-markdown-display";
+import * as Haptics from "expo-haptics";
 import * as WebBrowser from "expo-web-browser";
 import { api } from "@/lib/trpc";
-import { Archive, ArchiveRestore, Star, Trash } from "lucide-react-native";
+import { MenuView } from "@react-native-menu/menu";
+import { Ellipsis, Star } from "lucide-react-native";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
-import { ActionButton } from "../ui/ActionButton";
 import { Divider } from "../ui/Divider";
 import { Skeleton } from "../ui/Skeleton";
 import { useToast } from "../ui/Toast";
@@ -36,46 +45,59 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const apiUtils = api.useUtils();
 
+  const onError = () => {
+    toast({
+      message: "Something went wrong",
+      variant: "destructive",
+      showProgress: false,
+    });
+  };
+
   const { mutate: deleteBookmark, isPending: isDeletionPending } =
     api.bookmarks.deleteBookmark.useMutation({
       onSuccess: () => {
-        apiUtils.bookmarks.getBookmarks.invalidate();
-      },
-      onError: () => {
         toast({
-          message: "Something went wrong",
-          variant: "destructive",
+          message: 'The bookmark has been deleted!',
           showProgress: false,
         });
+        apiUtils.bookmarks.getBookmarks.invalidate();
       },
+      onError,
     });
-  const {
-    mutate: updateBookmark,
-    variables,
-    isPending: isUpdatePending,
-  } = api.bookmarks.updateBookmark.useMutation({
-    onSuccess: () => {
-      apiUtils.bookmarks.getBookmarks.invalidate();
-      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: bookmark.id });
-    },
-    onError: () => {
-      toast({
-        message: "Something went wrong",
-        variant: "destructive",
-        showProgress: false,
-      });
-    },
-  });
+
+  const { mutate: favouriteBookmark, variables } =
+    api.bookmarks.updateBookmark.useMutation({
+      onSuccess: () => {
+        apiUtils.bookmarks.getBookmarks.invalidate();
+        apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: bookmark.id });
+      },
+      onError,
+    });
+
+  const { mutate: archiveBookmark, isPending: isArchivePending } =
+    api.bookmarks.updateBookmark.useMutation({
+      onSuccess: (resp) => {
+        toast({
+          message: `The bookmark has been ${resp.archived ? "archived" : "un-archived"}!`,
+          showProgress: false,
+        });
+        apiUtils.bookmarks.getBookmarks.invalidate();
+        apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: bookmark.id });
+      },
+      onError,
+    });
 
   return (
     <View className="flex flex-row gap-4">
+      {(isArchivePending || isDeletionPending) && <ActivityIndicator />}
       <Pressable
-        onPress={() =>
-          updateBookmark({
+        onPress={() => {
+          Haptics.selectionAsync();
+          favouriteBookmark({
             bookmarkId: bookmark.id,
             favourited: !bookmark.favourited,
-          })
-        }
+          });
+        }}
       >
         {(variables ? variables.favourited : bookmark.favourited) ? (
           <Star fill="#ebb434" color="#ebb434" />
@@ -83,31 +105,46 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
           <Star color="gray" />
         )}
       </Pressable>
-      <ActionButton
-        loading={isUpdatePending}
-        onPress={() =>
-          updateBookmark({
-            bookmarkId: bookmark.id,
-            archived: !bookmark.archived,
-          })
-        }
+
+      <MenuView
+        onPressAction={({ nativeEvent }) => {
+          Haptics.selectionAsync();
+          if (nativeEvent.event === "delete") {
+            deleteBookmark({
+              bookmarkId: bookmark.id,
+            });
+          } else if (nativeEvent.event === "archive") {
+            archiveBookmark({
+              bookmarkId: bookmark.id,
+              archived: !bookmark.archived,
+            });
+          }
+        }}
+        actions={[
+          {
+            id: "archive",
+            title: bookmark.archived ? "Un-archive" : "Archive",
+            image: Platform.select({
+              ios: "folder",
+              android: "ic_menu_folder",
+            }),
+          },
+          {
+            id: "delete",
+            title: "Delete",
+            attributes: {
+              destructive: true,
+            },
+            image: Platform.select({
+              ios: "trash",
+              android: "ic_menu_delete",
+            }),
+          },
+        ]}
+        shouldOpenOnLongPress={false}
       >
-        {bookmark.archived ? (
-          <ArchiveRestore color="gray" />
-        ) : (
-          <Archive color="gray" />
-        )}
-      </ActionButton>
-      <ActionButton
-        loading={isDeletionPending}
-        onPress={() =>
-          deleteBookmark({
-            bookmarkId: bookmark.id,
-          })
-        }
-      >
-        <Trash color="gray" />
-      </ActionButton>
+        <Ellipsis onPress={() => Haptics.selectionAsync()} color="gray" />
+      </MenuView>
     </View>
   );
 }
@@ -236,9 +273,5 @@ export default function BookmarkCard({
       break;
   }
 
-  return (
-    <View className="border-b border-gray-300 bg-white">
-      {comp}
-    </View>
-  );
+  return <View className="border-b border-gray-300 bg-white">{comp}</View>;
 }

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hoarder/trpc": "0.1.0",
+    "@react-native-menu/menu": "^0.9.1",
     "@tanstack/react-query": "^5.24.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
@@ -20,6 +21,7 @@
     "expo-config-plugin-ios-share-extension": "^0.0.4",
     "expo-constants": "~15.4.5",
     "expo-dev-client": "^3.3.9",
+    "expo-haptics": "^12.8.1",
     "expo-image": "^1.10.6",
     "expo-linking": "~6.2.2",
     "expo-router": "~3.4.8",
@@ -42,11 +44,11 @@
     "zustand": "^4.5.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.20.0",
     "@hoarder/eslint-config": "workspace:^0.2.0",
     "@hoarder/prettier-config": "workspace:^0.1.0",
     "@hoarder/tailwind-config": "workspace:^0.1.0",
     "@hoarder/tsconfig": "workspace:^0.1.0",
-    "@babel/core": "^7.20.0",
     "@types/react": "^18.2.55",
     "ajv": "latest",
     "eslint": "^8.57.0",

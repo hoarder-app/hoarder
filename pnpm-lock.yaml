@@ -140,6 +140,9 @@ importers:
       '@hoarder/trpc':
         specifier: 0.1.0
         version: link:../../packages/trpc
+      '@react-native-menu/menu':
+        specifier: ^0.9.1
+        version: 0.9.1(react-native@0.73.4)(react@18.2.0)
       '@tanstack/react-query':
         specifier: ^5.24.8
         version: 5.24.8(react@18.2.0)
@@ -161,6 +164,9 @@ importers:
       expo-dev-client:
         specifier: ^3.3.9
         version: 3.3.9(expo@50.0.11)
+      expo-haptics:
+        specifier: ^12.8.1
+        version: 12.8.1(expo@50.0.11)
       expo-image:
         specifier: ^1.10.6
         version: 1.10.6(expo@50.0.11)
@@ -4799,6 +4805,16 @@ packages:
       - encoding
       - supports-color
       - utf-8-validate
+    dev: false
+
+  /@react-native-menu/menu@0.9.1(react-native@0.73.4)(react@18.2.0):
+    resolution: {integrity: sha512-PdZoN1P72ESQ7UTzm5YI4W+87KU5mv7vVJ3GsQVRtnrzzuVskfp5E9ds1biGClcTieXAdIZ7hvPD1HHHZPobdg==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+    dependencies:
+      react: 18.2.0
+      react-native: 0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0)(react@18.2.0)
     dev: false
 
   /@react-native/assets-registry@0.73.1:
@@ -9509,6 +9525,14 @@ packages:
     dependencies:
       expo: 50.0.11(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21)
       fontfaceobserver: 2.3.0
+    dev: false
+
+  /expo-haptics@12.8.1(expo@50.0.11):
+    resolution: {integrity: sha512-ntLsHkfle8K8w9MW8pZEw92ZN3sguaGUSSIxv30fPKNeQFu7Cq/h47Qv3tONv2MO3wU48N9FbKnant6XlfptpA==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 50.0.11(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21)
     dev: false
 
   /expo-image@1.10.6(expo@50.0.11):
