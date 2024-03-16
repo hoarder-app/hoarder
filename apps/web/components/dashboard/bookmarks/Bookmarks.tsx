@@ -11,7 +11,12 @@ export default async function Bookmarks({
   archived,
   title,
   showDivider,
-}: ZGetBookmarksRequest & { title: string; showDivider?: boolean }) {
+  showEditorCard = false,
+}: ZGetBookmarksRequest & {
+  title: string;
+  showDivider?: boolean;
+  showEditorCard?: boolean;
+}) {
   const session = await getServerAuthSession();
   if (!session) {
     redirect("/");
@@ -28,7 +33,11 @@ export default async function Bookmarks({
     <div className="container flex flex-col gap-3">
       <div className="text-2xl">{title}</div>
       {showDivider && <hr />}
-      <BookmarksGrid query={query} bookmarks={bookmarks.bookmarks} />
+      <BookmarksGrid
+        query={query}
+        bookmarks={bookmarks.bookmarks}
+        showEditorCard={showEditorCard}
+      />
     </div>
   );
 }

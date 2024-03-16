@@ -12,8 +12,17 @@ import type {
   ZGetBookmarksRequest,
 } from "@hoarder/trpc/types/bookmarks";
 
+import EditorCard from "./EditorCard";
 import LinkCard from "./LinkCard";
 import TextCard from "./TextCard";
+
+function BookmarkCard({ children }: { children: React.ReactNode }) {
+  return (
+    <Slot className="border-grey-100 mb-4 border bg-gray-50 duration-300 ease-in hover:shadow-lg hover:transition-all">
+      {children}
+    </Slot>
+  );
+}
 
 function getBreakpointConfig() {
   const fullConfig = resolveConfig(tailwindConfig);
@@ -37,22 +46,17 @@ function renderBookmark(bookmark: ZBookmark) {
       comp = <TextCard bookmark={bookmark} />;
       break;
   }
-  return (
-    <Slot
-      key={bookmark.id}
-      className="border-grey-100 mb-4 border bg-gray-50 duration-300 ease-in hover:shadow-lg hover:transition-all"
-    >
-      {comp}
-    </Slot>
-  );
+  return <BookmarkCard key={bookmark.id}>{comp}</BookmarkCard>;
 }
 
 export default function BookmarksGrid({
   query,
   bookmarks: initialBookmarks,
+  showEditorCard = false,
 }: {
   query: ZGetBookmarksRequest;
   bookmarks: ZBookmark[];
+  showEditorCard?: boolean;
 }) {
   const { data } = api.bookmarks.getBookmarks.useQuery(query, {
     initialData: { bookmarks: initialBookmarks },
@@ -63,6 +67,11 @@ export default function BookmarksGrid({
   }
   return (
     <Masonry className="flex gap-4" breakpointCols={breakpointConfig}>
+      {showEditorCard && (
+        <BookmarkCard>
+          <EditorCard />
+        </BookmarkCard>
+      )}
       {data.bookmarks.map((b) => renderBookmark(b))}
     </Masonry>
   );
