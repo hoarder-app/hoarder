@@ -4,6 +4,7 @@ import {
   text,
   primaryKey,
   unique,
+  index,
 } from "drizzle-orm/sqlite-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 import { createId } from "@paralleldrive/cuid2";
@@ -111,7 +112,11 @@ export const bookmarks = sqliteTable("bookmarks", {
   taggingStatus: text("taggingStatus", {
     enum: ["pending", "failure", "success"],
   }).default("pending"),
-});
+}, (b) => ({
+  userIdIdx: index("bookmarks_userId_idx").on(b.userId),
+  archivedIdx: index("bookmarks_archived_idx").on(b.archived),
+  favIdx: index("bookmarks_favourited_idx").on(b.favourited),
+}));
 
 export const bookmarkLinks = sqliteTable("bookmarkLinks", {
   id: text("id")
@@ -155,6 +160,8 @@ export const bookmarkTags = sqliteTable(
   },
   (bt) => ({
     uniq: unique().on(bt.userId, bt.name),
+    nameIdx: index("bookmarkTags_name_idx").on(bt.name),
+    userIdIdx: index("bookmarkTags_userId_idx").on(bt.userId),
   }),
 );
 
@@ -175,6 +182,8 @@ export const tagsOnBookmarks = sqliteTable(
   },
   (tb) => ({
     pk: primaryKey({ columns: [tb.bookmarkId, tb.tagId] }),
+    tagIdIdx: index("tagsOnBookmarks_tagId_idx").on(tb.bookmarkId),
+    bookmarkIdIdx: index("tagsOnBookmarks_bookmarkId_idx").on(tb.bookmarkId),
   }),
 );
 
@@ -194,6 +203,7 @@ export const bookmarkLists = sqliteTable(
   },
   (bl) => ({
     unq: unique().on(bl.name, bl.userId),
+    userIdIdx: index("bookmarkLists_userId_idx").on(bl.userId),
   }),
 );
 
@@ -212,6 +222,8 @@ export const bookmarksInLists = sqliteTable(
   },
   (tb) => ({
     pk: primaryKey({ columns: [tb.bookmarkId, tb.listId] }),
+    bookmarkIdIdx: index("bookmarksInLists_bookmarkId_idx").on(tb.bookmarkId),
+    listIdIdx: index("bookmarksInLists_listId_idx").on(tb.listId),
   }),
 );
 
