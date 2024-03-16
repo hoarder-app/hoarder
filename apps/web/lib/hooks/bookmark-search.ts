@@ -34,7 +34,7 @@ export function useDoBookmarkSearch() {
     }
     const id = setTimeout(() => {
       doSearch(val);
-    }, 200);
+    }, 10);
     setTimeoutId(id);
   };
 
