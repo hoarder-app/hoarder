@@ -74,8 +74,8 @@ export default function Signin() {
               value={settings.address}
               autoCapitalize="none"
               keyboardType="url"
-              onEndEditing={(e) =>
-                setSettings({ ...settings, address: e.nativeEvent.text })
+              onChangeText={(e) =>
+                setSettings({ ...settings, address: e })
               }
             />
           </View>
