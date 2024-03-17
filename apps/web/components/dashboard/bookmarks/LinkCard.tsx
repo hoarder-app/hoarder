@@ -15,11 +15,10 @@ import {
   isBookmarkStillTagging,
 } from "@/lib/bookmarkUtils";
 import { api } from "@/lib/trpc";
-import { Maximize2, Star } from "lucide-react";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
-import BookmarkOptions from "./BookmarkOptions";
+import BookmarkActionBar from "./BookmarkActionBar";
 import TagList from "./TagList";
 
 export default function LinkCard({
@@ -92,22 +91,7 @@ export default function LinkCard({
                 {parsedUrl.host}
               </Link>
             </div>
-            <div className="flex">
-              {bookmark.favourited && (
-                <Star
-                  className="m-1 size-8 rounded p-1"
-                  color="#ebb434"
-                  fill="#ebb434"
-                />
-              )}
-              <Link
-                className="my-auto block px-2"
-                href={`/dashboard/preview/${bookmark.id}`}
-              >
-                <Maximize2 size="20" />
-              </Link>
-              <BookmarkOptions bookmark={bookmark} />
-            </div>
+            <BookmarkActionBar bookmark={bookmark} />
           </div>
         </ImageCardFooter>
       </ImageCardContent>

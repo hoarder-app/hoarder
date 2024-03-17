@@ -1,17 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { isBookmarkStillTagging } from "@/lib/bookmarkUtils";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
-import { Maximize2, Star } from "lucide-react";
 import Markdown from "react-markdown";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
+import BookmarkActionBar from "./BookmarkActionBar";
 import { BookmarkedTextViewer } from "./BookmarkedTextViewer";
-import BookmarkOptions from "./BookmarkOptions";
 import TagList from "./TagList";
 
 export default function TextCard({
@@ -71,24 +69,7 @@ export default function TextCard({
         </div>
         <div className="flex w-full justify-between">
           <div />
-          <div className="flex gap-0 text-gray-500">
-            <div>
-              {bookmark.favourited && (
-                <Star
-                  className="my-1 size-8 rounded p-1"
-                  color="#ebb434"
-                  fill="#ebb434"
-                />
-              )}
-            </div>
-            <Link
-              className="my-auto block px-2"
-              href={`/dashboard/preview/${bookmark.id}`}
-            >
-              <Maximize2 size="20" />
-            </Link>
-            <BookmarkOptions bookmark={bookmark} />
-          </div>
+          <BookmarkActionBar bookmark={bookmark} />
         </div>
       </div>
     </>
