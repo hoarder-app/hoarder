@@ -1,11 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
-import { count, eq } from "drizzle-orm";
-
-import { db } from "@hoarder/db";
-import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 
 function TagPill({ name, count }: { name: string; count: number }) {
   return (
@@ -24,16 +21,7 @@ export default async function TagsPage() {
     redirect("/");
   }
 
-  let tags = await db
-    .select({
-      id: tagsOnBookmarks.tagId,
-      name: bookmarkTags.name,
-      count: count(),
-    })
-    .from(tagsOnBookmarks)
-    .where(eq(bookmarkTags.userId, session.user.id))
-    .groupBy(tagsOnBookmarks.tagId)
-    .innerJoin(bookmarkTags, eq(bookmarkTags.id, tagsOnBookmarks.tagId));
+  let tags = (await api.tags.list()).tags;
 
   // Sort tags by usage desc
   tags = tags.sort((a, b) => b.count - a.count);

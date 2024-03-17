@@ -1,5 +1,5 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { bookmarks, bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
@@ -93,7 +93,32 @@ export const tagsAppRouter = router({
       return {
         id: res[0].id,
         name: res[0].name,
-        bookmarks: res.flatMap((t) => t.bookmarkId ? [t.bookmarkId] : []),
+        bookmarks: res.flatMap((t) => (t.bookmarkId ? [t.bookmarkId] : [])),
       };
+    }),
+  list: authedProcedure
+    .output(
+      z.object({
+        tags: z.array(
+          z.object({
+            id: z.string(),
+            name: z.string(),
+            count: z.number(),
+          }),
+        ),
+      }),
+    )
+    .query(async ({ ctx }) => {
+      const tags = await ctx.db
+        .select({
+          id: tagsOnBookmarks.tagId,
+          name: bookmarkTags.name,
+          count: count(),
+        })
+        .from(tagsOnBookmarks)
+        .where(eq(bookmarkTags.userId, ctx.user.id))
+        .groupBy(tagsOnBookmarks.tagId)
+        .innerJoin(bookmarkTags, eq(bookmarkTags.id, tagsOnBookmarks.tagId));
+      return { tags };
     }),
 });
