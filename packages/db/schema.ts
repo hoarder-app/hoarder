@@ -116,6 +116,7 @@ export const bookmarks = sqliteTable("bookmarks", {
   userIdIdx: index("bookmarks_userId_idx").on(b.userId),
   archivedIdx: index("bookmarks_archived_idx").on(b.archived),
   favIdx: index("bookmarks_favourited_idx").on(b.favourited),
+  createdAtIdx: index("bookmarks_createdAt_idx").on(b.createdAt),
 }));
 
 export const bookmarkLinks = sqliteTable("bookmarkLinks", {
