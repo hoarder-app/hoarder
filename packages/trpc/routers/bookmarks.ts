@@ -1,5 +1,5 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, desc, eq, exists, inArray } from "drizzle-orm";
+import { and, desc, eq, exists, inArray, lte } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -21,6 +21,7 @@ import { getSearchIdxClient } from "@hoarder/shared/search";
 
 import { authedProcedure, Context, router } from "../index";
 import {
+  DEFAULT_NUM_BOOKMARKS_PER_PAGE,
   zBareBookmarkSchema,
   ZBookmark,
   ZBookmarkContent,
@@ -322,7 +323,7 @@ export const bookmarksAppRouter = router({
       });
 
       if (resp.hits.length == 0) {
-        return { bookmarks: [] };
+        return { bookmarks: [], nextCursor: null };
       }
       const results = await ctx.db.query.bookmarks.findMany({
         where: and(
@@ -343,66 +344,79 @@ export const bookmarksAppRouter = router({
         },
       });
 
-      return { bookmarks: results.map(toZodSchema) };
+      return { bookmarks: results.map(toZodSchema), nextCursor: null };
     }),
   getBookmarks: authedProcedure
     .input(zGetBookmarksRequestSchema)
     .output(zGetBookmarksResponseSchema)
     .query(async ({ input, ctx }) => {
       if (input.ids && input.ids.length == 0) {
-        return { bookmarks: [] };
+        return { bookmarks: [], nextCursor: null };
       }
+      if (!input.limit) {
+        input.limit = DEFAULT_NUM_BOOKMARKS_PER_PAGE;
+      }
+
+      const sq = ctx.db.$with("bookmarksSq").as(
+        ctx.db
+          .select()
+          .from(bookmarks)
+          .where(
+            and(
+              eq(bookmarks.userId, ctx.user.id),
+              input.archived !== undefined
+                ? eq(bookmarks.archived, input.archived)
+                : undefined,
+              input.favourited !== undefined
+                ? eq(bookmarks.favourited, input.favourited)
+                : undefined,
+              input.ids ? inArray(bookmarks.id, input.ids) : undefined,
+              input.tagId !== undefined
+                ? exists(
+                  ctx.db
+                    .select()
+                    .from(tagsOnBookmarks)
+                    .where(
+                      and(
+                        eq(tagsOnBookmarks.bookmarkId, bookmarks.id),
+                        eq(tagsOnBookmarks.tagId, input.tagId),
+                      ),
+                    ),
+                )
+                : undefined,
+              input.listId !== undefined
+                ? exists(
+                  ctx.db
+                    .select()
+                    .from(bookmarksInLists)
+                    .where(
+                      and(
+                        eq(bookmarksInLists.bookmarkId, bookmarks.id),
+                        eq(bookmarksInLists.listId, input.listId),
+                      ),
+                    ),
+                )
+                : undefined,
+              input.cursor ? lte(bookmarks.createdAt, input.cursor) : undefined,
+            ),
+          )
+          .limit(input.limit + 1)
+          .orderBy(desc(bookmarks.createdAt)),
+      );
       // TODO: Consider not inlining the tags in the response of getBookmarks as this query is getting kinda expensive
       const results = await ctx.db
+        .with(sq)
         .select()
-        .from(bookmarks)
-        .where(
-          and(
-            eq(bookmarks.userId, ctx.user.id),
-            input.archived !== undefined
-              ? eq(bookmarks.archived, input.archived)
-              : undefined,
-            input.favourited !== undefined
-              ? eq(bookmarks.favourited, input.favourited)
-              : undefined,
-            input.ids ? inArray(bookmarks.id, input.ids) : undefined,
-            input.tagId !== undefined
-              ? exists(
-                ctx.db
-                  .select()
-                  .from(tagsOnBookmarks)
-                  .where(
-                    and(
-                      eq(tagsOnBookmarks.bookmarkId, bookmarks.id),
-                      eq(tagsOnBookmarks.tagId, input.tagId),
-                    ),
-                  ),
-              )
-              : undefined,
-            input.listId !== undefined
-              ? exists(
-                ctx.db
-                  .select()
-                  .from(bookmarksInLists)
-                  .where(
-                    and(
-                      eq(bookmarksInLists.bookmarkId, bookmarks.id),
-                      eq(bookmarksInLists.listId, input.listId),
-                    ),
-                  ),
-              )
-              : undefined,
-          ),
-        )
-        .leftJoin(tagsOnBookmarks, eq(bookmarks.id, tagsOnBookmarks.bookmarkId))
+        .from(sq)
+        .leftJoin(tagsOnBookmarks, eq(sq.id, tagsOnBookmarks.bookmarkId))
         .leftJoin(bookmarkTags, eq(tagsOnBookmarks.tagId, bookmarkTags.id))
-        .leftJoin(bookmarkLinks, eq(bookmarkLinks.id, bookmarks.id))
-        .leftJoin(bookmarkTexts, eq(bookmarkTexts.id, bookmarks.id))
-        .orderBy(desc(bookmarks.createdAt));
+        .leftJoin(bookmarkLinks, eq(bookmarkLinks.id, sq.id))
+        .leftJoin(bookmarkTexts, eq(bookmarkTexts.id, sq.id))
+        .orderBy(desc(sq.createdAt));
 
       const bookmarksRes = results.reduce<Record<string, ZBookmark>>(
         (acc, row) => {
-          const bookmarkId = row.bookmarks.id;
+          const bookmarkId = row.bookmarksSq.id;
           if (!acc[bookmarkId]) {
             let content: ZBookmarkContent;
             if (row.bookmarkLinks) {
@@ -413,7 +427,7 @@ export const bookmarksAppRouter = router({
               throw new Error("Unknown content type");
             }
             acc[bookmarkId] = {
-              ...row.bookmarks,
+              ...row.bookmarksSq,
               content,
               tags: [],
             };
@@ -435,7 +449,15 @@ export const bookmarksAppRouter = router({
         {},
       );
 
-      return { bookmarks: Object.values(bookmarksRes) };
+      const bookmarksArr = Object.values(bookmarksRes);
+
+      let nextCursor = null;
+      if (bookmarksArr.length > input.limit) {
+        const nextItem = bookmarksArr.pop();
+        nextCursor = nextItem?.createdAt ?? null;
+      }
+
+      return { bookmarks: bookmarksArr, nextCursor };
     }),
 
   updateTags: authedProcedure

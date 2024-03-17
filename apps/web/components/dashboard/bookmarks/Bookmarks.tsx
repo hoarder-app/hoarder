@@ -35,7 +35,7 @@ export default async function Bookmarks({
       {showDivider && <hr />}
       <BookmarksGrid
         query={query}
-        bookmarks={bookmarks.bookmarks}
+        bookmarks={bookmarks}
         showEditorCard={showEditorCard}
       />
     </div>

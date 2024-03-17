@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { ActionButton } from "@/components/ui/action-button";
 import { api } from "@/lib/trpc";
 import tailwindConfig from "@/tailwind.config";
 import { Slot } from "@radix-ui/react-slot";
@@ -10,6 +11,7 @@ import resolveConfig from "tailwindcss/resolveConfig";
 import type {
   ZBookmark,
   ZGetBookmarksRequest,
+  ZGetBookmarksResponse,
 } from "@hoarder/trpc/types/bookmarks";
 
 import EditorCard from "./EditorCard";
@@ -55,24 +57,45 @@ export default function BookmarksGrid({
   showEditorCard = false,
 }: {
   query: ZGetBookmarksRequest;
-  bookmarks: ZBookmark[];
+  bookmarks: ZGetBookmarksResponse;
   showEditorCard?: boolean;
+  itemsPerPage?: number;
 }) {
-  const { data } = api.bookmarks.getBookmarks.useQuery(query, {
-    initialData: { bookmarks: initialBookmarks },
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+    api.bookmarks.getBookmarks.useInfiniteQuery(query, {
+      initialData: () => ({
+        pages: [initialBookmarks],
+        pageParams: [query.cursor],
+      }),
+      initialCursor: null,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    });
+
   const breakpointConfig = useMemo(() => getBreakpointConfig(), []);
-  if (data.bookmarks.length == 0) {
+  const bookmarks = data!.pages.flatMap((b) => b.bookmarks);
+  if (bookmarks.length == 0) {
     return <p>No bookmarks</p>;
   }
   return (
-    <Masonry className="flex gap-4" breakpointCols={breakpointConfig}>
-      {showEditorCard && (
-        <BookmarkCard>
-          <EditorCard />
-        </BookmarkCard>
+    <>
+      <Masonry className="flex gap-4" breakpointCols={breakpointConfig}>
+        {showEditorCard && (
+          <BookmarkCard>
+            <EditorCard />
+          </BookmarkCard>
+        )}
+        {bookmarks.map((b) => renderBookmark(b))}
+      </Masonry>
+      {hasNextPage && (
+        <ActionButton
+          loading={isFetchingNextPage}
+          onClick={() => fetchNextPage()}
+          className="mx-auto w-min"
+          variant="ghost"
+        >
+          Load More
+        </ActionButton>
       )}
-      {data.bookmarks.map((b) => renderBookmark(b))}
-    </Masonry>
+    </>
   );
 }

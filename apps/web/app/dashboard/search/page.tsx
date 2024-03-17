@@ -24,7 +24,7 @@ function SearchComp() {
       {data ? (
         <BookmarksGrid
           query={{ ids: data.bookmarks.map((b) => b.id) }}
-          bookmarks={data.bookmarks}
+          bookmarks={data}
         />
       ) : (
         <Loading />

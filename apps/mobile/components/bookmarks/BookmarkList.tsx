@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Keyboard, Text, View } from "react-native";
+import { ActivityIndicator, Keyboard, Text, View } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { api } from "@/lib/trpc";
 import { useScrollToTop } from "@react-navigation/native";
@@ -20,12 +20,25 @@ export default function BookmarkList({
   const [refreshing, setRefreshing] = useState(false);
   const flatListRef = useRef(null);
   useScrollToTop(flatListRef);
-  const { data, isPending, isPlaceholderData } =
-    api.bookmarks.getBookmarks.useQuery(query);
+  const {
+    data,
+    isPending,
+    isPlaceholderData,
+    error,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = api.bookmarks.getBookmarks.useInfiniteQuery(query, {
+    initialCursor: null,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
 
   useEffect(() => {
     setRefreshing(isPending || isPlaceholderData);
   }, [isPending, isPlaceholderData]);
+
+  if (error) {
+    return <Text>{JSON.stringify(error)}</Text>;
+  }
 
   if (isPending || !data) {
     return <FullPageSpinner />;
@@ -51,11 +64,21 @@ export default function BookmarkList({
           <Text className="text-xl">No Bookmarks</Text>
         </View>
       }
-      data={data.bookmarks}
+      data={data.pages.flatMap((p) => p.bookmarks)}
       refreshing={refreshing}
       onRefresh={onRefresh}
       onScrollBeginDrag={Keyboard.dismiss}
       keyExtractor={(b) => b.id}
+      onEndReached={() => fetchNextPage()}
+      ListFooterComponent={
+        isFetchingNextPage ? (
+          <View className="items-center">
+            <ActivityIndicator />
+          </View>
+        ) : (
+          <View />
+        )
+      }
     />
   );
 }

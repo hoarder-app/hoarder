@@ -38,7 +38,7 @@ export default async function TagPage({
     <div className="container flex flex-col gap-3">
       <span className="pt-4 text-2xl">{tagName}</span>
       <hr />
-      <BookmarksGrid query={query} bookmarks={bookmarks.bookmarks} />
+      <BookmarksGrid query={query} bookmarks={bookmarks} />
     </div>
   );
 }

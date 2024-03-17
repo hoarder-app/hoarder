@@ -43,7 +43,7 @@ export default async function ListPage({
       <hr />
       <BookmarksGrid
         query={{ listId: list.id, archived: false }}
-        bookmarks={bookmarks.bookmarks}
+        bookmarks={bookmarks}
       />
     </div>
   );
