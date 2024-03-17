@@ -21,7 +21,7 @@ export default function Search() {
     <SafeAreaView>
       {data && (
         <BookmarkList
-          ids={data.bookmarks.map((b) => b.id)}
+          query={{ids: data.bookmarks.map((b) => b.id)}}
           header={
             <View>
               <PageTitle title="Search" />

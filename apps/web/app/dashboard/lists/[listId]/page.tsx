@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
+import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
 import DeleteListButton from "@/components/dashboard/lists/DeleteListButton";
-import ListView from "@/components/dashboard/lists/ListView";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
 import { TRPCError } from "@trpc/server";
@@ -27,7 +27,10 @@ export default async function ListPage({
     throw e;
   }
 
-  const bookmarks = await api.bookmarks.getBookmarks({ ids: list.bookmarks });
+  const bookmarks = await api.bookmarks.getBookmarks({
+    listId: list.id,
+    archived: false,
+  });
 
   return (
     <div className="container flex flex-col gap-3">
@@ -38,7 +41,10 @@ export default async function ListPage({
         <DeleteListButton list={list} />
       </div>
       <hr />
-      <ListView list={list} bookmarks={bookmarks.bookmarks} />
+      <BookmarksGrid
+        query={{ listId: list.id, archived: false }}
+        bookmarks={bookmarks.bookmarks}
+      />
     </div>
   );
 }

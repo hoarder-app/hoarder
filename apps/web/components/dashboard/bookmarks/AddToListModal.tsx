@@ -52,7 +52,6 @@ export default function AddToListModal({
   const { data: lists, isPending: isFetchingListsPending } =
     api.lists.list.useQuery();
 
-  const listInvalidationFunction = api.useUtils().lists.get.invalidate;
   const bookmarksInvalidationFunction =
     api.useUtils().bookmarks.getBookmarks.invalidate;
 
@@ -62,8 +61,8 @@ export default function AddToListModal({
         toast({
           description: "List has been updated!",
         });
-        listInvalidationFunction({ listId: req.listId });
-        bookmarksInvalidationFunction();
+        setOpen(false);
+        bookmarksInvalidationFunction({ listId: req.listId });
       },
       onError: (e) => {
         if (e.data?.code == "BAD_REQUEST") {

@@ -25,8 +25,10 @@ export default function TagView() {
       {tag ? (
         <View>
           <BookmarkList
-            archived={false}
-            ids={tag.bookmarks}
+            query={{
+              archived: false,
+              tagId: tag.id,
+            }}
             header={<PageTitle title={tag.name} />}
           />
         </View>

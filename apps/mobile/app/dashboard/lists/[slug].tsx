@@ -24,8 +24,10 @@ export default function ListView() {
       {list ? (
         <View>
           <BookmarkList
-            archived={false}
-            ids={list.bookmarks}
+            query={{
+              archived: false,
+              listId: list.id,
+            }}
             header={<PageTitle title={`${list.icon} ${list.name}`} />}
           />
         </View>

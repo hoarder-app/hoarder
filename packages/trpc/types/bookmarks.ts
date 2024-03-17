@@ -51,6 +51,8 @@ export const zGetBookmarksRequestSchema = z.object({
   ids: z.array(z.string()).optional(),
   archived: z.boolean().optional(),
   favourited: z.boolean().optional(),
+  tagId: z.string().optional(),
+  listId: z.string().optional(),
 });
 export type ZGetBookmarksRequest = z.infer<typeof zGetBookmarksRequestSchema>;
 

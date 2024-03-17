@@ -4,18 +4,16 @@ import Animated, { LinearTransition } from "react-native-reanimated";
 import { api } from "@/lib/trpc";
 import { useScrollToTop } from "@react-navigation/native";
 
+import type { ZGetBookmarksRequest } from "@hoarder/trpc/types/bookmarks";
+
 import FullPageSpinner from "../ui/FullPageSpinner";
 import BookmarkCard from "./BookmarkCard";
 
 export default function BookmarkList({
-  favourited,
-  archived,
-  ids,
-  header
+  query,
+  header,
 }: {
-  favourited?: boolean;
-  archived?: boolean;
-  ids?: string[];
+  query: ZGetBookmarksRequest;
   header?: React.ReactElement;
 }) {
   const apiUtils = api.useUtils();
@@ -23,11 +21,7 @@ export default function BookmarkList({
   const flatListRef = useRef(null);
   useScrollToTop(flatListRef);
   const { data, isPending, isPlaceholderData } =
-    api.bookmarks.getBookmarks.useQuery({
-      favourited,
-      archived,
-      ids,
-    });
+    api.bookmarks.getBookmarks.useQuery(query);
 
   useEffect(() => {
     setRefreshing(isPending || isPlaceholderData);

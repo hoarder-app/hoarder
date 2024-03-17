@@ -5,7 +5,7 @@ import PageTitle from "@/components/ui/PageTitle";
 export default function Archive() {
   return (
     <SafeAreaView>
-      <BookmarkList archived header={<PageTitle title="🗄️ Archive" />} />
+      <BookmarkList query={{archived: true}} header={<PageTitle title="🗄️ Archive" />} />
     </SafeAreaView>
   );
 }

@@ -28,8 +28,8 @@ export default async function TagPage({
   }
 
   const query = {
-    ids: tag.bookmarks,
     archived: false,
+    tagId: tag.id,
   };
 
   const bookmarks = await api.bookmarks.getBookmarks(query);

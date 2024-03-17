@@ -2,9 +2,9 @@ import { Platform, SafeAreaView, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import BookmarkList from "@/components/bookmarks/BookmarkList";
+import PageTitle from "@/components/ui/PageTitle";
 import { MenuView } from "@react-native-menu/menu";
 import { SquarePen } from "lucide-react-native";
-import PageTitle from "@/components/ui/PageTitle";
 
 function HeaderRight() {
   const router = useRouter();
@@ -49,7 +49,7 @@ export default function Home() {
   return (
     <SafeAreaView>
       <BookmarkList
-        archived={false}
+        query={{ archived: false }}
         header={
           <View className="flex flex-row justify-between">
             <PageTitle title="Home" />

@@ -75,6 +75,7 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
         description: "Tags has been updated!",
       });
       bookmarkInvalidationFunction({ bookmarkId: bookmark.id });
+      // TODO(bug) Invalidate the tag views as well
     },
     onError: () => {
       toast({

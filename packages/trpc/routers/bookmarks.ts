@@ -1,21 +1,15 @@
+import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
+import { and, desc, eq, exists, inArray } from "drizzle-orm";
+import invariant from "tiny-invariant";
 import { z } from "zod";
-import { Context, authedProcedure, router } from "../index";
-import { getSearchIdxClient } from "@hoarder/shared/search";
-import {
-  ZBookmark,
-  ZBookmarkContent,
-  zBareBookmarkSchema,
-  zBookmarkSchema,
-  zGetBookmarksRequestSchema,
-  zGetBookmarksResponseSchema,
-  zNewBookmarkRequestSchema,
-  zUpdateBookmarksRequestSchema,
-} from "../types/bookmarks";
+
+import { db as DONT_USE_db } from "@hoarder/db";
 import {
   bookmarkLinks,
+  bookmarks,
+  bookmarksInLists,
   bookmarkTags,
   bookmarkTexts,
-  bookmarks,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
 import {
@@ -23,11 +17,20 @@ import {
   OpenAIQueue,
   SearchIndexingQueue,
 } from "@hoarder/shared/queues";
-import { TRPCError, experimental_trpcMiddleware } from "@trpc/server";
-import { and, desc, eq, inArray } from "drizzle-orm";
-import { ZBookmarkTags } from "../types/tags";
+import { getSearchIdxClient } from "@hoarder/shared/search";
 
-import { db as DONT_USE_db } from "@hoarder/db";
+import { authedProcedure, Context, router } from "../index";
+import {
+  zBareBookmarkSchema,
+  ZBookmark,
+  ZBookmarkContent,
+  zBookmarkSchema,
+  zGetBookmarksRequestSchema,
+  zGetBookmarksResponseSchema,
+  zNewBookmarkRequestSchema,
+  zUpdateBookmarksRequestSchema,
+} from "../types/bookmarks";
+import { ZBookmarkTags } from "../types/tags";
 
 const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: Context;
@@ -79,16 +82,18 @@ async function dummyDrizzleReturnType() {
   return x;
 }
 
-function toZodSchema(
-  bookmark: Awaited<ReturnType<typeof dummyDrizzleReturnType>>,
-): ZBookmark {
+type BookmarkQueryReturnType = Awaited<
+  ReturnType<typeof dummyDrizzleReturnType>
+>;
+
+function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
   const { tagsOnBookmarks, link, text, ...rest } = bookmark;
 
   let content: ZBookmarkContent;
   if (link) {
     content = { type: "link", ...link };
   } else if (text) {
-    content = { type: "text", text: text.text || "" };
+    content = { type: "text", text: text.text ?? "" };
   } else {
     throw new Error("Unknown content type");
   }
@@ -147,7 +152,7 @@ export const bookmarksAppRouter = router({
               )[0];
               content = {
                 type: "text",
-                text: text.text || "",
+                text: text.text ?? "",
               };
               break;
             }
@@ -347,30 +352,90 @@ export const bookmarksAppRouter = router({
       if (input.ids && input.ids.length == 0) {
         return { bookmarks: [] };
       }
-      const results = await ctx.db.query.bookmarks.findMany({
-        where: and(
-          eq(bookmarks.userId, ctx.user.id),
-          input.archived !== undefined
-            ? eq(bookmarks.archived, input.archived)
-            : undefined,
-          input.favourited !== undefined
-            ? eq(bookmarks.favourited, input.favourited)
-            : undefined,
-          input.ids ? inArray(bookmarks.id, input.ids) : undefined,
-        ),
-        orderBy: [desc(bookmarks.createdAt)],
-        with: {
-          tagsOnBookmarks: {
-            with: {
-              tag: true,
-            },
-          },
-          link: true,
-          text: true,
-        },
-      });
+      // TODO: Consider not inlining the tags in the response of getBookmarks as this query is getting kinda expensive
+      const results = await ctx.db
+        .select()
+        .from(bookmarks)
+        .where(
+          and(
+            eq(bookmarks.userId, ctx.user.id),
+            input.archived !== undefined
+              ? eq(bookmarks.archived, input.archived)
+              : undefined,
+            input.favourited !== undefined
+              ? eq(bookmarks.favourited, input.favourited)
+              : undefined,
+            input.ids ? inArray(bookmarks.id, input.ids) : undefined,
+            input.tagId !== undefined
+              ? exists(
+                ctx.db
+                  .select()
+                  .from(tagsOnBookmarks)
+                  .where(
+                    and(
+                      eq(tagsOnBookmarks.bookmarkId, bookmarks.id),
+                      eq(tagsOnBookmarks.tagId, input.tagId),
+                    ),
+                  ),
+              )
+              : undefined,
+            input.listId !== undefined
+              ? exists(
+                ctx.db
+                  .select()
+                  .from(bookmarksInLists)
+                  .where(
+                    and(
+                      eq(bookmarksInLists.bookmarkId, bookmarks.id),
+                      eq(bookmarksInLists.listId, input.listId),
+                    ),
+                  ),
+              )
+              : undefined,
+          ),
+        )
+        .leftJoin(tagsOnBookmarks, eq(bookmarks.id, tagsOnBookmarks.bookmarkId))
+        .leftJoin(bookmarkTags, eq(tagsOnBookmarks.tagId, bookmarkTags.id))
+        .leftJoin(bookmarkLinks, eq(bookmarkLinks.id, bookmarks.id))
+        .leftJoin(bookmarkTexts, eq(bookmarkTexts.id, bookmarks.id))
+        .orderBy(desc(bookmarks.createdAt));
 
-      return { bookmarks: results.map(toZodSchema) };
+      const bookmarksRes = results.reduce<Record<string, ZBookmark>>(
+        (acc, row) => {
+          const bookmarkId = row.bookmarks.id;
+          if (!acc[bookmarkId]) {
+            let content: ZBookmarkContent;
+            if (row.bookmarkLinks) {
+              content = { type: "link", ...row.bookmarkLinks };
+            } else if (row.bookmarkTexts) {
+              content = { type: "text", text: row.bookmarkTexts.text ?? "" };
+            } else {
+              throw new Error("Unknown content type");
+            }
+            acc[bookmarkId] = {
+              ...row.bookmarks,
+              content,
+              tags: [],
+            };
+          }
+
+          if (row.bookmarkTags) {
+            invariant(
+              row.tagsOnBookmarks,
+              "if bookmark tag is set, its many-to-many relation must also be set",
+            );
+            acc[bookmarkId].tags.push({
+              ...row.bookmarkTags,
+              attachedBy: row.tagsOnBookmarks.attachedBy,
+            });
+          }
+
+          return acc;
+        },
+        {},
+      );
+
+      return { bookmarks: Object.values(bookmarksRes) };
     }),
 
   updateTags: authedProcedure
@@ -442,7 +507,7 @@ export const bookmarksAppRouter = router({
           .insert(tagsOnBookmarks)
           .values(
             allIds.map((i) => ({
-              tagId: i as string,
+              tagId: i,
               bookmarkId: input.bookmarkId,
               attachedBy: "human" as const,
               userId: ctx.user.id,
