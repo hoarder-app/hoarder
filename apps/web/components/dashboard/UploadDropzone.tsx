@@ -33,7 +33,7 @@ export default function UploadDropzone({
   const { mutate: uploadAsset } = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
-      formData.append("image2", file);
+      formData.append("image", file);
       const resp = await fetch("/api/assets", {
         method: "POST",
         body: formData,
