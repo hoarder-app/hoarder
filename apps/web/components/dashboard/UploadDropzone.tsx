@@ -53,7 +53,7 @@ export default function UploadDropzone({
     },
   });
 
-  const [isDragging, setDragging] = useState(false);
+  const [_isDragging, setDragging] = useState(false);
   const onDrop = (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     setDragging(false);
@@ -71,7 +71,6 @@ export default function UploadDropzone({
       {({ getRootProps, getInputProps }) => (
         <div {...getRootProps()}>
           <input {...getInputProps()} hidden />
-          <div hidden={!isDragging}>Dragging</div>
           {children}
         </div>
       )}
