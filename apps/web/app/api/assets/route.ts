@@ -1,3 +1,4 @@
+import { createContextFromRequest } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
 
 import { db } from "@hoarder/db";
@@ -9,11 +10,9 @@ const MAX_UPLOAD_SIZE_BYTES = 4 * 1024 * 1024;
 
 export const dynamic = "force-dynamic"; // defaults to auto
 export async function POST(request: Request) {
-  const session = await getServerAuthSession();
-  if (!session) {
-    return new Response(`Unauthorized`, {
-      status: 401,
-    });
+  const ctx = await createContextFromRequest(request);
+  if (!ctx.user) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
   const formData = await request.formData();
   const data = formData.get("image");
@@ -22,14 +21,17 @@ export async function POST(request: Request) {
   if (data instanceof File) {
     contentType = data.type;
     if (!SUPPORTED_ASSET_TYPES.has(contentType)) {
-      return new Response("Unsupported asset type", { status: 400 });
+      return Response.json(
+        { error: "Unsupported asset type" },
+        { status: 400 },
+      );
     }
     if (data.size > MAX_UPLOAD_SIZE_BYTES) {
-      return new Response("Asset is too big", { status: 413 });
+      return Response.json({ error: "Asset is too big" }, { status: 413 });
     }
     buffer = Buffer.from(await data.arrayBuffer());
   } else {
-    return new Response("Bad Request", { status: 400 });
+    return Response.json({ error: "Bad request" }, { status: 400 });
   }
 
   const [dbRes] = await db
@@ -38,7 +40,7 @@ export async function POST(request: Request) {
       encoding: "binary",
       contentType: contentType,
       blob: buffer,
-      userId: session.user.id,
+      userId: ctx.user.id,
     })
     .returning();
 
