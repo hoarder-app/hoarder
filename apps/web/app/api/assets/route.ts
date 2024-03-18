@@ -1,6 +1,6 @@
 import { createContextFromRequest } from "@/server/api/client";
-import { getServerAuthSession } from "@/server/auth";
 
+import type { ZUploadResponse } from "@hoarder/trpc/types/uploads";
 import { db } from "@hoarder/db";
 import { assets } from "@hoarder/db/schema";
 
@@ -8,7 +8,7 @@ const SUPPORTED_ASSET_TYPES = new Set(["image/jpeg", "image/png"]);
 
 const MAX_UPLOAD_SIZE_BYTES = 4 * 1024 * 1024;
 
-export const dynamic = "force-dynamic"; // defaults to auto
+export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
   const ctx = await createContextFromRequest(request);
   if (!ctx.user) {
@@ -48,5 +48,5 @@ export async function POST(request: Request) {
     assetId: dbRes.id,
     contentType: dbRes.contentType,
     size: buffer.byteLength,
-  });
+  } satisfies ZUploadResponse);
 }

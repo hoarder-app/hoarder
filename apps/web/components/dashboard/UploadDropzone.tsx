@@ -5,6 +5,11 @@ import { api } from "@/lib/trpc";
 import { useMutation } from "@tanstack/react-query";
 import DropZone from "react-dropzone";
 
+import {
+  zUploadErrorSchema,
+  zUploadResponseSchema,
+} from "@hoarder/trpc/types/uploads";
+
 import { toast } from "../ui/use-toast";
 
 export default function UploadDropzone({
@@ -26,21 +31,25 @@ export default function UploadDropzone({
   });
 
   const { mutate: uploadAsset } = useMutation({
-    mutationFn: (file: File) => {
+    mutationFn: async (file: File) => {
       const formData = new FormData();
-      formData.append("image", file);
-      return fetch("/api/assets", {
+      formData.append("image2", file);
+      const resp = await fetch("/api/assets", {
         method: "POST",
         body: formData,
       });
+      if (!resp.ok) {
+        throw new Error(await resp.text());
+      }
+      return zUploadResponseSchema.parse(await resp.json());
     },
-    onSuccess: async (x) => {
-      const resp = await x.json();
+    onSuccess: async (resp) => {
       const assetId = resp.assetId;
       createBookmark({ type: "asset", assetId, assetType: "image" });
     },
-    onError: (x) => {
-      toast({ description: JSON.stringify(x) });
+    onError: (error) => {
+      const err = zUploadErrorSchema.parse(JSON.parse(error.message));
+      toast({ description: err.error, variant: "destructive" });
     },
   });
 

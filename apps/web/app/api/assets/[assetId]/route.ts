@@ -1,5 +1,4 @@
 import { createContextFromRequest } from "@/server/api/client";
-import { getServerAuthSession } from "@/server/auth";
 import { and, eq } from "drizzle-orm";
 
 import { db } from "@hoarder/db";
@@ -21,7 +20,7 @@ export async function GET(
   if (!asset) {
     return Response.json({ error: "Asset not found" }, { status: 404 });
   }
-  return new Response(asset.blob, {
+  return new Response(asset.blob as string, {
     status: 200,
     headers: {
       "Content-type": asset.contentType,

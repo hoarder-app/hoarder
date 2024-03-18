@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import type { Settings } from "./settings";
 import { api } from "./trpc";
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import { zUploadResponseSchema, zUploadErrorSchema } from "@hoarder/trpc/types/uploads";
 
 export function useUploadAsset(
   settings: Settings,
@@ -49,7 +50,7 @@ export function useUploadAsset(
       if (!resp.ok) {
         throw new Error(await resp.text());
       }
-      return await resp.json();
+      return zUploadResponseSchema.parse(await resp.json());
     },
     onSuccess: (resp) => {
       const assetId = resp.assetId;
@@ -57,7 +58,8 @@ export function useUploadAsset(
     },
     onError: (e) => {
       if (options.onError) {
-        options.onError(e.message);
+        const err = zUploadErrorSchema.parse(JSON.parse(e.message));
+        options.onError(err.error);
       }
     },
   });
