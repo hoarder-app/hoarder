@@ -11,6 +11,7 @@ import Markdown from "react-native-markdown-display";
 import * as Haptics from "expo-haptics";
 import { Link } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
+import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
 import { MenuView } from "@react-native-menu/menu";
 import { Ellipsis, Star } from "lucide-react-native";
@@ -239,6 +240,35 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
   );
 }
 
+function AssetCard({ bookmark }: { bookmark: ZBookmark }) {
+  const { settings } = useAppSettings();
+  if (bookmark.content.type !== "asset") {
+    throw new Error("Wrong content type rendered");
+  }
+
+  return (
+    <View className="flex gap-2">
+      <Image
+        source={{
+          uri: `${settings.address}/api/assets/${bookmark.content.assetId}`,
+          headers: {
+            Authorization: `Bearer ${settings.apiKey}`,
+          },
+        }}
+        className="h-56 min-h-56 w-full object-cover"
+      />
+      <View className="flex gap-2 p-2">
+        <TagList bookmark={bookmark} />
+        <Divider orientation="vertical" className="mt-2 h-0.5 w-full" />
+        <View className="mt-2 flex flex-row justify-between px-2 pb-2">
+          <View />
+          <ActionBar bookmark={bookmark} />
+        </View>
+      </View>
+    </View>
+  );
+}
+
 export default function BookmarkCard({
   bookmark: initialData,
 }: {
@@ -271,6 +301,9 @@ export default function BookmarkCard({
       break;
     case "text":
       comp = <TextCard bookmark={bookmark} />;
+      break;
+    case "asset":
+      comp = <AssetCard bookmark={bookmark} />;
       break;
   }
 

@@ -50,7 +50,7 @@ export default function AssetCard({
       )}
     >
       {bookmarkedAsset.assetType == "image" && (
-        <div className="h-56 max-h-56 relative">
+        <div className="relative h-56 max-h-56">
           <Image
             alt="asset"
             src={`/api/assets/${bookmarkedAsset.assetId}`}

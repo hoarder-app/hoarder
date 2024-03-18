@@ -170,6 +170,9 @@ importers:
       expo-image:
         specifier: ^1.10.6
         version: 1.10.6(expo@50.0.11)
+      expo-image-picker:
+        specifier: ^14.7.1
+        version: 14.7.1(expo@50.0.11)
       expo-linking:
         specifier: ~6.2.2
         version: 6.2.2(expo@50.0.11)
@@ -9677,6 +9680,23 @@ packages:
       expo: '*'
     dependencies:
       expo: 50.0.11(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21)
+    dev: false
+
+  /expo-image-loader@4.6.0(expo@50.0.11):
+    resolution: {integrity: sha512-RHQTDak7/KyhWUxikn2yNzXL7i2cs16cMp6gEAgkHOjVhoCJQoOJ0Ljrt4cKQ3IowxgCuOrAgSUzGkqs7omj8Q==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 50.0.11(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21)
+    dev: false
+
+  /expo-image-picker@14.7.1(expo@50.0.11):
+    resolution: {integrity: sha512-ILQVOJgI3aEzrDmCFGDPtpAepYkn8mot8G7vfQ51BfFdQbzL6N3Wm1fS/ofdWlAZJl/qT2DwaIh5xYmf3SyGZA==}
+    peerDependencies:
+      expo: '*'
+    dependencies:
+      expo: 50.0.11(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21)
+      expo-image-loader: 4.6.0(expo@50.0.11)
     dev: false
 
   /expo-image@1.10.6(expo@50.0.11):

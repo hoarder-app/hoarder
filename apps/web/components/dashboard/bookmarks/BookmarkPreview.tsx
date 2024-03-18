@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { BackButton } from "@/components/ui/back-button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -7,7 +8,6 @@ import { isBookmarkStillCrawling } from "@/lib/bookmarkUtils";
 import { api } from "@/lib/trpc";
 import { ArrowLeftCircle, CalendarDays, ExternalLink } from "lucide-react";
 import Markdown from "react-markdown";
-import Image from "next/image";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
@@ -76,7 +76,11 @@ export default function BookmarkPreview({
         case "image": {
           content = (
             <div className="relative w-full">
-              <Image alt="asset" fill={true} src={`/api/assets/${bookmark.content.assetId}`} />
+              <Image
+                alt="asset"
+                fill={true}
+                src={`/api/assets/${bookmark.content.assetId}`}
+              />
             </div>
           );
         }
