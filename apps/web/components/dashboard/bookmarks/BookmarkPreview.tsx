@@ -70,6 +70,16 @@ export default function BookmarkPreview({
       content = <Markdown className="prose">{bookmark.content.text}</Markdown>;
       break;
     }
+    case "asset": {
+      switch (bookmark.content.assetType) {
+        case "image": {
+          content = (
+            <img alt="asset" src={`/api/assets/${bookmark.content.assetId}`} />
+          );
+        }
+      }
+      break;
+    }
   }
 
   return (
