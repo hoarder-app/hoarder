@@ -1,16 +1,19 @@
-import { zSignUpSchema } from "../types/users";
+import { TRPCError } from "@trpc/server";
+import { count, eq } from "drizzle-orm";
+import invariant from "tiny-invariant";
+import { z } from "zod";
+
+import { SqliteError } from "@hoarder/db";
+import { users } from "@hoarder/db/schema";
+
+import { hashPassword, validatePassword } from "../auth";
 import {
   adminProcedure,
   authedProcedure,
   publicProcedure,
   router,
 } from "../index";
-import { SqliteError } from "@hoarder/db";
-import { z } from "zod";
-import { hashPassword } from "../auth";
-import { TRPCError } from "@trpc/server";
-import { users } from "@hoarder/db/schema";
-import { count, eq } from "drizzle-orm";
+import { zSignUpSchema } from "../types/users";
 
 export const usersAppRouter = router({
   create: publicProcedure
@@ -83,6 +86,29 @@ export const usersAppRouter = router({
       });
       return { users };
     }),
+  changePassword: authedProcedure
+    .input(
+      z.object({
+        currentPassword: z.string(),
+        newPassword: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      invariant(ctx.user.email, "A user always has an email specified");
+      let user;
+      try {
+        user = await validatePassword(ctx.user.email, input.currentPassword);
+      } catch (e) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      invariant(user.id, ctx.user.id);
+      await ctx.db
+        .update(users)
+        .set({
+          password: await hashPassword(input.newPassword),
+        })
+        .where(eq(users.id, ctx.user.id));
+    }),
   delete: adminProcedure
     .input(
       z.object({
@@ -103,7 +129,7 @@ export const usersAppRouter = router({
         email: z.string().nullish(),
       }),
     )
-    .query(async ({ ctx }) => {
+    .query(({ ctx }) => {
       return { id: ctx.user.id, name: ctx.user.name, email: ctx.user.email };
     }),
 });
