@@ -7,6 +7,7 @@ import { isBookmarkStillCrawling } from "@/lib/bookmarkUtils";
 import { api } from "@/lib/trpc";
 import { ArrowLeftCircle, CalendarDays, ExternalLink } from "lucide-react";
 import Markdown from "react-markdown";
+import Image from "next/image";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
@@ -74,7 +75,9 @@ export default function BookmarkPreview({
       switch (bookmark.content.assetType) {
         case "image": {
           content = (
-            <img alt="asset" src={`/api/assets/${bookmark.content.assetId}`} />
+            <div className="relative w-full">
+              <Image alt="asset" fill={true} src={`/api/assets/${bookmark.content.assetId}`} />
+            </div>
           );
         }
       }

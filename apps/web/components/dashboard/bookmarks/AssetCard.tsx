@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { isBookmarkStillTagging } from "@/lib/bookmarkUtils";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
@@ -49,12 +50,14 @@ export default function AssetCard({
       )}
     >
       {bookmarkedAsset.assetType == "image" && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          alt="asset"
-          src={`/api/assets/${bookmarkedAsset.assetId}`}
-          className="max-h-56 rounded-t-lg object-cover"
-        />
+        <div className="h-56 max-h-56 relative">
+          <Image
+            alt="asset"
+            src={`/api/assets/${bookmarkedAsset.assetId}`}
+            fill={true}
+            className="rounded-t-lg object-cover"
+          />
+        </div>
       )}
       <div className="flex flex-col gap-y-1 overflow-hidden p-2">
         <div className="flex h-full flex-wrap gap-1 overflow-hidden">
