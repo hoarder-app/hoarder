@@ -5,6 +5,7 @@ import {
   primaryKey,
   unique,
   index,
+  blob,
 } from "drizzle-orm/sqlite-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 import { createId } from "@paralleldrive/cuid2";
@@ -205,6 +206,26 @@ export const bookmarkLists = sqliteTable(
   (bl) => ({
     unq: unique().on(bl.name, bl.userId),
     userIdIdx: index("bookmarkLists_userId_idx").on(bl.userId),
+  }),
+);
+
+export const assets = sqliteTable(
+  "assets",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: createdAtField(),
+    contentType: text("contentType").notNull(),
+    encoding: text("encoding", {enum: ["binary"]}).notNull(),
+    blob: blob("blob").notNull(),
+  },
+  (a) => ({
+    userIdIdx: index("assets_userId_idx").on(a.userId),
   }),
 );
 
