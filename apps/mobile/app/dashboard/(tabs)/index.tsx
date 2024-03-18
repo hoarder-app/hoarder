@@ -55,7 +55,7 @@ function HeaderRight() {
           id: "note",
           title: "New Note",
           image: Platform.select({
-            ios: "note",
+            ios: "note.text",
             android: "ic_menu_note",
           }),
         },
@@ -63,8 +63,8 @@ function HeaderRight() {
           id: "library",
           title: "Photo Library",
           image: Platform.select({
-            ios: "folder",
-            android: "ic_menu_note",
+            ios: "photo",
+            android: "ic_menu_photo",
           }),
         },
       ]}
