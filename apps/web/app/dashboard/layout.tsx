@@ -4,6 +4,8 @@ import UploadDropzone from "@/components/dashboard/UploadDropzone";
 import DemoModeBanner from "@/components/DemoModeBanner";
 import { Separator } from "@/components/ui/separator";
 
+import serverConfig from "@hoarder/shared/config";
+
 export default async function Dashboard({
   children,
 }: Readonly<{
@@ -15,7 +17,7 @@ export default async function Dashboard({
         <Sidebar />
       </div>
       <main className="flex-1 bg-gray-100 sm:overflow-y-auto">
-        <DemoModeBanner />
+        {serverConfig.demoMode && <DemoModeBanner />}
         <div className="block w-full sm:hidden">
           <MobileSidebar />
           <Separator />
