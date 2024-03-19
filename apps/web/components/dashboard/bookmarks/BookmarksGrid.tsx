@@ -77,7 +77,7 @@ export default function BookmarksGrid({
 
   const breakpointConfig = useMemo(() => getBreakpointConfig(), []);
   const bookmarks = data!.pages.flatMap((b) => b.bookmarks);
-  if (bookmarks.length == 0) {
+  if (bookmarks.length == 0 && !showEditorCard) {
     return <p>No bookmarks</p>;
   }
   return (
