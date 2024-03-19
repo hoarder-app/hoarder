@@ -35,6 +35,7 @@ export function useUploadAsset(
   } = useMutation({
     mutationFn: async (file: { type: string; name: string; uri: string }) => {
       const formData = new FormData();
+      // @ts-expect-error This is a valid api in react native
       formData.append("image", {
         uri: file.uri,
         name: file.name,
