@@ -1,8 +1,7 @@
 import { createContextFromRequest } from "@/server/api/client";
 
 import type { ZUploadResponse } from "@hoarder/trpc/types/uploads";
-import { db } from "@hoarder/db";
-import { assets } from "@hoarder/db/schema";
+import { saveAsset } from "@hoarder/shared/assetdb";
 
 const SUPPORTED_ASSET_TYPES = new Set(["image/jpeg", "image/png"]);
 
@@ -34,19 +33,18 @@ export async function POST(request: Request) {
     return Response.json({ error: "Bad request" }, { status: 400 });
   }
 
-  const [dbRes] = await db
-    .insert(assets)
-    .values({
-      encoding: "binary",
-      contentType: contentType,
-      blob: buffer,
-      userId: ctx.user.id,
-    })
-    .returning();
+  const assetId = crypto.randomUUID();
+
+  await saveAsset({
+    userId: ctx.user.id,
+    assetId,
+    metadata: { contentType },
+    asset: buffer,
+  });
 
   return Response.json({
-    assetId: dbRes.id,
-    contentType: dbRes.contentType,
+    assetId,
+    contentType,
     size: buffer.byteLength,
   } satisfies ZUploadResponse);
 }

@@ -13,7 +13,7 @@ function buildAuthentikConfig() {
 }
 
 const serverConfig = {
-  apiUrl: process.env.API_URL || "http://localhost:3000",
+  apiUrl: process.env.API_URL ?? "http://localhost:3000",
   auth: {
     authentik: buildAuthentikConfig(),
   },
@@ -21,8 +21,8 @@ const serverConfig = {
     apiKey: process.env.OPENAI_API_KEY,
   },
   bullMQ: {
-    redisHost: process.env.REDIS_HOST || "localhost",
-    redisPort: parseInt(process.env.REDIS_PORT || "6379"),
+    redisHost: process.env.REDIS_HOST ?? "localhost",
+    redisPort: parseInt(process.env.REDIS_PORT ?? "6379"),
   },
   crawler: {
     headlessBrowser: (process.env.CRAWLER_HEADLESS_BROWSER ?? "true") == "true",
@@ -31,12 +31,13 @@ const serverConfig = {
   },
   meilisearch: process.env.MEILI_ADDR
     ? {
-        address: process.env.MEILI_ADDR || "http://127.0.0.1:7700",
-        key: process.env.MEILI_MASTER_KEY || "",
+        address: process.env.MEILI_ADDR ?? "http://127.0.0.1:7700",
+        key: process.env.MEILI_MASTER_KEY ?? "",
       }
     : undefined,
-  logLevel: process.env.LOG_LEVEL || "debug",
+  logLevel: process.env.LOG_LEVEL ?? "debug",
   demoMode: (process.env.DEMO_MODE ?? "false") == "true",
+  dataDir: process.env.DATA_DIR ?? "",
 };
 
 export default serverConfig;

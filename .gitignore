@@ -38,6 +38,7 @@ next-env.d.ts
 
 # The sqlite database
 **/*.db
+data
 
 # PWA Files
 **/public/sw.js

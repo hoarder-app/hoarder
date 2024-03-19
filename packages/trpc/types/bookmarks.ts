@@ -30,6 +30,7 @@ export const zBookmarkContentSchema = z.discriminatedUnion("type", [
   zBookmarkedLinkSchema,
   zBookmarkedTextSchema,
   zBookmarkedAssetSchema,
+  z.object({type: z.literal("unknown")}),
 ]);
 export type ZBookmarkContent = z.infer<typeof zBookmarkContentSchema>;
 

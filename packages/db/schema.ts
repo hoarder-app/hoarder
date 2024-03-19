@@ -2,7 +2,6 @@ import type { AdapterAccount } from "@auth/core/adapters";
 import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import {
-  blob,
   index,
   integer,
   primaryKey,
@@ -158,9 +157,7 @@ export const bookmarkAssets = sqliteTable("bookmarkAssets", {
     .$defaultFn(() => createId())
     .references(() => bookmarks.id, { onDelete: "cascade" }),
   assetType: text("assetType", { enum: ["image"] }).notNull(),
-  assetId: text("assetId")
-    .notNull()
-    .references(() => assets.id, { onDelete: "cascade" }),
+  assetId: text("assetId").notNull(),
 });
 
 export const bookmarkTags = sqliteTable(
@@ -222,26 +219,6 @@ export const bookmarkLists = sqliteTable(
   (bl) => ({
     unq: unique().on(bl.name, bl.userId),
     userIdIdx: index("bookmarkLists_userId_idx").on(bl.userId),
-  }),
-);
-
-export const assets = sqliteTable(
-  "assets",
-  {
-    id: text("id")
-      .notNull()
-      .primaryKey()
-      .$defaultFn(() => createId()),
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    createdAt: createdAtField(),
-    contentType: text("contentType").notNull(),
-    encoding: text("encoding", { enum: ["binary"] }).notNull(),
-    blob: blob("blob").notNull(),
-  },
-  (a) => ({
-    userIdIdx: index("assets_userId_idx").on(a.userId),
   }),
 );
 

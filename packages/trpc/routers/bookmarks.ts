@@ -13,6 +13,7 @@ import {
   bookmarkTexts,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
+import { deleteAsset } from "@hoarder/shared/assetdb";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
@@ -104,7 +105,7 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
       assetId: asset.assetId,
     };
   } else {
-    throw new Error("Unknown content type");
+    content = { type: "unknown" };
   }
 
   return {
@@ -180,6 +181,9 @@ export const bookmarksAppRouter = router({
                 assetId: asset.assetId,
               };
               break;
+            }
+            case "unknown": {
+              throw new TRPCError({ code: "BAD_REQUEST" });
             }
           }
 
@@ -274,7 +278,10 @@ export const bookmarksAppRouter = router({
     .input(z.object({ bookmarkId: z.string() }))
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      await ctx.db
+      const asset = await ctx.db.query.bookmarkAssets.findFirst({
+        where: and(eq(bookmarkAssets.id, input.bookmarkId)),
+      });
+      const deleted = await ctx.db
         .delete(bookmarks)
         .where(
           and(
@@ -286,6 +293,9 @@ export const bookmarksAppRouter = router({
         bookmarkId: input.bookmarkId,
         type: "delete",
       });
+      if (deleted.changes > 0 && asset) {
+        await deleteAsset({ userId: ctx.user.id, assetId: asset.assetId });
+      }
     }),
   recrawlBookmark: authedProcedure
     .input(z.object({ bookmarkId: z.string() }))
@@ -452,9 +462,13 @@ export const bookmarksAppRouter = router({
             } else if (row.bookmarkTexts) {
               content = { type: "text", text: row.bookmarkTexts.text ?? "" };
             } else if (row.bookmarkAssets) {
-              content = { type: "asset", assetId: row.bookmarkAssets.assetId, assetType: row.bookmarkAssets.assetType };
+              content = {
+                type: "asset",
+                assetId: row.bookmarkAssets.assetId,
+                assetType: row.bookmarkAssets.assetType,
+              };
             } else {
-              throw new Error("Unknown content type");
+              content = { type: "unknown" };
             }
             acc[bookmarkId] = {
               ...row.bookmarksSq,

@@ -1,8 +1,6 @@
 import { createContextFromRequest } from "@/server/api/client";
-import { and, eq } from "drizzle-orm";
 
-import { db } from "@hoarder/db";
-import { assets } from "@hoarder/db/schema";
+import { readAsset } from "@hoarder/shared/assetdb";
 
 export const dynamic = "force-dynamic";
 export async function GET(
@@ -13,17 +11,15 @@ export async function GET(
   if (!ctx.user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const asset = await db.query.assets.findFirst({
-    where: and(eq(assets.id, params.assetId), eq(assets.userId, ctx.user.id)),
+  const { asset, metadata } = await readAsset({
+    userId: ctx.user.id,
+    assetId: params.assetId,
   });
 
-  if (!asset) {
-    return Response.json({ error: "Asset not found" }, { status: 404 });
-  }
-  return new Response(asset.blob as string, {
+  return new Response(asset, {
     status: 200,
     headers: {
-      "Content-type": asset.contentType,
+      "Content-type": metadata.contentType,
     },
   });
 }

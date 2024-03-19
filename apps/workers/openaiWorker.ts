@@ -3,12 +3,11 @@ import { and, eq, inArray } from "drizzle-orm";
 import OpenAI from "openai";
 import { z } from "zod";
 
-import Base64 from "js-base64";
-
 import { db } from "@hoarder/db";
-import { assets, bookmarks, bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
+import { bookmarks, bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
+import { readAsset } from "@hoarder/shared/assetdb";
 import {
   OpenAIQueue,
   queueConnectionDetails,
@@ -142,15 +141,15 @@ async function inferTagsFromImage(
   openai: OpenAI,
 ) {
 
-  const asset = await db.query.assets.findFirst({
-    where: eq(assets.id, bookmark.asset.assetId),
+  const { asset, metadata } = await readAsset({
+    userId: bookmark.userId,
+    assetId: bookmark.asset.assetId,
   });
 
   if (!asset) {
     throw new Error(`[openai][${jobId}] AssetId ${bookmark.asset.assetId} for bookmark ${bookmark.id} not found`);
   }
-
-  const base64 = Base64.encode(asset.blob as string);
+  const base64 = asset.toString('base64');
 
   const chatCompletion = await openai.chat.completions.create({
     model: "gpt-4-vision-preview",
@@ -162,7 +161,7 @@ async function inferTagsFromImage(
           {
             type: "image_url",
             image_url: {
-              url: `data:image/jpeg;base64,${base64}`,
+              url: `data:${metadata.contentType};base64,${base64}`,
               detail: "low",
             },
           },
@@ -176,7 +175,7 @@ async function inferTagsFromImage(
   if (!response) {
     throw new Error(`[openai][${jobId}] Got no message content from OpenAI`);
   }
-  return {response, totalTokens: chatCompletion.usage?.total_tokens};
+  return { response, totalTokens: chatCompletion.usage?.total_tokens };
 }
 
 async function inferTagsFromText(
@@ -194,7 +193,7 @@ async function inferTagsFromText(
   if (!response) {
     throw new Error(`[openai][${jobId}] Got no message content from OpenAI`);
   }
-  return {response, totalTokens: chatCompletion.usage?.total_tokens};
+  return { response, totalTokens: chatCompletion.usage?.total_tokens };
 }
 
 async function inferTags(
