@@ -40,4 +40,9 @@ const serverConfig = {
   dataDir: process.env.DATA_DIR ?? "",
 };
 
+export const clientConfig = {
+  demoMode: serverConfig.demoMode,
+};
+export type ClientConfig = typeof clientConfig;
+
 export default serverConfig;

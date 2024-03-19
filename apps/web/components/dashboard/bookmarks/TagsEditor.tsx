@@ -1,5 +1,6 @@
 import type { ActionMeta } from "react-select";
 import { toast } from "@/components/ui/use-toast";
+import { useClientConfig } from "@/lib/clientConfig";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
@@ -15,6 +16,7 @@ interface EditableTag {
 }
 
 export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
+  const demoMode = useClientConfig().demoMode;
   const bookmarkInvalidationFunction =
     api.useUtils().bookmarks.getBookmark.invalidate;
 
@@ -79,6 +81,7 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
 
   return (
     <CreateableSelect
+      isDisabled={demoMode}
       onChange={onChange}
       options={
         existingTags?.tags.map((t) => ({

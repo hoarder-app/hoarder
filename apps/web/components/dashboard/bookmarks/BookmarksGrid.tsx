@@ -92,6 +92,7 @@ export default function BookmarksGrid({
       </Masonry>
       {hasNextPage && (
         <ActionButton
+          ignoreDemoMode={true}
           loading={isFetchingNextPage}
           onClick={() => fetchNextPage()}
           className="mx-auto w-min"

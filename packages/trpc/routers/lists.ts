@@ -1,9 +1,11 @@
-import { Context, authedProcedure, router } from "../index";
-import { SqliteError } from "@hoarder/db";
-import { z } from "zod";
-import { TRPCError, experimental_trpcMiddleware } from "@trpc/server";
-import { bookmarkLists, bookmarksInLists } from "@hoarder/db/schema";
+import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
+import { z } from "zod";
+
+import { SqliteError } from "@hoarder/db";
+import { bookmarkLists, bookmarksInLists } from "@hoarder/db/schema";
+
+import { authedProcedure, Context, router } from "../index";
 import { zBookmarkListSchema } from "../types/lists";
 
 const ensureListOwnership = experimental_trpcMiddleware<{
@@ -42,7 +44,10 @@ export const listsAppRouter = router({
   create: authedProcedure
     .input(
       z.object({
-        name: z.string().min(1).max(20),
+        name: z
+          .string()
+          .min(1, "List name can't be empty")
+          .max(20, "List name is at most 20 chars"),
         icon: z.string(),
       }),
     )

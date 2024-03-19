@@ -67,10 +67,19 @@ export default function NewListModal() {
     },
     onError: (e) => {
       if (e.data?.code == "BAD_REQUEST") {
-        toast({
-          variant: "destructive",
-          description: e.message,
-        });
+        if (e.data.zodError) {
+          toast({
+            variant: "destructive",
+            description: Object.values(e.data.zodError.fieldErrors)
+              .flat()
+              .join("\n"),
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            description: e.message,
+          });
+        }
       } else {
         toast({
           variant: "destructive",

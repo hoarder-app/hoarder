@@ -10,6 +10,8 @@ import Providers from "@/lib/providers";
 import { getServerAuthSession } from "@/server/auth";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
+import { clientConfig } from "@hoarder/shared/config";
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -42,7 +44,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers session={session}>
+        <Providers session={session} clientConfig={clientConfig}>
           {children}
           <ReactQueryDevtools initialIsOpen={false} />
         </Providers>

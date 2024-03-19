@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
+import { useClientConfig } from "@/lib/clientConfig";
 import { api } from "@/lib/trpc";
 import {
   Archive,
@@ -31,6 +32,8 @@ import { useTagModel } from "./TagModal";
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const linkId = bookmark.id;
+
+  const demoMode = useClientConfig().demoMode;
 
   const { setOpen: setTagModalIsOpen, content: tagModal } =
     useTagModel(bookmark);
@@ -115,6 +118,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             </DropdownMenuItem>
           )}
           <DropdownMenuItem
+            disabled={demoMode}
             onClick={() =>
               updateBookmarkMutator.mutate({
                 bookmarkId: linkId,
@@ -126,6 +130,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             <span>{bookmark.favourited ? "Un-favourite" : "Favourite"}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
+            disabled={demoMode}
             onClick={() =>
               updateBookmarkMutator.mutate({
                 bookmarkId: linkId,
@@ -163,6 +168,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
 
           {bookmark.content.type === "link" && (
             <DropdownMenuItem
+              disabled={demoMode}
               onClick={() =>
                 crawlBookmarkMutator.mutate({ bookmarkId: bookmark.id })
               }
@@ -172,6 +178,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             </DropdownMenuItem>
           )}
           <DropdownMenuItem
+            disabled={demoMode}
             className="text-destructive"
             onClick={() =>
               deleteBookmarkMutator.mutate({ bookmarkId: bookmark.id })

@@ -1,6 +1,7 @@
 import MobileSidebar from "@/components/dashboard/sidebar/ModileSidebar";
 import Sidebar from "@/components/dashboard/sidebar/Sidebar";
 import UploadDropzone from "@/components/dashboard/UploadDropzone";
+import DemoModeBanner from "@/components/DemoModeBanner";
 import { Separator } from "@/components/ui/separator";
 
 export default async function Dashboard({
@@ -14,6 +15,7 @@ export default async function Dashboard({
         <Sidebar />
       </div>
       <main className="flex-1 bg-gray-100 sm:overflow-y-auto">
+        <DemoModeBanner />
         <div className="block w-full sm:hidden">
           <MobileSidebar />
           <Separator />

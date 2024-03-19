@@ -7,6 +7,9 @@ import { httpBatchLink, loggerLink } from "@trpc/client";
 import { SessionProvider } from "next-auth/react";
 import superjson from "superjson";
 
+import type { ClientConfig } from "@hoarder/shared/config";
+
+import { ClientConfigCtx } from "./clientConfig";
 import { api } from "./trpc";
 
 function makeQueryClient() {
@@ -40,9 +43,11 @@ function getQueryClient() {
 export default function Providers({
   children,
   session,
+  clientConfig,
 }: {
   children: React.ReactNode;
   session: Session | null;
+  clientConfig: ClientConfig;
 }) {
   const queryClient = getQueryClient();
 
@@ -64,12 +69,14 @@ export default function Providers({
   );
 
   return (
-    <SessionProvider session={session}>
-      <api.Provider client={trpcClient} queryClient={queryClient}>
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
-      </api.Provider>
-    </SessionProvider>
+    <ClientConfigCtx.Provider value={clientConfig}>
+      <SessionProvider session={session}>
+        <api.Provider client={trpcClient} queryClient={queryClient}>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </api.Provider>
+      </SessionProvider>
+    </ClientConfigCtx.Provider>
   );
 }

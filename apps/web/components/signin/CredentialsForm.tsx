@@ -86,7 +86,11 @@ function SignIn() {
               );
             }}
           />
-          <ActionButton type="submit" loading={form.formState.isSubmitting}>
+          <ActionButton
+            ignoreDemoMode
+            type="submit"
+            loading={form.formState.isSubmitting}
+          >
             Sign In
           </ActionButton>
         </div>
