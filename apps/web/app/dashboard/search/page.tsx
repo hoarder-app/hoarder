@@ -8,18 +8,14 @@ import { useBookmarkSearch } from "@/lib/hooks/bookmark-search";
 import Loading from "../bookmarks/loading";
 
 function SearchComp() {
-  const { data, isPending, isPlaceholderData } = useBookmarkSearch();
+  const { data } = useBookmarkSearch();
 
   const inputRef: React.MutableRefObject<HTMLInputElement | null> =
     useRef<HTMLInputElement | null>(null);
 
   return (
     <div className="container flex flex-col gap-3 p-4">
-      <SearchInput
-        ref={inputRef}
-        autoFocus={true}
-        loading={isPending || isPlaceholderData}
-      />
+      <SearchInput ref={inputRef} autoFocus={true} />
       <hr />
       {data ? (
         <BookmarksGrid
