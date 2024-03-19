@@ -1,10 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import screenshot from "@/public/landing/screenshot.png";
+import screenshot from "@/public/screenshot.png";
 import { ExternalLink, Github, PackageOpen } from "lucide-react";
-
-import { Button, buttonVariants } from "../ui/button";
 
 const GITHUB_LINK = "https://github.com/MohamedBassem/hoarder-app";
 
