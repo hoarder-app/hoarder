@@ -23,6 +23,7 @@
     "expo-dev-client": "^3.3.9",
     "expo-haptics": "^12.8.1",
     "expo-image": "^1.10.6",
+    "expo-image-picker": "^14.7.1",
     "expo-linking": "~6.2.2",
     "expo-router": "~3.4.8",
     "expo-secure-store": "^12.8.1",

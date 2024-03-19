@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { db as DONT_USE_db } from "@hoarder/db";
 import {
+  bookmarkAssets,
   bookmarkLinks,
   bookmarks,
   bookmarksInLists,
@@ -75,6 +76,7 @@ async function dummyDrizzleReturnType() {
       },
       link: true,
       text: true,
+      asset: true,
     },
   });
   if (!x) {
@@ -88,13 +90,19 @@ type BookmarkQueryReturnType = Awaited<
 >;
 
 function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
-  const { tagsOnBookmarks, link, text, ...rest } = bookmark;
+  const { tagsOnBookmarks, link, text, asset, ...rest } = bookmark;
 
   let content: ZBookmarkContent;
   if (link) {
     content = { type: "link", ...link };
   } else if (text) {
     content = { type: "text", text: text.text ?? "" };
+  } else if (asset) {
+    content = {
+      type: "asset",
+      assetType: asset.assetType,
+      assetId: asset.assetId,
+    };
   } else {
     throw new Error("Unknown content type");
   }
@@ -157,6 +165,22 @@ export const bookmarksAppRouter = router({
               };
               break;
             }
+            case "asset": {
+              const [asset] = await tx
+                .insert(bookmarkAssets)
+                .values({
+                  id: bookmark.id,
+                  assetType: input.assetType,
+                  assetId: input.assetId,
+                })
+                .returning();
+              content = {
+                type: "asset",
+                assetType: asset.assetType,
+                assetId: asset.assetId,
+              };
+              break;
+            }
           }
 
           return {
@@ -176,7 +200,8 @@ export const bookmarksAppRouter = router({
           });
           break;
         }
-        case "text": {
+        case "text":
+        case "asset": {
           await OpenAIQueue.add("openai", {
             bookmarkId: bookmark.id,
           });
@@ -292,6 +317,7 @@ export const bookmarksAppRouter = router({
           },
           link: true,
           text: true,
+          asset: true,
         },
       });
       if (!bookmark) {
@@ -341,6 +367,7 @@ export const bookmarksAppRouter = router({
           },
           link: true,
           text: true,
+          asset: true,
         },
       });
 
@@ -412,6 +439,7 @@ export const bookmarksAppRouter = router({
         .leftJoin(bookmarkTags, eq(tagsOnBookmarks.tagId, bookmarkTags.id))
         .leftJoin(bookmarkLinks, eq(bookmarkLinks.id, sq.id))
         .leftJoin(bookmarkTexts, eq(bookmarkTexts.id, sq.id))
+        .leftJoin(bookmarkAssets, eq(bookmarkAssets.id, sq.id))
         .orderBy(desc(sq.createdAt));
 
       const bookmarksRes = results.reduce<Record<string, ZBookmark>>(
@@ -423,6 +451,8 @@ export const bookmarksAppRouter = router({
               content = { type: "link", ...row.bookmarkLinks };
             } else if (row.bookmarkTexts) {
               content = { type: "text", text: row.bookmarkTexts.text ?? "" };
+            } else if (row.bookmarkAssets) {
+              content = { type: "asset", assetId: row.bookmarkAssets.assetId, assetType: row.bookmarkAssets.assetType };
             } else {
               throw new Error("Unknown content type");
             }

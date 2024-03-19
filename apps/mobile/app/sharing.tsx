@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { Link, useRouter } from "expo-router";
 import { useShareIntentContext } from "expo-share-intent";
+import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
+import { useUploadAsset } from "@/lib/upload";
 import { z } from "zod";
+import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
 type Mode =
   | { type: "idle" }
@@ -11,12 +14,28 @@ type Mode =
   | { type: "error" };
 
 function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
-  const { hasShareIntent, shareIntent, resetShareIntent } = useShareIntentContext();
+  const onSaved = (d: ZBookmark) => {
+    invalidateAllBookmarks();
+    setMode({ type: "success", bookmarkId: d.id });
+  };
+
+  const { hasShareIntent, shareIntent, resetShareIntent } =
+    useShareIntentContext();
+  const { settings, isLoading } = useAppSettings();
+  const { uploadAsset } = useUploadAsset(settings, {
+    onSuccess: onSaved,
+    onError: () => {
+      setMode({ type: "error" });
+    },
+  });
 
   const invalidateAllBookmarks =
     api.useUtils().bookmarks.getBookmarks.invalidate;
 
   useEffect(() => {
+    if (isLoading) {
+      return;
+    }
     if (!isPending && shareIntent?.text) {
       const val = z.string().url();
       if (val.safeParse(shareIntent.text).success) {
@@ -25,17 +44,20 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
       } else {
         mutate({ type: "text", text: shareIntent.text });
       }
+    } else if (!isPending && shareIntent?.files) {
+      uploadAsset({
+        type: shareIntent.files[0].type,
+        name: shareIntent.files[0].fileName ?? "",
+        uri: shareIntent.files[0].path,
+      });
     }
     if (hasShareIntent) {
       resetShareIntent();
     }
-  }, []);
+  }, [isLoading]);
 
   const { mutate, isPending } = api.bookmarks.createBookmark.useMutation({
-    onSuccess: (d) => {
-      invalidateAllBookmarks();
-      setMode({ type: "success", bookmarkId: d.id });
-    },
+    onSuccess: onSaved,
     onError: () => {
       setMode({ type: "error" });
     },

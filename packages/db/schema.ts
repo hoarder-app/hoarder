@@ -1,14 +1,15 @@
-import {
-  integer,
-  sqliteTable,
-  text,
-  primaryKey,
-  unique,
-  index,
-} from "drizzle-orm/sqlite-core";
 import type { AdapterAccount } from "@auth/core/adapters";
 import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
+import {
+  blob,
+  index,
+  integer,
+  primaryKey,
+  sqliteTable,
+  text,
+  unique,
+} from "drizzle-orm/sqlite-core";
 
 function createdAtField() {
   return integer("createdAt", { mode: "timestamp" })
@@ -96,28 +97,32 @@ export const apiKeys = sqliteTable(
   }),
 );
 
-export const bookmarks = sqliteTable("bookmarks", {
-  id: text("id")
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => createId()),
-  createdAt: createdAtField(),
-  archived: integer("archived", { mode: "boolean" }).notNull().default(false),
-  favourited: integer("favourited", { mode: "boolean" })
-    .notNull()
-    .default(false),
-  userId: text("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
-  taggingStatus: text("taggingStatus", {
-    enum: ["pending", "failure", "success"],
-  }).default("pending"),
-}, (b) => ({
-  userIdIdx: index("bookmarks_userId_idx").on(b.userId),
-  archivedIdx: index("bookmarks_archived_idx").on(b.archived),
-  favIdx: index("bookmarks_favourited_idx").on(b.favourited),
-  createdAtIdx: index("bookmarks_createdAt_idx").on(b.createdAt),
-}));
+export const bookmarks = sqliteTable(
+  "bookmarks",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    createdAt: createdAtField(),
+    archived: integer("archived", { mode: "boolean" }).notNull().default(false),
+    favourited: integer("favourited", { mode: "boolean" })
+      .notNull()
+      .default(false),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    taggingStatus: text("taggingStatus", {
+      enum: ["pending", "failure", "success"],
+    }).default("pending"),
+  },
+  (b) => ({
+    userIdIdx: index("bookmarks_userId_idx").on(b.userId),
+    archivedIdx: index("bookmarks_archived_idx").on(b.archived),
+    favIdx: index("bookmarks_favourited_idx").on(b.favourited),
+    createdAtIdx: index("bookmarks_createdAt_idx").on(b.createdAt),
+  }),
+);
 
 export const bookmarkLinks = sqliteTable("bookmarkLinks", {
   id: text("id")
@@ -144,6 +149,18 @@ export const bookmarkTexts = sqliteTable("bookmarkTexts", {
     .$defaultFn(() => createId())
     .references(() => bookmarks.id, { onDelete: "cascade" }),
   text: text("text"),
+});
+
+export const bookmarkAssets = sqliteTable("bookmarkAssets", {
+  id: text("id")
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => createId())
+    .references(() => bookmarks.id, { onDelete: "cascade" }),
+  assetType: text("assetType", { enum: ["image"] }).notNull(),
+  assetId: text("assetId")
+    .notNull()
+    .references(() => assets.id, { onDelete: "cascade" }),
 });
 
 export const bookmarkTags = sqliteTable(
@@ -208,6 +225,26 @@ export const bookmarkLists = sqliteTable(
   }),
 );
 
+export const assets = sqliteTable(
+  "assets",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    createdAt: createdAtField(),
+    contentType: text("contentType").notNull(),
+    encoding: text("encoding", { enum: ["binary"] }).notNull(),
+    blob: blob("blob").notNull(),
+  },
+  (a) => ({
+    userIdIdx: index("assets_userId_idx").on(a.userId),
+  }),
+);
+
 export const bookmarksInLists = sqliteTable(
   "bookmarksInLists",
   {
@@ -247,6 +284,10 @@ export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
   text: one(bookmarkTexts, {
     fields: [bookmarks.id],
     references: [bookmarkTexts.id],
+  }),
+  asset: one(bookmarkAssets, {
+    fields: [bookmarks.id],
+    references: [bookmarkAssets.id],
   }),
   tagsOnBookmarks: many(tagsOnBookmarks),
   bookmarksInLists: many(bookmarksInLists),

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { BackButton } from "@/components/ui/back-button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -68,6 +69,22 @@ export default function BookmarkPreview({
     }
     case "text": {
       content = <Markdown className="prose">{bookmark.content.text}</Markdown>;
+      break;
+    }
+    case "asset": {
+      switch (bookmark.content.assetType) {
+        case "image": {
+          content = (
+            <div className="relative w-full">
+              <Image
+                alt="asset"
+                fill={true}
+                src={`/api/assets/${bookmark.content.assetId}`}
+              />
+            </div>
+          );
+        }
+      }
       break;
     }
   }

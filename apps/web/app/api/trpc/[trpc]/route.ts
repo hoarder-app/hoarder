@@ -1,8 +1,6 @@
-import { createContext } from "@/server/api/client";
+import { createContextFromRequest } from "@/server/api/client";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
-import { db } from "@hoarder/db";
-import { authenticateApiKey } from "@hoarder/trpc/auth";
 import { appRouter } from "@hoarder/trpc/routers/_app";
 
 const handler = (req: Request) =>
@@ -18,20 +16,7 @@ const handler = (req: Request) =>
     },
 
     createContext: async (opts) => {
-      // TODO: This is a hack until we offer a proper REST API instead of the trpc based one.
-      // Check if the request has an Authorization token, if it does, assume that API key authentication is requested.
-      const authorizationHeader = opts.req.headers.get("Authorization");
-      if (authorizationHeader && authorizationHeader.startsWith("Bearer ")) {
-        const token = authorizationHeader.split(" ")[1];
-        try {
-          const user = await authenticateApiKey(token);
-          return { user, db };
-        } catch (e) {
-          // Fallthrough to cookie-based auth
-        }
-      }
-
-      return createContext();
+      return await createContextFromRequest(opts.req);
     },
   });
 export { handler as GET, handler as POST };

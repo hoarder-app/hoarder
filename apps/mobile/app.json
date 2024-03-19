@@ -3,7 +3,7 @@
     "name": "Hoarder App",
     "slug": "hoarder",
     "scheme": "hoarder",
-    "version": "1.2.4",
+    "version": "1.3.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -35,13 +35,19 @@
           "iosActivationRules": {
             "NSExtensionActivationSupportsWebURLWithMaxCount": 1,
             "NSExtensionActivationSupportsWebPageWithMaxCount": 1,
-            "NSExtensionActivationSupportsImageWithMaxCount": 0,
+            "NSExtensionActivationSupportsImageWithMaxCount": 1,
             "NSExtensionActivationSupportsMovieWithMaxCount": 0,
             "NSExtensionActivationSupportsText": true
           }
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app access your photo gallary on your request to hoard them."
+        }
+      ]
     ],
     "extra": {
       "router": {

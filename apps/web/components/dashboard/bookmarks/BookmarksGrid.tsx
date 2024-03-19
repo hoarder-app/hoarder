@@ -14,6 +14,7 @@ import type {
   ZGetBookmarksResponse,
 } from "@hoarder/trpc/types/bookmarks";
 
+import AssetCard from "./AssetCard";
 import EditorCard from "./EditorCard";
 import LinkCard from "./LinkCard";
 import TextCard from "./TextCard";
@@ -46,6 +47,9 @@ function renderBookmark(bookmark: ZBookmark) {
       break;
     case "text":
       comp = <TextCard bookmark={bookmark} />;
+      break;
+    case "asset":
+      comp = <AssetCard bookmark={bookmark} />;
       break;
   }
   return <BookmarkCard key={bookmark.id}>{comp}</BookmarkCard>;

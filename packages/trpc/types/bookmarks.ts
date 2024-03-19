@@ -19,9 +19,17 @@ export const zBookmarkedTextSchema = z.object({
 });
 export type ZBookmarkedText = z.infer<typeof zBookmarkedTextSchema>;
 
+export const zBookmarkedAssetSchema = z.object({
+  type: z.literal("asset"),
+  assetType: z.enum(["image"]),
+  assetId: z.string(),
+});
+export type ZBookmarkedAsset = z.infer<typeof zBookmarkedAssetSchema>;
+
 export const zBookmarkContentSchema = z.discriminatedUnion("type", [
   zBookmarkedLinkSchema,
   zBookmarkedTextSchema,
+  zBookmarkedAssetSchema,
 ]);
 export type ZBookmarkContent = z.infer<typeof zBookmarkContentSchema>;
 

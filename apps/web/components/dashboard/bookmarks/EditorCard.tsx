@@ -69,7 +69,9 @@ export default function EditorCard({ className }: { className?: string }) {
                   <Textarea
                     disabled={isPending}
                     className="h-full w-full resize-none border-none text-lg focus-visible:ring-0"
-                    placeholder={"Paste a link or write a note ..."}
+                    placeholder={
+                      "Paste a link, write a note or drag and drop an image in here ..."
+                    }
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && e.metaKey) {
                         form.handleSubmit(onSubmit, onError)();
