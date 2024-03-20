@@ -1,5 +1,11 @@
 import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
 
 export default async function BookmarksPage() {
-  return <Bookmarks title="Bookmarks" archived={false} showEditorCard={true} />;
+  return (
+    <Bookmarks
+      header={<p className="text-2xl">Bookmarks</p>}
+      query={{ archived: false }}
+      showEditorCard={true}
+    />
+  );
 }

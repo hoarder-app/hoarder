@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
+import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
 import { TRPCError } from "@trpc/server";
@@ -27,18 +27,13 @@ export default async function TagPage({
     throw e;
   }
 
-  const query = {
-    archived: false,
-    tagId: tag.id,
-  };
-
-  const bookmarks = await api.bookmarks.getBookmarks(query);
-
   return (
-    <div className="container flex flex-col gap-3">
-      <span className="pt-4 text-2xl">{tagName}</span>
-      <hr />
-      <BookmarksGrid query={query} bookmarks={bookmarks} />
+    <div className="continer mt-4">
+      <Bookmarks
+        header={<p className="text-2xl">{tagName}</p>}
+        query={{ archived: false, tagId: tag.id }}
+        showEditorCard={true}
+      />
     </div>
   );
 }

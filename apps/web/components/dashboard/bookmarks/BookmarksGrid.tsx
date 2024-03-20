@@ -2,17 +2,12 @@
 
 import { useMemo } from "react";
 import { ActionButton } from "@/components/ui/action-button";
-import { api } from "@/lib/trpc";
 import tailwindConfig from "@/tailwind.config";
 import { Slot } from "@radix-ui/react-slot";
 import Masonry from "react-masonry-css";
 import resolveConfig from "tailwindcss/resolveConfig";
 
-import type {
-  ZBookmark,
-  ZGetBookmarksRequest,
-  ZGetBookmarksResponse,
-} from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
 import AssetCard from "./AssetCard";
 import EditorCard from "./EditorCard";
@@ -56,27 +51,19 @@ function renderBookmark(bookmark: ZBookmark) {
 }
 
 export default function BookmarksGrid({
-  query,
-  bookmarks: initialBookmarks,
+  bookmarks,
+  hasNextPage = false,
+  fetchNextPage = () => ({}),
+  isFetchingNextPage = false,
   showEditorCard = false,
 }: {
-  query: ZGetBookmarksRequest;
-  bookmarks: ZGetBookmarksResponse;
+  bookmarks: ZBookmark[];
   showEditorCard?: boolean;
-  itemsPerPage?: number;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  fetchNextPage?: () => void;
 }) {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    api.bookmarks.getBookmarks.useInfiniteQuery(query, {
-      initialData: () => ({
-        pages: [initialBookmarks],
-        pageParams: [query.cursor],
-      }),
-      initialCursor: null,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    });
-
   const breakpointConfig = useMemo(() => getBreakpointConfig(), []);
-  const bookmarks = data!.pages.flatMap((b) => b.bookmarks);
   if (bookmarks.length == 0 && !showEditorCard) {
     return <p>No bookmarks</p>;
   }

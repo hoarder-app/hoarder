@@ -4,9 +4,8 @@ export default async function FavouritesBookmarkPage() {
   return (
     <div className="continer mt-4">
       <Bookmarks
-        title="⭐️ Favourites"
-        archived={false}
-        favourited={true}
+        header={<p className="text-2xl">⭐️ Favourites</p>}
+        query={{ favourited: true, archived: false }}
         showDivider={true}
       />
     </div>

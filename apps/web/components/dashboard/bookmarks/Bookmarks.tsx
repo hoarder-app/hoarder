@@ -4,16 +4,16 @@ import { getServerAuthSession } from "@/server/auth";
 
 import type { ZGetBookmarksRequest } from "@hoarder/trpc/types/bookmarks";
 
-import BookmarksGrid from "./BookmarksGrid";
+import UpdatableBookmarksGrid from "./UpdatableBookmarksGrid";
 
 export default async function Bookmarks({
-  favourited,
-  archived,
-  title,
+  query,
+  header,
   showDivider,
   showEditorCard = false,
-}: ZGetBookmarksRequest & {
-  title: string;
+}: {
+  query: ZGetBookmarksRequest;
+  header: React.ReactNode;
   showDivider?: boolean;
   showEditorCard?: boolean;
 }) {
@@ -22,18 +22,13 @@ export default async function Bookmarks({
     redirect("/");
   }
 
-  const query = {
-    favourited,
-    archived,
-  };
-
   const bookmarks = await api.bookmarks.getBookmarks(query);
 
   return (
     <div className="container flex flex-col gap-3">
-      <div className="text-2xl">{title}</div>
+      {header}
       {showDivider && <hr />}
-      <BookmarksGrid
+      <UpdatableBookmarksGrid
         query={query}
         bookmarks={bookmarks}
         showEditorCard={showEditorCard}

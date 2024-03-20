@@ -17,14 +17,7 @@ function SearchComp() {
     <div className="container flex flex-col gap-3 p-4">
       <SearchInput ref={inputRef} autoFocus={true} />
       <hr />
-      {data ? (
-        <BookmarksGrid
-          query={{ ids: data.bookmarks.map((b) => b.id) }}
-          bookmarks={data}
-        />
-      ) : (
-        <Loading />
-      )}
+      {data ? <BookmarksGrid bookmarks={data.bookmarks} /> : <Loading />}
     </div>
   );
 }
