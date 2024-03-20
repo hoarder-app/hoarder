@@ -1,6 +1,5 @@
 import MobileSidebar from "@/components/dashboard/sidebar/ModileSidebar";
 import Sidebar from "@/components/dashboard/sidebar/Sidebar";
-import UploadDropzone from "@/components/dashboard/UploadDropzone";
 import DemoModeBanner from "@/components/DemoModeBanner";
 import { Separator } from "@/components/ui/separator";
 
@@ -22,7 +21,7 @@ export default async function Dashboard({
           <MobileSidebar />
           <Separator />
         </div>
-        <UploadDropzone>{children}</UploadDropzone>
+        {children}
       </main>
     </div>
   );
