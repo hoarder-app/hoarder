@@ -6,54 +6,24 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 
 ## Features
 
-- 🔗 Bookmark links and take simple notes.
+- 🔗 Bookmark links, take simple notes and store images.
 - ⬇️ Automatic fetching for link titles, descriptions and images.
 - 📋 Sort your bookmarks into lists.
 - 🔎 Full text search of all the content stored.
 - ✨ AI-based (aka chatgpt) automatic tagging.
 - 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje) for quick bookmarking.
-- 📱 [iOS shortcut](https://www.icloud.com/shortcuts/78734b46624c4a3297187c85eb50d800) for bookmarking content from the phone. A minimal mobile app might come later.
+- 📱 [iOS shortcut](https://www.icloud.com/shortcuts/78734b46624c4a3297187c85eb50d800) for bookmarking content from the phone. A minimal mobile app is in the works.
 - 💾 Self-hosting first.
 - [Planned] Archiving the content for offline reading.
-- [Planned] Store raw images.
 
 **⚠️ This app is under heavy development and it's far from stable.**
 
-## Installation
+## Documentation
 
-Docker is the recommended way for deploying the app. A docker compose file is provided.
-
-Run `docker compose up` then head to `http://localhost:3000` to access the app.
-
-> NOTE: You'll need to set the env variable `OPENAI_API_KEY` without your own openai key for automatic tagging to work. Check the next section for config details.
-
-## Configuration
-
-The app is configured with env variables.
-
-| Name           | Default   | Description                                                                                                                                                                                                                                       |
-| -------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| OPENAI_API_KEY | Not set   | The OpenAI key used for automatic tagging. If not set, automatic tagging won't be enabled. The app currently uses `gpt-3.5-turbo-0125` which is [extremely cheap](https://openai.com/pricing). You'll be able to bookmark 1000+ for less than $1. |
-| DATA_DIR  | Not set   | The path for the persistent data directory.                                                                                                                                                                                                                 |
-| REDIS_HOST     | localhost | The address of redis used by background jobs                                                                                                                                                                                                      |
-| REDIS_POST     | 6379      | The port of redis used by background jobs                                                                                                                                                                                                         |
-| MEILI_ADDR     | Not set      | The address of meilisearch. If not set, Search will be disabled. |
-| MEILI_MASTER_KEY     | Not set      | The master key configured for meili. Not needed in development. |
-
-## Security Considerations
-
-If you're going to give app access to untrusted users, there's some security considerations that you'll need to be aware of given how the crawler works. The crawler is basically running a browser to fetch the content of the bookmarks. Any untrusted user can submit bookmarks to be crawled from your server and they'll be able to see the crawling result. This can be abused in multiple ways:
-
-1. Untrused users can submit crawl requests to websites that you don't want to be coming out of your IPs.
-2. Crawling user controlled websites can expose your origin IP (and location) even if your service is hosted behind cloudflare for example.
-3. The crawling requests will be coming out from your own network, which untrusted users can leverage to crawl internal non-internet exposed endpoints.
-
-To mitigate those risks, you can do one of the following:
-
-1. Limit access to trusted users
-2. Let the browser traffic go through some VPN with restricted network policies.
-3. Host the browser container outside of your network.
-4. Use a hosted browser as a service (e.g. [browserless](https://browserless.io)). Note: I've never used them before.
+- [Installation](https://docs.hoarder.app/installation)
+- [Configuration](https://docs.hoarder.app/configuration)
+- [Security Considerations](https://docs.hoarder.app/security-considerations)
+- [Development](https://docs.hoarder.app/Development/setup)
 
 ## Stack
 
@@ -80,34 +50,3 @@ I'm a systems engineer in my day job (and have been for the past 7 years). I did
 - [memos](https://github.com/usememos/memos): I love memos. I have it running on my home server and it's one of my most used self-hosted apps. I, however, don't like the fact that it doesn't preview the content of the links I dump there and to be honest, it doesn't have to because that's not what it was designed for. It's just that I dump a lot of links there and I'd have loved if I'd be able to figure which link is that by just looking at my timeline. Also, given the variety of things I dump there, I'd have loved if it does some sort of automatic tagging for what I save there. This is exactly the usecase that I'm trying to tackle with Hoarder.
 - [Wallabag](https://wallabag.it): Wallabag is a well-established open source read-it-later app written in php and I think it's the common recommendation on reddit for such apps. To be honest, I didn't give it a real shot, and the UI just felt a bit dated for my liking. Honestly, it's probably much more stable and feature complete than this app, but where's the fun in that?
 - [Shiori](https://github.com/go-shiori/shiori): Shiori is meant to be an open source pocket clone written in Go. It ticks all the marks but doesn't have my super sophisticated AI-based tagging. (JK, I only found about it after I decided to build my own app, so here we are 🤷).
-
-## Development
-
-### Docker
-
-You can turnup the whole development environment with:
-`docker compose -f docker/docker-compose.dev.yml up`
-
-### Manual
-
-Or if you have nodejs installed locally, you can do:
-
-- `pnpm install` in the root of the repo.
-- `pnpm db:migrate` to run the db migrations.
-- `pnpm web` to start the web app.
-  - Access it over `http://localhost:3000`.
-- `pnpm workers` to start the crawler and the openai worker.
-  - You'll need to have redis running at `localhost:5379` (configurable with env variables).
-  - An easy way to get redis running is by using docker `docker run -p 5379:5379 redis`.
-  - You can run the web app without the workers, but link fetching and automatic tagging won't work.
-
-### Codebase structure
-
-- `packages/db`: Where drizzle's schema lives. Shared between packages.
-- `packages/shared`: Shared utilities and code between the workers and the web app.
-- `packages/web`: Where the nextjs based web app lives.
-- `packages/workers`: Where the background job workers (crawler and openai as of now) run.
-
-### Submitting PRs
-
-- Before submitting PRs, you'll want to run `pnpm format` and include its changes in the commit. Also make sure `pnpm lint` is successful.

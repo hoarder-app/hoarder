@@ -47,6 +47,6 @@ jobs:
           file: docker/Dockerfile
           target: ${{ matrix.package }}
           push: true
-          tags: ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:${{github.event.release.name}}
+          tags: ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:${{github.event.release.name}},ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:release
           cache-from: type=gha
           cache-to: type=gha,mode=max

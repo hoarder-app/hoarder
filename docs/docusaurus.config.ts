@@ -51,12 +51,17 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'Hoarder Docs',
+      title: 'Hoarder',
       logo: {
-        alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        alt: 'Hoarder Logo',
+        src: 'img/logo.png',
       },
       items: [
+        {
+          href: 'https://hoarder.app',
+          label: 'Homepage',
+          position: 'right',
+        },
         {
           href: 'https://github.com/MohamedBassem/hoarder-app',
           label: 'GitHub',

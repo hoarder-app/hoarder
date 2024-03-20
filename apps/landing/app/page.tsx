@@ -6,6 +6,7 @@ import screenshot from "@/public/screenshot.png";
 import { ExternalLink, Github, PackageOpen } from "lucide-react";
 
 const GITHUB_LINK = "https://github.com/MohamedBassem/hoarder-app";
+const DOCS_LINK = "https://docs.hoarder.app";
 
 function NavBar() {
   return (
@@ -15,7 +16,10 @@ function NavBar() {
         <p className="text-2xl">Hoarder</p>
       </div>
       <div className="hidden gap-10 sm:flex">
-        <Link href="#" className="flex justify-center gap-2 text-center">
+        <Link
+          href={DOCS_LINK}
+          className="flex justify-center gap-2 text-center"
+        >
           Docs
         </Link>
         <Link
