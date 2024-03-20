@@ -34,6 +34,7 @@ jobs:
           context: .
           file: docker/Dockerfile
           target: ${{ matrix.package }}
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:latest
           cache-from: type=gha
@@ -46,6 +47,7 @@ jobs:
           context: .
           file: docker/Dockerfile
           target: ${{ matrix.package }}
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:${{github.event.release.name}},ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:release
           cache-from: type=gha
