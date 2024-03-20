@@ -32,7 +32,6 @@ export default async function TagPage({
       <Bookmarks
         header={<p className="text-2xl">{tagName}</p>}
         query={{ archived: false, tagId: tag.id }}
-        showEditorCard={true}
       />
     </div>
   );
