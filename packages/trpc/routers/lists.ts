@@ -7,8 +7,9 @@ import { bookmarkLists, bookmarksInLists } from "@hoarder/db/schema";
 
 import { authedProcedure, Context, router } from "../index";
 import { zBookmarkListSchema } from "../types/lists";
+import { ensureBookmarkOwnership } from "./bookmarks";
 
-const ensureListOwnership = experimental_trpcMiddleware<{
+export const ensureListOwnership = experimental_trpcMiddleware<{
   ctx: Context;
   input: { listId: string };
 }>().create(async (opts) => {
@@ -106,6 +107,7 @@ export const listsAppRouter = router({
       }),
     )
     .use(ensureListOwnership)
+    .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
       try {
         await ctx.db.insert(bookmarksInLists).values({
@@ -117,13 +119,38 @@ export const listsAppRouter = router({
           if (e.code == "SQLITE_CONSTRAINT_PRIMARYKEY") {
             throw new TRPCError({
               code: "BAD_REQUEST",
-              message: "Bookmark already in the list",
+              message: `Bookmark ${input.bookmarkId} is already in the list ${input.listId}`,
             });
           }
         }
         throw new TRPCError({
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
+        });
+      }
+    }),
+  removeFromList: authedProcedure
+    .input(
+      z.object({
+        listId: z.string(),
+        bookmarkId: z.string(),
+      }),
+    )
+    .use(ensureListOwnership)
+    .use(ensureBookmarkOwnership)
+    .mutation(async ({ input, ctx }) => {
+      const deleted = await ctx.db
+        .delete(bookmarksInLists)
+        .where(
+          and(
+            eq(bookmarksInLists.listId, input.listId),
+            eq(bookmarksInLists.bookmarkId, input.bookmarkId),
+          ),
+        );
+      if (deleted.changes == 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Bookmark ${input.bookmarkId} is already not in list ${input.listId}`,
         });
       }
     }),

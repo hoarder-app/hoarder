@@ -35,7 +35,7 @@ import {
 } from "../types/bookmarks";
 import { ZBookmarkTags } from "../types/tags";
 
-const ensureBookmarkOwnership = experimental_trpcMiddleware<{
+export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: Context;
   input: { bookmarkId: string };
 }>().create(async (opts) => {

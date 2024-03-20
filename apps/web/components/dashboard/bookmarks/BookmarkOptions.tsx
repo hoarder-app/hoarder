@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,11 +10,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
+import { BookmarkListContext } from "@/lib/hooks/list-context";
 import { api } from "@/lib/trpc";
 import {
   Archive,
   Link,
   List,
+  ListX,
   MoreHorizontal,
   Pencil,
   RotateCw,
@@ -41,6 +43,8 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
     useAddToListModal(bookmark.id);
 
   const [isTextEditorOpen, setTextEditorOpen] = useState(false);
+
+  const { listId } = useContext(BookmarkListContext);
 
   const invalidateAllBookmarksCache =
     api.useUtils().bookmarks.getBookmarks.invalidate;
@@ -90,6 +94,16 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
     onSettled: () => {
       invalidateBookmarkCache({ bookmarkId: bookmark.id });
     },
+  });
+
+  const removeFromListMutator = api.lists.removeFromList.useMutation({
+    onSuccess: (_resp, req) => {
+      invalidateAllBookmarksCache({ listId: req.listId });
+      toast({
+        description: "The bookmark has been deleted from the list",
+      });
+    },
+    onError,
   });
 
   return (
@@ -165,6 +179,21 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             <List className="mr-2 size-4" />
             <span>Add to List</span>
           </DropdownMenuItem>
+
+          {listId && (
+            <DropdownMenuItem
+              disabled={demoMode}
+              onClick={() =>
+                removeFromListMutator.mutate({
+                  listId,
+                  bookmarkId: bookmark.id,
+                })
+              }
+            >
+              <ListX className="mr-2 size-4" />
+              <span>Remove from List</span>
+            </DropdownMenuItem>
+          )}
 
           {bookmark.content.type === "link" && (
             <DropdownMenuItem
