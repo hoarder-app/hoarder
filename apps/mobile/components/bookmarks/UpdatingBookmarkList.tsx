@@ -1,0 +1,52 @@
+import { Text } from "react-native";
+import { api } from "@/lib/trpc";
+
+import type { ZGetBookmarksRequest } from "@hoarder/trpc/types/bookmarks";
+
+import FullPageSpinner from "../ui/FullPageSpinner";
+import BookmarkList2 from "./BookmarkList";
+
+export default function UpdatingBookmarkList({
+  query,
+  header,
+}: {
+  query: ZGetBookmarksRequest;
+  header?: React.ReactElement;
+}) {
+  const apiUtils = api.useUtils();
+  const {
+    data,
+    isPending,
+    isPlaceholderData,
+    error,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = api.bookmarks.getBookmarks.useInfiniteQuery(query, {
+    initialCursor: null,
+    getNextPageParam: (lastPage) => lastPage.nextCursor,
+  });
+
+  if (error) {
+    return <Text>{JSON.stringify(error)}</Text>;
+  }
+
+  if (isPending || !data) {
+    return <FullPageSpinner />;
+  }
+
+  const onRefresh = () => {
+    apiUtils.bookmarks.getBookmarks.invalidate();
+    apiUtils.bookmarks.getBookmark.invalidate();
+  };
+
+  return (
+    <BookmarkList2
+      bookmarks={data.pages.flatMap((p) => p.bookmarks)}
+      header={header}
+      onRefresh={onRefresh}
+      fetchNextPage={fetchNextPage}
+      isFetchingNextPage={isFetchingNextPage}
+      isRefreshing={isPending || isPlaceholderData}
+    />
+  );
+}

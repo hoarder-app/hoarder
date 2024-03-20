@@ -2,7 +2,7 @@ import { Platform, SafeAreaView, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
-import BookmarkList from "@/components/bookmarks/BookmarkList";
+import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
 import PageTitle from "@/components/ui/PageTitle";
 import useAppSettings from "@/lib/settings";
 import { useUploadAsset } from "@/lib/upload";
@@ -80,7 +80,7 @@ function HeaderRight() {
 export default function Home() {
   return (
     <SafeAreaView>
-      <BookmarkList
+      <UpdatingBookmarkList
         query={{ archived: false }}
         header={
           <View className="flex flex-row justify-between">

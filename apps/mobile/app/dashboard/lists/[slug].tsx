@@ -1,6 +1,6 @@
 import { SafeAreaView, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
-import BookmarkList from "@/components/bookmarks/BookmarkList";
+import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
@@ -23,7 +23,7 @@ export default function ListView() {
       />
       {list ? (
         <View>
-          <BookmarkList
+          <UpdatingBookmarkList
             query={{
               archived: false,
               listId: list.id,
