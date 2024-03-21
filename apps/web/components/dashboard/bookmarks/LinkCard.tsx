@@ -61,7 +61,7 @@ export default function LinkCard({
 
   return (
     <ImageCard className={className}>
-      <Link href={link.url}>
+      <Link href={link.url} target="_blank">
         <ImageCardBanner
           src={isBookmarkStillCrawling(bookmark) ? "/blur.avif" : image}
         />
