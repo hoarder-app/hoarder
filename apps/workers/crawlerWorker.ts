@@ -113,6 +113,22 @@ async function getBookmarkUrl(bookmarkId: string) {
   return bookmark.url;
 }
 
+/**
+ * This provides some "basic" protection from malicious URLs. However, all of those
+ * can be easily circumvented by pointing dns of origin to localhost, or with
+ * redirects.
+ */
+function validateUrl(url: string) {
+  const urlParsed = new URL(url);
+  if (urlParsed.protocol != "http:" && urlParsed.protocol != "https:") {
+    throw new Error(`Unsupported URL protocol: ${urlParsed.protocol}`);
+  }
+
+  if (["localhost", "127.0.0.1", "0.0.0.0"].includes(urlParsed.hostname)) {
+    throw new Error(`Link hostname rejected: ${urlParsed.hostname}`);
+  }
+}
+
 async function crawlPage(url: string) {
   assert(browser);
   const context = await browser.createBrowserContext();
@@ -158,7 +174,7 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   logger.info(
     `[Crawler][${jobId}] Will crawl "${url}" for link with id "${bookmarkId}"`,
   );
-  // TODO(IMPORTANT): Run security validations on the input URL (e.g. deny localhost, etc)
+  validateUrl(url);
 
   const htmlContent = await crawlPage(url);
 
