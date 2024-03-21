@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import screenshot from "@/public/screenshot.png";
 import { ExternalLink, Github, PackageOpen } from "lucide-react";
 
 const GITHUB_LINK = "https://github.com/MohamedBassem/hoarder-app";
 const DOCS_LINK = "https://docs.hoarder.app";
+const DEMO_LINK = "https://try.hoarder.app";
 
 function NavBar() {
   return (
@@ -56,11 +57,19 @@ function Hero() {
         </div>
       </div>
       <div className="flex h-10 gap-4">
-        <Button className="h-full w-28" variant="default">
+        <Link
+          href={DEMO_LINK}
+          target="_blank"
+          className={cn(
+            "flex h-full w-28 gap-2",
+            buttonVariants({ variant: "default" }),
+          )}
+        >
           Demo
-        </Button>
+        </Link>
         <Link
           href={GITHUB_LINK}
+          target="_blank"
           className={cn(
             "flex h-full w-28 gap-2",
             buttonVariants({ variant: "outline" }),

@@ -76,7 +76,7 @@ const config: Config = {
           title: 'Docs',
           items: [
             {
-              label: 'Tutorial',
+              label: 'Introduction',
               to: '/',
             },
           ],
@@ -85,16 +85,8 @@ const config: Config = {
           title: 'Community',
           items: [
             {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'Twitter',
-              href: 'https://twitter.com/docusaurus',
+              label: 'GitHub',
+              href: 'https://github.com/MohamedBassem/hoarder-app',
             },
           ],
         },
@@ -102,13 +94,21 @@ const config: Config = {
           title: 'More',
           items: [
             {
+              label: 'Homepage',
+              href: 'https://hoarder.app',
+            },
+            {
               label: 'GitHub',
               href: 'https://github.com/MohamedBassem/hoarder-app',
+            },
+            {
+              label: 'Demo',
+              href: 'https://try.hoarder.app',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Hoarder App. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

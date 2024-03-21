@@ -22,3 +22,15 @@ Hoarder is an open source "Bookmark Everything" app that uses AI for automatical
 - [Planned] Archiving the content for offline reading.
 
 **⚠️ This app is under heavy development and it's far from stable.**
+
+
+## Demo
+
+You can access the demo at [https://try.hoarder.app](https://try.hoarder.app). Login with the following creds:
+
+```
+email: demo@hoarder.app
+password: demodemo
+```
+
+The demo is seeded with some content, but it's in read-only mode to prevent abuse.
