@@ -51,7 +51,7 @@ export default function NewListModal() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      icon: "💡",
+      icon: "🚀",
     },
   });
 
@@ -64,6 +64,7 @@ export default function NewListModal() {
       });
       listsInvalidationFunction();
       setOpen(false);
+      form.reset();
     },
     onError: (e) => {
       if (e.data?.code == "BAD_REQUEST") {

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-import { Trash } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 import type { ZBookmarkList } from "@hoarder/trpc/types/lists";
 
@@ -43,8 +43,8 @@ export default function DeleteListButton({ list }: { list: ZBookmarkList }) {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button className="mt-auto flex gap-2" variant="destructive">
-          <Trash className="size-5" />
+        <Button className="mt-auto flex gap-2" variant="destructiveOutline">
+          <Trash2 className="size-5" />
           <span className="hidden md:block">Delete List</span>
         </Button>
       </DialogTrigger>
