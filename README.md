@@ -25,6 +25,17 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 - [Security Considerations](https://docs.hoarder.app/security-considerations)
 - [Development](https://docs.hoarder.app/Development/setup)
 
+## Demo
+
+You can access the demo at [https://try.hoarder.app](https://try.hoarder.app). Login with the following creds:
+
+```
+email: demo@hoarder.app
+password: demodemo
+```
+
+The demo is seeded with some content, but it's in read-only mode to prevent abuse.
+
 ## Stack
 
 - [NextJS](https://nextjs.org/) for the web app. Using app router.
