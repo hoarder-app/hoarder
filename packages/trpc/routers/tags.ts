@@ -7,9 +7,16 @@ import { bookmarks, bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 import type { Context } from "../index";
 import { authedProcedure, router } from "../index";
 
-function conditionFromInput(input: { tagName: string } | { tagId: string }) {
+function conditionFromInput(
+  input: { tagName: string } | { tagId: string },
+  userId: string,
+) {
   if ("tagName" in input) {
-    return eq(bookmarkTags.name, input.tagName);
+    // Tag names are not unique, we must include userId in the condition
+    return and(
+      eq(bookmarkTags.name, input.tagName),
+      eq(bookmarkTags.userId, userId),
+    );
   } else {
     return eq(bookmarkTags.id, input.tagId);
   }
@@ -19,18 +26,19 @@ const ensureTagOwnership = experimental_trpcMiddleware<{
   ctx: Context;
   input: { tagName: string } | { tagId: string };
 }>().create(async (opts) => {
-  const tag = await opts.ctx.db.query.bookmarkTags.findFirst({
-    where: conditionFromInput(opts.input),
-    columns: {
-      userId: true,
-    },
-  });
   if (!opts.ctx.user) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "User is not authorized",
     });
   }
+  const tag = await opts.ctx.db.query.bookmarkTags.findFirst({
+    where: conditionFromInput(opts.input, opts.ctx.user.id),
+    columns: {
+      userId: true,
+    },
+  });
+
   if (!tag) {
     throw new TRPCError({
       code: "NOT_FOUND",
@@ -80,7 +88,7 @@ export const tagsAppRouter = router({
         .leftJoin(bookmarks, eq(tagsOnBookmarks.bookmarkId, bookmarks.id))
         .where(
           and(
-            conditionFromInput(input),
+            conditionFromInput(input, ctx.user.id),
             eq(bookmarkTags.userId, ctx.user.id),
             eq(bookmarks.archived, false),
           ),
