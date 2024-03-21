@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { DialogContent } from "@/components/ui/dialog";
-import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Maximize2, Star } from "lucide-react";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
@@ -28,7 +27,11 @@ export default function BookmarkActionBar({
             <Maximize2 size="20" />
           </Button>
         </DialogTrigger>
-        <DialogContent className="h-[90%] max-w-[90%] overflow-hidden">
+        <DialogContent
+          className="h-[90%] max-w-[90%] overflow-hidden p-0"
+          hideCloseBtn={true}
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
           <BookmarkPreview initialData={bookmark} />
         </DialogContent>
       </Dialog>

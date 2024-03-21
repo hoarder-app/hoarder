@@ -10,5 +10,9 @@ export default async function BookmarkPreviewPage({
     bookmarkId: params.bookmarkId,
   });
 
-  return <BookmarkPreview initialData={bookmark} />;
+  return (
+    <div className="max-h-screen p-4">
+      <BookmarkPreview initialData={bookmark} />
+    </div>
+  );
 }
