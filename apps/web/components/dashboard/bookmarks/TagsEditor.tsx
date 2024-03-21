@@ -106,6 +106,9 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
         valueContainer: (styles) => ({
           ...styles,
           padding: "0.5rem",
+          maxHeight: "14rem",
+          overflowY: "auto",
+          scrollbarWidth: "none",
         }),
       }}
       components={{
@@ -129,6 +132,8 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
             {children}
           </div>
         ),
+        DropdownIndicator: () => <span />,
+        IndicatorSeparator: () => <span />,
       }}
       classNames={{
         multiValueRemove: () => "my-auto",
