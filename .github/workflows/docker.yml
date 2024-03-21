@@ -11,6 +11,7 @@ jobs:
     strategy:
       matrix:
         package: [web, workers]
+        platform: [linux/amd64, linux/arm64]
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -34,11 +35,11 @@ jobs:
           context: .
           file: docker/Dockerfile
           target: ${{ matrix.package }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platform }}
           push: true
           tags: ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.package }}-${{ matrix.platform }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.package }}-${{ matrix.platform }}
 
       - name: Build ${{ matrix.package }} (release)
         uses: docker/build-push-action@v5
@@ -47,8 +48,8 @@ jobs:
           context: .
           file: docker/Dockerfile
           target: ${{ matrix.package }}
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platform }}
           push: true
           tags: ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:${{github.event.release.name}},ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:release
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=${{ matrix.package }}-${{ matrix.platform }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.package }}-${{ matrix.platform }}
