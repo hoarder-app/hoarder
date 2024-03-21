@@ -1,40 +1,36 @@
+import assert from "assert";
+import { Readability } from "@mozilla/readability";
+import { Mutex } from "async-mutex";
+import { Job, Worker } from "bullmq";
+import DOMPurify from "dompurify";
+import { eq } from "drizzle-orm";
+import { isShuttingDown, shutdownPromise } from "exit";
+import { JSDOM } from "jsdom";
+import metascraper from "metascraper";
+import metascraperDescription from "metascraper-description";
+import metascraperImage from "metascraper-image";
+import metascraperLogo from "metascraper-logo-favicon";
+import metascraperReadability from "metascraper-readability";
+import metascraperTitle from "metascraper-title";
+import metascraperTwitter from "metascraper-twitter";
+import metascraperUrl from "metascraper-url";
+import { Browser } from "puppeteer";
+import puppeteer from "puppeteer-extra";
+import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+
+import { db } from "@hoarder/db";
+import { bookmarkLinks } from "@hoarder/db/schema";
+import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
+  queueConnectionDetails,
   SearchIndexingQueue,
   ZCrawlLinkRequest,
-  queueConnectionDetails,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
-import DOMPurify from "dompurify";
-import { JSDOM } from "jsdom";
-
-import { Worker } from "bullmq";
-import { Job } from "bullmq";
-
-import { db } from "@hoarder/db";
-
-import { Browser } from "puppeteer";
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
-
-import metascraper from "metascraper";
-
-import metascraperDescription from "metascraper-description";
-import metascraperImage from "metascraper-image";
-import metascraperLogo from "metascraper-logo-favicon";
-import metascraperTitle from "metascraper-title";
-import metascraperUrl from "metascraper-url";
-import metascraperTwitter from "metascraper-twitter";
-import metascraperReadability from "metascraper-readability";
-import { Mutex } from "async-mutex";
-import assert from "assert";
-import serverConfig from "@hoarder/shared/config";
-import { bookmarkLinks } from "@hoarder/db/schema";
-import { eq } from "drizzle-orm";
-import { Readability } from "@mozilla/readability";
 
 const metascraperParser = metascraper([
   metascraperReadability(),
@@ -60,6 +56,12 @@ async function launchBrowser() {
       userDataDir: serverConfig.crawler.browserUserDataDir,
     });
     browser.on("disconnected", async () => {
+      if (isShuttingDown) {
+        logger.info(
+          "The puppeteer browser got disconnected. But we're shutting down so won't restart it.",
+        );
+        return;
+      }
       logger.info(
         "The puppeteer browser got disconnected. Will attempt to launch it again.",
       );
