@@ -46,7 +46,9 @@ function CreationTime({ createdAt }: { createdAt: Date }) {
             <CalendarDays /> {dayjs(createdAt).fromNow()}
           </span>
         </TooltipTrigger>
-        <TooltipContent>{createdAt.toLocaleString()}</TooltipContent>
+        <TooltipPortal>
+          <TooltipContent>{createdAt.toLocaleString()}</TooltipContent>
+        </TooltipPortal>
       </Tooltip>
     </TooltipProvider>
   );
