@@ -16,37 +16,30 @@ Create a new directory to host the compose file and env variables.
 Download the docker compose file provided [here](https://github.com/MohamedBassem/hoarder-app/blob/main/docker/docker-compose.yml).
 
 ```
-$ wget https://raw.githubusercontent.com/MohamedBassem/hoarder-app/main/docker/docker-compose.yml
+wget https://raw.githubusercontent.com/MohamedBassem/hoarder-app/main/docker/docker-compose.yml
 ```
 
 ### 3. Populate the environment variables
 
-You can use the env file template provided [here](https://github.com/MohamedBassem/hoarder-app/blob/main/.env.sample) and fill it manually using the documentation [here](/configuration).
-
-```
-$ wget https://raw.githubusercontent.com/MohamedBassem/hoarder-app/main/.env.sample
-$ mv .env.sample .env
-```
-
-Alternatively, here is a minimal `.env` file to use:
+To configure the app, create a `.env` file in the directory and add this minimal env file:
 
 ```
 NEXTAUTH_SECRET=super_random_string
-NEXTAUTH_URL=<YOUR DEPLOYED URL>
-
 HOARDER_VERSION=release
-
-MEILI_ADDR=http://meilisearch:7700
 MEILI_MASTER_KEY=another_random_string
 ```
 
-You can use `openssl rand -base64 36` to generate the random strings.
+You **should** change the random strings. You can use `openssl rand -base64 36` to generate the random strings.
 
 Persistent storage and the wiring between the different services is already taken care of in the docker compose file.
 
+Keep in mind that every time you change the `.env` file, you'll need to re-run `docker compose up`.
+
+If you want more config params, check the config documentation [here](/configuration).
+
 ### 4. Setup OpenAI
 
-To enable automatic tagging, you'll need to configure open ai. This is optional though but hightly recommended.
+To enable automatic tagging, you'll need to configure OpenAI. This is optional though but hightly recommended.
 
 - Follow [OpenAI's help](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) to get an API key.
 - Add `OPENAI_API_KEY=<key>` to the env file.
@@ -60,5 +53,5 @@ Learn more about the costs of using openai [here](/openai).
 Start the service by running:
 
 ```
-$ docker compose up -d
+docker compose up -d
 ```

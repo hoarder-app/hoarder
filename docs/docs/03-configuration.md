@@ -6,7 +6,6 @@ The app is mainly configured by environment variables. All the used environment 
 | ---------------- | ------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | DATA_DIR         | Yes                                   | Not set   | The path for the persistent data directory. This is where the db and the uploaded assets live.                                |
 | NEXTAUTH_SECRET  | Yes                                   | Not set   | Random string used to sign the JWT tokens. Generate one with `openssl rand -base64 36`.                                       |
-| NEXTAUTH_URL     | Yes                                   | Not set   | The url on which the service will be running on. E.g. (`https://demo.hoarder.app`).                                           |
 | REDIS_HOST       | Yes                                   | localhost | The address of redis used by background jobs                                                                                  |
 | REDIS_POST       | Yes                                   | 6379      | The port of redis used by background jobs                                                                                     |
 | OPENAI_API_KEY   | No                                    | Not set   | The OpenAI key used for automatic tagging. If not set, automatic tagging won't be enabled. More on that in [here](/openai).   |
