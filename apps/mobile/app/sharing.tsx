@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Text, View } from "react-native";
-import { Link, useRouter } from "expo-router";
+import { ActivityIndicator, Text, View } from "react-native";
+import { useRouter } from "expo-router";
 import { useShareIntentContext } from "expo-share-intent";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
 import { useUploadAsset } from "@/lib/upload";
 import { z } from "zod";
+
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
 type Mode =
@@ -63,7 +64,12 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
     },
   });
 
-  return <Text className="text-4xl">Hoarding ...</Text>;
+  return (
+    <View className="flex flex-row gap-3">
+      <Text className="text-4xl">Hoarding</Text>
+      <ActivityIndicator />
+    </View>
+  );
 }
 
 export default function Sharing() {
@@ -100,9 +106,6 @@ export default function Sharing() {
   }, [mode.type]);
 
   return (
-    <View className="flex-1 items-center justify-center gap-4">
-      {comp}
-      <Link href="dashboard">Dismiss</Link>
-    </View>
+    <View className="flex-1 items-center justify-center gap-4">{comp}</View>
   );
 }
