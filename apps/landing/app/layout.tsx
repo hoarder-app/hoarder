@@ -9,7 +9,9 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Hoarder",
-  description: "Your AI powered second brain",
+  metadataBase: new URL("https://hoarder.app"),
+  description:
+    "The Bookmark Everything app. Hoard links, notes, and images and they will get automatically tagged AI.",
 };
 
 export default async function RootLayout({
