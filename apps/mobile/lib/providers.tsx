@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { ToastProvider } from "@/components/ui/Toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -6,16 +6,15 @@ import { httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 
 import type { Settings } from "./settings";
-import useAppSettings, { getAppSettings } from "./settings";
+import useAppSettings from "./settings";
 import { api } from "./trpc";
 
-function getTRPCClient(address: string) {
+function getTRPCClient(settings: Settings) {
   return api.createClient({
     links: [
       httpBatchLink({
-        url: `${address}/api/trpc`,
-        async headers() {
-          const settings = await getAppSettings();
+        url: `${settings.address}/api/trpc`,
+        headers() {
           return {
             Authorization: settings?.apiKey
               ? `Bearer ${settings.apiKey}`
@@ -35,22 +34,12 @@ function TrpcProvider({
   settings: Settings;
   children: React.ReactNode;
 }) {
-  const [queryClient] = useState(() => new QueryClient());
+  const queryClient = useMemo(() => new QueryClient(), [settings]);
 
-  const [trpcClient, setTrpcClient] = useState<
-    ReturnType<typeof getTRPCClient>
-  >(getTRPCClient(settings.address));
-
-  useEffect(() => {
-    setTrpcClient(getTRPCClient(settings.address));
-  }, [settings.address]);
+  const trpcClient = useMemo(() => getTRPCClient(settings), [settings]);
 
   return (
-    <api.Provider
-      key={settings.address}
-      client={trpcClient}
-      queryClient={queryClient}
-    >
+    <api.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <ToastProvider>{children}</ToastProvider>
       </QueryClientProvider>
@@ -59,7 +48,11 @@ function TrpcProvider({
 }
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const { settings, isLoading } = useAppSettings();
+  const { settings, isLoading, load } = useAppSettings();
+
+  useEffect(() => {
+    load();
+  }, []);
 
   if (isLoading) {
     // Don't render anything if the settings still hasn't been loaded

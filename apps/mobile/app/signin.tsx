@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -7,7 +7,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { Redirect } from "expo-router";
 import Logo from "@/components/Logo";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -15,8 +15,6 @@ import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
 
 export default function Signin() {
-  const router = useRouter();
-
   const { settings, setSettings } = useAppSettings();
 
   const [error, setError] = useState<string | undefined>();
@@ -24,7 +22,6 @@ export default function Signin() {
   const { mutate: login, isPending } = api.apiKeys.exchange.useMutation({
     onSuccess: (resp) => {
       setSettings({ ...settings, apiKey: resp.key });
-      router.replace("dashboard");
     },
     onError: (e) => {
       if (e.data?.code === "UNAUTHORIZED") {
@@ -43,11 +40,9 @@ export default function Signin() {
     password: "",
   });
 
-  useEffect(() => {
-    if (settings.apiKey) {
-      router.navigate("dashboard");
-    }
-  }, [settings]);
+  if (settings.apiKey) {
+    return <Redirect href="dashboard" />;
+  }
 
   const onSignin = () => {
     const randStr = (Math.random() + 1).toString(36).substring(5);

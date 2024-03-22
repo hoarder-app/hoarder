@@ -1,19 +1,16 @@
-import { useEffect } from "react";
-import { View } from "react-native";
-import { useRouter } from "expo-router";
-import { useSession } from "@/lib/session";
+import { useIsLoggedIn } from "@/lib/session";
+import { Redirect } from "expo-router";
+import FullPageSpinner from "@/components/ui/FullPageSpinner";
 
 export default function App() {
-  const router = useRouter();
-  const { isLoggedIn } = useSession();
-  useEffect(() => {
+  const isLoggedIn = useIsLoggedIn();
+
     if (isLoggedIn === undefined) {
       // Wait until it's loaded
+      return <FullPageSpinner />;
     } else if (isLoggedIn) {
-      router.replace("dashboard");
+      return <Redirect href="dashboard" />
     } else {
-      router.replace("signin");
+      return <Redirect href="signin" />
     }
-  }, [isLoggedIn]);
-  return <View />;
 }

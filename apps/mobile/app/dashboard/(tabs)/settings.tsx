@@ -1,29 +1,17 @@
-import { useEffect } from "react";
 import { SafeAreaView, Text, View } from "react-native";
-import { useRouter } from "expo-router";
 import { Button } from "@/components/ui/Button";
+import PageTitle from "@/components/ui/PageTitle";
 import { useSession } from "@/lib/session";
 import { api } from "@/lib/trpc";
-import PageTitle from "@/components/ui/PageTitle";
 
 export default function Dashboard() {
-  const router = useRouter();
-
-  const { isLoggedIn, logout } = useSession();
-
-  useEffect(() => {
-    if (isLoggedIn !== undefined && !isLoggedIn) {
-      router.replace("signin");
-    }
-  }, [isLoggedIn]);
+  const { logout } = useSession();
 
   const { data, error, isLoading } = api.users.whoami.useQuery();
 
-  useEffect(() => {
-    if (error?.data?.code === "UNAUTHORIZED") {
-      logout();
-    }
-  }, [error]);
+  if (error?.data?.code === "UNAUTHORIZED") {
+    logout();
+  }
 
   return (
     <SafeAreaView>

@@ -1,6 +1,18 @@
+import { useIsLoggedIn } from "@/lib/session";
+import { useRouter } from "expo-router";
 import { Stack } from "expo-router/stack";
+import { useEffect } from "react";
 
 export default function Dashboard() {
+  const router = useRouter();
+
+  const isLoggedIn = useIsLoggedIn();
+  useEffect(() => {
+    if (isLoggedIn !== undefined && !isLoggedIn) {
+      return router.replace("signin");
+    }
+  }, [isLoggedIn]);
+
   return (
     <Stack>
       <Stack.Screen
