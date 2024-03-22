@@ -1,5 +1,5 @@
 ################# Base Builder ##############
-FROM node:21-alpine AS base
+FROM --platform=$BUILDPLATFORM node:21-alpine AS base
 
 WORKDIR /app
 ENV PNPM_HOME="/pnpm"
@@ -31,7 +31,7 @@ RUN pnpm next experimental-compile
 
 ################# The Web App ##############
 
-FROM node:21-alpine AS web
+FROM --platform=$BUILDPLATFORM node:21-alpine AS web
 WORKDIR /app
 
 ENV NODE_ENV production
@@ -69,7 +69,7 @@ RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-lin
 
 ################# The workers ##############
 
-FROM node:21-alpine AS workers
+FROM --platform=$BUILDPLATFORM node:21-alpine AS workers
 WORKDIR /app
 
 # Install chromium needed for puppeteer
