@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { SqliteError } from "@hoarder/db";
 import { users } from "@hoarder/db/schema";
+import serverConfig from "@hoarder/shared/config";
 
 import { hashPassword, validatePassword } from "../auth";
 import {
@@ -27,6 +28,12 @@ export const usersAppRouter = router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      if (serverConfig.auth.disableSignups) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Signups are disabled in server config",
+        });
+      }
       // TODO: This is racy, but that's probably fine.
       const [{ count: userCount }] = await ctx.db
         .select({ count: count() })

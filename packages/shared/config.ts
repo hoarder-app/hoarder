@@ -1,21 +1,7 @@
-function buildAuthentikConfig() {
-  const { AUTHENTIK_ID, AUTHENTIK_SECRET, AUTHENTIK_ISSUER } = process.env;
-
-  if (!AUTHENTIK_ID || !AUTHENTIK_SECRET || !AUTHENTIK_ISSUER) {
-    return undefined;
-  }
-
-  return {
-    clientId: AUTHENTIK_ID,
-    clientSecret: AUTHENTIK_SECRET,
-    issuer: AUTHENTIK_ISSUER,
-  };
-}
-
 const serverConfig = {
   apiUrl: process.env.API_URL ?? "http://localhost:3000",
   auth: {
-    authentik: buildAuthentikConfig(),
+    disableSignups: (process.env.DISABLE_SIGNUPS ?? "false") == "true",
   },
   openAI: {
     apiKey: process.env.OPENAI_API_KEY,
@@ -40,8 +26,12 @@ const serverConfig = {
   dataDir: process.env.DATA_DIR ?? "",
 };
 
+// Always explicitly pick up stuff from server config to avoid accidentally leaking stuff
 export const clientConfig = {
   demoMode: serverConfig.demoMode,
+  auth: {
+    disableSignups: serverConfig.auth.disableSignups,
+  }
 };
 export type ClientConfig = typeof clientConfig;
 

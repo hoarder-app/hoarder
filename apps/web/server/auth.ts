@@ -5,12 +5,10 @@ import NextAuth, {
   getServerSession,
   NextAuthOptions,
 } from "next-auth";
-import AuthentikProvider from "next-auth/providers/authentik";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Provider } from "next-auth/providers/index";
 
 import { db } from "@hoarder/db";
-import serverConfig from "@hoarder/shared/config";
 import { validatePassword } from "@hoarder/trpc/auth";
 
 declare module "next-auth/jwt" {
@@ -62,10 +60,6 @@ const providers: Provider[] = [
     },
   }),
 ];
-
-if (serverConfig.auth.authentik) {
-  providers.push(AuthentikProvider(serverConfig.auth.authentik));
-}
 
 export const authOptions: NextAuthOptions = {
   // https://github.com/nextauthjs/next-auth/issues/9493

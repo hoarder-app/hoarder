@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useClientConfig } from "@/lib/clientConfig";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TRPCClientError } from "@trpc/client";
@@ -100,6 +101,7 @@ function SignIn() {
 }
 
 function SignUp() {
+  const clientConfig = useClientConfig();
   const form = useForm<z.infer<typeof zSignUpSchema>>({
     resolver: zodResolver(zSignUpSchema),
   });
@@ -201,7 +203,11 @@ function SignUp() {
               );
             }}
           />
-          <ActionButton type="submit" loading={form.formState.isSubmitting}>
+          <ActionButton
+            type="submit"
+            loading={form.formState.isSubmitting}
+            disabled={clientConfig.auth.disableSignups}
+          >
             Sign Up
           </ActionButton>
         </div>
