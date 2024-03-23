@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import "./globals.css";
+import "@hoarder/tailwind-config/globals.css";
 
 import type { Viewport } from "next";
 import React from "react";

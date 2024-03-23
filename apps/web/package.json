@@ -58,7 +58,6 @@
     "react-select": "^5.8.0",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7",
     "zod": "^3.22.4",
     "zustand": "^4.5.1"
   },
@@ -67,7 +66,6 @@
     "@hoarder/prettier-config": "workspace:^0.1.0",
     "@hoarder/tailwind-config": "workspace:^0.1.0",
     "@hoarder/tsconfig": "workspace:^0.1.0",
-    "@tailwindcss/typography": "^0.5.10",
     "@types/emoji-mart": "^3.0.14",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",

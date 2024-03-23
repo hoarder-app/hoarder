@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     "./native": "./native.ts",
-    "./web": "./web.ts"
+    "./web": "./web.ts",
+    "./globals.css": "./globals.css"
   },
   "license": "MIT",
   "scripts": {
@@ -17,7 +18,9 @@
   "dependencies": {
     "postcss": "^8.4.35",
     "tailwindcss": "^3.4.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "@tailwindcss/typography": "^0.5.10",
+    "nativewind": "^4.0.1"
   },
   "devDependencies": {
     "@hoarder/eslint-config": "workspace:^0.2.0",

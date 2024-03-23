@@ -58,7 +58,7 @@ export default function TextCard({
           ),
         )}
       >
-        <Markdown className="prose dark:prose-invert grow overflow-hidden">
+        <Markdown className="prose grow overflow-hidden dark:prose-invert">
           {bookmarkedText.text}
         </Markdown>
         <div className="mt-4 flex flex-none flex-wrap gap-1 overflow-hidden">

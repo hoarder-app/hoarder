@@ -104,7 +104,7 @@ function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
             dangerouslySetInnerHTML={{
               __html: bookmark.content.htmlContent || "",
             }}
-            className="prose dark:prose-invert mx-auto"
+            className="prose mx-auto dark:prose-invert"
           />
         );
       }
@@ -112,7 +112,7 @@ function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
     }
     case "text": {
       content = (
-        <Markdown className="prose dark:prose-invert mx-auto">
+        <Markdown className="prose mx-auto dark:prose-invert">
           {bookmark.content.text}
         </Markdown>
       );
