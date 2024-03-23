@@ -1,11 +1,6 @@
-import type { Metadata } from "next";
 import React from "react";
 import TopNav from "@/components/dashboard/bookmarks/TopNav";
 import UploadDropzone from "@/components/dashboard/UploadDropzone";
-
-export const metadata: Metadata = {
-  title: "Hoarder - Bookmarks",
-};
 
 export default function BookmarksLayout({
   children,
