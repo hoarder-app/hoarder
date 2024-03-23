@@ -18,6 +18,7 @@ Hoarder is an open source "Bookmark Everything" app that uses AI for automatical
 - ✨ AI-based (aka chatgpt) automatic tagging.
 - 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje) for quick bookmarking.
 - 📱 An iOS app that's pending apple's review.
+- 🌙 Dark mode support.
 - 💾 Self-hosting first.
 - [Planned] Archiving the content for offline reading.
 

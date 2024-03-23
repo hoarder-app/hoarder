@@ -20,7 +20,7 @@ function ListItem({
 }) {
   return (
     <Link href={path}>
-      <div className="rounded-md border border-gray-200 bg-background px-4 py-2 text-lg">
+      <div className="rounded-md border border-border bg-background px-4 py-2 text-lg">
         <p className="text-nowrap">
           {icon} {name}
         </p>

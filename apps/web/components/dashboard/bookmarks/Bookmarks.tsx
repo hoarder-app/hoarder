@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
 
@@ -27,7 +28,7 @@ export default async function Bookmarks({
   return (
     <div className="container flex flex-col gap-3">
       {header}
-      {showDivider && <hr />}
+      {showDivider && <Separator />}
       <UpdatableBookmarksGrid
         query={query}
         bookmarks={bookmarks}

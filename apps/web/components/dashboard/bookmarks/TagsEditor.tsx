@@ -99,6 +99,17 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
       closeMenuOnSelect={false}
       isClearable={false}
       isLoading={isExistingTagsLoading || isMutating}
+      theme={(theme) => ({
+        ...theme,
+        // This color scheme doesn't support disabled options.
+        colors: {
+          ...theme.colors,
+          primary: "hsl(var(--accent))",
+          primary50: "hsl(var(--accent))",
+          primary75: "hsl(var(--accent))",
+          primary25: "hsl(var(--accent))",
+        },
+      })}
       styles={{
         multiValueRemove: () => ({
           "background-color": "transparent",
@@ -110,6 +121,14 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
           overflowY: "auto",
           scrollbarWidth: "none",
         }),
+        control: (styles) => ({
+          ...styles,
+          "background-color": "hsl(var(--background))",
+          "border-color": "hsl(var(--border))",
+          ":hover": {
+            "border-color": "hsl(var(--border))",
+          },
+        }),
       }}
       components={{
         MultiValueContainer: ({ children, data }) => (
@@ -118,7 +137,7 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
               "flex min-h-8 space-x-1 rounded px-2",
               (data as { attachedBy: string }).attachedBy == "ai"
                 ? "bg-gradient-to-tr from-purple-500 to-purple-400 text-white"
-                : "bg-gray-200",
+                : "bg-accent",
             )}
           >
             {children}
@@ -137,8 +156,9 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
       }}
       classNames={{
         multiValueRemove: () => "my-auto",
-        valueContainer: () => "gap-2",
-        menuList: () => "text-sm",
+        valueContainer: () => "gap-2 bg-background",
+        menuList: () => "text-sm bg-background",
+        option: () => "text-red-500",
       }}
     />
   );

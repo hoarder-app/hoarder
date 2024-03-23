@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
+import { Separator } from "@/components/ui/separator";
 import LoadingSpinner from "@/components/ui/spinner";
 import {
   Table,
@@ -96,7 +97,7 @@ function ServerStatsSection() {
           </TableRow>
         </TableBody>
       </Table>
-      <hr />
+      <Separator />
       <p className="text-xl">Background Jobs</p>
       <Table className="w-1/2">
         <TableBody>
@@ -190,13 +191,13 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="m-4 flex flex-col gap-5 rounded-md border bg-white p-4">
+    <div className="m-4 flex flex-col gap-5 rounded-md border bg-background p-4">
       <p className="text-2xl">Admin</p>
-      <hr />
+      <Separator />
       <ServerStatsSection />
-      <hr />
+      <Separator />
       <UsersSection />
-      <hr />
+      <Separator />
       <ActionsSection />
     </div>
   );

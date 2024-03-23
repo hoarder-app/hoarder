@@ -4,6 +4,10 @@
 
 ![Homepage](/img/screenshots/homepage.png)
 
+## Homepage (Dark Mode)
+
+![Homepage](/img/screenshots/homepage-dark.png)
+
 ## Tags
 
 ![All Tags](/img/screenshots/all-tags.png)

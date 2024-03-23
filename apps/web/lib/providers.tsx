@@ -2,6 +2,7 @@
 
 import type { Session } from "next-auth";
 import React, { useState } from "react";
+import { ThemeProvider } from "@/components/theme-provider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { SessionProvider } from "next-auth/react";
@@ -73,7 +74,14 @@ export default function Providers({
       <SessionProvider session={session}>
         <api.Provider client={trpcClient} queryClient={queryClient}>
           <QueryClientProvider client={queryClient}>
-            {children}
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+            </ThemeProvider>
           </QueryClientProvider>
         </api.Provider>
       </SessionProvider>

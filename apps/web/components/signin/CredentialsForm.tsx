@@ -53,7 +53,7 @@ function SignIn() {
       >
         <div className="flex w-full flex-col space-y-2">
           {signinError && (
-            <p className="w-full text-center text-red-500">
+            <p className="w-full text-center text-destructive">
               Incorrect username or password
             </p>
           )}
@@ -137,7 +137,9 @@ function SignUp() {
       >
         <div className="flex w-full flex-col space-y-2">
           {errorMessage && (
-            <p className="w-full text-center text-red-500">{errorMessage}</p>
+            <p className="w-full text-center text-destructive">
+              {errorMessage}
+            </p>
           )}
           <FormField
             control={form.control}

@@ -22,12 +22,12 @@ export default async function Sidebar() {
   return (
     <aside className="flex h-screen w-60 flex-col gap-5 border-r p-4">
       <Link href={"/dashboard/bookmarks"}>
-        <div className="flex items-center rounded-lg px-1 text-slate-900">
+        <div className="flex items-center rounded-lg px-1 text-foreground">
           <PackageOpen />
           <span className="ml-2 text-base font-semibold">Hoarder</span>
         </div>
       </Link>
-      <hr />
+      <Separator />
       <div>
         <ul className="space-y-2 text-sm font-medium">
           <SidebarItem

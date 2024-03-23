@@ -84,7 +84,7 @@ export default function LinkCard({
           <div className="mt-1 flex justify-between text-gray-500">
             <div className="my-auto">
               <Link
-                className="line-clamp-1 hover:text-black"
+                className="line-clamp-1 hover:text-foreground"
                 href={link.url}
                 target="_blank"
               >

@@ -19,8 +19,8 @@ export default function SidebarItem({
   return (
     <li
       className={cn(
-        "rounded-lg px-3 py-2 hover:bg-slate-100",
-        path == currentPath ? "bg-gray-50" : "",
+        "rounded-lg px-3 py-2 hover:bg-accent",
+        path == currentPath ? "bg-accent/50" : "",
         className,
       )}
     >

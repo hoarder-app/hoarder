@@ -1,3 +1,4 @@
+import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -16,7 +17,7 @@ export default async function ApiKeys() {
   return (
     <div className="pt-4">
       <span className="text-xl">API Keys</span>
-      <hr className="my-2" />
+      <Separator className="my-2" />
       <div className="flex flex-col space-y-3">
         <div className="flex flex-1 justify-end">
           <AddApiKey />

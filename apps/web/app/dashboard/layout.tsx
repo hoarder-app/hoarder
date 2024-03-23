@@ -15,7 +15,7 @@ export default async function Dashboard({
       <div className="hidden flex-none sm:flex">
         <Sidebar />
       </div>
-      <main className="flex-1 bg-gray-100 sm:overflow-y-auto">
+      <main className="flex-1 bg-muted sm:overflow-y-auto">
         {serverConfig.demoMode && <DemoModeBanner />}
         <div className="block w-full sm:hidden">
           <MobileSidebar />

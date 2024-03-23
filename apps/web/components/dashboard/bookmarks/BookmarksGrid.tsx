@@ -16,7 +16,7 @@ import TextCard from "./TextCard";
 
 function BookmarkCard({ children }: { children: React.ReactNode }) {
   return (
-    <Slot className="border-grey-100 mb-4 border bg-gray-50 duration-300 ease-in hover:shadow-lg hover:transition-all">
+    <Slot className="mb-4 border border-border bg-card duration-300 ease-in hover:shadow-lg hover:transition-all">
       {children}
     </Slot>
   );

@@ -3,6 +3,7 @@
 import { Suspense, useRef } from "react";
 import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
 import { SearchInput } from "@/components/dashboard/search/SearchInput";
+import { Separator } from "@/components/ui/separator";
 import { useBookmarkSearch } from "@/lib/hooks/bookmark-search";
 
 import Loading from "../bookmarks/loading";
@@ -16,7 +17,7 @@ function SearchComp() {
   return (
     <div className="container flex flex-col gap-3 p-4">
       <SearchInput ref={inputRef} autoFocus={true} />
-      <hr />
+      <Separator />
       {data ? <BookmarksGrid bookmarks={data.bookmarks} /> : <Loading />}
     </div>
   );

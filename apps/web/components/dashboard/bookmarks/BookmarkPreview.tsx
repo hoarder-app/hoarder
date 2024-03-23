@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
@@ -82,7 +83,7 @@ function LinkHeader({ bookmark }: { bookmark: ZBookmark }) {
         <span className="my-auto">View Original</span>
         <ExternalLink />
       </Link>
-      <hr />
+      <Separator />
     </div>
   );
 }
@@ -103,7 +104,7 @@ function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
             dangerouslySetInnerHTML={{
               __html: bookmark.content.htmlContent || "",
             }}
-            className="prose mx-auto"
+            className="prose dark:prose-invert mx-auto"
           />
         );
       }
@@ -111,7 +112,9 @@ function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
     }
     case "text": {
       content = (
-        <Markdown className="prose mx-auto">{bookmark.content.text}</Markdown>
+        <Markdown className="prose dark:prose-invert mx-auto">
+          {bookmark.content.text}
+        </Markdown>
       );
       break;
     }
@@ -195,7 +198,7 @@ export default function BookmarkPreview({
       <div className="row-span-2 h-full w-full overflow-hidden p-2 md:col-span-2 lg:row-auto">
         {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
       </div>
-      <div className="lg:col-span1 row-span-1 flex flex-col gap-4 bg-gray-100 p-4 lg:row-auto">
+      <div className="lg:col-span1 row-span-1 flex flex-col gap-4 bg-accent p-4 lg:row-auto">
         {linkHeader}
         <CreationTime createdAt={bookmark.createdAt} />
         <div className="flex gap-2">

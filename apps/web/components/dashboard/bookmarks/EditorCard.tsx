@@ -1,6 +1,7 @@
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { ActionButton } from "@/components/ui/action-button";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
+import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
@@ -55,12 +56,12 @@ export default function EditorCard({ className }: { className?: string }) {
       <form
         className={cn(
           className,
-          "flex h-96 flex-col gap-2 rounded-xl bg-white p-4",
+          "flex h-96 flex-col gap-2 rounded-xl bg-card p-4",
         )}
         onSubmit={form.handleSubmit(onSubmit, onError)}
       >
         <p className="text-sm">NEW ITEM</p>
-        <hr />
+        <Separator />
         <FormField
           control={form.control}
           name="text"

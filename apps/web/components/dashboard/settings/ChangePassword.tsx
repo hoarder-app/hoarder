@@ -11,6 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,7 +56,7 @@ export function ChangePassword() {
   return (
     <div className="w-full pt-4">
       <span className="text-xl">Change Password</span>
-      <hr className="my-2" />
+      <Separator className="my-2" />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

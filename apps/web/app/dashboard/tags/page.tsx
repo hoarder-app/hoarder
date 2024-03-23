@@ -7,7 +7,7 @@ import { getServerAuthSession } from "@/server/auth";
 function TagPill({ name, count }: { name: string; count: number }) {
   return (
     <Link
-      className="flex gap-2 rounded-md border border-gray-200 bg-white px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
+      className="flex gap-2 rounded-md border border-border bg-background px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
       href={`/dashboard/tags/${name}`}
     >
       {name} <Separator orientation="vertical" /> {count}
@@ -38,7 +38,7 @@ export default async function TagsPage() {
   return (
     <div className="container mt-2 space-y-3">
       <span className="text-2xl">All Tags</span>
-      <hr />
+      <Separator />
       <div className="flex flex-wrap gap-3">{tagPill}</div>
     </div>
   );
