@@ -59,6 +59,8 @@ export default function EditorCard({ className }: { className?: string }) {
         )}
         onSubmit={form.handleSubmit(onSubmit, onError)}
       >
+        <p className="text-sm">NEW ITEM</p>
+        <hr />
         <FormField
           control={form.control}
           name="text"
@@ -84,8 +86,8 @@ export default function EditorCard({ className }: { className?: string }) {
             );
           }}
         />
-        <ActionButton loading={isPending} type="submit" variant="ghost">
-          Save
+        <ActionButton loading={isPending} type="submit" variant="default">
+          {form.formState.dirtyFields.text ? "Press ⌘ + Enter to Save" : "Save"}
         </ActionButton>
       </form>
     </Form>
