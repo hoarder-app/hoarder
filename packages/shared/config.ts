@@ -14,6 +14,7 @@ const serverConfig = {
     headlessBrowser: (process.env.CRAWLER_HEADLESS_BROWSER ?? "true") == "true",
     browserExecutablePath: process.env.BROWSER_EXECUTABLE_PATH, // If not set, the system's browser will be used
     browserUserDataDir: process.env.BROWSER_USER_DATA_DIR,
+    browserWebUrl: process.env.BROWSER_WEB_URL,
   },
   meilisearch: process.env.MEILI_ADDR
     ? {

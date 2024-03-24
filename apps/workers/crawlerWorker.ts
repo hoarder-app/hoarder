@@ -1,10 +1,11 @@
 import assert from "assert";
+import * as dns from "dns";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
 import { Job, Worker } from "bullmq";
 import DOMPurify from "dompurify";
 import { eq } from "drizzle-orm";
-import { isShuttingDown, shutdownPromise } from "exit";
+import { isShuttingDown } from "exit";
 import { JSDOM } from "jsdom";
 import metascraper from "metascraper";
 import metascraperDescription from "metascraper-description";
@@ -50,11 +51,38 @@ const browserMutex = new Mutex();
 async function launchBrowser() {
   browser = undefined;
   await browserMutex.runExclusive(async () => {
-    browser = await puppeteer.launch({
-      headless: serverConfig.crawler.headlessBrowser,
-      executablePath: serverConfig.crawler.browserExecutablePath,
-      userDataDir: serverConfig.crawler.browserUserDataDir,
-    });
+    try {
+      if (serverConfig.crawler.browserWebUrl) {
+        logger.info(
+          `Connecting to existing browser instance: ${serverConfig.crawler.browserWebUrl}`,
+        );
+        const webUrl = new URL(serverConfig.crawler.browserWebUrl);
+        // We need to resolve the ip address as a workaround for https://github.com/puppeteer/puppeteer/issues/2242
+        const { address: address } = await dns.promises.lookup(webUrl.hostname);
+        webUrl.hostname = address;
+        logger.info(
+          `Successfully resolved IP address, new address: ${webUrl.toString()}`,
+        );
+        browser = await puppeteer.connect({
+          browserURL: webUrl.toString(),
+        });
+      } else {
+        logger.info(`Launching a new browser instance`);
+        browser = await puppeteer.launch({
+          headless: serverConfig.crawler.headlessBrowser,
+          executablePath: serverConfig.crawler.browserExecutablePath,
+          userDataDir: serverConfig.crawler.browserUserDataDir,
+        });
+      }
+    } catch (e) {
+      logger.error(
+        "Failed to connect to the browser instance, will retry in 5 secs",
+      );
+      setTimeout(() => {
+        launchBrowser();
+      }, 5000);
+      return;
+    }
     browser.on("disconnected", async () => {
       if (isShuttingDown) {
         logger.info(
@@ -91,13 +119,15 @@ export class CrawlerWorker {
     );
 
     worker.on("completed", (job) => {
-      const jobId = job?.id || "unknown";
+      const jobId = job?.id ?? "unknown";
       logger.info(`[Crawler][${jobId}] Completed successfully`);
     });
 
     worker.on("failed", (job, error) => {
-      const jobId = job?.id || "unknown";
-      logger.error(`[Crawler][${jobId}] Crawling job failed: ${error}`);
+      const jobId = job?.id ?? "unknown";
+      logger.error(
+        `[Crawler][${jobId}] Crawling job failed: ${JSON.stringify(error)}`,
+      );
     });
 
     return worker;
@@ -160,7 +190,7 @@ async function crawlPage(url: string) {
 }
 
 async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
-  const jobId = job.id || "unknown";
+  const jobId = job.id ?? "unknown";
 
   const request = zCrawlLinkRequestSchema.safeParse(job.data);
   if (!request.success) {
