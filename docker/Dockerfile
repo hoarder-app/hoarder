@@ -72,18 +72,9 @@ RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-lin
 FROM --platform=$BUILDPLATFORM node:21-alpine AS workers
 WORKDIR /app
 
-# Install chromium needed for puppeteer
-RUN apk add --no-cache chromium runuser
-ENV CHROME_PATH "/usr/bin/chromium-browser"
-ENV BROWSER_EXECUTABLE_PATH "/app/start-chrome.sh"
-ENV BROWSER_USER_DATA_DIR="/tmp/chrome"
-
 COPY --from=workers_builder /prod apps/workers
 
 RUN corepack enable
-
-ADD docker/start-chrome.sh .
-RUN chmod +x start-chrome.sh
 
 WORKDIR /app/apps/workers
 
