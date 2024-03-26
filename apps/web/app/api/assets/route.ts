@@ -1,7 +1,9 @@
 import { createContextFromRequest } from "@/server/api/client";
+import { TRPCError } from "@trpc/server";
 
 import type { ZUploadResponse } from "@hoarder/trpc/types/uploads";
 import { saveAsset } from "@hoarder/shared/assetdb";
+import serverConfig from "@hoarder/shared/config";
 
 const SUPPORTED_ASSET_TYPES = new Set(["image/jpeg", "image/png"]);
 
@@ -12,6 +14,12 @@ export async function POST(request: Request) {
   const ctx = await createContextFromRequest(request);
   if (!ctx.user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (serverConfig.demoMode) {
+    throw new TRPCError({
+      message: "Mutations are not allowed in demo mode",
+      code: "FORBIDDEN",
+    });
   }
   const formData = await request.formData();
   const data = formData.get("image");
