@@ -35,7 +35,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const linkId = bookmark.id;
 
-  const demoMode = useClientConfig().demoMode;
+  const demoMode = !!useClientConfig().demoMode;
 
   const { setOpen: setTagModalIsOpen, content: tagModal } =
     useTagModel(bookmark);

@@ -117,6 +117,11 @@ export default function AddToListModal({
                                     {l.icon} {l.name}
                                   </SelectItem>
                                 ))}
+                                {lists && lists.lists.length == 0 && (
+                                  <SelectItem value="nolist" disabled>
+                                    You don&apos;t currently have any lists.
+                                  </SelectItem>
+                                )}
                               </SelectGroup>
                             </SelectContent>
                           </Select>

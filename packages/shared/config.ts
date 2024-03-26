@@ -23,7 +23,10 @@ const serverConfig = {
       }
     : undefined,
   logLevel: process.env.LOG_LEVEL ?? "debug",
-  demoMode: (process.env.DEMO_MODE ?? "false") == "true",
+  demoMode: (process.env.DEMO_MODE ?? "false") == "true" ? {
+    email: process.env.DEMO_MODE_EMAIL,
+    password: process.env.DEMO_MODE_PASSWORD,
+  }: undefined,
   dataDir: process.env.DATA_DIR ?? "",
 };
 

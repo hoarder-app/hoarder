@@ -1,5 +1,7 @@
 import { getProviders } from "next-auth/react";
 
+import serverConfig from "@hoarder/shared/config";
+
 import CredentialsForm from "./CredentialsForm";
 import SignInProviderButton from "./SignInProviderButton";
 
@@ -15,6 +17,13 @@ export default async function SignInForm() {
 
   return (
     <div className="flex flex-col items-center space-y-2">
+      {serverConfig.demoMode && (
+        <div className="mb-1 w-full items-start space-y-1 rounded bg-accent p-3">
+          <p className="text-center font-bold">Demo Mode</p>
+          <p>Email: {serverConfig.demoMode.email} </p>
+          <p>Password: {serverConfig.demoMode.password} </p>
+        </div>
+      )}
       <CredentialsForm />
 
       {providerValues && providerValues.length > 0 && (
