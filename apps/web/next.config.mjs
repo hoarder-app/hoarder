@@ -25,7 +25,7 @@ const nextConfig = withPWA({
           // Allow for specific domains to have access or * for all
           {
             key: "Access-Control-Allow-Origin",
-            value: "chrome-extension://kgcjekpmcjjogibpjebkhaanilehneje",
+            value: "*",
           },
           // Allows for specific methods accepted
           {
