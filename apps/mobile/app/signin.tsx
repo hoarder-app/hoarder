@@ -56,7 +56,7 @@ export default function Signin() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View className="flex h-full flex-col justify-center gap-2 px-4">
           <View className="items-center">
-            <Logo />
+            <Logo height={150} width={200} />
           </View>
           {error && (
             <Text className="w-full text-center text-red-500">{error}</Text>

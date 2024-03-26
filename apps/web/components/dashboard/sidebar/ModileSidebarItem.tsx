@@ -19,7 +19,7 @@ export default function MobileSidebarItem({
         path == currentPath ? "bg-background" : "",
       )}
     >
-      <Link href={path} className="mx-auto px-3 py-2">
+      <Link href={path} className="m-auto px-3 py-2">
         {logo}
       </Link>
     </li>

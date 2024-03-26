@@ -1,4 +1,4 @@
-# <img width="25px" src="./screenshots/logo.png" /> Hoarder
+# <img height="50px" src="./screenshots/logo.png" />
 
 A self-hostable bookmark-everything app with a touch of AI for the data hoarders out there.
 

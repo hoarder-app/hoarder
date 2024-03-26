@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import HoarderLogo from "@/components/HoarderIcon";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
-import { Home, PackageOpen, Search, Settings, Shield, Tag } from "lucide-react";
+import { Home, Search, Settings, Shield, Tag } from "lucide-react";
 
 import serverConfig from "@hoarder/shared/config";
 
@@ -22,10 +23,7 @@ export default async function Sidebar() {
   return (
     <aside className="flex h-screen w-60 flex-col gap-5 border-r p-4">
       <Link href={"/dashboard/bookmarks"}>
-        <div className="flex items-center rounded-lg px-1 text-foreground">
-          <PackageOpen />
-          <span className="ml-2 text-base font-semibold">Hoarder</span>
-        </div>
+        <HoarderLogo height={20} gap="8px" />
       </Link>
       <Separator />
       <div>

@@ -51,10 +51,11 @@ const config: Config = {
     // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     navbar: {
-      title: 'Hoarder',
+      title: '',
       logo: {
         alt: 'Hoarder Logo',
-        src: 'img/logo.png',
+        src: 'img/logo-full.svg',
+        width: "120px",
       },
       items: [
         {

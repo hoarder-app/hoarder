@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
+import HoarderLogo from "@/components/HoarderLogo";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import screenshot from "@/public/screenshot.png";
-import { ExternalLink, Github, PackageOpen } from "lucide-react";
+import { ExternalLink, Github } from "lucide-react";
 
 const GITHUB_LINK = "https://github.com/MohamedBassem/hoarder-app";
 const DOCS_LINK = "https://docs.hoarder.app";
@@ -12,10 +13,7 @@ const DEMO_LINK = "https://try.hoarder.app";
 function NavBar() {
   return (
     <div className="flex justify-between px-3 py-4">
-      <div className="flex items-center justify-center gap-x-2">
-        <PackageOpen size="40" className="" />
-        <p className="text-2xl">Hoarder</p>
-      </div>
+      <HoarderLogo height={30} gap="8px" />
       <div className="hidden gap-10 sm:flex">
         <Link
           href={DOCS_LINK}
