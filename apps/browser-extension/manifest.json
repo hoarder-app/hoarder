@@ -15,5 +15,10 @@
     "page": "index.html#options",
     "open_in_tab": false
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "addon@hoarder.app"
+    }
+  },
   "permissions": ["storage", "tabs"]
 }
