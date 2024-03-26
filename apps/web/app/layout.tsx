@@ -17,7 +17,8 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Hoarder",
   applicationName: "Hoarder",
-  description: "Your AI powered second brain",
+  description:
+    "The Bookmark Everything app. Hoard links, notes, and images and they will get automatically tagged AI.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

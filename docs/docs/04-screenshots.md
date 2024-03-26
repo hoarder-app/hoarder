@@ -16,6 +16,10 @@
 
 ![All Lists](/img/screenshots/all-lists.png)
 
+## Bookmark Preview
+
+![Bookmark Preview](/img/screenshots/bookmark-preview.png)
+
 ## Settings
 
 ![Settings](/img/screenshots/settings.png)

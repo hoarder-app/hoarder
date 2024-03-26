@@ -55,6 +55,7 @@ const config: Config = {
       logo: {
         alt: 'Hoarder Logo',
         src: 'img/logo-full.svg',
+        srcDark: 'img/logo-full-white.svg',
         width: "120px",
       },
       items: [

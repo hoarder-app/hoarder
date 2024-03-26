@@ -13,7 +13,7 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 - ✨ AI-based (aka chatgpt) automatic tagging.
 - 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje) for quick bookmarking.
 - 📱 An iOS app that's pending apple's review.
-- 🌙 Dark mode support.
+- 🌙 Dark mode support (web only so far).
 - 💾 Self-hosting first.
 - [Planned] Archiving the content for offline reading.
 
@@ -53,7 +53,7 @@ The demo is seeded with some content, but it's in read-only mode to prevent abus
 
 I browse reddit, twitter and hackernews a lot from my phone. I frequently find interesting stuff (articles, tools, etc) that I'd like to bookmark and read later when I'm in front of a laptop. Typical read-it-later apps usecase. Initially, I was using [Pocket](getpocket.com) for that. Then I got into self-hosting and I wanted to self-host this usecase. I used [memos](https://github.com/usememos/memos) for those quick notes and I loved it but it was lacking some features that I found important for that usecase such as link previews and automatic tagging (more on that in the next section).
 
-I'm a systems engineer in my day job (and have been for the past 7 years). I didn't want to get too detached from the web development world. I decided to build this app as a way to keep my hand dirty with web development, and at the same time, build something that I care about and will use everyday.
+I'm a systems engineer in my day job (and have been for the past 7 years). I didn't want to get too detached from the web development world. I decided to build this app as a way to keep my hand dirty with web development, and at the same time, build something that I care about and use every day.
 
 ## Alternatives
 
