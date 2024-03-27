@@ -29,6 +29,7 @@ const allEnv = z.object({
   DEMO_MODE_EMAIL: z.string().optional(),
   DEMO_MODE_PASSWORD: z.string().optional(),
   DATA_DIR: z.string().default(""),
+  MAX_ASSET_SIZE_MB: z.coerce.number().default(4),
 });
 
 const serverConfigSchema = allEnv.transform((val) => {
@@ -69,6 +70,7 @@ const serverConfigSchema = allEnv.transform((val) => {
         }
       : undefined,
     dataDir: val.DATA_DIR,
+    maxAssetSizeMb: val.MAX_ASSET_SIZE_MB,
   };
 });
 

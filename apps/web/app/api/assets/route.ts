@@ -11,7 +11,7 @@ const SUPPORTED_ASSET_TYPES = new Set([
   "image/webp",
 ]);
 
-const MAX_UPLOAD_SIZE_BYTES = 4 * 1024 * 1024;
+const MAX_UPLOAD_SIZE_BYTES = serverConfig.maxAssetSizeMb * 1024 * 1024;
 
 export const dynamic = "force-dynamic";
 export async function POST(request: Request) {

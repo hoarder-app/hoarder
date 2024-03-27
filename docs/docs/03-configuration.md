@@ -2,25 +2,27 @@
 
 The app is mainly configured by environment variables. All the used environment variables are listed in [packages/shared/config.ts](https://github.com/MohamedBassem/hoarder-app/blob/main/packages/shared/config.ts). The most important ones are:
 
-| Name             | Required                              | Default   | Description                                                                                                                               |
-| ---------------- | ------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| DATA_DIR         | Yes                                   | Not set   | The path for the persistent data directory. This is where the db and the uploaded assets live.                                            |
-| NEXTAUTH_SECRET  | Yes                                   | Not set   | Random string used to sign the JWT tokens. Generate one with `openssl rand -base64 36`.                                                   |
-| REDIS_HOST       | Yes                                   | localhost | The address of redis used by background jobs                                                                                              |
-| REDIS_POST       | Yes                                   | 6379      | The port of redis used by background jobs                                                                                                 |
-| REDIS_DB_IDX     | No                                    | Not set   | The db idx to use with redis. It defaults to 0 (in the client) so you don't usually need to set it unless you explicitly want another db. |
-| MEILI_ADDR       | No                                    | Not set   | The address of meilisearch. If not set, Search will be disabled. E.g. (`http://meilisearch:7700`)                                         |
-| MEILI_MASTER_KEY | Only in Prod and if search is enabled | Not set   | The master key configured for meilisearch. Not needed in development environment. Generate one with `openssl rand -base64 36`             |
-| DISABLE_SIGNUPS  | No                                    | false     | If enabled, no new signups will be allowed and the signup button will be disabled in the UI                                               |
+| Name              | Required                              | Default   | Description                                                                                                                               |
+| ----------------- | ------------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| DATA_DIR          | Yes                                   | Not set   | The path for the persistent data directory. This is where the db and the uploaded assets live.                                            |
+| NEXTAUTH_SECRET   | Yes                                   | Not set   | Random string used to sign the JWT tokens. Generate one with `openssl rand -base64 36`.                                                   |
+| REDIS_HOST        | Yes                                   | localhost | The address of redis used by background jobs                                                                                              |
+| REDIS_POST        | Yes                                   | 6379      | The port of redis used by background jobs                                                                                                 |
+| REDIS_DB_IDX      | No                                    | Not set   | The db idx to use with redis. It defaults to 0 (in the client) so you don't usually need to set it unless you explicitly want another db. |
+| MEILI_ADDR        | No                                    | Not set   | The address of meilisearch. If not set, Search will be disabled. E.g. (`http://meilisearch:7700`)                                         |
+| MEILI_MASTER_KEY  | Only in Prod and if search is enabled | Not set   | The master key configured for meilisearch. Not needed in development environment. Generate one with `openssl rand -base64 36`             |
+| DISABLE_SIGNUPS   | No                                    | false     | If enabled, no new signups will be allowed and the signup button will be disabled in the UI                                               |
+| MAX_ASSET_SIZE_MB | No                                    | 4         | Sets the maximum allowed asset size (in MB) to be uploaded                                                                                |
 
 ## Inference Configs (For automatic tagging)
 
 Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic tagging to be enabled. Otherwise, automatic tagging will be skipped.
 
 :::warning
+
 - The quality of the tags you'll get will depend on the quality of the model you choose.
 - Running local models is a recent addition and not as battle tested as using OpenAI, so proceed with care (and potentially expect a bunch of inference failures).
-:::
+  :::
 
 | Name                  | Required | Default              | Description                                                                                                                                                                                     |
 | --------------------- | -------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
