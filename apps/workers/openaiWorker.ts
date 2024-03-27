@@ -89,6 +89,14 @@ CONTENT START HERE:
 function buildPrompt(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
 ) {
+  const truncateContent = (content: string) => {
+      let words = content.split(" ");
+      if (words.length > 1500) {
+        words = words.slice(1500);
+        content = words.join(" ");
+      }
+    return content;
+  };
   if (bookmark.link) {
     if (!bookmark.link.description && !bookmark.link.content) {
       throw new Error(
@@ -98,11 +106,7 @@ function buildPrompt(
 
     let content = bookmark.link.content;
     if (content) {
-      let words = content.split(" ");
-      if (words.length > 2000) {
-        words = words.slice(2000);
-        content = words.join(" ");
-      }
+      content = truncateContent(content);
     }
     return `
 ${TEXT_PROMPT_BASE}
@@ -114,10 +118,11 @@ Content: ${content ?? ""}
   }
 
   if (bookmark.text) {
+    const content = truncateContent(bookmark.text.text ?? "");
     // TODO: Ensure that the content doesn't exceed the context length of openai
     return `
 ${TEXT_PROMPT_BASE}
-${bookmark.text.text}
+${content}
   `;
   }
 

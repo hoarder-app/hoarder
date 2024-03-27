@@ -15,7 +15,7 @@ export type ZBookmarkedLink = z.infer<typeof zBookmarkedLinkSchema>;
 
 export const zBookmarkedTextSchema = z.object({
   type: z.literal("text"),
-  text: z.string().max(2000),
+  text: z.string(),
 });
 export type ZBookmarkedText = z.infer<typeof zBookmarkedTextSchema>;
 
