@@ -83,7 +83,7 @@ async function launchBrowser() {
       }, 5000);
       return;
     }
-    browser.on("disconnected", async () => {
+    browser.on("disconnected", async (): Promise<void> => {
       if (isShuttingDown) {
         logger.info(
           "The puppeteer browser got disconnected. But we're shutting down so won't restart it.",
