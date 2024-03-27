@@ -10,7 +10,7 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 - ⬇️ Automatic fetching for link titles, descriptions and images.
 - 📋 Sort your bookmarks into lists.
 - 🔎 Full text search of all the content stored.
-- ✨ AI-based (aka chatgpt) automatic tagging.
+- ✨ AI-based (aka chatgpt) automatic tagging. With supports for local models using ollama!
 - 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje) for quick bookmarking.
 - 📱 An iOS app that's pending apple's review.
 - 🌙 Dark mode support (web only so far).

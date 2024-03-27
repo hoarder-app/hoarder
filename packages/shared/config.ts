@@ -12,6 +12,7 @@ const allEnv = z.object({
   DISABLE_SIGNUPS: stringBool("false"),
   OPENAI_API_KEY: z.string().optional(),
   OPENAI_BASE_URL: z.string().url().optional(),
+  OLLAMA_BASE_URL: z.string().url().optional(),
   INFERENCE_TEXT_MODEL: z.string().default("gpt-3.5-turbo-0125"),
   INFERENCE_IMAGE_MODEL: z.string().default("gpt-4-vision-preview"),
   REDIS_HOST: z.string().default("localhost"),
@@ -38,6 +39,7 @@ const serverConfigSchema = allEnv.transform((val) => {
     inference: {
       openAIApiKey: val.OPENAI_API_KEY,
       openAIBaseUrl: val.OPENAI_BASE_URL,
+      ollamaBaseUrl: val.OLLAMA_BASE_URL,
       textModel: val.INFERENCE_TEXT_MODEL,
       imageModel: val.INFERENCE_IMAGE_MODEL,
     },
