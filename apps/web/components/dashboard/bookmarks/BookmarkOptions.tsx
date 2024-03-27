@@ -52,6 +52,9 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const invalidateBookmarkCache =
     api.useUtils().bookmarks.getBookmark.invalidate;
 
+  const invalidateSearchCache =
+    api.useUtils().bookmarks.searchBookmarks.invalidate;
+
   const onError = () => {
     toast({
       variant: "destructive",
@@ -68,6 +71,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
     onError,
     onSettled: () => {
       invalidateAllBookmarksCache();
+      invalidateSearchCache();
     },
   });
 
@@ -81,6 +85,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
     onSettled: () => {
       invalidateBookmarkCache({ bookmarkId: bookmark.id });
       invalidateAllBookmarksCache();
+      invalidateSearchCache();
     },
   });
 
