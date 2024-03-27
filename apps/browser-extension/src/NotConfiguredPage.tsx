@@ -19,7 +19,7 @@ export default function NotConfiguredPage() {
       setError("Server address is required");
       return;
     }
-    setSettings((s) => ({ ...s, address: serverAddress }));
+    setSettings((s) => ({ ...s, address: serverAddress.replace(/\/$/, "") }));
     navigate("/signin");
   };
 
