@@ -17,14 +17,14 @@ export default function Layout() {
 
   return (
     <div className="flex flex-col space-y-2">
-      <div className="rounded-md bg-yellow-100 p-4">
+      <div className="rounded-md bg-yellow-100 p-4 text-black">
         <Outlet />
       </div>
       <hr />
       <div className="flex justify-between space-x-3">
         <div className="my-auto">
           <a
-            className="flex gap-2 text-black"
+            className="flex gap-2 text-foreground"
             target="_blank"
             rel="noreferrer"
             href={`${settings.address}/dashboard/bookmarks`}

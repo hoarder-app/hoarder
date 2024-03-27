@@ -1,10 +1,8 @@
-/** @type {import('tailwindcss').Config} */
-const tailwindConfig = {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  theme: {
-    extend: {},
-  },
-  plugins: [],
+import web from "@hoarder/tailwind-config/web";
+
+const config = {
+  content: web.content,
+  presets: [web],
 };
 
-export default tailwindConfig;
+export default config;
