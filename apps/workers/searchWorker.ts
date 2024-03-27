@@ -1,16 +1,17 @@
+import type { Job } from "bullmq";
+import { Worker } from "bullmq";
+import { eq } from "drizzle-orm";
+
+import type { ZSearchIndexingRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
+import { bookmarks } from "@hoarder/db/schema";
 import logger from "@hoarder/shared/logger";
-import { getSearchIdxClient } from "@hoarder/shared/search";
 import {
-  SearchIndexingQueue,
-  ZSearchIndexingRequest,
   queueConnectionDetails,
+  SearchIndexingQueue,
   zSearchIndexingRequestSchema,
 } from "@hoarder/shared/queues";
-import { Job } from "bullmq";
-import { Worker } from "bullmq";
-import { bookmarks } from "@hoarder/db/schema";
-import { eq } from "drizzle-orm";
+import { getSearchIdxClient } from "@hoarder/shared/search";
 
 export class SearchIndexingWorker {
   static async build() {
@@ -25,12 +26,12 @@ export class SearchIndexingWorker {
     );
 
     worker.on("completed", (job) => {
-      const jobId = job?.id || "unknown";
+      const jobId = job?.id ?? "unknown";
       logger.info(`[search][${jobId}] Completed successfully`);
     });
 
     worker.on("failed", (job, error) => {
-      const jobId = job?.id || "unknown";
+      const jobId = job?.id ?? "unknown";
       logger.error(`[search][${jobId}] openai job failed: ${error}`);
     });
 
@@ -85,7 +86,7 @@ async function runDelete(
 }
 
 async function runSearchIndexing(job: Job<ZSearchIndexingRequest, void>) {
-  const jobId = job.id || "unknown";
+  const jobId = job.id ?? "unknown";
 
   const request = zSearchIndexingRequestSchema.safeParse(job.data);
   if (!request.success) {
