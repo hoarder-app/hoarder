@@ -38,7 +38,7 @@ export default function AllLists({
       />
       <SidebarItem
         logo={<span className="text-lg">⭐️</span>}
-        name="Favourties"
+        name="Favourites"
         path={`/dashboard/favourites`}
         className="py-0.5"
       />
