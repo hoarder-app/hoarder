@@ -30,6 +30,7 @@ const config = {
     "import/consistent-type-specifier-style": ["error", "prefer-top-level"],
     "@typescript-eslint/no-floating-promises": "off",
     "@typescript-eslint/unbound-method": "off",
+    "@typescript-eslint/restrict-template-expressions": "off",
   },
   ignorePatterns: [
     "**/*.config.js",

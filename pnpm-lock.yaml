@@ -661,6 +661,9 @@ importers:
       '@auth/core':
         specifier: ^0.27.0
         version: 0.27.0
+      '@hoarder/shared':
+        specifier: workspace:*
+        version: link:../shared
       '@paralleldrive/cuid2':
         specifier: ^2.2.2
         version: 2.2.2

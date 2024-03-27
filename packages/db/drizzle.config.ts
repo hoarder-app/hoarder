@@ -1,8 +1,9 @@
 import "dotenv/config";
 import type { Config } from "drizzle-kit";
+import serverConfig from "@hoarder/shared/config";
 
-const databaseURL = process.env.DATA_DIR
-  ? `${process.env.DATA_DIR}/db.db`
+const databaseURL = serverConfig.dataDir
+  ? `${serverConfig.dataDir}/db.db`
   : "./db.db";
 
 export default {

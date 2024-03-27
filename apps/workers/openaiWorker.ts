@@ -41,7 +41,7 @@ async function attemptMarkTaggingStatus(
 }
 
 export class OpenAiWorker {
-  static async build() {
+  static build() {
     logger.info("Starting openai worker ...");
     const worker = new Worker<ZOpenAIRequest, void>(
       OpenAIQueue.name,
@@ -52,14 +52,14 @@ export class OpenAiWorker {
       },
     );
 
-    worker.on("completed", async (job) => {
-      const jobId = job?.id || "unknown";
+    worker.on("completed", async (job): Promise<void> => {
+      const jobId = job?.id ?? "unknown";
       logger.info(`[openai][${jobId}] Completed successfully`);
       await attemptMarkTaggingStatus(job?.data, "success");
     });
 
-    worker.on("failed", async (job, error) => {
-      const jobId = job?.id || "unknown";
+    worker.on("failed", async (job, error): Promise<void> => {
+      const jobId = job?.id ?? "unknown";
       logger.error(`[openai][${jobId}] openai job failed: ${error}`);
       await attemptMarkTaggingStatus(job?.data, "failure");
     });
@@ -152,7 +152,7 @@ async function inferTagsFromImage(
   const base64 = asset.toString('base64');
 
   const chatCompletion = await openai.chat.completions.create({
-    model: "gpt-4-vision-preview",
+    model: serverConfig.inference.imageModel,
     messages: [
       {
         role: "user",
@@ -185,7 +185,7 @@ async function inferTagsFromText(
 ) {
   const chatCompletion = await openai.chat.completions.create({
     messages: [{ role: "system", content: buildPrompt(bookmark) }],
-    model: "gpt-3.5-turbo-0125",
+    model: serverConfig.inference.textModel,
     response_format: { type: "json_object" },
   });
 
@@ -290,11 +290,11 @@ async function connectTags(
 }
 
 async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
-  const jobId = job.id || "unknown";
+  const jobId = job.id ?? "unknown";
 
-  const { openAI } = serverConfig;
+  const { inference } = serverConfig;
 
-  if (!openAI.apiKey) {
+  if (!inference.openAIApiKey) {
     logger.debug(
       `[openai][${jobId}] OpenAI is not configured, nothing to do now`,
     );
@@ -302,7 +302,7 @@ async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
   }
 
   const openai = new OpenAI({
-    apiKey: openAI.apiKey,
+    apiKey: inference.openAIApiKey,
   });
 
   const request = zOpenAIRequestSchema.safeParse(job.data);
