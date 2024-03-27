@@ -2,6 +2,7 @@ import { Ollama } from "ollama";
 import OpenAI from "openai";
 
 import serverConfig from "@hoarder/shared/config";
+import logger from "@hoarder/shared/logger";
 
 export interface InferenceResponse {
   response: string;
@@ -96,16 +97,41 @@ class OllamaInferenceClient implements InferenceClient {
     });
   }
 
-  async inferFromText(prompt: string): Promise<InferenceResponse> {
+  async runModel(model: string, prompt: string, image?: string) {
     const chatCompletion = await this.ollama.chat({
-      model: serverConfig.inference.textModel,
+      model: model,
       format: "json",
-      messages: [{ role: "system", content: prompt }],
+      stream: true,
+      messages: [
+        { role: "user", content: prompt, images: image ? [image] : undefined },
+      ],
     });
 
-    const response = chatCompletion.message.content;
+    let totalTokens = 0;
+    let response = "";
+    try {
+      for await (const part of chatCompletion) {
+        response += part.message.content;
+        if (!isNaN(part.eval_count)) {
+          totalTokens += part.eval_count;
+        }
+        if (!isNaN(part.prompt_eval_count)) {
+          totalTokens += part.prompt_eval_count;
+        }
+      }
+    } catch (e) {
+      // There seem to be some bug in ollama where you can get some successfull response, but still throw an error.
+      // Using stream + accumulating the response so far is a workaround.
+      // https://github.com/ollama/ollama-js/issues/72
+      totalTokens = NaN;
+      logger.warn(`Got an exception from ollama, will still attempt to deserialize the response we got so far: ${e}`)
+    }
 
-    return { response, totalTokens: chatCompletion.eval_count };
+    return { response, totalTokens };
+  }
+
+  async inferFromText(prompt: string): Promise<InferenceResponse> {
+    return await this.runModel(serverConfig.inference.textModel, prompt);
   }
 
   async inferFromImage(
@@ -113,13 +139,6 @@ class OllamaInferenceClient implements InferenceClient {
     _contentType: string,
     image: string,
   ): Promise<InferenceResponse> {
-    const chatCompletion = await this.ollama.chat({
-      model: serverConfig.inference.imageModel,
-      format: "json",
-      messages: [{ role: "user", content: prompt, images: [`${image}`] }],
-    });
-
-    const response = chatCompletion.message.content;
-    return { response, totalTokens: chatCompletion.eval_count };
+    return await this.runModel(serverConfig.inference.imageModel, prompt, image);
   }
 }

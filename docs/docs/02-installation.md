@@ -55,7 +55,7 @@ Learn more about the costs of using openai [here](/openai).
 
     - Make sure ollama is running.
     - Set the `OLLAMA_BASE_URL` env variable to the address of the ollama API.
-    - Set `INFERENCE_TEXT_MODEL` to the model you want to use for text inference in ollama (for example: `llama2`)
+    - Set `INFERENCE_TEXT_MODEL` to the model you want to use for text inference in ollama (for example: `mistral`)
     - Set `INFERENCE_IMAGE_MODEL` to the model you want to use for image inference in ollama (for example: `llava`)
     - Make sure that you `ollama pull`-ed the models that you want to use.
 

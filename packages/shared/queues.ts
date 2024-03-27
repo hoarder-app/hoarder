@@ -1,5 +1,6 @@
 import { Queue } from "bullmq";
 import { z } from "zod";
+
 import serverConfig from "./config";
 
 export const queueConnectionDetails = {
@@ -27,6 +28,13 @@ export type ZOpenAIRequest = z.infer<typeof zOpenAIRequestSchema>;
 
 export const OpenAIQueue = new Queue<ZOpenAIRequest, void>("openai_queue", {
   connection: queueConnectionDetails,
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: {
+      type: "exponential",
+      delay: 500,
+    },
+  },
 });
 
 // Search Indexing Worker

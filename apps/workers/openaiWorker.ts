@@ -14,7 +14,7 @@ import {
   zOpenAIRequestSchema,
 } from "@hoarder/shared/queues";
 
-import { InferenceClientFactory, InferenceClient } from "./inference";
+import { InferenceClient, InferenceClientFactory } from "./inference";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
@@ -36,7 +36,7 @@ async function attemptMarkTaggingStatus(
       })
       .where(eq(bookmarks.id, request.bookmarkId));
   } catch (e) {
-    console.log(`Something went wrong when marking the tagging status: ${e}`);
+    logger.error(`Something went wrong when marking the tagging status: ${e}`);
   }
 }
 
@@ -196,8 +196,9 @@ async function inferTags(
 
     return tags;
   } catch (e) {
+    const responseSneak = response.response.substr(0, 20);
     throw new Error(
-      `[inference][${jobId}] Failed to parse JSON response from inference client: ${e}`,
+      `[inference][${jobId}] The model ignored our prompt and didn't respond with the expected JSON: ${JSON.stringify(e)}. Here's a sneak peak from the response: ${responseSneak}`,
     );
   }
 }
@@ -284,6 +285,10 @@ async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
       `[inference][${jobId}] bookmark with id ${bookmarkId} was not found`,
     );
   }
+
+  logger.info(
+    `[inference][${jobId}] Starting an inference job for bookmark with id "${bookmark.id}"`,
+  );
 
   const tags = await inferTags(jobId, bookmark, inferenceClient);
 
