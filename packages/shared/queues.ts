@@ -5,6 +5,7 @@ import serverConfig from "./config";
 export const queueConnectionDetails = {
   host: serverConfig.bullMQ.redisHost,
   port: serverConfig.bullMQ.redisPort,
+  db: serverConfig.bullMQ.redisDBIdx,
 };
 
 // Link Crawler

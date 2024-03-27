@@ -17,6 +17,7 @@ const allEnv = z.object({
   INFERENCE_IMAGE_MODEL: z.string().default("gpt-4-vision-preview"),
   REDIS_HOST: z.string().default("localhost"),
   REDIS_PORT: z.coerce.number().default(6379),
+  REDIS_DB_IDX: z.coerce.number().optional(),
   CRAWLER_HEADLESS_BROWSER: stringBool("true"),
   BROWSER_EXECUTABLE_PATH: z.string().optional(), // If not set, the system's browser will be used
   BROWSER_USER_DATA_DIR: z.string().optional(),
@@ -46,6 +47,7 @@ const serverConfigSchema = allEnv.transform((val) => {
     bullMQ: {
       redisHost: val.REDIS_HOST,
       redisPort: val.REDIS_PORT,
+      redisDBIdx: val.REDIS_DB_IDX,
     },
     crawler: {
       headlessBrowser: val.CRAWLER_HEADLESS_BROWSER,
