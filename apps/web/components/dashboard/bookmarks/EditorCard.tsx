@@ -76,7 +76,7 @@ export default function EditorCard({ className }: { className?: string }) {
                       "Paste a link, write a note or drag and drop an image in here ..."
                     }
                     onKeyDown={(e) => {
-                      if (e.key === "Enter" && e.metaKey) {
+                      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                         form.handleSubmit(onSubmit, onError)();
                       }
                     }}
