@@ -31,6 +31,8 @@ MEILI_MASTER_KEY=another_random_string
 
 You **should** change the random strings. You can use `openssl rand -base64 36` to generate the random strings.
 
+Using `HOARDER_VERSION=release` will pull the latest stable version. You might want to pin the version instead to control the upgrades (e.g. `HOARDER_VERSION=0.10.0`). Check the latest versions [here](https://github.com/MohamedBassem/hoarder-app/pkgs/container/hoarder-web).
+
 Persistent storage and the wiring between the different services is already taken care of in the docker compose file.
 
 Keep in mind that every time you change the `.env` file, you'll need to re-run `docker compose up`.
@@ -47,13 +49,16 @@ To enable automatic tagging, you'll need to configure OpenAI. This is optional t
 Learn more about the costs of using openai [here](/openai).
 
 <details>
-    <summary>If you want to use Ollama (https://ollama.com/) instead for local inference.</summary>
+    <summary>[EXPERIMENTAL] If you want to use Ollama (https://ollama.com/) instead for local inference.</summary>
+
+    **Note:** The quality of the tags you'll get will depend on the quality of the model you choose. Running local models is a recent addition and not as battle tested as using openai, so proceed with care (and potentially expect a bunch of inference failures).
 
     - Make sure ollama is running.
     - Set the `OLLAMA_BASE_URL` env variable to the address of the ollama API.
     - Set `INFERENCE_TEXT_MODEL` to the model you want to use for text inference in ollama (for example: `llama2`)
     - Set `INFERENCE_IMAGE_MODEL` to the model you want to use for image inference in ollama (for example: `llava`)
     - Make sure that you `ollama pull`-ed the models that you want to use.
+
 
 </details>
 
@@ -64,3 +69,12 @@ Start the service by running:
 ```
 docker compose up -d
 ```
+
+Then visit `http://localhost:3000` and you should be greated with the Sign In page.
+
+
+## Updating
+
+Updating hoarder will depend on what you used for the `HOARDER_VERSION` env variable.
+- If you pinned the app to a specific version, bump the version and re-run `docker compose up -d`. This should pull the new version for you.
+- If you used `HOARDER_VERSION=release`, you'll need to force docker to pull the latest version by running `docker compose up --pull always -d`.

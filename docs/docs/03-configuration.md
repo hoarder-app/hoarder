@@ -17,6 +17,11 @@ The app is mainly configured by environment variables. All the used environment 
 
 Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic tagging to be enabled. Otherwise, automatic tagging will be skipped.
 
+:::warning
+- The quality of the tags you'll get will depend on the quality of the model you choose.
+- Running local models is a recent addition and not as battle tested as using OpenAI, so proceed with care (and potentially expect a bunch of inference failures).
+:::
+
 | Name                  | Required | Default              | Description                                                                                                                                                                                     |
 | --------------------- | -------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | OPENAI_API_KEY        | No       | Not set              | The OpenAI key used for automatic tagging. More on that in [here](/openai).                                                                                                                     |
