@@ -5,7 +5,11 @@ import type { ZUploadResponse } from "@hoarder/trpc/types/uploads";
 import { saveAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 
-const SUPPORTED_ASSET_TYPES = new Set(["image/jpeg", "image/png"]);
+const SUPPORTED_ASSET_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+]);
 
 const MAX_UPLOAD_SIZE_BYTES = 4 * 1024 * 1024;
 
