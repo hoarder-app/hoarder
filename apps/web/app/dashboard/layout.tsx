@@ -21,7 +21,7 @@ export default async function Dashboard({
           <MobileSidebar />
           <Separator />
         </div>
-        {children}
+        <div className="container p-4">{children}</div>
       </main>
     </div>
   );

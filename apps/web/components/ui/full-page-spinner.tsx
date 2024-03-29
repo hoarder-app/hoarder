@@ -1,6 +1,6 @@
-import Spinner from "@/components/ui/spinner";
+import Spinner from "./spinner";
 
-export default function Loading() {
+export function FullPageSpinner() {
   return (
     <div className="flex size-full">
       <div className="m-auto">

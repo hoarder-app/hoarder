@@ -36,7 +36,7 @@ export default async function TagsPage() {
   }
 
   return (
-    <div className="container mt-2 space-y-3">
+    <div className="space-y-3">
       <span className="text-2xl">All Tags</span>
       <Separator />
       <div className="flex flex-wrap gap-3">{tagPill}</div>

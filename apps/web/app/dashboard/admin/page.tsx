@@ -191,7 +191,7 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="m-4 flex flex-col gap-5 rounded-md border bg-background p-4">
+    <div className="flex flex-col gap-5 rounded-md border bg-background p-4">
       <p className="text-2xl">Admin</p>
       <Separator />
       <ServerStatsSection />

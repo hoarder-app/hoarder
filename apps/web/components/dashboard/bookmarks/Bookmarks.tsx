@@ -26,7 +26,7 @@ export default async function Bookmarks({
   const bookmarks = await api.bookmarks.getBookmarks(query);
 
   return (
-    <div className="container flex flex-col gap-3">
+    <div className="flex flex-col gap-3">
       {header}
       {showDivider && <Separator />}
       <UpdatableBookmarksGrid

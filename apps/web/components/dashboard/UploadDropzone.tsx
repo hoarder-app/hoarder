@@ -76,7 +76,7 @@ export default function UploadDropzone({
           <input {...getInputProps()} hidden />
           <div
             className={cn(
-              "fixed inset-0 flex h-full w-full items-center justify-center bg-gray-200 opacity-90",
+              "fixed inset-0 z-50 flex h-full w-full items-center justify-center bg-gray-200 opacity-90",
               isDragging || isUploading || isCreating ? undefined : "hidden",
             )}
           >

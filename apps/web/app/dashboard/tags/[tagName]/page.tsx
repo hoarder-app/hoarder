@@ -28,11 +28,9 @@ export default async function TagPage({
   }
 
   return (
-    <div className="continer mt-4">
-      <Bookmarks
-        header={<p className="text-2xl">{tagName}</p>}
-        query={{ archived: false, tagId: tag.id }}
-      />
-    </div>
+    <Bookmarks
+      header={<p className="text-2xl">{tagName}</p>}
+      query={{ archived: false, tagId: tag.id }}
+    />
   );
 }

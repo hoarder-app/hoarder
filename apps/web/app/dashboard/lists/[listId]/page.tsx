@@ -35,7 +35,7 @@ export default async function ListPage({
         showDivider={true}
         header={
           <div className="flex justify-between">
-            <span className="pt-4 text-2xl">
+            <span className="text-2xl">
               {list.icon} {list.name}
             </span>
             <DeleteListButton list={list} />
