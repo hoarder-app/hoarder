@@ -1,7 +1,7 @@
-import { useIsLoggedIn } from "@/lib/session";
+import { useEffect } from "react";
 import { useRouter } from "expo-router";
 import { Stack } from "expo-router/stack";
-import { useEffect } from "react";
+import { useIsLoggedIn } from "@/lib/session";
 
 export default function Dashboard() {
   const router = useRouter();

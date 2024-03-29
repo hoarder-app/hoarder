@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { ToastProvider } from "@/components/ui/Toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -60,8 +61,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <TrpcProvider settings={settings}>
-      <ToastProvider>{children}</ToastProvider>
-    </TrpcProvider>
+    <SafeAreaProvider>
+      <TrpcProvider settings={settings}>
+        <ToastProvider>{children}</ToastProvider>
+      </TrpcProvider>
+    </SafeAreaProvider>
   );
 }

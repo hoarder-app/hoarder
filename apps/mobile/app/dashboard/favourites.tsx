@@ -1,10 +1,10 @@
-import { SafeAreaView } from "react-native";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
 import PageTitle from "@/components/ui/PageTitle";
+import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 
 export default function Favourites() {
   return (
-    <SafeAreaView>
+    <CustomSafeAreaView>
       <UpdatingBookmarkList
         query={{
           archived: false,
@@ -12,6 +12,6 @@ export default function Favourites() {
         }}
         header={<PageTitle title="⭐️ Favourites" />}
       />
-    </SafeAreaView>
+    </CustomSafeAreaView>
   );
 }

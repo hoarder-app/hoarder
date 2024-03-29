@@ -24,7 +24,7 @@ export default function RootLayout() {
   return (
     <ShareIntentProvider>
       <Providers>
-        <View className="h-full w-full bg-white">
+        <View className="w-full flex-1 bg-background">
           <Stack
             screenOptions={{
               headerShown: false,

@@ -63,6 +63,7 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
           showProgress: false,
         });
         apiUtils.bookmarks.getBookmarks.invalidate();
+        apiUtils.bookmarks.searchBookmarks.invalidate();
       },
       onError,
     });
@@ -85,6 +86,7 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         });
         apiUtils.bookmarks.getBookmarks.invalidate();
         apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: bookmark.id });
+        apiUtils.bookmarks.searchBookmarks.invalidate();
       },
       onError,
     });
@@ -128,7 +130,6 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             title: bookmark.archived ? "Un-archive" : "Archive",
             image: Platform.select({
               ios: "folder",
-              android: "ic_menu_folder",
             }),
           },
           {
@@ -139,7 +140,6 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             },
             image: Platform.select({
               ios: "trash",
-              android: "ic_menu_delete",
             }),
           },
         ]}

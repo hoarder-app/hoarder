@@ -1,7 +1,7 @@
 {
   "name": "@hoarder/mobile",
   "version": "1.0.0",
-  "main": "expo-router/entry",
+  "main": "index.ts",
   "scripts": {
     "clean": "git clean -xdf .expo .turbo node_modules",
     "start": "expo start",
@@ -25,6 +25,7 @@
     "expo-image": "^1.10.6",
     "expo-image-picker": "^14.7.1",
     "expo-linking": "~6.2.2",
+    "expo-navigation-bar": "~2.8.1",
     "expo-router": "~3.4.8",
     "expo-secure-store": "^12.8.1",
     "expo-share-intent": "^1.1.0",
@@ -67,7 +68,9 @@
       "@hoarder/eslint-config/react"
     ],
     "ignorePatterns": [
-      "expo-plugins/**"
+      "expo-plugins/**",
+      "ios/**",
+      "android/**"
     ]
   },
   "prettier": "@hoarder/prettier-config"

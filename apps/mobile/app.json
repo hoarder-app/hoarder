@@ -22,8 +22,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#000000"
       },
       "package": "app.hoarder.hoardermobile"
     },
@@ -38,7 +38,11 @@
             "NSExtensionActivationSupportsImageWithMaxCount": 1,
             "NSExtensionActivationSupportsMovieWithMaxCount": 0,
             "NSExtensionActivationSupportsText": true
-          }
+          },
+          "androidIntentFilters": [
+            "text/*",
+            "image/*"
+          ]
         }
       ],
       "expo-secure-store",

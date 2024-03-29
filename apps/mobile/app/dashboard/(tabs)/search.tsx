@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SafeAreaView, View } from "react-native";
+import { View } from "react-native";
 import BookmarkList from "@/components/bookmarks/BookmarkList";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
@@ -7,6 +7,7 @@ import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
+import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 
 export default function Search() {
   const [search, setSearch] = useState("");
@@ -25,7 +26,7 @@ export default function Search() {
   }
 
   return (
-    <SafeAreaView>
+    <CustomSafeAreaView>
       <BookmarkList
         bookmarks={data.bookmarks}
         header={
@@ -44,6 +45,6 @@ export default function Search() {
         onRefresh={onRefresh}
         isRefreshing={isPending}
       />
-    </SafeAreaView>
+    </CustomSafeAreaView>
   );
 }

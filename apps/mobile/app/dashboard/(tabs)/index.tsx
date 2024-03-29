@@ -1,4 +1,4 @@
-import { Platform, SafeAreaView, View } from "react-native";
+import { Platform, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
@@ -9,6 +9,7 @@ import { useUploadAsset } from "@/lib/upload";
 import { MenuView } from "@react-native-menu/menu";
 import { SquarePen } from "lucide-react-native";
 import { useToast } from "@/components/ui/Toast";
+import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 
 function HeaderRight() {
   const {toast} = useToast();
@@ -48,7 +49,6 @@ function HeaderRight() {
           title: "New Link",
           image: Platform.select({
             ios: "link",
-            android: "ic_menu_link",
           }),
         },
         {
@@ -56,7 +56,6 @@ function HeaderRight() {
           title: "New Note",
           image: Platform.select({
             ios: "note.text",
-            android: "ic_menu_note",
           }),
         },
         {
@@ -64,14 +63,13 @@ function HeaderRight() {
           title: "Photo Library",
           image: Platform.select({
             ios: "photo",
-            android: "ic_menu_photo",
           }),
         },
       ]}
       shouldOpenOnLongPress={false}
     >
       <View className="my-auto px-4">
-        <SquarePen onPress={() => Haptics.selectionAsync()} />
+        <SquarePen color="rgb(0, 122, 255)" onPress={() => Haptics.selectionAsync()} />
       </View>
     </MenuView>
   );
@@ -79,7 +77,7 @@ function HeaderRight() {
 
 export default function Home() {
   return (
-    <SafeAreaView>
+    <CustomSafeAreaView>
       <UpdatingBookmarkList
         query={{ archived: false }}
         header={
@@ -89,6 +87,6 @@ export default function Home() {
           </View>
         }
       />
-    </SafeAreaView>
+    </CustomSafeAreaView>
   );
 }

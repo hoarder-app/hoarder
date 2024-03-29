@@ -1,9 +1,10 @@
-import { SafeAreaView, View } from "react-native";
+import { View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
+import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 
 export default function ListView() {
   const { slug } = useLocalSearchParams();
@@ -13,7 +14,7 @@ export default function ListView() {
   const { data: list } = api.lists.get.useQuery({ listId: slug });
 
   return (
-    <SafeAreaView>
+    <CustomSafeAreaView>
       <Stack.Screen
         options={{
           headerTitle: "",
@@ -34,6 +35,6 @@ export default function ListView() {
       ) : (
         <FullPageSpinner />
       )}
-    </SafeAreaView>
+    </CustomSafeAreaView>
   );
 }

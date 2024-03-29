@@ -1,9 +1,10 @@
-import { SafeAreaView, View } from "react-native";
+import { View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
+import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 
 export default function TagView() {
   const { slug } = useLocalSearchParams();
@@ -14,7 +15,7 @@ export default function TagView() {
   const { data: tag } = api.tags.get.useQuery({ tagId: slug });
 
   return (
-    <SafeAreaView>
+    <CustomSafeAreaView>
       <Stack.Screen
         options={{
           headerTitle: "",
@@ -35,6 +36,6 @@ export default function TagView() {
       ) : (
         <FullPageSpinner />
       )}
-    </SafeAreaView>
+    </CustomSafeAreaView>
   );
 }
