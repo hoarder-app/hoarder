@@ -4,6 +4,7 @@ import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+import { useClientConfig } from "@/lib/clientConfig";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export default function EditorCard({ className }: { className?: string }) {
+  const demoMode = !!useClientConfig().demoMode;
   const formSchema = z.object({
     text: z.string(),
   });
@@ -76,6 +78,9 @@ export default function EditorCard({ className }: { className?: string }) {
                       "Paste a link, write a note or drag and drop an image in here ..."
                     }
                     onKeyDown={(e) => {
+                      if (demoMode) {
+                        return;
+                      }
                       if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                         form.handleSubmit(onSubmit, onError)();
                       }
@@ -88,7 +93,11 @@ export default function EditorCard({ className }: { className?: string }) {
           }}
         />
         <ActionButton loading={isPending} type="submit" variant="default">
-          {form.formState.dirtyFields.text ? "Press ⌘ + Enter to Save" : "Save"}
+          {form.formState.dirtyFields.text
+            ? demoMode
+              ? "Submissions are disabled"
+              : "Press ⌘ + Enter to Save"
+            : "Save"}
         </ActionButton>
       </form>
     </Form>
