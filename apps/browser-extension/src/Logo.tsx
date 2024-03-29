@@ -1,10 +1,9 @@
-import { PackageOpen } from "lucide-react";
+import logoImg from "../public/logo-full.png";
 
 export default function Logo() {
   return (
-    <span className="mx-auto flex gap-2">
-      <PackageOpen size="40" className="my-auto" />
-      <p className="text-4xl">Hoarder</p>
+    <span className="flex items-center justify-center">
+      <img src={logoImg} alt="hoarder logo" className="h-10" />
     </span>
   );
 }
