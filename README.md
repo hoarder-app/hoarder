@@ -1,3 +1,11 @@
+<div align="center">
+    <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/MohamedBassem/hoarder-app/ci.yml" />
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/mohamedbassem/hoarder-app" />
+    <a href="https://discord.gg/NrgeYywsFh">
+        <img alt="Discord" src="https://img.shields.io/discord/1223681308962721802" />
+    </a>
+</div>
+
 # <img height="50px" src="./screenshots/logo.png" />
 
 A self-hostable bookmark-everything app with a touch of AI for the data hoarders out there.
