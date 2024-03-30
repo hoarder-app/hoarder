@@ -16,6 +16,7 @@ import { api } from "@/lib/trpc";
 
 export default function Signin() {
   const { settings, setSettings } = useAppSettings();
+  const [serverAddress, setServerAddress] = useState(settings.address);
 
   const [error, setError] = useState<string | undefined>();
 
@@ -66,10 +67,13 @@ export default function Signin() {
             <Input
               className="w-full"
               placeholder="Server Address"
-              value={settings.address}
+              value={serverAddress}
               autoCapitalize="none"
               keyboardType="url"
-              onChangeText={(e) => setSettings({ ...settings, address: e })}
+              onChangeText={(e) => {
+                setServerAddress(e);
+                setSettings({ ...settings, address: e });
+              }}
             />
           </View>
           <View className="gap-2">
@@ -90,6 +94,8 @@ export default function Signin() {
               placeholder="Password"
               secureTextEntry
               value={formData.password}
+              autoCapitalize="none"
+              textContentType="password"
               onChangeText={(e) => setFormData((s) => ({ ...s, password: e }))}
             />
           </View>
