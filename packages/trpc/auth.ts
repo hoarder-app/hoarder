@@ -1,7 +1,8 @@
 import { randomBytes } from "crypto";
-import { apiKeys } from "@hoarder/db/schema";
 import * as bcrypt from "bcryptjs";
+
 import { db } from "@hoarder/db";
+import { apiKeys } from "@hoarder/db/schema";
 
 // API Keys
 

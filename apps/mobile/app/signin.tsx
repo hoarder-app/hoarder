@@ -69,9 +69,7 @@ export default function Signin() {
               value={settings.address}
               autoCapitalize="none"
               keyboardType="url"
-              onChangeText={(e) =>
-                setSettings({ ...settings, address: e })
-              }
+              onChangeText={(e) => setSettings({ ...settings, address: e })}
             />
           </View>
           <View className="gap-2">

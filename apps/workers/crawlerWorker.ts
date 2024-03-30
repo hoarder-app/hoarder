@@ -1,8 +1,10 @@
 import assert from "assert";
 import * as dns from "dns";
+import type { Job } from "bullmq";
+import type { Browser } from "puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
-import { Job, Worker } from "bullmq";
+import { Worker } from "bullmq";
 import DOMPurify from "dompurify";
 import { eq } from "drizzle-orm";
 import { isShuttingDown } from "exit";
@@ -15,11 +17,11 @@ import metascraperReadability from "metascraper-readability";
 import metascraperTitle from "metascraper-title";
 import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
-import { Browser } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 
+import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
 import { bookmarkLinks } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
@@ -29,7 +31,6 @@ import {
   OpenAIQueue,
   queueConnectionDetails,
   SearchIndexingQueue,
-  ZCrawlLinkRequest,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
 
@@ -83,7 +84,7 @@ async function launchBrowser() {
       }, 5000);
       return;
     }
-    browser.on("disconnected", async (): Promise<void> => {
+    browser.on("disconnected", () => {
       if (isShuttingDown) {
         logger.info(
           "The puppeteer browser got disconnected. But we're shutting down so won't restart it.",
@@ -93,7 +94,7 @@ async function launchBrowser() {
       logger.info(
         "The puppeteer browser got disconnected. Will attempt to launch it again.",
       );
-      await launchBrowser();
+      launchBrowser();
     });
   });
 }

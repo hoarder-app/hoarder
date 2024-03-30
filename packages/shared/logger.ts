@@ -1,4 +1,5 @@
 import winston from "winston";
+
 import serverConfig from "./config";
 
 const logger = winston.createLogger({

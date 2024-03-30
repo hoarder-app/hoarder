@@ -1,14 +1,17 @@
 import ReactDOM from "react-dom/client";
+
 import "./index.css";
-import OptionsPage from "./OptionsPage.tsx";
-import NotConfiguredPage from "./NotConfiguredPage.tsx";
-import { Providers } from "./utils/providers.tsx";
-import BookmarkSavedPage from "./BookmarkSavedPage.tsx";
-import { HashRouter, Routes, Route } from "react-router-dom";
-import Layout from "./Layout.tsx";
-import SavePage from "./SavePage.tsx";
+
+import { HashRouter, Route, Routes } from "react-router-dom";
+
 import BookmarkDeletedPage from "./BookmarkDeletedPage.tsx";
+import BookmarkSavedPage from "./BookmarkSavedPage.tsx";
+import Layout from "./Layout.tsx";
+import NotConfiguredPage from "./NotConfiguredPage.tsx";
+import OptionsPage from "./OptionsPage.tsx";
+import SavePage from "./SavePage.tsx";
 import SignInPage from "./SignInPage.tsx";
+import { Providers } from "./utils/providers.tsx";
 
 function App() {
   return (

@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
+import Logo from "./Logo";
+import Spinner from "./Spinner";
 import usePluginSettings from "./utils/settings";
 import { api } from "./utils/trpc";
-import Spinner from "./Spinner";
-import { useNavigate } from "react-router-dom";
-import Logo from "./Logo";
 
 export default function OptionsPage() {
   const navigate = useNavigate();

@@ -5,7 +5,8 @@ import { z } from "zod";
 import { SqliteError } from "@hoarder/db";
 import { bookmarkLists, bookmarksInLists } from "@hoarder/db/schema";
 
-import { authedProcedure, Context, router } from "../index";
+import type { Context } from "../index";
+import { authedProcedure, router } from "../index";
 import { zBookmarkListSchema } from "../types/lists";
 import { ensureBookmarkOwnership } from "./bookmarks";
 

@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
+import { Platform } from "react-native";
+import * as NavigationBar from "expo-navigation-bar";
 import { Tabs } from "expo-router";
 import { ClipboardList, Home, Search, Settings } from "lucide-react-native";
-import { Platform } from "react-native";
-import * as NavigationBar from 'expo-navigation-bar';
 
 export default function TabLayout() {
   useEffect(() => {

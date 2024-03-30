@@ -124,7 +124,9 @@ class OllamaInferenceClient implements InferenceClient {
       // Using stream + accumulating the response so far is a workaround.
       // https://github.com/ollama/ollama-js/issues/72
       totalTokens = NaN;
-      logger.warn(`Got an exception from ollama, will still attempt to deserialize the response we got so far: ${e}`)
+      logger.warn(
+        `Got an exception from ollama, will still attempt to deserialize the response we got so far: ${e}`,
+      );
     }
 
     return { response, totalTokens };
@@ -139,6 +141,10 @@ class OllamaInferenceClient implements InferenceClient {
     _contentType: string,
     image: string,
   ): Promise<InferenceResponse> {
-    return await this.runModel(serverConfig.inference.imageModel, prompt, image);
+    return await this.runModel(
+      serverConfig.inference.imageModel,
+      prompt,
+      image,
+    );
   }
 }

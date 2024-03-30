@@ -1,9 +1,11 @@
+import { TRPCError } from "@trpc/server";
+import { and, eq } from "drizzle-orm";
+import { z } from "zod";
+
+import { apiKeys } from "@hoarder/db/schema";
+
 import { generateApiKey, validatePassword } from "../auth";
 import { authedProcedure, publicProcedure, router } from "../index";
-import { z } from "zod";
-import { apiKeys } from "@hoarder/db/schema";
-import { eq, and } from "drizzle-orm";
-import { TRPCError } from "@trpc/server";
 
 const zApiKeySchema = z.object({
   id: z.string(),

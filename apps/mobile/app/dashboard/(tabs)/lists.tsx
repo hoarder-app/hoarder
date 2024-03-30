@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { Link } from "expo-router";
+import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
+import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
 import { ChevronRight } from "lucide-react-native";
-import PageTitle from "@/components/ui/PageTitle";
-import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 
 export default function Lists() {
   const [refreshing, setRefreshing] = useState(false);
@@ -51,9 +51,7 @@ export default function Lists() {
   return (
     <CustomSafeAreaView>
       <FlatList
-        ListHeaderComponent={
-          <PageTitle title="Lists" />
-        }
+        ListHeaderComponent={<PageTitle title="Lists" />}
         contentContainerStyle={{
           gap: 5,
         }}

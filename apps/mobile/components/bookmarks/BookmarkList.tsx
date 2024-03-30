@@ -16,11 +16,11 @@ export default function BookmarkList({
   isRefreshing,
 }: {
   bookmarks: ZBookmark[];
-  onRefresh: () => void,
-  isRefreshing: boolean,
-  fetchNextPage?: () => void,
+  onRefresh: () => void;
+  isRefreshing: boolean;
+  fetchNextPage?: () => void;
   header?: React.ReactElement;
-  isFetchingNextPage?: boolean,
+  isFetchingNextPage?: boolean;
 }) {
   const flatListRef = useRef(null);
   useScrollToTop(flatListRef);

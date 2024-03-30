@@ -22,7 +22,7 @@ export async function saveAsset({
 }: {
   userId: string;
   assetId: string;
-  asset: Buffer,
+  asset: Buffer;
   metadata: z.infer<typeof zAssetMetadataSchema>;
 }) {
   const assetDir = getAssetDir(userId, assetId);
@@ -30,7 +30,10 @@ export async function saveAsset({
 
   await Promise.all([
     fs.promises.writeFile(path.join(assetDir, "asset.bin"), asset),
-    fs.promises.writeFile(path.join(assetDir, "metadata.json"), JSON.stringify(metadata)),
+    fs.promises.writeFile(
+      path.join(assetDir, "metadata.json"),
+      JSON.stringify(metadata),
+    ),
   ]);
 }
 
@@ -42,14 +45,16 @@ export async function readAsset({
   assetId: string;
 }) {
   const assetDir = getAssetDir(userId, assetId);
-  
-  const [asset, metadataStr] =  await Promise.all([
+
+  const [asset, metadataStr] = await Promise.all([
     fs.promises.readFile(path.join(assetDir, "asset.bin")),
-    fs.promises.readFile(path.join(assetDir, "metadata.json"), {encoding: "utf8"}),
+    fs.promises.readFile(path.join(assetDir, "metadata.json"), {
+      encoding: "utf8",
+    }),
   ]);
 
   const metadata = zAssetMetadataSchema.parse(JSON.parse(metadataStr));
-  return {asset, metadata};
+  return { asset, metadata };
 }
 
 export async function deleteAsset({
@@ -60,5 +65,5 @@ export async function deleteAsset({
   assetId: string;
 }) {
   const assetDir = getAssetDir(userId, assetId);
-  await fs.promises.rm(path.join(assetDir), {recursive: true});
+  await fs.promises.rm(path.join(assetDir), { recursive: true });
 }

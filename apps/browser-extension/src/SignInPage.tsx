@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { api } from "./utils/trpc";
-import usePluginSettings from "./utils/settings";
 import { useNavigate } from "react-router-dom";
+
 import Logo from "./Logo";
+import usePluginSettings from "./utils/settings";
+import { api } from "./utils/trpc";
 
 export default function SignInPage() {
   const navigate = useNavigate();

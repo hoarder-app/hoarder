@@ -3,21 +3,21 @@ import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
+import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import PageTitle from "@/components/ui/PageTitle";
+import { useToast } from "@/components/ui/Toast";
 import useAppSettings from "@/lib/settings";
 import { useUploadAsset } from "@/lib/upload";
 import { MenuView } from "@react-native-menu/menu";
 import { SquarePen } from "lucide-react-native";
-import { useToast } from "@/components/ui/Toast";
-import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 
 function HeaderRight() {
-  const {toast} = useToast();
+  const { toast } = useToast();
   const router = useRouter();
   const { settings } = useAppSettings();
   const { uploadAsset } = useUploadAsset(settings, {
     onError: (e) => {
-      toast({message: e, variant: "destructive"});
+      toast({ message: e, variant: "destructive" });
     },
   });
   return (
@@ -69,7 +69,10 @@ function HeaderRight() {
       shouldOpenOnLongPress={false}
     >
       <View className="my-auto px-4">
-        <SquarePen color="rgb(0, 122, 255)" onPress={() => Haptics.selectionAsync()} />
+        <SquarePen
+          color="rgb(0, 122, 255)"
+          onPress={() => Haptics.selectionAsync()}
+        />
       </View>
     </MenuView>
   );

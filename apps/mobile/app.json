@@ -39,10 +39,7 @@
             "NSExtensionActivationSupportsMovieWithMaxCount": 0,
             "NSExtensionActivationSupportsText": true
           },
-          "androidIntentFilters": [
-            "text/*",
-            "image/*"
-          ]
+          "androidIntentFilters": ["text/*", "image/*"]
         }
       ],
       "expo-secure-store",

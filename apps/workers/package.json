@@ -44,6 +44,8 @@
   "scripts": {
     "start": "tsx watch index.ts",
     "start:prod": "tsx index.ts",
+    "lint": "eslint .",
+    "format": "prettier . --ignore-path ../../.prettierignore",
     "typecheck": "tsc --noEmit"
   },
   "eslintConfig": {

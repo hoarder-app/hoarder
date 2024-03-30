@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import usePluginSettings from "./utils/settings";
+
 import Logo from "./Logo";
+import usePluginSettings from "./utils/settings";
 
 export default function NotConfiguredPage() {
   const navigate = useNavigate();

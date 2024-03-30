@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { zBookmarkTagSchema } from "./tags";
 
 export const zBookmarkedLinkSchema = z.object({
@@ -30,7 +31,7 @@ export const zBookmarkContentSchema = z.discriminatedUnion("type", [
   zBookmarkedLinkSchema,
   zBookmarkedTextSchema,
   zBookmarkedAssetSchema,
-  z.object({type: z.literal("unknown")}),
+  z.object({ type: z.literal("unknown") }),
 ]);
 export type ZBookmarkContent = z.infer<typeof zBookmarkContentSchema>;
 

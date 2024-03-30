@@ -1,4 +1,4 @@
-import {Text} from "react-native";
+import { Text } from "react-native";
 
 export default function PageTitle({ title }: { title: string }) {
   return <Text className="p-4 text-4xl font-bold">{title}</Text>;

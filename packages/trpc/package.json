@@ -6,6 +6,8 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "format": "prettier . --ignore-path ../../.prettierignore",
+    "lint": "eslint .",
     "test": "vitest"
   },
   "dependencies": {

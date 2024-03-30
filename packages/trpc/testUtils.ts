@@ -1,7 +1,8 @@
-import { users } from "@hoarder/db/schema";
 import { getInMemoryDB } from "@hoarder/db/drizzle";
-import { appRouter } from "./routers/_app";
+import { users } from "@hoarder/db/schema";
+
 import { createCallerFactory } from "./index";
+import { appRouter } from "./routers/_app";
 
 export function getTestDB() {
   return getInMemoryDB(true);
@@ -63,7 +64,7 @@ export async function buildTestContext(
   };
 }
 
-export function defaultBeforeEach(seedDB: boolean = true) {
+export function defaultBeforeEach(seedDB = true) {
   return async (context: object) => {
     Object.assign(context, await buildTestContext(seedDB));
   };

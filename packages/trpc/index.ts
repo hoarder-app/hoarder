@@ -1,20 +1,21 @@
-import { db } from "@hoarder/db";
-import serverConfig from "@hoarder/shared/config";
-import { TRPCError, initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-type User = {
+import type { db } from "@hoarder/db";
+import serverConfig from "@hoarder/shared/config";
+
+interface User {
   id: string;
   name?: string | null | undefined;
   email?: string | null | undefined;
   role: "admin" | "user" | null;
-};
+}
 
-export type Context = {
+export interface Context {
   user: User | null;
   db: typeof db;
-};
+}
 
 // Avoid exporting the entire t-object
 // since it's not very descriptive.
@@ -29,7 +30,7 @@ const t = initTRPC.context<Context>().create({
       data: {
         ...shape.data,
         zodError:
-          error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
+          error.code === "BAD_REQUEST" && error.cause instanceof ZodError
             ? error.cause.flatten()
             : null,
       },
@@ -53,7 +54,7 @@ export const publicProcedure = procedure;
 export const authedProcedure = procedure.use(function isAuthed(opts) {
   const user = opts.ctx.user;
 
-  if (!user || !user.id) {
+  if (!user?.id) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 

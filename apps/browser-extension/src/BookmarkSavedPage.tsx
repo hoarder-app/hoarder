@@ -1,9 +1,10 @@
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { api } from "./utils/trpc";
-import usePluginSettings from "./utils/settings";
-import { ArrowUpRightFromSquare, Trash } from "lucide-react";
-import Spinner from "./Spinner";
 import { useState } from "react";
+import { ArrowUpRightFromSquare, Trash } from "lucide-react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
+import Spinner from "./Spinner";
+import usePluginSettings from "./utils/settings";
+import { api } from "./utils/trpc";
 
 export default function BookmarkSavedPage() {
   const { bookmarkId } = useParams();

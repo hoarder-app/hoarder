@@ -14,7 +14,7 @@ import {
 import { getSearchIdxClient } from "@hoarder/shared/search";
 
 export class SearchIndexingWorker {
-  static async build() {
+  static build() {
     logger.info("Starting search indexing worker ...");
     const worker = new Worker<ZSearchIndexingRequest, void>(
       SearchIndexingQueue.name,

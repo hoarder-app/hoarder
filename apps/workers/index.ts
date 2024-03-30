@@ -1,14 +1,15 @@
 import "dotenv/config";
+
 import { CrawlerWorker } from "./crawlerWorker";
+import { shutdownPromise } from "./exit";
 import { OpenAiWorker } from "./openaiWorker";
 import { SearchIndexingWorker } from "./searchWorker";
-import { shutdownPromise } from "./exit";
 
 async function main() {
   const [crawler, openai, search] = [
     await CrawlerWorker.build(),
-    await OpenAiWorker.build(),
-    await SearchIndexingWorker.build(),
+    OpenAiWorker.build(),
+    SearchIndexingWorker.build(),
   ];
 
   await Promise.any([

@@ -1,9 +1,9 @@
 import { Text, View } from "react-native";
 import { Button } from "@/components/ui/Button";
+import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import PageTitle from "@/components/ui/PageTitle";
 import { useSession } from "@/lib/session";
 import { api } from "@/lib/trpc";
-import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 
 export default function Dashboard() {
   const { logout } = useSession();

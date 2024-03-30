@@ -1,38 +1,40 @@
 import { useMutation } from "@tanstack/react-query";
 
+import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import {
+  zUploadErrorSchema,
+  zUploadResponseSchema,
+} from "@hoarder/trpc/types/uploads";
+
 import type { Settings } from "./settings";
 import { api } from "./trpc";
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
-import { zUploadResponseSchema, zUploadErrorSchema } from "@hoarder/trpc/types/uploads";
 
 export function useUploadAsset(
   settings: Settings,
-  options: { onSuccess?: (bookmark: ZBookmark) => void; onError?: (e: string) => void },
+  options: {
+    onSuccess?: (bookmark: ZBookmark) => void;
+    onError?: (e: string) => void;
+  },
 ) {
   const invalidateAllBookmarks =
     api.useUtils().bookmarks.getBookmarks.invalidate;
 
-  const {
-    mutate: createBookmark,
-    isPending: isCreatingBookmark,
-  } = api.bookmarks.createBookmark.useMutation({
-    onSuccess: (d) => {
-      invalidateAllBookmarks();
-      if (options.onSuccess) {
-        options.onSuccess(d);
-      }
-    },
-    onError: (e) => {
-      if (options.onError) {
-        options.onError(e.message);
-      }
-    },
-  });
+  const { mutate: createBookmark, isPending: isCreatingBookmark } =
+    api.bookmarks.createBookmark.useMutation({
+      onSuccess: (d) => {
+        invalidateAllBookmarks();
+        if (options.onSuccess) {
+          options.onSuccess(d);
+        }
+      },
+      onError: (e) => {
+        if (options.onError) {
+          options.onError(e.message);
+        }
+      },
+    });
 
-  const {
-    mutate: uploadAsset,
-    isPending: isUploading,
-  } = useMutation({
+  const { mutate: uploadAsset, isPending: isUploading } = useMutation({
     mutationFn: async (file: { type: string; name: string; uri: string }) => {
       const formData = new FormData();
       // @ts-expect-error This is a valid api in react native

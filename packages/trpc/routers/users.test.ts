@@ -1,9 +1,7 @@
-import {
-  CustomTestContext,
-  defaultBeforeEach,
-  getApiCaller,
-} from "../testUtils";
-import { expect, describe, test, beforeEach, assert } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
+
+import type { CustomTestContext } from "../testUtils";
+import { defaultBeforeEach, getApiCaller } from "../testUtils";
 
 beforeEach<CustomTestContext>(defaultBeforeEach(false));
 

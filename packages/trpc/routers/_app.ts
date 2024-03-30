@@ -5,6 +5,7 @@ import { bookmarksAppRouter } from "./bookmarks";
 import { listsAppRouter } from "./lists";
 import { tagsAppRouter } from "./tags";
 import { usersAppRouter } from "./users";
+
 export const appRouter = router({
   bookmarks: bookmarksAppRouter,
   apiKeys: apiKeysAppRouter,

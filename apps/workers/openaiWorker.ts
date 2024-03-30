@@ -1,7 +1,9 @@
-import { Job, Worker } from "bullmq";
+import type { Job } from "bullmq";
+import { Worker } from "bullmq";
 import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
+import type { ZOpenAIRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
 import { bookmarks, bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 import { readAsset } from "@hoarder/shared/assetdb";
@@ -10,11 +12,11 @@ import {
   OpenAIQueue,
   queueConnectionDetails,
   SearchIndexingQueue,
-  ZOpenAIRequest,
   zOpenAIRequestSchema,
 } from "@hoarder/shared/queues";
 
-import { InferenceClient, InferenceClientFactory } from "./inference";
+import type { InferenceClient } from "./inference";
+import { InferenceClientFactory } from "./inference";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
@@ -41,7 +43,7 @@ async function attemptMarkTaggingStatus(
 }
 
 export class OpenAiWorker {
-  static async build() {
+  static build() {
     logger.info("Starting inference worker ...");
     const worker = new Worker<ZOpenAIRequest, void>(
       OpenAIQueue.name,
@@ -52,16 +54,16 @@ export class OpenAiWorker {
       },
     );
 
-    worker.on("completed", async (job): Promise<void> => {
+    worker.on("completed", (job) => {
       const jobId = job?.id ?? "unknown";
       logger.info(`[inference][${jobId}] Completed successfully`);
-      await attemptMarkTaggingStatus(job?.data, "success");
+      attemptMarkTaggingStatus(job?.data, "success");
     });
 
-    worker.on("failed", async (job, error): Promise<void> => {
+    worker.on("failed", (job, error) => {
       const jobId = job?.id ?? "unknown";
       logger.error(`[inference][${jobId}] inference job failed: ${error}`);
-      await attemptMarkTaggingStatus(job?.data, "failure");
+      attemptMarkTaggingStatus(job?.data, "failure");
     });
 
     return worker;
@@ -90,11 +92,11 @@ function buildPrompt(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
 ) {
   const truncateContent = (content: string) => {
-      let words = content.split(" ");
-      if (words.length > 1500) {
-        words = words.slice(1500);
-        content = words.join(" ");
-      }
+    let words = content.split(" ");
+    if (words.length > 1500) {
+      words = words.slice(1500);
+      content = words.join(" ");
+    }
     return content;
   };
   if (bookmark.link) {

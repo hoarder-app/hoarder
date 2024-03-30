@@ -1,10 +1,10 @@
 import { View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
+import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
-import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 
 export default function TagView() {
   const { slug } = useLocalSearchParams();

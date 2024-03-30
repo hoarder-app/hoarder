@@ -21,19 +21,19 @@ import {
 } from "@hoarder/shared/queues";
 import { getSearchIdxClient } from "@hoarder/shared/search";
 
-import { authedProcedure, Context, router } from "../index";
+import type { Context } from "../index";
+import type { ZBookmark, ZBookmarkContent } from "../types/bookmarks";
+import type { ZBookmarkTags } from "../types/tags";
+import { authedProcedure, router } from "../index";
 import {
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
   zBareBookmarkSchema,
-  ZBookmark,
-  ZBookmarkContent,
   zBookmarkSchema,
   zGetBookmarksRequestSchema,
   zGetBookmarksResponseSchema,
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "../types/bookmarks";
-import { ZBookmarkTags } from "../types/tags";
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: Context;
@@ -423,29 +423,29 @@ export const bookmarksAppRouter = router({
               input.ids ? inArray(bookmarks.id, input.ids) : undefined,
               input.tagId !== undefined
                 ? exists(
-                  ctx.db
-                    .select()
-                    .from(tagsOnBookmarks)
-                    .where(
-                      and(
-                        eq(tagsOnBookmarks.bookmarkId, bookmarks.id),
-                        eq(tagsOnBookmarks.tagId, input.tagId),
+                    ctx.db
+                      .select()
+                      .from(tagsOnBookmarks)
+                      .where(
+                        and(
+                          eq(tagsOnBookmarks.bookmarkId, bookmarks.id),
+                          eq(tagsOnBookmarks.tagId, input.tagId),
+                        ),
                       ),
-                    ),
-                )
+                  )
                 : undefined,
               input.listId !== undefined
                 ? exists(
-                  ctx.db
-                    .select()
-                    .from(bookmarksInLists)
-                    .where(
-                      and(
-                        eq(bookmarksInLists.bookmarkId, bookmarks.id),
-                        eq(bookmarksInLists.listId, input.listId),
+                    ctx.db
+                      .select()
+                      .from(bookmarksInLists)
+                      .where(
+                        and(
+                          eq(bookmarksInLists.bookmarkId, bookmarks.id),
+                          eq(bookmarksInLists.listId, input.listId),
+                        ),
                       ),
-                    ),
-                )
+                  )
                 : undefined,
               input.cursor ? lte(bookmarks.createdAt, input.cursor) : undefined,
             ),

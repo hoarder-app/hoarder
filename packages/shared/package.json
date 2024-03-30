@@ -15,6 +15,11 @@
     "@hoarder/prettier-config": "workspace:^0.1.0",
     "@hoarder/tsconfig": "workspace:^0.1.0"
   },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "format": "prettier . --ignore-path ../../.prettierignore",
+    "lint": "eslint ."
+  },
   "main": "index.ts",
   "eslintConfig": {
     "root": true,

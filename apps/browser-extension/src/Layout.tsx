@@ -1,6 +1,6 @@
-import { Outlet } from "react-router-dom";
 import { Home, RefreshCw, Settings, X } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+
 import usePluginSettings from "./utils/settings";
 
 export default function Layout() {

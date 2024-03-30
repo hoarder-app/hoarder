@@ -1,6 +1,8 @@
-import { MeiliSearch, Index } from "meilisearch";
-import serverConfig from "./config";
+import type { Index } from "meilisearch";
+import { MeiliSearch } from "meilisearch";
 import { z } from "zod";
+
+import serverConfig from "./config";
 
 export const zBookmarkIdxSchema = z.object({
   id: z.string(),
@@ -51,15 +53,29 @@ export async function getSearchIdxClient(): Promise<Index<ZBookmarkIdx> | null> 
   const desiredSortableAttributes = ["createdAt"].sort();
 
   const settings = await idxFound.getSettings();
-  if (JSON.stringify(settings.filterableAttributes?.sort()) != JSON.stringify(desiredFilterableAttributes)) {
-    console.log(`[meilisearch] Updating desired filterable attributes to ${desiredFilterableAttributes} from ${settings.filterableAttributes}`);
-    const taskId = await idxFound.updateFilterableAttributes(desiredFilterableAttributes);
+  if (
+    JSON.stringify(settings.filterableAttributes?.sort()) !=
+    JSON.stringify(desiredFilterableAttributes)
+  ) {
+    console.log(
+      `[meilisearch] Updating desired filterable attributes to ${desiredFilterableAttributes} from ${settings.filterableAttributes}`,
+    );
+    const taskId = await idxFound.updateFilterableAttributes(
+      desiredFilterableAttributes,
+    );
     await searchClient.waitForTask(taskId.taskUid);
   }
 
-  if (JSON.stringify(settings.sortableAttributes?.sort()) != JSON.stringify(desiredSortableAttributes)) {
-    console.log(`[meilisearch] Updating desired sortable attributes to ${desiredSortableAttributes} from ${settings.sortableAttributes}`);
-    const taskId = await idxFound.updateSortableAttributes(desiredSortableAttributes);
+  if (
+    JSON.stringify(settings.sortableAttributes?.sort()) !=
+    JSON.stringify(desiredSortableAttributes)
+  ) {
+    console.log(
+      `[meilisearch] Updating desired sortable attributes to ${desiredSortableAttributes} from ${settings.sortableAttributes}`,
+    );
+    const taskId = await idxFound.updateSortableAttributes(
+      desiredSortableAttributes,
+    );
     await searchClient.waitForTask(taskId.taskUid);
   }
   idxClient = idxFound;

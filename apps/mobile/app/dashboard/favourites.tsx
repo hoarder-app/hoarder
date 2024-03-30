@@ -1,6 +1,6 @@
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
-import PageTitle from "@/components/ui/PageTitle";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
+import PageTitle from "@/components/ui/PageTitle";
 
 export default function Favourites() {
   return (

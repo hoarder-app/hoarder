@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+
 import base from "@hoarder/tailwind-config/native";
 
 const config = {
