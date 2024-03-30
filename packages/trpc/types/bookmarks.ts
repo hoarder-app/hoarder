@@ -40,6 +40,7 @@ export const zBareBookmarkSchema = z.object({
   archived: z.boolean(),
   favourited: z.boolean(),
   taggingStatus: z.enum(["success", "failure", "pending"]).nullable(),
+  note: z.string().nullish(),
 });
 
 export const zBookmarkSchema = zBareBookmarkSchema.merge(
@@ -80,6 +81,7 @@ export const zUpdateBookmarksRequestSchema = z.object({
   bookmarkId: z.string(),
   archived: z.boolean().optional(),
   favourited: z.boolean().optional(),
+  note: z.string().optional(),
 });
 export type ZUpdateBookmarksRequest = z.infer<
   typeof zUpdateBookmarksRequestSchema

@@ -24,6 +24,7 @@ import Markdown from "react-markdown";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
+import { NoteEditor } from "./NoteEditor";
 import { TagsEditor } from "./TagsEditor";
 
 dayjs.extend(relativeTime);
@@ -198,11 +199,16 @@ export default function BookmarkPreview({
       <div className="row-span-2 h-full w-full overflow-hidden p-2 md:col-span-2 lg:row-auto">
         {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
       </div>
-      <div className="lg:col-span1 row-span-1 flex flex-col gap-4 bg-accent p-4 lg:row-auto">
+      <div className="lg:col-span1 row-span-1 flex flex-col gap-4 overflow-auto bg-accent p-4 lg:row-auto">
         {linkHeader}
         <CreationTime createdAt={bookmark.createdAt} />
-        <div className="flex gap-2">
+        <div className="flex gap-4">
+          <p className="text-sm text-gray-400">Tags</p>
           <TagsEditor bookmark={bookmark} />
+        </div>
+        <div className="flex gap-4">
+          <p className="text-sm text-gray-400">Note</p>
+          <NoteEditor bookmark={bookmark} />
         </div>
       </div>
     </div>

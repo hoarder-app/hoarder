@@ -114,6 +114,7 @@ export const bookmarks = sqliteTable(
     taggingStatus: text("taggingStatus", {
       enum: ["pending", "failure", "success"],
     }).default("pending"),
+    note: text("note"),
   },
   (b) => ({
     userIdIdx: index("bookmarks_userId_idx").on(b.userId),

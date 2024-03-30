@@ -9,6 +9,7 @@ export const zBookmarkIdxSchema = z.object({
   title: z.string().nullish(),
   description: z.string().nullish(),
   content: z.string().nullish(),
+  note: z.string().nullish(),
   tags: z.array(z.string()).default([]),
 });
 

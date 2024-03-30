@@ -229,6 +229,7 @@ export const bookmarksAppRouter = router({
         .set({
           archived: input.archived,
           favourited: input.favourited,
+          note: input.note,
         })
         .where(
           and(
@@ -243,6 +244,10 @@ export const bookmarksAppRouter = router({
           message: "Bookmark not found",
         });
       }
+      SearchIndexingQueue.add("search_indexing", {
+        bookmarkId: input.bookmarkId,
+        type: "index",
+      });
       return res[0];
     }),
 
