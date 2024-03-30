@@ -361,11 +361,18 @@ export const bookmarksAppRouter = router({
       }
       const resp = await client.search(input.text, {
         filter: [`userId = '${ctx.user.id}'`],
+        showRankingScore: true,
+        attributesToRetrieve: ["id"],
+        sort: ["createdAt:desc"],
       });
 
       if (resp.hits.length == 0) {
         return { bookmarks: [], nextCursor: null };
       }
+      const idToRank = resp.hits.reduce<Record<string, number>>((acc, r) => {
+        acc[r.id] = r._rankingScore!;
+        return acc;
+      }, {});
       const results = await ctx.db.query.bookmarks.findMany({
         where: and(
           eq(bookmarks.userId, ctx.user.id),
@@ -385,6 +392,7 @@ export const bookmarksAppRouter = router({
           asset: true,
         },
       });
+      results.sort((a, b) => idToRank[b.id] - idToRank[a.id]);
 
       return { bookmarks: results.map(toZodSchema), nextCursor: null };
     }),

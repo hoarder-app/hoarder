@@ -9,6 +9,7 @@ export const zBookmarkIdxSchema = z.object({
   title: z.string().nullish(),
   description: z.string().nullish(),
   content: z.string().nullish(),
+  createdAt: z.string().nullish(),
   note: z.string().nullish(),
   tags: z.array(z.string()).default([]),
 });
@@ -44,8 +45,23 @@ export async function getSearchIdxClient(): Promise<Index<ZBookmarkIdx> | null> 
     });
     await searchClient.waitForTask(idx.taskUid);
     idxFound = await searchClient.getIndex<ZBookmarkIdx>(BOOKMARKS_IDX_NAME);
-    const taskId = await idxFound.updateFilterableAttributes(["id", "userId"]);
+  }
+
+  const desiredFilterableAttributes = ["id", "userId"].sort();
+  const desiredSortableAttributes = ["createdAt"].sort();
+
+  const settings = await idxFound.getSettings();
+  if (JSON.stringify(settings.filterableAttributes?.sort()) != JSON.stringify(desiredFilterableAttributes)) {
+    console.log(`[meilisearch] Updating desired filterable attributes to ${desiredFilterableAttributes} from ${settings.filterableAttributes}`);
+    const taskId = await idxFound.updateFilterableAttributes(desiredFilterableAttributes);
     await searchClient.waitForTask(taskId.taskUid);
   }
+
+  if (JSON.stringify(settings.sortableAttributes?.sort()) != JSON.stringify(desiredSortableAttributes)) {
+    console.log(`[meilisearch] Updating desired sortable attributes to ${desiredSortableAttributes} from ${settings.sortableAttributes}`);
+    const taskId = await idxFound.updateSortableAttributes(desiredSortableAttributes);
+    await searchClient.waitForTask(taskId.taskUid);
+  }
+  idxClient = idxFound;
   return idxFound;
 }
