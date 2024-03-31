@@ -1,8 +1,13 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { api } from "@/server/api/client";
-import { getServerAuthSession } from "@/server/auth";
+import { Info } from "lucide-react";
 
 function TagPill({ name, count }: { name: string; count: number }) {
   return (
@@ -16,30 +21,62 @@ function TagPill({ name, count }: { name: string; count: number }) {
 }
 
 export default async function TagsPage() {
-  const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/");
-  }
-
-  let tags = (await api.tags.list()).tags;
+  let allTags = (await api.tags.list()).tags;
 
   // Sort tags by usage desc
-  tags = tags.sort((a, b) => b.count - a.count);
+  allTags = allTags.sort((a, b) => b.count - a.count);
 
-  let tagPill;
-  if (tags.length) {
-    tagPill = tags.map((t) => (
-      <TagPill key={t.id} name={t.name} count={t.count} />
-    ));
-  } else {
-    tagPill = "No Tags";
-  }
+  const humanTags = allTags.filter((t) => (t.countAttachedBy.human ?? 0) > 0);
+  const aiTags = allTags.filter((t) => (t.countAttachedBy.human ?? 0) == 0);
+
+  const tagsToPill = (tags: typeof allTags) => {
+    let tagPill;
+    if (tags.length) {
+      tagPill = tags.map((t) => (
+        <TagPill key={t.id} name={t.name} count={t.count} />
+      ));
+    } else {
+      tagPill = "No Tags";
+    }
+    return tagPill;
+  };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 rounded-md border bg-background p-4">
       <span className="text-2xl">All Tags</span>
       <Separator />
-      <div className="flex flex-wrap gap-3">{tagPill}</div>
+
+      <span className="flex items-center gap-2">
+        <p className="text-lg">Your Tags</p>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info size={20} />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Tags that were attached at least once by you</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </span>
+      <div className="flex flex-wrap gap-3">{tagsToPill(humanTags)}</div>
+
+      <Separator />
+
+      <span className="flex items-center gap-2">
+        <p className="text-lg">AI Tags</p>
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className="text-gray-100" size={20} />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Tags that were only attached automatically (by AI)</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </span>
+      <div className="flex flex-wrap gap-3">{tagsToPill(aiTags)}</div>
     </div>
   );
 }

@@ -5,7 +5,9 @@ import { z } from "zod";
 import { bookmarks, bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 
 import type { Context } from "../index";
+import type { ZAttachedByEnum } from "../types/tags";
 import { authedProcedure, router } from "../index";
+import { zAttachedByEnumSchema } from "../types/tags";
 
 function conditionFromInput(
   input: { tagName: string } | { tagId: string },
@@ -55,6 +57,13 @@ const ensureTagOwnership = experimental_trpcMiddleware<{
   return opts.next();
 });
 
+const zTagSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  count: z.number(),
+  countAttachedBy: z.record(zAttachedByEnumSchema, z.number()),
+});
+
 export const tagsAppRouter = router({
   get: authedProcedure
     .input(
@@ -68,20 +77,14 @@ export const tagsAppRouter = router({
           }),
         ),
     )
-    .output(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        bookmarks: z.array(z.string()),
-      }),
-    )
+    .output(zTagSchema)
     .use(ensureTagOwnership)
     .query(async ({ input, ctx }) => {
       const res = await ctx.db
         .select({
           id: bookmarkTags.id,
           name: bookmarkTags.name,
-          bookmarkId: bookmarks.id,
+          attachedBy: tagsOnBookmarks.attachedBy,
         })
         .from(bookmarkTags)
         .leftJoin(tagsOnBookmarks, eq(bookmarkTags.id, tagsOnBookmarks.tagId))
@@ -98,10 +101,21 @@ export const tagsAppRouter = router({
         throw new TRPCError({ code: "NOT_FOUND" });
       }
 
+      const countAttachedBy = res.reduce<Record<ZAttachedByEnum, number>>(
+        (acc, curr) => {
+          if (curr.attachedBy) {
+            acc[curr.attachedBy]++;
+          }
+          return acc;
+        },
+        { ai: 0, human: 0 },
+      );
+
       return {
         id: res[0].id,
         name: res[0].name,
-        bookmarks: res.flatMap((t) => (t.bookmarkId ? [t.bookmarkId] : [])),
+        count: Object.values(countAttachedBy).reduce((s, a) => s + a, 0),
+        countAttachedBy,
       };
     }),
   delete: authedProcedure
@@ -133,26 +147,47 @@ export const tagsAppRouter = router({
   list: authedProcedure
     .output(
       z.object({
-        tags: z.array(
-          z.object({
-            id: z.string(),
-            name: z.string(),
-            count: z.number(),
-          }),
-        ),
+        tags: z.array(zTagSchema),
       }),
     )
     .query(async ({ ctx }) => {
-      const tags = await ctx.db
+      const res = await ctx.db
         .select({
           id: tagsOnBookmarks.tagId,
           name: bookmarkTags.name,
+          attachedBy: tagsOnBookmarks.attachedBy,
           count: count(),
         })
         .from(tagsOnBookmarks)
-        .where(eq(bookmarkTags.userId, ctx.user.id))
-        .groupBy(tagsOnBookmarks.tagId)
-        .innerJoin(bookmarkTags, eq(bookmarkTags.id, tagsOnBookmarks.tagId));
-      return { tags };
+        .groupBy(tagsOnBookmarks.tagId, tagsOnBookmarks.attachedBy)
+        .innerJoin(bookmarkTags, eq(bookmarkTags.id, tagsOnBookmarks.tagId))
+        .leftJoin(bookmarks, eq(tagsOnBookmarks.bookmarkId, bookmarks.id))
+        .where(
+          and(
+            eq(bookmarkTags.userId, ctx.user.id),
+            eq(bookmarks.archived, false),
+          ),
+        );
+
+      const tags = res.reduce<Record<string, z.infer<typeof zTagSchema>>>(
+        (acc, row) => {
+          if (!(row.id in acc)) {
+            acc[row.id] = {
+              id: row.id,
+              name: row.name,
+              count: 0,
+              countAttachedBy: {
+                ai: 0,
+                human: 0,
+              },
+            };
+          }
+          acc[row.id].count++;
+          acc[row.id].countAttachedBy[row.attachedBy]!++;
+          return acc;
+        },
+        {},
+      );
+      return { tags: Object.values(tags) };
     }),
 });
