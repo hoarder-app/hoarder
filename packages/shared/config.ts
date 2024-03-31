@@ -19,8 +19,6 @@ const allEnv = z.object({
   REDIS_PORT: z.coerce.number().default(6379),
   REDIS_DB_IDX: z.coerce.number().optional(),
   CRAWLER_HEADLESS_BROWSER: stringBool("true"),
-  BROWSER_EXECUTABLE_PATH: z.string().optional(), // If not set, the system's browser will be used
-  BROWSER_USER_DATA_DIR: z.string().optional(),
   BROWSER_WEB_URL: z.string().url().optional(),
   MEILI_ADDR: z.string().optional(),
   MEILI_MASTER_KEY: z.string().default(""),
@@ -52,8 +50,6 @@ const serverConfigSchema = allEnv.transform((val) => {
     },
     crawler: {
       headlessBrowser: val.CRAWLER_HEADLESS_BROWSER,
-      browserExecutablePath: val.BROWSER_EXECUTABLE_PATH,
-      browserUserDataDir: val.BROWSER_USER_DATA_DIR,
       browserWebUrl: val.BROWSER_WEB_URL,
     },
     meilisearch: val.MEILI_ADDR

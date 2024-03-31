@@ -71,8 +71,6 @@ async function launchBrowser() {
         logger.info(`Launching a new browser instance`);
         browser = await puppeteer.launch({
           headless: serverConfig.crawler.headlessBrowser,
-          executablePath: serverConfig.crawler.browserExecutablePath,
-          userDataDir: serverConfig.crawler.browserUserDataDir,
         });
       }
     } catch (e) {
