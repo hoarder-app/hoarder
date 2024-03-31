@@ -1,8 +1,12 @@
 <div align="center">
-    <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/MohamedBassem/hoarder-app/ci.yml" />
-    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/mohamedbassem/hoarder-app" />
+    <a href="https://github.com/MohamedBassem/hoarder-app/actions/workflows/ci.yml">
+        <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/MohamedBassem/hoarder-app/ci.yml" />
+    </a>
+    <a href="https://github.com/MohamedBassem/hoarder-app/releases">
+        <img alt="GitHub Release" src="https://img.shields.io/github/v/release/mohamedbassem/hoarder-app" />
+    </a>
     <a href="https://discord.gg/NrgeYywsFh">
-        <img alt="Discord" src="https://img.shields.io/discord/1223681308962721802" />
+        <img alt="Discord" src="https://img.shields.io/discord/1223681308962721802?label=chat%20on%20discord" />
     </a>
 </div>
 
