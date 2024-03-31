@@ -42,7 +42,7 @@ export default async function TagsPage() {
   };
 
   return (
-    <div className="space-y-3 rounded-md border bg-background p-4">
+    <div className="space-y-4 rounded-md border bg-background p-4">
       <span className="text-2xl">All Tags</span>
       <Separator />
 
@@ -68,7 +68,7 @@ export default async function TagsPage() {
         <TooltipProvider delayDuration={0}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Info className="text-gray-100" size={20} />
+              <Info size={20} />
             </TooltipTrigger>
             <TooltipContent>
               <p>Tags that were only attached automatically (by AI)</p>
