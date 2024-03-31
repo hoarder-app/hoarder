@@ -1,18 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
+import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { Trash2 } from "lucide-react";
@@ -20,8 +11,6 @@ import { Trash2 } from "lucide-react";
 import type { ZBookmarkList } from "@hoarder/trpc/types/lists";
 
 export default function DeleteListButton({ list }: { list: ZBookmarkList }) {
-  const [isDialogOpen, setDialogOpen] = useState(false);
-
   const router = useRouter();
 
   const listsInvalidationFunction = api.useUtils().lists.list.invalidate;
@@ -41,38 +30,24 @@ export default function DeleteListButton({ list }: { list: ZBookmarkList }) {
     },
   });
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
-      <DialogTrigger asChild>
-        <Button className="mt-auto flex gap-2" variant="destructiveOutline">
-          <Trash2 className="size-5" />
-          <span className="hidden md:block">Delete List</span>
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            Delete {list.icon} {list.name}?
-          </DialogTitle>
-        </DialogHeader>
-        <span>
-          Are you sure you want to delete {list.icon} {list.name}?
-        </span>
-        <DialogFooter className="sm:justify-end">
-          <DialogClose asChild>
-            <Button type="button" variant="secondary">
-              Close
-            </Button>
-          </DialogClose>
-          <ActionButton
-            type="button"
-            variant="destructive"
-            loading={isPending}
-            onClick={() => deleteList({ listId: list.id })}
-          >
-            Delete
-          </ActionButton>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <ActionConfirmingDialog
+      title={`Delete ${list.icon} ${list.name}?`}
+      description={`Are you sure you want to delete ${list.icon} ${list.name}?`}
+      actionButton={() => (
+        <ActionButton
+          type="button"
+          variant="destructive"
+          loading={isPending}
+          onClick={() => deleteList({ listId: list.id })}
+        >
+          Delete
+        </ActionButton>
+      )}
+    >
+      <Button className="mt-auto flex gap-2" variant="destructiveOutline">
+        <Trash2 className="size-5" />
+        <span className="hidden md:block">Delete List</span>
+      </Button>
+    </ActionConfirmingDialog>
   );
 }
