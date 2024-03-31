@@ -104,6 +104,32 @@ export const tagsAppRouter = router({
         bookmarks: res.flatMap((t) => (t.bookmarkId ? [t.bookmarkId] : [])),
       };
     }),
+  delete: authedProcedure
+    .input(
+      z
+        .object({
+          tagId: z.string(),
+        })
+        .or(
+          z.object({
+            tagName: z.string(),
+          }),
+        ),
+    )
+    .use(ensureTagOwnership)
+    .mutation(async ({ input, ctx }) => {
+      const res = await ctx.db
+        .delete(bookmarkTags)
+        .where(
+          and(
+            conditionFromInput(input, ctx.user.id),
+            eq(bookmarkTags.userId, ctx.user.id),
+          ),
+        );
+      if (res.changes == 0) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+    }),
   list: authedProcedure
     .output(
       z.object({

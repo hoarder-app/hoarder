@@ -1,9 +1,8 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
 import DeleteListButton from "@/components/dashboard/lists/DeleteListButton";
 import { BookmarkListContextProvider } from "@/lib/hooks/list-context";
 import { api } from "@/server/api/client";
-import { getServerAuthSession } from "@/server/auth";
 import { TRPCError } from "@trpc/server";
 
 export default async function ListPage({
@@ -11,11 +10,6 @@ export default async function ListPage({
 }: {
   params: { listId: string };
 }) {
-  const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/");
-  }
-
   let list;
   try {
     list = await api.lists.get({ listId: params.listId });

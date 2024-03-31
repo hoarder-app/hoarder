@@ -1,7 +1,7 @@
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
+import DeleteTagButton from "@/components/dashboard/tags/DeleteTagButton";
 import { api } from "@/server/api/client";
-import { getServerAuthSession } from "@/server/auth";
 import { TRPCError } from "@trpc/server";
 
 export default async function TagPage({
@@ -9,10 +9,6 @@ export default async function TagPage({
 }: {
   params: { tagName: string };
 }) {
-  const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/");
-  }
   const tagName = decodeURIComponent(params.tagName);
 
   let tag;
@@ -29,7 +25,12 @@ export default async function TagPage({
 
   return (
     <Bookmarks
-      header={<p className="text-2xl">{tagName}</p>}
+      header={
+        <div className="flex justify-between">
+          <span className="text-2xl">{tagName}</span>
+          <DeleteTagButton tagName={tag.name} tagId={tag.id} />
+        </div>
+      }
       query={{ archived: false, tagId: tag.id }}
     />
   );
