@@ -6,7 +6,7 @@ export default async function ListsPage() {
   const lists = await api.lists.list();
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 rounded-md border bg-background p-4">
       <p className="text-2xl">📋 All Lists</p>
       <Separator />
       <AllListsView initialData={lists.lists} />
