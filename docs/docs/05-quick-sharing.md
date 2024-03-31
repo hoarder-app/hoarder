@@ -7,11 +7,12 @@ The whole point of Hoarder is making it easy to hoard the content. That's why th
 <img src="/img/quick-sharing/mobile.png" alt="mobile screenshot" width="300"/>
 
 
-- iOS app: TODO
-- Android App: The app is built in using a cross-platform framework (react native). So technically, the android app should just work, but I didn't test it. If there's enough demand, I'll publish it to the google play store.
+- iOS app: Currently [beta testing](https://testflight.apple.com/join/QifpNxAT) on TestFlight. Pending apple's approval for the app store.
+- Android App: Currently pending google's approval. If you can't wait, you can find the APK [in this issue](https://github.com/MohamedBassem/hoarder-app/issues/6).
 
-## Chrome Extensions
+## Browser Extensions
 
 <img src="/img/quick-sharing/extension.png" alt="mobile screenshot" width="300"/>
 
-- To quickly bookmark links, you can also use the chrome extension [here](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje).
+- Chrome extension: [here](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje).
+- Firefox addon: [here](https://addons.mozilla.org/en-US/firefox/addon/hoarder/).
