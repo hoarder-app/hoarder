@@ -18,6 +18,12 @@
       "bundleIdentifier": "app.hoarder.hoardermobile",
       "config": {
         "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true,
+          "NSAllowsLocalNetworking": true
+        }
       }
     },
     "android": {
@@ -47,6 +53,14 @@
         "expo-image-picker",
         {
           "photosPermission": "The app access your photo gallary on your request to hoard them."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
         }
       ]
     ],

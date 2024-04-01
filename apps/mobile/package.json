@@ -19,6 +19,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "expo": "~50.0.11",
+    "expo-build-properties": "^0.11.1",
     "expo-config-plugin-ios-share-extension": "^0.0.4",
     "expo-constants": "~15.4.5",
     "expo-dev-client": "^3.3.9",

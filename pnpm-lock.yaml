@@ -225,6 +225,9 @@ importers:
       expo:
         specifier: ~50.0.11
         version: 50.0.11(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9)))
+      expo-build-properties:
+        specifier: ^0.11.1
+        version: 0.11.1(expo@50.0.11(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))))
       expo-config-plugin-ios-share-extension:
         specifier: ^0.0.4
         version: 0.0.4(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))
@@ -6281,6 +6284,11 @@ packages:
 
   expo-asset@9.0.2:
     resolution: {integrity: sha512-PzYKME1MgUOoUvwtdzhAyXkjXOXGiSYqGKG/MsXwWr0Ef5wlBaBm2DCO9V6KYbng5tBPFu6hTjoRNil1tBOSow==}
+
+  expo-build-properties@0.11.1:
+    resolution: {integrity: sha512-m4j4aEjFaDuBE6KWYMxDhWgLzzSmpE7uHKAwtvXyNmRK+6JKF0gjiXi0sXgI5ngNppDQpsyPFMvqG7uQpRuCuw==}
+    peerDependencies:
+      expo: '*'
 
   expo-config-plugin-ios-share-extension@0.0.4:
     resolution: {integrity: sha512-M/EMG0GiYtqkS/MOu7UA6qg2BHjl9zQesKdvxW2OiBl4xUTSDa4uIRMybN4O4yAJE9pwe0KeQbuS/ORnCZtjMg==}
@@ -20817,6 +20825,13 @@ snapshots:
     transitivePeerDependencies:
       - expo
       - supports-color
+    dev: false
+
+  expo-build-properties@0.11.1(expo@50.0.11(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9)))):
+    dependencies:
+      ajv: 8.12.0
+      expo: 50.0.11(@babel/core@7.23.9)(@react-native/babel-preset@0.73.21(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9)))
+      semver: 7.6.0
     dev: false
 
   expo-config-plugin-ios-share-extension@0.0.4(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0)):
