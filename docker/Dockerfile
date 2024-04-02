@@ -34,9 +34,6 @@ RUN pnpm next experimental-compile
 FROM --platform=$BUILDPLATFORM node:21-alpine AS web
 WORKDIR /app
 
-ARG SERVER_VERSION=nightly
-ENV SERVER_VERSION=${SERVER_VERSION}
-
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
@@ -60,6 +57,9 @@ ENV PORT 3000
 # set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
 
+ARG SERVER_VERSION=nightly
+ENV SERVER_VERSION=${SERVER_VERSION}
+
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
 CMD ["/bin/sh", "-c", "(cd /db_migrations && node index.js) && node server.js"]
@@ -75,9 +75,6 @@ RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-lin
 FROM --platform=$BUILDPLATFORM node:21-alpine AS workers
 WORKDIR /app
 
-ARG SERVER_VERSION=nightly
-ENV SERVER_VERSION=${SERVER_VERSION}
-
 COPY --from=workers_builder /prod apps/workers
 
 RUN corepack enable
@@ -85,6 +82,9 @@ RUN corepack enable
 WORKDIR /app/apps/workers
 
 USER root
+
+ARG SERVER_VERSION=nightly
+ENV SERVER_VERSION=${SERVER_VERSION}
 
 CMD ["pnpm", "run", "start:prod"]
 
@@ -99,13 +99,14 @@ RUN --mount=type=cache,id=pnpm_cli,target=/pnpm/store pnpm deploy --node-linker=
 FROM --platform=$BUILDPLATFORM node:21-alpine AS cli
 WORKDIR /app
 
-ARG SERVER_VERSION=nightly
-ENV SERVER_VERSION=${SERVER_VERSION}
 
 COPY --from=cli_builder /prod apps/cli
 
 RUN corepack enable
 
 WORKDIR /app/apps/cli
+
+ARG SERVER_VERSION=nightly
+ENV SERVER_VERSION=${SERVER_VERSION}
 
 ENTRYPOINT ["pnpm" , "exec", "tsx", "index.ts"]
