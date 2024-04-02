@@ -13,10 +13,57 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
+import { useClientConfig } from "@/lib/clientConfig";
 import { api } from "@/lib/trpc";
-import { keepPreviousData } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Trash } from "lucide-react";
 import { useSession } from "next-auth/react";
+
+const REPO_LATEST_RELEASE_API =
+  "https://api.github.com/repos/mohamedbassem/hoarder-app/releases/latest";
+const REPO_RELEASE_PAGE =
+  "https://github.com/MohamedBassem/hoarder-app/releases";
+
+function useLatestRelease() {
+  const { data } = useQuery({
+    queryKey: ["latest-release"],
+    queryFn: async () => {
+      const res = await fetch(REPO_LATEST_RELEASE_API);
+      if (!res.ok) {
+        return undefined;
+      }
+      const data = (await res.json()) as { name: string };
+      return data.name;
+    },
+    staleTime: 60 * 60 * 1000,
+    enabled: !useClientConfig().disableNewReleaseCheck,
+  });
+  return data;
+}
+
+function ReleaseInfo() {
+  const currentRelease = useClientConfig().serverVersion ?? "not set";
+  const latestRelease = useLatestRelease();
+
+  let newRelease;
+  if (latestRelease && currentRelease != latestRelease) {
+    newRelease = (
+      <a
+        href={REPO_RELEASE_PAGE}
+        target="_blank"
+        className="text-blue-500"
+        rel="noreferrer"
+      >
+        (New release available: {latestRelease})
+      </a>
+    );
+  }
+  return (
+    <p className="text-nowrap">
+      {currentRelease} {newRelease}
+    </p>
+  );
+}
 
 function ActionsSection() {
   const { mutate: recrawlLinks, isPending: isRecrawlPending } =
@@ -94,6 +141,12 @@ function ServerStatsSection() {
           <TableRow>
             <TableCell>Num Bookmarks</TableCell>
             <TableCell>{serverStats.numBookmarks}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="w-2/3">Server Version</TableCell>
+            <TableCell>
+              <ReleaseInfo />
+            </TableCell>
           </TableRow>
         </TableBody>
       </Table>

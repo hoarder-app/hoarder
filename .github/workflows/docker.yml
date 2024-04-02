@@ -32,6 +32,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
+          build-args: SERVER_VERSION=nightly
           file: docker/Dockerfile
           target: ${{ matrix.package }}
           platforms: linux/amd64,linux/arm64
@@ -45,6 +46,7 @@ jobs:
         if: github.event_name == 'release'
         with:
           context: .
+          build-args: SERVER_VERSION=${{ github.event.release.name }}
           file: docker/Dockerfile
           target: ${{ matrix.package }}
           platforms: linux/amd64,linux/arm64

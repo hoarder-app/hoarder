@@ -19,7 +19,7 @@ const program = new Command()
       .makeOptionMandatory(true)
       .env("HOARDER_SERVER_ADDR"),
   )
-  .version("0.1.0");
+  .version(process.env.SERVER_VERSION ?? "nightly");
 
 program.addCommand(bookmarkCmd);
 program.addCommand(whoamiCmd);

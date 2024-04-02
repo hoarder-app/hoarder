@@ -7,6 +7,8 @@ export const ClientConfigCtx = createContext<ClientConfig>({
   auth: {
     disableSignups: false,
   },
+  serverVersion: undefined,
+  disableNewReleaseCheck: true,
 });
 
 export function useClientConfig() {

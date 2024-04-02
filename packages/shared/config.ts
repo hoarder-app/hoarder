@@ -29,6 +29,9 @@ const allEnv = z.object({
   DATA_DIR: z.string().default(""),
   MAX_ASSET_SIZE_MB: z.coerce.number().default(4),
   INFERENCE_LANG: z.string().default("english"),
+  // Build only flag
+  SERVER_VERSION: z.string().optional(),
+  DISABLE_NEW_RELEASE_CHECK: stringBool("false"),
 });
 
 const serverConfigSchema = allEnv.transform((val) => {
@@ -69,6 +72,8 @@ const serverConfigSchema = allEnv.transform((val) => {
       : undefined,
     dataDir: val.DATA_DIR,
     maxAssetSizeMb: val.MAX_ASSET_SIZE_MB,
+    serverVersion: val.SERVER_VERSION,
+    disableNewReleaseCheck: val.DISABLE_NEW_RELEASE_CHECK,
   };
 });
 
@@ -79,6 +84,8 @@ export const clientConfig = {
   auth: {
     disableSignups: serverConfig.auth.disableSignups,
   },
+  serverVersion: serverConfig.serverVersion,
+  disableNewReleaseCheck: serverConfig.disableNewReleaseCheck,
 };
 export type ClientConfig = typeof clientConfig;
 

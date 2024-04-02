@@ -34,6 +34,9 @@ RUN pnpm next experimental-compile
 FROM --platform=$BUILDPLATFORM node:21-alpine AS web
 WORKDIR /app
 
+ARG SERVER_VERSION=nightly
+ENV SERVER_VERSION=${SERVER_VERSION}
+
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 
@@ -72,6 +75,9 @@ RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-lin
 FROM --platform=$BUILDPLATFORM node:21-alpine AS workers
 WORKDIR /app
 
+ARG SERVER_VERSION=nightly
+ENV SERVER_VERSION=${SERVER_VERSION}
+
 COPY --from=workers_builder /prod apps/workers
 
 RUN corepack enable
@@ -92,6 +98,9 @@ RUN --mount=type=cache,id=pnpm_cli,target=/pnpm/store pnpm deploy --node-linker=
 
 FROM --platform=$BUILDPLATFORM node:21-alpine AS cli
 WORKDIR /app
+
+ARG SERVER_VERSION=nightly
+ENV SERVER_VERSION=${SERVER_VERSION}
 
 COPY --from=cli_builder /prod apps/cli
 
