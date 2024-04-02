@@ -20,6 +20,7 @@ import metascraperUrl from "metascraper-url";
 import puppeteer from "puppeteer-extra";
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { withTimeout } from "utils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
@@ -110,7 +111,7 @@ export class CrawlerWorker {
     logger.info("Starting crawler worker ...");
     const worker = new Worker<ZCrawlLinkRequest, void>(
       LinkCrawlerQueue.name,
-      runCrawler,
+      withTimeout(runCrawler, /* timeoutSec */ 30),
       {
         connection: queueConnectionDetails,
         autorun: false,
