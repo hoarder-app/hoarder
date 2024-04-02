@@ -28,6 +28,7 @@ const allEnv = z.object({
   DEMO_MODE_PASSWORD: z.string().optional(),
   DATA_DIR: z.string().default(""),
   MAX_ASSET_SIZE_MB: z.coerce.number().default(4),
+  INFERENCE_LANG: z.string().default("english"),
 });
 
 const serverConfigSchema = allEnv.transform((val) => {
@@ -42,6 +43,7 @@ const serverConfigSchema = allEnv.transform((val) => {
       ollamaBaseUrl: val.OLLAMA_BASE_URL,
       textModel: val.INFERENCE_TEXT_MODEL,
       imageModel: val.INFERENCE_IMAGE_MODEL,
+      inferredTagLang: val.INFERENCE_LANG,
     },
     bullMQ: {
       redisHost: val.REDIS_HOST,

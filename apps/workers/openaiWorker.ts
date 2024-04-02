@@ -7,6 +7,7 @@ import type { ZOpenAIRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
 import { bookmarks, bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 import { readAsset } from "@hoarder/shared/assetdb";
+import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
 import {
   OpenAIQueue,
@@ -73,15 +74,14 @@ export class OpenAiWorker {
 const IMAGE_PROMPT_BASE = `
 I'm building a read-it-later app and I need your help with automatic tagging.
 Please analyze the attached image and suggest relevant tags that describe its key themes, topics, and main ideas.
-Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. If it's a famous website
-you may also include a tag for the website. If the tag is not generic enough, don't include it. Aim for 10-15 tags.
-If there are no good tags, don't emit any. You must respond in valid JSON with the key "tags" and the value is list of tags.
-Don't wrap the response in a markdown code.`;
+Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}.
+If the tag is not generic enough, don't include it. Aim for 10-15 tags. If there are no good tags, don't emit any. You must respond in valid JSON
+with the key "tags" and the value is list of tags. Don't wrap the response in a markdown code.`;
 
 const TEXT_PROMPT_BASE = `
 I'm building a read-it-later app and I need your help with automatic tagging.
 Please analyze the text after the sentence "CONTENT START HERE:" and suggest relevant tags that describe its key themes, topics, and main ideas.
-Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. If it's a famous website
+Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}. If it's a famous website
 you may also include a tag for the website. If the tag is not generic enough, don't include it. Aim for 3-5 tags. If there are no good tags, don't emit any.
 The content can include text for cookie consent and privacy policy, ignore those while tagging.
 You must respond in JSON with the key "tags" and the value is list of tags.
