@@ -3,19 +3,19 @@
 Hoarder comes with a simple CLI for those users who want to do more advanced manipulation. Currently, the CLI comes packaged as a docker container. You can run it with:
 
 ```
-docker run --rm ghcr.io/mohamedbassem/hoarder-cli --help
+docker run --rm ghcr.io/mohamedbassem/hoarder-cli:release --help
 ```
 
 To use the CLI, you'll need to get an API key from your hoarder settings. You can validate that it's working by running:
 
 ```
-docker run --rm ghcr.io/mohamedbassem/hoarder-cli --api-key <key> --server-addr <addr> whoami
+docker run --rm ghcr.io/mohamedbassem/hoarder-cli:release --api-key <key> --server-addr <addr> whoami
 ```
 
 For example:
 
 ```
-docker run --rm ghcr.io/mohamedbassem/hoarder-cli --api-key mysupersecretkey --server-addr https://try.hoarder.app whoami
+docker run --rm ghcr.io/mohamedbassem/hoarder-cli:release --api-key mysupersecretkey --server-addr https://try.hoarder.app whoami
 {
   id: 'j29gnbzxxd01q74j2lu88tnb',
   name: 'Test User',
