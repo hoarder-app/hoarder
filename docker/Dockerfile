@@ -102,11 +102,10 @@ WORKDIR /app
 
 COPY --from=cli_builder /prod apps/cli
 
-RUN corepack enable
-
 WORKDIR /app/apps/cli
+RUN npm config set update-notifier false
 
 ARG SERVER_VERSION=nightly
 ENV SERVER_VERSION=${SERVER_VERSION}
 
-ENTRYPOINT ["pnpm" , "exec", "tsx", "index.ts"]
+ENTRYPOINT ["npm", "exec", "--", "tsx", "index.ts"]
