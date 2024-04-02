@@ -24,12 +24,13 @@ wget https://raw.githubusercontent.com/MohamedBassem/hoarder-app/main/docker/doc
 To configure the app, create a `.env` file in the directory and add this minimal env file:
 
 ```
-NEXTAUTH_SECRET=super_random_string
 HOARDER_VERSION=release
+NEXTAUTH_SECRET=super_random_string
 MEILI_MASTER_KEY=another_random_string
+NEXTAUTH_URL=http://localhost:3000
 ```
 
-You **should** change the random strings. You can use `openssl rand -base64 36` to generate the random strings.
+You **should** change the random strings. You can use `openssl rand -base64 36` to generate the random strings. You should also change the `NEXTAUTH_URL` variable to point to your server address.
 
 Using `HOARDER_VERSION=release` will pull the latest stable version. You might want to pin the version instead to control the upgrades (e.g. `HOARDER_VERSION=0.10.0`). Check the latest versions [here](https://github.com/MohamedBassem/hoarder-app/pkgs/container/hoarder-web).
 
@@ -44,7 +45,11 @@ If you want more config params, check the config documentation [here](/configura
 To enable automatic tagging, you'll need to configure OpenAI. This is optional though but hightly recommended.
 
 - Follow [OpenAI's help](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) to get an API key.
-- Add `OPENAI_API_KEY=<key>` to the env file.
+- Add the OpenAI API key to the env file:
+
+```
+OPENAI_API_KEY=<key>
+```
 
 Learn more about the costs of using openai [here](/openai).
 
@@ -72,6 +77,9 @@ docker compose up -d
 
 Then visit `http://localhost:3000` and you should be greated with the Sign In page.
 
+### [Optional] 6. Setup quick sharing extensions
+
+Go to the [quick sharing page](/quick-sharing) to install the mobile apps and the browser extensions. Those will help you hoard things faster!
 
 ## Updating
 

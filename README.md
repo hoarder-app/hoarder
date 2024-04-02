@@ -27,7 +27,7 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 - 📱 An iOS app that's pending apple's review (currently [beta testing](https://testflight.apple.com/join/QifpNxAT)), and the Android app is [almost ready](https://github.com/MohamedBassem/hoarder-app/issues/6).
 - 🌙 Dark mode support (web only so far).
 - 💾 Self-hosting first.
-- [Planned] Archiving the content for offline reading.
+- [Planned] Downloading the content for offline reading.
 
 **⚠️ This app is under heavy development and it's far from stable.**
 
