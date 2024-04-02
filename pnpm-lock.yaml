@@ -135,6 +135,46 @@ importers:
         specifier: ^5.1.0
         version: 5.1.4(@types/node@20.11.20)
 
+  apps/cli:
+    dependencies:
+      '@commander-js/extra-typings':
+        specifier: ^12.0.1
+        version: 12.0.1(commander@12.0.0)
+      '@hoarder/trpc':
+        specifier: workspace:^0.1.0
+        version: link:../../packages/trpc
+      '@hoarder/tsconfig':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/typescript
+      '@trpc/client':
+        specifier: 11.0.0-next-beta.308
+        version: 11.0.0-next-beta.308(@trpc/server@11.0.0-next-beta.308)
+      '@trpc/server':
+        specifier: 11.0.0-next-beta.308
+        version: 11.0.0-next-beta.308
+      '@tsconfig/node21':
+        specifier: ^21.0.1
+        version: 21.0.1
+      chalk:
+        specifier: ^5.3.0
+        version: 5.3.0
+      commander:
+        specifier: ^12.0.0
+        version: 12.0.0
+      superjson:
+        specifier: ^2.2.1
+        version: 2.2.1
+      tsx:
+        specifier: ^4.7.1
+        version: 4.7.1
+    devDependencies:
+      '@hoarder/eslint-config':
+        specifier: workspace:^0.2.0
+        version: link:../../tooling/eslint
+      '@hoarder/prettier-config':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/prettier
+
   apps/landing:
     dependencies:
       '@radix-ui/react-slot':
@@ -1809,6 +1849,11 @@ packages:
   '@colors/colors@1.6.0':
     resolution: {integrity: sha512-Ir+AOibqzrIsL6ajt3Rz3LskB7OiMVHqltZmspbW/TJuTVuyOMirVqAkjfY6JISiLHgyNqicAC8AyHHGzNd/dA==}
     engines: {node: '>=0.1.90'}
+
+  '@commander-js/extra-typings@12.0.1':
+    resolution: {integrity: sha512-OvkMobb1eMqOCuJdbuSin/KJkkZr7n24/UNV+Lcz/0Dhepf3r2p9PaGwpRpAWej7A+gQnny4h8mGhpFl4giKkg==}
+    peerDependencies:
+      commander: ~12.0.0
 
   '@crxjs/vite-plugin@1.0.14':
     resolution: {integrity: sha512-emOueVCqFRFmpcfT80Xsm4mfuFw9VSp5GY4eh5qeLDeiP81g0hddlobVQCo0pE2ZvNnWbyhLrXEYAaMAXjNL6A==}
@@ -5179,6 +5224,10 @@ packages:
   commander@10.0.1:
     resolution: {integrity: sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==}
     engines: {node: '>=14'}
+
+  commander@12.0.0:
+    resolution: {integrity: sha512-MwVNWlYjDTtOjX5PiD7o5pK0UrFU/OYgcJfjjK4RaHZETNtjJqrZa9Y9ds88+A+f+d5lv+561eZ+yCKoS3gbAA==}
+    engines: {node: '>=18'}
 
   commander@2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
@@ -14071,6 +14120,11 @@ snapshots:
   '@colors/colors@1.6.0':
     dev: false
 
+  '@commander-js/extra-typings@12.0.1(commander@12.0.0)':
+    dependencies:
+      commander: 12.0.0
+    dev: false
+
   '@crxjs/vite-plugin@1.0.14(vite@5.1.4(@types/node@20.11.20))':
     dependencies:
       '@rollup/pluginutils': 4.2.1
@@ -19359,6 +19413,9 @@ snapshots:
     dev: false
 
   commander@10.0.1:
+    dev: false
+
+  commander@12.0.0:
     dev: false
 
   commander@2.20.3: {}

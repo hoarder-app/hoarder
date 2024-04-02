@@ -10,7 +10,7 @@ jobs:
   push:
     strategy:
       matrix:
-        package: [web, workers]
+        package: [web, workers, cli]
     runs-on: ubuntu-latest
     permissions:
       packages: write

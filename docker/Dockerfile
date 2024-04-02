@@ -81,3 +81,22 @@ WORKDIR /app/apps/workers
 USER root
 
 CMD ["pnpm", "run", "start:prod"]
+
+################# The cli builder ##############
+
+FROM base AS cli_builder
+
+RUN --mount=type=cache,id=pnpm_cli,target=/pnpm/store pnpm deploy --node-linker=isolated --filter @hoarder/cli --prod /prod
+
+################# The cli ##############
+
+FROM --platform=$BUILDPLATFORM node:21-alpine AS cli
+WORKDIR /app
+
+COPY --from=cli_builder /prod apps/cli
+
+RUN corepack enable
+
+WORKDIR /app/apps/cli
+
+ENTRYPOINT ["pnpm" , "exec", "tsx", "index.ts"]
