@@ -182,8 +182,8 @@ export const tagsAppRouter = router({
               },
             };
           }
-          acc[row.id].count++;
-          acc[row.id].countAttachedBy[row.attachedBy]!++;
+          acc[row.id].count += row.count;
+          acc[row.id].countAttachedBy[row.attachedBy]! += row.count;
           return acc;
         },
         {},
