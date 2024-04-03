@@ -100,7 +100,7 @@ function ActionsSection() {
     <>
       <p className="text-xl">Actions</p>
       <ActionButton
-        className="w-1/2"
+        className="lg:w-1/2"
         variant="destructive"
         loading={isRecrawlPending}
         onClick={() => recrawlLinks()}
@@ -108,7 +108,7 @@ function ActionsSection() {
         Recrawl All Links
       </ActionButton>
       <ActionButton
-        className="w-1/2"
+        className="lg:w-1/2"
         variant="destructive"
         loading={isReindexPending}
         onClick={() => reindexBookmarks()}
@@ -132,10 +132,10 @@ function ServerStatsSection() {
   return (
     <>
       <p className="text-xl">Server Stats</p>
-      <Table className="w-1/2">
+      <Table className="lg:w-1/2">
         <TableBody>
           <TableRow>
-            <TableCell className="w-2/3">Num Users</TableCell>
+            <TableCell className="lg:w-2/3">Num Users</TableCell>
             <TableCell>{serverStats.numUsers}</TableCell>
           </TableRow>
           <TableRow>
@@ -143,7 +143,7 @@ function ServerStatsSection() {
             <TableCell>{serverStats.numBookmarks}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell className="w-2/3">Server Version</TableCell>
+            <TableCell className="lg:w-2/3">Server Version</TableCell>
             <TableCell>
               <ReleaseInfo />
             </TableCell>
@@ -152,10 +152,10 @@ function ServerStatsSection() {
       </Table>
       <Separator />
       <p className="text-xl">Background Jobs</p>
-      <Table className="w-1/2">
+      <Table className="lg:w-1/2">
         <TableBody>
           <TableRow>
-            <TableCell className="w-2/3">Pending Crawling Jobs</TableCell>
+            <TableCell className="lg:w-2/3">Pending Crawling Jobs</TableCell>
             <TableCell>{serverStats.pendingCrawls}</TableCell>
           </TableRow>
           <TableRow>
