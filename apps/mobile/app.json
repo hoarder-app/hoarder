@@ -31,7 +31,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
       },
-      "package": "app.hoarder.hoardermobile"
+      "package": "app.hoarder.hoardermobile",
+      "versionCode": 2
     },
     "plugins": [
       "expo-router",
