@@ -67,3 +67,15 @@ export async function deleteAsset({
   const assetDir = getAssetDir(userId, assetId);
   await fs.promises.rm(path.join(assetDir), { recursive: true });
 }
+
+export async function deleteUserAssets({ userId }: { userId: string }) {
+  const userDir = path.join(ROOT_PATH, userId);
+  const dirExists = await fs.promises
+    .access(userDir)
+    .then(() => true)
+    .catch(() => false);
+  if (!dirExists) {
+    return;
+  }
+  await fs.promises.rm(userDir, { recursive: true });
+}

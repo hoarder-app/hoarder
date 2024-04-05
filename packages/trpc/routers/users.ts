@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { SqliteError } from "@hoarder/db";
 import { users } from "@hoarder/db/schema";
+import { deleteUserAssets } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 
 import { hashPassword, validatePassword } from "../auth";
@@ -127,6 +128,7 @@ export const usersAppRouter = router({
       if (res.changes == 0) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
+      await deleteUserAssets({ userId: input.userId });
     }),
   whoami: authedProcedure
     .output(
