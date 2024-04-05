@@ -67,7 +67,10 @@ export default function EditorCard({ className }: { className?: string }) {
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
     const text = data.text.trim();
     try {
-      new URL(text);
+      const url = new URL(text);
+      if (url.protocol != "http:" && url.protocol != "https:") {
+        throw new Error("Invalid URL");
+      }
       mutate({ type: "link", url: text });
     } catch (e) {
       // Not a URL
