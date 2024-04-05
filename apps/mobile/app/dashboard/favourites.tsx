@@ -7,7 +7,6 @@ export default function Favourites() {
     <CustomSafeAreaView>
       <UpdatingBookmarkList
         query={{
-          archived: false,
           favourited: true,
         }}
         header={<PageTitle title="⭐️ Favourites" />}

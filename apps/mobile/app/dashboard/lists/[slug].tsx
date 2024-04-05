@@ -26,7 +26,6 @@ export default function ListView() {
         <View>
           <UpdatingBookmarkList
             query={{
-              archived: false,
               listId: list.id,
             }}
             header={<PageTitle title={`${list.icon} ${list.name}`} />}

@@ -31,7 +31,7 @@ export default async function TagPage({
           <DeleteTagButton tagName={tag.name} tagId={tag.id} />
         </div>
       }
-      query={{ archived: false, tagId: tag.id }}
+      query={{ tagId: tag.id }}
     />
   );
 }

@@ -4,7 +4,7 @@ export default async function FavouritesBookmarkPage() {
   return (
     <Bookmarks
       header={<p className="text-2xl">⭐️ Favourites</p>}
-      query={{ favourited: true, archived: false }}
+      query={{ favourited: true }}
       showDivider={true}
     />
   );

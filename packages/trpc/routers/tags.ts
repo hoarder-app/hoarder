@@ -2,7 +2,7 @@ import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
 import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { bookmarks, bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
+import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 
 import type { Context } from "../index";
 import type { ZAttachedByEnum } from "../types/tags";
@@ -88,12 +88,10 @@ export const tagsAppRouter = router({
         })
         .from(bookmarkTags)
         .leftJoin(tagsOnBookmarks, eq(bookmarkTags.id, tagsOnBookmarks.tagId))
-        .leftJoin(bookmarks, eq(tagsOnBookmarks.bookmarkId, bookmarks.id))
         .where(
           and(
             conditionFromInput(input, ctx.user.id),
             eq(bookmarkTags.userId, ctx.user.id),
-            eq(bookmarks.archived, false),
           ),
         );
 
@@ -161,13 +159,7 @@ export const tagsAppRouter = router({
         .from(tagsOnBookmarks)
         .groupBy(tagsOnBookmarks.tagId, tagsOnBookmarks.attachedBy)
         .innerJoin(bookmarkTags, eq(bookmarkTags.id, tagsOnBookmarks.tagId))
-        .leftJoin(bookmarks, eq(tagsOnBookmarks.bookmarkId, bookmarks.id))
-        .where(
-          and(
-            eq(bookmarkTags.userId, ctx.user.id),
-            eq(bookmarks.archived, false),
-          ),
-        );
+        .where(eq(bookmarkTags.userId, ctx.user.id));
 
       const tags = res.reduce<Record<string, z.infer<typeof zTagSchema>>>(
         (acc, row) => {

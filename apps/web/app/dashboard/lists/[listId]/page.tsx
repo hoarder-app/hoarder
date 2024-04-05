@@ -25,7 +25,7 @@ export default async function ListPage({
   return (
     <BookmarkListContextProvider listId={list.id}>
       <Bookmarks
-        query={{ listId: list.id, archived: false }}
+        query={{ listId: list.id }}
         showDivider={true}
         header={
           <div className="flex justify-between">

@@ -27,7 +27,6 @@ export default function TagView() {
         <View>
           <UpdatingBookmarkList
             query={{
-              archived: false,
               tagId: tag.id,
             }}
             header={<PageTitle title={tag.name} />}
