@@ -34,3 +34,9 @@ Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic taggin
 | INFERENCE_TEXT_MODEL  | No       | gpt-3.5-turbo-0125   | The model to use for text inference. You'll need to change this to some other model if you're using ollama.                                                                                     |
 | INFERENCE_IMAGE_MODEL | No       | gpt-4-vision-preview | The model to use for image inference. You'll need to change this to some other model if you're using ollama and that model needs to support vision APIs (e.g. llava).                           |
 | INFERENCE_LANG        | No       | english              | The language in which the tags will be generated.                                                                                                                                               |
+
+## Crawler Configs
+
+| Name                    | Required | Default | Description                                                                                                                                                            |
+| ----------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CRAWLER_JOB_TIMEOUT_SEC | No       | 60      | How long to wait for the crawler job to finish before timing out. If you have a slow internet connection or a low powered device, you might want to bump this up a bit |

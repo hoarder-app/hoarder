@@ -56,14 +56,14 @@ async function launchBrowser() {
     try {
       if (serverConfig.crawler.browserWebUrl) {
         logger.info(
-          `Connecting to existing browser instance: ${serverConfig.crawler.browserWebUrl}`,
+          `[Crawler] Connecting to existing browser instance: ${serverConfig.crawler.browserWebUrl}`,
         );
         const webUrl = new URL(serverConfig.crawler.browserWebUrl);
         // We need to resolve the ip address as a workaround for https://github.com/puppeteer/puppeteer/issues/2242
         const { address: address } = await dns.promises.lookup(webUrl.hostname);
         webUrl.hostname = address;
         logger.info(
-          `Successfully resolved IP address, new address: ${webUrl.toString()}`,
+          `[Crawler] Successfully resolved IP address, new address: ${webUrl.toString()}`,
         );
         browser = await puppeteer.connect({
           browserURL: webUrl.toString(),
@@ -76,7 +76,7 @@ async function launchBrowser() {
       }
     } catch (e) {
       logger.error(
-        "Failed to connect to the browser instance, will retry in 5 secs",
+        "[Crawler] Failed to connect to the browser instance, will retry in 5 secs",
       );
       setTimeout(() => {
         launchBrowser();
@@ -86,12 +86,12 @@ async function launchBrowser() {
     browser.on("disconnected", () => {
       if (isShuttingDown) {
         logger.info(
-          "The puppeteer browser got disconnected. But we're shutting down so won't restart it.",
+          "[Crawler] The puppeteer browser got disconnected. But we're shutting down so won't restart it.",
         );
         return;
       }
       logger.info(
-        "The puppeteer browser got disconnected. Will attempt to launch it again.",
+        "[Crawler] The puppeteer browser got disconnected. Will attempt to launch it again.",
       );
       launchBrowser();
     });
@@ -111,7 +111,10 @@ export class CrawlerWorker {
     logger.info("Starting crawler worker ...");
     const worker = new Worker<ZCrawlLinkRequest, void>(
       LinkCrawlerQueue.name,
-      withTimeout(runCrawler, /* timeoutSec */ 30),
+      withTimeout(
+        runCrawler,
+        /* timeoutSec */ serverConfig.crawler.jobTimeoutSec,
+      ),
       {
         connection: queueConnectionDetails,
         autorun: false,
@@ -125,9 +128,7 @@ export class CrawlerWorker {
 
     worker.on("failed", (job, error) => {
       const jobId = job?.id ?? "unknown";
-      logger.error(
-        `[Crawler][${jobId}] Crawling job failed: ${JSON.stringify(error)}`,
-      );
+      logger.error(`[Crawler][${jobId}] Crawling job failed: ${error}`);
     });
 
     return worker;
@@ -161,7 +162,7 @@ function validateUrl(url: string) {
   }
 }
 
-async function crawlPage(url: string) {
+async function crawlPage(jobId: string, url: string) {
   assert(browser);
   const context = await browser.createBrowserContext();
 
@@ -171,6 +172,9 @@ async function crawlPage(url: string) {
     await page.goto(url, {
       timeout: 10000, // 10 seconds
     });
+    logger.info(
+      `[Crawler][${jobId}] Successfully navigated to "${url}". Waiting for the page to load ...`,
+    );
 
     // Wait until there's at most two connections for 2 seconds
     // Attempt to wait only for 5 seconds
@@ -181,6 +185,8 @@ async function crawlPage(url: string) {
       }),
       new Promise((f) => setTimeout(f, 5000)),
     ]);
+
+    logger.info(`[Crawler][${jobId}] Finished waiting for the page to load.`);
 
     const htmlContent = await page.content();
     return htmlContent;
@@ -208,12 +214,16 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   );
   validateUrl(url);
 
-  const htmlContent = await crawlPage(url);
+  const htmlContent = await crawlPage(jobId, url);
 
+  logger.info(
+    `[Crawler][${jobId}] Will attempt to parse the content of the page ...`,
+  );
   const meta = await metascraperParser({
     url,
     html: htmlContent,
   });
+  logger.info(`[Crawler][${jobId}] Done parsing the content of the page.`);
 
   const window = new JSDOM("").window;
   const purify = DOMPurify(window);

@@ -20,6 +20,7 @@ const allEnv = z.object({
   REDIS_DB_IDX: z.coerce.number().optional(),
   CRAWLER_HEADLESS_BROWSER: stringBool("true"),
   BROWSER_WEB_URL: z.string().url().optional(),
+  CRAWLER_JOB_TIMEOUT_SEC: z.number().default(60),
   MEILI_ADDR: z.string().optional(),
   MEILI_MASTER_KEY: z.string().default(""),
   LOG_LEVEL: z.string().default("debug"),
@@ -56,6 +57,7 @@ const serverConfigSchema = allEnv.transform((val) => {
     crawler: {
       headlessBrowser: val.CRAWLER_HEADLESS_BROWSER,
       browserWebUrl: val.BROWSER_WEB_URL,
+      jobTimeoutSec: val.CRAWLER_JOB_TIMEOUT_SEC,
     },
     meilisearch: val.MEILI_ADDR
       ? {
