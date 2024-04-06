@@ -1,5 +1,5 @@
 ################# Base Builder ##############
-FROM --platform=$BUILDPLATFORM node:21-alpine AS base
+FROM node:21-alpine AS base
 
 WORKDIR /app
 ENV PNPM_HOME="/pnpm"
@@ -31,7 +31,7 @@ RUN pnpm next experimental-compile
 
 ################# The Web App ##############
 
-FROM --platform=$BUILDPLATFORM node:21-alpine AS web
+FROM node:21-alpine AS web
 WORKDIR /app
 
 ENV NODE_ENV production
@@ -72,7 +72,7 @@ RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-lin
 
 ################# The workers ##############
 
-FROM --platform=$BUILDPLATFORM node:21-alpine AS workers
+FROM node:21-alpine AS workers
 WORKDIR /app
 
 COPY --from=workers_builder /prod apps/workers
@@ -96,7 +96,7 @@ RUN --mount=type=cache,id=pnpm_cli,target=/pnpm/store pnpm deploy --node-linker=
 
 ################# The cli ##############
 
-FROM --platform=$BUILDPLATFORM node:21-alpine AS cli
+FROM node:21-alpine AS cli
 WORKDIR /app
 
 
