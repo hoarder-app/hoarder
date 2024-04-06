@@ -2,20 +2,14 @@ import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useEffect, useImperativeHandle, useRef } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import { Form, FormControl, FormItem } from "@/components/ui/form";
+import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { toast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Info } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -97,18 +91,11 @@ export default function EditorCard({ className }: { className?: string }) {
       >
         <div className="flex justify-between">
           <p className="text-sm">NEW ITEM</p>
-          <TooltipProvider delayDuration={0}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info size={15} />
-              </TooltipTrigger>
-              <TooltipContent className="w-52">
-                <p className="text-center">
-                  You can quickly focus on this field by pressing ⌘ + E
-                </p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <InfoTooltip size={15}>
+            <p className="text-center">
+              You can quickly focus on this field by pressing ⌘ + E
+            </p>
+          </InfoTooltip>
         </div>
         <Separator />
         <FormItem className="flex-1">

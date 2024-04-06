@@ -1,13 +1,7 @@
 import Link from "next/link";
+import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { api } from "@/server/api/client";
-import { Info } from "lucide-react";
 
 function TagPill({ name, count }: { name: string; count: number }) {
   return (
@@ -48,16 +42,9 @@ export default async function TagsPage() {
 
       <span className="flex items-center gap-2">
         <p className="text-lg">Your Tags</p>
-        <TooltipProvider delayDuration={0}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Info size={20} />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Tags that were attached at least once by you</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <InfoTooltip size={15} className="my-auto" variant="explain">
+          <p>Tags that were attached at least once by you</p>
+        </InfoTooltip>
       </span>
       <div className="flex flex-wrap gap-3">{tagsToPill(humanTags)}</div>
 
@@ -65,16 +52,9 @@ export default async function TagsPage() {
 
       <span className="flex items-center gap-2">
         <p className="text-lg">AI Tags</p>
-        <TooltipProvider delayDuration={0}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Info size={20} />
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Tags that were only attached automatically (by AI)</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <InfoTooltip size={15} className="my-auto" variant="explain">
+          <p>Tags that were only attached automatically (by AI)</p>
+        </InfoTooltip>
       </span>
       <div className="flex flex-wrap gap-3">{tagsToPill(aiTags)}</div>
     </div>
