@@ -7,7 +7,7 @@ import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 import type { Context } from "../index";
 import type { ZAttachedByEnum } from "../types/tags";
 import { authedProcedure, router } from "../index";
-import { zAttachedByEnumSchema } from "../types/tags";
+import { zGetTagResponseSchema } from "../types/tags";
 
 function conditionFromInput(
   input: { tagName: string } | { tagId: string },
@@ -57,13 +57,6 @@ const ensureTagOwnership = experimental_trpcMiddleware<{
   return opts.next();
 });
 
-const zTagSchema = z.object({
-  id: z.string(),
-  name: z.string(),
-  count: z.number(),
-  countAttachedBy: z.record(zAttachedByEnumSchema, z.number()),
-});
-
 export const tagsAppRouter = router({
   get: authedProcedure
     .input(
@@ -77,7 +70,7 @@ export const tagsAppRouter = router({
           }),
         ),
     )
-    .output(zTagSchema)
+    .output(zGetTagResponseSchema)
     .use(ensureTagOwnership)
     .query(async ({ input, ctx }) => {
       const res = await ctx.db
@@ -145,7 +138,7 @@ export const tagsAppRouter = router({
   list: authedProcedure
     .output(
       z.object({
-        tags: z.array(zTagSchema),
+        tags: z.array(zGetTagResponseSchema),
       }),
     )
     .query(async ({ ctx }) => {
@@ -161,25 +154,24 @@ export const tagsAppRouter = router({
         .innerJoin(bookmarkTags, eq(bookmarkTags.id, tagsOnBookmarks.tagId))
         .where(eq(bookmarkTags.userId, ctx.user.id));
 
-      const tags = res.reduce<Record<string, z.infer<typeof zTagSchema>>>(
-        (acc, row) => {
-          if (!(row.id in acc)) {
-            acc[row.id] = {
-              id: row.id,
-              name: row.name,
-              count: 0,
-              countAttachedBy: {
-                ai: 0,
-                human: 0,
-              },
-            };
-          }
-          acc[row.id].count += row.count;
-          acc[row.id].countAttachedBy[row.attachedBy]! += row.count;
-          return acc;
-        },
-        {},
-      );
+      const tags = res.reduce<
+        Record<string, z.infer<typeof zGetTagResponseSchema>>
+      >((acc, row) => {
+        if (!(row.id in acc)) {
+          acc[row.id] = {
+            id: row.id,
+            name: row.name,
+            count: 0,
+            countAttachedBy: {
+              ai: 0,
+              human: 0,
+            },
+          };
+        }
+        acc[row.id].count += row.count;
+        acc[row.id].countAttachedBy[row.attachedBy]! += row.count;
+        return acc;
+      }, {});
       return { tags: Object.values(tags) };
     }),
 });

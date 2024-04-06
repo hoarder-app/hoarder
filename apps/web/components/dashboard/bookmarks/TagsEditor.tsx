@@ -17,16 +17,16 @@ interface EditableTag {
 
 export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
   const demoMode = !!useClientConfig().demoMode;
-  const bookmarkInvalidationFunction =
-    api.useUtils().bookmarks.getBookmark.invalidate;
+  const apiUtils = api.useUtils();
 
   const { mutate } = api.bookmarks.updateTags.useMutation({
     onSuccess: () => {
       toast({
         description: "Tags has been updated!",
       });
-      bookmarkInvalidationFunction({ bookmarkId: bookmark.id });
-      // TODO(bug) Invalidate the tag views as well
+      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: bookmark.id });
+      apiUtils.tags.list.invalidate();
+      apiUtils.tags.get.invalidate();
     },
     onError: () => {
       toast({
