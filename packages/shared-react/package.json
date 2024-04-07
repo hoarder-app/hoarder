@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "@hoarder/shared-react",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@hoarder/trpc": "workspace:^0.1.0",
+    "@tanstack/react-query": "^5.24.8"
+  },
+  "devDependencies": {
+    "@hoarder/eslint-config": "workspace:^0.2.0",
+    "@hoarder/prettier-config": "workspace:^0.1.0",
+    "@hoarder/tsconfig": "workspace:^0.1.0"
+  },
+"peerDependencies": {
+    "react": "*",
+    "react-native": "*",
+    "react-native-web": "*"
+  },
+  "peerDependenciesMeta": {
+    "react-native": {
+      "optional": true
+    },
+    "react-native-web": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "format": "prettier . --ignore-path ../../.prettierignore",
+    "lint": "eslint ."
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@hoarder/eslint-config/base",
+      "@hoarder/eslint-config/react"
+    ]
+  },
+  "prettier": "@hoarder/prettier-config"
+}

@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { TagsEditor } from "@/components/dashboard/bookmarks/TagsEditor";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -20,12 +19,13 @@ import { api } from "@/lib/trpc";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { CalendarDays, ExternalLink } from "lucide-react";
-import Markdown from "react-markdown";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
+import ActionBar from "./ActionBar";
+import { AssetContentSection } from "./AssetContentSection";
 import { NoteEditor } from "./NoteEditor";
-import { TagsEditor } from "./TagsEditor";
+import { TextContentSection } from "./TextContentSection";
 
 dayjs.extend(relativeTime);
 
@@ -89,69 +89,6 @@ function LinkHeader({ bookmark }: { bookmark: ZBookmark }) {
   );
 }
 
-function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
-  let content;
-  switch (bookmark.content.type) {
-    case "link": {
-      if (!bookmark.content.htmlContent) {
-        content = (
-          <div className="text-destructive">
-            Failed to fetch link content ...
-          </div>
-        );
-      } else {
-        content = (
-          <div
-            dangerouslySetInnerHTML={{
-              __html: bookmark.content.htmlContent || "",
-            }}
-            className="prose mx-auto dark:prose-invert"
-          />
-        );
-      }
-      break;
-    }
-    case "text": {
-      content = (
-        <Markdown className="prose mx-auto dark:prose-invert">
-          {bookmark.content.text}
-        </Markdown>
-      );
-      break;
-    }
-  }
-
-  return <ScrollArea className="h-full">{content}</ScrollArea>;
-}
-
-function AssetContentSection({ bookmark }: { bookmark: ZBookmark }) {
-  if (bookmark.content.type != "asset") {
-    throw new Error("Invalid content type");
-  }
-
-  let content;
-  switch (bookmark.content.assetType) {
-    case "image": {
-      switch (bookmark.content.assetType) {
-        case "image": {
-          content = (
-            <div className="relative h-full min-w-full">
-              <Image
-                alt="asset"
-                fill={true}
-                className="object-contain"
-                src={`/api/assets/${bookmark.content.assetId}`}
-              />
-            </div>
-          );
-        }
-      }
-      break;
-    }
-  }
-  return content;
-}
-
 export default function BookmarkPreview({
   initialData,
 }: {
@@ -210,6 +147,7 @@ export default function BookmarkPreview({
           <p className="text-sm text-gray-400">Note</p>
           <NoteEditor bookmark={bookmark} />
         </div>
+        <ActionBar bookmark={bookmark} />
       </div>
     </div>
   );

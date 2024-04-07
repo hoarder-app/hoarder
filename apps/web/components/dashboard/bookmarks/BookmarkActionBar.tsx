@@ -1,11 +1,12 @@
+import BookmarkPreview from "@/components/dashboard/preview/BookmarkPreview";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import { Maximize2, Star } from "lucide-react";
+import { Maximize2 } from "lucide-react";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
 import BookmarkOptions from "./BookmarkOptions";
-import BookmarkPreview from "./BookmarkPreview";
+import { FavouritedActionIcon } from "./icons";
 
 export default function BookmarkActionBar({
   bookmark,
@@ -15,11 +16,7 @@ export default function BookmarkActionBar({
   return (
     <div className="flex text-gray-500">
       {bookmark.favourited && (
-        <Star
-          className="m-1 size-8 rounded p-1"
-          color="#ebb434"
-          fill="#ebb434"
-        />
+        <FavouritedActionIcon className="m-1 size-8 rounded p-1" favourited />
       )}
       <Dialog>
         <DialogTrigger asChild>

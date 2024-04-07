@@ -1,17 +1,14 @@
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
-import { api } from "@/lib/trpc";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
 
 export function NoteEditor({ bookmark }: { bookmark: ZBookmark }) {
   const demoMode = !!useClientConfig().demoMode;
 
-  const invalidateBookmarkCache =
-    api.useUtils().bookmarks.getBookmark.invalidate;
-
-  const updateBookmarkMutator = api.bookmarks.updateBookmark.useMutation({
+  const updateBookmarkMutator = useUpdateBookmark({
     onSuccess: () => {
       toast({
         description: "The bookmark has been updated!",
@@ -22,9 +19,6 @@ export function NoteEditor({ bookmark }: { bookmark: ZBookmark }) {
         description: "Something went wrong while saving the note",
         variant: "destructive",
       });
-    },
-    onSettled: () => {
-      invalidateBookmarkCache({ bookmarkId: bookmark.id });
     },
   });
 

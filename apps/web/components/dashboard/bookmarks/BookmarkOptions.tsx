@@ -11,24 +11,28 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
 import { BookmarkListContext } from "@/lib/hooks/list-context";
-import { api } from "@/lib/trpc";
 import {
-  Archive,
   Link,
   List,
   ListX,
   MoreHorizontal,
   Pencil,
   RotateCw,
-  Star,
   Tags,
   Trash2,
 } from "lucide-react";
 
 import type { ZBookmark, ZBookmarkedLink } from "@hoarder/trpc/types/bookmarks";
+import {
+  useDeleteBookmark,
+  useRecrawlBookmark,
+  useUpdateBookmark,
+} from "@hoarder/shared-react/hooks//bookmarks";
+import { useRemoveBookmarkFromList } from "@hoarder/shared-react/hooks//lists";
 
 import { useAddToListModal } from "./AddToListModal";
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
+import { ArchivedActionIcon, FavouritedActionIcon } from "./icons";
 import { useTagModel } from "./TagModal";
 
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
@@ -46,15 +50,6 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
 
   const { listId } = useContext(BookmarkListContext);
 
-  const invalidateAllBookmarksCache =
-    api.useUtils().bookmarks.getBookmarks.invalidate;
-
-  const invalidateBookmarkCache =
-    api.useUtils().bookmarks.getBookmark.invalidate;
-
-  const invalidateSearchCache =
-    api.useUtils().bookmarks.searchBookmarks.invalidate;
-
   const onError = () => {
     toast({
       variant: "destructive",
@@ -62,48 +57,35 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       description: "There was a problem with your request.",
     });
   };
-  const deleteBookmarkMutator = api.bookmarks.deleteBookmark.useMutation({
+  const deleteBookmarkMutator = useDeleteBookmark({
     onSuccess: () => {
       toast({
         description: "The bookmark has been deleted!",
       });
     },
     onError,
-    onSettled: () => {
-      invalidateAllBookmarksCache();
-      invalidateSearchCache();
-    },
   });
 
-  const updateBookmarkMutator = api.bookmarks.updateBookmark.useMutation({
+  const updateBookmarkMutator = useUpdateBookmark({
     onSuccess: () => {
       toast({
         description: "The bookmark has been updated!",
       });
     },
     onError,
-    onSettled: () => {
-      invalidateBookmarkCache({ bookmarkId: bookmark.id });
-      invalidateAllBookmarksCache();
-      invalidateSearchCache();
-    },
   });
 
-  const crawlBookmarkMutator = api.bookmarks.recrawlBookmark.useMutation({
+  const crawlBookmarkMutator = useRecrawlBookmark({
     onSuccess: () => {
       toast({
         description: "Re-fetch has been enqueued!",
       });
     },
     onError,
-    onSettled: () => {
-      invalidateBookmarkCache({ bookmarkId: bookmark.id });
-    },
   });
 
-  const removeFromListMutator = api.lists.removeFromList.useMutation({
-    onSuccess: (_resp, req) => {
-      invalidateAllBookmarksCache({ listId: req.listId });
+  const removeFromListMutator = useRemoveBookmarkFromList({
+    onSuccess: () => {
       toast({
         description: "The bookmark has been deleted from the list",
       });
@@ -145,7 +127,10 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               })
             }
           >
-            <Star className="mr-2 size-4" />
+            <FavouritedActionIcon
+              className="mr-2 size-4"
+              favourited={bookmark.favourited}
+            />
             <span>{bookmark.favourited ? "Un-favourite" : "Favourite"}</span>
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -157,7 +142,10 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               })
             }
           >
-            <Archive className="mr-2 size-4" />
+            <ArchivedActionIcon
+              className="mr-2 size-4"
+              archived={bookmark.archived}
+            />
             <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
           </DropdownMenuItem>
           {bookmark.content.type === "link" && (

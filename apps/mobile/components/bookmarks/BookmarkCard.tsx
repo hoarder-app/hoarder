@@ -17,6 +17,10 @@ import { MenuView } from "@react-native-menu/menu";
 import { Ellipsis, Star } from "lucide-react-native";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import {
+  useDeleteBookmark,
+  useUpdateBookmark,
+} from "@hoarder/shared-react/hooks/bookmarks";
 
 import { Divider } from "../ui/Divider";
 import { Skeleton } from "../ui/Skeleton";
@@ -45,7 +49,6 @@ export function isBookmarkStillLoading(bookmark: ZBookmark) {
 
 function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
-  const apiUtils = api.useUtils();
 
   const onError = () => {
     toast({
@@ -56,37 +59,27 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   };
 
   const { mutate: deleteBookmark, isPending: isDeletionPending } =
-    api.bookmarks.deleteBookmark.useMutation({
+    useDeleteBookmark({
       onSuccess: () => {
         toast({
           message: "The bookmark has been deleted!",
           showProgress: false,
         });
-        apiUtils.bookmarks.getBookmarks.invalidate();
-        apiUtils.bookmarks.searchBookmarks.invalidate();
       },
       onError,
     });
 
-  const { mutate: favouriteBookmark, variables } =
-    api.bookmarks.updateBookmark.useMutation({
-      onSuccess: () => {
-        apiUtils.bookmarks.getBookmarks.invalidate();
-        apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: bookmark.id });
-      },
-      onError,
-    });
+  const { mutate: favouriteBookmark, variables } = useUpdateBookmark({
+    onError,
+  });
 
   const { mutate: archiveBookmark, isPending: isArchivePending } =
-    api.bookmarks.updateBookmark.useMutation({
+    useUpdateBookmark({
       onSuccess: (resp) => {
         toast({
           message: `The bookmark has been ${resp.archived ? "archived" : "un-archived"}!`,
           showProgress: false,
         });
-        apiUtils.bookmarks.getBookmarks.invalidate();
-        apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: bookmark.id });
-        apiUtils.bookmarks.searchBookmarks.invalidate();
       },
       onError,
     });

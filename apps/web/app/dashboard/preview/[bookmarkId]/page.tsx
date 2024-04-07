@@ -1,4 +1,4 @@
-import BookmarkPreview from "@/components/dashboard/bookmarks/BookmarkPreview";
+import BookmarkPreview from "@/components/dashboard/preview/BookmarkPreview";
 import { api } from "@/server/api/client";
 
 export default async function BookmarkPreviewPage({
