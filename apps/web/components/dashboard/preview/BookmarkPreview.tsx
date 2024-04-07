@@ -8,7 +8,6 @@ import {
   Tooltip,
   TooltipContent,
   TooltipPortal,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
@@ -41,18 +40,16 @@ function ContentLoading() {
 
 function CreationTime({ createdAt }: { createdAt: Date }) {
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>
-          <span className="flex w-fit gap-2">
-            <CalendarDays /> {dayjs(createdAt).fromNow()}
-          </span>
-        </TooltipTrigger>
-        <TooltipPortal>
-          <TooltipContent>{createdAt.toLocaleString()}</TooltipContent>
-        </TooltipPortal>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip delayDuration={0}>
+      <TooltipTrigger asChild>
+        <span className="flex w-fit gap-2">
+          <CalendarDays /> {dayjs(createdAt).fromNow()}
+        </span>
+      </TooltipTrigger>
+      <TooltipPortal>
+        <TooltipContent>{createdAt.toLocaleString()}</TooltipContent>
+      </TooltipPortal>
+    </Tooltip>
   );
 }
 
@@ -65,18 +62,16 @@ function LinkHeader({ bookmark }: { bookmark: ZBookmark }) {
 
   return (
     <div className="flex w-full flex-col items-center justify-center space-y-3">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <p className="line-clamp-2 text-center text-lg">{title}</p>
-          </TooltipTrigger>
-          <TooltipPortal>
-            <TooltipContent side="bottom" className="w-96">
-              {title}
-            </TooltipContent>
-          </TooltipPortal>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <p className="line-clamp-2 text-center text-lg">{title}</p>
+        </TooltipTrigger>
+        <TooltipPortal>
+          <TooltipContent side="bottom" className="w-96">
+            {title}
+          </TooltipContent>
+        </TooltipPortal>
+      </Tooltip>
       <Link
         href={bookmark.content.url}
         className="mx-auto flex gap-2 text-gray-400"
