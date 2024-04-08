@@ -13,6 +13,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { useUploadAsset } from "../UploadDropzone";
+
 function useFocusOnKeyPress(inputRef: React.RefObject<HTMLTextAreaElement>) {
   useEffect(() => {
     function handleKeyPress(e: KeyboardEvent) {
@@ -32,6 +34,10 @@ function useFocusOnKeyPress(inputRef: React.RefObject<HTMLTextAreaElement>) {
 
 export default function EditorCard({ className }: { className?: string }) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const uploadAsset = useUploadAsset({
+    onComplete: () => console.log("file Uploaded"),
+  });
 
   const demoMode = !!useClientConfig().demoMode;
   const formSchema = z.object({
@@ -71,6 +77,7 @@ export default function EditorCard({ className }: { className?: string }) {
       mutate({ type: "text", text });
     }
   };
+
   const onError: SubmitErrorHandler<z.infer<typeof formSchema>> = (errors) => {
     toast({
       description: Object.values(errors)
@@ -78,6 +85,16 @@ export default function EditorCard({ className }: { className?: string }) {
         .join("\n"),
       variant: "destructive",
     });
+  };
+
+  const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const item = event.clipboardData.items[0];
+    if (item.type.startsWith("image")) {
+      const blob = item.getAsFile();
+      if (blob) {
+        uploadAsset(blob);
+      }
+    }
   };
 
   return (
@@ -107,6 +124,13 @@ export default function EditorCard({ className }: { className?: string }) {
               placeholder={
                 "Paste a link, write a note or drag and drop an image in here ..."
               }
+              onPaste={(e) => {
+                if (demoMode) {
+                  e.preventDefault();
+                  return;
+                }
+                handlePaste(e);
+              }}
               onKeyDown={(e) => {
                 if (demoMode) {
                   return;

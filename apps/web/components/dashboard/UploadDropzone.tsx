@@ -15,7 +15,7 @@ import {
 import LoadingSpinner from "../ui/spinner";
 import { toast } from "../ui/use-toast";
 
-function useUploadAsset({ onComplete }: { onComplete: () => void }) {
+export function useUploadAsset({ onComplete }: { onComplete: () => void }) {
   const invalidateAllBookmarks =
     api.useUtils().bookmarks.getBookmarks.invalidate;
 
