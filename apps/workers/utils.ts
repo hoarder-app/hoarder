@@ -1,3 +1,6 @@
+import type { Result as PDFResult } from "pdf-parse";
+import pdf from "pdf-parse";
+
 export function withTimeout<T, Ret>(
   func: (param: T) => Promise<Ret>,
   timeoutSec: number,
@@ -13,4 +16,13 @@ export function withTimeout<T, Ret>(
       ),
     ]);
   };
+}
+
+export async function readPDFText(buffer: Buffer): Promise<PDFResult> {
+  return new Promise((resolve, reject) => {
+    pdf(buffer).then((data) => {
+      if (!data) reject(new Error("Failed to read PDF"));
+      resolve(data);
+    });
+  });
 }

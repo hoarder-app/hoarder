@@ -157,8 +157,11 @@ export const bookmarkAssets = sqliteTable("bookmarkAssets", {
     .primaryKey()
     .$defaultFn(() => createId())
     .references(() => bookmarks.id, { onDelete: "cascade" }),
-  assetType: text("assetType", { enum: ["image"] }).notNull(),
+  assetType: text("assetType", { enum: ["image", "pdf"] }).notNull(),
   assetId: text("assetId").notNull(),
+  content: text("content"),
+  metadata: text("metadata"),
+  info: text("info"),
 });
 
 export const bookmarkTags = sqliteTable(

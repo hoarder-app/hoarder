@@ -5,7 +5,12 @@ import { z } from "zod";
 
 import type { ZOpenAIRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
-import { bookmarks, bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
+import {
+  bookmarkAssets,
+  bookmarks,
+  bookmarkTags,
+  tagsOnBookmarks,
+} from "@hoarder/db/schema";
 import { readAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
@@ -18,6 +23,7 @@ import {
 
 import type { InferenceClient } from "./inference";
 import { InferenceClientFactory } from "./inference";
+import { readPDFText } from "./utils";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
@@ -84,6 +90,14 @@ Please analyze the text after the sentence "CONTENT START HERE:" and suggest rel
 Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}. If it's a famous website
 you may also include a tag for the website. If the tag is not generic enough, don't include it. Aim for 3-5 tags. If there are no good tags, don't emit any.
 The content can include text for cookie consent and privacy policy, ignore those while tagging.
+You must respond in JSON with the key "tags" and the value is list of tags.
+CONTENT START HERE:
+`;
+
+const PDF_PROMPT_BASE = `
+I'm building a read-it-later app for PDF files and I need your help with automatic tagging.
+Please analyze the text after the sentence "CONTENT START HERE:" and suggest relevant tags that describe its key themes, topics, and main ideas.
+Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}. If the tag is not generic enough, don't include it. Aim for 3-5 tags. If there are no good tags, don't emit any.
 You must respond in JSON with the key "tags" and the value is list of tags.
 CONTENT START HERE:
 `;
@@ -166,6 +180,47 @@ async function inferTagsFromImage(
   );
 }
 
+async function inferTagsFromPDF(
+  jobId: string,
+  bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
+  inferenceClient: InferenceClient,
+) {
+  const { asset } = await readAsset({
+    userId: bookmark.userId,
+    assetId: bookmark.asset.assetId,
+  });
+  if (!asset) {
+    throw new Error(
+      `[inference][${jobId}] AssetId ${bookmark.asset.assetId} for bookmark ${bookmark.id} not found`,
+    );
+  }
+  const pdfParse = await readPDFText(asset);
+  if (!pdfParse?.text) {
+    throw new Error(
+      `[inference][${jobId}] PDF text is empty. Please make sure that the PDF includes text and not just images.`,
+    );
+  }
+
+  await db
+    .update(bookmarkAssets)
+    .set({
+      content: pdfParse.text,
+      info: pdfParse.info ? JSON.stringify(pdfParse.info) : null,
+      metadata: pdfParse.metadata ? JSON.stringify(pdfParse.metadata) : null,
+    })
+    .where(eq(bookmarkAssets.id, bookmark.id));
+
+  let prompt = PDF_PROMPT_BASE;
+  if (pdfParse.info) {
+    prompt += "Info: " + JSON.stringify(pdfParse.info) + "\n";
+  }
+  if (pdfParse.metadata) {
+    prompt += "Metadata: " + JSON.stringify(pdfParse.metadata) + "\n";
+  }
+  prompt += "Content: \n" + pdfParse.text;
+  return inferenceClient.inferFromText(prompt);
+}
+
 async function inferTagsFromText(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
   inferenceClient: InferenceClient,
@@ -182,9 +237,17 @@ async function inferTags(
   if (bookmark.link || bookmark.text) {
     response = await inferTagsFromText(bookmark, inferenceClient);
   } else if (bookmark.asset) {
-    response = await inferTagsFromImage(jobId, bookmark, inferenceClient);
+    if (bookmark.asset.assetType === "image") {
+      response = await inferTagsFromImage(jobId, bookmark, inferenceClient);
+    } else if (bookmark.asset.assetType === "pdf") {
+      response = await inferTagsFromPDF(jobId, bookmark, inferenceClient);
+    }
   } else {
     throw new Error(`[inference][${jobId}] Unsupported bookmark type`);
+  }
+
+  if (!response) {
+    throw new Error(`[inference][${jobId}] Inference response is empty`);
   }
 
   try {

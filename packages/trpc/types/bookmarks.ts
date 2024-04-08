@@ -22,7 +22,7 @@ export type ZBookmarkedText = z.infer<typeof zBookmarkedTextSchema>;
 
 export const zBookmarkedAssetSchema = z.object({
   type: z.literal("asset"),
-  assetType: z.enum(["image"]),
+  assetType: z.enum(["image", "pdf"]),
   assetId: z.string(),
 });
 export type ZBookmarkedAsset = z.infer<typeof zBookmarkedAssetSchema>;

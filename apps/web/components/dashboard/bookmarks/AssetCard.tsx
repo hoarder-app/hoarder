@@ -59,6 +59,13 @@ export default function AssetCard({
           />
         </div>
       )}
+      {bookmarkedAsset.assetType == "pdf" && (
+        <iframe
+          title={bookmarkedAsset.assetId}
+          className="h-56 max-h-56 w-full"
+          src={`/api/assets/${bookmarkedAsset.assetId}`}
+        />
+      )}
       <div className="flex flex-col gap-y-1 overflow-hidden p-2">
         <div className="flex h-full flex-wrap gap-1 overflow-hidden">
           <TagList

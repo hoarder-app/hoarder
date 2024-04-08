@@ -129,27 +129,32 @@ function AssetContentSection({ bookmark }: { bookmark: ZBookmark }) {
     throw new Error("Invalid content type");
   }
 
-  let content;
   switch (bookmark.content.assetType) {
     case "image": {
-      switch (bookmark.content.assetType) {
-        case "image": {
-          content = (
-            <div className="relative h-full min-w-full">
-              <Image
-                alt="asset"
-                fill={true}
-                className="object-contain"
-                src={`/api/assets/${bookmark.content.assetId}`}
-              />
-            </div>
-          );
-        }
-      }
-      break;
+      return (
+        <div className="relative h-full min-w-full">
+          <Image
+            alt="asset"
+            fill={true}
+            className="object-contain"
+            src={`/api/assets/${bookmark.content.assetId}`}
+          />
+        </div>
+      );
+    }
+    case "pdf": {
+      return (
+        <iframe
+          title={bookmark.content.assetId}
+          className="h-full w-full"
+          src={`/api/assets/${bookmark.content.assetId}`}
+        />
+      );
+    }
+    default: {
+      return <div>Unsupported asset type</div>;
     }
   }
-  return content;
 }
 
 export default function BookmarkPreview({
