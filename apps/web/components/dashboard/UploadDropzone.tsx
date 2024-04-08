@@ -45,10 +45,9 @@ function useUploadAsset({ onComplete }: { onComplete: () => void }) {
       return zUploadResponseSchema.parse(await resp.json());
     },
     onSuccess: async (resp) => {
-      const assetId = resp.assetId;
       const assetType =
         resp.contentType === "application/pdf" ? "pdf" : "image";
-      return createBookmark({ type: "asset", assetId, assetType });
+      return createBookmark({ ...resp, type: "asset", assetType });
     },
     onError: (error, req) => {
       const err = zUploadErrorSchema.parse(JSON.parse(error.message));

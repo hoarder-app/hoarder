@@ -23,7 +23,7 @@ import {
 
 import type { InferenceClient } from "./inference";
 import { InferenceClientFactory } from "./inference";
-import { readPDFText } from "./utils";
+import { readPDFText, truncateContent } from "./utils";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
@@ -77,42 +77,36 @@ export class OpenAiWorker {
   }
 }
 
-const IMAGE_PROMPT_BASE = `
-I'm building a read-it-later app and I need your help with automatic tagging.
-Please analyze the attached image and suggest relevant tags that describe its key themes, topics, and main ideas.
+function promptFactory(type: "text" | "web" | "pdf" | "image") {
+  const typeContent = {
+    text: "User Note",
+    web: "HTML page",
+    pdf: "PDF file",
+    image: "Image",
+  };
+  return `I'm building a read-it-later app and I need your help with automatic tagging.
+${
+  type === "web" || type === "pdf" || type === "text"
+    ? `You are currently analyzing the content of a ${typeContent[type]}, please analyze the content after the sentence "CONTENT START HERE:"`
+    : `Please analyze the attached image`
+}
+Suggest relevant tags that describe its key themes, topics, and main ideas.
 Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}.
-If the tag is not generic enough, don't include it. Aim for 10-15 tags. If there are no good tags, don't emit any. You must respond in valid JSON
-with the key "tags" and the value is list of tags. Don't wrap the response in a markdown code.`;
-
-const TEXT_PROMPT_BASE = `
-I'm building a read-it-later app and I need your help with automatic tagging.
-Please analyze the text after the sentence "CONTENT START HERE:" and suggest relevant tags that describe its key themes, topics, and main ideas.
-Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}. If it's a famous website
-you may also include a tag for the website. If the tag is not generic enough, don't include it. Aim for 3-5 tags. If there are no good tags, don't emit any.
-The content can include text for cookie consent and privacy policy, ignore those while tagging.
+If the tag is not generic enough, don't include it. Aim for 5-8 tags.
+If there are no good tags, don't emit any.
 You must respond in JSON with the key "tags" and the value is list of tags.
-CONTENT START HERE:
-`;
+In addition to the tags key, you should include a description key which includes a text that describes the content of the ${typeContent[type]}.
+Don't wrap the response in a markdown code.`;
+}
 
-const PDF_PROMPT_BASE = `
-I'm building a read-it-later app for PDF files and I need your help with automatic tagging.
-Please analyze the text after the sentence "CONTENT START HERE:" and suggest relevant tags that describe its key themes, topics, and main ideas.
-Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}. If the tag is not generic enough, don't include it. Aim for 3-5 tags. If there are no good tags, don't emit any.
-You must respond in JSON with the key "tags" and the value is list of tags.
-CONTENT START HERE:
-`;
+const TEXT_PROMPT = promptFactory("text");
+const WEB_PROMPT = promptFactory("web");
+const IMAGE_PROMPT = promptFactory("image");
+const PDF_PROMPT = promptFactory("pdf");
 
 function buildPrompt(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
 ) {
-  const truncateContent = (content: string) => {
-    let words = content.split(" ");
-    if (words.length > 1500) {
-      words = words.slice(1500);
-      content = words.join(" ");
-    }
-    return content;
-  };
   if (bookmark.link) {
     if (!bookmark.link.description && !bookmark.link.content) {
       throw new Error(
@@ -125,7 +119,7 @@ function buildPrompt(
       content = truncateContent(content);
     }
     return `
-${TEXT_PROMPT_BASE}
+${WEB_PROMPT}
 URL: ${bookmark.link.url}
 Title: ${bookmark.link.title ?? ""}
 Description: ${bookmark.link.description ?? ""}
@@ -137,7 +131,7 @@ Content: ${content ?? ""}
     const content = truncateContent(bookmark.text.text ?? "");
     // TODO: Ensure that the content doesn't exceed the context length of openai
     return `
-${TEXT_PROMPT_BASE}
+${TEXT_PROMPT}
 ${content}
   `;
   }
@@ -172,9 +166,8 @@ async function inferTagsFromImage(
     );
   }
   const base64 = asset.toString("base64");
-
-  return await inferenceClient.inferFromImage(
-    IMAGE_PROMPT_BASE,
+  return inferenceClient.inferFromImage(
+    IMAGE_PROMPT,
     metadata.contentType,
     base64,
   );
@@ -205,19 +198,13 @@ async function inferTagsFromPDF(
     .update(bookmarkAssets)
     .set({
       content: pdfParse.text,
-      info: pdfParse.info ? JSON.stringify(pdfParse.info) : null,
       metadata: pdfParse.metadata ? JSON.stringify(pdfParse.metadata) : null,
     })
     .where(eq(bookmarkAssets.id, bookmark.id));
 
-  let prompt = PDF_PROMPT_BASE;
-  if (pdfParse.info) {
-    prompt += "Info: " + JSON.stringify(pdfParse.info) + "\n";
-  }
-  if (pdfParse.metadata) {
-    prompt += "Metadata: " + JSON.stringify(pdfParse.metadata) + "\n";
-  }
-  prompt += "Content: \n" + pdfParse.text;
+  const prompt = `${PDF_PROMPT}
+Content: ${truncateContent(pdfParse.text)}
+`;
   return inferenceClient.inferFromText(prompt);
 }
 
@@ -237,10 +224,15 @@ async function inferTags(
   if (bookmark.link || bookmark.text) {
     response = await inferTagsFromText(bookmark, inferenceClient);
   } else if (bookmark.asset) {
-    if (bookmark.asset.assetType === "image") {
-      response = await inferTagsFromImage(jobId, bookmark, inferenceClient);
-    } else if (bookmark.asset.assetType === "pdf") {
-      response = await inferTagsFromPDF(jobId, bookmark, inferenceClient);
+    switch (bookmark.asset.assetType) {
+      case "image":
+        response = await inferTagsFromImage(jobId, bookmark, inferenceClient);
+        break;
+      case "pdf":
+        response = await inferTagsFromPDF(jobId, bookmark, inferenceClient);
+        break;
+      default:
+        throw new Error(`[inference][${jobId}] Unsupported bookmark type`);
     }
   } else {
     throw new Error(`[inference][${jobId}] Unsupported bookmark type`);

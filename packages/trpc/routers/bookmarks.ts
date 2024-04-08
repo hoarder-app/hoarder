@@ -174,8 +174,8 @@ export const bookmarksAppRouter = router({
                   assetType: input.assetType,
                   assetId: input.assetId,
                   content: null,
-                  info: null,
                   metadata: null,
+                  fileName: input.fileName ?? null,
                 })
                 .returning();
               content = {

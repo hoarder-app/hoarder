@@ -27,7 +27,7 @@ export async function POST(request: Request) {
     });
   }
   const formData = await request.formData();
-  const data = formData.get("file");
+  const data = formData.get("file") ?? formData.get("image");
   let buffer;
   let contentType;
   if (data instanceof File) {
@@ -47,11 +47,12 @@ export async function POST(request: Request) {
   }
 
   const assetId = crypto.randomUUID();
+  const fileName = data.name;
 
   await saveAsset({
     userId: ctx.user.id,
     assetId,
-    metadata: { contentType },
+    metadata: { contentType, fileName },
     asset: buffer,
   });
 
@@ -59,5 +60,6 @@ export async function POST(request: Request) {
     assetId,
     contentType,
     size: buffer.byteLength,
+    fileName,
   } satisfies ZUploadResponse);
 }

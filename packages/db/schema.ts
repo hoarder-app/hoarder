@@ -161,7 +161,7 @@ export const bookmarkAssets = sqliteTable("bookmarkAssets", {
   assetId: text("assetId").notNull(),
   content: text("content"),
   metadata: text("metadata"),
-  info: text("info"),
+  fileName: text("fileName"),
 });
 
 export const bookmarkTags = sqliteTable(

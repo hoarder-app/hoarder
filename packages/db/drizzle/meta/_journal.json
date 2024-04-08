@@ -113,6 +113,13 @@
       "when": 1712584035880,
       "tag": "0015_first_reavers",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "5",
+      "when": 1712610210210,
+      "tag": "0016_shallow_rawhide_kid",
+      "breakpoints": true
     }
   ]
 }
