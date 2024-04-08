@@ -41,7 +41,8 @@
     "@hoarder/prettier-config": "workspace:^0.1.0",
     "@types/dompurify": "^3.0.5",
     "@types/jsdom": "^21.1.6",
-    "@types/metascraper": "^5.14.3"
+    "@types/metascraper": "^5.14.3",
+    "@types/pdf-parse": "^1.1.4"
   },
   "scripts": {
     "start": "tsx watch index.ts",
