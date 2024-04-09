@@ -1,7 +1,7 @@
 import { api } from "../trpc";
 
 export function useAddBookmarkToList(
-  ...opts: Parameters<typeof api.lists.removeFromList.useMutation>
+  ...opts: Parameters<typeof api.lists.addToList.useMutation>
 ) {
   const apiUtils = api.useUtils();
   return api.lists.addToList.useMutation({
