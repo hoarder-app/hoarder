@@ -8,6 +8,7 @@ import CreateableSelect from "react-select/creatable";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 import type { ZAttachedByEnum } from "@hoarder/trpc/types/tags";
+import { useUpdateBookmarkTags } from "@hoarder/shared-react/hooks/bookmarks";
 
 interface EditableTag {
   attachedBy: ZAttachedByEnum;
@@ -17,16 +18,12 @@ interface EditableTag {
 
 export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
   const demoMode = !!useClientConfig().demoMode;
-  const apiUtils = api.useUtils();
 
-  const { mutate } = api.bookmarks.updateTags.useMutation({
+  const { mutate } = useUpdateBookmarkTags({
     onSuccess: () => {
       toast({
         description: "Tags has been updated!",
       });
-      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: bookmark.id });
-      apiUtils.tags.list.invalidate();
-      apiUtils.tags.get.invalidate();
     },
     onError: () => {
       toast({
@@ -58,7 +55,7 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
       case "create-option": {
         mutate({
           bookmarkId: bookmark.id,
-          attach: [{ tag: actionMeta.option.label }],
+          attach: [{ tagName: actionMeta.option.label }],
           detach: [],
         });
         break;
@@ -68,7 +65,10 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
           mutate({
             bookmarkId: bookmark.id,
             attach: [
-              { tag: actionMeta.option.label, tagId: actionMeta.option?.value },
+              {
+                tagName: actionMeta.option.label,
+                tagId: actionMeta.option?.value,
+              },
             ],
             detach: [],
           });

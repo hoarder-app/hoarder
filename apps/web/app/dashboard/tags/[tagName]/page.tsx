@@ -32,6 +32,7 @@ export default async function TagPage({
         </div>
       }
       query={{ tagId: tag.id }}
+      showEditorCard={true}
     />
   );
 }

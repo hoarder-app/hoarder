@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
 import DeleteListButton from "@/components/dashboard/lists/DeleteListButton";
-import { BookmarkListContextProvider } from "@/lib/hooks/list-context";
 import { api } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
@@ -23,19 +22,18 @@ export default async function ListPage({
   }
 
   return (
-    <BookmarkListContextProvider listId={list.id}>
-      <Bookmarks
-        query={{ listId: list.id }}
-        showDivider={true}
-        header={
-          <div className="flex justify-between">
-            <span className="text-2xl">
-              {list.icon} {list.name}
-            </span>
-            <DeleteListButton list={list} />
-          </div>
-        }
-      />
-    </BookmarkListContextProvider>
+    <Bookmarks
+      query={{ listId: list.id }}
+      showDivider={true}
+      showEditorCard={true}
+      header={
+        <div className="flex justify-between">
+          <span className="text-2xl">
+            {list.icon} {list.name}
+          </span>
+          <DeleteListButton list={list} />
+        </div>
+      }
+    />
   );
 }

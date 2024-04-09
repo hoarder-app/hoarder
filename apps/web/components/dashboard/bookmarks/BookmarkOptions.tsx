@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
-import { BookmarkListContext } from "@/lib/hooks/list-context";
 import {
   Link,
   List,
@@ -29,6 +28,7 @@ import {
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks//bookmarks";
 import { useRemoveBookmarkFromList } from "@hoarder/shared-react/hooks//lists";
+import { useBookmarkGridContext } from "@hoarder/shared-react/hooks/bookmark-grid-context";
 
 import { useAddToListModal } from "./AddToListModal";
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
@@ -48,7 +48,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
 
   const [isTextEditorOpen, setTextEditorOpen] = useState(false);
 
-  const { listId } = useContext(BookmarkListContext);
+  const { listId } = useBookmarkGridContext() ?? {};
 
   const onError = () => {
     toast({

@@ -123,7 +123,7 @@ describe("Bookmark Routes", () => {
 
     await api.updateTags({
       bookmarkId: bookmark.id,
-      attach: [{ tag: "tag1" }, { tag: "tag2" }],
+      attach: [{ tagName: "tag1" }, { tagName: "tag2" }],
       detach: [],
     });
 
@@ -134,12 +134,25 @@ describe("Bookmark Routes", () => {
 
     await api.updateTags({
       bookmarkId: bookmark.id,
-      attach: [{ tag: "tag3" }],
+      attach: [{ tagName: "tag3" }],
       detach: [{ tagId: tag1Id }],
     });
 
     bookmark = await api.getBookmark({ bookmarkId: bookmark.id });
     expect(bookmark.tags.map((t) => t.name).sort()).toEqual(["tag2", "tag3"]);
+
+    await api.updateTags({
+      bookmarkId: bookmark.id,
+      attach: [{ tagId: tag1Id }, { tagName: "tag4" }],
+      detach: [],
+    });
+    bookmark = await api.getBookmark({ bookmarkId: bookmark.id });
+    expect(bookmark.tags.map((t) => t.name).sort()).toEqual([
+      "tag1",
+      "tag2",
+      "tag3",
+      "tag4",
+    ]);
   });
 
   test<CustomTestContext>("update bookmark text", async ({ apiCallers }) => {

@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
 import DropZone from "react-dropzone";
 
+import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
 import {
   zUploadErrorSchema,
   zUploadResponseSchema,
@@ -16,20 +16,15 @@ import LoadingSpinner from "../ui/spinner";
 import { toast } from "../ui/use-toast";
 
 function useUploadAsset({ onComplete }: { onComplete: () => void }) {
-  const invalidateAllBookmarks =
-    api.useUtils().bookmarks.getBookmarks.invalidate;
-
-  const { mutateAsync: createBookmark } =
-    api.bookmarks.createBookmark.useMutation({
-      onSuccess: () => {
-        toast({ description: "Bookmark uploaded" });
-        invalidateAllBookmarks();
-        onComplete();
-      },
-      onError: () => {
-        toast({ description: "Something went wrong", variant: "destructive" });
-      },
-    });
+  const { mutateAsync: createBookmark } = useCreateBookmarkWithPostHook({
+    onSuccess: () => {
+      toast({ description: "Bookmark uploaded" });
+      onComplete();
+    },
+    onError: () => {
+      toast({ description: "Something went wrong", variant: "destructive" });
+    },
+  });
 
   const { mutateAsync: runUpload } = useMutation({
     mutationFn: async (file: File) => {

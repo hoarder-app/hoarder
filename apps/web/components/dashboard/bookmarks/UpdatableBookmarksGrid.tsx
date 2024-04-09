@@ -1,11 +1,13 @@
 "use client";
 
+import UploadDropzone from "@/components/dashboard/UploadDropzone";
 import { api } from "@/lib/trpc";
 
 import type {
   ZGetBookmarksRequest,
   ZGetBookmarksResponse,
 } from "@hoarder/trpc/types/bookmarks";
+import { BookmarkGridContextProvider } from "@hoarder/shared-react/hooks/bookmark-grid-context";
 
 import BookmarksGrid from "./BookmarksGrid";
 
@@ -29,7 +31,7 @@ export default function UpdatableBookmarksGrid({
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     });
 
-  return (
+  const grid = (
     <BookmarksGrid
       bookmarks={data!.pages.flatMap((b) => b.bookmarks)}
       hasNextPage={hasNextPage}
@@ -37,5 +39,11 @@ export default function UpdatableBookmarksGrid({
       isFetchingNextPage={isFetchingNextPage}
       showEditorCard={showEditorCard}
     />
+  );
+
+  return (
+    <BookmarkGridContextProvider query={query}>
+      {showEditorCard ? <UploadDropzone>{grid}</UploadDropzone> : grid}
+    </BookmarkGridContextProvider>
   );
 }
