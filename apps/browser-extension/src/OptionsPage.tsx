@@ -17,6 +17,8 @@ export default function OptionsPage() {
     },
   );
 
+  const { mutate: deleteKey } = api.apiKeys.revoke.useMutation();
+
   const invalidateWhoami = api.useUtils().users.whoami.refetch;
 
   useEffect(() => {
@@ -39,7 +41,10 @@ export default function OptionsPage() {
   }
 
   const onLogout = () => {
-    setSettings((s) => ({ ...s, apiKey: "" }));
+    if (settings.apiKeyId) {
+      deleteKey({ id: settings.apiKeyId });
+    }
+    setSettings((s) => ({ ...s, apiKey: "", apiKeyId: undefined }));
     invalidateWhoami();
     navigate("/notconfigured");
   };

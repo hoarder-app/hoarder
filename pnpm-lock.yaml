@@ -796,6 +796,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.24.8
         version: 5.24.8(react@18.2.0)
+      '@trpc/client':
+        specifier: 11.0.0-next-beta.308
+        version: 11.0.0-next-beta.308(@trpc/server@11.0.0-next-beta.308)
       react:
         specifier: '*'
         version: 18.2.0
@@ -805,6 +808,9 @@ importers:
       react-native-web:
         specifier: '*'
         version: 0.19.10(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      superjson:
+        specifier: ^2.2.1
+        version: 2.2.1
     devDependencies:
       '@hoarder/eslint-config':
         specifier: workspace:^0.2.0

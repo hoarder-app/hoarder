@@ -2,6 +2,7 @@ import { useChromeStorageSync } from "use-chrome-storage";
 
 export interface Settings {
   apiKey: string;
+  apiKeyId?: string;
   address: string;
 }
 

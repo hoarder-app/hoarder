@@ -22,7 +22,7 @@ export default function Signin() {
 
   const { mutate: login, isPending } = api.apiKeys.exchange.useMutation({
     onSuccess: (resp) => {
-      setSettings({ ...settings, apiKey: resp.key });
+      setSettings({ ...settings, apiKey: resp.key, apiKeyId: resp.id });
     },
     onError: (e) => {
       if (e.data?.code === "UNAUTHORIZED") {
