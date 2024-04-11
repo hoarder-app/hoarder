@@ -3,6 +3,7 @@
 import type { Session } from "next-auth";
 import React, { useState } from "react";
 import { ThemeProvider } from "@/components/theme-provider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { SessionProvider } from "next-auth/react";
@@ -80,7 +81,7 @@ export default function Providers({
               enableSystem
               disableTransitionOnChange
             >
-              {children}
+              <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
             </ThemeProvider>
           </QueryClientProvider>
         </api.Provider>

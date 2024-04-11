@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@hoarder/trpc": "workspace:^0.1.0",
+    "@hoarder/shared-react": "workspace:^0.1.0",
     "@react-native-menu/menu": "^0.9.1",
     "@tanstack/react-query": "^5.24.8",
     "class-variance-authority": "^0.7.0",

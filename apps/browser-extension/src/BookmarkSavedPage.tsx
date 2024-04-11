@@ -2,24 +2,24 @@ import { useState } from "react";
 import { ArrowUpRightFromSquare, Trash } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
+import { useDeleteBookmark } from "@hoarder/shared-react/hooks/bookmarks";
+
 import Spinner from "./Spinner";
 import usePluginSettings from "./utils/settings";
-import { api } from "./utils/trpc";
 
 export default function BookmarkSavedPage() {
   const { bookmarkId } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState("");
 
-  const { mutate: deleteBookmark, isPending } =
-    api.bookmarks.deleteBookmark.useMutation({
-      onSuccess: () => {
-        navigate("/bookmarkdeleted");
-      },
-      onError: (e) => {
-        setError(e.message);
-      },
-    });
+  const { mutate: deleteBookmark, isPending } = useDeleteBookmark({
+    onSuccess: () => {
+      navigate("/bookmarkdeleted");
+    },
+    onError: (e) => {
+      setError(e.message);
+    },
+  });
 
   const { settings } = usePluginSettings();
 

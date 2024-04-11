@@ -1,5 +1,5 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, desc, eq, exists, inArray, lte } from "drizzle-orm";
+import { and, desc, eq, exists, inArray, lte, or } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -526,17 +526,24 @@ export const bookmarksAppRouter = router({
         bookmarkId: z.string(),
         attach: z.array(
           z.object({
-            tagId: z.string().optional(), // If the tag already exists and we know its id
-            tag: z.string(),
+            // At least one of the two must be set
+            tagId: z.string().optional(), // If the tag already exists and we know its id we should pass it
+            tagName: z.string().optional(),
           }),
         ),
         // Detach by tag ids
         detach: z.array(z.object({ tagId: z.string() })),
       }),
     )
+    .output(
+      z.object({
+        attached: z.array(z.string()),
+        detached: z.array(z.string()),
+      }),
+    )
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      await ctx.db.transaction(async (tx) => {
+      return await ctx.db.transaction(async (tx) => {
         // Detaches
         if (input.detach.length > 0) {
           await tx.delete(tagsOnBookmarks).where(
@@ -551,21 +558,27 @@ export const bookmarksAppRouter = router({
         }
 
         if (input.attach.length == 0) {
-          return;
+          return {
+            bookmarkId: input.bookmarkId,
+            attached: [],
+            detached: input.detach.map((t) => t.tagId),
+          };
         }
 
-        // New Tags
-        const toBeCreatedTags = input.attach
-          .filter((i) => i.tagId === undefined)
-          .map((i) => ({
-            name: i.tag,
-            userId: ctx.user.id,
-          }));
+        const toAddTagNames = input.attach.flatMap((i) =>
+          i.tagName ? [i.tagName] : [],
+        );
+        const toAddTagIds = input.attach.flatMap((i) =>
+          i.tagId ? [i.tagId] : [],
+        );
 
-        if (toBeCreatedTags.length > 0) {
+        // New Tags
+        if (toAddTagNames.length > 0) {
           await tx
             .insert(bookmarkTags)
-            .values(toBeCreatedTags)
+            .values(
+              toAddTagNames.map((name) => ({ name, userId: ctx.user.id })),
+            )
             .onConflictDoNothing()
             .returning();
         }
@@ -574,9 +587,13 @@ export const bookmarksAppRouter = router({
           await tx.query.bookmarkTags.findMany({
             where: and(
               eq(bookmarkTags.userId, ctx.user.id),
-              inArray(
-                bookmarkTags.name,
-                input.attach.map((t) => t.tag),
+              or(
+                toAddTagIds.length > 0
+                  ? inArray(bookmarkTags.id, toAddTagIds)
+                  : undefined,
+                toAddTagNames.length > 0
+                  ? inArray(bookmarkTags.name, toAddTagNames)
+                  : undefined,
               ),
             ),
             columns: {
@@ -596,6 +613,11 @@ export const bookmarksAppRouter = router({
             })),
           )
           .onConflictDoNothing();
+        return {
+          bookmarkId: input.bookmarkId,
+          attached: allIds,
+          detached: input.detach.map((t) => t.tagId),
+        };
       });
     }),
 });

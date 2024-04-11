@@ -62,6 +62,7 @@ class OpenAIInferenceClient implements InferenceClient {
   ): Promise<InferenceResponse> {
     const chatCompletion = await this.openAI.chat.completions.create({
       model: serverConfig.inference.imageModel,
+      response_format: { type: "json_object" },
       messages: [
         {
           role: "user",

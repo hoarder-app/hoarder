@@ -14,7 +14,7 @@ const allEnv = z.object({
   OPENAI_BASE_URL: z.string().url().optional(),
   OLLAMA_BASE_URL: z.string().url().optional(),
   INFERENCE_TEXT_MODEL: z.string().default("gpt-3.5-turbo-0125"),
-  INFERENCE_IMAGE_MODEL: z.string().default("gpt-4-vision-preview"),
+  INFERENCE_IMAGE_MODEL: z.string().default("gpt-4-turbo"),
   REDIS_HOST: z.string().default("localhost"),
   REDIS_PORT: z.coerce.number().default(6379),
   REDIS_DB_IDX: z.coerce.number().optional(),

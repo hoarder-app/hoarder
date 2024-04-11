@@ -15,7 +15,7 @@ export default function SignInPage() {
     isPending,
   } = api.apiKeys.exchange.useMutation({
     onSuccess: (resp) => {
-      setSettings((s) => ({ ...s, apiKey: resp.key }));
+      setSettings((s) => ({ ...s, apiKey: resp.key, apiKeyId: resp.id }));
       navigate("/options");
     },
   });

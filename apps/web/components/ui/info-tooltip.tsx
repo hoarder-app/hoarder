@@ -1,7 +1,6 @@
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -19,20 +18,15 @@ export default function InfoTooltip({
   variant?: "tip" | "explain";
 }) {
   return (
-    <TooltipProvider delayDuration={0}>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {variant === "tip" ? (
-            <Info className={cn("cursor-pointer", className)} size={size} />
-          ) : (
-            <HelpCircle
-              className={cn("cursor-pointer", className)}
-              size={size}
-            />
-          )}
-        </TooltipTrigger>
-        <TooltipContent>{children}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        {variant === "tip" ? (
+          <Info className={cn("cursor-pointer", className)} size={size} />
+        ) : (
+          <HelpCircle className={cn("cursor-pointer", className)} size={size} />
+        )}
+      </TooltipTrigger>
+      <TooltipContent>{children}</TooltipContent>
+    </Tooltip>
   );
 }

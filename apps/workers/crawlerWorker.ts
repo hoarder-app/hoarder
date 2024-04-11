@@ -222,6 +222,9 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   const meta = await metascraperParser({
     url,
     html: htmlContent,
+    // We don't want to validate the URL again as we've already done it by visiting the page.
+    // This was added because URL validation fails if the URL ends with a question mark (e.g. empty query params).
+    validateUrl: false,
   });
   logger.info(`[Crawler][${jobId}] Done parsing the content of the page.`);
 

@@ -7,11 +7,12 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
-import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
 
 function useFocusOnKeyPress(inputRef: React.RefObject<HTMLTextAreaElement>) {
   useEffect(() => {
@@ -47,10 +48,8 @@ export default function EditorCard({ className }: { className?: string }) {
   useImperativeHandle(ref, () => inputRef.current);
   useFocusOnKeyPress(inputRef);
 
-  const invalidateBookmarksCache = api.useUtils().bookmarks.invalidate;
-  const { mutate, isPending } = api.bookmarks.createBookmark.useMutation({
+  const { mutate, isPending } = useCreateBookmarkWithPostHook({
     onSuccess: () => {
-      invalidateBookmarksCache();
       form.reset();
     },
     onError: () => {

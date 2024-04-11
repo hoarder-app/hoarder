@@ -1,15 +1,13 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { TagsEditor } from "@/components/dashboard/bookmarks/TagsEditor";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipPortal,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import {
@@ -20,12 +18,13 @@ import { api } from "@/lib/trpc";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { CalendarDays, ExternalLink } from "lucide-react";
-import Markdown from "react-markdown";
 
 import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 
+import ActionBar from "./ActionBar";
+import { AssetContentSection } from "./AssetContentSection";
 import { NoteEditor } from "./NoteEditor";
-import { TagsEditor } from "./TagsEditor";
+import { TextContentSection } from "./TextContentSection";
 
 dayjs.extend(relativeTime);
 
@@ -41,18 +40,16 @@ function ContentLoading() {
 
 function CreationTime({ createdAt }: { createdAt: Date }) {
   return (
-    <TooltipProvider>
-      <Tooltip delayDuration={0}>
-        <TooltipTrigger asChild>
-          <span className="flex w-fit gap-2">
-            <CalendarDays /> {dayjs(createdAt).fromNow()}
-          </span>
-        </TooltipTrigger>
-        <TooltipPortal>
-          <TooltipContent>{createdAt.toLocaleString()}</TooltipContent>
-        </TooltipPortal>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip delayDuration={0}>
+      <TooltipTrigger asChild>
+        <span className="flex w-fit gap-2">
+          <CalendarDays /> {dayjs(createdAt).fromNow()}
+        </span>
+      </TooltipTrigger>
+      <TooltipPortal>
+        <TooltipContent>{createdAt.toLocaleString()}</TooltipContent>
+      </TooltipPortal>
+    </Tooltip>
   );
 }
 
@@ -65,18 +62,16 @@ function LinkHeader({ bookmark }: { bookmark: ZBookmark }) {
 
   return (
     <div className="flex w-full flex-col items-center justify-center space-y-3">
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <p className="line-clamp-2 text-center text-lg">{title}</p>
-          </TooltipTrigger>
-          <TooltipPortal>
-            <TooltipContent side="bottom" className="w-96">
-              {title}
-            </TooltipContent>
-          </TooltipPortal>
-        </Tooltip>
-      </TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <p className="line-clamp-2 text-center text-lg">{title}</p>
+        </TooltipTrigger>
+        <TooltipPortal>
+          <TooltipContent side="bottom" className="w-96">
+            {title}
+          </TooltipContent>
+        </TooltipPortal>
+      </Tooltip>
       <Link
         href={bookmark.content.url}
         className="mx-auto flex gap-2 text-gray-400"
@@ -87,74 +82,6 @@ function LinkHeader({ bookmark }: { bookmark: ZBookmark }) {
       <Separator />
     </div>
   );
-}
-
-function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
-  let content;
-  switch (bookmark.content.type) {
-    case "link": {
-      if (!bookmark.content.htmlContent) {
-        content = (
-          <div className="text-destructive">
-            Failed to fetch link content ...
-          </div>
-        );
-      } else {
-        content = (
-          <div
-            dangerouslySetInnerHTML={{
-              __html: bookmark.content.htmlContent || "",
-            }}
-            className="prose mx-auto dark:prose-invert"
-          />
-        );
-      }
-      break;
-    }
-    case "text": {
-      content = (
-        <Markdown className="prose mx-auto dark:prose-invert">
-          {bookmark.content.text}
-        </Markdown>
-      );
-      break;
-    }
-  }
-
-  return <ScrollArea className="h-full">{content}</ScrollArea>;
-}
-
-function AssetContentSection({ bookmark }: { bookmark: ZBookmark }) {
-  if (bookmark.content.type != "asset") {
-    throw new Error("Invalid content type");
-  }
-
-  switch (bookmark.content.assetType) {
-    case "image": {
-      return (
-        <div className="relative h-full min-w-full">
-          <Image
-            alt="asset"
-            fill={true}
-            className="object-contain"
-            src={`/api/assets/${bookmark.content.assetId}`}
-          />
-        </div>
-      );
-    }
-    case "pdf": {
-      return (
-        <iframe
-          title={bookmark.content.assetId}
-          className="h-full w-full"
-          src={`/api/assets/${bookmark.content.assetId}`}
-        />
-      );
-    }
-    default: {
-      return <div>Unsupported asset type</div>;
-    }
-  }
 }
 
 export default function BookmarkPreview({
@@ -215,6 +142,7 @@ export default function BookmarkPreview({
           <p className="text-sm text-gray-400">Note</p>
           <NoteEditor bookmark={bookmark} />
         </div>
+        <ActionBar bookmark={bookmark} />
       </div>
     </div>
   );

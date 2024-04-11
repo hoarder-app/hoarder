@@ -5,6 +5,7 @@ const SETTING_NAME = "settings";
 
 export interface Settings {
   apiKey?: string;
+  apiKeyId?: string;
   address: string;
 }
 

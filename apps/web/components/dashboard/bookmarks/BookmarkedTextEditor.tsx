@@ -21,7 +21,7 @@ export function BookmarkedTextEditor({
   open,
   setOpen,
 }: {
-  bookmark?: ZBookmark;
+  bookmark: ZBookmark;
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
@@ -30,30 +30,14 @@ export function BookmarkedTextEditor({
     bookmark && bookmark.content.type == "text" ? bookmark.content.text : "",
   );
 
-  const invalidateAllBookmarksCache =
-    api.useUtils().bookmarks.getBookmarks.invalidate;
   const invalidateOneBookmarksCache =
     api.useUtils().bookmarks.getBookmark.invalidate;
 
-  const { mutate: createBookmarkMutator, isPending: isCreationPending } =
-    api.bookmarks.createBookmark.useMutation({
-      onSuccess: () => {
-        invalidateAllBookmarksCache();
-        toast({
-          description: "Note created!",
-        });
-        setOpen(false);
-        setNoteText("");
-      },
-      onError: () => {
-        toast({ description: "Something went wrong", variant: "destructive" });
-      },
-    });
-  const { mutate: updateBookmarkMutator, isPending: isUpdatePending } =
+  const { mutate: updateBookmarkMutator, isPending } =
     api.bookmarks.updateBookmarkText.useMutation({
       onSuccess: () => {
         invalidateOneBookmarksCache({
-          bookmarkId: bookmark!.id,
+          bookmarkId: bookmark.id,
         });
         toast({
           description: "Note updated!",
@@ -64,20 +48,12 @@ export function BookmarkedTextEditor({
         toast({ description: "Something went wrong", variant: "destructive" });
       },
     });
-  const isPending = isCreationPending || isUpdatePending;
 
   const onSave = () => {
-    if (isNewBookmark) {
-      createBookmarkMutator({
-        type: "text",
-        text: noteText,
-      });
-    } else {
-      updateBookmarkMutator({
-        bookmarkId: bookmark.id,
-        text: noteText,
-      });
-    }
+    updateBookmarkMutator({
+      bookmarkId: bookmark.id,
+      text: noteText,
+    });
   };
 
   return (

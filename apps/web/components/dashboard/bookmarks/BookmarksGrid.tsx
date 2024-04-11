@@ -1,5 +1,3 @@
-"use client";
-
 import { useMemo } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import tailwindConfig from "@/tailwind.config";
@@ -78,15 +76,16 @@ export default function BookmarksGrid({
         {bookmarks.map((b) => renderBookmark(b))}
       </Masonry>
       {hasNextPage && (
-        <ActionButton
-          ignoreDemoMode={true}
-          loading={isFetchingNextPage}
-          onClick={() => fetchNextPage()}
-          className="mx-auto w-min"
-          variant="ghost"
-        >
-          Load More
-        </ActionButton>
+        <div className="flex justify-center">
+          <ActionButton
+            ignoreDemoMode={true}
+            loading={isFetchingNextPage}
+            onClick={() => fetchNextPage()}
+            variant="ghost"
+          >
+            Load More
+          </ActionButton>
+        </div>
       )}
     </>
   );

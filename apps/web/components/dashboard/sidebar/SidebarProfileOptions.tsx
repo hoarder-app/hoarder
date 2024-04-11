@@ -1,5 +1,6 @@
 "use client";
 
+import { useToggleTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,28 +14,29 @@ import { signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
 
 function DarkModeToggle() {
-  const { theme, setTheme } = useTheme();
+  const { theme } = useTheme();
 
   let comp;
   if (theme == "dark") {
     comp = (
-      <button onClick={() => setTheme("light")}>
+      <span>
         <Sun className="size-4" />
         <p>Light Mode</p>
-      </button>
+      </span>
     );
   } else {
     comp = (
-      <button onClick={() => setTheme("dark")}>
+      <span>
         <Moon className="size-4" />
         <p>Dark Mode</p>
-      </button>
+      </span>
     );
   }
   return <Slot className="flex flex-row gap-2">{comp}</Slot>;
 }
 
 export default function SidebarProfileOptions() {
+  const toggleTheme = useToggleTheme();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -43,7 +45,7 @@ export default function SidebarProfileOptions() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={toggleTheme}>
           <DarkModeToggle />
         </DropdownMenuItem>
         <DropdownMenuItem
