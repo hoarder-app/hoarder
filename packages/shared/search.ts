@@ -11,7 +11,7 @@ export const zBookmarkIdxSchema = z.object({
   title: z.string().nullish(),
   description: z.string().nullish(),
   content: z.string().nullish(),
-  metadata: z.record(z.string()).nullish(),
+  metadata: z.string().nullish(),
   fileName: z.string().nullish(),
   createdAt: z.string().nullish(),
   note: z.string().nullish(),

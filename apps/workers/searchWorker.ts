@@ -76,7 +76,6 @@ async function runIndex(
       ...(bookmark.asset
         ? {
             content: bookmark.asset.content,
-            info: bookmark.asset.info,
             metadata: bookmark.asset.metadata,
           }
         : undefined),
