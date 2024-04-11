@@ -1,7 +1,7 @@
-import { count } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { bookmarks, users } from "@hoarder/db/schema";
+import { bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
@@ -17,49 +17,75 @@ export const adminAppRouter = router({
         numUsers: z.number(),
         numBookmarks: z.number(),
         pendingCrawls: z.number(),
+        failedCrawls: z.number(),
         pendingIndexing: z.number(),
+        failedIndexing: z.number(),
         pendingOpenai: z.number(),
+        failedOpenai: z.number(),
       }),
     )
     .query(async ({ ctx }) => {
       const [
         [{ value: numUsers }],
         [{ value: numBookmarks }],
-        pendingCrawls,
+        [{ value: pendingCrawls }],
+        [{ value: failedCrawls }],
         pendingIndexing,
+        failedIndexing,
         pendingOpenai,
+        failedOpenai,
       ] = await Promise.all([
         ctx.db.select({ value: count() }).from(users),
         ctx.db.select({ value: count() }).from(bookmarks),
-        LinkCrawlerQueue.getWaitingCount(),
+        ctx.db
+          .select({ value: count() })
+          .from(bookmarkLinks)
+          .where(eq(bookmarkLinks.crawlStatus, "pending")),
+        ctx.db
+          .select({ value: count() })
+          .from(bookmarkLinks)
+          .where(eq(bookmarkLinks.crawlStatus, "failure")),
         SearchIndexingQueue.getWaitingCount(),
+        SearchIndexingQueue.getFailedCount(),
         OpenAIQueue.getWaitingCount(),
+        OpenAIQueue.getFailedCount(),
       ]);
 
       return {
         numUsers,
         numBookmarks,
         pendingCrawls,
+        failedCrawls,
         pendingIndexing,
+        failedIndexing,
         pendingOpenai,
+        failedOpenai,
       };
     }),
-  recrawlAllLinks: adminProcedure.mutation(async ({ ctx }) => {
-    const bookmarkIds = await ctx.db.query.bookmarkLinks.findMany({
-      columns: {
-        id: true,
-      },
-    });
+  recrawlLinks: adminProcedure
+    .input(
+      z.object({
+        crawlStatus: z.enum(["success", "failure", "all"]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const bookmarkIds = await ctx.db.query.bookmarkLinks.findMany({
+        columns: {
+          id: true,
+        },
+        ...(input.crawlStatus === "all"
+          ? {}
+          : { where: eq(bookmarkLinks.crawlStatus, input.crawlStatus) }),
+      });
 
-    await Promise.all(
-      bookmarkIds.map((b) =>
-        LinkCrawlerQueue.add("crawl", {
-          bookmarkId: b.id,
-        }),
-      ),
-    );
-  }),
-
+      await Promise.all(
+        bookmarkIds.map((b) =>
+          LinkCrawlerQueue.add("crawl", {
+            bookmarkId: b.id,
+          }),
+        ),
+      );
+    }),
   reindexAllBookmarks: adminProcedure.mutation(async ({ ctx }) => {
     const bookmarkIds = await ctx.db.query.bookmarks.findMany({
       columns: {
