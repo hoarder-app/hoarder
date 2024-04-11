@@ -124,15 +124,35 @@ export class CrawlerWorker {
     worker.on("completed", (job) => {
       const jobId = job?.id ?? "unknown";
       logger.info(`[Crawler][${jobId}] Completed successfully`);
+      const bookmarkId = job?.data.bookmarkId;
+      if (bookmarkId) {
+        changeBookmarkStatus(bookmarkId, "success");
+      }
     });
 
     worker.on("failed", (job, error) => {
       const jobId = job?.id ?? "unknown";
       logger.error(`[Crawler][${jobId}] Crawling job failed: ${error}`);
+      const bookmarkId = job?.data.bookmarkId;
+      if (bookmarkId) {
+        changeBookmarkStatus(bookmarkId, "failure");
+      }
     });
 
     return worker;
   }
+}
+
+async function changeBookmarkStatus(
+  bookmarkId: string,
+  crawlStatus: "success" | "failure",
+) {
+  await db
+    .update(bookmarkLinks)
+    .set({
+      crawlStatus,
+    })
+    .where(eq(bookmarkLinks.id, bookmarkId));
 }
 
 async function getBookmarkUrl(bookmarkId: string) {

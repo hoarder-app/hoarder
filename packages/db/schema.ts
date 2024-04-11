@@ -140,6 +140,9 @@ export const bookmarkLinks = sqliteTable("bookmarkLinks", {
   content: text("content"),
   htmlContent: text("htmlContent"),
   crawledAt: integer("crawledAt", { mode: "timestamp" }),
+  crawlStatus: text("crawlStatus", {
+    enum: ["pending", "failure", "success"],
+  }).default("pending"),
 });
 
 export const bookmarkTexts = sqliteTable("bookmarkTexts", {

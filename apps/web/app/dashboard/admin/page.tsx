@@ -81,6 +81,21 @@ function ActionsSection() {
       },
     });
 
+  const { mutate: recrawlFailedLinks, isPending: isRecrawlFailedPending } =
+    api.admin.recrawlFailedLinks.useMutation({
+      onSuccess: () => {
+        toast({
+          description: "Recrawl Failed Links enqueued",
+        });
+      },
+      onError: (e) => {
+        toast({
+          variant: "destructive",
+          description: e.message,
+        });
+      },
+    });
+
   const { mutate: reindexBookmarks, isPending: isReindexPending } =
     api.admin.reindexAllBookmarks.useMutation({
       onSuccess: () => {
@@ -102,7 +117,15 @@ function ActionsSection() {
       <ActionButton
         className="lg:w-1/2"
         variant="destructive"
-        loading={isRecrawlPending}
+        loading={isRecrawlPending || isRecrawlFailedPending}
+        onClick={() => recrawlFailedLinks()}
+      >
+        Recrawl Failed Links Only
+      </ActionButton>
+      <ActionButton
+        className="lg:w-1/2"
+        variant="destructive"
+        loading={isRecrawlPending || isRecrawlFailedPending}
         onClick={() => recrawlLinks()}
       >
         Recrawl All Links
@@ -157,6 +180,10 @@ function ServerStatsSection() {
           <TableRow>
             <TableCell className="lg:w-2/3">Pending Crawling Jobs</TableCell>
             <TableCell>{serverStats.pendingCrawls}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell className="lg:w-2/3">Failed Crawling Jobs</TableCell>
+            <TableCell>{serverStats.failedCrawls}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Pending Indexing Jobs</TableCell>

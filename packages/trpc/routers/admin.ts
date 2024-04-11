@@ -1,7 +1,7 @@
-import { count } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { bookmarks, users } from "@hoarder/db/schema";
+import { bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
@@ -17,6 +17,7 @@ export const adminAppRouter = router({
         numUsers: z.number(),
         numBookmarks: z.number(),
         pendingCrawls: z.number(),
+        failedCrawls: z.number(),
         pendingIndexing: z.number(),
         pendingOpenai: z.number(),
       }),
@@ -25,13 +26,21 @@ export const adminAppRouter = router({
       const [
         [{ value: numUsers }],
         [{ value: numBookmarks }],
-        pendingCrawls,
+        [{ value: pendingCrawls }],
+        [{ value: failedCrawls }],
         pendingIndexing,
         pendingOpenai,
       ] = await Promise.all([
         ctx.db.select({ value: count() }).from(users),
         ctx.db.select({ value: count() }).from(bookmarks),
-        LinkCrawlerQueue.getWaitingCount(),
+        ctx.db
+          .select({ value: count() })
+          .from(bookmarkLinks)
+          .where(eq(bookmarkLinks.crawlStatus, "pending")),
+        ctx.db
+          .select({ value: count() })
+          .from(bookmarkLinks)
+          .where(eq(bookmarkLinks.crawlStatus, "failure")),
         SearchIndexingQueue.getWaitingCount(),
         OpenAIQueue.getWaitingCount(),
       ]);
@@ -40,6 +49,7 @@ export const adminAppRouter = router({
         numUsers,
         numBookmarks,
         pendingCrawls,
+        failedCrawls,
         pendingIndexing,
         pendingOpenai,
       };
@@ -59,7 +69,21 @@ export const adminAppRouter = router({
       ),
     );
   }),
-
+  recrawlFailedLinks: adminProcedure.mutation(async ({ ctx }) => {
+    const bookmarkIds = await ctx.db.query.bookmarkLinks.findMany({
+      columns: {
+        id: true,
+      },
+      where: eq(bookmarkLinks.crawlStatus, "failure"),
+    });
+    await Promise.all(
+      bookmarkIds.map((b) =>
+        LinkCrawlerQueue.add("crawl", {
+          bookmarkId: b.id,
+        }),
+      ),
+    );
+  }),
   reindexAllBookmarks: adminProcedure.mutation(async ({ ctx }) => {
     const bookmarkIds = await ctx.db.query.bookmarks.findMany({
       columns: {
