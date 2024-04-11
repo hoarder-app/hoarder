@@ -163,24 +163,28 @@ function ServerStatsSection() {
       <Table className="lg:w-1/2">
         <TableHeader>
           <TableHead>Job</TableHead>
+          <TableHead>Queued</TableHead>
           <TableHead>Pending</TableHead>
           <TableHead>Failed</TableHead>
         </TableHeader>
         <TableBody>
           <TableRow>
             <TableCell className="lg:w-2/3">Crawling Jobs</TableCell>
-            <TableCell>{serverStats.pendingCrawls}</TableCell>
-            <TableCell>{serverStats.failedCrawls}</TableCell>
+            <TableCell>{serverStats.crawlStats.queuedInRedis}</TableCell>
+            <TableCell>{serverStats.crawlStats.pending}</TableCell>
+            <TableCell>{serverStats.crawlStats.failed}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Indexing Jobs</TableCell>
-            <TableCell>{serverStats.pendingIndexing}</TableCell>
-            <TableCell>{serverStats.failedIndexing}</TableCell>
+            <TableCell>{serverStats.indexingStats.queuedInRedis}</TableCell>
+            <TableCell>-</TableCell>
+            <TableCell>-</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>OpenAI Jobs</TableCell>
-            <TableCell>{serverStats.pendingOpenai}</TableCell>
-            <TableCell>{serverStats.failedOpenai}</TableCell>
+            <TableCell>Inference Jobs</TableCell>
+            <TableCell>{serverStats.inferenceStats.queuedInRedis}</TableCell>
+            <TableCell>{serverStats.inferenceStats.pending}</TableCell>
+            <TableCell>{serverStats.inferenceStats.failed}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

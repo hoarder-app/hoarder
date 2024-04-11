@@ -16,27 +16,44 @@ export const adminAppRouter = router({
       z.object({
         numUsers: z.number(),
         numBookmarks: z.number(),
-        pendingCrawls: z.number(),
-        failedCrawls: z.number(),
-        pendingIndexing: z.number(),
-        failedIndexing: z.number(),
-        pendingOpenai: z.number(),
-        failedOpenai: z.number(),
+        crawlStats: z.object({
+          queuedInRedis: z.number(),
+          pending: z.number(),
+          failed: z.number(),
+        }),
+        inferenceStats: z.object({
+          queuedInRedis: z.number(),
+          pending: z.number(),
+          failed: z.number(),
+        }),
+        indexingStats: z.object({
+          queuedInRedis: z.number(),
+        }),
       }),
     )
     .query(async ({ ctx }) => {
       const [
         [{ value: numUsers }],
         [{ value: numBookmarks }],
+
+        // Crawls
+        pendingCrawlsInRedis,
         [{ value: pendingCrawls }],
         [{ value: failedCrawls }],
-        pendingIndexing,
-        failedIndexing,
-        pendingOpenai,
-        failedOpenai,
+
+        // Indexing
+        pendingIndexingInRedis,
+
+        // Inference
+        pendingInferenceInRedis,
+        [{ value: pendingInference }],
+        [{ value: failedInference }],
       ] = await Promise.all([
         ctx.db.select({ value: count() }).from(users),
         ctx.db.select({ value: count() }).from(bookmarks),
+
+        // Crawls
+        LinkCrawlerQueue.getWaitingCount(),
         ctx.db
           .select({ value: count() })
           .from(bookmarkLinks)
@@ -45,21 +62,38 @@ export const adminAppRouter = router({
           .select({ value: count() })
           .from(bookmarkLinks)
           .where(eq(bookmarkLinks.crawlStatus, "failure")),
+
+        // Indexing
         SearchIndexingQueue.getWaitingCount(),
-        SearchIndexingQueue.getFailedCount(),
+
+        // Inference
         OpenAIQueue.getWaitingCount(),
-        OpenAIQueue.getFailedCount(),
+        ctx.db
+          .select({ value: count() })
+          .from(bookmarks)
+          .where(eq(bookmarks.taggingStatus, "pending")),
+        ctx.db
+          .select({ value: count() })
+          .from(bookmarks)
+          .where(eq(bookmarks.taggingStatus, "failure")),
       ]);
 
       return {
         numUsers,
         numBookmarks,
-        pendingCrawls,
-        failedCrawls,
-        pendingIndexing,
-        failedIndexing,
-        pendingOpenai,
-        failedOpenai,
+        crawlStats: {
+          queuedInRedis: pendingCrawlsInRedis,
+          pending: pendingCrawls,
+          failed: failedCrawls,
+        },
+        inferenceStats: {
+          queuedInRedis: pendingInferenceInRedis,
+          pending: pendingInference,
+          failed: failedInference,
+        },
+        indexingStats: {
+          queuedInRedis: pendingIndexingInRedis,
+        },
       };
     }),
   recrawlLinks: adminProcedure

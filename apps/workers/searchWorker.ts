@@ -32,7 +32,7 @@ export class SearchIndexingWorker {
 
     worker.on("failed", (job, error) => {
       const jobId = job?.id ?? "unknown";
-      logger.error(`[search][${jobId}] openai job failed: ${error}`);
+      logger.error(`[search][${jobId}] search job failed: ${error}`);
     });
 
     return worker;
