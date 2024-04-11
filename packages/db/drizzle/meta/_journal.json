@@ -106,6 +106,20 @@
       "when": 1711767601057,
       "tag": "0014_lonely_thaddeus_ross",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "5",
+      "when": 1712584035880,
+      "tag": "0015_first_reavers",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "5",
+      "when": 1712610210210,
+      "tag": "0016_shallow_rawhide_kid",
+      "breakpoints": true
     }
   ]
 }

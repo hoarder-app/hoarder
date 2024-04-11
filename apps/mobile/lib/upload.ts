@@ -38,7 +38,7 @@ export function useUploadAsset(
     mutationFn: async (file: { type: string; name: string; uri: string }) => {
       const formData = new FormData();
       // @ts-expect-error This is a valid api in react native
-      formData.append("image", {
+      formData.append("file", {
         uri: file.uri,
         name: file.name,
         type: file.type,
@@ -57,7 +57,9 @@ export function useUploadAsset(
     },
     onSuccess: (resp) => {
       const assetId = resp.assetId;
-      createBookmark({ type: "asset", assetId, assetType: "image" });
+      const assetType =
+        resp.contentType === "application/pdf" ? "pdf" : "image";
+      createBookmark({ type: "asset", assetId, assetType });
     },
     onError: (e) => {
       if (options.onError) {

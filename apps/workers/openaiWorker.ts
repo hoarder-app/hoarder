@@ -5,7 +5,12 @@ import { z } from "zod";
 
 import type { ZOpenAIRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
-import { bookmarks, bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
+import {
+  bookmarkAssets,
+  bookmarks,
+  bookmarkTags,
+  tagsOnBookmarks,
+} from "@hoarder/db/schema";
 import { readAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
@@ -18,6 +23,7 @@ import {
 
 import type { InferenceClient } from "./inference";
 import { InferenceClientFactory } from "./inference";
+import { readPDFText, truncateContent } from "./utils";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
@@ -91,14 +97,6 @@ CONTENT START HERE:
 function buildPrompt(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
 ) {
-  const truncateContent = (content: string) => {
-    let words = content.split(" ");
-    if (words.length > 1500) {
-      words = words.slice(1500);
-      content = words.join(" ");
-    }
-    return content;
-  };
   if (bookmark.link) {
     if (!bookmark.link.description && !bookmark.link.content) {
       throw new Error(
@@ -158,12 +156,46 @@ async function inferTagsFromImage(
     );
   }
   const base64 = asset.toString("base64");
-
-  return await inferenceClient.inferFromImage(
+  return inferenceClient.inferFromImage(
     IMAGE_PROMPT_BASE,
     metadata.contentType,
     base64,
   );
+}
+
+async function inferTagsFromPDF(
+  jobId: string,
+  bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
+  inferenceClient: InferenceClient,
+) {
+  const { asset } = await readAsset({
+    userId: bookmark.userId,
+    assetId: bookmark.asset.assetId,
+  });
+  if (!asset) {
+    throw new Error(
+      `[inference][${jobId}] AssetId ${bookmark.asset.assetId} for bookmark ${bookmark.id} not found`,
+    );
+  }
+  const pdfParse = await readPDFText(asset);
+  if (!pdfParse?.text) {
+    throw new Error(
+      `[inference][${jobId}] PDF text is empty. Please make sure that the PDF includes text and not just images.`,
+    );
+  }
+
+  await db
+    .update(bookmarkAssets)
+    .set({
+      content: pdfParse.text,
+      metadata: pdfParse.metadata ? JSON.stringify(pdfParse.metadata) : null,
+    })
+    .where(eq(bookmarkAssets.id, bookmark.id));
+
+  const prompt = `${TEXT_PROMPT_BASE}
+Content: ${truncateContent(pdfParse.text)}
+`;
+  return inferenceClient.inferFromText(prompt);
 }
 
 async function inferTagsFromText(
@@ -182,9 +214,22 @@ async function inferTags(
   if (bookmark.link || bookmark.text) {
     response = await inferTagsFromText(bookmark, inferenceClient);
   } else if (bookmark.asset) {
-    response = await inferTagsFromImage(jobId, bookmark, inferenceClient);
+    switch (bookmark.asset.assetType) {
+      case "image":
+        response = await inferTagsFromImage(jobId, bookmark, inferenceClient);
+        break;
+      case "pdf":
+        response = await inferTagsFromPDF(jobId, bookmark, inferenceClient);
+        break;
+      default:
+        throw new Error(`[inference][${jobId}] Unsupported bookmark type`);
+    }
   } else {
     throw new Error(`[inference][${jobId}] Unsupported bookmark type`);
+  }
+
+  if (!response) {
+    throw new Error(`[inference][${jobId}] Inference response is empty`);
   }
 
   try {

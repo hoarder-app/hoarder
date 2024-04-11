@@ -48,6 +48,7 @@ async function runIndex(
     with: {
       link: true,
       text: true,
+      asset: true,
       tagsOnBookmarks: {
         with: {
           tag: true,
@@ -70,6 +71,12 @@ async function runIndex(
             title: bookmark.link.title,
             description: bookmark.link.description,
             content: bookmark.link.content,
+          }
+        : undefined),
+      ...(bookmark.asset
+        ? {
+            content: bookmark.asset.content,
+            metadata: bookmark.asset.metadata,
           }
         : undefined),
       ...(bookmark.text ? { content: bookmark.text.text } : undefined),

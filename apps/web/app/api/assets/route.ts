@@ -9,6 +9,7 @@ const SUPPORTED_ASSET_TYPES = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
+  "application/pdf",
 ]);
 
 const MAX_UPLOAD_SIZE_BYTES = serverConfig.maxAssetSizeMb * 1024 * 1024;
@@ -26,7 +27,7 @@ export async function POST(request: Request) {
     });
   }
   const formData = await request.formData();
-  const data = formData.get("image");
+  const data = formData.get("file") ?? formData.get("image");
   let buffer;
   let contentType;
   if (data instanceof File) {
@@ -46,11 +47,12 @@ export async function POST(request: Request) {
   }
 
   const assetId = crypto.randomUUID();
+  const fileName = data.name;
 
   await saveAsset({
     userId: ctx.user.id,
     assetId,
-    metadata: { contentType },
+    metadata: { contentType, fileName },
     asset: buffer,
   });
 
@@ -58,5 +60,6 @@ export async function POST(request: Request) {
     assetId,
     contentType,
     size: buffer.byteLength,
+    fileName,
   } satisfies ZUploadResponse);
 }

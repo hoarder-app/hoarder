@@ -12,6 +12,7 @@ function getAssetDir(userId: string, assetId: string) {
 
 export const zAssetMetadataSchema = z.object({
   contentType: z.string(),
+  fileName: z.string().nullish(),
 });
 
 export async function saveAsset({

@@ -29,7 +29,7 @@ function useUploadAsset({ onComplete }: { onComplete: () => void }) {
   const { mutateAsync: runUpload } = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("file", file);
       const resp = await fetch("/api/assets", {
         method: "POST",
         body: formData,
@@ -40,8 +40,9 @@ function useUploadAsset({ onComplete }: { onComplete: () => void }) {
       return zUploadResponseSchema.parse(await resp.json());
     },
     onSuccess: async (resp) => {
-      const assetId = resp.assetId;
-      return createBookmark({ type: "asset", assetId, assetType: "image" });
+      const assetType =
+        resp.contentType === "application/pdf" ? "pdf" : "image";
+      return createBookmark({ ...resp, type: "asset", assetType });
     },
     onError: (error, req) => {
       const err = zUploadErrorSchema.parse(JSON.parse(error.message));
