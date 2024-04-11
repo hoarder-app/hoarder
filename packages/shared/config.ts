@@ -21,6 +21,7 @@ const allEnv = z.object({
   CRAWLER_HEADLESS_BROWSER: stringBool("true"),
   BROWSER_WEB_URL: z.string().url().optional(),
   CRAWLER_JOB_TIMEOUT_SEC: z.number().default(60),
+  CRAWLER_NAVIGATE_TIMEOUT_SEC: z.number().default(30),
   MEILI_ADDR: z.string().optional(),
   MEILI_MASTER_KEY: z.string().default(""),
   LOG_LEVEL: z.string().default("debug"),
@@ -58,6 +59,7 @@ const serverConfigSchema = allEnv.transform((val) => {
       headlessBrowser: val.CRAWLER_HEADLESS_BROWSER,
       browserWebUrl: val.BROWSER_WEB_URL,
       jobTimeoutSec: val.CRAWLER_JOB_TIMEOUT_SEC,
+      navigateTimeoutSec: val.CRAWLER_NAVIGATE_TIMEOUT_SEC,
     },
     meilisearch: val.MEILI_ADDR
       ? {

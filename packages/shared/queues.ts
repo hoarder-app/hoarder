@@ -17,7 +17,16 @@ export type ZCrawlLinkRequest = z.infer<typeof zCrawlLinkRequestSchema>;
 
 export const LinkCrawlerQueue = new Queue<ZCrawlLinkRequest, void>(
   "link_crawler_queue",
-  { connection: queueConnectionDetails },
+  {
+    connection: queueConnectionDetails,
+    defaultJobOptions: {
+      attempts: 5,
+      backoff: {
+        type: "exponential",
+        delay: 1000,
+      },
+    },
+  },
 );
 
 // OpenAI Worker

@@ -37,6 +37,7 @@ Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic taggin
 
 ## Crawler Configs
 
-| Name                    | Required | Default | Description                                                                                                                                                            |
-| ----------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CRAWLER_JOB_TIMEOUT_SEC | No       | 60      | How long to wait for the crawler job to finish before timing out. If you have a slow internet connection or a low powered device, you might want to bump this up a bit |
+| Name                         | Required | Default | Description                                                                                                                                                            |
+| ---------------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CRAWLER_JOB_TIMEOUT_SEC      | No       | 60      | How long to wait for the crawler job to finish before timing out. If you have a slow internet connection or a low powered device, you might want to bump this up a bit |
+| CRAWLER_NAVIGATE_TIMEOUT_SEC | No       | 30      | How long to spend navigating to the page (along with its redirects). Increase this if you have a slow internet connection                                              |

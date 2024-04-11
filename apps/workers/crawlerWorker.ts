@@ -170,7 +170,7 @@ async function crawlPage(jobId: string, url: string) {
     const page = await context.newPage();
 
     await page.goto(url, {
-      timeout: 10000, // 10 seconds
+      timeout: serverConfig.crawler.navigateTimeoutSec * 1000,
     });
     logger.info(
       `[Crawler][${jobId}] Successfully navigated to "${url}". Waiting for the page to load ...`,

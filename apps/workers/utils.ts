@@ -26,7 +26,6 @@ export async function readPDFText(buffer: Buffer): Promise<{
     const pdfParser = new PDFParser(null, 1);
     pdfParser.on("pdfParser_dataError", reject);
     pdfParser.on("pdfParser_dataReady", (pdfData) => {
-      // eslint-disable-next-line
       resolve({
         // The type isn't set correctly, reference : https://github.com/modesty/pdf2json/issues/327
         // eslint-disable-next-line
