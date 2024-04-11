@@ -67,25 +67,10 @@ function ReleaseInfo() {
 
 function ActionsSection() {
   const { mutate: recrawlLinks, isPending: isRecrawlPending } =
-    api.admin.recrawlAllLinks.useMutation({
+    api.admin.recrawlLinks.useMutation({
       onSuccess: () => {
         toast({
           description: "Recrawl enqueued",
-        });
-      },
-      onError: (e) => {
-        toast({
-          variant: "destructive",
-          description: e.message,
-        });
-      },
-    });
-
-  const { mutate: recrawlFailedLinks, isPending: isRecrawlFailedPending } =
-    api.admin.recrawlFailedLinks.useMutation({
-      onSuccess: () => {
-        toast({
-          description: "Recrawl Failed Links enqueued",
         });
       },
       onError: (e) => {
@@ -117,16 +102,16 @@ function ActionsSection() {
       <ActionButton
         className="lg:w-1/2"
         variant="destructive"
-        loading={isRecrawlPending || isRecrawlFailedPending}
-        onClick={() => recrawlFailedLinks()}
+        loading={isRecrawlPending}
+        onClick={() => recrawlLinks({ crawlStatus: "failure" })}
       >
         Recrawl Failed Links Only
       </ActionButton>
       <ActionButton
         className="lg:w-1/2"
         variant="destructive"
-        loading={isRecrawlPending || isRecrawlFailedPending}
-        onClick={() => recrawlLinks()}
+        loading={isRecrawlPending}
+        onClick={() => recrawlLinks({ crawlStatus: "all" })}
       >
         Recrawl All Links
       </ActionButton>
@@ -176,22 +161,26 @@ function ServerStatsSection() {
       <Separator />
       <p className="text-xl">Background Jobs</p>
       <Table className="lg:w-1/2">
+        <TableHeader>
+          <TableHead>Job</TableHead>
+          <TableHead>Pending</TableHead>
+          <TableHead>Failed</TableHead>
+        </TableHeader>
         <TableBody>
           <TableRow>
-            <TableCell className="lg:w-2/3">Pending Crawling Jobs</TableCell>
+            <TableCell className="lg:w-2/3">Crawling Jobs</TableCell>
             <TableCell>{serverStats.pendingCrawls}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell className="lg:w-2/3">Failed Crawling Jobs</TableCell>
             <TableCell>{serverStats.failedCrawls}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Pending Indexing Jobs</TableCell>
+            <TableCell>Indexing Jobs</TableCell>
             <TableCell>{serverStats.pendingIndexing}</TableCell>
+            <TableCell>{serverStats.failedIndexing}</TableCell>
           </TableRow>
           <TableRow>
-            <TableCell>Pending OpenAI Jobs</TableCell>
+            <TableCell>OpenAI Jobs</TableCell>
             <TableCell>{serverStats.pendingOpenai}</TableCell>
+            <TableCell>{serverStats.failedOpenai}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

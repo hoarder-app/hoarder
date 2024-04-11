@@ -19,7 +19,9 @@ export const adminAppRouter = router({
         pendingCrawls: z.number(),
         failedCrawls: z.number(),
         pendingIndexing: z.number(),
+        failedIndexing: z.number(),
         pendingOpenai: z.number(),
+        failedOpenai: z.number(),
       }),
     )
     .query(async ({ ctx }) => {
@@ -29,7 +31,9 @@ export const adminAppRouter = router({
         [{ value: pendingCrawls }],
         [{ value: failedCrawls }],
         pendingIndexing,
+        failedIndexing,
         pendingOpenai,
+        failedOpenai,
       ] = await Promise.all([
         ctx.db.select({ value: count() }).from(users),
         ctx.db.select({ value: count() }).from(bookmarks),
@@ -42,7 +46,9 @@ export const adminAppRouter = router({
           .from(bookmarkLinks)
           .where(eq(bookmarkLinks.crawlStatus, "failure")),
         SearchIndexingQueue.getWaitingCount(),
+        SearchIndexingQueue.getFailedCount(),
         OpenAIQueue.getWaitingCount(),
+        OpenAIQueue.getFailedCount(),
       ]);
 
       return {
@@ -51,39 +57,35 @@ export const adminAppRouter = router({
         pendingCrawls,
         failedCrawls,
         pendingIndexing,
+        failedIndexing,
         pendingOpenai,
+        failedOpenai,
       };
     }),
-  recrawlAllLinks: adminProcedure.mutation(async ({ ctx }) => {
-    const bookmarkIds = await ctx.db.query.bookmarkLinks.findMany({
-      columns: {
-        id: true,
-      },
-    });
+  recrawlLinks: adminProcedure
+    .input(
+      z.object({
+        crawlStatus: z.enum(["success", "failure", "all"]),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const bookmarkIds = await ctx.db.query.bookmarkLinks.findMany({
+        columns: {
+          id: true,
+        },
+        ...(input.crawlStatus === "all"
+          ? {}
+          : { where: eq(bookmarkLinks.crawlStatus, input.crawlStatus) }),
+      });
 
-    await Promise.all(
-      bookmarkIds.map((b) =>
-        LinkCrawlerQueue.add("crawl", {
-          bookmarkId: b.id,
-        }),
-      ),
-    );
-  }),
-  recrawlFailedLinks: adminProcedure.mutation(async ({ ctx }) => {
-    const bookmarkIds = await ctx.db.query.bookmarkLinks.findMany({
-      columns: {
-        id: true,
-      },
-      where: eq(bookmarkLinks.crawlStatus, "failure"),
-    });
-    await Promise.all(
-      bookmarkIds.map((b) =>
-        LinkCrawlerQueue.add("crawl", {
-          bookmarkId: b.id,
-        }),
-      ),
-    );
-  }),
+      await Promise.all(
+        bookmarkIds.map((b) =>
+          LinkCrawlerQueue.add("crawl", {
+            bookmarkId: b.id,
+          }),
+        ),
+      );
+    }),
   reindexAllBookmarks: adminProcedure.mutation(async ({ ctx }) => {
     const bookmarkIds = await ctx.db.query.bookmarks.findMany({
       columns: {
