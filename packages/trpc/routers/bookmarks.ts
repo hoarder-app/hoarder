@@ -103,6 +103,7 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
       type: "asset",
       assetType: asset.assetType,
       assetId: asset.assetId,
+      fileName: asset.fileName,
     };
   } else {
     content = { type: "unknown" };
@@ -482,6 +483,7 @@ export const bookmarksAppRouter = router({
                 type: "asset",
                 assetId: row.bookmarkAssets.assetId,
                 assetType: row.bookmarkAssets.assetType,
+                fileName: row.bookmarkAssets.fileName,
               };
             } else {
               content = { type: "unknown" };

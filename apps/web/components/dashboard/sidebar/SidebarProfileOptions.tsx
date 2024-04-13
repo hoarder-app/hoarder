@@ -6,33 +6,86 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Slot } from "@radix-ui/react-slot";
-import { LogOut, Moon, MoreHorizontal, Sun } from "lucide-react";
+import { useBookmarkLayout } from "@/lib/userLocalSettings/bookmarksLayout";
+import { updateBookmarksLayout } from "@/lib/userLocalSettings/userLocalSettings";
+import {
+  Check,
+  LayoutDashboard,
+  LayoutGrid,
+  LayoutList,
+  LayoutPanelLeft,
+  LogOut,
+  Moon,
+  MoreHorizontal,
+  Sun,
+} from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
+
+function BookmarkLayoutSelector() {
+  const layout = useBookmarkLayout();
+
+  const checkedComp = <Check className="ml-2 size-4" />;
+
+  return (
+    <>
+      <DropdownMenuItem
+        className="justify-between"
+        onClick={async () => await updateBookmarksLayout("masonry")}
+      >
+        <div className="flex items-center gap-2">
+          <LayoutDashboard className="size-4" />
+          <span>Masonry</span>
+        </div>
+        {layout == "masonry" && checkedComp}
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        className="justify-between"
+        onClick={async () => await updateBookmarksLayout("grid")}
+      >
+        <div className="flex items-center gap-2">
+          <LayoutGrid className="size-4" />
+          <span>Grid</span>
+        </div>
+        {layout == "grid" && checkedComp}
+      </DropdownMenuItem>
+      <DropdownMenuItem
+        className="justify-between"
+        onClick={async () => await updateBookmarksLayout("list")}
+      >
+        <div className="flex items-center gap-2">
+          <LayoutList className="size-4" />
+          <span>List</span>
+        </div>
+        {layout == "list" && checkedComp}
+      </DropdownMenuItem>
+    </>
+  );
+}
 
 function DarkModeToggle() {
   const { theme } = useTheme();
 
-  let comp;
   if (theme == "dark") {
-    comp = (
-      <span>
-        <Sun className="size-4" />
-        <p>Light Mode</p>
-      </span>
+    return (
+      <>
+        <Sun className="mr-2 size-4" />
+        <span>Light Mode</span>
+      </>
     );
   } else {
-    comp = (
-      <span>
-        <Moon className="size-4" />
-        <p>Dark Mode</p>
-      </span>
+    return (
+      <>
+        <Moon className="mr-2 size-4" />
+        <span>Dark Mode</span>
+      </>
     );
   }
-  return <Slot className="flex flex-row gap-2">{comp}</Slot>;
 }
 
 export default function SidebarProfileOptions() {
@@ -48,6 +101,15 @@ export default function SidebarProfileOptions() {
         <DropdownMenuItem onClick={toggleTheme}>
           <DarkModeToggle />
         </DropdownMenuItem>
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger>
+            <LayoutPanelLeft className="mr-2 size-4" />
+            <span>Layout</span>
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent>
+            <BookmarkLayoutSelector />
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
         <DropdownMenuItem
           onClick={() =>
             signOut({

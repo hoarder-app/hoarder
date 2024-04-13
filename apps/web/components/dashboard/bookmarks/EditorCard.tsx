@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
+import { useBookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -78,13 +79,19 @@ export default function EditorCard({ className }: { className?: string }) {
       variant: "destructive",
     });
   };
+  const cardHeight = useBookmarkLayoutSwitch({
+    grid: "h-96",
+    masonry: "h-96",
+    list: undefined,
+  });
 
   return (
     <Form {...form}>
       <form
         className={cn(
           className,
-          "flex h-96 flex-col gap-2 rounded-xl bg-card p-4",
+          "flex flex-col gap-2 rounded-xl bg-card p-4",
+          cardHeight,
         )}
         onSubmit={form.handleSubmit(onSubmit, onError)}
       >

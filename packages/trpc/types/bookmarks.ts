@@ -53,6 +53,30 @@ export const zBookmarkSchema = zBareBookmarkSchema.merge(
 );
 export type ZBookmark = z.infer<typeof zBookmarkSchema>;
 
+const zBookmarkTypeLinkSchema = zBareBookmarkSchema.merge(
+  z.object({
+    tags: z.array(zBookmarkTagSchema),
+    content: zBookmarkedLinkSchema,
+  }),
+);
+export type ZBookmarkTypeLink = z.infer<typeof zBookmarkTypeLinkSchema>;
+
+const zBookmarkTypeTextSchema = zBareBookmarkSchema.merge(
+  z.object({
+    tags: z.array(zBookmarkTagSchema),
+    content: zBookmarkedTextSchema,
+  }),
+);
+export type ZBookmarkTypeText = z.infer<typeof zBookmarkTypeTextSchema>;
+
+const zBookmarkTypeAssetSchema = zBareBookmarkSchema.merge(
+  z.object({
+    tags: z.array(zBookmarkTagSchema),
+    content: zBookmarkedAssetSchema,
+  }),
+);
+export type ZBookmarkTypeAsset = z.infer<typeof zBookmarkTypeAssetSchema>;
+
 // POST /v1/bookmarks
 export const zNewBookmarkRequestSchema = zBookmarkContentSchema;
 export type ZNewBookmarkRequest = z.infer<typeof zNewBookmarkRequestSchema>;

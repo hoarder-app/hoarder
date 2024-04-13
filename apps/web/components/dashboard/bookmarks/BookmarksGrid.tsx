@@ -1,5 +1,9 @@
 import { useMemo } from "react";
 import { ActionButton } from "@/components/ui/action-button";
+import {
+  bookmarkLayoutSwitch,
+  useBookmarkLayout,
+} from "@/lib/userLocalSettings/bookmarksLayout";
 import tailwindConfig from "@/tailwind.config";
 import { Slot } from "@radix-ui/react-slot";
 import Masonry from "react-masonry-css";
@@ -36,13 +40,15 @@ function renderBookmark(bookmark: ZBookmark) {
   let comp;
   switch (bookmark.content.type) {
     case "link":
-      comp = <LinkCard bookmark={bookmark} />;
+      comp = <LinkCard bookmark={{ ...bookmark, content: bookmark.content }} />;
       break;
     case "text":
-      comp = <TextCard bookmark={bookmark} />;
+      comp = <TextCard bookmark={{ ...bookmark, content: bookmark.content }} />;
       break;
     case "asset":
-      comp = <AssetCard bookmark={bookmark} />;
+      comp = (
+        <AssetCard bookmark={{ ...bookmark, content: bookmark.content }} />
+      );
       break;
   }
   return <BookmarkCard key={bookmark.id}>{comp}</BookmarkCard>;
@@ -61,20 +67,36 @@ export default function BookmarksGrid({
   isFetchingNextPage?: boolean;
   fetchNextPage?: () => void;
 }) {
+  const layout = useBookmarkLayout();
   const breakpointConfig = useMemo(() => getBreakpointConfig(), []);
+
   if (bookmarks.length == 0 && !showEditorCard) {
     return <p>No bookmarks</p>;
   }
+
+  const children = [
+    showEditorCard && (
+      <BookmarkCard key={"editor"}>
+        <EditorCard />
+      </BookmarkCard>
+    ),
+    ...bookmarks.map((b) => renderBookmark(b)),
+  ];
   return (
     <>
-      <Masonry className="flex gap-4" breakpointCols={breakpointConfig}>
-        {showEditorCard && (
-          <BookmarkCard>
-            <EditorCard />
-          </BookmarkCard>
-        )}
-        {bookmarks.map((b) => renderBookmark(b))}
-      </Masonry>
+      {bookmarkLayoutSwitch(layout, {
+        masonry: (
+          <Masonry className="flex gap-4" breakpointCols={breakpointConfig}>
+            {children}
+          </Masonry>
+        ),
+        grid: (
+          <Masonry className="flex gap-4" breakpointCols={breakpointConfig}>
+            {children}
+          </Masonry>
+        ),
+        list: <div className="grid grid-cols-1">{children}</div>,
+      })}
       {hasNextPage && (
         <div className="flex justify-center">
           <ActionButton
