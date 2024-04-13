@@ -111,7 +111,7 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
       })}
       styles={{
         multiValueRemove: () => ({
-          "background-color": "transparent",
+          backgroundColor: "transparent",
         }),
         valueContainer: (styles) => ({
           ...styles,
@@ -122,10 +122,10 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
         }),
         control: (styles) => ({
           ...styles,
-          "background-color": "hsl(var(--background))",
-          "border-color": "hsl(var(--border))",
+          backgroundColor: "hsl(var(--background))",
+          borderColor: "hsl(var(--border))",
           ":hover": {
-            "border-color": "hsl(var(--border))",
+            borderColor: "hsl(var(--border))",
           },
         }),
       }}

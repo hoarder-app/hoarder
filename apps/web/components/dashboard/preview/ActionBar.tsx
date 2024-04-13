@@ -53,7 +53,7 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   return (
     <div className="flex items-center justify-center gap-3">
       <Tooltip delayDuration={0}>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <ActionButton
             variant="none"
             className="size-14 rounded-full bg-background"
@@ -73,7 +73,7 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         </TooltipContent>
       </Tooltip>
       <Tooltip delayDuration={0}>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <ActionButton
             variant="none"
             loading={pendingArchive}
@@ -93,7 +93,7 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         </TooltipContent>
       </Tooltip>
       <Tooltip delayDuration={0}>
-        <TooltipTrigger>
+        <TooltipTrigger asChild>
           <ActionButton
             loading={pendingDeletion}
             className="size-14 rounded-full bg-background"

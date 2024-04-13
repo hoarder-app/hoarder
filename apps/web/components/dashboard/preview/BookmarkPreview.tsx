@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { TagsEditor } from "@/components/dashboard/bookmarks/TagsEditor";
 import { Separator } from "@/components/ui/separator";
@@ -39,15 +40,23 @@ function ContentLoading() {
 }
 
 function CreationTime({ createdAt }: { createdAt: Date }) {
+  const [fromNow, setFromNow] = useState("");
+  const [localCreatedAt, setLocalCreatedAt] = useState("");
+
+  // This is to avoid hydration errors when server and clients are in different timezones
+  useEffect(() => {
+    setFromNow(dayjs(createdAt).fromNow());
+    setLocalCreatedAt(createdAt.toLocaleString());
+  }, [createdAt]);
   return (
     <Tooltip delayDuration={0}>
       <TooltipTrigger asChild>
         <span className="flex w-fit gap-2">
-          <CalendarDays /> {dayjs(createdAt).fromNow()}
+          <CalendarDays /> {fromNow}
         </span>
       </TooltipTrigger>
       <TooltipPortal>
-        <TooltipContent>{createdAt.toLocaleString()}</TooltipContent>
+        <TooltipContent>{localCreatedAt}</TooltipContent>
       </TooltipPortal>
     </Tooltip>
   );
@@ -127,7 +136,7 @@ export default function BookmarkPreview({
   );
 
   return (
-    <div className="grid grid-rows-3 gap-2 overflow-hidden bg-background lg:grid-cols-3 lg:grid-rows-none">
+    <div className="grid h-full grid-rows-3 gap-2 overflow-hidden bg-background lg:grid-cols-3 lg:grid-rows-none">
       <div className="row-span-2 h-full w-full overflow-auto p-2 md:col-span-2 lg:row-auto">
         {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
       </div>
