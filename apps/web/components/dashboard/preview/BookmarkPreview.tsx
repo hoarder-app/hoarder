@@ -128,7 +128,7 @@ export default function BookmarkPreview({
 
   return (
     <div className="grid grid-rows-3 gap-2 overflow-hidden bg-background lg:grid-cols-3 lg:grid-rows-none">
-      <div className="row-span-2 h-full w-full overflow-hidden p-2 md:col-span-2 lg:row-auto">
+      <div className="row-span-2 h-full w-full overflow-auto p-2 md:col-span-2 lg:row-auto">
         {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
       </div>
       <div className="lg:col-span1 row-span-1 flex flex-col gap-4 overflow-auto bg-accent p-4 lg:row-auto">

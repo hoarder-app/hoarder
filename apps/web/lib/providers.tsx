@@ -1,9 +1,11 @@
 "use client";
 
+import type { UserLocalSettings } from "@/lib/userLocalSettings/types";
 import type { Session } from "next-auth";
 import React, { useState } from "react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { UserLocalSettingsCtx } from "@/lib/userLocalSettings/bookmarksLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { SessionProvider } from "next-auth/react";
@@ -46,10 +48,12 @@ export default function Providers({
   children,
   session,
   clientConfig,
+  userLocalSettings,
 }: {
   children: React.ReactNode;
   session: Session | null;
   clientConfig: ClientConfig;
+  userLocalSettings: UserLocalSettings;
 }) {
   const queryClient = getQueryClient();
 
@@ -72,20 +76,22 @@ export default function Providers({
 
   return (
     <ClientConfigCtx.Provider value={clientConfig}>
-      <SessionProvider session={session}>
-        <api.Provider client={trpcClient} queryClient={queryClient}>
-          <QueryClientProvider client={queryClient}>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
-            </ThemeProvider>
-          </QueryClientProvider>
-        </api.Provider>
-      </SessionProvider>
+      <UserLocalSettingsCtx.Provider value={userLocalSettings}>
+        <SessionProvider session={session}>
+          <api.Provider client={trpcClient} queryClient={queryClient}>
+            <QueryClientProvider client={queryClient}>
+              <ThemeProvider
+                attribute="class"
+                defaultTheme="system"
+                enableSystem
+                disableTransitionOnChange
+              >
+                <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
+              </ThemeProvider>
+            </QueryClientProvider>
+          </api.Provider>
+        </SessionProvider>
+      </UserLocalSettingsCtx.Provider>
     </ClientConfigCtx.Provider>
   );
 }

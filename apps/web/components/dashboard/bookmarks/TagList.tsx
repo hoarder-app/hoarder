@@ -8,9 +8,11 @@ import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
 export default function TagList({
   bookmark,
   loading,
+  className,
 }: {
   bookmark: ZBookmark;
   loading?: boolean;
+  className?: string;
 }) {
   if (loading) {
     return (
@@ -23,8 +25,9 @@ export default function TagList({
   return (
     <>
       {bookmark.tags.map((t) => (
-        <div key={t.id} className="flex h-full flex-col justify-end">
+        <div key={t.id} className={className}>
           <Link
+            key={t.id}
             className={cn(
               badgeVariants({ variant: "outline" }),
               "text-nowrap font-normal hover:bg-foreground hover:text-secondary",
