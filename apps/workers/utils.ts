@@ -40,7 +40,7 @@ export async function readPDFText(buffer: Buffer): Promise<{
 export function truncateContent(content: string, length = 1500) {
   let words = content.split(" ");
   if (words.length > length) {
-    words = words.slice(length);
+    words = words.slice(0, length);
     content = words.join(" ");
   }
   return content;
