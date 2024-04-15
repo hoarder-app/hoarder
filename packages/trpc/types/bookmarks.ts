@@ -2,6 +2,8 @@ import { z } from "zod";
 
 import { zBookmarkTagSchema } from "./tags";
 
+const MAX_TITLE_LENGTH = 100;
+
 export const zBookmarkedLinkSchema = z.object({
   type: z.literal("link"),
   url: z.string().url(),
@@ -39,6 +41,7 @@ export type ZBookmarkContent = z.infer<typeof zBookmarkContentSchema>;
 export const zBareBookmarkSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
+  title: z.string().max(MAX_TITLE_LENGTH).nullish(),
   archived: z.boolean(),
   favourited: z.boolean(),
   taggingStatus: z.enum(["success", "failure", "pending"]).nullable(),
@@ -108,6 +111,7 @@ export const zUpdateBookmarksRequestSchema = z.object({
   archived: z.boolean().optional(),
   favourited: z.boolean().optional(),
   note: z.string().optional(),
+  title: z.string().max(MAX_TITLE_LENGTH).nullish(),
 });
 export type ZUpdateBookmarksRequest = z.infer<
   typeof zUpdateBookmarksRequestSchema

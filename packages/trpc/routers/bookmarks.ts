@@ -231,6 +231,7 @@ export const bookmarksAppRouter = router({
       const res = await ctx.db
         .update(bookmarks)
         .set({
+          title: input.title,
           archived: input.archived,
           favourited: input.favourited,
           note: input.note,

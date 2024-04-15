@@ -68,7 +68,7 @@ async function runIndex(
       ...(bookmark.link
         ? {
             url: bookmark.link.url,
-            title: bookmark.link.title,
+            linkTitle: bookmark.link.title,
             description: bookmark.link.description,
             content: bookmark.link.content,
           }
@@ -81,6 +81,7 @@ async function runIndex(
         : undefined),
       ...(bookmark.text ? { content: bookmark.text.text } : undefined),
       note: bookmark.note,
+      title: bookmark.title,
       createdAt: bookmark.createdAt.toISOString(),
       tags: bookmark.tagsOnBookmarks.map((t) => t.tag.name),
     },

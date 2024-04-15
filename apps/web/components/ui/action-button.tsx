@@ -4,15 +4,20 @@ import { useClientConfig } from "@/lib/clientConfig";
 import type { ButtonProps } from "./button";
 import { Button } from "./button";
 import LoadingSpinner from "./spinner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipPortal,
+  TooltipTrigger,
+} from "./tooltip";
 
-const ActionButton = React.forwardRef<
-  HTMLButtonElement,
-  ButtonProps & {
-    loading: boolean;
-    spinner?: React.ReactNode;
-    ignoreDemoMode?: boolean;
-  }
->(
+interface ActionButtonProps extends ButtonProps {
+  loading: boolean;
+  spinner?: React.ReactNode;
+  ignoreDemoMode?: boolean;
+}
+
+const ActionButton = React.forwardRef<HTMLButtonElement, ActionButtonProps>(
   (
     { children, loading, spinner, disabled, ignoreDemoMode = false, ...props },
     ref,
@@ -35,4 +40,21 @@ const ActionButton = React.forwardRef<
 );
 ActionButton.displayName = "ActionButton";
 
-export { ActionButton };
+const ActionButtonWithTooltip = React.forwardRef<
+  HTMLButtonElement,
+  ActionButtonProps & { tooltip: string; delayDuration?: number }
+>(({ tooltip, delayDuration, ...props }, ref) => {
+  return (
+    <Tooltip delayDuration={delayDuration}>
+      <TooltipTrigger>
+        <ActionButton ref={ref} {...props} />
+      </TooltipTrigger>
+      <TooltipPortal>
+        <TooltipContent>{tooltip}</TooltipContent>
+      </TooltipPortal>
+    </Tooltip>
+  );
+});
+ActionButtonWithTooltip.displayName = "ActionButtonWithTooltip";
+
+export { ActionButton, ActionButtonWithTooltip };

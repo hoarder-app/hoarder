@@ -16,7 +16,7 @@ function LinkTitle({ bookmark }: { bookmark: ZBookmarkTypeLink }) {
   const parsedUrl = new URL(link.url);
   return (
     <Link className="line-clamp-2" href={link.url} target="_blank">
-      {link?.title ?? parsedUrl.host}
+      {bookmark.title ?? link?.title ?? parsedUrl.host}
     </Link>
   );
 }

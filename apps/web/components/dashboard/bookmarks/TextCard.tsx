@@ -51,6 +51,7 @@ export default function TextCard({
         setOpen={setPreviewModalOpen}
       />
       <BookmarkLayoutAdaptingCard
+        title={bookmark.title}
         content={
           <Markdown className="prose dark:prose-invert">
             {bookmarkedText.text}

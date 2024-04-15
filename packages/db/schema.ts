@@ -104,6 +104,7 @@ export const bookmarks = sqliteTable(
       .primaryKey()
       .$defaultFn(() => createId()),
     createdAt: createdAtField(),
+    title: text("title"),
     archived: integer("archived", { mode: "boolean" }).notNull().default(false),
     favourited: integer("favourited", { mode: "boolean" })
       .notNull()

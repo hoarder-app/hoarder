@@ -9,6 +9,7 @@ export const zBookmarkIdxSchema = z.object({
   userId: z.string(),
   url: z.string().nullish(),
   title: z.string().nullish(),
+  linkTitle: z.string().nullish(),
   description: z.string().nullish(),
   content: z.string().nullish(),
   metadata: z.string().nullish(),

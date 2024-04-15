@@ -201,7 +201,7 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
           className="line-clamp-2 text-xl font-bold"
           onPress={() => WebBrowser.openBrowserAsync(url)}
         >
-          {bookmark.content.title ?? parsedUrl.host}
+          {bookmark.title ?? bookmark.content.title ?? parsedUrl.host}
         </Text>
         <TagList bookmark={bookmark} />
         <Divider orientation="vertical" className="mt-2 h-0.5 w-full" />
@@ -220,6 +220,9 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
   }
   return (
     <View className="flex max-h-96 gap-2 p-2">
+      {bookmark.title && (
+        <Text className="line-clamp-2 text-xl font-bold">{bookmark.title}</Text>
+      )}
       <View className="max-h-56 overflow-hidden p-2">
         <Markdown>{bookmark.content.text}</Markdown>
       </View>
@@ -238,6 +241,7 @@ function AssetCard({ bookmark }: { bookmark: ZBookmark }) {
   if (bookmark.content.type !== "asset") {
     throw new Error("Wrong content type rendered");
   }
+  const title = bookmark.title ?? bookmark.content.fileName;
 
   return (
     <View className="flex gap-2">
@@ -251,6 +255,9 @@ function AssetCard({ bookmark }: { bookmark: ZBookmark }) {
         className="h-56 min-h-56 w-full object-cover"
       />
       <View className="flex gap-2 p-2">
+        {title && (
+          <Text className="line-clamp-2 text-xl font-bold">{title}</Text>
+        )}
         <TagList bookmark={bookmark} />
         <Divider orientation="vertical" className="mt-2 h-0.5 w-full" />
         <View className="mt-2 flex flex-row justify-between px-2 pb-2">

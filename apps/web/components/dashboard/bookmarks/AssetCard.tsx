@@ -80,7 +80,7 @@ export default function AssetCard({
 
   return (
     <BookmarkLayoutAdaptingCard
-      title={bookmarkedAsset.content.fileName}
+      title={bookmarkedAsset.title ?? bookmarkedAsset.content.fileName}
       footer={null}
       bookmark={bookmarkedAsset}
       className={className}
