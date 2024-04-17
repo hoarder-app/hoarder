@@ -4,7 +4,7 @@ import { api } from "@/lib/trpc";
 import type { ZGetBookmarksRequest } from "@hoarder/trpc/types/bookmarks";
 
 import FullPageSpinner from "../ui/FullPageSpinner";
-import BookmarkList2 from "./BookmarkList";
+import BookmarkList from "./BookmarkList";
 
 export default function UpdatingBookmarkList({
   query,
@@ -40,7 +40,7 @@ export default function UpdatingBookmarkList({
   };
 
   return (
-    <BookmarkList2
+    <BookmarkList
       bookmarks={data.pages.flatMap((p) => p.bookmarks)}
       header={header}
       onRefresh={onRefresh}

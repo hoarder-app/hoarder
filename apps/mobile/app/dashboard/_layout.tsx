@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { AppState, Platform } from "react-native";
 import { useRouter } from "expo-router";
 import { Stack } from "expo-router/stack";
+import { StyledStack } from "@/components/navigation/stack";
 import { useIsLoggedIn } from "@/lib/session";
 import { focusManager } from "@tanstack/react-query";
 
@@ -29,7 +30,10 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <Stack>
+    <StyledStack
+      contentClassName="bg-gray-100 dark:bg-background"
+      headerClassName="bg-gray-100 dark:bg-background text-foreground"
+    >
       <Stack.Screen
         name="(tabs)"
         options={{ headerShown: false, title: "Home" }}
@@ -64,6 +68,6 @@ export default function Dashboard() {
           presentation: "modal",
         }}
       />
-    </Stack>
+    </StyledStack>
   );
 }

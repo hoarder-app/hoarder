@@ -66,7 +66,7 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
 
   return (
     <View className="flex flex-row gap-3">
-      <Text className="text-4xl">Hoarding</Text>
+      <Text className="text-4xl text-foreground">Hoarding</Text>
       <ActivityIndicator />
     </View>
   );
@@ -83,11 +83,11 @@ export default function Sharing() {
       break;
     }
     case "success": {
-      comp = <Text className="text-4xl">Hoarded!</Text>;
+      comp = <Text className="text-4xl text-foreground">Hoarded!</Text>;
       break;
     }
     case "error": {
-      comp = <Text className="text-4xl">Error!</Text>;
+      comp = <Text className="text-4xl text-foreground">Error!</Text>;
       break;
     }
   }

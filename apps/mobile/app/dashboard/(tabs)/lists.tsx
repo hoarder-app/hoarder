@@ -57,8 +57,8 @@ export default function Lists() {
         }}
         renderItem={(l) => (
           <Link asChild key={l.item.id} href={l.item.href}>
-            <Pressable className="mx-2 flex flex-row justify-between rounded-xl border border-gray-100 bg-white px-4 py-2">
-              <Text className="text-lg">
+            <Pressable className="mx-2 flex flex-row justify-between rounded-xl border border-input bg-white px-4 py-2 dark:bg-accent">
+              <Text className="text-lg text-accent-foreground">
                 {l.item.logo} {l.item.name}
               </Text>
               <ChevronRight color="rgb(0, 122, 255)" />

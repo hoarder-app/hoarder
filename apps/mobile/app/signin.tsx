@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Redirect } from "expo-router";
 import Logo from "@/components/Logo";
+import { TailwindResolver } from "@/components/TailwindResolver";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import useAppSettings from "@/lib/settings";
@@ -57,7 +58,16 @@ export default function Signin() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View className="flex h-full flex-col justify-center gap-2 px-4">
           <View className="items-center">
-            <Logo height={150} width={200} />
+            <TailwindResolver
+              className="color-foreground"
+              comp={(styles) => (
+                <Logo
+                  height={150}
+                  width={200}
+                  fill={styles?.color?.toString()}
+                />
+              )}
+            />
           </View>
           {error && (
             <Text className="w-full text-center text-red-500">{error}</Text>

@@ -6,16 +6,21 @@
     "version": "1.3.2",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
+    "userInterfaceStyle": "automatic",
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "app.hoarder.hoardermobile",
+      "splash": {
+        "image": "./assets/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff",
+        "dark": {
+          "image": "./assets/splash-white.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#000000"
+        }
+      },
       "config": {
         "usesNonExemptEncryption": false
       },
@@ -30,6 +35,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
+      },
+      "splash": {
+        "image": "./assets/splash.png",
+        "resizeMode": "contain",
+        "backgroundColor": "#ffffff",
+        "dark": {
+          "image": "./assets/splash-white.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#000000"
+        }
       },
       "package": "app.hoarder.hoardermobile",
       "versionCode": 2

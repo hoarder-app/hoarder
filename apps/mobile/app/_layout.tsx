@@ -7,11 +7,15 @@ import { useRouter } from "expo-router";
 import { Stack } from "expo-router/stack";
 import { ShareIntentProvider, useShareIntent } from "expo-share-intent";
 import { StatusBar } from "expo-status-bar";
+import { StyledStack } from "@/components/navigation/stack";
 import { Providers } from "@/lib/providers";
+import { cn } from "@/lib/utils";
+import { useColorScheme } from "nativewind";
 
 export default function RootLayout() {
   const router = useRouter();
   const { hasShareIntent } = useShareIntent();
+  const { colorScheme } = useColorScheme();
 
   useEffect(() => {
     if (hasShareIntent) {
@@ -24,8 +28,14 @@ export default function RootLayout() {
   return (
     <ShareIntentProvider>
       <Providers>
-        <View className="w-full flex-1 bg-background">
-          <Stack
+        <View
+          className={cn(
+            "w-full flex-1 bg-gray-100 text-foreground dark:bg-background",
+            colorScheme == "dark" ? "dark" : "light",
+          )}
+        >
+          <StyledStack
+            contentClassName="bg-gray-100 dark:bg-background"
             screenOptions={{
               headerShown: false,
             }}
@@ -37,7 +47,7 @@ export default function RootLayout() {
                 presentation: "modal",
               }}
             />
-          </Stack>
+          </StyledStack>
           <StatusBar style="auto" />
         </View>
       </Providers>

@@ -39,7 +39,6 @@ export default function AddNote() {
         <Text className="w-full text-center text-red-500">{error}</Text>
       )}
       <Input
-        className="bg-white"
         value={text}
         onChangeText={setText}
         multiline

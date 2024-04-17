@@ -1,17 +1,13 @@
-import React, { useEffect } from "react";
-import { Platform } from "react-native";
-import * as NavigationBar from "expo-navigation-bar";
+import React from "react";
 import { Tabs } from "expo-router";
+import { StyledTabs } from "@/components/navigation/tabs";
 import { ClipboardList, Home, Search, Settings } from "lucide-react-native";
 
 export default function TabLayout() {
-  useEffect(() => {
-    if (Platform.OS == "android") {
-      NavigationBar.setBackgroundColorAsync("white");
-    }
-  }, []);
   return (
-    <Tabs
+    <StyledTabs
+      tabBarClassName="bg-gray-100 dark:bg-background pt-3"
+      sceneContainerClassName="bg-gray-100 dark:bg-background"
       screenOptions={{
         headerShown: false,
       }}
@@ -44,6 +40,6 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <Settings color={color} />,
         }}
       />
-    </Tabs>
+    </StyledTabs>
   );
 }

@@ -37,7 +37,7 @@ export default function BookmarkList({
       renderItem={(b) => <BookmarkCard bookmark={b.item} />}
       ListEmptyComponent={
         <View className="items-center justify-center pt-4">
-          <Text className="text-xl">No Bookmarks</Text>
+          <Text className="text-xl text-foreground">No Bookmarks</Text>
         </View>
       }
       data={bookmarks}

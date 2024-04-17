@@ -22,6 +22,7 @@ import {
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
 
+import { TailwindResolver } from "../TailwindResolver";
 import { Divider } from "../ui/Divider";
 import { Skeleton } from "../ui/Skeleton";
 import { useToast } from "../ui/Toast";
@@ -162,9 +163,11 @@ function TagList({ bookmark }: { bookmark: ZBookmark }) {
         {tags.map((t) => (
           <View
             key={t.id}
-            className="rounded-full border border-gray-200 px-2.5 py-0.5 text-xs font-semibold"
+            className="rounded-full border border-accent px-2.5 py-0.5 text-xs font-semibold"
           >
-            <Link href={`dashboard/tags/${t.id}`}>{t.name}</Link>
+            <Link className="text-foreground" href={`dashboard/tags/${t.id}`}>
+              {t.name}
+            </Link>
           </View>
         ))}
       </View>
@@ -198,7 +201,7 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
       {imageComp}
       <View className="flex gap-2 p-2">
         <Text
-          className="line-clamp-2 text-xl font-bold"
+          className="line-clamp-2 text-xl font-bold text-foreground"
           onPress={() => WebBrowser.openBrowserAsync(url)}
         >
           {bookmark.title ?? bookmark.content.title ?? parsedUrl.host}
@@ -206,7 +209,9 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
         <TagList bookmark={bookmark} />
         <Divider orientation="vertical" className="mt-2 h-0.5 w-full" />
         <View className="mt-2 flex flex-row justify-between px-2 pb-2">
-          <Text className="my-auto line-clamp-1">{parsedUrl.host}</Text>
+          <Text className="my-auto line-clamp-1 text-foreground">
+            {parsedUrl.host}
+          </Text>
           <ActionBar bookmark={bookmark} />
         </View>
       </View>
@@ -218,13 +223,29 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
   if (bookmark.content.type !== "text") {
     throw new Error("Wrong content type rendered");
   }
+  const content = bookmark.content.text;
   return (
     <View className="flex max-h-96 gap-2 p-2">
       {bookmark.title && (
-        <Text className="line-clamp-2 text-xl font-bold">{bookmark.title}</Text>
+        <Text className="line-clamp-2 text-xl font-bold text-foreground">
+          {bookmark.title}
+        </Text>
       )}
-      <View className="max-h-56 overflow-hidden p-2">
-        <Markdown>{bookmark.content.text}</Markdown>
+      <View className="max-h-56 overflow-hidden p-2 text-foreground">
+        <TailwindResolver
+          className="text-foreground"
+          comp={(styles) => (
+            <Markdown
+              style={{
+                text: {
+                  color: styles?.color?.toString(),
+                },
+              }}
+            >
+              {content}
+            </Markdown>
+          )}
+        />
       </View>
       <TagList bookmark={bookmark} />
       <Divider orientation="vertical" className="mt-2 h-0.5 w-full" />
@@ -256,7 +277,9 @@ function AssetCard({ bookmark }: { bookmark: ZBookmark }) {
       />
       <View className="flex gap-2 p-2">
         {title && (
-          <Text className="line-clamp-2 text-xl font-bold">{title}</Text>
+          <Text className="line-clamp-2 text-xl font-bold text-foreground">
+            {title}
+          </Text>
         )}
         <TagList bookmark={bookmark} />
         <Divider orientation="vertical" className="mt-2 h-0.5 w-full" />
@@ -307,5 +330,5 @@ export default function BookmarkCard({
       break;
   }
 
-  return <View className="border-b border-gray-300 bg-white">{comp}</View>;
+  return <View className="border-b border-accent bg-background">{comp}</View>;
 }
