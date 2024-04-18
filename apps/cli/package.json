@@ -6,6 +6,7 @@
   "dependencies": {
     "@commander-js/extra-typings": "^12.0.1",
     "@hoarder/trpc": "workspace:^0.1.0",
+    "@hoarder/shared": "workspace:^0.1.0",
     "@hoarder/tsconfig": "workspace:^0.1.0",
     "@tsconfig/node21": "^21.0.1",
     "tsx": "^4.7.1",

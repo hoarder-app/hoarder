@@ -7,7 +7,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { Trash2 } from "lucide-react";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 import {
   useDeleteBookmark,
   useUpdateBookmark,

@@ -1,7 +1,7 @@
 import { Text } from "react-native";
 import { api } from "@/lib/trpc";
 
-import type { ZGetBookmarksRequest } from "@hoarder/trpc/types/bookmarks";
+import type { ZGetBookmarksRequest } from "@hoarder/shared/types/bookmarks";
 
 import FullPageSpinner from "../ui/FullPageSpinner";
 import BookmarkList from "./BookmarkList";

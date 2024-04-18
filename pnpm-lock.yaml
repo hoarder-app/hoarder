@@ -143,6 +143,9 @@ importers:
       '@commander-js/extra-typings':
         specifier: ^12.0.1
         version: 12.0.1(commander@12.0.0)
+      '@hoarder/shared':
+        specifier: workspace:^0.1.0
+        version: link:../../packages/shared
       '@hoarder/trpc':
         specifier: workspace:^0.1.0
         version: link:../../packages/trpc
@@ -250,6 +253,9 @@ importers:
 
   apps/mobile:
     dependencies:
+      '@hoarder/shared':
+        specifier: workspace:^0.1.0
+        version: link:../../packages/shared
       '@hoarder/shared-react':
         specifier: workspace:^0.1.0
         version: link:../../packages/shared-react
@@ -796,6 +802,9 @@ importers:
 
   packages/shared-react:
     dependencies:
+      '@hoarder/shared':
+        specifier: workspace:^0.1.0
+        version: link:../shared
       '@hoarder/trpc':
         specifier: workspace:^0.1.0
         version: link:../trpc

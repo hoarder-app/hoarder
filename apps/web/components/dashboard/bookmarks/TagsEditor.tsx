@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
 import CreateableSelect from "react-select/creatable";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
-import type { ZAttachedByEnum } from "@hoarder/trpc/types/tags";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import type { ZAttachedByEnum } from "@hoarder/shared/types/tags";
 import { useUpdateBookmarkTags } from "@hoarder/shared-react/hooks/bookmarks";
 
 interface EditableTag {

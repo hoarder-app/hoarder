@@ -3,7 +3,7 @@ import { ActivityIndicator, Keyboard, Text, View } from "react-native";
 import Animated, { LinearTransition } from "react-native-reanimated";
 import { useScrollToTop } from "@react-navigation/native";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import BookmarkCard from "./BookmarkCard";
 

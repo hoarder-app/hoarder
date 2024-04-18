@@ -2,12 +2,12 @@ import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
 import { and, count, eq } from "drizzle-orm";
 import { z } from "zod";
 
+import type { ZAttachedByEnum } from "@hoarder/shared/types/tags";
 import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
+import { zGetTagResponseSchema } from "@hoarder/shared/types/tags";
 
 import type { Context } from "../index";
-import type { ZAttachedByEnum } from "../types/tags";
 import { authedProcedure, router } from "../index";
-import { zGetTagResponseSchema } from "../types/tags";
 
 function conditionFromInput(
   input: { tagName: string } | { tagId: string },

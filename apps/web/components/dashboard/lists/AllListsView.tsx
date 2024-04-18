@@ -7,7 +7,7 @@ import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 
-import type { ZBookmarkList } from "@hoarder/trpc/types/lists";
+import type { ZBookmarkList } from "@hoarder/shared/types/lists";
 
 function ListItem({
   name,

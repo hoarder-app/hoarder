@@ -9,7 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import BookmarkActionBar from "./BookmarkActionBar";
 import TagList from "./TagList";

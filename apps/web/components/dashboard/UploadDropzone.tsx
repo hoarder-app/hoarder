@@ -10,7 +10,7 @@ import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookm
 import {
   zUploadErrorSchema,
   zUploadResponseSchema,
-} from "@hoarder/trpc/types/uploads";
+} from "@hoarder/shared/types/uploads";
 
 import LoadingSpinner from "../ui/spinner";
 import { toast } from "../ui/use-toast";

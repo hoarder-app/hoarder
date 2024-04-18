@@ -16,7 +16,7 @@ import { api } from "@/lib/trpc";
 import { MenuView } from "@react-native-menu/menu";
 import { Ellipsis, Star } from "lucide-react-native";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 import {
   useDeleteBookmark,
   useUpdateBookmark,

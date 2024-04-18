@@ -3,6 +3,11 @@ import { and, desc, eq, exists, inArray, lte, or } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
+import type {
+  ZBookmark,
+  ZBookmarkContent,
+} from "@hoarder/shared/types/bookmarks";
+import type { ZBookmarkTags } from "@hoarder/shared/types/tags";
 import { db as DONT_USE_db } from "@hoarder/db";
 import {
   bookmarkAssets,
@@ -20,11 +25,6 @@ import {
   SearchIndexingQueue,
 } from "@hoarder/shared/queues";
 import { getSearchIdxClient } from "@hoarder/shared/search";
-
-import type { Context } from "../index";
-import type { ZBookmark, ZBookmarkContent } from "../types/bookmarks";
-import type { ZBookmarkTags } from "../types/tags";
-import { authedProcedure, router } from "../index";
 import {
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
   zBareBookmarkSchema,
@@ -33,7 +33,10 @@ import {
   zGetBookmarksResponseSchema,
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
-} from "../types/bookmarks";
+} from "@hoarder/shared/types/bookmarks";
+
+import type { Context } from "../index";
+import { authedProcedure, router } from "../index";
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: Context;

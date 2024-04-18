@@ -8,7 +8,7 @@ import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { Trash2 } from "lucide-react";
 
-import type { ZBookmarkList } from "@hoarder/trpc/types/lists";
+import type { ZBookmarkList } from "@hoarder/shared/types/lists";
 
 export default function DeleteListButton({ list }: { list: ZBookmarkList }) {
   const router = useRouter();

@@ -1,4 +1,4 @@
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 const MAX_LOADING_MSEC = 30 * 1000;
 

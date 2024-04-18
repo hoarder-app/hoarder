@@ -11,7 +11,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Check, Pencil, X } from "lucide-react";
 
 import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
-import { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 interface Props {
   bookmarkId: string;

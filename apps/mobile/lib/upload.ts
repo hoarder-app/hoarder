@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 import {
   zUploadErrorSchema,
   zUploadResponseSchema,
-} from "@hoarder/trpc/types/uploads";
+} from "@hoarder/shared/types/uploads";
 
 import type { Settings } from "./settings";
 import { api } from "./trpc";

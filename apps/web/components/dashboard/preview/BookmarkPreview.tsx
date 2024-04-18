@@ -20,7 +20,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { CalendarDays, ExternalLink } from "lucide-react";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import ActionBar from "./ActionBar";
 import { AssetContentSection } from "./AssetContentSection";

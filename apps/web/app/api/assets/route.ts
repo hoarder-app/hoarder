@@ -1,7 +1,7 @@
 import { createContextFromRequest } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
-import type { ZUploadResponse } from "@hoarder/trpc/types/uploads";
+import type { ZUploadResponse } from "@hoarder/shared/types/uploads";
 import { saveAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 

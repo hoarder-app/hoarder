@@ -21,7 +21,10 @@ import {
   Trash2,
 } from "lucide-react";
 
-import type { ZBookmark, ZBookmarkedLink } from "@hoarder/trpc/types/bookmarks";
+import type {
+  ZBookmark,
+  ZBookmarkedLink,
+} from "@hoarder/shared/types/bookmarks";
 import {
   useDeleteBookmark,
   useRecrawlBookmark,

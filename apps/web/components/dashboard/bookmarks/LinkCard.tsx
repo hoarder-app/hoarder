@@ -7,7 +7,7 @@ import {
 } from "@/lib/bookmarkUtils";
 import { api } from "@/lib/trpc";
 
-import type { ZBookmarkTypeLink } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmarkTypeLink } from "@hoarder/shared/types/bookmarks";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 

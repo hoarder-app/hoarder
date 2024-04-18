@@ -6,7 +6,7 @@ import { api } from "@/lib/trpc";
 import type {
   ZGetBookmarksRequest,
   ZGetBookmarksResponse,
-} from "@hoarder/trpc/types/bookmarks";
+} from "@hoarder/shared/types/bookmarks";
 import { BookmarkGridContextProvider } from "@hoarder/shared-react/hooks/bookmark-grid-context";
 
 import BookmarksGrid from "./BookmarksGrid";

@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 export function AssetContentSection({ bookmark }: { bookmark: ZBookmark }) {
   if (bookmark.content.type != "asset") {

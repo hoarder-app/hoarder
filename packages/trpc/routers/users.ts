@@ -7,6 +7,7 @@ import { SqliteError } from "@hoarder/db";
 import { users } from "@hoarder/db/schema";
 import { deleteUserAssets } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
+import { zSignUpSchema } from "@hoarder/shared/types/users";
 
 import { hashPassword, validatePassword } from "../auth";
 import {
@@ -15,7 +16,6 @@ import {
   publicProcedure,
   router,
 } from "../index";
-import { zSignUpSchema } from "../types/users";
 
 export const usersAppRouter = router({
   create: publicProcedure

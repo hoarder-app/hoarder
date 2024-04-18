@@ -9,7 +9,7 @@ import { Slot } from "@radix-ui/react-slot";
 import Masonry from "react-masonry-css";
 import resolveConfig from "tailwindcss/resolveConfig";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import AssetCard from "./AssetCard";
 import EditorCard from "./EditorCard";

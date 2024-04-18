@@ -7,7 +7,7 @@ import { bookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 import Markdown from "react-markdown";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import { BookmarkedTextViewer } from "./BookmarkedTextViewer";
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";

@@ -3,7 +3,7 @@ import { Command } from "@commander-js/extra-typings";
 import chalk from "chalk";
 import { getAPIClient } from "lib/trpc";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 export const bookmarkCmd = new Command()
   .name("bookmarks")

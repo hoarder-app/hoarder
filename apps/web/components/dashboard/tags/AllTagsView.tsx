@@ -5,7 +5,7 @@ import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/trpc";
 
-import type { ZGetTagResponse } from "@hoarder/trpc/types/tags";
+import type { ZGetTagResponse } from "@hoarder/shared/types/tags";
 
 function TagPill({ name, count }: { name: string; count: number }) {
   return (

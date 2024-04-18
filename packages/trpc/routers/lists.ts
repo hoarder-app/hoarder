@@ -4,10 +4,10 @@ import { z } from "zod";
 
 import { SqliteError } from "@hoarder/db";
 import { bookmarkLists, bookmarksInLists } from "@hoarder/db/schema";
+import { zBookmarkListSchema } from "@hoarder/shared/types/lists";
 
 import type { Context } from "../index";
 import { authedProcedure, router } from "../index";
-import { zBookmarkListSchema } from "../types/lists";
 import { ensureBookmarkOwnership } from "./bookmarks";
 
 export const ensureListOwnership = experimental_trpcMiddleware<{

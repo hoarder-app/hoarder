@@ -7,7 +7,7 @@ import { api } from "@/lib/trpc";
 import type {
   ZBookmark,
   ZBookmarkTypeAsset,
-} from "@hoarder/trpc/types/bookmarks";
+} from "@hoarder/shared/types/bookmarks";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 

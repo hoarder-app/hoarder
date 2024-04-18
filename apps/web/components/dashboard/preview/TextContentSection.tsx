@@ -1,7 +1,7 @@
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import Markdown from "react-markdown";
 
-import type { ZBookmark } from "@hoarder/trpc/types/bookmarks";
+import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 export function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
   let content;
