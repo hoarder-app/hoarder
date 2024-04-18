@@ -10,6 +10,15 @@ import type { Context } from "../index";
 import { authedProcedure, router } from "../index";
 import { ensureBookmarkOwnership } from "./bookmarks";
 
+const zNewBookmarkListSchema = z.object({
+  name: z
+    .string()
+    .min(1, "List name can't be empty")
+    .max(20, "List name is at most 20 chars"),
+  icon: z.string(),
+  parentId: z.string().nullish(),
+});
+
 export const ensureListOwnership = experimental_trpcMiddleware<{
   ctx: Context;
   input: { listId: string };
@@ -44,41 +53,50 @@ export const ensureListOwnership = experimental_trpcMiddleware<{
 
 export const listsAppRouter = router({
   create: authedProcedure
+    .input(zNewBookmarkListSchema)
+    .output(zBookmarkListSchema)
+    .mutation(async ({ input, ctx }) => {
+      const [result] = await ctx.db
+        .insert(bookmarkLists)
+        .values({
+          name: input.name,
+          icon: input.icon,
+          userId: ctx.user.id,
+          parentId: input.parentId,
+        })
+        .returning();
+      return result;
+    }),
+  edit: authedProcedure
     .input(
-      z.object({
-        name: z
-          .string()
-          .min(1, "List name can't be empty")
-          .max(20, "List name is at most 20 chars"),
-        icon: z.string(),
-      }),
+      zNewBookmarkListSchema
+        .partial()
+        .merge(z.object({ listId: z.string() }))
+        .refine((val) => val.parentId != val.listId, {
+          message: "List can't be its own parent",
+          path: ["parentId"],
+        }),
     )
     .output(zBookmarkListSchema)
     .mutation(async ({ input, ctx }) => {
-      try {
-        const result = await ctx.db
-          .insert(bookmarkLists)
-          .values({
-            name: input.name,
-            icon: input.icon,
-            userId: ctx.user.id,
-          })
-          .returning();
-        return result[0];
-      } catch (e) {
-        if (e instanceof SqliteError) {
-          if (e.code == "SQLITE_CONSTRAINT_UNIQUE") {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "List already exists",
-            });
-          }
-        }
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong",
-        });
+      const result = await ctx.db
+        .update(bookmarkLists)
+        .set({
+          name: input.name,
+          icon: input.icon,
+          parentId: input.parentId,
+        })
+        .where(
+          and(
+            eq(bookmarkLists.id, input.listId),
+            eq(bookmarkLists.userId, ctx.user.id),
+          ),
+        )
+        .returning();
+      if (result.length == 0) {
+        throw new TRPCError({ code: "NOT_FOUND" });
       }
+      return result[0];
     }),
   delete: authedProcedure
     .input(
@@ -187,6 +205,7 @@ export const listsAppRouter = router({
         id: res.id,
         name: res.name,
         icon: res.icon,
+        parentId: res.parentId,
         bookmarks: res.bookmarksInLists.map((b) => b.bookmarkId),
       };
     }),
