@@ -13,20 +13,27 @@ import { useBookmarkLists } from "@hoarder/shared-react/hooks/lists";
 export function BookmarkListSelector({
   value,
   onChange,
-  hideIds = [],
+  hideSubtreeOf,
   placeholder = "Select a list",
 }: {
   value?: string | null;
   onChange: (value: string) => void;
   placeholder?: string;
-  hideIds?: string[];
+  hideSubtreeOf?: string;
 }) {
   const { data, isPending: isFetchingListsPending } = useBookmarkLists();
-  const { allPaths } = data ?? {};
+  let { allPaths } = data ?? {};
 
   if (isFetchingListsPending) {
     return <LoadingSpinner />;
   }
+
+  allPaths = allPaths?.filter((path) => {
+    if (!hideSubtreeOf) {
+      return true;
+    }
+    return !path.map((p) => p.id).includes(hideSubtreeOf);
+  });
 
   return (
     <Select onValueChange={onChange} value={value ?? undefined}>
@@ -37,9 +44,6 @@ export function BookmarkListSelector({
         <SelectGroup>
           {allPaths?.map((path) => {
             const l = path[path.length - 1];
-            if (hideIds.includes(l.id)) {
-              return null;
-            }
             const name = path.map((p) => `${p.icon} ${p.name}`).join(" / ");
             return (
               <SelectItem key={l.id} value={l.id}>

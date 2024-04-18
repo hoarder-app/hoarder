@@ -237,7 +237,7 @@ export function EditListModal({
                       <FormControl>
                         <BookmarkListSelector
                           // Hide the current list from the list of parents
-                          hideIds={list ? [list.id] : undefined}
+                          hideSubtreeOf={list ? list.id : undefined}
                           value={field.value}
                           onChange={field.onChange}
                           placeholder={"No Parent"}
