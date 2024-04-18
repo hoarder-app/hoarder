@@ -2,6 +2,7 @@ import type { AdapterAccount } from "@auth/core/adapters";
 import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import {
+  AnySQLiteColumn,
   index,
   integer,
   primaryKey,
@@ -223,9 +224,10 @@ export const bookmarkLists = sqliteTable(
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    parentId: text("parentId")
+      .references((): AnySQLiteColumn => bookmarkLists.id, { onDelete: "set null" }),
   },
   (bl) => ({
-    unq: unique().on(bl.name, bl.userId),
     userIdIdx: index("bookmarkLists_userId_idx").on(bl.userId),
   }),
 );
@@ -317,6 +319,10 @@ export const bookmarkListsRelations = relations(
     user: one(users, {
       fields: [bookmarkLists.userId],
       references: [users.id],
+    }),
+    parent: one(bookmarkLists, {
+      fields: [bookmarkLists.parentId],
+      references: [bookmarkLists.id],
     }),
   }),
 );

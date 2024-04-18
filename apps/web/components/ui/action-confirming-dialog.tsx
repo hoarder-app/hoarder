@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   Dialog,
@@ -18,14 +16,21 @@ export default function ActionConfirmingDialog({
   description,
   actionButton,
   children,
+  open: userIsOpen,
+  setOpen: userSetOpen,
 }: {
+  open?: boolean;
+  setOpen?: (v: boolean) => void;
   title: React.ReactNode;
   description: React.ReactNode;
   actionButton: (setDialogOpen: (open: boolean) => void) => React.ReactNode;
   children: React.ReactNode;
 }) {
-  const [isDialogOpen, setDialogOpen] = useState(false);
-
+  const [customIsOpen, setCustomIsOpen] = useState(false);
+  const [isDialogOpen, setDialogOpen] = [
+    userIsOpen ?? customIsOpen,
+    userSetOpen ?? setCustomIsOpen,
+  ];
   return (
     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>

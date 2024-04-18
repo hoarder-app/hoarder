@@ -8,7 +8,7 @@ export function useCreateBookmarkWithPostHook(
   const apiUtils = api.useUtils();
   const postCreationCB = useBookmarkPostCreationHook();
   return api.bookmarks.createBookmark.useMutation({
-    ...opts,
+    ...opts[0],
     onSuccess: async (res, req, meta) => {
       apiUtils.bookmarks.getBookmarks.invalidate();
       apiUtils.bookmarks.searchBookmarks.invalidate();
@@ -23,7 +23,7 @@ export function useDeleteBookmark(
 ) {
   const apiUtils = api.useUtils();
   return api.bookmarks.deleteBookmark.useMutation({
-    ...opts,
+    ...opts[0],
     onSuccess: (res, req, meta) => {
       apiUtils.bookmarks.getBookmarks.invalidate();
       apiUtils.bookmarks.searchBookmarks.invalidate();
@@ -37,7 +37,7 @@ export function useUpdateBookmark(
 ) {
   const apiUtils = api.useUtils();
   return api.bookmarks.updateBookmark.useMutation({
-    ...opts,
+    ...opts[0],
     onSuccess: (res, req, meta) => {
       apiUtils.bookmarks.getBookmarks.invalidate();
       apiUtils.bookmarks.searchBookmarks.invalidate();
@@ -52,7 +52,7 @@ export function useRecrawlBookmark(
 ) {
   const apiUtils = api.useUtils();
   return api.bookmarks.recrawlBookmark.useMutation({
-    ...opts,
+    ...opts[0],
     onSuccess: (res, req, meta) => {
       apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
       return opts[0]?.onSuccess?.(res, req, meta);
@@ -65,7 +65,7 @@ export function useUpdateBookmarkTags(
 ) {
   const apiUtils = api.useUtils();
   return api.bookmarks.updateTags.useMutation({
-    ...opts,
+    ...opts[0],
     onSuccess: (res, req, meta) => {
       apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
 

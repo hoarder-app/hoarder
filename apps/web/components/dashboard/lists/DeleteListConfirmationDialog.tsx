@@ -1,26 +1,34 @@
-"use client";
-
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
-import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { api } from "@/lib/trpc";
-import { Trash2 } from "lucide-react";
 
 import type { ZBookmarkList } from "@hoarder/shared/types/lists";
+import { useDeleteBookmarkList } from "@hoarder/shared-react/hooks/lists";
 
-export default function DeleteListButton({ list }: { list: ZBookmarkList }) {
+export default function DeleteListConfirmationDialog({
+  list,
+  children,
+  open,
+  setOpen,
+}: {
+  list: ZBookmarkList;
+  children?: React.ReactNode;
+  open: boolean;
+  setOpen: (v: boolean) => void;
+}) {
+  const currentPath = usePathname();
   const router = useRouter();
 
-  const listsInvalidationFunction = api.useUtils().lists.list.invalidate;
-  const { mutate: deleteList, isPending } = api.lists.delete.useMutation({
+  const { mutate: deleteList, isPending } = useDeleteBookmarkList({
     onSuccess: () => {
-      listsInvalidationFunction();
       toast({
         description: `List "${list.icon} ${list.name}" is deleted!`,
       });
-      router.push("/");
+      setOpen(false);
+      if (currentPath.includes(list.id)) {
+        router.push("/dashboard/lists");
+      }
     },
     onError: () => {
       toast({
@@ -29,8 +37,11 @@ export default function DeleteListButton({ list }: { list: ZBookmarkList }) {
       });
     },
   });
+
   return (
     <ActionConfirmingDialog
+      open={open}
+      setOpen={setOpen}
       title={`Delete ${list.icon} ${list.name}?`}
       description={`Are you sure you want to delete ${list.icon} ${list.name}?`}
       actionButton={() => (
@@ -44,10 +55,7 @@ export default function DeleteListButton({ list }: { list: ZBookmarkList }) {
         </ActionButton>
       )}
     >
-      <Button className="mt-auto flex gap-2" variant="destructiveOutline">
-        <Trash2 className="size-5" />
-        <span className="hidden md:block">Delete List</span>
-      </Button>
+      {children}
     </ActionConfirmingDialog>
   );
 }

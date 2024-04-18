@@ -16,20 +16,14 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import LoadingSpinner from "@/components/ui/spinner";
 import { toast } from "@/components/ui/use-toast";
-import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+import { useAddBookmarkToList } from "@hoarder/shared-react/hooks/lists";
+
+import { BookmarkListSelector } from "../lists/BookmarkListSelector";
 
 export default function AddToListModal({
   bookmarkId,
@@ -49,20 +43,13 @@ export default function AddToListModal({
     resolver: zodResolver(formSchema),
   });
 
-  const { data: lists, isPending: isFetchingListsPending } =
-    api.lists.list.useQuery();
-
-  const bookmarksInvalidationFunction =
-    api.useUtils().bookmarks.getBookmarks.invalidate;
-
   const { mutate: addToList, isPending: isAddingToListPending } =
-    api.lists.addToList.useMutation({
-      onSuccess: (_resp, req) => {
+    useAddBookmarkToList({
+      onSuccess: () => {
         toast({
           description: "List has been updated!",
         });
         setOpen(false);
-        bookmarksInvalidationFunction({ listId: req.listId });
       },
       onError: (e) => {
         if (e.data?.code == "BAD_REQUEST") {
@@ -78,8 +65,6 @@ export default function AddToListModal({
         }
       },
     });
-
-  const isPending = isFetchingListsPending || isAddingToListPending;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -98,42 +83,20 @@ export default function AddToListModal({
             </DialogHeader>
 
             <div className="py-4">
-              {lists ? (
-                <FormField
-                  control={form.control}
-                  name="listId"
-                  render={({ field }) => {
-                    return (
-                      <FormItem>
-                        <FormControl>
-                          <Select onValueChange={field.onChange}>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a list" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectGroup>
-                                {lists?.lists.map((l) => (
-                                  <SelectItem key={l.id} value={l.id}>
-                                    {l.icon} {l.name}
-                                  </SelectItem>
-                                ))}
-                                {lists && lists.lists.length == 0 && (
-                                  <SelectItem value="nolist" disabled>
-                                    You don&apos;t currently have any lists.
-                                  </SelectItem>
-                                )}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
-              ) : (
-                <LoadingSpinner />
-              )}
+              <FormField
+                control={form.control}
+                name="listId"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormControl>
+                        <BookmarkListSelector onChange={field.onChange} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
             </div>
             <DialogFooter className="sm:justify-end">
               <DialogClose asChild>
@@ -144,7 +107,7 @@ export default function AddToListModal({
               <ActionButton
                 type="submit"
                 loading={isAddingToListPending}
-                disabled={isPending}
+                disabled={isAddingToListPending}
               >
                 Add
               </ActionButton>
