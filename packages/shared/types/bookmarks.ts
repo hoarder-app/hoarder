@@ -10,6 +10,8 @@ export const zBookmarkedLinkSchema = z.object({
   title: z.string().nullish(),
   description: z.string().nullish(),
   imageUrl: z.string().url().nullish(),
+  imageAssetId: z.string().nullish(),
+  screenshotAssetId: z.string().nullish(),
   favicon: z.string().url().nullish(),
   htmlContent: z.string().nullish(),
   crawledAt: z.date().nullish(),

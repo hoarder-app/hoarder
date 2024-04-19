@@ -1,7 +1,6 @@
 import type { BookmarksLayoutTypes } from "@/lib/userLocalSettings/types";
 import React from "react";
 import Link from "next/link";
-import { isBookmarkStillTagging } from "@/lib/bookmarkUtils";
 import {
   bookmarkLayoutSwitch,
   useBookmarkLayout,
@@ -10,6 +9,7 @@ import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import BookmarkActionBar from "./BookmarkActionBar";
 import TagList from "./TagList";

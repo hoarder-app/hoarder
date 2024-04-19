@@ -21,32 +21,16 @@ import {
   useDeleteBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
+import {
+  getBookmarkLinkImageUrl,
+  isBookmarkStillLoading,
+  isBookmarkStillTagging,
+} from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { TailwindResolver } from "../TailwindResolver";
 import { Divider } from "../ui/Divider";
 import { Skeleton } from "../ui/Skeleton";
 import { useToast } from "../ui/Toast";
-
-const MAX_LOADING_MSEC = 30 * 1000;
-
-export function isBookmarkStillCrawling(bookmark: ZBookmark) {
-  return (
-    bookmark.content.type === "link" &&
-    !bookmark.content.crawledAt &&
-    Date.now().valueOf() - bookmark.createdAt.valueOf() < MAX_LOADING_MSEC
-  );
-}
-
-export function isBookmarkStillTagging(bookmark: ZBookmark) {
-  return (
-    bookmark.taggingStatus === "pending" &&
-    Date.now().valueOf() - bookmark.createdAt.valueOf() < MAX_LOADING_MSEC
-  );
-}
-
-export function isBookmarkStillLoading(bookmark: ZBookmark) {
-  return isBookmarkStillTagging(bookmark) || isBookmarkStillCrawling(bookmark);
-}
 
 function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
@@ -176,6 +160,7 @@ function TagList({ bookmark }: { bookmark: ZBookmark }) {
 }
 
 function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
+  const { settings } = useAppSettings();
   if (bookmark.content.type !== "link") {
     throw new Error("Wrong content type rendered");
   }
@@ -183,18 +168,36 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
   const url = bookmark.content.url;
   const parsedUrl = new URL(url);
 
-  const imageComp = bookmark.content.imageUrl ? (
-    <Image
-      source={{ uri: bookmark.content.imageUrl }}
-      className="h-56 min-h-56 w-full object-cover"
-    />
-  ) : (
-    <Image
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      source={require("@/assets/blur.jpeg")}
-      className="h-56 w-full rounded-t-lg"
-    />
-  );
+  const imageUrl = getBookmarkLinkImageUrl(bookmark.content);
+
+  let imageComp;
+  if (imageUrl) {
+    imageComp = (
+      <Image
+        source={
+          imageUrl.localAsset
+            ? {
+                uri: `${settings.address}${imageUrl.url}`,
+                headers: {
+                  Authorization: `Bearer ${settings.apiKey}`,
+                },
+              }
+            : {
+                uri: imageUrl.url,
+              }
+        }
+        className="h-56 min-h-56 w-full object-cover"
+      />
+    );
+  } else {
+    imageComp = (
+      <Image
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        source={require("@/assets/blur.jpeg")}
+        className="h-56 w-full rounded-t-lg"
+      />
+    );
+  }
 
   return (
     <View className="flex gap-2">

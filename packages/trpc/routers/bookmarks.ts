@@ -93,6 +93,28 @@ type BookmarkQueryReturnType = Awaited<
   ReturnType<typeof dummyDrizzleReturnType>
 >;
 
+async function cleanupAssetForBookmark(
+  bookmark: Pick<BookmarkQueryReturnType, "asset" | "link" | "userId">,
+) {
+  const assetIds = [];
+  if (bookmark.asset) {
+    assetIds.push(bookmark.asset.assetId);
+  }
+  if (bookmark.link) {
+    if (bookmark.link.screenshotAssetId) {
+      assetIds.push(bookmark.link.screenshotAssetId);
+    }
+    if (bookmark.link.imageAssetId) {
+      assetIds.push(bookmark.link.imageAssetId);
+    }
+  }
+  await Promise.all(
+    assetIds.map((assetId) =>
+      deleteAsset({ userId: bookmark.userId, assetId }),
+    ),
+  );
+}
+
 function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
   const { tagsOnBookmarks, link, text, asset, ...rest } = bookmark;
 
@@ -291,8 +313,15 @@ export const bookmarksAppRouter = router({
     .input(z.object({ bookmarkId: z.string() }))
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      const asset = await ctx.db.query.bookmarkAssets.findFirst({
-        where: and(eq(bookmarkAssets.id, input.bookmarkId)),
+      const bookmark = await ctx.db.query.bookmarks.findFirst({
+        where: and(
+          eq(bookmarks.id, input.bookmarkId),
+          eq(bookmarks.userId, ctx.user.id),
+        ),
+        with: {
+          asset: true,
+          link: true,
+        },
       });
       const deleted = await ctx.db
         .delete(bookmarks)
@@ -306,8 +335,12 @@ export const bookmarksAppRouter = router({
         bookmarkId: input.bookmarkId,
         type: "delete",
       });
-      if (deleted.changes > 0 && asset) {
-        await deleteAsset({ userId: ctx.user.id, assetId: asset.assetId });
+      if (deleted.changes > 0 && bookmark) {
+        await cleanupAssetForBookmark({
+          asset: bookmark.asset,
+          link: bookmark.link,
+          userId: ctx.user.id,
+        });
       }
     }),
   recrawlBookmark: authedProcedure

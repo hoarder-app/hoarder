@@ -28,6 +28,7 @@ const config = {
     "@typescript-eslint/no-floating-promises": "off",
     "@typescript-eslint/unbound-method": "off",
     "@typescript-eslint/restrict-template-expressions": "off",
+    "@typescript-eslint/prefer-optional-chain": "off",
   },
   ignorePatterns: [
     "**/*.config.js",

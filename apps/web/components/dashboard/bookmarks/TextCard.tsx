@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { isBookmarkStillTagging } from "@/lib/bookmarkUtils";
 import { api } from "@/lib/trpc";
 import { bookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 import Markdown from "react-markdown";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { BookmarkedTextViewer } from "./BookmarkedTextViewer";
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
