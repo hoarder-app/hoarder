@@ -25,7 +25,7 @@ import { withTimeout } from "utils";
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
 import { bookmarkLinks, bookmarks } from "@hoarder/db/schema";
-import { newAssetId, saveAsset } from "@hoarder/shared/assetdb";
+import { deleteAsset, newAssetId, saveAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
 import {
@@ -165,7 +165,12 @@ async function getBookmarkDetails(bookmarkId: string) {
   if (!bookmark || !bookmark.link) {
     throw new Error("The bookmark either doesn't exist or not a link");
   }
-  return { url: bookmark.link.url, userId: bookmark.userId };
+  return {
+    url: bookmark.link.url,
+    userId: bookmark.userId,
+    screenshotAssetId: bookmark.link.screenshotAssetId,
+    imageAssetId: bookmark.link.imageAssetId,
+  };
 }
 
 /**
@@ -332,7 +337,12 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   }
 
   const { bookmarkId } = request.data;
-  const { url, userId } = await getBookmarkDetails(bookmarkId);
+  const {
+    url,
+    userId,
+    screenshotAssetId: oldScreenshotAssetId,
+    imageAssetId: oldImageAssetId,
+  } = await getBookmarkDetails(bookmarkId);
 
   logger.info(
     `[Crawler][${jobId}] Will crawl "${url}" for link with id "${bookmarkId}"`,
@@ -371,10 +381,22 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     })
     .where(eq(bookmarkLinks.id, bookmarkId));
 
-  // Enqueue openai job
-  OpenAIQueue.add("openai", {
-    bookmarkId,
-  });
+  // Delete the old assets if any
+  await Promise.all([
+    oldScreenshotAssetId
+      ? deleteAsset({ userId, assetId: oldScreenshotAssetId }).catch(() => ({}))
+      : {},
+    oldImageAssetId
+      ? deleteAsset({ userId, assetId: oldImageAssetId }).catch(() => ({}))
+      : {},
+  ]);
+
+  // Enqueue openai job (if not set, assume it's true for backward compatibility)
+  if (job.data.runInference !== false) {
+    OpenAIQueue.add("openai", {
+      bookmarkId,
+    });
+  }
 
   // Update the search index
   SearchIndexingQueue.add("search_indexing", {

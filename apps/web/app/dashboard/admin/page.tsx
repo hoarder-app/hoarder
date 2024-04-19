@@ -103,7 +103,9 @@ function ActionsSection() {
         className="lg:w-1/2"
         variant="destructive"
         loading={isRecrawlPending}
-        onClick={() => recrawlLinks({ crawlStatus: "failure" })}
+        onClick={() =>
+          recrawlLinks({ crawlStatus: "failure", runInference: true })
+        }
       >
         Recrawl Failed Links Only
       </ActionButton>
@@ -111,9 +113,19 @@ function ActionsSection() {
         className="lg:w-1/2"
         variant="destructive"
         loading={isRecrawlPending}
-        onClick={() => recrawlLinks({ crawlStatus: "all" })}
+        onClick={() => recrawlLinks({ crawlStatus: "all", runInference: true })}
       >
         Recrawl All Links
+      </ActionButton>
+      <ActionButton
+        className="lg:w-1/2"
+        variant="destructive"
+        loading={isRecrawlPending}
+        onClick={() =>
+          recrawlLinks({ crawlStatus: "all", runInference: false })
+        }
+      >
+        Recrawl All Links (Without Inference)
       </ActionButton>
       <ActionButton
         className="lg:w-1/2"

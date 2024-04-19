@@ -12,6 +12,7 @@ export const queueConnectionDetails = {
 // Link Crawler
 export const zCrawlLinkRequestSchema = z.object({
   bookmarkId: z.string(),
+  runInference: z.boolean().optional(),
 });
 export type ZCrawlLinkRequest = z.infer<typeof zCrawlLinkRequestSchema>;
 
