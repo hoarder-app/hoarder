@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import { Link } from "expo-router";
+import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
@@ -113,15 +114,20 @@ export default function Lists() {
                   }));
                 }}
               >
-                <Triangle
-                  fill="black"
-                  color="black"
-                  size={10}
-                  style={{
-                    transform: [
-                      { rotate: l.item.collapsed ? "90deg" : "180deg" },
-                    ],
-                  }}
+                <TailwindResolver
+                  className="text-foreground"
+                  comp={(style) => (
+                    <Triangle
+                      size={10}
+                      color={style?.color?.toString()}
+                      fill={style?.color?.toString()}
+                      style={{
+                        transform: [
+                          { rotate: l.item.collapsed ? "90deg" : "180deg" },
+                        ],
+                      }}
+                    />
+                  )}
                 />
               </Pressable>
             )}
