@@ -24,7 +24,8 @@ import { withTimeout } from "utils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
-import { bookmarkLinks } from "@hoarder/db/schema";
+import { bookmarkLinks, bookmarks } from "@hoarder/db/schema";
+import { newAssetId, saveAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
 import {
@@ -155,15 +156,16 @@ async function changeBookmarkStatus(
     .where(eq(bookmarkLinks.id, bookmarkId));
 }
 
-async function getBookmarkUrl(bookmarkId: string) {
-  const bookmark = await db.query.bookmarkLinks.findFirst({
-    where: eq(bookmarkLinks.id, bookmarkId),
+async function getBookmarkDetails(bookmarkId: string) {
+  const bookmark = await db.query.bookmarks.findFirst({
+    where: eq(bookmarks.id, bookmarkId),
+    with: { link: true },
   });
 
-  if (!bookmark) {
+  if (!bookmark || !bookmark.link) {
     throw new Error("The bookmark either doesn't exist or not a link");
   }
-  return bookmark.url;
+  return { url: bookmark.link.url, userId: bookmark.userId };
 }
 
 /**
@@ -208,10 +210,113 @@ async function crawlPage(jobId: string, url: string) {
 
     logger.info(`[Crawler][${jobId}] Finished waiting for the page to load.`);
 
-    const htmlContent = await page.content();
-    return htmlContent;
+    const [htmlContent, screenshot] = await Promise.all([
+      page.content(),
+      page.screenshot({
+        // If you change this, you need to change the asset type in the store function.
+        type: "png",
+        encoding: "binary",
+      }),
+    ]);
+    logger.info(
+      `[Crawler][${jobId}] Finished capturing page content and a screenshot.`,
+    );
+    return { htmlContent, screenshot, url: page.url() };
   } finally {
     await context.close();
+  }
+}
+
+async function extractMetadata(
+  htmlContent: string,
+  url: string,
+  jobId: string,
+) {
+  logger.info(
+    `[Crawler][${jobId}] Will attempt to extract metadata from page ...`,
+  );
+  const meta = await metascraperParser({
+    url,
+    html: htmlContent,
+    // We don't want to validate the URL again as we've already done it by visiting the page.
+    // This was added because URL validation fails if the URL ends with a question mark (e.g. empty query params).
+    validateUrl: false,
+  });
+  logger.info(`[Crawler][${jobId}] Done extracting metadata from the page.`);
+  return meta;
+}
+
+function extractReadableContent(
+  htmlContent: string,
+  url: string,
+  jobId: string,
+) {
+  logger.info(
+    `[Crawler][${jobId}] Will attempt to extract readable content ...`,
+  );
+  const window = new JSDOM("").window;
+  const purify = DOMPurify(window);
+  const purifiedHTML = purify.sanitize(htmlContent);
+  const purifiedDOM = new JSDOM(purifiedHTML, { url });
+  const readableContent = new Readability(purifiedDOM.window.document).parse();
+  logger.info(`[Crawler][${jobId}] Done extracting readable content.`);
+  return readableContent;
+}
+
+async function storeScreenshot(
+  screenshot: Buffer,
+  userId: string,
+  jobId: string,
+) {
+  const assetId = newAssetId();
+  await saveAsset({
+    userId,
+    assetId,
+    metadata: { contentType: "image/png", fileName: "screenshot.png" },
+    asset: screenshot,
+  });
+  logger.info(
+    `[Crawler][${jobId}] Stored the screenshot as assetId: ${assetId}`,
+  );
+  return assetId;
+}
+
+async function downloadAndStoreImage(
+  url: string,
+  userId: string,
+  jobId: string,
+) {
+  try {
+    logger.info(`[Crawler][${jobId}] Downloading image from "${url}"`);
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Failed to download image: ${response.status}`);
+    }
+    const buffer = await response.arrayBuffer();
+    const assetId = newAssetId();
+
+    const contentType = response.headers.get("content-type");
+    if (!contentType) {
+      throw new Error("No content type in the response");
+    }
+
+    await saveAsset({
+      userId,
+      assetId,
+      metadata: { contentType },
+      asset: Buffer.from(buffer),
+    });
+
+    logger.info(
+      `[Crawler][${jobId}] Downloaded the image as assetId: ${assetId}`,
+    );
+
+    return assetId;
+  } catch (e) {
+    logger.error(
+      `[Crawler][${jobId}] Failed to download and store image: ${e}`,
+    );
+    return null;
   }
 }
 
@@ -227,35 +332,30 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   }
 
   const { bookmarkId } = request.data;
-  const url = await getBookmarkUrl(bookmarkId);
+  const { url, userId } = await getBookmarkDetails(bookmarkId);
 
   logger.info(
     `[Crawler][${jobId}] Will crawl "${url}" for link with id "${bookmarkId}"`,
   );
   validateUrl(url);
 
-  const htmlContent = await crawlPage(jobId, url);
+  const {
+    htmlContent,
+    screenshot,
+    url: browserUrl,
+  } = await crawlPage(jobId, url);
 
-  logger.info(
-    `[Crawler][${jobId}] Will attempt to parse the content of the page ...`,
-  );
-  const meta = await metascraperParser({
-    url,
-    html: htmlContent,
-    // We don't want to validate the URL again as we've already done it by visiting the page.
-    // This was added because URL validation fails if the URL ends with a question mark (e.g. empty query params).
-    validateUrl: false,
-  });
-  logger.info(`[Crawler][${jobId}] Done parsing the content of the page.`);
-
-  const window = new JSDOM("").window;
-  const purify = DOMPurify(window);
-  const purifiedHTML = purify.sanitize(htmlContent);
-  const purifiedDOM = new JSDOM(purifiedHTML, { url });
-  const readableContent = new Readability(purifiedDOM.window.document).parse();
+  const [meta, readableContent, screenshotAssetId] = await Promise.all([
+    extractMetadata(htmlContent, browserUrl, jobId),
+    extractReadableContent(htmlContent, browserUrl, jobId),
+    storeScreenshot(screenshot, userId, jobId),
+  ]);
+  let imageAssetId: string | null = null;
+  if (meta.image) {
+    imageAssetId = await downloadAndStoreImage(meta.image, userId, jobId);
+  }
 
   // TODO(important): Restrict the size of content to store
-
   await db
     .update(bookmarkLinks)
     .set({
@@ -265,6 +365,8 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
       favicon: meta.logo,
       content: readableContent?.textContent,
       htmlContent: readableContent?.content,
+      screenshotAssetId,
+      imageAssetId,
       crawledAt: new Date(),
     })
     .where(eq(bookmarkLinks.id, bookmarkId));

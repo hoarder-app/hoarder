@@ -2,7 +2,7 @@ import { createContextFromRequest } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
 import type { ZUploadResponse } from "@hoarder/shared/types/uploads";
-import { saveAsset } from "@hoarder/shared/assetdb";
+import { newAssetId, saveAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 
 const SUPPORTED_ASSET_TYPES = new Set([
@@ -46,7 +46,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Bad request" }, { status: 400 });
   }
 
-  const assetId = crypto.randomUUID();
+  const assetId = newAssetId();
   const fileName = data.name;
 
   await saveAsset({

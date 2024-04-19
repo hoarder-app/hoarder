@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import {
-  isBookmarkStillCrawling,
-  isBookmarkStillLoading,
-} from "@/lib/bookmarkUtils";
 import { api } from "@/lib/trpc";
 
 import type { ZBookmarkTypeLink } from "@hoarder/shared/types/bookmarks";
+import {
+  getBookmarkLinkImageUrl,
+  isBookmarkStillCrawling,
+  isBookmarkStillLoading,
+} from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 
@@ -33,7 +34,7 @@ function LinkImage({
   // A dummy white pixel for when there's no image.
   // TODO: Better handling for cards with no images
   const image =
-    link.imageUrl ??
+    getBookmarkLinkImageUrl(link)?.url ??
     "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P///38ACfsD/QVDRcoAAAAASUVORK5CYII=";
   return (
     <Link href={link.url} target="_blank">

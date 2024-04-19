@@ -1,13 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { isBookmarkStillTagging } from "@/lib/bookmarkUtils";
 import { api } from "@/lib/trpc";
 
 import type {
   ZBookmark,
   ZBookmarkTypeAsset,
 } from "@hoarder/shared/types/bookmarks";
+import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
+import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 
@@ -24,7 +25,7 @@ function AssetImage({
       return (
         <Image
           alt="asset"
-          src={`/api/assets/${bookmarkedAsset.assetId}`}
+          src={getAssetUrl(bookmarkedAsset.assetId)}
           fill={true}
           className={className}
         />
@@ -35,7 +36,7 @@ function AssetImage({
         <iframe
           title={bookmarkedAsset.assetId}
           className={className}
-          src={`/api/assets/${bookmarkedAsset.assetId}`}
+          src={getAssetUrl(bookmarkedAsset.assetId)}
         />
       );
     }

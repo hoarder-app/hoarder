@@ -15,6 +15,10 @@ export const zAssetMetadataSchema = z.object({
   fileName: z.string().nullish(),
 });
 
+export function newAssetId() {
+  return crypto.randomUUID();
+}
+
 export async function saveAsset({
   userId,
   assetId,

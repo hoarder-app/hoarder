@@ -11,20 +11,21 @@ import {
   TooltipPortal,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  isBookmarkStillCrawling,
-  isBookmarkStillLoading,
-} from "@/lib/bookmarkUtils";
 import { api } from "@/lib/trpc";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { CalendarDays, ExternalLink } from "lucide-react";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import {
+  isBookmarkStillCrawling,
+  isBookmarkStillLoading,
+} from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import ActionBar from "./ActionBar";
 import { AssetContentSection } from "./AssetContentSection";
 import { EditableTitle } from "./EditableTitle";
+import LinkContentSection from "./LinkContentSection";
 import { NoteEditor } from "./NoteEditor";
 import { TextContentSection } from "./TextContentSection";
 
@@ -90,7 +91,10 @@ export default function BookmarkPreview({
 
   let content;
   switch (bookmark.content.type) {
-    case "link":
+    case "link": {
+      content = <LinkContentSection bookmark={bookmark} />;
+      break;
+    }
     case "text": {
       content = <TextContentSection bookmark={bookmark} />;
       break;
