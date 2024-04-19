@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { api } from "@/lib/trpc";
 
@@ -31,19 +32,35 @@ function LinkImage({
 }) {
   const link = bookmark.content;
 
-  // A dummy white pixel for when there's no image.
-  // TODO: Better handling for cards with no images
-  const image =
-    getBookmarkLinkImageUrl(link)?.url ??
-    "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P///38ACfsD/QVDRcoAAAAASUVORK5CYII=";
+  const imgComponent = (url: string, unoptimized: boolean) => (
+    <Image
+      unoptimized={unoptimized}
+      className={className}
+      alt="card banner"
+      fill={true}
+      src={url}
+    />
+  );
+
+  const imageDetails = getBookmarkLinkImageUrl(link);
+
+  let img: React.ReactNode = null;
+  if (isBookmarkStillCrawling(bookmark)) {
+    img = imgComponent("/blur.avif", false);
+  } else if (imageDetails) {
+    img = imgComponent(imageDetails.url, !imageDetails.localAsset);
+  } else {
+    // No image found
+    // A dummy white pixel for when there's no image.
+    img = imgComponent(
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj+P///38ACfsD/QVDRcoAAAAASUVORK5CYII=",
+      true,
+    );
+  }
+
   return (
     <Link href={link.url} target="_blank">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        className={className}
-        alt="card banner"
-        src={isBookmarkStillCrawling(bookmark) ? "/blur.avif" : image}
-      />
+      <div className="relative size-full flex-1">{img}</div>
     </Link>
   );
 }

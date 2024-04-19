@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Image from "next/image";
 import {
   Select,
   SelectContent,
@@ -12,8 +13,16 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 import { ZBookmark, ZBookmarkedLink } from "@hoarder/shared/types/bookmarks";
 
 function ScreenshotSection({ link }: { link: ZBookmarkedLink }) {
-  // eslint-disable-next-line @next/next/no-img-element
-  return <img alt="screenshot" src={`/api/assets/${link.screenshotAssetId}`} />;
+  return (
+    <div className="relative h-full min-w-full">
+      <Image
+        fill={true}
+        alt="screenshot"
+        src={`/api/assets/${link.screenshotAssetId}`}
+        className="object-contain"
+      />
+    </div>
+  );
 }
 
 function CachedContentSection({ link }: { link: ZBookmarkedLink }) {
@@ -32,7 +41,7 @@ function CachedContentSection({ link }: { link: ZBookmarkedLink }) {
       />
     );
   }
-  return content;
+  return <ScrollArea className="h-full">{content}</ScrollArea>;
 }
 
 export default function LinkContentSection({
@@ -54,7 +63,7 @@ export default function LinkContentSection({
   }
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex h-full flex-col items-center gap-2">
       <Select onValueChange={setSection} value={section}>
         <SelectTrigger className="w-fit">
           <SelectValue />
@@ -71,7 +80,7 @@ export default function LinkContentSection({
           </SelectGroup>
         </SelectContent>
       </Select>
-      <ScrollArea className="h-full">{content}</ScrollArea>
+      {content}
     </div>
   );
 }
