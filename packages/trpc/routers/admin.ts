@@ -100,6 +100,7 @@ export const adminAppRouter = router({
     .input(
       z.object({
         crawlStatus: z.enum(["success", "failure", "all"]),
+        runInference: z.boolean(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -116,6 +117,7 @@ export const adminAppRouter = router({
         bookmarkIds.map((b) =>
           LinkCrawlerQueue.add("crawl", {
             bookmarkId: b.id,
+            runInference: input.runInference,
           }),
         ),
       );
