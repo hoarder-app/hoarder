@@ -6,6 +6,13 @@ import serverConfig from "./config";
 
 const ROOT_PATH = path.join(serverConfig.dataDir, "assets");
 
+export const SUPPORTED_ASSET_TYPES = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "application/pdf",
+]);
+
 function getAssetDir(userId: string, assetId: string) {
   return path.join(ROOT_PATH, userId, assetId);
 }
@@ -30,6 +37,9 @@ export async function saveAsset({
   asset: Buffer;
   metadata: z.infer<typeof zAssetMetadataSchema>;
 }) {
+  if (!SUPPORTED_ASSET_TYPES.has(metadata.contentType)) {
+    throw new Error("Unsupported asset type");
+  }
   const assetDir = getAssetDir(userId, assetId);
   await fs.promises.mkdir(assetDir, { recursive: true });
 

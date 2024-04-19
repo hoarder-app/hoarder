@@ -2,15 +2,12 @@ import { createContextFromRequest } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
 import type { ZUploadResponse } from "@hoarder/shared/types/uploads";
-import { newAssetId, saveAsset } from "@hoarder/shared/assetdb";
+import {
+  newAssetId,
+  saveAsset,
+  SUPPORTED_ASSET_TYPES,
+} from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
-
-const SUPPORTED_ASSET_TYPES = new Set([
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "application/pdf",
-]);
 
 const MAX_UPLOAD_SIZE_BYTES = serverConfig.maxAssetSizeMb * 1024 * 1024;
 
