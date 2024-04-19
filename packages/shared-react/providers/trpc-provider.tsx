@@ -39,11 +39,7 @@ export function TRPCProvider({
   const trpcClient = useMemo(() => getTRPCClient(settings), [settings]);
 
   return (
-    <api.Provider
-      key={settings.address}
-      client={trpcClient}
-      queryClient={queryClient}
-    >
+    <api.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </api.Provider>
   );
