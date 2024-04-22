@@ -5,7 +5,7 @@ import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
-import { ChevronRight, Triangle } from "lucide-react-native";
+import { ChevronRight } from "lucide-react-native";
 
 import { useBookmarkLists } from "@hoarder/shared-react/hooks/lists";
 import { ZBookmarkListTreeNode } from "@hoarder/shared/utils/listUtils";
@@ -102,11 +102,12 @@ export default function Lists() {
         }}
         renderItem={(l) => (
           <View
-            className="mx-2 flex flex-row items-center gap-x-2 rounded-xl border border-input bg-white px-4 py-2 dark:bg-accent"
+            className="mx-2 flex flex-row items-center rounded-xl border border-input bg-white px-4 py-2 dark:bg-accent"
             style={{ marginLeft: l.item.level * 20 }}
           >
             {l.item.numChildren > 0 && (
               <Pressable
+                className="pr-2"
                 onPress={() => {
                   setShowChildrenOf((prev) => ({
                     ...prev,
@@ -117,13 +118,11 @@ export default function Lists() {
                 <TailwindResolver
                   className="text-foreground"
                   comp={(style) => (
-                    <Triangle
-                      size={10}
+                    <ChevronRight
                       color={style?.color?.toString()}
-                      fill={style?.color?.toString()}
                       style={{
                         transform: [
-                          { rotate: l.item.collapsed ? "90deg" : "180deg" },
+                          { rotate: l.item.collapsed ? "0deg" : "90deg" },
                         ],
                       }}
                     />
