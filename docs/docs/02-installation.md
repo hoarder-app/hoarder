@@ -25,8 +25,9 @@ To configure the app, create a `.env` file in the directory and add this minimal
 
 ```
 HOARDER_VERSION=release
-NEXTAUTH_SECRET=super_random_string
 MEILI_MASTER_KEY=another_random_string
+MEILI_NO_ANALYTICS=true
+NEXTAUTH_SECRET=super_random_string
 NEXTAUTH_URL=http://localhost:3000
 ```
 
