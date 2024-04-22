@@ -1,6 +1,7 @@
 import { Home, RefreshCw, Settings, X } from "lucide-react";
 import { Outlet, useNavigate } from "react-router-dom";
 
+import { Button } from "./components/ui/button";
 import usePluginSettings from "./utils/settings";
 
 export default function Layout() {
@@ -35,16 +36,16 @@ export default function Layout() {
         </div>
         <div className="flex space-x-3">
           {process.env.NODE_ENV == "development" && (
-            <button onClick={() => navigate(0)}>
+            <Button onClick={() => navigate(0)}>
               <RefreshCw className="w-4" />
-            </button>
+            </Button>
           )}
-          <button onClick={() => navigate("/options")}>
+          <Button onClick={() => navigate("/options")}>
             <Settings className="w-4" />
-          </button>
-          <button onClick={() => window.close()}>
+          </Button>
+          <Button onClick={() => window.close()}>
             <X className="w-4" />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

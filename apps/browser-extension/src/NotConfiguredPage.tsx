@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
 import Logo from "./Logo";
 import usePluginSettings from "./utils/settings";
 
@@ -33,16 +35,14 @@ export default function NotConfiguredPage() {
       <p className="text-red-500">{error}</p>
       <div className="flex gap-2">
         <label className="my-auto">Server Address</label>
-        <input
+        <Input
           name="address"
           value={serverAddress}
           className="h-8 flex-1 rounded-lg border border-gray-300 p-2"
           onChange={(e) => setServerAddress(e.target.value)}
         />
       </div>
-      <button className="bg-black text-white" onClick={onSave}>
-        Configure
-      </button>
+      <Button onClick={onSave}>Configure</Button>
     </div>
   );
 }

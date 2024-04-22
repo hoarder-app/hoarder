@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Button } from "./components/ui/button";
+import { Input } from "./components/ui/input";
 import Logo from "./Logo";
 import usePluginSettings from "./utils/settings";
 import { api } from "./utils/trpc";
@@ -51,7 +53,7 @@ export default function SignInPage() {
       <form className="flex flex-col gap-y-2" onSubmit={onSubmit}>
         <div className="flex flex-col gap-y-1">
           <label className="my-auto font-bold">Email</label>
-          <input
+          <Input
             value={formData.email}
             onChange={(e) =>
               setFormData((f) => ({ ...f, email: e.target.value }))
@@ -63,7 +65,7 @@ export default function SignInPage() {
         </div>
         <div className="flex flex-col gap-y-1">
           <label className="my-auto font-bold">Password</label>
-          <input
+          <Input
             value={formData.password}
             onChange={(e) =>
               setFormData((f) => ({
@@ -76,13 +78,9 @@ export default function SignInPage() {
             className="h-8 flex-1 rounded-lg border border-gray-300 p-2"
           />
         </div>
-        <button
-          className="bg-black text-white"
-          type="submit"
-          disabled={isPending}
-        >
+        <Button type="submit" disabled={isPending}>
           Login
-        </button>
+        </Button>
       </form>
     </div>
   );

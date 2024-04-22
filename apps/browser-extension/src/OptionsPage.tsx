@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { Button } from "./components/ui/button";
 import Logo from "./Logo";
 import Spinner from "./Spinner";
 import usePluginSettings from "./utils/settings";
@@ -55,12 +56,14 @@ export default function OptionsPage() {
       <span className="text-lg">Settings</span>
       <hr />
       <div className="flex gap-2">
+        <span className="my-auto">Server Address:</span>
+        {settings.address}
+      </div>
+      <div className="flex gap-2">
         <span className="my-auto">Logged in as:</span>
         {loggedInMessage}
       </div>
-      <button className="rounded-lg border border-gray-200" onClick={onLogout}>
-        Logout
-      </button>
+      <Button onClick={onLogout}>Logout</Button>
     </div>
   );
 }
