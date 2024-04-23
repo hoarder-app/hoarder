@@ -68,6 +68,10 @@ async function launchBrowser() {
         );
         browser = await puppeteer.connect({
           browserURL: webUrl.toString(),
+          defaultViewport: {
+            width: 1440,
+            height: 900,
+          },
         });
       } else {
         logger.info(`Launching a new browser instance`);
@@ -195,6 +199,9 @@ async function crawlPage(jobId: string, url: string) {
 
   try {
     const page = await context.newPage();
+    await page.setUserAgent(
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    );
 
     await page.goto(url, {
       timeout: serverConfig.crawler.navigateTimeoutSec * 1000,
