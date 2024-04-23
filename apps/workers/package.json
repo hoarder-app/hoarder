@@ -16,6 +16,7 @@
     "drizzle-orm": "^0.29.4",
     "jsdom": "^24.0.0",
     "metascraper": "^5.43.4",
+    "metascraper-amazon": "^5.45.0",
     "metascraper-description": "^5.43.4",
     "metascraper-image": "^5.43.4",
     "metascraper-logo": "^5.43.4",

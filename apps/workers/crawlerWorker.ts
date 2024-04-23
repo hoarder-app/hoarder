@@ -10,6 +10,7 @@ import { eq } from "drizzle-orm";
 import { isShuttingDown } from "exit";
 import { JSDOM } from "jsdom";
 import metascraper from "metascraper";
+import metascraperAmazon from "metascraper-amazon";
 import metascraperDescription from "metascraper-description";
 import metascraperImage from "metascraper-image";
 import metascraperLogo from "metascraper-logo-favicon";
@@ -37,6 +38,7 @@ import {
 } from "@hoarder/shared/queues";
 
 const metascraperParser = metascraper([
+  metascraperAmazon(),
   metascraperReadability(),
   metascraperTitle(),
   metascraperDescription(),

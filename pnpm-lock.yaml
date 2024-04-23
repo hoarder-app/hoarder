@@ -654,6 +654,9 @@ importers:
       metascraper:
         specifier: ^5.43.4
         version: 5.45.0
+      metascraper-amazon:
+        specifier: ^5.45.0
+        version: 5.45.0
       metascraper-description:
         specifier: ^5.43.4
         version: 5.45.0
@@ -8453,6 +8456,10 @@ packages:
   merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
+
+  metascraper-amazon@5.45.0:
+    resolution: {integrity: sha512-+T7keyfyPLtLqiXfbm+k8zWLl07Q2iYQklDChZk2nD3sauF4EP024X5ooDP+oJxYqcKFjJq35nDsFotd3dlugA==}
+    engines: {node: '>= 16'}
 
   metascraper-description@5.45.0:
     resolution: {integrity: sha512-LtAcHkHH9cHwPjuJ+0MBxLMJdZCzljM1QDnJ6oEzrv/8YgXCl+XNSCyip52p4j9ZbpQHSZ7+eYpwZ7IvV3cDKg==}
@@ -23914,6 +23921,16 @@ snapshots:
   merge-stream@2.0.0: {}
 
   merge2@1.4.1: {}
+
+  metascraper-amazon@5.45.0:
+    dependencies:
+      '@metascraper/helpers': 5.45.0
+    transitivePeerDependencies:
+      - bufferutil
+      - canvas
+      - supports-color
+      - utf-8-validate
+    dev: false
 
   metascraper-description@5.45.0:
     dependencies:
