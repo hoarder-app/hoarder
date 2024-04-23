@@ -1,6 +1,25 @@
 import { api } from "../trpc";
+import { isBookmarkStillLoading } from "../utils/bookmarkUtils";
 import { useBookmarkGridContext } from "./bookmark-grid-context";
 import { useAddBookmarkToList } from "./lists";
+
+export function useAutoRefreshingBookmarkQuery(
+  input: Parameters<typeof api.bookmarks.getBookmark.useQuery>[0],
+) {
+  return api.bookmarks.getBookmark.useQuery(input, {
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (!data) {
+        return false;
+      }
+      // If the link is not crawled or not tagged
+      if (isBookmarkStillLoading(data)) {
+        return 1000;
+      }
+      return false;
+    },
+  });
+}
 
 export function useCreateBookmarkWithPostHook(
   ...opts: Parameters<typeof api.bookmarks.createBookmark.useMutation>

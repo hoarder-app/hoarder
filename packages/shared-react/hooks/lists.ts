@@ -41,6 +41,9 @@ export function useAddBookmarkToList(
     ...opts[0],
     onSuccess: (res, req, meta) => {
       apiUtils.bookmarks.getBookmarks.invalidate({ listId: req.listId });
+      apiUtils.lists.getListsOfBookmark.invalidate({
+        bookmarkId: req.bookmarkId,
+      });
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });
@@ -54,6 +57,9 @@ export function useRemoveBookmarkFromList(
     ...opts[0],
     onSuccess: (res, req, meta) => {
       apiUtils.bookmarks.getBookmarks.invalidate({ listId: req.listId });
+      apiUtils.lists.getListsOfBookmark.invalidate({
+        bookmarkId: req.bookmarkId,
+      });
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });
@@ -90,6 +96,7 @@ export function augmentBookmarkListsWithInitialData(
         data: ZBookmarkList[];
         root: ZBookmarkListRoot;
         allPaths: ZBookmarkList[][];
+        getPathById: (id: string) => ZBookmarkList[] | undefined;
       }
     | undefined,
   initialData: ZBookmarkList[],

@@ -4,7 +4,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useDeleteBookmark } from "@hoarder/shared-react/hooks/bookmarks";
 
+import BookmarkLists from "./components/BookmarkLists";
+import { ListsSelector } from "./components/ListsSelector";
+import TagList from "./components/TagList";
+import { TagsSelector } from "./components/TagsSelector";
+import { Button, buttonVariants } from "./components/ui/button";
 import Spinner from "./Spinner";
+import { cn } from "./utils/css";
 import usePluginSettings from "./utils/settings";
 
 export default function BookmarkSavedPage() {
@@ -31,10 +37,13 @@ export default function BookmarkSavedPage() {
     <div className="flex flex-col gap-2">
       {error && <p className="text-red-500">{error}</p>}
       <div className="flex items-center justify-between gap-2">
-        <p className="text-lg">Bookmarked!</p>
+        <p className="text-xl">Hoarded!</p>
         <div className="flex gap-2">
           <Link
-            className="flex gap-2 rounded-md p-3 text-black hover:text-black"
+            className={cn(
+              buttonVariants({ variant: "link" }),
+              "flex gap-2 rounded-md p-3",
+            )}
             target="_blank"
             rel="noreferrer"
             to={`${settings.address}/dashboard/preview/${bookmarkId}`}
@@ -42,9 +51,10 @@ export default function BookmarkSavedPage() {
             <ArrowUpRightFromSquare className="my-auto" size="20" />
             <p className="my-auto">Open</p>
           </Link>
-          <button
-            onClick={() => deleteBookmark({ bookmarkId: bookmarkId })}
-            className="flex gap-2 bg-transparent text-red-500 hover:text-red-500"
+          <Button
+            variant="link"
+            onClick={() => deleteBookmark({ bookmarkId })}
+            className="flex gap-2 text-red-500 hover:text-red-500"
           >
             {!isPending ? (
               <>
@@ -56,9 +66,17 @@ export default function BookmarkSavedPage() {
                 <Spinner />
               </span>
             )}
-          </button>
+          </Button>
         </div>
       </div>
+      <hr />
+      <p className="text-lg">Tags</p>
+      <TagList bookmarkId={bookmarkId} />
+      <TagsSelector bookmarkId={bookmarkId} />
+      <hr />
+      <p className="text-lg">Lists</p>
+      <BookmarkLists bookmarkId={bookmarkId} />
+      <ListsSelector bookmarkId={bookmarkId} />
     </div>
   );
 }

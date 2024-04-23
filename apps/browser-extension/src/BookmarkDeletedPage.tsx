@@ -1,3 +1,3 @@
 export default function BookmarkDeletedPage() {
-  return <p className="text-lg">Bookmark Deleted!</p>;
+  return <p className="text-xl">Bookmark Deleted!</p>;
 }

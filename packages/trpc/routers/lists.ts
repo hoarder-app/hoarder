@@ -1,3 +1,4 @@
+import assert from "node:assert";
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
@@ -221,5 +222,24 @@ export const listsAppRouter = router({
       });
 
       return { lists };
+    }),
+  getListsOfBookmark: authedProcedure
+    .input(z.object({ bookmarkId: z.string() }))
+    .output(
+      z.object({
+        lists: z.array(zBookmarkListSchema),
+      }),
+    )
+    .use(ensureBookmarkOwnership)
+    .query(async ({ input, ctx }) => {
+      const lists = await ctx.db.query.bookmarksInLists.findMany({
+        where: and(eq(bookmarksInLists.bookmarkId, input.bookmarkId)),
+        with: {
+          list: true,
+        },
+      });
+      assert(lists.map((l) => l.list.userId).every((id) => id == ctx.user.id));
+
+      return { lists: lists.map((l) => l.list) };
     }),
 });

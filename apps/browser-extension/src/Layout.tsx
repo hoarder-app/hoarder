@@ -18,7 +18,7 @@ export default function Layout() {
 
   return (
     <div className="flex flex-col space-y-2">
-      <div className="rounded-md bg-yellow-100 p-4 text-black">
+      <div className="rounded-md bg-gray-100 p-4 dark:bg-gray-900">
         <Outlet />
       </div>
       <hr />

@@ -51,5 +51,10 @@ export function listsToTree(lists: ZBookmarkList[]) {
     dfs(node, []);
   });
 
-  return { allPaths, root };
+  return {
+    allPaths,
+    root,
+    getPathById: (id: string) =>
+      allPaths.find((path) => path[path.length - 1].id === id),
+  };
 }
