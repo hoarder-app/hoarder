@@ -33,9 +33,9 @@ import {
 import { useRemoveBookmarkFromList } from "@hoarder/shared-react/hooks//lists";
 import { useBookmarkGridContext } from "@hoarder/shared-react/hooks/bookmark-grid-context";
 
-import { useAddToListModal } from "./AddToListModal";
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
 import { ArchivedActionIcon, FavouritedActionIcon } from "./icons";
+import { useManageListsModal } from "./ManageListsModal";
 import { useTagModel } from "./TagModal";
 
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
@@ -46,8 +46,8 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
 
   const { setOpen: setTagModalIsOpen, content: tagModal } =
     useTagModel(bookmark);
-  const { setOpen: setAddToListModalOpen, content: addToListModal } =
-    useAddToListModal(bookmark.id);
+  const { setOpen: setManageListsModalOpen, content: manageListsModal } =
+    useManageListsModal(bookmark.id);
 
   const [isTextEditorOpen, setTextEditorOpen] = useState(false);
 
@@ -99,7 +99,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   return (
     <>
       {tagModal}
-      {addToListModal}
+      {manageListsModal}
       <BookmarkedTextEditor
         bookmark={bookmark}
         open={isTextEditorOpen}
@@ -171,9 +171,9 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             <span>Edit Tags</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem onClick={() => setAddToListModalOpen(true)}>
+          <DropdownMenuItem onClick={() => setManageListsModalOpen(true)}>
             <List className="mr-2 size-4" />
-            <span>Add to List</span>
+            <span>Manage Lists</span>
           </DropdownMenuItem>
 
           {listId && (

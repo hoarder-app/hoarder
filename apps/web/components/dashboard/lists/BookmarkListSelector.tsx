@@ -14,12 +14,14 @@ export function BookmarkListSelector({
   value,
   onChange,
   hideSubtreeOf,
+  hideBookmarkIds = [],
   placeholder = "Select a list",
 }: {
   value?: string | null;
   onChange: (value: string) => void;
   placeholder?: string;
   hideSubtreeOf?: string;
+  hideBookmarkIds?: string[];
 }) {
   const { data, isPending: isFetchingListsPending } = useBookmarkLists();
   let { allPaths } = data ?? {};
@@ -29,6 +31,9 @@ export function BookmarkListSelector({
   }
 
   allPaths = allPaths?.filter((path) => {
+    if (hideBookmarkIds.includes(path[path.length - 1].id)) {
+      return false;
+    }
     if (!hideSubtreeOf) {
       return true;
     }
@@ -36,7 +41,7 @@ export function BookmarkListSelector({
   });
 
   return (
-    <Select onValueChange={onChange} value={value ?? undefined}>
+    <Select onValueChange={onChange} value={value ?? ""}>
       <SelectTrigger className="w-full">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

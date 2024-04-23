@@ -17,15 +17,21 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
+import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { useAddBookmarkToList } from "@hoarder/shared-react/hooks/lists";
+import {
+  useAddBookmarkToList,
+  useBookmarkLists,
+  useRemoveBookmarkFromList,
+} from "@hoarder/shared-react/hooks/lists";
 
 import { BookmarkListSelector } from "../lists/BookmarkListSelector";
 
-export default function AddToListModal({
+export default function ManageListsModal({
   bookmarkId,
   open,
   setOpen,
@@ -41,7 +47,19 @@ export default function AddToListModal({
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      listId: undefined,
+    },
   });
+
+  const { data: allLists } = useBookmarkLists(undefined, { enabled: open });
+
+  const { data: alreadyInList } = api.lists.getListsOfBookmark.useQuery(
+    {
+      bookmarkId,
+    },
+    { enabled: open },
+  );
 
   const { mutate: addToList, isPending: isAddingToListPending } =
     useAddBookmarkToList({
@@ -49,7 +67,30 @@ export default function AddToListModal({
         toast({
           description: "List has been updated!",
         });
-        setOpen(false);
+        form.resetField("listId");
+      },
+      onError: (e) => {
+        if (e.data?.code == "BAD_REQUEST") {
+          toast({
+            variant: "destructive",
+            description: e.message,
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Something went wrong",
+          });
+        }
+      },
+    });
+
+  const { mutate: deleteFromList, isPending: isDeleteFromListPending } =
+    useRemoveBookmarkFromList({
+      onSuccess: () => {
+        toast({
+          description: "List has been updated!",
+        });
+        form.resetField("listId");
       },
       onError: (e) => {
         if (e.data?.code == "BAD_REQUEST") {
@@ -79,10 +120,38 @@ export default function AddToListModal({
             })}
           >
             <DialogHeader>
-              <DialogTitle>Add to List</DialogTitle>
+              <DialogTitle>Manage Lists</DialogTitle>
             </DialogHeader>
+            {allLists && (
+              <ul className="flex flex-col gap-2 pb-2 pt-4">
+                {alreadyInList?.lists.map((list) => (
+                  <li
+                    key={list.id}
+                    className="flex items-center justify-between rounded-lg border border-border bg-background px-2 py-1 text-foreground"
+                  >
+                    <p>
+                      {allLists
+                        .getPathById(list.id)!
+                        .map((l) => `${l.icon} ${l.name}`)
+                        .join(" / ")}
+                    </p>
+                    <ActionButton
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      loading={isDeleteFromListPending}
+                      onClick={() =>
+                        deleteFromList({ bookmarkId, listId: list.id })
+                      }
+                    >
+                      <X className="size-4" />
+                    </ActionButton>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-            <div className="py-4">
+            <div className="pb-4">
               <FormField
                 control={form.control}
                 name="listId"
@@ -90,7 +159,13 @@ export default function AddToListModal({
                   return (
                     <FormItem>
                       <FormControl>
-                        <BookmarkListSelector onChange={field.onChange} />
+                        <BookmarkListSelector
+                          value={field.value}
+                          hideBookmarkIds={alreadyInList?.lists.map(
+                            (l) => l.id,
+                          )}
+                          onChange={field.onChange}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -119,14 +194,14 @@ export default function AddToListModal({
   );
 }
 
-export function useAddToListModal(bookmarkId: string) {
+export function useManageListsModal(bookmarkId: string) {
   const [open, setOpen] = useState(false);
 
   return {
     open,
     setOpen,
     content: (
-      <AddToListModal bookmarkId={bookmarkId} open={open} setOpen={setOpen} />
+      <ManageListsModal bookmarkId={bookmarkId} open={open} setOpen={setOpen} />
     ),
   };
 }
