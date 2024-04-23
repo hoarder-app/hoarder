@@ -59,7 +59,7 @@ function LinkImage({
   }
 
   return (
-    <Link href={link.url} target="_blank">
+    <Link href={link.url} target="_blank" className={className}>
       <div className="relative size-full flex-1">{img}</div>
     </Link>
   );
