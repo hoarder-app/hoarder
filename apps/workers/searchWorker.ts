@@ -39,6 +39,16 @@ export class SearchIndexingWorker {
   }
 }
 
+async function ensureTaskSuccess(
+  searchClient: NonNullable<Awaited<ReturnType<typeof getSearchIdxClient>>>,
+  taskUid: number,
+) {
+  const task = await searchClient.waitForTask(taskUid);
+  if (task.error) {
+    throw new Error(`Search task failed: ${task.error.message}`);
+  }
+}
+
 async function runIndex(
   searchClient: NonNullable<Awaited<ReturnType<typeof getSearchIdxClient>>>,
   bookmarkId: string,
@@ -61,38 +71,45 @@ async function runIndex(
     throw new Error(`Bookmark ${bookmarkId} not found`);
   }
 
-  searchClient.addDocuments([
+  const task = await searchClient.addDocuments(
+    [
+      {
+        id: bookmark.id,
+        userId: bookmark.userId,
+        ...(bookmark.link
+          ? {
+              url: bookmark.link.url,
+              linkTitle: bookmark.link.title,
+              description: bookmark.link.description,
+              content: bookmark.link.content,
+            }
+          : undefined),
+        ...(bookmark.asset
+          ? {
+              content: bookmark.asset.content,
+              metadata: bookmark.asset.metadata,
+            }
+          : undefined),
+        ...(bookmark.text ? { content: bookmark.text.text } : undefined),
+        note: bookmark.note,
+        title: bookmark.title,
+        createdAt: bookmark.createdAt.toISOString(),
+        tags: bookmark.tagsOnBookmarks.map((t) => t.tag.name),
+      },
+    ],
     {
-      id: bookmark.id,
-      userId: bookmark.userId,
-      ...(bookmark.link
-        ? {
-            url: bookmark.link.url,
-            linkTitle: bookmark.link.title,
-            description: bookmark.link.description,
-            content: bookmark.link.content,
-          }
-        : undefined),
-      ...(bookmark.asset
-        ? {
-            content: bookmark.asset.content,
-            metadata: bookmark.asset.metadata,
-          }
-        : undefined),
-      ...(bookmark.text ? { content: bookmark.text.text } : undefined),
-      note: bookmark.note,
-      title: bookmark.title,
-      createdAt: bookmark.createdAt.toISOString(),
-      tags: bookmark.tagsOnBookmarks.map((t) => t.tag.name),
+      primaryKey: "id",
     },
-  ]);
+  );
+  await ensureTaskSuccess(searchClient, task.taskUid);
 }
 
 async function runDelete(
   searchClient: NonNullable<Awaited<ReturnType<typeof getSearchIdxClient>>>,
   bookmarkId: string,
 ) {
-  await searchClient.deleteDocument(bookmarkId);
+  const task = await searchClient.deleteDocument(bookmarkId);
+  await ensureTaskSuccess(searchClient, task.taskUid);
 }
 
 async function runSearchIndexing(job: Job<ZSearchIndexingRequest, void>) {
@@ -114,6 +131,10 @@ async function runSearchIndexing(job: Job<ZSearchIndexingRequest, void>) {
   }
 
   const bookmarkId = request.data.bookmarkId;
+  logger.info(
+    `[search][${jobId}] Attempting to index bookmark with id ${bookmarkId} ...`,
+  );
+
   switch (request.data.type) {
     case "index": {
       await runIndex(searchClient, bookmarkId);
