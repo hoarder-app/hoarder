@@ -16,7 +16,7 @@ Currently importing bookmarks requires some technical knowledge and might not be
 Run the following command to import all the links from `all_links.txt`:
 
 ```
-cat all_links.txt | xargs -I{} docker run --rm ghcr.io/mohamedbassem/hoarder-cli:release --api-key <key> --server-addr <addr> bookmarks add --link {}
+cat all_links.txt | xargs -I{} hoarder --api-key <key> --server-addr <addr> bookmarks add --link {}
 ```
 
 ## Import from other platforms
@@ -24,5 +24,5 @@ cat all_links.txt | xargs -I{} docker run --rm ghcr.io/mohamedbassem/hoarder-cli
 If you can get your bookmarks in a text file with one link per line, you can use the following command to import them using the [hoarder cli](https://docs.hoarder.app/command-line):
 
 ```
-cat all_links.txt | xargs -I{} docker run --rm ghcr.io/mohamedbassem/hoarder-cli:release --api-key <key> --server-addr <addr> bookmarks add --link {}
+cat all_links.txt | xargs -I{} hoarder --api-key <key> --server-addr <addr> bookmarks add --link {}
 ```
