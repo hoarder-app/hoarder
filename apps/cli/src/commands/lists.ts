@@ -6,11 +6,11 @@ import { listsToTree } from "@hoarder/shared/utils/listUtils";
 
 export const listsCmd = new Command()
   .name("lists")
-  .description("Manipulating lists");
+  .description("manipulating lists");
 
 listsCmd
   .command("list")
-  .description("Lists all lists")
+  .description("lists all lists")
   .action(async () => {
     const api = getAPIClient();
 
@@ -31,8 +31,8 @@ listsCmd
 
 listsCmd
   .command("delete")
-  .description("Deletes a list")
-  .argument("<id>", "The id of the list")
+  .description("deletes a list")
+  .argument("<id>", "the id of the list")
   .action(async (id) => {
     const api = getAPIClient();
 
@@ -44,9 +44,9 @@ listsCmd
 
 listsCmd
   .command("add-bookmark")
-  .description("Add a bookmark to list")
-  .requiredOption("--list <id>", "The id of the list")
-  .requiredOption("--bookmark <bookmark>", "The id of the bookmark")
+  .description("add a bookmark to list")
+  .requiredOption("--list <id>", "the id of the list")
+  .requiredOption("--bookmark <bookmark>", "the id of the bookmark")
   .action(async (opts) => {
     const api = getAPIClient();
 
@@ -59,9 +59,9 @@ listsCmd
 
 listsCmd
   .command("remove-bookmark")
-  .description("Remove a bookmark from list")
-  .requiredOption("--list <id>", "The id of the list")
-  .requiredOption("--bookmark <bookmark>", "The id of the bookmark")
+  .description("remove a bookmark from list")
+  .requiredOption("--list <id>", "the id of the list")
+  .requiredOption("--bookmark <bookmark>", "the id of the bookmark")
   .action(async (opts) => {
     const api = getAPIClient();
 

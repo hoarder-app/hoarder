@@ -7,7 +7,7 @@ import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 export const bookmarkCmd = new Command()
   .name("bookmarks")
-  .description("Manipulating bookmarks");
+  .description("manipulating bookmarks");
 
 function collect<T>(val: T, acc: T[]) {
   acc.push(val);
@@ -31,7 +31,7 @@ function normalizeBookmark(bookmark: ZBookmark) {
 
 bookmarkCmd
   .command("add")
-  .description("Creates a new bookmark")
+  .description("creates a new bookmark")
   .option(
     "--link <link>",
     "the link to add. Specify multiple times to add multiple links",
@@ -87,14 +87,14 @@ bookmarkCmd
 
 bookmarkCmd
   .command("update")
-  .description("Archive a bookmark")
-  .option("--title <title>", "If set, the bookmark's title will be updated")
-  .option("--note <note>", "If set, the bookmark's note will be updated")
-  .option("--archive", "If set, the bookmark will be archived")
-  .option("--no-archive", "If set, the bookmark will be unarchived")
-  .option("--favourite", "If set, the bookmark will be favourited")
-  .option("--no-favourite", "If set, the bookmark will be unfavourited")
-  .argument("<id>", "The id of the bookmark to get")
+  .description("update a bookmark")
+  .option("--title <title>", "if set, the bookmark's title will be updated")
+  .option("--note <note>", "if set, the bookmark's note will be updated")
+  .option("--archive", "if set, the bookmark will be archived")
+  .option("--no-archive", "if set, the bookmark will be unarchived")
+  .option("--favourite", "if set, the bookmark will be favourited")
+  .option("--no-favourite", "if set, the bookmark will be unfavourited")
+  .argument("<id>", "the id of the bookmark to get")
   .action(async (id, opts) => {
     const api = getAPIClient();
     const resp = await api.bookmarks.updateBookmark.mutate({
@@ -114,7 +114,7 @@ bookmarkCmd
     "If set, archived bookmarks will be fetched as well",
     false,
   )
-  .option("--list-id <id>", "If set, only items from that list will be fetched")
+  .option("--list-id <id>", "if set, only items from that list will be fetched")
   .action(async (opts) => {
     const api = getAPIClient();
     const resp = await api.bookmarks.getBookmarks.query({
@@ -127,7 +127,7 @@ bookmarkCmd
 bookmarkCmd
   .command("delete")
   .description("delete a bookmark")
-  .argument("<id>", "The id of the bookmark to delete")
+  .argument("<id>", "the id of the bookmark to delete")
   .action(async (id) => {
     const api = getAPIClient();
     await api.bookmarks.deleteBookmark.mutate({ bookmarkId: id });

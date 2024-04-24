@@ -4,11 +4,11 @@ import { getBorderCharacters, table } from "table";
 
 export const tagsCmd = new Command()
   .name("tags")
-  .description("Manipulating tags");
+  .description("manipulating tags");
 
 tagsCmd
   .command("list")
-  .description("Lists all tags")
+  .description("lists all tags")
   .action(async () => {
     const api = getAPIClient();
 
@@ -27,8 +27,8 @@ tagsCmd
 
 tagsCmd
   .command("delete")
-  .description("Delete a tag")
-  .argument("<id>", "The id of the tag")
+  .description("delete a tag")
+  .argument("<id>", "the id of the tag")
   .action(async (id) => {
     const api = getAPIClient();
 

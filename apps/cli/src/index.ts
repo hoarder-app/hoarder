@@ -7,22 +7,22 @@ import { setGlobalOptions } from "@/lib/globals";
 import { Command, Option } from "@commander-js/extra-typings";
 
 const program = new Command()
-  .name("hoarder-cli")
+  .name("hoarder")
   .description("A CLI interface to interact with the hoarder api")
   .addOption(
-    new Option("--api-key <key>", "The API key to interact with the API")
+    new Option("--api-key <key>", "the API key to interact with the API")
       .makeOptionMandatory(true)
       .env("HOARDER_API_KEY"),
   )
   .addOption(
     new Option(
       "--server-addr <addr>",
-      "The address of the server to connect to",
+      "the address of the server to connect to",
     )
       .makeOptionMandatory(true)
       .env("HOARDER_SERVER_ADDR"),
   )
-  .version(process.env.SERVER_VERSION ?? "nightly");
+  .version(process.env.npm_package_version ?? "0.0.0");
 
 program.addCommand(bookmarkCmd);
 program.addCommand(listsCmd);
