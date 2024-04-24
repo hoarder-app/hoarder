@@ -1,9 +1,10 @@
+#! /usr/bin/env node
+import { bookmarkCmd } from "@/commands/bookmarks";
+import { listsCmd } from "@/commands/lists";
+import { tagsCmd } from "@/commands/tags";
+import { whoamiCmd } from "@/commands/whoami";
+import { setGlobalOptions } from "@/lib/globals";
 import { Command, Option } from "@commander-js/extra-typings";
-import { bookmarkCmd } from "commands/bookmarks";
-import { listsCmd } from "commands/lists";
-import { tagsCmd } from "commands/tags";
-import { whoamiCmd } from "commands/whoami";
-import { setGlobalOptions } from "lib/globals";
 
 const program = new Command()
   .name("hoarder-cli")

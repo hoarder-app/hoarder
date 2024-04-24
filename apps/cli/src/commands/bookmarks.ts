@@ -1,7 +1,7 @@
 import * as fs from "node:fs";
+import { getAPIClient } from "@/lib/trpc";
 import { Command } from "@commander-js/extra-typings";
 import chalk from "chalk";
-import { getAPIClient } from "lib/trpc";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 

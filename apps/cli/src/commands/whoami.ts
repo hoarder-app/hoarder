@@ -1,5 +1,5 @@
+import { getAPIClient } from "@/lib/trpc";
 import { Command } from "@commander-js/extra-typings";
-import { getAPIClient } from "lib/trpc";
 
 export const whoamiCmd = new Command()
   .name("whoami")

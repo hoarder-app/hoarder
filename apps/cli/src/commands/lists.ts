@@ -1,5 +1,5 @@
+import { getAPIClient } from "@/lib/trpc";
 import { Command } from "@commander-js/extra-typings";
-import { getAPIClient } from "lib/trpc";
 import { getBorderCharacters, table } from "table";
 
 import { listsToTree } from "@hoarder/shared/utils/listUtils";

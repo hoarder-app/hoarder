@@ -92,7 +92,9 @@ CMD ["pnpm", "run", "start:prod"]
 
 FROM base AS cli_builder
 
-RUN --mount=type=cache,id=pnpm_cli,target=/pnpm/store pnpm deploy --node-linker=isolated --filter @hoarder/cli --prod /prod
+WORKDIR /app/apps/cli
+
+RUN pnpm run build
 
 ################# The cli ##############
 
@@ -100,12 +102,11 @@ FROM node:21-alpine AS cli
 WORKDIR /app
 
 
-COPY --from=cli_builder /prod apps/cli
+COPY --from=cli_builder /app/apps/cli/dist/index.mjs apps/cli/index.mjs
 
 WORKDIR /app/apps/cli
-RUN npm config set update-notifier false
 
 ARG SERVER_VERSION=nightly
 ENV SERVER_VERSION=${SERVER_VERSION}
 
-ENTRYPOINT ["npm", "exec", "--", "tsx", "index.ts"]
+ENTRYPOINT ["node", "index.mjs"]

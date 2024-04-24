@@ -169,10 +169,16 @@ importers:
         version: 5.1.4(@types/node@20.11.20)
 
   apps/cli:
-    dependencies:
+    devDependencies:
       '@commander-js/extra-typings':
         specifier: ^12.0.1
         version: 12.0.1(commander@12.0.0)
+      '@hoarder/eslint-config':
+        specifier: workspace:^0.2.0
+        version: link:../../tooling/eslint
+      '@hoarder/prettier-config':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/prettier
       '@hoarder/shared':
         specifier: workspace:^0.1.0
         version: link:../../packages/shared
@@ -206,13 +212,9 @@ importers:
       tsx:
         specifier: ^4.7.1
         version: 4.7.1
-    devDependencies:
-      '@hoarder/eslint-config':
-        specifier: workspace:^0.2.0
-        version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
-        specifier: workspace:^0.1.0
-        version: link:../../tooling/prettier
+      vite:
+        specifier: ^5.1.0
+        version: 5.1.4(@types/node@20.11.20)
 
   apps/landing:
     dependencies:
@@ -14368,7 +14370,7 @@ snapshots:
   '@commander-js/extra-typings@12.0.1(commander@12.0.0)':
     dependencies:
       commander: 12.0.0
-    dev: false
+    dev: true
 
   '@crxjs/vite-plugin@1.0.14(vite@5.1.4(@types/node@20.11.20))':
     dependencies:
@@ -17781,7 +17783,6 @@ snapshots:
   '@trpc/client@11.0.0-next-beta.308(@trpc/server@11.0.0-next-beta.308)':
     dependencies:
       '@trpc/server': 11.0.0-next-beta.308
-    dev: false
 
   '@trpc/next@11.0.0-next-beta.308(@tanstack/react-query@5.24.8(react@18.2.0))(@trpc/client@11.0.0-next-beta.308(@trpc/server@11.0.0-next-beta.308))(@trpc/react-query@11.0.0-next-beta.308(@tanstack/react-query@5.24.8(react@18.2.0))(@trpc/client@11.0.0-next-beta.308(@trpc/server@11.0.0-next-beta.308))(@trpc/server@11.0.0-next-beta.308)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(@trpc/server@11.0.0-next-beta.308)(next@14.1.4(@babel/core@7.24.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
     dependencies:
@@ -17803,8 +17804,7 @@ snapshots:
       react-dom: 18.2.0(react@18.2.0)
     dev: false
 
-  '@trpc/server@11.0.0-next-beta.308':
-    dev: false
+  '@trpc/server@11.0.0-next-beta.308': {}
 
   '@trysound/sax@0.2.0':
     dev: false
@@ -18841,7 +18841,7 @@ snapshots:
     dev: false
 
   astral-regex@2.0.0:
-    dev: false
+    dev: true
 
   astring@1.8.6: {}
 
@@ -19745,7 +19745,7 @@ snapshots:
     dev: false
 
   commander@12.0.0:
-    dev: false
+    dev: true
 
   commander@2.20.3: {}
 
@@ -23510,7 +23510,7 @@ snapshots:
   lodash.throttle@4.1.1: {}
 
   lodash.truncate@4.4.2:
-    dev: false
+    dev: true
 
   lodash.uniq@4.5.0:
     dev: false
@@ -27377,7 +27377,7 @@ snapshots:
       ansi-styles: 4.3.0
       astral-regex: 2.0.0
       is-fullwidth-code-point: 3.0.0
-    dev: false
+    dev: true
 
   slugify@1.6.6:
     dev: false
@@ -27797,7 +27797,7 @@ snapshots:
       slice-ansi: 4.0.0
       string-width: 4.2.3
       strip-ansi: 6.0.1
-    dev: false
+    dev: true
 
   tailwind-merge@2.2.1:
     dependencies:
@@ -28097,7 +28097,6 @@ snapshots:
       get-tsconfig: 4.7.2
     optionalDependencies:
       fsevents: 2.3.3
-    dev: false
 
   tunnel-agent@0.6.0:
     dependencies:
