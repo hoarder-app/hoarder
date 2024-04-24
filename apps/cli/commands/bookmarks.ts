@@ -86,6 +86,27 @@ bookmarkCmd
   });
 
 bookmarkCmd
+  .command("update")
+  .description("Archive a bookmark")
+  .option("--title <title>", "If set, the bookmark's title will be updated")
+  .option("--note <note>", "If set, the bookmark's note will be updated")
+  .option("--archive", "If set, the bookmark will be archived")
+  .option("--no-archive", "If set, the bookmark will be unarchived")
+  .option("--favourite", "If set, the bookmark will be favourited")
+  .option("--no-favourite", "If set, the bookmark will be unfavourited")
+  .argument("<id>", "The id of the bookmark to get")
+  .action(async (id, opts) => {
+    const api = getAPIClient();
+    const resp = await api.bookmarks.updateBookmark.mutate({
+      bookmarkId: id,
+      archived: opts.archive,
+      favourited: opts.favourite,
+      title: opts.title,
+    });
+    console.log(resp);
+  });
+
+bookmarkCmd
   .command("list")
   .description("list all bookmarks")
   .option(
@@ -93,10 +114,12 @@ bookmarkCmd
     "If set, archived bookmarks will be fetched as well",
     false,
   )
+  .option("--list-id <id>", "If set, only items from that list will be fetched")
   .action(async (opts) => {
     const api = getAPIClient();
     const resp = await api.bookmarks.getBookmarks.query({
       archived: opts.includeArchived ? undefined : false,
+      listId: opts.listId,
     });
     console.log(resp.bookmarks.map(normalizeBookmark));
   });

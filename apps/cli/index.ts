@@ -1,5 +1,7 @@
 import { Command, Option } from "@commander-js/extra-typings";
 import { bookmarkCmd } from "commands/bookmarks";
+import { listsCmd } from "commands/lists";
+import { tagsCmd } from "commands/tags";
 import { whoamiCmd } from "commands/whoami";
 import { setGlobalOptions } from "lib/globals";
 
@@ -22,6 +24,8 @@ const program = new Command()
   .version(process.env.SERVER_VERSION ?? "nightly");
 
 program.addCommand(bookmarkCmd);
+program.addCommand(listsCmd);
+program.addCommand(tagsCmd);
 program.addCommand(whoamiCmd);
 
 setGlobalOptions(program.opts());
