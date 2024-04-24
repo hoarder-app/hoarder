@@ -7,8 +7,10 @@ import serverConfig from "@hoarder/shared/config";
 
 export default async function Dashboard({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <div className="flex min-h-screen w-screen flex-col sm:h-screen sm:flex-row">
@@ -21,6 +23,7 @@ export default async function Dashboard({
           <MobileSidebar />
           <Separator />
         </div>
+        {modal}
         <div className="container min-h-screen p-4">{children}</div>
       </main>
     </div>

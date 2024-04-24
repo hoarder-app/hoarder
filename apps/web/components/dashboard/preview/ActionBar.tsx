@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
 import {
   Tooltip,
@@ -16,6 +17,7 @@ import {
 import { ArchivedActionIcon, FavouritedActionIcon } from "../bookmarks/icons";
 
 export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
+  const router = useRouter();
   const onError = () => {
     toast({
       variant: "destructive",
@@ -46,6 +48,7 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         toast({
           description: "The bookmark has been deleted!",
         });
+        router.back();
       },
       onError,
     });

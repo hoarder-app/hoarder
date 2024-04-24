@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { TagsEditor } from "@/components/dashboard/bookmarks/TagsEditor";
+import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -65,13 +66,15 @@ function CreationTime({ createdAt }: { createdAt: Date }) {
 }
 
 export default function BookmarkPreview({
+  bookmarkId,
   initialData,
 }: {
-  initialData: ZBookmark;
+  bookmarkId: string;
+  initialData?: ZBookmark;
 }) {
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {
-      bookmarkId: initialData.id,
+      bookmarkId,
     },
     {
       initialData,
@@ -88,6 +91,10 @@ export default function BookmarkPreview({
       },
     },
   );
+
+  if (!bookmark) {
+    return <FullPageSpinner />;
+  }
 
   let content;
   switch (bookmark.content.type) {

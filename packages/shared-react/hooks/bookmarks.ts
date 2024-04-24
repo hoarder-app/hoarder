@@ -46,6 +46,7 @@ export function useDeleteBookmark(
     onSuccess: (res, req, meta) => {
       apiUtils.bookmarks.getBookmarks.invalidate();
       apiUtils.bookmarks.searchBookmarks.invalidate();
+      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });
