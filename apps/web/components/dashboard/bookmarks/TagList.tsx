@@ -32,7 +32,7 @@ export default function TagList({
               badgeVariants({ variant: "outline" }),
               "text-nowrap font-normal hover:bg-foreground hover:text-secondary",
             )}
-            href={`/dashboard/tags/${t.name}`}
+            href={`/dashboard/tags/${t.id}`}
           >
             {t.name}
           </Link>

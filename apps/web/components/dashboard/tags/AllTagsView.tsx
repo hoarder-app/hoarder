@@ -1,20 +1,44 @@
 "use client";
 
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/trpc";
+import { X } from "lucide-react";
 
 import type { ZGetTagResponse } from "@hoarder/shared/types/tags";
 
-function TagPill({ name, count }: { name: string; count: number }) {
+import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";
+
+function TagPill({
+  id,
+  name,
+  count,
+}: {
+  id: string;
+  name: string;
+  count: number;
+}) {
   return (
-    <Link
-      className="flex gap-2 rounded-md border border-border bg-background px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
-      href={`/dashboard/tags/${name}`}
-    >
-      {name} <Separator orientation="vertical" /> {count}
-    </Link>
+    <div className="group relative flex">
+      <Link
+        className="flex gap-2 rounded-md border border-border bg-background px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
+        href={`/dashboard/tags/${id}`}
+      >
+        {name} <Separator orientation="vertical" /> {count}
+      </Link>
+
+      <DeleteTagConfirmationDialog tag={{ name, id }}>
+        <Button
+          size="none"
+          variant="secondary"
+          className="-translate-1/2 absolute -right-1 -top-1 hidden rounded-full group-hover:block"
+        >
+          <X className="size-3" />
+        </Button>
+      </DeleteTagConfirmationDialog>
+    </div>
   );
 }
 
@@ -36,7 +60,7 @@ export default function AllTagsView({
     let tagPill;
     if (tags.length) {
       tagPill = tags.map((t) => (
-        <TagPill key={t.id} name={t.name} count={t.count} />
+        <TagPill key={t.id} id={t.id} name={t.name} count={t.count} />
       ));
     } else {
       tagPill = "No Tags";
