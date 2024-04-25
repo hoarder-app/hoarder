@@ -9,7 +9,7 @@ import { X } from "lucide-react";
 
 import type { ZGetTagResponse } from "@hoarder/shared/types/tags";
 
-import DeleteTagButton from "./DeleteTagButton";
+import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";
 
 function TagPill({
   id,
@@ -24,12 +24,12 @@ function TagPill({
     <div className="group relative flex">
       <Link
         className="flex gap-2 rounded-md border border-border bg-background px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
-        href={`/dashboard/tags/${name}`}
+        href={`/dashboard/tags/${id}`}
       >
         {name} <Separator orientation="vertical" /> {count}
       </Link>
 
-      <DeleteTagButton tagName={name} tagId={id}>
+      <DeleteTagConfirmationDialog tag={{ name, id }}>
         <Button
           size="none"
           variant="secondary"
@@ -37,7 +37,7 @@ function TagPill({
         >
           <X className="size-3" />
         </Button>
-      </DeleteTagButton>
+      </DeleteTagConfirmationDialog>
     </div>
   );
 }

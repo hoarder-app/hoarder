@@ -1,21 +1,20 @@
 import { notFound } from "next/navigation";
 import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
-import DeleteTagButton from "@/components/dashboard/tags/DeleteTagButton";
+import EditableTagName from "@/components/dashboard/tags/EditableTagName";
+import { TagOptions } from "@/components/dashboard/tags/TagOptions";
 import { Button } from "@/components/ui/button";
 import { api } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
-import { Trash2 } from "lucide-react";
+import { MoreHorizontal } from "lucide-react";
 
 export default async function TagPage({
   params,
 }: {
-  params: { tagName: string };
+  params: { tagId: string };
 }) {
-  const tagName = decodeURIComponent(params.tagName);
-
   let tag;
   try {
-    tag = await api.tags.get({ tagName });
+    tag = await api.tags.get({ tagId: params.tagId });
   } catch (e) {
     if (e instanceof TRPCError) {
       if (e.code == "NOT_FOUND") {
@@ -29,17 +28,16 @@ export default async function TagPage({
     <Bookmarks
       header={
         <div className="flex justify-between">
-          <span className="text-2xl">{tagName}</span>
-          <DeleteTagButton
-            tagName={tag.name}
-            tagId={tag.id}
-            navigateOnDelete={true}
-          >
-            <Button className="mt-auto flex gap-2" variant="destructiveOutline">
-              <Trash2 className="size-5" />
-              <span className="hidden md:block">Delete Tag</span>
+          <EditableTagName
+            tag={{ id: tag.id, name: tag.name }}
+            className="text-2xl"
+          />
+
+          <TagOptions tag={tag}>
+            <Button variant="ghost">
+              <MoreHorizontal />
             </Button>
-          </DeleteTagButton>
+          </TagOptions>
         </div>
       }
       query={{ tagId: tag.id }}

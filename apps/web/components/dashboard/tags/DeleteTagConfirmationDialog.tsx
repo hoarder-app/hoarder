@@ -1,30 +1,29 @@
-"use client";
-
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { toast } from "@/components/ui/use-toast";
 
 import { useDeleteTag } from "@hoarder/shared-react/hooks/tags";
 
-export default function DeleteTagButton({
-  tagName,
-  tagId,
+export default function DeleteTagConfirmationDialog({
+  tag,
   children,
-  navigateOnDelete = false,
+  open,
+  setOpen,
 }: {
-  tagName: string;
-  tagId: string;
-  children: React.ReactNode;
-  navigateOnDelete?: boolean;
+  tag: { id: string; name: string };
+  children?: React.ReactNode;
+  open?: boolean;
+  setOpen?: (v: boolean) => void;
 }) {
+  const currentPath = usePathname();
   const router = useRouter();
   const { mutate: deleteTag, isPending } = useDeleteTag({
     onSuccess: () => {
       toast({
-        description: `Tag "${tagName}" has been deleted!`,
+        description: `Tag "${tag.name}" has been deleted!`,
       });
-      if (navigateOnDelete) {
+      if (currentPath.includes(tag.id)) {
         router.push("/dashboard/tags");
       }
     },
@@ -37,17 +36,21 @@ export default function DeleteTagButton({
   });
   return (
     <ActionConfirmingDialog
-      title={`Delete ${tagName}?`}
-      description={`Are you sure you want to delete the tag "${tagName}"?`}
+      open={open}
+      setOpen={setOpen}
+      title={`Delete ${tag.name}?`}
+      description={`Are you sure you want to delete the tag "${tag.name}"?`}
       actionButton={(setDialogOpen) => (
         <ActionButton
           type="button"
           variant="destructive"
           loading={isPending}
-          onClick={() => {
-            deleteTag({ tagId: tagId });
-            setDialogOpen(false);
-          }}
+          onClick={() =>
+            deleteTag(
+              { tagId: tag.id },
+              { onSuccess: () => setDialogOpen(false) },
+            )
+          }
         >
           Delete
         </ActionButton>

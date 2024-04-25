@@ -1,32 +1,22 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 import type { ZAttachedByEnum } from "@hoarder/shared/types/tags";
+import { SqliteError } from "@hoarder/db";
 import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
 import { zGetTagResponseSchema } from "@hoarder/shared/types/tags";
 
 import type { Context } from "../index";
 import { authedProcedure, router } from "../index";
 
-function conditionFromInput(
-  input: { tagName: string } | { tagId: string },
-  userId: string,
-) {
-  if ("tagName" in input) {
-    // Tag names are not unique, we must include userId in the condition
-    return and(
-      eq(bookmarkTags.name, input.tagName),
-      eq(bookmarkTags.userId, userId),
-    );
-  } else {
-    return eq(bookmarkTags.id, input.tagId);
-  }
+function conditionFromInput(input: { tagId: string }, userId: string) {
+  return and(eq(bookmarkTags.id, input.tagId), eq(bookmarkTags.userId, userId));
 }
 
 const ensureTagOwnership = experimental_trpcMiddleware<{
   ctx: Context;
-  input: { tagName: string } | { tagId: string };
+  input: { tagId: string };
 }>().create(async (opts) => {
   if (!opts.ctx.user) {
     throw new TRPCError({
@@ -60,15 +50,9 @@ const ensureTagOwnership = experimental_trpcMiddleware<{
 export const tagsAppRouter = router({
   get: authedProcedure
     .input(
-      z
-        .object({
-          tagId: z.string(),
-        })
-        .or(
-          z.object({
-            tagName: z.string(),
-          }),
-        ),
+      z.object({
+        tagId: z.string(),
+      }),
     )
     .output(zGetTagResponseSchema)
     .use(ensureTagOwnership)
@@ -111,15 +95,9 @@ export const tagsAppRouter = router({
     }),
   delete: authedProcedure
     .input(
-      z
-        .object({
-          tagId: z.string(),
-        })
-        .or(
-          z.object({
-            tagName: z.string(),
-          }),
-        ),
+      z.object({
+        tagId: z.string(),
+      }),
     )
     .use(ensureTagOwnership)
     .mutation(async ({ input, ctx }) => {
@@ -134,6 +112,144 @@ export const tagsAppRouter = router({
       if (res.changes == 0) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
+    }),
+  update: authedProcedure
+    .input(
+      z.object({
+        tagId: z.string(),
+        name: z.string().optional(),
+      }),
+    )
+    .output(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        userId: z.string(),
+        createdAt: z.date(),
+      }),
+    )
+    .use(ensureTagOwnership)
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const res = await ctx.db
+          .update(bookmarkTags)
+          .set({
+            name: input.name,
+          })
+          .where(
+            and(
+              eq(bookmarkTags.id, input.tagId),
+              eq(bookmarkTags.userId, ctx.user.id),
+            ),
+          )
+          .returning();
+
+        if (res.length == 0) {
+          throw new TRPCError({ code: "NOT_FOUND" });
+        }
+
+        return res[0];
+      } catch (e) {
+        if (e instanceof SqliteError) {
+          if (e.code == "SQLITE_CONSTRAINT_UNIQUE") {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message:
+                "Tag name already exists. You might want to consider a merge instead.",
+            });
+          }
+        }
+        throw e;
+      }
+    }),
+  merge: authedProcedure
+    .input(
+      z.object({
+        intoTagId: z.string(),
+        fromTagIds: z.array(z.string()),
+      }),
+    )
+    .output(
+      z.object({
+        mergedIntoTagId: z.string(),
+        deletedTags: z.array(z.string()),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const requestedTags = new Set([input.intoTagId, ...input.fromTagIds]);
+      if (requestedTags.size == 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No tags provided",
+        });
+      }
+      if (input.fromTagIds.includes(input.intoTagId)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot merge tag into itself",
+        });
+      }
+      const affectedTags = await ctx.db.query.bookmarkTags.findMany({
+        where: and(
+          eq(bookmarkTags.userId, ctx.user.id),
+          inArray(bookmarkTags.id, [...requestedTags]),
+        ),
+        columns: {
+          id: true,
+          userId: true,
+        },
+      });
+      if (affectedTags.some((t) => t.userId != ctx.user.id)) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "User is not allowed to access resource",
+        });
+      }
+      if (affectedTags.length != requestedTags.size) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "One or more tags not found",
+        });
+      }
+
+      const deletedTags = await ctx.db.transaction(async (trx) => {
+        // Not entirely sure what happens with a racing transaction that adds a to-be-deleted tag on a bookmark. But it's fine for now.
+
+        // NOTE: You can't really do an update here as you might violate the uniquness constraint if the info tag is already attached to the bookmark.
+        // There's no OnConflict handling for updates in drizzle.
+
+        // Unlink old tags
+        const unlinked = await trx
+          .delete(tagsOnBookmarks)
+          .where(and(inArray(tagsOnBookmarks.tagId, input.fromTagIds)))
+          .returning();
+
+        // Re-attach them to the new tag
+        await trx
+          .insert(tagsOnBookmarks)
+          .values(
+            unlinked.map((u) => ({
+              ...u,
+              tagId: input.intoTagId,
+            })),
+          )
+          .onConflictDoNothing();
+
+        // Delete the old tags
+        return await trx
+          .delete(bookmarkTags)
+          .where(
+            and(
+              inArray(bookmarkTags.id, input.fromTagIds),
+              eq(bookmarkTags.userId, ctx.user.id),
+            ),
+          )
+          .returning({ id: bookmarkTags.id });
+      });
+      return {
+        deletedTags: deletedTags.map((t) => t.id),
+        mergedIntoTagId: input.intoTagId,
+      };
     }),
   list: authedProcedure
     .output(
