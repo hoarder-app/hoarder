@@ -34,7 +34,7 @@ interface Suggestion {
 }
 
 function normalizeTag(tag: string) {
-  return tag.toLocaleLowerCase().replace(/[ -]/g, "");
+  return tag.toLocaleLowerCase().replace(/[ -_]/g, "");
 }
 
 const useSuggestions = () => {

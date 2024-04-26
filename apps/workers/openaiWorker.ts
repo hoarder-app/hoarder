@@ -1,6 +1,6 @@
 import type { Job } from "bullmq";
 import { Worker } from "bullmq";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, Column, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import type { ZOpenAIRequest } from "@hoarder/shared/queues";
@@ -28,6 +28,17 @@ import { readPDFText, truncateContent } from "./utils";
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
 });
+
+function tagNormalizer(col: Column) {
+  function normalizeTag(tag: string) {
+    return tag.toLowerCase().replace(/[ -_]/g, "");
+  }
+
+  return {
+    normalizeTag,
+    sql: sql`lower(replace(replace(replace(${col}, ' ', ''), '-', ''), '_', ''))`,
+  };
+}
 
 async function attemptMarkTaggingStatus(
   jobData: object | undefined,
@@ -257,36 +268,63 @@ async function inferTags(
 
 async function connectTags(
   bookmarkId: string,
-  newTags: string[],
+  inferredTags: string[],
   userId: string,
 ) {
-  if (newTags.length == 0) {
+  if (inferredTags.length == 0) {
     return;
   }
 
   await db.transaction(async (tx) => {
-    // Create tags that didn't exist previously
-    await tx
-      .insert(bookmarkTags)
-      .values(
-        newTags.map((t) => ({
-          name: t,
-          userId,
-        })),
-      )
-      .onConflictDoNothing();
+    // Attempt to match exiting tags with the new ones
+    const { matchedTagIds, notFoundTagNames } = await (async () => {
+      const { normalizeTag, sql: normalizedTagSql } = tagNormalizer(
+        bookmarkTags.name,
+      );
+      const normalizedInferredTags = inferredTags.map((t) => ({
+        originalTag: t,
+        normalizedTag: normalizeTag(t),
+      }));
 
-    const newTagIds = (
-      await tx.query.bookmarkTags.findMany({
+      const matchedTags = await tx.query.bookmarkTags.findMany({
         where: and(
           eq(bookmarkTags.userId, userId),
-          inArray(bookmarkTags.name, newTags),
+          inArray(
+            normalizedTagSql,
+            normalizedInferredTags.map((t) => t.normalizedTag),
+          ),
         ),
-        columns: {
-          id: true,
-        },
-      })
-    ).map((r) => r.id);
+      });
+
+      const matchedTagIds = matchedTags.map((r) => r.id);
+      const notFoundTagNames = normalizedInferredTags
+        .filter(
+          (t) =>
+            !matchedTags.some(
+              (mt) => normalizeTag(mt.name) === t.normalizedTag,
+            ),
+        )
+        .map((t) => t.originalTag);
+
+      return { matchedTagIds, notFoundTagNames };
+    })();
+
+    // Create tags that didn't exist previously
+    let newTagIds: string[] = [];
+    if (notFoundTagNames.length > 0) {
+      newTagIds = (
+        await tx
+          .insert(bookmarkTags)
+          .values(
+            notFoundTagNames.map((t) => ({
+              name: t,
+              userId,
+            })),
+          )
+          .onConflictDoNothing()
+          .returning()
+      ).map((t) => t.id);
+    }
 
     // Delete old AI tags
     await tx
@@ -298,11 +336,13 @@ async function connectTags(
         ),
       );
 
+    const allTagIds = new Set([...matchedTagIds, ...newTagIds]);
+
     // Attach new ones
     await tx
       .insert(tagsOnBookmarks)
       .values(
-        newTagIds.map((tagId) => ({
+        [...allTagIds].map((tagId) => ({
           tagId,
           bookmarkId,
           attachedBy: "ai" as const,
