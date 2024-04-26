@@ -5,6 +5,7 @@ import { z } from "zod";
 import type { ZAttachedByEnum } from "@hoarder/shared/types/tags";
 import { SqliteError } from "@hoarder/db";
 import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
+import { SearchIndexingQueue } from "@hoarder/shared/queues";
 import { zGetTagResponseSchema } from "@hoarder/shared/types/tags";
 
 import type { Context } from "../index";
@@ -112,6 +113,7 @@ export const tagsAppRouter = router({
       if (res.changes == 0) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
+      // TODO: Update affected bookmarks in search index
     }),
   update: authedProcedure
     .input(
@@ -146,6 +148,30 @@ export const tagsAppRouter = router({
 
         if (res.length == 0) {
           throw new TRPCError({ code: "NOT_FOUND" });
+        }
+
+        try {
+          const affectedBookmarks = await ctx.db.query.tagsOnBookmarks.findMany(
+            {
+              where: eq(tagsOnBookmarks.tagId, input.tagId),
+              columns: {
+                bookmarkId: true,
+              },
+            },
+          );
+          await Promise.all([
+            affectedBookmarks
+              .map((b) => b.bookmarkId)
+              .map((id) =>
+                SearchIndexingQueue.add("search_indexing", {
+                  bookmarkId: id,
+                  type: "index",
+                }),
+              ),
+          ]);
+        } catch (e) {
+          // Best Effort attempt to reindex affected bookmarks
+          console.error("Failed to reindex affected bookmarks", e);
         }
 
         return res[0];
@@ -212,40 +238,62 @@ export const tagsAppRouter = router({
         });
       }
 
-      const deletedTags = await ctx.db.transaction(async (trx) => {
-        // Not entirely sure what happens with a racing transaction that adds a to-be-deleted tag on a bookmark. But it's fine for now.
+      const { deletedTags, affectedBookmarks } = await ctx.db.transaction(
+        async (trx) => {
+          // Not entirely sure what happens with a racing transaction that adds a to-be-deleted tag on a bookmark. But it's fine for now.
 
-        // NOTE: You can't really do an update here as you might violate the uniquness constraint if the info tag is already attached to the bookmark.
-        // There's no OnConflict handling for updates in drizzle.
+          // NOTE: You can't really do an update here as you might violate the uniquness constraint if the info tag is already attached to the bookmark.
+          // There's no OnConflict handling for updates in drizzle.
 
-        // Unlink old tags
-        const unlinked = await trx
-          .delete(tagsOnBookmarks)
-          .where(and(inArray(tagsOnBookmarks.tagId, input.fromTagIds)))
-          .returning();
+          // Unlink old tags
+          const unlinked = await trx
+            .delete(tagsOnBookmarks)
+            .where(and(inArray(tagsOnBookmarks.tagId, input.fromTagIds)))
+            .returning();
 
-        // Re-attach them to the new tag
-        await trx
-          .insert(tagsOnBookmarks)
-          .values(
-            unlinked.map((u) => ({
-              ...u,
-              tagId: input.intoTagId,
-            })),
-          )
-          .onConflictDoNothing();
+          // Re-attach them to the new tag
+          await trx
+            .insert(tagsOnBookmarks)
+            .values(
+              unlinked.map((u) => ({
+                ...u,
+                tagId: input.intoTagId,
+              })),
+            )
+            .onConflictDoNothing();
 
-        // Delete the old tags
-        return await trx
-          .delete(bookmarkTags)
-          .where(
-            and(
-              inArray(bookmarkTags.id, input.fromTagIds),
-              eq(bookmarkTags.userId, ctx.user.id),
-            ),
-          )
-          .returning({ id: bookmarkTags.id });
-      });
+          // Delete the old tags
+          const deletedTags = await trx
+            .delete(bookmarkTags)
+            .where(
+              and(
+                inArray(bookmarkTags.id, input.fromTagIds),
+                eq(bookmarkTags.userId, ctx.user.id),
+              ),
+            )
+            .returning({ id: bookmarkTags.id });
+
+          return {
+            deletedTags,
+            affectedBookmarks: unlinked.map((u) => u.bookmarkId),
+          };
+        },
+      );
+
+      try {
+        await Promise.all([
+          affectedBookmarks.map((id) =>
+            SearchIndexingQueue.add("search_indexing", {
+              bookmarkId: id,
+              type: "index",
+            }),
+          ),
+        ]);
+      } catch (e) {
+        // Best Effort attempt to reindex affected bookmarks
+        console.error("Failed to reindex affected bookmarks", e);
+      }
+
       return {
         deletedTags: deletedTags.map((t) => t.id),
         mergedIntoTagId: input.intoTagId,
