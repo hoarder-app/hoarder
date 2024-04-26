@@ -252,15 +252,17 @@ export const tagsAppRouter = router({
             .returning();
 
           // Re-attach them to the new tag
-          await trx
-            .insert(tagsOnBookmarks)
-            .values(
-              unlinked.map((u) => ({
-                ...u,
-                tagId: input.intoTagId,
-              })),
-            )
-            .onConflictDoNothing();
+          if (unlinked.length > 0) {
+            await trx
+              .insert(tagsOnBookmarks)
+              .values(
+                unlinked.map((u) => ({
+                  ...u,
+                  tagId: input.intoTagId,
+                })),
+              )
+              .onConflictDoNothing()
+          }
 
           // Delete the old tags
           const deletedTags = await trx
