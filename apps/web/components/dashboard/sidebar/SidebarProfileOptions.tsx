@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useToggleTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +23,7 @@ import {
   LogOut,
   Moon,
   MoreHorizontal,
+  Paintbrush,
   Sun,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -98,6 +100,12 @@ export default function SidebarProfileOptions() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard/cleanups">
+            <Paintbrush className="mr-2 size-4" />
+            Cleanups
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuItem onClick={toggleTheme}>
           <DarkModeToggle />
         </DropdownMenuItem>
