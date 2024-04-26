@@ -22,6 +22,9 @@ const allEnv = z.object({
   BROWSER_WEB_URL: z.string().url().optional(),
   CRAWLER_JOB_TIMEOUT_SEC: z.number().default(60),
   CRAWLER_NAVIGATE_TIMEOUT_SEC: z.number().default(30),
+  CRAWLER_NUM_WORKERS: z.coerce.number().default(1),
+  CRAWLER_DOWNLOAD_BANNER_IMAGE: stringBool("true"),
+  CRAWLER_STORE_SCREENSHOT: stringBool("true"),
   MEILI_ADDR: z.string().optional(),
   MEILI_MASTER_KEY: z.string().default(""),
   LOG_LEVEL: z.string().default("debug"),
@@ -56,10 +59,13 @@ const serverConfigSchema = allEnv.transform((val) => {
       redisDBIdx: val.REDIS_DB_IDX,
     },
     crawler: {
+      numWorkers: val.CRAWLER_NUM_WORKERS,
       headlessBrowser: val.CRAWLER_HEADLESS_BROWSER,
       browserWebUrl: val.BROWSER_WEB_URL,
       jobTimeoutSec: val.CRAWLER_JOB_TIMEOUT_SEC,
       navigateTimeoutSec: val.CRAWLER_NAVIGATE_TIMEOUT_SEC,
+      downloadBannerImage: val.CRAWLER_DOWNLOAD_BANNER_IMAGE,
+      storeScreenshot: val.CRAWLER_STORE_SCREENSHOT,
     },
     meilisearch: val.MEILI_ADDR
       ? {

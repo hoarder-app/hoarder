@@ -37,7 +37,10 @@ Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic taggin
 
 ## Crawler Configs
 
-| Name                         | Required | Default | Description                                                                                                                                                            |
-| ---------------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CRAWLER_JOB_TIMEOUT_SEC      | No       | 60      | How long to wait for the crawler job to finish before timing out. If you have a slow internet connection or a low powered device, you might want to bump this up a bit |
-| CRAWLER_NAVIGATE_TIMEOUT_SEC | No       | 30      | How long to spend navigating to the page (along with its redirects). Increase this if you have a slow internet connection                                              |
+| Name                          | Required | Default | Description                                                                                                                                                                                                                |
+| ----------------------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CRAWLER_NUM_WORKERS           | No       | 1       | Number of allowed concurrent crawling jobs. By default, we're only doing one crawling request at a time to avoid consuming a lot of resources.                                                                             |
+| CRAWLER_DOWNLOAD_BANNER_IMAGE | No       | true    | Whether to cache the banner image used in the cards locally or fetch it each time directly from the website. Caching it consumes more storage space, but is more resilient against link rot and rate limits from websites. |
+| CRAWLER_STORE_SCREENSHOT      | No       | true    | Whether to store a screenshot from the crawled website or not. Screenshots act as a fallback for when we fail to extract an image from a website. You can also view the stored screenshots for any link.                   |
+| CRAWLER_JOB_TIMEOUT_SEC       | No       | 60      | How long to wait for the crawler job to finish before timing out. If you have a slow internet connection or a low powered device, you might want to bump this up a bit                                                     |
+| CRAWLER_NAVIGATE_TIMEOUT_SEC  | No       | 30      | How long to spend navigating to the page (along with its redirects). Increase this if you have a slow internet connection                                                                                                  |

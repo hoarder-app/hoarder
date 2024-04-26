@@ -123,6 +123,7 @@ export class CrawlerWorker {
         /* timeoutSec */ serverConfig.crawler.jobTimeoutSec,
       ),
       {
+        concurrency: serverConfig.crawler.numWorkers,
         connection: queueConnectionDetails,
         autorun: false,
       },
@@ -282,6 +283,12 @@ async function storeScreenshot(
   userId: string,
   jobId: string,
 ) {
+  if (!serverConfig.crawler.storeScreenshot) {
+    logger.info(
+      `[Crawler][${jobId}] Skipping storing the screenshot as per the config.`,
+    );
+    return null;
+  }
   const assetId = newAssetId();
   await saveAsset({
     userId,
@@ -300,6 +307,12 @@ async function downloadAndStoreImage(
   userId: string,
   jobId: string,
 ) {
+  if (!serverConfig.crawler.downloadBannerImage) {
+    logger.info(
+      `[Crawler][${jobId}] Skipping downloading the image as per the config.`,
+    );
+    return null;
+  }
   try {
     logger.info(`[Crawler][${jobId}] Downloading image from "${url}"`);
     const response = await fetch(url);
