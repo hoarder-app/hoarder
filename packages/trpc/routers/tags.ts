@@ -1,5 +1,5 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, count, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 
 import type { ZAttachedByEnum } from "@hoarder/shared/types/tags";
@@ -306,36 +306,33 @@ export const tagsAppRouter = router({
       }),
     )
     .query(async ({ ctx }) => {
-      const res = await ctx.db
-        .select({
-          id: tagsOnBookmarks.tagId,
-          name: bookmarkTags.name,
-          attachedBy: tagsOnBookmarks.attachedBy,
-          count: count(),
-        })
-        .from(tagsOnBookmarks)
-        .groupBy(tagsOnBookmarks.tagId, tagsOnBookmarks.attachedBy)
-        .innerJoin(bookmarkTags, eq(bookmarkTags.id, tagsOnBookmarks.tagId))
-        .where(eq(bookmarkTags.userId, ctx.user.id));
-
-      const tags = res.reduce<
-        Record<string, z.infer<typeof zGetTagResponseSchema>>
-      >((acc, row) => {
-        if (!(row.id in acc)) {
-          acc[row.id] = {
-            id: row.id,
-            name: row.name,
-            count: 0,
-            countAttachedBy: {
-              ai: 0,
-              human: 0,
+      const tags = await ctx.db.query.bookmarkTags.findMany({
+        where: eq(bookmarkTags.userId, ctx.user.id),
+        with: {
+          tagsOnBookmarks: {
+            columns: {
+              attachedBy: true,
             },
-          };
-        }
-        acc[row.id].count += row.count;
-        acc[row.id].countAttachedBy[row.attachedBy]! += row.count;
-        return acc;
-      }, {});
-      return { tags: Object.values(tags) };
+          },
+        },
+      });
+
+      const resp = tags.map(({ tagsOnBookmarks, ...rest }) => ({
+        ...rest,
+        count: tagsOnBookmarks.length,
+        countAttachedBy: tagsOnBookmarks.reduce<
+          Record<ZAttachedByEnum, number>
+        >(
+          (acc, curr) => {
+            if (curr.attachedBy) {
+              acc[curr.attachedBy]++;
+            }
+            return acc;
+          },
+          { ai: 0, human: 0 },
+        ),
+      }));
+
+      return { tags: resp };
     }),
 });

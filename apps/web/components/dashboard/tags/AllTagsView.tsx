@@ -2,6 +2,11 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/trpc";
@@ -54,7 +59,8 @@ export default function AllTagsView({
   const allTags = data.tags.sort((a, b) => b.count - a.count);
 
   const humanTags = allTags.filter((t) => (t.countAttachedBy.human ?? 0) > 0);
-  const aiTags = allTags.filter((t) => (t.countAttachedBy.human ?? 0) == 0);
+  const aiTags = allTags.filter((t) => (t.countAttachedBy.ai ?? 0) > 0);
+  const emptyTags = allTags.filter((t) => t.count === 0);
 
   const tagsToPill = (tags: typeof allTags) => {
     let tagPill;
@@ -86,6 +92,23 @@ export default function AllTagsView({
         </InfoTooltip>
       </span>
       <div className="flex flex-wrap gap-3">{tagsToPill(aiTags)}</div>
+
+      <Separator />
+
+      <span className="flex items-center gap-2">
+        <p className="text-lg">Unused Tags</p>
+        <InfoTooltip size={15} className="my-auto" variant="explain">
+          <p>Tags that are not attached to any bookmarks</p>
+        </InfoTooltip>
+      </span>
+      <Collapsible>
+        <CollapsibleTrigger className="pb-2">
+          <Button variant="link">Show {emptyTags.length} unused tags</Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="flex flex-wrap gap-3">{tagsToPill(emptyTags)}</div>
+        </CollapsibleContent>
+      </Collapsible>
     </>
   );
 }
