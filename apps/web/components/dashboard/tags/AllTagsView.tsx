@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { ActionButton } from "@/components/ui/action-button";
+import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -9,12 +11,49 @@ import {
 } from "@/components/ui/collapsible";
 import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { X } from "lucide-react";
 
 import type { ZGetTagResponse } from "@hoarder/shared/types/tags";
+import { useDeleteUnusedTags } from "@hoarder/shared-react/hooks/tags";
 
 import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";
+
+function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
+  const { mutate, isPending } = useDeleteUnusedTags({
+    onSuccess: () => {
+      toast({
+        description: `Deleted all ${numUnusedTags} unused tags`,
+      });
+    },
+    onError: () => {
+      toast({
+        description: "Something went wrong",
+        variant: "destructive",
+      });
+    },
+  });
+  return (
+    <ActionConfirmingDialog
+      title="Delete all unused tags?"
+      description={`Are you sure you want to delete the ${numUnusedTags} unused tags?`}
+      actionButton={() => (
+        <ActionButton
+          variant="destructive"
+          loading={isPending}
+          onClick={() => mutate()}
+        >
+          DELETE THEM ALL
+        </ActionButton>
+      )}
+    >
+      <Button variant="destructive" disabled={numUnusedTags == 0}>
+        Delete All Unused Tags
+      </Button>
+    </ActionConfirmingDialog>
+  );
+}
 
 function TagPill({
   id,
@@ -102,9 +141,18 @@ export default function AllTagsView({
         </InfoTooltip>
       </span>
       <Collapsible>
-        <CollapsibleTrigger className="pb-2">
-          <Button variant="link">Show {emptyTags.length} unused tags</Button>
-        </CollapsibleTrigger>
+        <div className="space-x-1 pb-2">
+          <CollapsibleTrigger asChild>
+            <Button variant="secondary" disabled={emptyTags.length == 0}>
+              {emptyTags.length > 0
+                ? `Show ${emptyTags.length} unused tags`
+                : "You don't have any unused tags"}
+            </Button>
+          </CollapsibleTrigger>
+          {emptyTags.length > 0 && (
+            <DeleteAllUnusedTags numUnusedTags={emptyTags.length} />
+          )}
+        </div>
         <CollapsibleContent>
           <div className="flex flex-wrap gap-3">{tagsToPill(emptyTags)}</div>
         </CollapsibleContent>

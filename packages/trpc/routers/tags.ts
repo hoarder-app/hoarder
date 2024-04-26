@@ -1,5 +1,5 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, notExists } from "drizzle-orm";
 import { z } from "zod";
 
 import type { ZAttachedByEnum } from "@hoarder/shared/types/tags";
@@ -114,6 +114,28 @@ export const tagsAppRouter = router({
         throw new TRPCError({ code: "NOT_FOUND" });
       }
       // TODO: Update affected bookmarks in search index
+    }),
+  deleteUnused: authedProcedure
+    .output(
+      z.object({
+        deletedTags: z.number(),
+      }),
+    )
+    .mutation(async ({ ctx }) => {
+      const res = await ctx.db
+        .delete(bookmarkTags)
+        .where(
+          and(
+            eq(bookmarkTags.userId, ctx.user.id),
+            notExists(
+              ctx.db
+                .select({ id: tagsOnBookmarks.tagId })
+                .from(tagsOnBookmarks)
+                .where(eq(tagsOnBookmarks.tagId, bookmarkTags.id)),
+            ),
+          ),
+        );
+      return { deletedTags: res.changes };
     }),
   update: authedProcedure
     .input(
@@ -261,7 +283,7 @@ export const tagsAppRouter = router({
                   tagId: input.intoTagId,
                 })),
               )
-              .onConflictDoNothing()
+              .onConflictDoNothing();
           }
 
           // Delete the old tags

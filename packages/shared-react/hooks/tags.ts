@@ -53,3 +53,17 @@ export function useDeleteTag(
     },
   });
 }
+
+export function useDeleteUnusedTags(
+  ...opts: Parameters<typeof api.tags.deleteUnused.useMutation>
+) {
+  const apiUtils = api.useUtils();
+
+  return api.tags.deleteUnused.useMutation({
+    ...opts[0],
+    onSuccess: (res, req, meta) => {
+      apiUtils.tags.list.invalidate();
+      return opts[0]?.onSuccess?.(res, req, meta);
+    },
+  });
+}
