@@ -117,11 +117,24 @@ bookmarkCmd
   .option("--list-id <id>", "if set, only items from that list will be fetched")
   .action(async (opts) => {
     const api = getAPIClient();
-    const resp = await api.bookmarks.getBookmarks.query({
+
+    const request = {
       archived: opts.includeArchived ? undefined : false,
       listId: opts.listId,
-    });
-    console.log(resp.bookmarks.map(normalizeBookmark));
+    };
+
+    let results: ZBookmark[] = [];
+    let resp = await api.bookmarks.getBookmarks.query(request);
+
+    while (resp.nextCursor) {
+      resp = await api.bookmarks.getBookmarks.query({
+        ...request,
+        cursor: resp.nextCursor,
+      });
+      results = [...results, ...resp.bookmarks];
+    }
+
+    console.log(results.map(normalizeBookmark));
   });
 
 bookmarkCmd
