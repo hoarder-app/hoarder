@@ -9,6 +9,7 @@ runs:
       with:
         node-version: 21
         cache: "pnpm"
+        registry-url: https://registry.npmjs.org
 
     - shell: bash
       run: pnpm add -g turbo
