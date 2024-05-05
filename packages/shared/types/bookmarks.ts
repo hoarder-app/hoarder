@@ -89,6 +89,7 @@ export type ZNewBookmarkRequest = z.infer<typeof zNewBookmarkRequestSchema>;
 // GET /v1/bookmarks
 
 export const DEFAULT_NUM_BOOKMARKS_PER_PAGE = 20;
+export const MAX_NUM_BOOKMARKS_PER_PAGE = 100;
 
 export const zGetBookmarksRequestSchema = z.object({
   ids: z.array(z.string()).optional(),
@@ -96,7 +97,7 @@ export const zGetBookmarksRequestSchema = z.object({
   favourited: z.boolean().optional(),
   tagId: z.string().optional(),
   listId: z.string().optional(),
-  limit: z.number().max(100).optional(),
+  limit: z.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),
   cursor: z.date().nullish(),
 });
 export type ZGetBookmarksRequest = z.infer<typeof zGetBookmarksRequestSchema>;

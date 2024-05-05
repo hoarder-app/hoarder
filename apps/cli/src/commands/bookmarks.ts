@@ -4,6 +4,7 @@ import { Command } from "@commander-js/extra-typings";
 import chalk from "chalk";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { MAX_NUM_BOOKMARKS_PER_PAGE } from "@hoarder/shared/types/bookmarks";
 
 export const bookmarkCmd = new Command()
   .name("bookmarks")
@@ -121,10 +122,11 @@ bookmarkCmd
     const request = {
       archived: opts.includeArchived ? undefined : false,
       listId: opts.listId,
+      limit: MAX_NUM_BOOKMARKS_PER_PAGE,
     };
 
-    let results: ZBookmark[] = [];
     let resp = await api.bookmarks.getBookmarks.query(request);
+    let results: ZBookmark[] = resp.bookmarks;
 
     while (resp.nextCursor) {
       resp = await api.bookmarks.getBookmarks.query({
@@ -134,7 +136,7 @@ bookmarkCmd
       results = [...results, ...resp.bookmarks];
     }
 
-    console.log(results.map(normalizeBookmark));
+    console.dir(results.map(normalizeBookmark), { maxArrayLength: null });
   });
 
 bookmarkCmd
