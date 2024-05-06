@@ -12,7 +12,7 @@ import { api } from "./trpc";
 export function useUploadAsset(
   settings: Settings,
   options: {
-    onSuccess?: (bookmark: ZBookmark) => void;
+    onSuccess?: (bookmark: ZBookmark & { alreadyExists: boolean }) => void;
     onError?: (e: string) => void;
   },
 ) {

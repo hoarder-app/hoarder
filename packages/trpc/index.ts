@@ -17,6 +17,11 @@ export interface Context {
   db: typeof db;
 }
 
+export interface AuthedContext {
+  user: User;
+  db: typeof db;
+}
+
 // Avoid exporting the entire t-object
 // since it's not very descriptive.
 // For instance, the use of a t variable

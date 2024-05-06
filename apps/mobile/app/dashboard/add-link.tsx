@@ -3,17 +3,24 @@ import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { useToast } from "@/components/ui/Toast";
 import { api } from "@/lib/trpc";
 
 export default function AddNote() {
   const [text, setText] = useState("");
   const [error, setError] = useState<string | undefined>();
+  const { toast } = useToast();
   const router = useRouter();
   const invalidateAllBookmarks =
     api.useUtils().bookmarks.getBookmarks.invalidate;
 
   const { mutate } = api.bookmarks.createBookmark.useMutation({
-    onSuccess: () => {
+    onSuccess: (resp) => {
+      if (resp.alreadyExists) {
+        toast({
+          message: "Bookmark already exists",
+        });
+      }
       invalidateAllBookmarks();
       if (router.canGoBack()) {
         router.replace("../");

@@ -12,12 +12,16 @@ import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 type Mode =
   | { type: "idle" }
   | { type: "success"; bookmarkId: string }
+  | { type: "alreadyExists"; bookmarkId: string }
   | { type: "error" };
 
 function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
-  const onSaved = (d: ZBookmark) => {
+  const onSaved = (d: ZBookmark & { alreadyExists: boolean }) => {
     invalidateAllBookmarks();
-    setMode({ type: "success", bookmarkId: d.id });
+    setMode({
+      type: d.alreadyExists ? "alreadyExists" : "success",
+      bookmarkId: d.id,
+    });
   };
 
   const { hasShareIntent, shareIntent, resetShareIntent } =
@@ -84,6 +88,10 @@ export default function Sharing() {
     }
     case "success": {
       comp = <Text className="text-4xl text-foreground">Hoarded!</Text>;
+      break;
+    }
+    case "alreadyExists": {
+      comp = <Text className="text-4xl text-foreground">Already Hoarded!</Text>;
       break;
     }
     case "error": {

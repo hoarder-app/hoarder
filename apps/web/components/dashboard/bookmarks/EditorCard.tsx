@@ -1,5 +1,6 @@
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import { useEffect, useImperativeHandle, useRef } from "react";
+import Link from "next/link";
 import { ActionButton } from "@/components/ui/action-button";
 import { Form, FormControl, FormItem } from "@/components/ui/form";
 import InfoTooltip from "@/components/ui/info-tooltip";
@@ -10,6 +11,7 @@ import { useClientConfig } from "@/lib/clientConfig";
 import { useBookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ExternalLink } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -50,7 +52,23 @@ export default function EditorCard({ className }: { className?: string }) {
   useFocusOnKeyPress(inputRef);
 
   const { mutate, isPending } = useCreateBookmarkWithPostHook({
-    onSuccess: () => {
+    onSuccess: (resp) => {
+      if (resp.alreadyExists) {
+        toast({
+          description: (
+            <div className="flex items-center gap-1">
+              Bookmark already exists.
+              <Link
+                className="flex underline-offset-4 hover:underline"
+                href={`/dashboard/preview/${resp.id}`}
+              >
+                Open <ExternalLink className="ml-1 size-4" />
+              </Link>
+            </div>
+          ),
+          variant: "default",
+        });
+      }
       form.reset();
     },
     onError: () => {

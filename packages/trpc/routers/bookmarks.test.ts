@@ -116,18 +116,18 @@ describe("Bookmark Routes", () => {
 
   test<CustomTestContext>("update tags", async ({ apiCallers }) => {
     const api = apiCallers[0].bookmarks;
-    let bookmark = await api.createBookmark({
+    const createdBookmark = await api.createBookmark({
       url: "https://google.com",
       type: "link",
     });
 
     await api.updateTags({
-      bookmarkId: bookmark.id,
+      bookmarkId: createdBookmark.id,
       attach: [{ tagName: "tag1" }, { tagName: "tag2" }],
       detach: [],
     });
 
-    bookmark = await api.getBookmark({ bookmarkId: bookmark.id });
+    let bookmark = await api.getBookmark({ bookmarkId: createdBookmark.id });
     expect(bookmark.tags.map((t) => t.name).sort()).toEqual(["tag1", "tag2"]);
 
     const tag1Id = bookmark.tags.filter((t) => t.name == "tag1")[0].id;
@@ -157,17 +157,17 @@ describe("Bookmark Routes", () => {
 
   test<CustomTestContext>("update bookmark text", async ({ apiCallers }) => {
     const api = apiCallers[0].bookmarks;
-    let bookmark = await api.createBookmark({
+    const createdBookmark = await api.createBookmark({
       text: "HELLO WORLD",
       type: "text",
     });
 
     await api.updateBookmarkText({
-      bookmarkId: bookmark.id,
+      bookmarkId: createdBookmark.id,
       text: "WORLD HELLO",
     });
 
-    bookmark = await api.getBookmark({ bookmarkId: bookmark.id });
+    const bookmark = await api.getBookmark({ bookmarkId: createdBookmark.id });
     assert(bookmark.content.type == "text");
     expect(bookmark.content.text).toEqual("WORLD HELLO");
   });

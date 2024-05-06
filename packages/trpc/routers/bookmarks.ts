@@ -35,7 +35,7 @@ import {
   zUpdateBookmarksRequestSchema,
 } from "@hoarder/shared/types/bookmarks";
 
-import type { Context } from "../index";
+import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
@@ -69,6 +69,45 @@ export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
 
   return opts.next();
 });
+
+async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
+  const bookmark = await ctx.db.query.bookmarks.findFirst({
+    where: and(eq(bookmarks.userId, ctx.user.id), eq(bookmarks.id, bookmarkId)),
+    with: {
+      tagsOnBookmarks: {
+        with: {
+          tag: true,
+        },
+      },
+      link: true,
+      text: true,
+      asset: true,
+    },
+  });
+  if (!bookmark) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Bookmark not found",
+    });
+  }
+
+  return toZodSchema(bookmark);
+}
+
+async function attemptToDedupLink(ctx: AuthedContext, url: string) {
+  const result = await ctx.db
+    .select({
+      id: bookmarkLinks.id,
+    })
+    .from(bookmarkLinks)
+    .leftJoin(bookmarks, eq(bookmarks.id, bookmarkLinks.id))
+    .where(and(eq(bookmarkLinks.url, url), eq(bookmarks.userId, ctx.user.id)));
+
+  if (result.length == 0) {
+    return null;
+  }
+  return getBookmark(ctx, result[0].id);
+}
 
 async function dummyDrizzleReturnType() {
   const x = await DONT_USE_db.query.bookmarks.findFirst({
@@ -147,82 +186,94 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
 export const bookmarksAppRouter = router({
   createBookmark: authedProcedure
     .input(zNewBookmarkRequestSchema)
-    .output(zBookmarkSchema)
+    .output(
+      zBookmarkSchema.merge(
+        z.object({
+          alreadyExists: z.boolean().optional().default(false),
+        }),
+      ),
+    )
     .mutation(async ({ input, ctx }) => {
-      const bookmark = await ctx.db.transaction(
-        async (tx): Promise<ZBookmark> => {
-          const bookmark = (
-            await tx
-              .insert(bookmarks)
-              .values({
-                userId: ctx.user.id,
-              })
-              .returning()
-          )[0];
+      if (input.type == "link") {
+        // This doesn't 100% protect from duplicates because of races but it's more than enough for this usecase.
+        const alreadyExists = await attemptToDedupLink(ctx, input.url);
+        if (alreadyExists) {
+          return { ...alreadyExists, alreadyExists: true };
+        }
+      }
+      const bookmark = await ctx.db.transaction(async (tx) => {
+        const bookmark = (
+          await tx
+            .insert(bookmarks)
+            .values({
+              userId: ctx.user.id,
+            })
+            .returning()
+        )[0];
 
-          let content: ZBookmarkContent;
+        let content: ZBookmarkContent;
 
-          switch (input.type) {
-            case "link": {
-              const link = (
-                await tx
-                  .insert(bookmarkLinks)
-                  .values({
-                    id: bookmark.id,
-                    url: input.url.trim(),
-                  })
-                  .returning()
-              )[0];
-              content = {
-                type: "link",
-                ...link,
-              };
-              break;
-            }
-            case "text": {
-              const text = (
-                await tx
-                  .insert(bookmarkTexts)
-                  .values({ id: bookmark.id, text: input.text })
-                  .returning()
-              )[0];
-              content = {
-                type: "text",
-                text: text.text ?? "",
-              };
-              break;
-            }
-            case "asset": {
-              const [asset] = await tx
-                .insert(bookmarkAssets)
+        switch (input.type) {
+          case "link": {
+            const link = (
+              await tx
+                .insert(bookmarkLinks)
                 .values({
                   id: bookmark.id,
-                  assetType: input.assetType,
-                  assetId: input.assetId,
-                  content: null,
-                  metadata: null,
-                  fileName: input.fileName ?? null,
+                  url: input.url.trim(),
                 })
-                .returning();
-              content = {
-                type: "asset",
-                assetType: asset.assetType,
-                assetId: asset.assetId,
-              };
-              break;
-            }
-            case "unknown": {
-              throw new TRPCError({ code: "BAD_REQUEST" });
-            }
+                .returning()
+            )[0];
+            content = {
+              type: "link",
+              ...link,
+            };
+            break;
           }
+          case "text": {
+            const text = (
+              await tx
+                .insert(bookmarkTexts)
+                .values({ id: bookmark.id, text: input.text })
+                .returning()
+            )[0];
+            content = {
+              type: "text",
+              text: text.text ?? "",
+            };
+            break;
+          }
+          case "asset": {
+            const [asset] = await tx
+              .insert(bookmarkAssets)
+              .values({
+                id: bookmark.id,
+                assetType: input.assetType,
+                assetId: input.assetId,
+                content: null,
+                metadata: null,
+                fileName: input.fileName ?? null,
+              })
+              .returning();
+            content = {
+              type: "asset",
+              assetType: asset.assetType,
+              assetId: asset.assetId,
+            };
+            break;
+          }
+          case "unknown": {
+            throw new TRPCError({ code: "BAD_REQUEST" });
+          }
+        }
 
-          return {
-            tags: [] as ZBookmarkTags[],
-            content,
-            ...bookmark,
-          };
-        },
-      );
+        return {
+          alreadyExists: false,
+          tags: [] as ZBookmarkTags[],
+          content,
+          ...bookmark,
+        };
+      });
 
       // Enqueue crawling request
       switch (bookmark.content.type) {
@@ -360,30 +411,7 @@ export const bookmarksAppRouter = router({
     .output(zBookmarkSchema)
     .use(ensureBookmarkOwnership)
     .query(async ({ input, ctx }) => {
-      const bookmark = await ctx.db.query.bookmarks.findFirst({
-        where: and(
-          eq(bookmarks.userId, ctx.user.id),
-          eq(bookmarks.id, input.bookmarkId),
-        ),
-        with: {
-          tagsOnBookmarks: {
-            with: {
-              tag: true,
-            },
-          },
-          link: true,
-          text: true,
-          asset: true,
-        },
-      });
-      if (!bookmark) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Bookmark not found",
-        });
-      }
-
-      return toZodSchema(bookmark);
+      return await getBookmark(ctx, input.bookmarkId);
     }),
   searchBookmarks: authedProcedure
     .input(

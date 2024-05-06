@@ -147,6 +147,10 @@ export const bookmarkLinks = sqliteTable("bookmarkLinks", {
   crawlStatus: text("crawlStatus", {
     enum: ["pending", "failure", "success"],
   }).default("pending"),
+}, (bl) => {
+  return {
+    urlIdx: index("bookmarkLinks_url_idx").on(bl.url),
+  };
 });
 
 export const bookmarkTexts = sqliteTable("bookmarkTexts", {
