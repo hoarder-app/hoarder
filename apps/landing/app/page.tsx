@@ -3,6 +3,8 @@ import Link from "next/link";
 import HoarderLogo from "@/components/HoarderLogo";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import appStoreBadge from "@/public/app-store-badge.png";
+import playStoreBadge from "@/public/google-play-badge.png";
 import screenshot from "@/public/screenshot.png";
 import { ExternalLink, Github } from "lucide-react";
 
@@ -74,6 +76,21 @@ function Hero() {
           )}
         >
           <Github /> Github
+        </Link>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <Link
+          href="https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share"
+          target="_blank"
+        >
+          <Image className="w-48" alt="play store badge" src={playStoreBadge} />
+        </Link>
+        <Link
+          href="https://apps.apple.com/us/app/hoarder-app/id6479258022"
+          target="_blank"
+        >
+          <Image className="w-40" alt="app store badge" src={appStoreBadge} />
         </Link>
       </div>
     </div>
