@@ -7,7 +7,7 @@ The whole point of Hoarder is making it easy to hoard the content. That's why th
 <img src="/img/quick-sharing/mobile.png" alt="mobile screenshot" width="300"/>
 
 
-- **iOS app**: Currently [beta testing](https://testflight.apple.com/join/QifpNxAT) on TestFlight. Pending apple's approval for the app store.
+- **iOS app**: [App Store Link](https://apps.apple.com/us/app/hoarder-app/id6479258022).
 - **Android App**: [Play Store link](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
 
 ## Browser Extensions
