@@ -212,4 +212,42 @@ describe("Bookmark Routes", () => {
       ),
     ).toEqual([user2Bookmark.id]);
   });
+
+  test<CustomTestContext>("bookmark links dedup", async ({ apiCallers }) => {
+    // Two users with google in their bookmarks
+    const bookmark1User1 = await apiCallers[0].bookmarks.createBookmark({
+      url: "https://google.com",
+      type: "link",
+    });
+    expect(bookmark1User1.alreadyExists).toEqual(false);
+
+    const bookmark1User2 = await apiCallers[1].bookmarks.createBookmark({
+      url: "https://google.com",
+      type: "link",
+    });
+    expect(bookmark1User2.alreadyExists).toEqual(false);
+
+    // User1 attempting to re-add google. Should return the existing bookmark
+    const bookmark2User1 = await apiCallers[0].bookmarks.createBookmark({
+      url: "https://google.com",
+      type: "link",
+    });
+    expect(bookmark2User1.alreadyExists).toEqual(true);
+    expect(bookmark2User1.id).toEqual(bookmark1User1.id);
+
+    // User2 attempting to re-add google. Should return the existing bookmark
+    const bookmark2User2 = await apiCallers[1].bookmarks.createBookmark({
+      url: "https://google.com",
+      type: "link",
+    });
+    expect(bookmark2User2.alreadyExists).toEqual(true);
+    expect(bookmark2User2.id).toEqual(bookmark1User2.id);
+
+    // User1 adding google2. Should not return an existing bookmark
+    const bookmark3User1 = await apiCallers[0].bookmarks.createBookmark({
+      url: "https://google2.com",
+      type: "link",
+    });
+    expect(bookmark3User1.alreadyExists).toEqual(false);
+  });
 });
