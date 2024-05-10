@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { api } from "@/lib/trpc";
 
 import type {
@@ -23,12 +24,14 @@ function AssetImage({
   switch (bookmarkedAsset.assetType) {
     case "image": {
       return (
-        <Image
-          alt="asset"
-          src={getAssetUrl(bookmarkedAsset.assetId)}
-          fill={true}
-          className={className}
-        />
+        <Link href={`/dashboard/preview/${bookmark.id}`}>
+          <Image
+            alt="asset"
+            src={getAssetUrl(bookmarkedAsset.assetId)}
+            fill={true}
+            className={className}
+          />
+        </Link>
       );
     }
     case "pdf": {
