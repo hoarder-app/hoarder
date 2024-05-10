@@ -231,10 +231,11 @@ async function crawlPage(jobId: string, url: string) {
         // If you change this, you need to change the asset type in the store function.
         type: "png",
         encoding: "binary",
+        fullPage: serverConfig.crawler.fullPageScreenshot,
       }),
     ]);
     logger.info(
-      `[Crawler][${jobId}] Finished capturing page content and a screenshot.`,
+      `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
     );
     return { htmlContent, screenshot, url: page.url() };
   } finally {

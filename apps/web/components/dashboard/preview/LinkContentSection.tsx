@@ -16,10 +16,12 @@ function ScreenshotSection({ link }: { link: ZBookmarkedLink }) {
   return (
     <div className="relative h-full min-w-full">
       <Image
-        fill={true}
         alt="screenshot"
         src={`/api/assets/${link.screenshotAssetId}`}
-        className="object-contain"
+        width={0}
+        height={0}
+        sizes="100vw"
+        style={{ width: "100%", height: "auto" }}
       />
     </div>
   );
