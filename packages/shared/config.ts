@@ -25,6 +25,7 @@ const allEnv = z.object({
   CRAWLER_NUM_WORKERS: z.coerce.number().default(1),
   CRAWLER_DOWNLOAD_BANNER_IMAGE: stringBool("true"),
   CRAWLER_STORE_SCREENSHOT: stringBool("true"),
+  CRAWLER_FULL_PAGE_SCREENSHOT: stringBool("false"),
   MEILI_ADDR: z.string().optional(),
   MEILI_MASTER_KEY: z.string().default(""),
   LOG_LEVEL: z.string().default("debug"),
@@ -66,6 +67,7 @@ const serverConfigSchema = allEnv.transform((val) => {
       navigateTimeoutSec: val.CRAWLER_NAVIGATE_TIMEOUT_SEC,
       downloadBannerImage: val.CRAWLER_DOWNLOAD_BANNER_IMAGE,
       storeScreenshot: val.CRAWLER_STORE_SCREENSHOT,
+      fullPageScreenshot: val.CRAWLER_FULL_PAGE_SCREENSHOT,
     },
     meilisearch: val.MEILI_ADDR
       ? {
