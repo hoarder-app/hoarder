@@ -96,7 +96,7 @@ function ViewMode({
 }: Props) {
   return (
     <Tooltip delayDuration={500}>
-      <div className="flex items-center gap-3 text-center">
+      <div className="flex max-w-full items-center gap-3 text-center">
         <TooltipTrigger asChild>
           {originalText ? (
             <p className={viewClassName}>{originalText}</p>

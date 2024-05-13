@@ -35,8 +35,8 @@ export function EditableTitle({ bookmark }: { bookmark: ZBookmark }) {
   return (
     <EditableText
       originalText={title}
-      editClassName="p-2 text-center text-lg"
-      viewClassName="line-clamp-2 text-lg"
+      editClassName="p-2 text-center text-lg break-all"
+      viewClassName="inline line-clamp-2 text-lg text-ellipsis"
       untitledClassName="text-lg italic text-gray-600"
       onSave={(newTitle) => {
         updateBookmark(

@@ -65,7 +65,11 @@ function ListView({
       </div>
       <div className="flex h-full flex-1 flex-col justify-between gap-2 overflow-hidden">
         <div className="flex flex-col gap-2 overflow-hidden">
-          {title && <div className="flex-none shrink-0 text-lg">{title}</div>}
+          {title && (
+            <div className="flex-none shrink-0 overflow-hidden text-ellipsis text-lg">
+              {title}
+            </div>
+          )}
           {content && <div className="shrink-1 overflow-hidden">{content}</div>}
           <div className="flex shrink-0 flex-wrap gap-1 overflow-hidden">
             <TagList
@@ -104,7 +108,11 @@ function GridView({
       {img && <div className="h-56 w-full shrink-0 overflow-hidden">{img}</div>}
       <div className="flex h-full flex-col justify-between gap-2 overflow-hidden p-2">
         <div className="grow-1 flex flex-col gap-2 overflow-hidden">
-          {title && <div className="flex-none shrink-0 text-lg">{title}</div>}
+          {title && (
+            <div className="flex-none shrink-0 overflow-hidden text-ellipsis text-lg">
+              {title}
+            </div>
+          )}
           {content && <div className="shrink-1 overflow-hidden">{content}</div>}
           <div className="flex shrink-0 flex-wrap gap-1 overflow-hidden">
             <TagList
