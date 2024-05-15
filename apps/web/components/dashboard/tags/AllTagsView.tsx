@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import React from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { Button } from "@/components/ui/button";
@@ -13,12 +13,15 @@ import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-import { X } from "lucide-react";
+import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
 
 import type { ZGetTagResponse } from "@hoarder/shared/types/tags";
-import { useDeleteUnusedTags } from "@hoarder/shared-react/hooks/tags";
+import {
+  useDeleteUnusedTags,
+  useMergeTag,
+} from "@hoarder/shared-react/hooks/tags";
 
-import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";
+import { TagPill } from "./TagPill";
 
 function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
   const { mutate, isPending } = useDeleteUnusedTags({
@@ -54,48 +57,128 @@ function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
     </ActionConfirmingDialog>
   );
 }
-
-function TagPill({
-  id,
-  name,
-  count,
-}: {
-  id: string;
-  name: string;
-  count: number;
-}) {
-  return (
-    <div className="group relative flex">
-      <Link
-        className="flex gap-2 rounded-md border border-border bg-background px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
-        href={`/dashboard/tags/${id}`}
-      >
-        {name} <Separator orientation="vertical" /> {count}
-      </Link>
-
-      <DeleteTagConfirmationDialog tag={{ name, id }}>
-        <Button
-          size="none"
-          variant="secondary"
-          className="-translate-1/2 absolute -right-1 -top-1 hidden rounded-full group-hover:block"
-        >
-          <X className="size-3" />
-        </Button>
-      </DeleteTagConfirmationDialog>
-    </div>
-  );
+interface DragState {
+  dragId: string | null;
+  dragOverId: string | null;
+  x: number;
+  y: number;
 }
+
+const initialState: DragState = {
+  dragId: "",
+  dragOverId: "",
+  x: 0,
+  y: 0,
+};
+let currentState: DragState = initialState;
+
+const byUsageSorter = (a: ZGetTagResponse, b: ZGetTagResponse) =>
+  b.count - a.count;
+const byNameSorter = (a: ZGetTagResponse, b: ZGetTagResponse) =>
+  a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
 
 export default function AllTagsView({
   initialData,
 }: {
   initialData: ZGetTagResponse[];
 }) {
+  const [draggingEnabled, setDraggingEnabled] = React.useState(false);
+  const [sortByName, setSortByName] = React.useState(false);
+
+  function handleSortByNameChange(): void {
+    setSortByName(!sortByName);
+  }
+
+  function handleDraggableChange(): void {
+    setDraggingEnabled(!draggingEnabled);
+  }
+
+  function handleDragStart(e: DraggableEvent, data: DraggableData): void {
+    const { node } = data;
+    const id = node.getAttribute("data-id");
+
+    currentState = {
+      ...initialState,
+      dragId: id,
+      x: data.x,
+      y: data.y,
+    };
+  }
+
+  function handleDrag(e: DraggableEvent): void {
+    const { dragOverId } = currentState;
+    const { target } = e;
+
+    // Important according to the sample I found
+    e.preventDefault();
+
+    if (target) {
+      const id = (target as HTMLElement).getAttribute("data-id");
+
+      if (id !== dragOverId) {
+        currentState.dragOverId = id;
+      }
+    }
+  }
+
+  function handleDragEnd(): void {
+    const { dragId, dragOverId } = currentState;
+
+    if (dragId && dragOverId && dragId !== dragOverId) {
+      /*  
+            As Draggable tries to setState when the 
+            component is unmounted, it is needed to
+            push onCombine to the event loop queue.
+            onCombine would be run after setState on
+            Draggable so it would fix the issue until
+            they fix it on their end.
+        */
+      setTimeout(() => {
+        mergeTag({
+          fromTagIds: [dragId],
+          intoTagId: dragOverId,
+        });
+      }, 0);
+    }
+
+    currentState = initialState;
+  }
+
+  const { mutate: mergeTag } = useMergeTag({
+    onSuccess: () => {
+      toast({
+        description: "Tag has been updated!",
+      });
+    },
+    onError: (e) => {
+      if (e.data?.code == "BAD_REQUEST") {
+        if (e.data.zodError) {
+          toast({
+            variant: "destructive",
+            description: Object.values(e.data.zodError.fieldErrors)
+              .flat()
+              .join("\n"),
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            description: e.message,
+          });
+        }
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+        });
+      }
+    },
+  });
+
   const { data } = api.tags.list.useQuery(undefined, {
     initialData: { tags: initialData },
   });
   // Sort tags by usage desc
-  const allTags = data.tags.sort((a, b) => b.count - a.count);
+  const allTags = data.tags.sort(sortByName ? byNameSorter : byUsageSorter);
 
   const humanTags = allTags.filter((t) => (t.countAttachedBy.human ?? 0) > 0);
   const aiTags = allTags.filter((t) => (t.countAttachedBy.ai ?? 0) > 0);
@@ -104,9 +187,42 @@ export default function AllTagsView({
   const tagsToPill = (tags: typeof allTags) => {
     let tagPill;
     if (tags.length) {
-      tagPill = tags.map((t) => (
-        <TagPill key={t.id} id={t.id} name={t.name} count={t.count} />
-      ));
+      tagPill = (
+        <div className="flex flex-wrap gap-3">
+          {tags.map((t) => (
+            <Draggable
+              key={t.id}
+              axis="both"
+              onStart={handleDragStart}
+              onDrag={handleDrag}
+              onStop={handleDragEnd}
+              disabled={!draggingEnabled}
+              defaultClassNameDragging={
+                "position-relative z-10 pointer-events-none"
+              }
+              position={
+                !currentState.dragId
+                  ? { x: currentState.x ?? 0, y: currentState.y ?? 0 }
+                  : undefined
+              }
+            >
+              <div
+                className="group relative flex cursor-grab"
+                data-id={t.id}
+                onDragOver={handleDrag}
+              >
+                <TagPill
+                  key={t.id}
+                  id={t.id}
+                  name={t.name}
+                  count={t.count}
+                  isDraggable={draggingEnabled}
+                />
+              </div>
+            </Draggable>
+          ))}
+        </div>
+      );
     } else {
       tagPill = "No Tags";
     }
@@ -114,12 +230,30 @@ export default function AllTagsView({
   };
   return (
     <>
+      <label>
+        <input
+          type="checkbox"
+          checked={draggingEnabled}
+          onChange={handleDraggableChange}
+        />
+        Allow Merging via Drag&Drop
+      </label>
+      <br />
+      <label>
+        <input
+          type="checkbox"
+          checked={sortByName}
+          onChange={handleSortByNameChange}
+        />
+        Sort by Name
+      </label>
       <span className="flex items-center gap-2">
         <p className="text-lg">Your Tags</p>
         <InfoTooltip size={15} className="my-auto" variant="explain">
           <p>Tags that were attached at least once by you</p>
         </InfoTooltip>
       </span>
+
       <div className="flex flex-wrap gap-3">{tagsToPill(humanTags)}</div>
 
       <Separator />
@@ -130,6 +264,7 @@ export default function AllTagsView({
           <p>Tags that were only attached automatically (by AI)</p>
         </InfoTooltip>
       </span>
+
       <div className="flex flex-wrap gap-3">{tagsToPill(aiTags)}</div>
 
       <Separator />
