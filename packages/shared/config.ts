@@ -18,6 +18,7 @@ const allEnv = z.object({
   REDIS_HOST: z.string().default("localhost"),
   REDIS_PORT: z.coerce.number().default(6379),
   REDIS_DB_IDX: z.coerce.number().optional(),
+  REDIS_PASSWORD: z.string().optional(),
   CRAWLER_HEADLESS_BROWSER: stringBool("true"),
   BROWSER_WEB_URL: z.string().url().optional(),
   CRAWLER_JOB_TIMEOUT_SEC: z.coerce.number().default(60),
@@ -58,6 +59,7 @@ const serverConfigSchema = allEnv.transform((val) => {
       redisHost: val.REDIS_HOST,
       redisPort: val.REDIS_PORT,
       redisDBIdx: val.REDIS_DB_IDX,
+      redisPassword: val.REDIS_PASSWORD,
     },
     crawler: {
       numWorkers: val.CRAWLER_NUM_WORKERS,
