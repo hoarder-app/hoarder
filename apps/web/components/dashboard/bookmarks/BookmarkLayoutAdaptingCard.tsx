@@ -66,7 +66,7 @@ function ListView({
       <div className="flex h-full flex-1 flex-col justify-between gap-2 overflow-hidden">
         <div className="flex flex-col gap-2 overflow-hidden">
           {title && (
-            <div className="flex-none shrink-0 overflow-hidden text-ellipsis text-lg">
+            <div className="line-clamp-2 flex-none shrink-0 overflow-hidden text-ellipsis break-words text-lg">
               {title}
             </div>
           )}
@@ -109,7 +109,7 @@ function GridView({
       <div className="flex h-full flex-col justify-between gap-2 overflow-hidden p-2">
         <div className="grow-1 flex flex-col gap-2 overflow-hidden">
           {title && (
-            <div className="flex-none shrink-0 overflow-hidden text-ellipsis text-lg">
+            <div className="line-clamp-2 flex-none shrink-0 overflow-hidden text-ellipsis break-words text-lg">
               {title}
             </div>
           )}
