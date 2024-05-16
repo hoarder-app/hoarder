@@ -333,5 +333,9 @@ export default function BookmarkCard({
       break;
   }
 
-  return <View className="border-b border-accent bg-background">{comp}</View>;
+  return (
+    <View className="overflow-hidden rounded-xl border-b border-accent bg-background">
+      {comp}
+    </View>
+  );
 }

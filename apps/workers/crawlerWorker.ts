@@ -48,39 +48,53 @@ const metascraperParser = metascraper([
   metascraperUrl(),
 ]);
 
-let browser: Browser | undefined;
+let globalBrowser: Browser | undefined;
 // Guards the interactions with the browser instance.
 // This is needed given that most of the browser APIs are async.
 const browserMutex = new Mutex();
 
+async function startBrowserInstance() {
+  const defaultViewport = {
+    width: 1440,
+    height: 900,
+  };
+  if (serverConfig.crawler.browserWebSocketUrl) {
+    logger.info(
+      `[Crawler] Connecting to existing browser websocket address: ${serverConfig.crawler.browserWebSocketUrl}`,
+    );
+    return await puppeteer.connect({
+      browserWSEndpoint: serverConfig.crawler.browserWebSocketUrl,
+      defaultViewport,
+    });
+  } else if (serverConfig.crawler.browserWebUrl) {
+    logger.info(
+      `[Crawler] Connecting to existing browser instance: ${serverConfig.crawler.browserWebUrl}`,
+    );
+    const webUrl = new URL(serverConfig.crawler.browserWebUrl);
+    // We need to resolve the ip address as a workaround for https://github.com/puppeteer/puppeteer/issues/2242
+    const { address: address } = await dns.promises.lookup(webUrl.hostname);
+    webUrl.hostname = address;
+    logger.info(
+      `[Crawler] Successfully resolved IP address, new address: ${webUrl.toString()}`,
+    );
+    return await puppeteer.connect({
+      browserURL: webUrl.toString(),
+      defaultViewport,
+    });
+  } else {
+    logger.info(`Launching a new browser instance`);
+    return await puppeteer.launch({
+      headless: serverConfig.crawler.headlessBrowser,
+      defaultViewport,
+    });
+  }
+}
+
 async function launchBrowser() {
-  browser = undefined;
+  globalBrowser = undefined;
   await browserMutex.runExclusive(async () => {
     try {
-      if (serverConfig.crawler.browserWebUrl) {
-        logger.info(
-          `[Crawler] Connecting to existing browser instance: ${serverConfig.crawler.browserWebUrl}`,
-        );
-        const webUrl = new URL(serverConfig.crawler.browserWebUrl);
-        // We need to resolve the ip address as a workaround for https://github.com/puppeteer/puppeteer/issues/2242
-        const { address: address } = await dns.promises.lookup(webUrl.hostname);
-        webUrl.hostname = address;
-        logger.info(
-          `[Crawler] Successfully resolved IP address, new address: ${webUrl.toString()}`,
-        );
-        browser = await puppeteer.connect({
-          browserURL: webUrl.toString(),
-          defaultViewport: {
-            width: 1440,
-            height: 900,
-          },
-        });
-      } else {
-        logger.info(`Launching a new browser instance`);
-        browser = await puppeteer.launch({
-          headless: serverConfig.crawler.headlessBrowser,
-        });
-      }
+      globalBrowser = await startBrowserInstance();
     } catch (e) {
       logger.error(
         "[Crawler] Failed to connect to the browser instance, will retry in 5 secs",
@@ -90,7 +104,7 @@ async function launchBrowser() {
       }, 5000);
       return;
     }
-    browser.on("disconnected", () => {
+    globalBrowser.on("disconnected", () => {
       if (isShuttingDown) {
         logger.info(
           "[Crawler] The puppeteer browser got disconnected. But we're shutting down so won't restart it.",
@@ -113,7 +127,13 @@ export class CrawlerWorker {
         blockTrackersAndAnnoyances: true,
       }),
     );
-    await launchBrowser();
+    if (!serverConfig.crawler.browserConnectOnDemand) {
+      await launchBrowser();
+    } else {
+      logger.info(
+        "[Crawler] Browser connect on demand is enabled, won't proactively start the browser instance",
+      );
+    }
 
     logger.info("Starting crawler worker ...");
     const worker = new Worker<ZCrawlLinkRequest, void>(
@@ -197,6 +217,13 @@ function validateUrl(url: string) {
 }
 
 async function crawlPage(jobId: string, url: string) {
+  let browser: Browser;
+  if (serverConfig.crawler.browserConnectOnDemand) {
+    browser = await startBrowserInstance();
+  } else {
+    assert(globalBrowser);
+    browser = globalBrowser;
+  }
   assert(browser);
   const context = await browser.createBrowserContext();
 
@@ -231,10 +258,11 @@ async function crawlPage(jobId: string, url: string) {
         // If you change this, you need to change the asset type in the store function.
         type: "png",
         encoding: "binary",
+        fullPage: serverConfig.crawler.fullPageScreenshot,
       }),
     ]);
     logger.info(
-      `[Crawler][${jobId}] Finished capturing page content and a screenshot.`,
+      `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
     );
     return { htmlContent, screenshot, url: page.url() };
   } finally {
