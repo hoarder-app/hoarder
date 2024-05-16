@@ -7,6 +7,7 @@ export const queueConnectionDetails = {
   host: serverConfig.bullMQ.redisHost,
   port: serverConfig.bullMQ.redisPort,
   db: serverConfig.bullMQ.redisDBIdx,
+  password: serverConfig.bullMQ.redisPassword,
 };
 
 // Link Crawler
