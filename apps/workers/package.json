@@ -27,7 +27,7 @@
     "metascraper-url": "^5.43.4",
     "ollama": "^0.5.0",
     "openai": "^4.29.0",
-    "pdf2json": "^3.0.5",
+    "pdf2json": "3.0.5",
     "pdfjs-dist": "^4.0.379",
     "puppeteer": "^22.0.0",
     "puppeteer-extra": "^3.3.6",
