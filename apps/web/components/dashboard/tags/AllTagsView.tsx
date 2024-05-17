@@ -12,8 +12,9 @@ import {
 import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
+import { useDragAndDrop } from "@/lib/drag-and-drop";
 import { api } from "@/lib/trpc";
-import Draggable, { DraggableData, DraggableEvent } from "react-draggable";
+import Draggable from "react-draggable";
 
 import type { ZGetTagResponse } from "@hoarder/shared/types/tags";
 import {
@@ -57,21 +58,6 @@ function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
     </ActionConfirmingDialog>
   );
 }
-interface DragState {
-  dragId: string | null;
-  dragOverId: string | null;
-  // The position of the elements being dragged such that on drag over, we can revert the position.
-  initialX: number;
-  initialY: number;
-}
-
-const initialState: DragState = {
-  dragId: null,
-  dragOverId: null,
-  initialX: 0,
-  initialY: 0,
-};
-let currentState: DragState = initialState;
 
 const byUsageSorter = (a: ZGetTagResponse, b: ZGetTagResponse) =>
   b.count - a.count;
@@ -86,63 +72,24 @@ export default function AllTagsView({
   const [draggingEnabled, toggleDraggingEnabled] = React.useState(false);
   const [sortByName, toggleSortByName] = React.useState(false);
 
+  const { dragState, handleDrag, handleDragStart, handleDragEnd } =
+    useDragAndDrop(
+      "data-id",
+      "data-id",
+      (dragSourceId: string, dragTargetId: string) => {
+        mergeTag({
+          fromTagIds: [dragSourceId],
+          intoTagId: dragTargetId,
+        });
+      },
+    );
+
   function handleSortByNameChange(): void {
     toggleSortByName(!sortByName);
   }
 
   function handleDraggableChange(): void {
     toggleDraggingEnabled(!draggingEnabled);
-  }
-
-  function handleDragStart(e: DraggableEvent, data: DraggableData): void {
-    const { node } = data;
-    const id = node.getAttribute("data-id");
-
-    currentState = {
-      ...initialState,
-      dragId: id,
-      initialX: data.x,
-      initialY: data.y,
-    };
-  }
-
-  function handleDrag(e: DraggableEvent): void {
-    const { dragOverId } = currentState;
-    const { target } = e;
-
-    // Important according to the sample I found
-    e.preventDefault();
-
-    if (target) {
-      const id = (target as HTMLElement).getAttribute("data-id");
-
-      if (id !== dragOverId) {
-        currentState.dragOverId = id;
-      }
-    }
-  }
-
-  function handleDragEnd(): void {
-    const { dragId, dragOverId } = currentState;
-
-    if (dragId && dragOverId && dragId !== dragOverId) {
-      /*  
-            As Draggable tries to setState when the 
-            component is unmounted, it is needed to
-            push onCombine to the event loop queue.
-            onCombine would be run after setState on
-            Draggable so it would fix the issue until
-            they fix it on their end.
-        */
-      setTimeout(() => {
-        mergeTag({
-          fromTagIds: [dragId],
-          intoTagId: dragOverId,
-        });
-      }, 0);
-    }
-
-    currentState = initialState;
   }
 
   const { mutate: mergeTag } = useMergeTag({
@@ -202,10 +149,10 @@ export default function AllTagsView({
                 "position-relative z-10 pointer-events-none"
               }
               position={
-                !currentState.dragId
+                !dragState.dragSourceId
                   ? {
-                      x: currentState.initialX ?? 0,
-                      y: currentState.initialY ?? 0,
+                      x: dragState.initialX ?? 0,
+                      y: dragState.initialY ?? 0,
                     }
                   : undefined
               }
