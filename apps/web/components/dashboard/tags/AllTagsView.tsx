@@ -60,15 +60,16 @@ function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
 interface DragState {
   dragId: string | null;
   dragOverId: string | null;
-  x: number;
-  y: number;
+  // The position of the elements being dragged such that on drag over, we can revert the position.
+  initialX: number;
+  initialY: number;
 }
 
 const initialState: DragState = {
-  dragId: "",
-  dragOverId: "",
-  x: 0,
-  y: 0,
+  dragId: null,
+  dragOverId: null,
+  initialX: 0,
+  initialY: 0,
 };
 let currentState: DragState = initialState;
 
@@ -82,15 +83,15 @@ export default function AllTagsView({
 }: {
   initialData: ZGetTagResponse[];
 }) {
-  const [draggingEnabled, setDraggingEnabled] = React.useState(false);
-  const [sortByName, setSortByName] = React.useState(false);
+  const [draggingEnabled, toggleDraggingEnabled] = React.useState(false);
+  const [sortByName, toggleSortByName] = React.useState(false);
 
   function handleSortByNameChange(): void {
-    setSortByName(!sortByName);
+    toggleSortByName(!sortByName);
   }
 
   function handleDraggableChange(): void {
-    setDraggingEnabled(!draggingEnabled);
+    toggleDraggingEnabled(!draggingEnabled);
   }
 
   function handleDragStart(e: DraggableEvent, data: DraggableData): void {
@@ -100,8 +101,8 @@ export default function AllTagsView({
     currentState = {
       ...initialState,
       dragId: id,
-      x: data.x,
-      y: data.y,
+      initialX: data.x,
+      initialY: data.y,
     };
   }
 
@@ -147,7 +148,7 @@ export default function AllTagsView({
   const { mutate: mergeTag } = useMergeTag({
     onSuccess: () => {
       toast({
-        description: "Tag has been updated!",
+        description: "Tags have been merged!",
       });
     },
     onError: (e) => {
@@ -202,17 +203,15 @@ export default function AllTagsView({
               }
               position={
                 !currentState.dragId
-                  ? { x: currentState.x ?? 0, y: currentState.y ?? 0 }
+                  ? {
+                      x: currentState.initialX ?? 0,
+                      y: currentState.initialY ?? 0,
+                    }
                   : undefined
               }
             >
-              <div
-                className="group relative flex cursor-grab"
-                data-id={t.id}
-                onDragOver={handleDrag}
-              >
+              <div className="group relative flex cursor-grab" data-id={t.id}>
                 <TagPill
-                  key={t.id}
                   id={t.id}
                   name={t.name}
                   count={t.count}
@@ -254,7 +253,7 @@ export default function AllTagsView({
         </InfoTooltip>
       </span>
 
-      <div className="flex flex-wrap gap-3">{tagsToPill(humanTags)}</div>
+      {tagsToPill(humanTags)}
 
       <Separator />
 
@@ -265,7 +264,7 @@ export default function AllTagsView({
         </InfoTooltip>
       </span>
 
-      <div className="flex flex-wrap gap-3">{tagsToPill(aiTags)}</div>
+      {tagsToPill(aiTags)}
 
       <Separator />
 
@@ -288,9 +287,7 @@ export default function AllTagsView({
             <DeleteAllUnusedTags numUnusedTags={emptyTags.length} />
           )}
         </div>
-        <CollapsibleContent>
-          <div className="flex flex-wrap gap-3">{tagsToPill(emptyTags)}</div>
-        </CollapsibleContent>
+        <CollapsibleContent>{tagsToPill(emptyTags)}</CollapsibleContent>
       </Collapsible>
     </>
   );
