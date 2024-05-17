@@ -59,8 +59,13 @@ function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
   );
 }
 
-const byUsageSorter = (a: ZGetTagResponse, b: ZGetTagResponse) =>
-  b.count - a.count;
+const byUsageSorter = (a: ZGetTagResponse, b: ZGetTagResponse) => {
+  // Sort by name if the usage is the same to get a stable result
+  if (b.count == a.count) {
+    return byNameSorter(a, b);
+  }
+  return b.count - a.count;
+};
 const byNameSorter = (a: ZGetTagResponse, b: ZGetTagResponse) =>
   a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
 
