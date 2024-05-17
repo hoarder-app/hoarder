@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/collapsible";
 import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
+import { Toggle } from "@/components/ui/toggle";
 import { toast } from "@/components/ui/use-toast";
 import { useDragAndDrop } from "@/lib/drag-and-drop";
 import { api } from "@/lib/trpc";
@@ -181,23 +182,24 @@ export default function AllTagsView({
   };
   return (
     <>
-      <label>
-        <input
-          type="checkbox"
-          checked={draggingEnabled}
-          onChange={handleDraggableChange}
-        />
-        Allow Merging via Drag&Drop
-      </label>
-      <br />
-      <label>
-        <input
-          type="checkbox"
-          checked={sortByName}
-          onChange={handleSortByNameChange}
-        />
-        Sort by Name
-      </label>
+      <div className="float-right">
+        <Toggle
+          variant="outline"
+          aria-label="Toggle bold"
+          pressed={draggingEnabled}
+          onPressedChange={handleDraggableChange}
+        >
+          Allow Merging via Drag&Drop
+        </Toggle>
+        <Toggle
+          variant="outline"
+          aria-label="Toggle bold"
+          pressed={sortByName}
+          onPressedChange={handleSortByNameChange}
+        >
+          Sort by Name
+        </Toggle>
+      </div>
       <span className="flex items-center gap-2">
         <p className="text-lg">Your Tags</p>
         <InfoTooltip size={15} className="my-auto" variant="explain">
