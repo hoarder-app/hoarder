@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Maximize2 } from "lucide-react";
+import { GripVertical, Maximize2 } from "lucide-react";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
@@ -25,6 +25,7 @@ export default function BookmarkActionBar({
         <Maximize2 size="20" />
       </Link>
       <BookmarkOptions bookmark={bookmark} />
+      <GripVertical className="handle inline-flex h-10 cursor-grab items-center justify-center whitespace-nowrap px-0 py-2" />
     </div>
   );
 }

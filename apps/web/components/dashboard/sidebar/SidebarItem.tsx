@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 export default function SidebarItem({
+  id,
   name,
   logo,
   path,
@@ -14,6 +15,7 @@ export default function SidebarItem({
   collapseButton,
   right = null,
 }: {
+  id?: string;
   name: string;
   logo: React.ReactNode;
   path: string;
@@ -25,6 +27,7 @@ export default function SidebarItem({
   const currentPath = usePathname();
   return (
     <li
+      data-list-id={id}
       className={cn(
         "relative rounded-lg px-3 py-2 hover:bg-accent",
         path == currentPath ? "bg-accent/50" : "",
