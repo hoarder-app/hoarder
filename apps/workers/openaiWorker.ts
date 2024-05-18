@@ -97,7 +97,7 @@ with the key "tags" and the value is list of tags. Don't wrap the response in a 
 
 const TEXT_PROMPT_BASE = `
 I'm building a read-it-later app and I need your help with automatic tagging.
-Please analyze the text after the sentence "CONTENT START HERE" and "CONTENT END HERE" and suggest relevant tags that describe its key themes, topics, and main ideas.
+Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT END HERE" and suggest relevant tags that describe its key themes, topics, and main ideas.
 Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}. If it's a famous website
 you may also include a tag for the website. If the tag is not generic enough, don't include it.
 The content can include text for cookie consent and privacy policy, ignore those while tagging.
