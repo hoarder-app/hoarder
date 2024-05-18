@@ -1,69 +1,30 @@
+import React from "react";
 import { DraggableData, DraggableEvent } from "react-draggable";
-
-export interface DragState {
-  // The id of the element that is being dragged
-  dragSourceId: string | null;
-  // The id of the element that is currently being hovered over
-  dragTargetId: string | null;
-  // The position of the elements being dragged such that on drag over, we can revert the position.
-  initialX: number;
-  initialY: number;
-}
-
-export interface DragAndDropFunctions {
-  handleDragStart: (e: DraggableEvent, data: DraggableData) => void;
-  handleDrag: (e: DraggableEvent) => void;
-  handleDragEnd: () => void;
-  dragState: DragState;
-}
 
 export function useDragAndDrop(
   dragSourceIdAttribute: string,
   dragTargetIdAttribute: string,
-  callback: (dragSourceId: string, dragTargetId: string) => void,
-): DragAndDropFunctions {
-  const initialState: DragState = {
-    dragSourceId: null,
-    dragTargetId: null,
-    initialX: 0,
-    initialY: 0,
-  };
+  onDragOver: (dragSourceId: string, dragTargetId: string) => void,
+) {
+  const [dragSourceId, setDragSourceId] = React.useState<string | null>(null);
 
-  let currentState: DragState = initialState;
+  const handleDragStart = React.useCallback(
+    (_e: DraggableEvent, { node }: DraggableData) => {
+      const id = node.getAttribute(dragSourceIdAttribute);
+      setDragSourceId(id);
+    },
+    [],
+  );
 
-  function handleDragStart(e: DraggableEvent, data: DraggableData): void {
-    const { node } = data;
-    const id = node.getAttribute(dragSourceIdAttribute);
+  const handleDragEnd = React.useCallback(
+    (e: DraggableEvent) => {
+      const { target } = e;
+      const dragTargetId = (target as HTMLElement).getAttribute(
+        dragTargetIdAttribute,
+      );
 
-    currentState = {
-      ...initialState,
-      dragSourceId: id,
-      initialX: data.x,
-      initialY: data.y,
-    };
-  }
-
-  function handleDrag(e: DraggableEvent): void {
-    const { dragTargetId } = currentState;
-    const { target } = e;
-
-    // Important according to the sample I found
-    e.preventDefault();
-
-    if (target) {
-      const id = (target as HTMLElement).getAttribute(dragTargetIdAttribute);
-
-      if (id !== dragTargetId) {
-        currentState.dragTargetId = id;
-      }
-    }
-  }
-
-  function handleDragEnd(): void {
-    const { dragSourceId, dragTargetId } = currentState;
-
-    if (dragSourceId && dragTargetId && dragSourceId !== dragTargetId) {
-      /*  
+      if (dragSourceId && dragTargetId && dragSourceId !== dragTargetId) {
+        /*
           As Draggable tries to setState when the 
           component is unmounted, it is needed to
           push onCombine to the event loop queue.
@@ -71,19 +32,17 @@ export function useDragAndDrop(
           Draggable so it would fix the issue until
           they fix it on their end.
       */
-      setTimeout(() => {
-        console.log(dragSourceId, dragTargetId);
-        callback(dragSourceId, dragTargetId);
-      }, 0);
-    }
-
-    currentState = initialState;
-  }
+        setTimeout(() => {
+          onDragOver(dragSourceId, dragTargetId);
+        }, 0);
+      }
+      setDragSourceId(null);
+    },
+    [dragSourceId, onDragOver],
+  );
 
   return {
-    dragState: currentState,
     handleDragStart,
-    handleDrag,
     handleDragEnd,
   };
 }

@@ -15,6 +15,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { toast } from "@/components/ui/use-toast";
 import { useDragAndDrop } from "@/lib/drag-and-drop";
 import { api } from "@/lib/trpc";
+import { ArrowDownAZ, Combine } from "lucide-react";
 import Draggable from "react-draggable";
 
 import type { ZGetTagResponse } from "@hoarder/shared/types/tags";
@@ -75,27 +76,26 @@ export default function AllTagsView({
 }: {
   initialData: ZGetTagResponse[];
 }) {
-  const [draggingEnabled, toggleDraggingEnabled] = React.useState(false);
-  const [sortByName, toggleSortByName] = React.useState(false);
+  const [draggingEnabled, setDraggingEnabled] = React.useState(false);
+  const [sortByName, setSortByName] = React.useState(false);
 
-  const { dragState, handleDrag, handleDragStart, handleDragEnd } =
-    useDragAndDrop(
-      "data-id",
-      "data-id",
-      (dragSourceId: string, dragTargetId: string) => {
-        mergeTag({
-          fromTagIds: [dragSourceId],
-          intoTagId: dragTargetId,
-        });
-      },
-    );
+  const { handleDragStart, handleDragEnd } = useDragAndDrop(
+    "data-id",
+    "data-id",
+    (dragSourceId: string, dragTargetId: string) => {
+      mergeTag({
+        fromTagIds: [dragSourceId],
+        intoTagId: dragTargetId,
+      });
+    },
+  );
 
-  function handleSortByNameChange(): void {
-    toggleSortByName(!sortByName);
+  function toggleSortByName(): void {
+    setSortByName(!sortByName);
   }
 
-  function handleDraggableChange(): void {
-    toggleDraggingEnabled(!draggingEnabled);
+  function toggleDraggingEnabled(): void {
+    setDraggingEnabled(!draggingEnabled);
   }
 
   const { mutate: mergeTag } = useMergeTag({
@@ -131,6 +131,7 @@ export default function AllTagsView({
   const { data } = api.tags.list.useQuery(undefined, {
     initialData: { tags: initialData },
   });
+
   // Sort tags by usage desc
   const allTags = data.tags.sort(sortByName ? byNameSorter : byUsageSorter);
 
@@ -148,28 +149,15 @@ export default function AllTagsView({
               key={t.id}
               axis="both"
               onStart={handleDragStart}
-              onDrag={handleDrag}
               onStop={handleDragEnd}
               disabled={!draggingEnabled}
               defaultClassNameDragging={
                 "position-relative z-10 pointer-events-none"
               }
-              position={
-                !dragState.dragSourceId
-                  ? {
-                      x: dragState.initialX ?? 0,
-                      y: dragState.initialY ?? 0,
-                    }
-                  : undefined
-              }
+              position={{ x: 0, y: 0 }}
             >
-              <div className="group relative flex cursor-grab" data-id={t.id}>
-                <TagPill
-                  id={t.id}
-                  name={t.name}
-                  count={t.count}
-                  isDraggable={draggingEnabled}
-                />
+              <div className="cursor-grab" data-id={t.id}>
+                <TagPill id={t.id} name={t.name} count={t.count} />
               </div>
             </Draggable>
           ))}
@@ -182,22 +170,24 @@ export default function AllTagsView({
   };
   return (
     <>
-      <div className="float-right">
+      <div className="flex justify-end gap-x-2">
         <Toggle
           variant="outline"
-          aria-label="Toggle bold"
           pressed={draggingEnabled}
-          onPressedChange={handleDraggableChange}
+          onPressedChange={toggleDraggingEnabled}
         >
-          Allow Merging via Drag&Drop
+          <Combine className="mr-2 size-4" />
+          Drag & Drop Merging
+          <InfoTooltip size={15} className="my-auto ml-2" variant="explain">
+            <p>Drag and drop tags on each other to merge them</p>
+          </InfoTooltip>
         </Toggle>
         <Toggle
           variant="outline"
-          aria-label="Toggle bold"
           pressed={sortByName}
-          onPressedChange={handleSortByNameChange}
+          onPressedChange={toggleSortByName}
         >
-          Sort by Name
+          <ArrowDownAZ className="mr-2 size-4" /> Sort by Name
         </Toggle>
       </div>
       <span className="flex items-center gap-2">
