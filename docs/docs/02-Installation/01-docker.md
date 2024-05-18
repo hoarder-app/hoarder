@@ -1,6 +1,4 @@
-# Installation
-
-## Docker (Recommended)
+# Docker Compose [Recommended]
 
 ### Requirements
 

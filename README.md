@@ -33,7 +33,7 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 
 ## Documentation
 
-- [Installation](https://docs.hoarder.app/installation)
+- [Installation](https://docs.hoarder.app/installation/docker)
 - [Configuration](https://docs.hoarder.app/configuration)
 - [Screenshots](https://docs.hoarder.app/screenshots)
 - [Security Considerations](https://docs.hoarder.app/security-considerations)
