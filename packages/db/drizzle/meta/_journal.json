@@ -148,6 +148,13 @@
       "when": 1713539346326,
       "tag": "0020_sudden_dagger",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "5",
+      "when": 1716031428677,
+      "tag": "0021_magical_firebrand",
+      "breakpoints": true
     }
   ]
 }
