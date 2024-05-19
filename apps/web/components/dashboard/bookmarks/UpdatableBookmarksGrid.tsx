@@ -22,14 +22,17 @@ export default function UpdatableBookmarksGrid({
   itemsPerPage?: number;
 }) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    api.bookmarks.getBookmarks.useInfiniteQuery(query, {
-      initialData: () => ({
-        pages: [initialBookmarks],
-        pageParams: [query.cursor],
-      }),
-      initialCursor: null,
-      getNextPageParam: (lastPage) => lastPage.nextCursor,
-    });
+    api.bookmarks.getBookmarks.useInfiniteQuery(
+      { ...query, useCursorV2: true },
+      {
+        initialData: () => ({
+          pages: [initialBookmarks],
+          pageParams: [query.cursor],
+        }),
+        initialCursor: null,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      },
+    );
 
   const grid = (
     <BookmarksGrid

@@ -1,5 +1,7 @@
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
+import { bookmarks } from "@hoarder/db/schema";
+
 import type { CustomTestContext } from "../testUtils";
 import { defaultBeforeEach } from "../testUtils";
 
@@ -249,5 +251,63 @@ describe("Bookmark Routes", () => {
       type: "link",
     });
     expect(bookmark3User1.alreadyExists).toEqual(false);
+  });
+
+  // Ensure that the pagination returns all the results
+  test<CustomTestContext>("pagination", async ({ apiCallers, db }) => {
+    const user = await apiCallers[0].users.whoami();
+    let now = 100_000;
+
+    const bookmarkWithDate = (date_ms: number) => ({
+      userId: user.id,
+      createdAt: new Date(date_ms),
+    });
+
+    // One normal bookmark
+    const values = [bookmarkWithDate(now)];
+    // 10 with a second in between
+    for (let i = 0; i < 10; i++) {
+      now -= 1000;
+      values.push(bookmarkWithDate(now));
+    }
+    // Another ten but at the same second
+    for (let i = 0; i < 10; i++) {
+      values.push(bookmarkWithDate(now));
+    }
+    // And then another one with a second afterards
+    for (let i = 0; i < 10; i++) {
+      now -= 1000;
+      values.push(bookmarkWithDate(now));
+    }
+    // In total, we should have 31 bookmarks
+
+    const inserted = await db.insert(bookmarks).values(values).returning();
+
+    const validateWithLimit = async (limit: number) => {
+      const results: string[] = [];
+      let cursor = undefined;
+
+      // To avoid running the test forever
+      let i = 0;
+
+      do {
+        const res = await apiCallers[0].bookmarks.getBookmarks({
+          limit,
+          cursor,
+          useCursorV2: true,
+        });
+        results.push(...res.bookmarks.map((b) => b.id));
+        cursor = res.nextCursor;
+        i++;
+      } while (cursor && i < 100);
+
+      expect(results.sort()).toEqual(inserted.map((b) => b.id).sort());
+    };
+
+    await validateWithLimit(1);
+    await validateWithLimit(2);
+    await validateWithLimit(3);
+    await validateWithLimit(10);
+    await validateWithLimit(100);
   });
 });
