@@ -37,6 +37,8 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
   const { data: existingTags, isLoading: isExistingTagsLoading } =
     api.tags.list.useQuery();
 
+  existingTags?.tags.sort((a, b) => a.name.localeCompare(b.name));
+
   const onChange = (
     _option: readonly EditableTag[],
     actionMeta: ActionMeta<EditableTag>,
