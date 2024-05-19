@@ -38,7 +38,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MohamedBassem/hoarder-app.git",
+    "url": "git+https://github.com/hoarder-app/hoarder.git",
     "directory": "apps/cli"
   },
   "eslintConfig": {

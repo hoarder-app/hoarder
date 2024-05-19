@@ -1,6 +1,6 @@
 # Configuration
 
-The app is mainly configured by environment variables. All the used environment variables are listed in [packages/shared/config.ts](https://github.com/MohamedBassem/hoarder-app/blob/main/packages/shared/config.ts). The most important ones are:
+The app is mainly configured by environment variables. All the used environment variables are listed in [packages/shared/config.ts](https://github.com/hoarder-app/hoarder/blob/main/packages/shared/config.ts). The most important ones are:
 
 | Name                      | Required                              | Default   | Description                                                                                                                                    |
 | ------------------------- | ------------------------------------- | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |

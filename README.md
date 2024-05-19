@@ -1,9 +1,9 @@
 <div align="center">
-    <a href="https://github.com/MohamedBassem/hoarder-app/actions/workflows/ci.yml">
-        <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/MohamedBassem/hoarder-app/ci.yml" />
+    <a href="https://github.com/hoarder-app/hoarder/actions/workflows/ci.yml">
+        <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/hoarder-app/hoarder/ci.yml" />
     </a>
-    <a href="https://github.com/MohamedBassem/hoarder-app/releases">
-        <img alt="GitHub Release" src="https://img.shields.io/github/v/release/mohamedbassem/hoarder-app" />
+    <a href="https://github.com/hoarder-app/hoarder/releases">
+        <img alt="GitHub Release" src="https://img.shields.io/github/v/release/hoarder-app/hoarder" />
     </a>
     <a href="https://discord.gg/NrgeYywsFh">
         <img alt="Discord" src="https://img.shields.io/discord/1223681308962721802?label=chat%20on%20discord" />
@@ -14,7 +14,7 @@
 
 A self-hostable bookmark-everything app with a touch of AI for the data hoarders out there.
 
-![homepage screenshot](https://github.com/MohamedBassem/hoarder-app/blob/main/screenshots/homepage.png?raw=true)
+![homepage screenshot](https://github.com/hoarder-app/hoarder/blob/main/screenshots/homepage.png?raw=true)
 
 ## Features
 
@@ -82,4 +82,4 @@ I'm a systems engineer in my day job (and have been for the past 7 years). I did
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=MohamedBassem/hoarder-app&type=Date)](https://star-history.com/#MohamedBassem/hoarder-app&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=hoarder-app/hoarder&type=Date)](https://star-history.com/#hoarder-app/hoarder&Date)

@@ -11,10 +11,10 @@ Create a new directory to host the compose file and env variables.
 
 ### 2. Download the compose file
 
-Download the docker compose file provided [here](https://github.com/MohamedBassem/hoarder-app/blob/main/docker/docker-compose.yml).
+Download the docker compose file provided [here](https://github.com/hoarder-app/hoarder/blob/main/docker/docker-compose.yml).
 
 ```
-wget https://raw.githubusercontent.com/MohamedBassem/hoarder-app/main/docker/docker-compose.yml
+wget https://raw.githubusercontent.com/hoarder-app/hoarder/main/docker/docker-compose.yml
 ```
 
 ### 3. Populate the environment variables
@@ -30,7 +30,7 @@ NEXTAUTH_URL=http://localhost:3000
 
 You **should** change the random strings. You can use `openssl rand -base64 36` to generate the random strings. You should also change the `NEXTAUTH_URL` variable to point to your server address.
 
-Using `HOARDER_VERSION=release` will pull the latest stable version. You might want to pin the version instead to control the upgrades (e.g. `HOARDER_VERSION=0.10.0`). Check the latest versions [here](https://github.com/MohamedBassem/hoarder-app/pkgs/container/hoarder-web).
+Using `HOARDER_VERSION=release` will pull the latest stable version. You might want to pin the version instead to control the upgrades (e.g. `HOARDER_VERSION=0.10.0`). Check the latest versions [here](https://github.com/hoarder-app/hoarder/pkgs/container/hoarder-web).
 
 Persistent storage and the wiring between the different services is already taken care of in the docker compose file.
 

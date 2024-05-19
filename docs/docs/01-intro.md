@@ -6,7 +6,7 @@ slug: /
 
 Hoarder is an open source "Bookmark Everything" app that uses AI for automatically tagging the content you throw at it. The app is built with self-hosting as a first class citizen.
 
-![Screenshot](https://raw.githubusercontent.com/MohamedBassem/hoarder-app/main/screenshots/homepage.png)
+![Screenshot](https://raw.githubusercontent.com/hoarder-app/hoarder/main/screenshots/homepage.png)
 
 
 ## Features
