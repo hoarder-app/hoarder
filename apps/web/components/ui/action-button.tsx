@@ -58,3 +58,4 @@ const ActionButtonWithTooltip = React.forwardRef<
 ActionButtonWithTooltip.displayName = "ActionButtonWithTooltip";
 
 export { ActionButton, ActionButtonWithTooltip };
+export type { ActionButtonProps };

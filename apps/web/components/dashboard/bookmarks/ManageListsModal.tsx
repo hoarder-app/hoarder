@@ -19,7 +19,7 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { X } from "lucide-react";
+import { Archive, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -30,6 +30,7 @@ import {
 } from "@hoarder/shared-react/hooks/lists";
 
 import { BookmarkListSelector } from "../lists/BookmarkListSelector";
+import ArchiveBookmarkButton from "./action-buttons/ArchiveBookmarkButton";
 
 export default function ManageListsModal({
   bookmarkId,
@@ -179,6 +180,13 @@ export default function ManageListsModal({
                   Close
                 </Button>
               </DialogClose>
+              <ArchiveBookmarkButton
+                type="button"
+                bookmarkId={bookmarkId}
+                onDone={() => setOpen(false)}
+              >
+                <Archive className="mr-2 size-4" /> Archive
+              </ArchiveBookmarkButton>
               <ActionButton
                 type="submit"
                 loading={isAddingToListPending}
