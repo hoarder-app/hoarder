@@ -16,6 +16,7 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
+import LoadingSpinner from "@/components/ui/spinner";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -53,14 +54,20 @@ export default function ManageListsModal({
     },
   });
 
-  const { data: allLists } = useBookmarkLists(undefined, { enabled: open });
-
-  const { data: alreadyInList } = api.lists.getListsOfBookmark.useQuery(
-    {
-      bookmarkId,
-    },
+  const { data: allLists, isPending: isAllListsPending } = useBookmarkLists(
+    undefined,
     { enabled: open },
   );
+
+  const { data: alreadyInList, isPending: isAlreadyInListPending } =
+    api.lists.getListsOfBookmark.useQuery(
+      {
+        bookmarkId,
+      },
+      { enabled: open },
+    );
+
+  const isLoading = isAllListsPending || isAlreadyInListPending;
 
   const { mutate: addToList, isPending: isAddingToListPending } =
     useAddBookmarkToList({
@@ -123,33 +130,37 @@ export default function ManageListsModal({
             <DialogHeader>
               <DialogTitle>Manage Lists</DialogTitle>
             </DialogHeader>
-            {allLists && (
-              <ul className="flex flex-col gap-2 pb-2 pt-4">
-                {alreadyInList?.lists.map((list) => (
-                  <li
-                    key={list.id}
-                    className="flex items-center justify-between rounded-lg border border-border bg-background px-2 py-1 text-foreground"
-                  >
-                    <p>
-                      {allLists
-                        .getPathById(list.id)!
-                        .map((l) => `${l.icon} ${l.name}`)
-                        .join(" / ")}
-                    </p>
-                    <ActionButton
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      loading={isDeleteFromListPending}
-                      onClick={() =>
-                        deleteFromList({ bookmarkId, listId: list.id })
-                      }
+            {isLoading ? (
+              <LoadingSpinner className="my-4" />
+            ) : (
+              allLists && (
+                <ul className="flex flex-col gap-2 pb-2 pt-4">
+                  {alreadyInList?.lists.map((list) => (
+                    <li
+                      key={list.id}
+                      className="flex items-center justify-between rounded-lg border border-border bg-background px-2 py-1 text-foreground"
                     >
-                      <X className="size-4" />
-                    </ActionButton>
-                  </li>
-                ))}
-              </ul>
+                      <p>
+                        {allLists
+                          .getPathById(list.id)!
+                          .map((l) => `${l.icon} ${l.name}`)
+                          .join(" / ")}
+                      </p>
+                      <ActionButton
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        loading={isDeleteFromListPending}
+                        onClick={() =>
+                          deleteFromList({ bookmarkId, listId: list.id })
+                        }
+                      >
+                        <X className="size-4" />
+                      </ActionButton>
+                    </li>
+                  ))}
+                </ul>
+              )
             )}
 
             <div className="pb-4">
@@ -208,7 +219,7 @@ export function useManageListsModal(bookmarkId: string) {
   return {
     open,
     setOpen,
-    content: (
+    content: open && (
       <ManageListsModal bookmarkId={bookmarkId} open={open} setOpen={setOpen} />
     ),
   };
