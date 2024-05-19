@@ -6,9 +6,11 @@ on:
   push:
     branches:
       - main
+
 jobs:
   push:
     strategy:
+      fail-fast: false
       matrix:
         package: [web, workers, cli]
     runs-on: ubuntu-latest
@@ -26,7 +28,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_GITHUB_PAT }}
 
       - name: Build ${{ matrix.package }}
         uses: docker/build-push-action@v5
