@@ -136,7 +136,7 @@ bookmarkCmd
       results = [...results, ...resp.bookmarks];
     }
 
-    console.dir(results.map(normalizeBookmark), { maxArrayLength: null });
+    console.log(JSON.stringify(results.map(normalizeBookmark), null, 4));
   });
 
 bookmarkCmd
