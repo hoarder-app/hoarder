@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   web:
-    image: ghcr.io/mohamedbassem/hoarder-web:${HOARDER_VERSION:-release}
+    image: ghcr.io/hoarder-app/hoarder-web:${HOARDER_VERSION:-release}
     restart: unless-stopped
     volumes:
       - data:/data
@@ -38,7 +38,7 @@ services:
     volumes:
       - meilisearch:/meili_data
   workers:
-    image: ghcr.io/mohamedbassem/hoarder-workers:${HOARDER_VERSION:-release}
+    image: ghcr.io/hoarder-app/hoarder-workers:${HOARDER_VERSION:-release}
     restart: unless-stopped
     volumes:
       - data:/data
