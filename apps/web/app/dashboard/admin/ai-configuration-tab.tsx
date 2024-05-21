@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { toast } from "@/components/ui/use-toast";
+import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Undo } from "lucide-react";
 import { useForm, useFormContext } from "react-hook-form";
@@ -209,6 +211,21 @@ function OllamaConfigSection() {
 }
 
 function AiConfigurationSection(aiConfig: aiConfigSchemaType) {
+  const { mutate: updateAiConfigMutator } = api.admin.updateConfig.useMutation({
+    onSuccess: () => {
+      toast({
+        description: "Config updated!",
+      });
+      form.reset(form.getValues());
+    },
+    onError: (error) => {
+      toast({
+        description: `Something went wrong: ${error.message}`,
+        variant: "destructive",
+      });
+    },
+  });
+
   const form = useForm<aiConfigSchemaType>({
     values: aiConfig,
     resolver: zodResolver(aiConfigSchema),
@@ -233,9 +250,10 @@ function AiConfigurationSection(aiConfig: aiConfigSchemaType) {
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(async (_value) => {
-          console.log("hier", _value);
-          // TODO submit form
+        onSubmit={form.handleSubmit(async (value) => {
+          updateAiConfigMutator({
+            aiConfig: value,
+          });
         })}
       >
         <p className="text-xl">AI Configuration</p>

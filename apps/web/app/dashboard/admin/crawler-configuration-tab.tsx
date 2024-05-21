@@ -9,6 +9,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { toast } from "@/components/ui/use-toast";
+import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, Undo } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -23,13 +25,29 @@ function CrawlerConfigurationSection(crawlerConfig: crawlerConfigSchemaType) {
     values: crawlerConfig,
     resolver: zodResolver(crawlerConfigSchema),
   });
+  const { mutate: updateCrawlerConfigMutator } =
+    api.admin.updateConfig.useMutation({
+      onSuccess: () => {
+        toast({
+          description: "Config updated!",
+        });
+        form.reset(form.getValues());
+      },
+      onError: (error) => {
+        toast({
+          description: `Something went wrong: ${error.message}`,
+          variant: "destructive",
+        });
+      },
+    });
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(async (_value) => {
-          console.log("hier", _value);
-          // TODO submit form
+        onSubmit={form.handleSubmit(async (value) => {
+          updateCrawlerConfigMutator({
+            crawlerConfig: value,
+          });
         })}
       >
         <p className="text-xl">Crawler Configuration</p>

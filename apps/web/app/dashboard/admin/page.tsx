@@ -31,7 +31,7 @@ const REPO_RELEASE_PAGE =
 export function useDynamicServerConfiguration():
   | dynamicConfigSchemaType
   | undefined {
-  const { data } = api.admin.config.useQuery(undefined, {
+  const { data } = api.admin.getConfig.useQuery(undefined, {
     placeholderData: keepPreviousData,
   });
 

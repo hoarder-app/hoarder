@@ -7,12 +7,31 @@ import {
   OpenAIQueue,
   SearchIndexingQueue,
 } from "@hoarder/shared/queues";
-import { AI_PROVIDERS, dynamicConfigSchema } from "@hoarder/shared/types/admin";
+import {
+  AI_PROVIDERS,
+  configUpdateSchema,
+  dynamicConfigSchema,
+} from "@hoarder/shared/types/admin";
 
 import { adminProcedure, router } from "../index";
 
 export const adminAppRouter = router({
-  config: adminProcedure.output(dynamicConfigSchema).query(() => {
+  updateConfig: adminProcedure
+    .input(dynamicConfigSchema.partial())
+    .output(configUpdateSchema)
+    .mutation(({ input }) => {
+      console.log("asdfasdf", JSON.stringify(input));
+
+      //throw new TRPCError({
+      //  message: "qwerqwer",
+      //  code: "FORBIDDEN",
+      //});
+      return {
+        successful: true,
+      };
+    }),
+  getConfig: adminProcedure.output(dynamicConfigSchema).query(() => {
+    // TODO check permissions ?
     return {
       generalSettings: {
         disableNewReleaseCheck: true,

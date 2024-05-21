@@ -34,6 +34,7 @@ function UsersSection() {
   const { data: session } = useSession();
   const invalidateUserList = api.useUtils().users.list.invalidate;
   const { data: users } = api.users.list.useQuery();
+
   const { mutate: deleteUser, isPending: isDeletionPending } =
     api.users.delete.useMutation({
       onSuccess: () => {
@@ -94,11 +95,30 @@ function GeneralSettingsSection(generalSettings: generalSettingsSchemaType) {
     resolver: zodResolver(generalSettingsSchema),
   });
 
+  const { mutate: updateGeneralConfigMutator } =
+    api.admin.updateConfig.useMutation({
+      onSuccess: () => {
+        toast({
+          description: "Config updated!",
+        });
+        form.reset(form.getValues());
+      },
+      onError: (error) => {
+        toast({
+          description: `Something went wrong: ${error.message}`,
+          variant: "destructive",
+        });
+      },
+    });
+
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(async (_value) => {
-          console.log("hier", _value);
+        onSubmit={form.handleSubmit(async (value) => {
+          console.log("hier", value);
+          updateGeneralConfigMutator({
+            generalSettings: value,
+          });
         })}
       >
         <p className="text-xl">General Settings</p>

@@ -49,6 +49,11 @@ export const dynamicConfigSchema = z.object({
   aiConfig: aiConfigSchema,
 });
 
+export const configUpdateSchema = z.object({
+  successful: z.boolean(),
+});
+
+export type configUpdateSchemaType = z.infer<typeof configUpdateSchema>;
 export type dynamicConfigSchemaType = z.infer<typeof dynamicConfigSchema>;
 export type generalSettingsSchemaType = z.infer<typeof generalSettingsSchema>;
 export type crawlerConfigSchemaType = z.infer<typeof crawlerConfigSchema>;
