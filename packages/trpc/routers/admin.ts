@@ -7,10 +7,36 @@ import {
   OpenAIQueue,
   SearchIndexingQueue,
 } from "@hoarder/shared/queues";
+import { AI_PROVIDERS, dynamicConfigSchema } from "@hoarder/shared/types/admin";
 
 import { adminProcedure, router } from "../index";
 
 export const adminAppRouter = router({
+  config: adminProcedure.output(dynamicConfigSchema).query(() => {
+    return {
+      generalSettings: {
+        disableNewReleaseCheck: true,
+        disableSignups: true,
+        maxAssetSize: 4,
+      },
+      aiConfig: {
+        aiProvider: AI_PROVIDERS.OLLAMA,
+        Ollama: {
+          baseURL: "http://www.google.at",
+          inferenceImageModel: "llama3",
+          inferenceLanguage: "english",
+          inferenceTextModel: "text",
+        },
+      },
+      crawlerConfig: {
+        downloadBannerImage: false,
+        storeScreenshot: true,
+        storeFullPageScreenshot: false,
+        jobTimeout: 60000,
+        navigateTimeout: 60000,
+      },
+    };
+  }),
   stats: adminProcedure
     .output(
       z.object({
