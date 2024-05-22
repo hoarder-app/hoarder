@@ -25,6 +25,7 @@ function CrawlerConfigurationSection(crawlerConfig: crawlerConfigSchemaType) {
     values: crawlerConfig,
     resolver: zodResolver(crawlerConfigSchema),
   });
+
   const { mutate: updateCrawlerConfigMutator } =
     api.admin.updateConfig.useMutation({
       onSuccess: () => {
@@ -87,7 +88,12 @@ function CrawlerConfigurationSection(crawlerConfig: crawlerConfigSchemaType) {
                         <FormControl>
                           <Switch
                             checked={field.value}
-                            onCheckedChange={field.onChange}
+                            onCheckedChange={(value) => {
+                              field.onChange(value);
+                              if (!value) {
+                                form.setValue("storeFullPageScreenshot", false);
+                              }
+                            }}
                           />
                         </FormControl>
                         <FormMessage />
@@ -109,7 +115,12 @@ function CrawlerConfigurationSection(crawlerConfig: crawlerConfigSchemaType) {
                         <FormControl>
                           <Switch
                             checked={field.value}
-                            onCheckedChange={field.onChange}
+                            onCheckedChange={(value) => {
+                              field.onChange(value);
+                              if (value) {
+                                form.setValue("storeScreenshot", true);
+                              }
+                            }}
                           />
                         </FormControl>
                         <FormMessage />

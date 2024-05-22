@@ -20,28 +20,36 @@ export const crawlerConfigSchema = z.object({
   navigateTimeout: z.coerce.number().positive(),
 });
 
-export const aiConfigSchema = z.object({
-  aiProvider: z.nativeEnum(AI_PROVIDERS),
-
-  [AI_PROVIDERS.OPEN_AI]: z
-    .object({
-      baseURL: z.string().url(),
-      apiKey: z.string(),
-      inferenceTextModel: z.string(),
-      inferenceImageModel: z.string(),
-      inferenceLanguage: z.string(),
-    })
-    .optional(),
-
-  [AI_PROVIDERS.OLLAMA]: z
-    .object({
-      baseURL: z.string().url(),
-      inferenceTextModel: z.string(),
-      inferenceImageModel: z.string(),
-      inferenceLanguage: z.string(),
-    })
-    .optional(),
+const openAISchema = z.object({
+  aiProvider: z.literal(AI_PROVIDERS.OPEN_AI),
+  [AI_PROVIDERS.OPEN_AI]: z.object({
+    baseURL: z.string().url(),
+    apiKey: z.string(),
+    inferenceTextModel: z.string(),
+    inferenceImageModel: z.string(),
+    inferenceLanguage: z.string(),
+  }),
 });
+
+const ollamaSchema = z.object({
+  aiProvider: z.literal(AI_PROVIDERS.OLLAMA),
+  [AI_PROVIDERS.OLLAMA]: z.object({
+    baseURL: z.string().url(),
+    inferenceTextModel: z.string(),
+    inferenceImageModel: z.string(),
+    inferenceLanguage: z.string(),
+  }),
+});
+
+const disabledSchema = z.object({
+  aiProvider: z.literal(AI_PROVIDERS.DISABLED),
+});
+
+export const aiConfigSchema = z.union([
+  openAISchema,
+  ollamaSchema,
+  disabledSchema,
+]);
 
 export const dynamicConfigSchema = z.object({
   generalSettings: generalSettingsSchema,
@@ -75,8 +83,6 @@ export function createDefaultDynamicConfig(): dynamicConfigSchemaType {
     },
     aiConfig: {
       aiProvider: AI_PROVIDERS.DISABLED,
-      [AI_PROVIDERS.OPEN_AI]: void 0,
-      [AI_PROVIDERS.OLLAMA]: void 0,
     },
   };
 }

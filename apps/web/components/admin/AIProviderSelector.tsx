@@ -12,12 +12,12 @@ export function AIProviderSelector({
   options,
   onChange,
 }: {
-  value?: string | null;
+  value?: string;
   options: string[];
-  onChange: (value: string) => void;
+  onChange?: (value: string) => void;
 }) {
   return (
-    <Select onValueChange={onChange} defaultValue={value ?? ""}>
+    <Select onValueChange={onChange} value={value}>
       <FormControl>
         <SelectTrigger className="w-fit">
           <SelectValue placeholder={value} />

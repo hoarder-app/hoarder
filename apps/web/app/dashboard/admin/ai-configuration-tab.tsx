@@ -231,26 +231,13 @@ function AiConfigurationSection(aiConfig: aiConfigSchemaType) {
     resolver: zodResolver(aiConfigSchema),
   });
 
-  function cleanState() {
-    const state = form.getValues();
-
-    console.log(state);
-    switch (state.aiProvider) {
-      case AI_PROVIDERS.OPEN_AI:
-        form.reset({ ...form.getValues(), aiProvider: AI_PROVIDERS.OPEN_AI });
-        break;
-      case AI_PROVIDERS.OLLAMA:
-        form.reset({ ...form.getValues(), aiProvider: AI_PROVIDERS.OLLAMA });
-        break;
-    }
-  }
-
   const selectedAiProvider = form.watch("aiProvider");
 
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (value) => {
+          console.log(value);
           updateAiConfigMutator({
             aiConfig: value,
           });
@@ -270,10 +257,7 @@ function AiConfigurationSection(aiConfig: aiConfigSchemaType) {
                       <AIProviderSelector
                         value={field.value}
                         options={Object.values(AI_PROVIDERS)}
-                        onChange={(e) => {
-                          field.onChange(e);
-                          cleanState();
-                        }}
+                        onChange={field.onChange}
                       ></AIProviderSelector>
                     );
                   }}

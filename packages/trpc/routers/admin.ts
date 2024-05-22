@@ -40,7 +40,7 @@ function* iterate(
   stack: string[] = [],
 ): Generator<IterationResult> {
   for (const property in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, property)) {
+    if (Object.prototype.hasOwnProperty.call(obj, property) && obj[property]) {
       const value = obj[property];
       if (value && typeof value === "object" && !Array.isArray(value)) {
         yield* iterate(
@@ -72,7 +72,13 @@ export const adminAppRouter = router({
           };
 
           // Insert into database
-          await transaction.insert(serverConfig).values(configRow);
+          await transaction
+            .insert(serverConfig)
+            .values(configRow)
+            .onConflictDoUpdate({
+              target: serverConfig.key,
+              set: { ...configRow },
+            });
         }
       });
       return {
