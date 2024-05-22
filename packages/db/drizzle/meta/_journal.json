@@ -155,6 +155,13 @@
       "when": 1716031428677,
       "tag": "0021_magical_firebrand",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "5",
+      "when": 1716394718030,
+      "tag": "0022_cute_marvel_zombies",
+      "breakpoints": true
     }
   ]
 }

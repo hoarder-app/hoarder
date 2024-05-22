@@ -58,3 +58,25 @@ export type dynamicConfigSchemaType = z.infer<typeof dynamicConfigSchema>;
 export type generalSettingsSchemaType = z.infer<typeof generalSettingsSchema>;
 export type crawlerConfigSchemaType = z.infer<typeof crawlerConfigSchema>;
 export type aiConfigSchemaType = z.infer<typeof aiConfigSchema>;
+
+export function createDefaultDynamicConfig(): dynamicConfigSchemaType {
+  return {
+    generalSettings: {
+      disableSignups: false,
+      maxAssetSize: 4,
+      disableNewReleaseCheck: false,
+    },
+    crawlerConfig: {
+      downloadBannerImage: false,
+      storeScreenshot: true,
+      storeFullPageScreenshot: false,
+      jobTimeout: 60000,
+      navigateTimeout: 60000,
+    },
+    aiConfig: {
+      aiProvider: AI_PROVIDERS.DISABLED,
+      [AI_PROVIDERS.OPEN_AI]: void 0,
+      [AI_PROVIDERS.OLLAMA]: void 0,
+    },
+  };
+}

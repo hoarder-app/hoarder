@@ -1,61 +1,130 @@
 import { count, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
+import {
+  bookmarkLinks,
+  bookmarks,
+  serverConfig,
+  users,
+} from "@hoarder/db/schema";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
   SearchIndexingQueue,
 } from "@hoarder/shared/queues";
 import {
-  AI_PROVIDERS,
   configUpdateSchema,
+  createDefaultDynamicConfig,
   dynamicConfigSchema,
 } from "@hoarder/shared/types/admin";
 
 import { adminProcedure, router } from "../index";
 
+interface IterationResult {
+  path: string;
+  value: string;
+  type: "string" | "boolean" | "number";
+}
+
+function getType(value: unknown): "string" | "boolean" | "number" {
+  const type = typeof value;
+  if (type === "string" || type === "number" || type === "boolean") {
+    return type;
+  }
+  throw new Error(`Invalid type ${type}`);
+}
+
+// Recursive function to handle nested properties
+function* iterate(
+  obj: Record<string, unknown>,
+  stack: string[] = [],
+): Generator<IterationResult> {
+  for (const property in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, property)) {
+      const value = obj[property];
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        yield* iterate(
+          value as Record<string, unknown>,
+          stack.concat(property),
+        );
+      } else {
+        yield {
+          path: stack.concat(property).join("."),
+          value: String(value),
+          type: getType(value),
+        };
+      }
+    }
+  }
+}
+
 export const adminAppRouter = router({
   updateConfig: adminProcedure
     .input(dynamicConfigSchema.partial())
     .output(configUpdateSchema)
-    .mutation(({ input }) => {
-      console.log("asdfasdf", JSON.stringify(input));
+    .mutation(async ({ input, ctx }) => {
+      await ctx.db.transaction(async (transaction) => {
+        for (const { path, value, type } of iterate(input)) {
+          const configRow = {
+            key: path,
+            value: value,
+            type: type,
+          };
 
-      //throw new TRPCError({
-      //  message: "qwerqwer",
-      //  code: "FORBIDDEN",
-      //});
+          // Insert into database
+          await transaction.insert(serverConfig).values(configRow);
+        }
+      });
       return {
         successful: true,
       };
     }),
-  getConfig: adminProcedure.output(dynamicConfigSchema).query(() => {
-    // TODO check permissions ?
-    return {
-      generalSettings: {
-        disableNewReleaseCheck: true,
-        disableSignups: true,
-        maxAssetSize: 4,
-      },
-      aiConfig: {
-        aiProvider: AI_PROVIDERS.OLLAMA,
-        Ollama: {
-          baseURL: "http://www.google.at",
-          inferenceImageModel: "llama3",
-          inferenceLanguage: "english",
-          inferenceTextModel: "text",
-        },
-      },
-      crawlerConfig: {
-        downloadBannerImage: false,
-        storeScreenshot: true,
-        storeFullPageScreenshot: false,
-        jobTimeout: 60000,
-        navigateTimeout: 60000,
-      },
-    };
-  }),
+  getConfig: adminProcedure
+    .output(dynamicConfigSchema)
+    .query(async ({ ctx }) => {
+      // TODO check permissions ?
+      const rows = await ctx.db.select().from(serverConfig);
+
+      const config = createDefaultDynamicConfig();
+
+      for (const row of rows) {
+        // Split the key into its components
+        const keys = row.key.split(".");
+
+        // Start with the root of the config object
+        let currentPart: Record<string, unknown> = config;
+
+        // Iterate over each component in the key
+        for (let i = 0; i < keys.length; i++) {
+          const key = keys[i];
+
+          if (i === keys.length - 1) {
+            // If this is the last component, set the value
+            switch (row.type) {
+              case "string":
+                currentPart[key] = String(row.value);
+                break;
+              case "number":
+                currentPart[key] = Number(row.value);
+                break;
+              case "boolean":
+                currentPart[key] = row.value === "true";
+                break;
+              default:
+                throw new Error(`Invalid type ${row.type}`);
+            }
+          } else {
+            // If this is not the last component, go deeper into the config object
+            if (!currentPart[key]) {
+              currentPart[key] = {};
+            }
+            currentPart = currentPart[key] as Record<string, unknown>;
+          }
+        }
+      }
+
+      return config;
+    }),
   stats: adminProcedure
     .output(
       z.object({
