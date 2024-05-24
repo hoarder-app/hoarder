@@ -1,8 +1,13 @@
 import { Ollama } from "ollama";
 import OpenAI from "openai";
 
-import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
+import {
+  AI_PROVIDER,
+  dynamicConfigSchemaType,
+  ollamaConfigSchemaType,
+  openAIConfigSchemaType,
+} from "@hoarder/shared/types/admin";
 
 export interface InferenceResponse {
   response: string;
@@ -10,6 +15,7 @@ export interface InferenceResponse {
 }
 
 export interface InferenceClient {
+  getInferredTagLang(): string;
   inferFromText(prompt: string): Promise<InferenceResponse>;
   inferFromImage(
     prompt: string,
@@ -19,13 +25,17 @@ export interface InferenceClient {
 }
 
 export class InferenceClientFactory {
-  static build(): InferenceClient | null {
-    if (serverConfig.inference.openAIApiKey) {
-      return new OpenAIInferenceClient();
+  static build(dynamicConfig: dynamicConfigSchemaType): InferenceClient | null {
+    if (dynamicConfig.aiConfig.aiProvider === AI_PROVIDER.OPEN_AI) {
+      return new OpenAIInferenceClient(
+        dynamicConfig.aiConfig[AI_PROVIDER.OPEN_AI],
+      );
     }
 
-    if (serverConfig.inference.ollamaBaseUrl) {
-      return new OllamaInferenceClient();
+    if (dynamicConfig.aiConfig.aiProvider === AI_PROVIDER.OLLAMA) {
+      return new OllamaInferenceClient(
+        dynamicConfig.aiConfig[AI_PROVIDER.OLLAMA],
+      );
     }
     return null;
   }
@@ -33,18 +43,24 @@ export class InferenceClientFactory {
 
 class OpenAIInferenceClient implements InferenceClient {
   openAI: OpenAI;
+  openAiConfig: openAIConfigSchemaType;
 
-  constructor() {
+  constructor(config: openAIConfigSchemaType) {
+    this.openAiConfig = config;
     this.openAI = new OpenAI({
-      apiKey: serverConfig.inference.openAIApiKey,
-      baseURL: serverConfig.inference.openAIBaseUrl,
+      apiKey: config.apiKey,
+      baseURL: config.baseURL,
     });
+  }
+
+  getInferredTagLang(): string {
+    return this.openAiConfig.inferenceLanguage;
   }
 
   async inferFromText(prompt: string): Promise<InferenceResponse> {
     const chatCompletion = await this.openAI.chat.completions.create({
       messages: [{ role: "system", content: prompt }],
-      model: serverConfig.inference.textModel,
+      model: this.openAiConfig.inferenceTextModel,
       response_format: { type: "json_object" },
     });
 
@@ -61,7 +77,7 @@ class OpenAIInferenceClient implements InferenceClient {
     image: string,
   ): Promise<InferenceResponse> {
     const chatCompletion = await this.openAI.chat.completions.create({
-      model: serverConfig.inference.imageModel,
+      model: this.openAiConfig.inferenceImageModel,
       response_format: { type: "json_object" },
       messages: [
         {
@@ -91,11 +107,17 @@ class OpenAIInferenceClient implements InferenceClient {
 
 class OllamaInferenceClient implements InferenceClient {
   ollama: Ollama;
+  ollamaConfig: ollamaConfigSchemaType;
 
-  constructor() {
+  constructor(config: ollamaConfigSchemaType) {
     this.ollama = new Ollama({
-      host: serverConfig.inference.ollamaBaseUrl,
+      host: config.baseURL,
     });
+    this.ollamaConfig = config;
+  }
+
+  getInferredTagLang(): string {
+    return this.ollamaConfig.inferenceLanguage;
   }
 
   async runModel(model: string, prompt: string, image?: string) {
@@ -134,7 +156,7 @@ class OllamaInferenceClient implements InferenceClient {
   }
 
   async inferFromText(prompt: string): Promise<InferenceResponse> {
-    return await this.runModel(serverConfig.inference.textModel, prompt);
+    return await this.runModel(this.ollamaConfig.inferenceTextModel, prompt);
   }
 
   async inferFromImage(
@@ -143,7 +165,7 @@ class OllamaInferenceClient implements InferenceClient {
     image: string,
   ): Promise<InferenceResponse> {
     return await this.runModel(
-      serverConfig.inference.imageModel,
+      this.ollamaConfig.inferenceImageModel,
       prompt,
       image,
     );

@@ -16,7 +16,7 @@ import { Save, Undo } from "lucide-react";
 import { useForm, useFormContext } from "react-hook-form";
 
 import {
-  AI_PROVIDERS,
+  AI_PROVIDER,
   aiConfigSchema,
   aiConfigSchemaType,
 } from "@hoarder/shared/types/admin";
@@ -256,7 +256,7 @@ function AiConfigurationSection(aiConfig: aiConfigSchemaType) {
                     return (
                       <AIProviderSelector
                         value={field.value}
-                        options={Object.values(AI_PROVIDERS)}
+                        options={Object.values(AI_PROVIDER)}
                         onChange={field.onChange}
                       ></AIProviderSelector>
                     );
@@ -264,10 +264,10 @@ function AiConfigurationSection(aiConfig: aiConfigSchemaType) {
                 />
               </TableCell>
             </TableRow>
-            {selectedAiProvider === AI_PROVIDERS.OPEN_AI && (
+            {selectedAiProvider === AI_PROVIDER.OPEN_AI && (
               <OpenAiConfigSection />
             )}
-            {selectedAiProvider === AI_PROVIDERS.OLLAMA && (
+            {selectedAiProvider === AI_PROVIDER.OLLAMA && (
               <OllamaConfigSection />
             )}
             <TableRow>

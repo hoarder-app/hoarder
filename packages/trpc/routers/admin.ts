@@ -1,6 +1,7 @@
 import { count, eq } from "drizzle-orm";
 import { z } from "zod";
 
+import { getDynamicConfig } from "@hoarder/db/dynamicConfig";
 import {
   bookmarkLinks,
   bookmarks,
@@ -14,7 +15,6 @@ import {
 } from "@hoarder/shared/queues";
 import {
   configUpdateSchema,
-  createDefaultDynamicConfig,
   dynamicConfigSchema,
 } from "@hoarder/shared/types/admin";
 
@@ -40,7 +40,10 @@ function* iterate(
   stack: string[] = [],
 ): Generator<IterationResult> {
   for (const property in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, property) && obj[property]) {
+    if (
+      Object.prototype.hasOwnProperty.call(obj, property) &&
+      property in obj
+    ) {
       const value = obj[property];
       if (value && typeof value === "object" && !Array.isArray(value)) {
         yield* iterate(
@@ -63,8 +66,10 @@ export const adminAppRouter = router({
     .input(dynamicConfigSchema.partial())
     .output(configUpdateSchema)
     .mutation(async ({ input, ctx }) => {
+      console.log("input", input);
       await ctx.db.transaction(async (transaction) => {
         for (const { path, value, type } of iterate(input)) {
+          console.log("trying to insert: ", path, value, type);
           const configRow = {
             key: path,
             value: value,
@@ -85,52 +90,11 @@ export const adminAppRouter = router({
         successful: true,
       };
     }),
-  getConfig: adminProcedure
-    .output(dynamicConfigSchema)
-    .query(async ({ ctx }) => {
-      // TODO check permissions ?
-      const rows = await ctx.db.select().from(serverConfig);
+  getConfig: adminProcedure.output(dynamicConfigSchema).query(async () => {
+    // TODO check permissions ?
 
-      const config = createDefaultDynamicConfig();
-
-      for (const row of rows) {
-        // Split the key into its components
-        const keys = row.key.split(".");
-
-        // Start with the root of the config object
-        let currentPart: Record<string, unknown> = config;
-
-        // Iterate over each component in the key
-        for (let i = 0; i < keys.length; i++) {
-          const key = keys[i];
-
-          if (i === keys.length - 1) {
-            // If this is the last component, set the value
-            switch (row.type) {
-              case "string":
-                currentPart[key] = String(row.value);
-                break;
-              case "number":
-                currentPart[key] = Number(row.value);
-                break;
-              case "boolean":
-                currentPart[key] = row.value === "true";
-                break;
-              default:
-                throw new Error(`Invalid type ${row.type}`);
-            }
-          } else {
-            // If this is not the last component, go deeper into the config object
-            if (!currentPart[key]) {
-              currentPart[key] = {};
-            }
-            currentPart = currentPart[key] as Record<string, unknown>;
-          }
-        }
-      }
-
-      return config;
-    }),
+    return await getDynamicConfig();
+  }),
   stats: adminProcedure
     .output(
       z.object({

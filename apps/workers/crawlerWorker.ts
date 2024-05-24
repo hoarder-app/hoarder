@@ -25,6 +25,7 @@ import { withTimeout } from "utils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
+import { getDynamicConfig } from "@hoarder/db/dynamicConfig";
 import { bookmarkLinks, bookmarks } from "@hoarder/db/schema";
 import { deleteAsset, newAssetId, saveAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
@@ -36,6 +37,7 @@ import {
   SearchIndexingQueue,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
+import { dynamicConfigSchemaType } from "@hoarder/shared/types/admin";
 
 const metascraperParser = metascraper([
   metascraperAmazon(),
@@ -136,11 +138,12 @@ export class CrawlerWorker {
     }
 
     logger.info("Starting crawler worker ...");
+    const dynamicConfig = await getDynamicConfig();
     const worker = new Worker<ZCrawlLinkRequest, void>(
       LinkCrawlerQueue.name,
       withTimeout(
         runCrawler,
-        /* timeoutSec */ serverConfig.crawler.jobTimeoutSec,
+        /* timeoutSec */ dynamicConfig.crawlerConfig.jobTimeout,
       ),
       {
         concurrency: serverConfig.crawler.numWorkers,
@@ -216,7 +219,11 @@ function validateUrl(url: string) {
   }
 }
 
-async function crawlPage(jobId: string, url: string) {
+async function crawlPage(
+  jobId: string,
+  url: string,
+  dynamicConfig: dynamicConfigSchemaType,
+) {
   let browser: Browser;
   if (serverConfig.crawler.browserConnectOnDemand) {
     browser = await startBrowserInstance();
@@ -234,7 +241,7 @@ async function crawlPage(jobId: string, url: string) {
     );
 
     await page.goto(url, {
-      timeout: serverConfig.crawler.navigateTimeoutSec * 1000,
+      timeout: dynamicConfig.crawlerConfig.navigateTimeout * 1000,
     });
     logger.info(
       `[Crawler][${jobId}] Successfully navigated to "${url}". Waiting for the page to load ...`,
@@ -258,11 +265,11 @@ async function crawlPage(jobId: string, url: string) {
         // If you change this, you need to change the asset type in the store function.
         type: "png",
         encoding: "binary",
-        fullPage: serverConfig.crawler.fullPageScreenshot,
+        fullPage: dynamicConfig.crawlerConfig.storeFullPageScreenshot,
       }),
     ]);
     logger.info(
-      `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
+      `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${dynamicConfig.crawlerConfig.storeFullPageScreenshot}`,
     );
     return { htmlContent, screenshot, url: page.url() };
   } finally {
@@ -310,8 +317,9 @@ async function storeScreenshot(
   screenshot: Buffer,
   userId: string,
   jobId: string,
+  dynamicConfig: dynamicConfigSchemaType,
 ) {
-  if (!serverConfig.crawler.storeScreenshot) {
+  if (!dynamicConfig.crawlerConfig.storeScreenshot) {
     logger.info(
       `[Crawler][${jobId}] Skipping storing the screenshot as per the config.`,
     );
@@ -334,8 +342,9 @@ async function downloadAndStoreImage(
   url: string,
   userId: string,
   jobId: string,
+  dynamicConfig: dynamicConfigSchemaType,
 ) {
-  if (!serverConfig.crawler.downloadBannerImage) {
+  if (!dynamicConfig.crawlerConfig.downloadBannerImage) {
     logger.info(
       `[Crawler][${jobId}] Skipping downloading the image as per the config.`,
     );
@@ -394,6 +403,8 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     imageAssetId: oldImageAssetId,
   } = await getBookmarkDetails(bookmarkId);
 
+  const dynamicConfig = await getDynamicConfig();
+
   logger.info(
     `[Crawler][${jobId}] Will crawl "${url}" for link with id "${bookmarkId}"`,
   );
@@ -403,16 +414,21 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     htmlContent,
     screenshot,
     url: browserUrl,
-  } = await crawlPage(jobId, url);
+  } = await crawlPage(jobId, url, dynamicConfig);
 
   const [meta, readableContent, screenshotAssetId] = await Promise.all([
     extractMetadata(htmlContent, browserUrl, jobId),
     extractReadableContent(htmlContent, browserUrl, jobId),
-    storeScreenshot(screenshot, userId, jobId),
+    storeScreenshot(screenshot, userId, jobId, dynamicConfig),
   ]);
   let imageAssetId: string | null = null;
   if (meta.image) {
-    imageAssetId = await downloadAndStoreImage(meta.image, userId, jobId);
+    imageAssetId = await downloadAndStoreImage(
+      meta.image,
+      userId,
+      jobId,
+      dynamicConfig,
+    );
   }
 
   // TODO(important): Restrict the size of content to store

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export enum AI_PROVIDERS {
+export enum AI_PROVIDER {
   DISABLED = "disabled",
   OPEN_AI = "OpenAI",
   OLLAMA = "Ollama",
@@ -20,29 +20,33 @@ export const crawlerConfigSchema = z.object({
   navigateTimeout: z.coerce.number().positive(),
 });
 
+const openAiConfigSchema = z.object({
+  baseURL: z.string().url(),
+  apiKey: z.string(),
+  inferenceTextModel: z.string(),
+  inferenceImageModel: z.string(),
+  inferenceLanguage: z.string(),
+});
+
 const openAISchema = z.object({
-  aiProvider: z.literal(AI_PROVIDERS.OPEN_AI),
-  [AI_PROVIDERS.OPEN_AI]: z.object({
-    baseURL: z.string().url(),
-    apiKey: z.string(),
-    inferenceTextModel: z.string(),
-    inferenceImageModel: z.string(),
-    inferenceLanguage: z.string(),
-  }),
+  aiProvider: z.literal(AI_PROVIDER.OPEN_AI),
+  [AI_PROVIDER.OPEN_AI]: openAiConfigSchema,
+});
+
+const ollamaConfigSchema = z.object({
+  baseURL: z.string().url(),
+  inferenceTextModel: z.string(),
+  inferenceImageModel: z.string(),
+  inferenceLanguage: z.string(),
 });
 
 const ollamaSchema = z.object({
-  aiProvider: z.literal(AI_PROVIDERS.OLLAMA),
-  [AI_PROVIDERS.OLLAMA]: z.object({
-    baseURL: z.string().url(),
-    inferenceTextModel: z.string(),
-    inferenceImageModel: z.string(),
-    inferenceLanguage: z.string(),
-  }),
+  aiProvider: z.literal(AI_PROVIDER.OLLAMA),
+  [AI_PROVIDER.OLLAMA]: ollamaConfigSchema,
 });
 
 const disabledSchema = z.object({
-  aiProvider: z.literal(AI_PROVIDERS.DISABLED),
+  aiProvider: z.literal(AI_PROVIDER.DISABLED),
 });
 
 export const aiConfigSchema = z.union([
@@ -66,6 +70,8 @@ export type dynamicConfigSchemaType = z.infer<typeof dynamicConfigSchema>;
 export type generalSettingsSchemaType = z.infer<typeof generalSettingsSchema>;
 export type crawlerConfigSchemaType = z.infer<typeof crawlerConfigSchema>;
 export type aiConfigSchemaType = z.infer<typeof aiConfigSchema>;
+export type openAIConfigSchemaType = z.infer<typeof openAiConfigSchema>;
+export type ollamaConfigSchemaType = z.infer<typeof ollamaConfigSchema>;
 
 export function createDefaultDynamicConfig(): dynamicConfigSchemaType {
   return {
@@ -82,7 +88,7 @@ export function createDefaultDynamicConfig(): dynamicConfigSchemaType {
       navigateTimeout: 60000,
     },
     aiConfig: {
-      aiProvider: AI_PROVIDERS.DISABLED,
+      aiProvider: AI_PROVIDER.DISABLED,
     },
   };
 }

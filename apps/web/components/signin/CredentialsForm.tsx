@@ -13,15 +13,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useClientConfig } from "@/lib/clientConfig";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { keepPreviousData } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
 import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
+import { dynamicConfigSchemaType } from "@hoarder/shared/types/admin";
 import { zSignUpSchema } from "@hoarder/shared/types/users";
+
+import LoadingSpinner from "../ui/spinner";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -99,9 +102,17 @@ function SignIn() {
     </Form>
   );
 }
+export function useDynamicServerConfiguration():
+  | dynamicConfigSchemaType
+  | undefined {
+  const { data } = api.admin.getConfig.useQuery(undefined, {
+    placeholderData: keepPreviousData,
+  });
+
+  return data;
+}
 
 function SignUp() {
-  const clientConfig = useClientConfig();
   const form = useForm<z.infer<typeof zSignUpSchema>>({
     resolver: zodResolver(zSignUpSchema),
   });
@@ -110,6 +121,13 @@ function SignUp() {
   const router = useRouter();
 
   const createUserMutation = api.users.create.useMutation();
+
+  // This is trying to access the admin endpoint and therefore is not authorized --> needs its own endpoint
+  const dynamicConfig = useDynamicServerConfiguration();
+
+  if (!dynamicConfig) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <Form {...form}>
@@ -208,7 +226,7 @@ function SignUp() {
           <ActionButton
             type="submit"
             loading={form.formState.isSubmitting}
-            disabled={clientConfig.auth.disableSignups}
+            disabled={dynamicConfig.generalSettings.disableSignups}
           >
             Sign Up
           </ActionButton>

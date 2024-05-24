@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import type { ZOpenAIRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
+import { getDynamicConfig } from "@hoarder/db/dynamicConfig";
 import {
   bookmarkAssets,
   bookmarks,
@@ -12,7 +13,6 @@ import {
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
 import { readAsset } from "@hoarder/shared/assetdb";
-import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
 import {
   OpenAIQueue,
@@ -88,21 +88,28 @@ export class OpenAiWorker {
   }
 }
 
-const IMAGE_PROMPT_BASE = `
-I'm building a read-it-later app and I need your help with automatic tagging.
-Please analyze the attached image and suggest relevant tags that describe its key themes, topics, and main ideas.
-Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}.
-If the tag is not generic enough, don't include it. Aim for 10-15 tags. If there are no good tags, don't emit any. You must respond in valid JSON
-with the key "tags" and the value is list of tags. Don't wrap the response in a markdown code.`;
+/**
+ * Getter for the Image prompt. Already prepared to allow custom prompts in the future
+ */
+function getImagePromptBase(inferredTagLang: string): string {
+  return `
+  I'm building a read-it-later app and I need your help with automatic tagging.
+  Please analyze the attached image and suggest relevant tags that describe its key themes, topics, and main ideas.
+  Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${inferredTagLang}.
+  If the tag is not generic enough, don't include it. Aim for 10-15 tags. If there are no good tags, don't emit any. You must respond in valid JSON
+  with the key "tags" and the value is list of tags. Don't wrap the response in a markdown code.`;
+}
 
-const TEXT_PROMPT_BASE = `
-I'm building a read-it-later app and I need your help with automatic tagging.
-Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT END HERE" and suggest relevant tags that describe its key themes, topics, and main ideas.
-Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}. If it's a famous website
-you may also include a tag for the website. If the tag is not generic enough, don't include it.
-The content can include text for cookie consent and privacy policy, ignore those while tagging.
-CONTENT START HERE
-`;
+function getTextPromptBase(inferredTagLang: string): string {
+  return `
+  I'm building a read-it-later app and I need your help with automatic tagging.
+  Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT END HERE" and suggest relevant tags that describe its key themes, topics, and main ideas.
+  Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${inferredTagLang}. If it's a famous website
+  you may also include a tag for the website. If the tag is not generic enough, don't include it.
+  The content can include text for cookie consent and privacy policy, ignore those while tagging.
+  CONTENT START HERE
+  `;
+}
 
 const TEXT_PROMPT_INSTRUCTIONS = `
 CONTENT END HERE
@@ -112,6 +119,7 @@ Aim for 3-5 tags. If there are no good tags, leave the array empty.
 
 function buildPrompt(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
+  inferredTagLang: string,
 ) {
   if (bookmark.link) {
     if (!bookmark.link.description && !bookmark.link.content) {
@@ -125,7 +133,7 @@ function buildPrompt(
       content = truncateContent(content);
     }
     return `
-${TEXT_PROMPT_BASE}
+${getTextPromptBase(inferredTagLang)}
 URL: ${bookmark.link.url}
 Title: ${bookmark.link.title ?? ""}
 Description: ${bookmark.link.description ?? ""}
@@ -137,7 +145,7 @@ ${TEXT_PROMPT_INSTRUCTIONS}`;
     const content = truncateContent(bookmark.text.text ?? "");
     // TODO: Ensure that the content doesn't exceed the context length of openai
     return `
-${TEXT_PROMPT_BASE}
+${getTextPromptBase(inferredTagLang)}
 ${content}
 ${TEXT_PROMPT_INSTRUCTIONS}
   `;
@@ -174,7 +182,7 @@ async function inferTagsFromImage(
   }
   const base64 = asset.toString("base64");
   return inferenceClient.inferFromImage(
-    IMAGE_PROMPT_BASE,
+    getImagePromptBase(inferenceClient.getInferredTagLang()),
     metadata.contentType,
     base64,
   );
@@ -209,7 +217,7 @@ async function inferTagsFromPDF(
     })
     .where(eq(bookmarkAssets.id, bookmark.id));
 
-  const prompt = `${TEXT_PROMPT_BASE}
+  const prompt = `${getTextPromptBase(inferenceClient.getInferredTagLang())}
 Content: ${truncateContent(pdfParse.text)}
 ${TEXT_PROMPT_INSTRUCTIONS}
 `;
@@ -220,7 +228,9 @@ async function inferTagsFromText(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
   inferenceClient: InferenceClient,
 ) {
-  return await inferenceClient.inferFromText(buildPrompt(bookmark));
+  return await inferenceClient.inferFromText(
+    buildPrompt(bookmark, inferenceClient.getInferredTagLang()),
+  );
 }
 
 async function inferTags(
@@ -362,7 +372,9 @@ async function connectTags(
 async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
   const jobId = job.id ?? "unknown";
 
-  const inferenceClient = InferenceClientFactory.build();
+  const dynamicConfig = await getDynamicConfig();
+
+  const inferenceClient = InferenceClientFactory.build(dynamicConfig);
   if (!inferenceClient) {
     logger.debug(
       `[inference][${jobId}] No inference client configured, nothing to do now`,

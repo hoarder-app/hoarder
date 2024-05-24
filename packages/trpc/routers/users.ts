@@ -4,9 +4,9 @@ import invariant from "tiny-invariant";
 import { z } from "zod";
 
 import { SqliteError } from "@hoarder/db";
+import { getDynamicConfig } from "@hoarder/db/dynamicConfig";
 import { users } from "@hoarder/db/schema";
 import { deleteUserAssets } from "@hoarder/shared/assetdb";
-import serverConfig from "@hoarder/shared/config";
 import { zSignUpSchema } from "@hoarder/shared/types/users";
 
 import { hashPassword, validatePassword } from "../auth";
@@ -29,7 +29,8 @@ export const usersAppRouter = router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      if (serverConfig.auth.disableSignups) {
+      const dynamicConfig = await getDynamicConfig();
+      if (dynamicConfig.generalSettings.disableSignups) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Signups are disabled in server config",

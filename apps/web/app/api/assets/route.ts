@@ -2,14 +2,13 @@ import { createContextFromRequest } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
 import type { ZUploadResponse } from "@hoarder/shared/types/uploads";
+import { getDynamicConfig } from "@hoarder/db/dynamicConfig";
 import {
   newAssetId,
   saveAsset,
   SUPPORTED_ASSET_TYPES,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
-
-const MAX_UPLOAD_SIZE_BYTES = serverConfig.maxAssetSizeMb * 1024 * 1024;
 
 export const dynamic = "force-dynamic";
 export async function POST(request: Request) {
@@ -35,7 +34,12 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-    if (data.size > MAX_UPLOAD_SIZE_BYTES) {
+
+    const dynamicConfig = await getDynamicConfig();
+    const maxUploadSizeBytes =
+      dynamicConfig.generalSettings.maxAssetSize * 1024 * 1024;
+
+    if (data.size > maxUploadSizeBytes) {
       return Response.json({ error: "Asset is too big" }, { status: 413 });
     }
     buffer = Buffer.from(await data.arrayBuffer());
