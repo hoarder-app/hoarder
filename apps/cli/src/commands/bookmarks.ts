@@ -123,6 +123,7 @@ bookmarkCmd
       archived: opts.includeArchived ? undefined : false,
       listId: opts.listId,
       limit: MAX_NUM_BOOKMARKS_PER_PAGE,
+      useCursorV2: true,
     };
 
     let resp = await api.bookmarks.getBookmarks.query(request);
