@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
+import { parseNetscapeBookmarkFile } from "@/lib/netscapeBookmarkParser";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
@@ -14,19 +15,26 @@ import {
 
 import LoadingSpinner from "../ui/spinner";
 import { toast } from "../ui/use-toast";
+import BookmarkAlreadyExistsToast from "../utils/BookmarkAlreadyExistsToast";
 
-function useUploadAsset({ onComplete }: { onComplete: () => void }) {
+function useUploadAsset() {
   const { mutateAsync: createBookmark } = useCreateBookmarkWithPostHook({
-    onSuccess: () => {
-      toast({ description: "Bookmark uploaded" });
-      onComplete();
+    onSuccess: (resp) => {
+      if (resp.alreadyExists) {
+        toast({
+          description: <BookmarkAlreadyExistsToast bookmarkId={resp.id} />,
+          variant: "default",
+        });
+      } else {
+        toast({ description: "Bookmark uploaded" });
+      }
     },
     onError: () => {
       toast({ description: "Something went wrong", variant: "destructive" });
     },
   });
 
-  const { mutateAsync: runUpload } = useMutation({
+  const { mutateAsync: runUploadAsset } = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append("file", file);
@@ -53,7 +61,35 @@ function useUploadAsset({ onComplete }: { onComplete: () => void }) {
     },
   });
 
-  return runUpload;
+  const { mutateAsync: runUploadBookmarkFile } = useMutation({
+    mutationFn: async (file: File) => {
+      return await parseNetscapeBookmarkFile(file);
+    },
+    onSuccess: async (resp) => {
+      return Promise.all(
+        resp.map((url) =>
+          createBookmark({ type: "link", url: url.toString() }),
+        ),
+      );
+    },
+    onError: (error) => {
+      toast({
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  return useCallback(
+    (file: File) => {
+      if (file.type === "text/html") {
+        return runUploadBookmarkFile(file);
+      } else {
+        return runUploadAsset(file);
+      }
+    },
+    [runUploadAsset, runUploadBookmarkFile],
+  );
 }
 
 function useUploadAssets({
@@ -65,7 +101,7 @@ function useUploadAssets({
   onFileError: (name: string, e: Error) => void;
   onAllUploaded: () => void;
 }) {
-  const runUpload = useUploadAsset({ onComplete: onFileUpload });
+  const runUpload = useUploadAsset();
 
   return async (files: File[]) => {
     if (files.length == 0) {
@@ -74,6 +110,7 @@ function useUploadAssets({
     for (const file of files) {
       try {
         await runUpload(file);
+        onFileUpload();
       } catch (e) {
         if (e instanceof TRPCClientError || e instanceof Error) {
           onFileError(file.name, e);
@@ -137,7 +174,7 @@ export default function UploadDropzone({
               </div>
             ) : (
               <p className="text-2xl font-bold text-gray-700">
-                Drop Your Image
+                Drop Your Image / Bookmark file
               </p>
             )}
           </div>
