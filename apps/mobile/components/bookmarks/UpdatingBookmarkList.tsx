@@ -21,10 +21,13 @@ export default function UpdatingBookmarkList({
     error,
     fetchNextPage,
     isFetchingNextPage,
-  } = api.bookmarks.getBookmarks.useInfiniteQuery(query, {
-    initialCursor: null,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-  });
+  } = api.bookmarks.getBookmarks.useInfiniteQuery(
+    { ...query, useCursorV2: true },
+    {
+      initialCursor: null,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    },
+  );
 
   if (error) {
     return <Text>{JSON.stringify(error)}</Text>;
@@ -41,7 +44,9 @@ export default function UpdatingBookmarkList({
 
   return (
     <BookmarkList
-      bookmarks={data.pages.flatMap((p) => p.bookmarks)}
+      bookmarks={data.pages
+        .flatMap((p) => p.bookmarks)
+        .filter((b) => b.content.type != "unknown")}
       header={header}
       onRefresh={onRefresh}
       fetchNextPage={fetchNextPage}

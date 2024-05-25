@@ -133,12 +133,12 @@ export default function BookmarkPreview({
         </div>
 
         <CreationTime createdAt={bookmark.createdAt} />
-        <div className="flex gap-4">
+        <div className="flex items-center gap-4">
           <p className="text-sm text-gray-400">Tags</p>
           <TagsEditor bookmark={bookmark} />
         </div>
         <div className="flex gap-4">
-          <p className="text-sm text-gray-400">Note</p>
+          <p className="pt-2 text-sm text-gray-400">Note</p>
           <NoteEditor bookmark={bookmark} />
         </div>
         <ActionBar bookmark={bookmark} />

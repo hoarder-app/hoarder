@@ -37,6 +37,8 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
   const { data: existingTags, isLoading: isExistingTagsLoading } =
     api.tags.list.useQuery();
 
+  existingTags?.tags.sort((a, b) => a.name.localeCompare(b.name));
+
   const onChange = (
     _option: readonly EditableTag[],
     actionMeta: ActionMeta<EditableTag>,
@@ -120,13 +122,31 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
           overflowY: "auto",
           scrollbarWidth: "none",
         }),
+        container: (styles) => ({
+          ...styles,
+          width: "100%",
+        }),
         control: (styles) => ({
           ...styles,
+          overflow: "hidden",
           backgroundColor: "hsl(var(--background))",
           borderColor: "hsl(var(--border))",
           ":hover": {
             borderColor: "hsl(var(--border))",
           },
+        }),
+        input: (styles) => ({
+          ...styles,
+          color: "rgb(156 163 175)",
+        }),
+        menu: (styles) => ({
+          ...styles,
+          overflow: "hidden",
+          color: "rgb(156 163 175)",
+        }),
+        placeholder: (styles) => ({
+          ...styles,
+          color: "hsl(var(--muted-foreground))",
         }),
       }}
       components={{
@@ -155,9 +175,11 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
       }}
       classNames={{
         multiValueRemove: () => "my-auto",
-        valueContainer: () => "gap-2 bg-background",
-        menuList: () => "text-sm bg-background",
+        valueContainer: () => "gap-2 bg-background text-sm",
+        menu: () => "dark:text-gray-300",
+        menuList: () => "bg-background text-sm",
         option: () => "text-red-500",
+        input: () => "dark:text-gray-300",
       }}
     />
   );

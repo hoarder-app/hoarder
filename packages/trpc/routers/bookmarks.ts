@@ -1,5 +1,5 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, desc, eq, exists, inArray, lte, or } from "drizzle-orm";
+import { and, desc, eq, exists, inArray, lt, lte, or } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -516,11 +516,21 @@ export const bookmarksAppRouter = router({
                       ),
                   )
                 : undefined,
-              input.cursor ? lte(bookmarks.createdAt, input.cursor) : undefined,
+              input.cursor
+                ? input.cursor instanceof Date
+                  ? lte(bookmarks.createdAt, input.cursor)
+                  : or(
+                      lt(bookmarks.createdAt, input.cursor.createdAt),
+                      and(
+                        eq(bookmarks.createdAt, input.cursor.createdAt),
+                        lte(bookmarks.id, input.cursor.id),
+                      ),
+                    )
+                : undefined,
             ),
           )
           .limit(input.limit + 1)
-          .orderBy(desc(bookmarks.createdAt)),
+          .orderBy(desc(bookmarks.createdAt), desc(bookmarks.id)),
       );
       // TODO: Consider not inlining the tags in the response of getBookmarks as this query is getting kinda expensive
       const results = await ctx.db
@@ -532,7 +542,7 @@ export const bookmarksAppRouter = router({
         .leftJoin(bookmarkLinks, eq(bookmarkLinks.id, sq.id))
         .leftJoin(bookmarkTexts, eq(bookmarkTexts.id, sq.id))
         .leftJoin(bookmarkAssets, eq(bookmarkAssets.id, sq.id))
-        .orderBy(desc(sq.createdAt));
+        .orderBy(desc(sq.createdAt), desc(sq.id));
 
       const bookmarksRes = results.reduce<Record<string, ZBookmark>>(
         (acc, row) => {
@@ -578,10 +588,25 @@ export const bookmarksAppRouter = router({
 
       const bookmarksArr = Object.values(bookmarksRes);
 
+      bookmarksArr.sort((a, b) => {
+        if (a.createdAt != b.createdAt) {
+          return b.createdAt.getTime() - a.createdAt.getTime();
+        } else {
+          return b.id.localeCompare(a.id);
+        }
+      });
+
       let nextCursor = null;
       if (bookmarksArr.length > input.limit) {
-        const nextItem = bookmarksArr.pop();
-        nextCursor = nextItem?.createdAt ?? null;
+        const nextItem = bookmarksArr.pop()!;
+        if (input.useCursorV2) {
+          nextCursor = {
+            id: nextItem.id,
+            createdAt: nextItem.createdAt,
+          };
+        } else {
+          nextCursor = nextItem.createdAt;
+        }
       }
 
       return { bookmarks: bookmarksArr, nextCursor };

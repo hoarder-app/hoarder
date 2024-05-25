@@ -6,9 +6,11 @@ on:
   push:
     branches:
       - main
+
 jobs:
   push:
     strategy:
+      fail-fast: false
       matrix:
         package: [web, workers, cli]
     runs-on: ubuntu-latest
@@ -26,7 +28,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_GITHUB_PAT }}
 
       - name: Build ${{ matrix.package }}
         uses: docker/build-push-action@v5
@@ -37,9 +39,9 @@ jobs:
           target: ${{ matrix.package }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:latest
-          cache-from: type=registry,ref=ghcr.io/mohamedbassem/hoarder-build-cache:${{ matrix.package }}
-          cache-to: type=registry,mode=max,ref=ghcr.io/mohamedbassem/hoarder-build-cache:${{ matrix.package }}
+          tags: ghcr.io/hoarder-app/hoarder-${{ matrix.package }}:latest,ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:latest
+          cache-from: type=registry,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.package }}
+          cache-to: type=registry,mode=max,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.package }}
 
       - name: Build ${{ matrix.package }} (release)
         uses: docker/build-push-action@v5
@@ -51,6 +53,6 @@ jobs:
           target: ${{ matrix.package }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:${{ github.event.release.name }},ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:release
-          cache-from: type=registry,ref=ghcr.io/mohamedbassem/hoarder-build-cache:${{ matrix.package }}
-          cache-to: type=registry,mode=max,ref=ghcr.io/mohamedbassem/hoarder-build-cache:${{ matrix.package }}
+          tags: ghcr.io/hoarder-app/hoarder-${{ matrix.package }}:${{ github.event.release.name }},ghcr.io/hoarder-app/hoarder-${{ matrix.package }}:release,ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:${{ github.event.release.name }},ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:release
+          cache-from: type=registry,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.package }}
+          cache-to: type=registry,mode=max,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.package }}

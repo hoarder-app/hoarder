@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
@@ -11,12 +12,17 @@ export function AssetContentSection({ bookmark }: { bookmark: ZBookmark }) {
     case "image": {
       return (
         <div className="relative h-full min-w-full">
-          <Image
-            alt="asset"
-            fill={true}
-            className="object-contain"
-            src={`/api/assets/${bookmark.content.assetId}`}
-          />
+          <Link
+            href={`/api/assets/${bookmark.content.assetId}`}
+            target="_blank"
+          >
+            <Image
+              alt="asset"
+              fill={true}
+              className="object-contain"
+              src={`/api/assets/${bookmark.content.assetId}`}
+            />
+          </Link>
         </div>
       );
     }

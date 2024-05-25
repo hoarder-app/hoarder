@@ -97,12 +97,17 @@ with the key "tags" and the value is list of tags. Don't wrap the response in a 
 
 const TEXT_PROMPT_BASE = `
 I'm building a read-it-later app and I need your help with automatic tagging.
-Please analyze the text after the sentence "CONTENT START HERE:" and suggest relevant tags that describe its key themes, topics, and main ideas.
+Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT END HERE" and suggest relevant tags that describe its key themes, topics, and main ideas.
 Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}. If it's a famous website
-you may also include a tag for the website. If the tag is not generic enough, don't include it. Aim for 3-5 tags. If there are no good tags, don't emit any.
+you may also include a tag for the website. If the tag is not generic enough, don't include it.
 The content can include text for cookie consent and privacy policy, ignore those while tagging.
-You must respond in JSON with the key "tags" and the value is list of tags.
-CONTENT START HERE:
+CONTENT START HERE
+`;
+
+const TEXT_PROMPT_INSTRUCTIONS = `
+CONTENT END HERE
+You must respond in JSON with the key "tags" and the value is an array of string tags. 
+Aim for 3-5 tags. If there are no good tags, leave the array empty.
 `;
 
 function buildPrompt(
@@ -125,7 +130,7 @@ URL: ${bookmark.link.url}
 Title: ${bookmark.link.title ?? ""}
 Description: ${bookmark.link.description ?? ""}
 Content: ${content ?? ""}
-  `;
+${TEXT_PROMPT_INSTRUCTIONS}`;
   }
 
   if (bookmark.text) {
@@ -134,6 +139,7 @@ Content: ${content ?? ""}
     return `
 ${TEXT_PROMPT_BASE}
 ${content}
+${TEXT_PROMPT_INSTRUCTIONS}
   `;
   }
 
@@ -205,6 +211,7 @@ async function inferTagsFromPDF(
 
   const prompt = `${TEXT_PROMPT_BASE}
 Content: ${truncateContent(pdfParse.text)}
+${TEXT_PROMPT_INSTRUCTIONS}
 `;
   return inferenceClient.inferFromText(prompt);
 }

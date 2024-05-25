@@ -36,7 +36,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           editUrl:
-            'https://github.com/MohamedBassem/hoarder-app/tree/main/docs/',
+            'https://github.com/hoarder-app/hoarder/tree/main/docs/',
           routeBasePath: "/",
         },
         blog: false,
@@ -64,7 +64,7 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://github.com/MohamedBassem/hoarder-app',
+          href: 'https://github.com/hoarder-app/hoarder',
           label: 'GitHub',
           position: 'right',
         },
@@ -87,7 +87,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/MohamedBassem/hoarder-app',
+              href: 'https://github.com/hoarder-app/hoarder',
             },
           ],
         },
@@ -100,7 +100,7 @@ const config: Config = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/MohamedBassem/hoarder-app',
+              href: 'https://github.com/hoarder-app/hoarder',
             },
             {
               label: 'Demo',

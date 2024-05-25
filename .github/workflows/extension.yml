@@ -1,0 +1,26 @@
+name: Extension Release Build
+
+on:
+  push:
+    tags:
+      - 'extension/v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./tooling/github/setup
+
+      - name: Build the extension
+        working-directory: apps/browser-extension
+        run: pnpm run build
+
+      - name: Upload Extension Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoarder-extension
+          path: apps/browser-extension/dist/*

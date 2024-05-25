@@ -91,6 +91,11 @@ export type ZNewBookmarkRequest = z.infer<typeof zNewBookmarkRequestSchema>;
 export const DEFAULT_NUM_BOOKMARKS_PER_PAGE = 20;
 export const MAX_NUM_BOOKMARKS_PER_PAGE = 100;
 
+const zCursorV2 = z.object({
+  createdAt: z.date(),
+  id: z.string(),
+});
+
 export const zGetBookmarksRequestSchema = z.object({
   ids: z.array(z.string()).optional(),
   archived: z.boolean().optional(),
@@ -98,13 +103,17 @@ export const zGetBookmarksRequestSchema = z.object({
   tagId: z.string().optional(),
   listId: z.string().optional(),
   limit: z.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),
-  cursor: z.date().nullish(),
+  cursor: zCursorV2.or(z.date()).nullish(),
+  // TODO: Remove this field once all clients are updated to use the new cursor structure.
+  // This is done for backward comptability. If a client doesn't send this field, we'll assume it's an old client
+  // and repsond with the old cursor structure. Once all clients are updated, we can remove this field and drop the old cursor structure.
+  useCursorV2: z.boolean().optional(),
 });
 export type ZGetBookmarksRequest = z.infer<typeof zGetBookmarksRequestSchema>;
 
 export const zGetBookmarksResponseSchema = z.object({
   bookmarks: z.array(zBookmarkSchema),
-  nextCursor: z.date().nullable(),
+  nextCursor: zCursorV2.or(z.date()).nullable(),
 });
 export type ZGetBookmarksResponse = z.infer<typeof zGetBookmarksResponseSchema>;
 

@@ -17,7 +17,7 @@ npm install -g @hoarderapp/cli
 ## Installation (Docker)
 
 ```
-docker run --rm ghcr.io/mohamedbassem/hoarder-cli:release --help
+docker run --rm ghcr.io/hoarder-app/hoarder-cli:release --help
 ```
 
 ## Usage

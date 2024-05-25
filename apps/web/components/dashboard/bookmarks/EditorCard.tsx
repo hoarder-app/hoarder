@@ -1,8 +1,9 @@
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
-import { useEffect, useImperativeHandle, useRef } from "react";
+import React, { useEffect, useImperativeHandle, useRef } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import { Form, FormControl, FormItem } from "@/components/ui/form";
 import InfoTooltip from "@/components/ui/info-tooltip";
+import MultipleChoiceDialog from "@/components/ui/multiple-choice-dialog";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
@@ -33,8 +34,16 @@ function useFocusOnKeyPress(inputRef: React.RefObject<HTMLTextAreaElement>) {
   }, [inputRef]);
 }
 
+interface MultiUrlImportState {
+  urls: URL[];
+  text: string;
+}
+
 export default function EditorCard({ className }: { className?: string }) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const [multiUrlImportState, setMultiUrlImportState] =
+    React.useState<MultiUrlImportState | null>(null);
 
   const demoMode = !!useClientConfig().demoMode;
   const formSchema = z.object({
@@ -65,14 +74,31 @@ export default function EditorCard({ className }: { className?: string }) {
     },
   });
 
-  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
-    const text = data.text.trim();
-    try {
-      const url = new URL(text);
+  function tryToImportUrls(text: string): void {
+    const lines = text.split("\n");
+    const urls: URL[] = [];
+    for (const line of lines) {
+      // parsing can also throw an exception, but will be caught outside
+      const url = new URL(line);
       if (url.protocol != "http:" && url.protocol != "https:") {
         throw new Error("Invalid URL");
       }
+      urls.push(url);
+    }
+
+    if (urls.length === 1) {
+      // Only 1 url in the textfield --> simply import it
       mutate({ type: "link", url: text });
+      return;
+    }
+    // multiple urls found --> ask the user if it should be imported as multiple URLs or as a text bookmark
+    setMultiUrlImportState({ urls, text });
+  }
+
+  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
+    const text = data.text.trim();
+    try {
+      tryToImportUrls(text);
     } catch (e) {
       // Not a URL
       mutate({ type: "text", text });
@@ -139,6 +165,49 @@ export default function EditorCard({ className }: { className?: string }) {
               : "Press ⌘ + Enter to Save"
             : "Save"}
         </ActionButton>
+
+        {multiUrlImportState && (
+          <MultipleChoiceDialog
+            open={true}
+            title={`Import URLs as separate Bookmarks?`}
+            description={`The input contains multiple URLs on separate lines. Do you want to import them as separate bookmarks?`}
+            onOpenChange={(open) => {
+              if (!open) {
+                setMultiUrlImportState(null);
+              }
+            }}
+            actionButtons={[
+              () => (
+                <ActionButton
+                  type="button"
+                  variant="secondary"
+                  loading={isPending}
+                  onClick={() => {
+                    mutate({ type: "text", text: multiUrlImportState.text });
+                    setMultiUrlImportState(null);
+                  }}
+                >
+                  Import as Text Bookmark
+                </ActionButton>
+              ),
+              () => (
+                <ActionButton
+                  type="button"
+                  variant="destructive"
+                  loading={isPending}
+                  onClick={() => {
+                    multiUrlImportState.urls.forEach((url) =>
+                      mutate({ type: "link", url: url.toString() }),
+                    );
+                    setMultiUrlImportState(null);
+                  }}
+                >
+                  Import as separate Bookmarks
+                </ActionButton>
+              ),
+            ]}
+          ></MultipleChoiceDialog>
+        )}
       </form>
     </Form>
   );

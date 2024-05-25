@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Hoarder",
   "description": "An extension to bookmark links to hoarder.app",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "icons": {
     "16": "public/logo-16.png",
     "48": "public/logo-48.png",
@@ -19,6 +19,9 @@
     "gecko": {
       "id": "addon@hoarder.app"
     }
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "permissions": ["storage", "tabs"]
 }

@@ -34,7 +34,7 @@ export default function Search() {
             <PageTitle title="Search" />
             <Input
               placeholder="Search"
-              className="mx-4"
+              className="mx-1"
               value={search}
               onChangeText={setSearch}
               autoFocus

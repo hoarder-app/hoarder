@@ -32,6 +32,7 @@ export default function BookmarkList({
       ListHeaderComponent={header}
       contentContainerStyle={{
         gap: 15,
+        marginHorizontal: 15,
         marginBottom: 15,
       }}
       renderItem={(b) => <BookmarkCard bookmark={b.item} />}

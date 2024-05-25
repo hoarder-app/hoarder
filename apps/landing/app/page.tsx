@@ -8,7 +8,7 @@ import playStoreBadge from "@/public/google-play-badge.png";
 import screenshot from "@/public/screenshot.png";
 import { ExternalLink, Github } from "lucide-react";
 
-const GITHUB_LINK = "https://github.com/MohamedBassem/hoarder-app";
+const GITHUB_LINK = "https://github.com/hoarder-app/hoarder";
 const DOCS_LINK = "https://docs.hoarder.app";
 const DEMO_LINK = "https://try.hoarder.app";
 

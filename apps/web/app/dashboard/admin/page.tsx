@@ -20,9 +20,8 @@ import { Trash } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 const REPO_LATEST_RELEASE_API =
-  "https://api.github.com/repos/mohamedbassem/hoarder-app/releases/latest";
-const REPO_RELEASE_PAGE =
-  "https://github.com/MohamedBassem/hoarder-app/releases";
+  "https://api.github.com/repos/hoarder-app/hoarder/releases/latest";
+const REPO_RELEASE_PAGE = "https://github.com/hoarder-app/hoarder/releases";
 
 function useLatestRelease() {
   const { data } = useQuery({
