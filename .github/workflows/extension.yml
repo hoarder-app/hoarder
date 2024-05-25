@@ -12,28 +12,15 @@ jobs:
       - name: Setup repo
         uses: actions/checkout@v4
 
-      - name: Archive Repo
-        run: |
-          zip -r "${{ github.workspace }}/repo.zip" .;
-
       - name: Setup
         uses: ./tooling/github/setup
 
       - name: Build the extension
         working-directory: apps/browser-extension
-        run: |
-          pnpm run build;
-          cd dist;
-          zip -r "${{ github.workspace }}/extension.zip" *;
-
-      - name: Upload Repo Archive
-        uses: actions/upload-artifact@v4
-        with:
-          name: repo.zip
-          path: ${{ github.workspace }}/repo.zip
+        run: pnpm run build
 
       - name: Upload Extension Archive
         uses: actions/upload-artifact@v4
         with:
-          name: extension.zip
-          path: ${{ github.workspace }}/extension.zip
+          name: hoarder-extension
+          path: apps/browser-extension/dist/*
