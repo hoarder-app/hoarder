@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useCallback, useState } from "react";
+import { parseNetscapeBookmarkFile } from "@/lib/netscapeBookmarkParser";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
-import { ExternalLink } from "lucide-react";
 import DropZone from "react-dropzone";
 
 import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
@@ -16,19 +15,26 @@ import {
 
 import LoadingSpinner from "../ui/spinner";
 import { toast } from "../ui/use-toast";
+import BookmarkAlreadyExistsToast from "../utils/BookmarkAlreadyExistsToast";
 
-function useUploadAsset({ onComplete }: { onComplete: () => void }) {
+function useUploadAsset() {
   const { mutateAsync: createBookmark } = useCreateBookmarkWithPostHook({
-    onSuccess: () => {
-      toast({ description: "Bookmark uploaded" });
-      onComplete();
+    onSuccess: (resp) => {
+      if (resp.alreadyExists) {
+        toast({
+          description: <BookmarkAlreadyExistsToast bookmarkId={resp.id} />,
+          variant: "default",
+        });
+      } else {
+        toast({ description: "Bookmark uploaded" });
+      }
     },
     onError: () => {
       toast({ description: "Something went wrong", variant: "destructive" });
     },
   });
 
-  const { mutateAsync: runUpload } = useMutation({
+  const { mutateAsync: runUploadAsset } = useMutation({
     mutationFn: async (file: File) => {
       const formData = new FormData();
       formData.append("file", file);
@@ -55,21 +61,47 @@ function useUploadAsset({ onComplete }: { onComplete: () => void }) {
     },
   });
 
-  return runUpload;
+  const { mutateAsync: runUploadBookmarkFile } = useMutation({
+    mutationFn: async (file: File) => {
+      return await parseNetscapeBookmarkFile(file);
+    },
+    onSuccess: async (resp) => {
+      return Promise.all(
+        resp.map((url) =>
+          createBookmark({ type: "link", url: url.toString() }),
+        ),
+      );
+    },
+    onError: (error) => {
+      toast({
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  return useCallback(
+    (file: File) => {
+      if (file.type === "text/html") {
+        return runUploadBookmarkFile(file);
+      } else {
+        return runUploadAsset(file);
+      }
+    },
+    [runUploadAsset, runUploadBookmarkFile],
+  );
 }
 
 function useUploadAssets({
   onFileUpload,
   onFileError,
   onAllUploaded,
-  addBookmark,
 }: {
   onFileUpload: () => void;
   onFileError: (name: string, e: Error) => void;
   onAllUploaded: () => void;
-  addBookmark: (bookmark: { type: "link"; url: string }) => void;
 }) {
-  const runUpload = useUploadAsset({ onComplete: onFileUpload });
+  const runUpload = useUploadAsset();
 
   return async (files: File[]) => {
     if (files.length == 0) {
@@ -77,11 +109,8 @@ function useUploadAssets({
     }
     for (const file of files) {
       try {
-        if (file.type === "text/html") {
-          await handleBookmarkFile(file, addBookmark);
-        } else {
-          await runUpload(file);
-        }
+        await runUpload(file);
+        onFileUpload();
       } catch (e) {
         if (e instanceof TRPCClientError || e instanceof Error) {
           onFileError(file.name, e);
@@ -92,71 +121,11 @@ function useUploadAssets({
   };
 }
 
-async function handleBookmarkFile(
-  file: File,
-  addBookmark: (bookmark: { type: "link"; url: string }) => void,
-): Promise<void> {
-  const textContent = Buffer.from(await file.arrayBuffer()).toString();
-  if (!textContent.startsWith("<!DOCTYPE NETSCAPE-Bookmark-file-1>")) {
-    toast({
-      description:
-        "The uploaded html file does not appear to be a bookmark file",
-      variant: "destructive",
-    });
-    throw Error("The uploaded html file does not seem to be a bookmark file");
-  }
-
-  const extractedUrls = extractUrls(textContent);
-
-  for (const extractedUrl of extractedUrls) {
-    const url = new URL(extractedUrl);
-    addBookmark({ type: "link", url: url.toString() });
-  }
-}
-
-function extractUrls(html: string): string[] {
-  const regex = /<a\s+(?:[^>]*?\s+)?href="(http[^"]*)"/gi;
-  let match;
-  const urls = [];
-
-  while ((match = regex.exec(html)) !== null) {
-    urls.push(match[1]);
-  }
-
-  return urls;
-}
-
 export default function UploadDropzone({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { mutate: addBookmark } = useCreateBookmarkWithPostHook({
-    onSuccess: (resp) => {
-      if (resp.alreadyExists) {
-        toast({
-          description: (
-            <div className="flex items-center gap-1">
-              Bookmark already exists.
-              <Link
-                className="flex underline-offset-4 hover:underline"
-                href={`/dashboard/preview/${resp.id}`}
-              >
-                Open <ExternalLink className="ml-1 size-4" />
-              </Link>
-            </div>
-          ),
-          variant: "default",
-        });
-      } else {
-        toast({ description: "Bookmark uploaded" });
-      }
-    },
-    onError: () => {
-      toast({ description: "Something went wrong", variant: "destructive" });
-    },
-  });
-
   const [numUploading, setNumUploading] = useState(0);
   const [numUploaded, setNumUploaded] = useState(0);
   const uploadAssets = useUploadAssets({
@@ -171,7 +140,6 @@ export default function UploadDropzone({
       setNumUploaded(0);
       return;
     },
-    addBookmark: addBookmark,
   });
 
   const [isDragging, setDragging] = useState(false);
