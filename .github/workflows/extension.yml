@@ -1,0 +1,39 @@
+name: Extension Release Build
+
+on:
+  push:
+    tags:
+      - 'extension/v[0-9]+.[0-9]+.[0-9]+'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup repo
+        uses: actions/checkout@v4
+
+      - name: Archive Repo
+        run: |
+          zip -r "${{ github.workspace }}/repo.zip" .;
+
+      - name: Setup
+        uses: ./tooling/github/setup
+
+      - name: Build the extension
+        working-directory: apps/browser-extension
+        run: |
+          pnpm run build;
+          cd dist;
+          zip -r "${{ github.workspace }}/extension.zip" *;
+
+      - name: Upload Repo Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: repo.zip
+          path: ${{ github.workspace }}/repo.zip
+
+      - name: Upload Extension Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension.zip
+          path: ${{ github.workspace }}/extension.zip
