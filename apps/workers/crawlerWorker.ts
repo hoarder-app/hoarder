@@ -388,9 +388,6 @@ async function archiveWebpage(
   userId: string,
   jobId: string,
 ) {
-  if (!serverConfig.crawler.fullPageArchive) {
-    return;
-  }
   logger.info(`[Crawler][${jobId}] Will attempt to archive page ...`);
   const urlParsed = new URL(url);
   const baseUrl = `${urlParsed.protocol}//${urlParsed.host}`;
@@ -499,22 +496,25 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   });
 
   // Do the archival as a separate last step as it has the potential for failure
-  const fullPageArchiveAssetId = await archiveWebpage(
-    htmlContent,
-    browserUrl,
-    userId,
-    jobId,
-  );
-  await db
-    .update(bookmarkLinks)
-    .set({
-      fullPageArchiveAssetId,
-    })
-    .where(eq(bookmarkLinks.id, bookmarkId));
-
-  if (oldFullPageArchiveAssetId) {
-    deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
-      () => ({}),
+  if (serverConfig.crawler.fullPageArchive) {
+    const fullPageArchiveAssetId = await archiveWebpage(
+      htmlContent,
+      browserUrl,
+      userId,
+      jobId,
     );
+
+    await db
+      .update(bookmarkLinks)
+      .set({
+        fullPageArchiveAssetId,
+      })
+      .where(eq(bookmarkLinks.id, bookmarkId));
+
+    if (oldFullPageArchiveAssetId) {
+      deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
+        () => ({}),
+      );
+    }
   }
 }
