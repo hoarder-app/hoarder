@@ -58,17 +58,23 @@ bookmarkCmd
   .action(async (opts) => {
     const api = getAPIClient();
 
+    const results: object[] = [];
+
     const promises = [
       ...opts.link.map((url) =>
         api.bookmarks.createBookmark
           .mutate({ type: "link", url })
-          .then(printBookmark)
+          .then((bookmark: ZBookmark) => {
+            results.push(normalizeBookmark(bookmark));
+          })
           .catch(printError(`Failed to add a link bookmark for url "${url}"`)),
       ),
       ...opts.note.map((text) =>
         api.bookmarks.createBookmark
           .mutate({ type: "text", text })
-          .then(printBookmark)
+          .then((bookmark: ZBookmark) => {
+            results.push(normalizeBookmark(bookmark));
+          })
           .catch(
             printError(
               `Failed to add a text bookmark with text "${text.substring(0, 50)}"`,
@@ -82,7 +88,9 @@ bookmarkCmd
       promises.push(
         api.bookmarks.createBookmark
           .mutate({ type: "text", text })
-          .then(printBookmark)
+          .then((bookmark: ZBookmark) => {
+            results.push(normalizeBookmark(bookmark));
+          })
           .catch(
             printError(
               `Failed to add a text bookmark with text "${text.substring(0, 50)}"`,
@@ -91,8 +99,8 @@ bookmarkCmd
       );
     }
 
-    // TODO: if you choose JSON output, the output would be multiple JSONs and not a single one, so it would not be parsable --> change behavior?
     await Promise.allSettled(promises);
+    printObject(results);
   });
 
 bookmarkCmd

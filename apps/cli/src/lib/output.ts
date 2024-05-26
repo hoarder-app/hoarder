@@ -27,21 +27,8 @@ export function printObject(
  */
 export function printStatusMessage(success: boolean, message: unknown): void {
   const status = success ? "Success" : "Error";
-  if (getGlobalOptions().json) {
-    console.log(
-      JSON.stringify(
-        {
-          status,
-          message,
-        },
-        null,
-        4,
-      ),
-    );
-  } else {
-    const colorFunction = success ? chalk.green : chalk.red;
-    console.log(colorFunction(`${status}: ${message}`));
-  }
+  const colorFunction = success ? chalk.green : chalk.red;
+  console.error(colorFunction(`${status}: ${message}`));
 }
 
 /**
