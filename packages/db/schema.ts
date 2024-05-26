@@ -142,6 +142,7 @@ export const bookmarkLinks = sqliteTable("bookmarkLinks", {
   content: text("content"),
   htmlContent: text("htmlContent"),
   screenshotAssetId: text("screenshotAssetId"),
+  fullPageArchiveAssetId: text("fullPageArchiveAssetId"),
   imageAssetId: text("imageAssetId"),
   crawledAt: integer("crawledAt", { mode: "timestamp" }),
   crawlStatus: text("crawlStatus", {

@@ -6,11 +6,18 @@ import serverConfig from "./config";
 
 const ROOT_PATH = path.join(serverConfig.dataDir, "assets");
 
-export const SUPPORTED_ASSET_TYPES = new Set([
+// The assets that we allow the users to upload
+export const SUPPORTED_UPLOAD_ASSET_TYPES = new Set([
   "image/jpeg",
   "image/png",
   "image/webp",
   "application/pdf",
+]);
+
+// The assets that we support saving in the asset db
+export const SUPPORTED_ASSET_TYPES = new Set([
+  ...SUPPORTED_UPLOAD_ASSET_TYPES,
+  "text/html",
 ]);
 
 function getAssetDir(userId: string, assetId: string) {
@@ -45,6 +52,32 @@ export async function saveAsset({
 
   await Promise.all([
     fs.promises.writeFile(path.join(assetDir, "asset.bin"), asset),
+    fs.promises.writeFile(
+      path.join(assetDir, "metadata.json"),
+      JSON.stringify(metadata),
+    ),
+  ]);
+}
+
+export async function saveAssetFromFile({
+  userId,
+  assetId,
+  assetPath,
+  metadata,
+}: {
+  userId: string;
+  assetId: string;
+  assetPath: string;
+  metadata: z.infer<typeof zAssetMetadataSchema>;
+}) {
+  if (!SUPPORTED_ASSET_TYPES.has(metadata.contentType)) {
+    throw new Error("Unsupported asset type");
+  }
+  const assetDir = getAssetDir(userId, assetId);
+  await fs.promises.mkdir(assetDir, { recursive: true });
+
+  await Promise.all([
+    fs.promises.rename(assetPath, path.join(assetDir, "asset.bin")),
     fs.promises.writeFile(
       path.join(assetDir, "metadata.json"),
       JSON.stringify(metadata),

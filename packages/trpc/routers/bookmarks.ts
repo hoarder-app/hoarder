@@ -146,6 +146,9 @@ async function cleanupAssetForBookmark(
     if (bookmark.link.imageAssetId) {
       assetIds.push(bookmark.link.imageAssetId);
     }
+    if (bookmark.link.fullPageArchiveAssetId) {
+      assetIds.push(bookmark.link.fullPageArchiveAssetId);
+    }
   }
   await Promise.all(
     assetIds.map((assetId) =>

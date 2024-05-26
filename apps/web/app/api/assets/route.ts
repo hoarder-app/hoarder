@@ -5,7 +5,7 @@ import type { ZUploadResponse } from "@hoarder/shared/types/uploads";
 import {
   newAssetId,
   saveAsset,
-  SUPPORTED_ASSET_TYPES,
+  SUPPORTED_UPLOAD_ASSET_TYPES,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   let contentType;
   if (data instanceof File) {
     contentType = data.type;
-    if (!SUPPORTED_ASSET_TYPES.has(contentType)) {
+    if (!SUPPORTED_UPLOAD_ASSET_TYPES.has(contentType)) {
       return Response.json(
         { error: "Unsupported asset type" },
         { status: 400 },

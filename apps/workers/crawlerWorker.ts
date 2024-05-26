@@ -7,6 +7,7 @@ import { Mutex } from "async-mutex";
 import { Worker } from "bullmq";
 import DOMPurify from "dompurify";
 import { eq } from "drizzle-orm";
+import { execa } from "execa";
 import { isShuttingDown } from "exit";
 import { JSDOM } from "jsdom";
 import metascraper from "metascraper";
@@ -26,7 +27,12 @@ import { withTimeout } from "utils";
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
 import { bookmarkLinks, bookmarks } from "@hoarder/db/schema";
-import { deleteAsset, newAssetId, saveAsset } from "@hoarder/shared/assetdb";
+import {
+  deleteAsset,
+  newAssetId,
+  saveAsset,
+  saveAssetFromFile,
+} from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
 import {
@@ -197,6 +203,7 @@ async function getBookmarkDetails(bookmarkId: string) {
     userId: bookmark.userId,
     screenshotAssetId: bookmark.link.screenshotAssetId,
     imageAssetId: bookmark.link.imageAssetId,
+    fullPageArchiveAssetId: bookmark.link.fullPageArchiveAssetId,
   };
 }
 
@@ -375,6 +382,42 @@ async function downloadAndStoreImage(
   }
 }
 
+async function archiveWebpage(
+  html: string,
+  url: string,
+  userId: string,
+  jobId: string,
+) {
+  if (!serverConfig.crawler.fullPageArchive) {
+    return;
+  }
+  logger.info(`[Crawler][${jobId}] Will attempt to archive page ...`);
+  const urlParsed = new URL(url);
+  const baseUrl = `${urlParsed.protocol}//${urlParsed.host}`;
+
+  const assetId = newAssetId();
+  const assetPath = `/tmp/${assetId}`;
+
+  await execa({
+    input: html,
+  })`monolith  - -Ije -t 5 -b ${baseUrl} -o ${assetPath}`;
+
+  await saveAssetFromFile({
+    userId,
+    assetId,
+    assetPath,
+    metadata: {
+      contentType: "text/html",
+    },
+  });
+
+  logger.info(
+    `[Crawler][${jobId}] Done archiving the page as assertId: ${assetId}`,
+  );
+
+  return assetId;
+}
+
 async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   const jobId = job.id ?? "unknown";
 
@@ -392,6 +435,7 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     userId,
     screenshotAssetId: oldScreenshotAssetId,
     imageAssetId: oldImageAssetId,
+    fullPageArchiveAssetId: oldFullPageArchiveAssetId,
   } = await getBookmarkDetails(bookmarkId);
 
   logger.info(
@@ -453,4 +497,24 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     bookmarkId,
     type: "index",
   });
+
+  // Do the archival as a separate last step as it has the potential for failure
+  const fullPageArchiveAssetId = await archiveWebpage(
+    htmlContent,
+    browserUrl,
+    userId,
+    jobId,
+  );
+  await db
+    .update(bookmarkLinks)
+    .set({
+      fullPageArchiveAssetId,
+    })
+    .where(eq(bookmarkLinks.id, bookmarkId));
+
+  if (oldFullPageArchiveAssetId) {
+    deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
+      () => ({}),
+    );
+  }
 }

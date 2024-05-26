@@ -12,6 +12,16 @@ import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 import { ZBookmark, ZBookmarkedLink } from "@hoarder/shared/types/bookmarks";
 
+function FullPageArchiveSection({ link }: { link: ZBookmarkedLink }) {
+  return (
+    <iframe
+      title={link.url}
+      src={`/api/assets/${link.fullPageArchiveAssetId}`}
+      className="relative h-full min-w-full"
+    />
+  );
+}
+
 function ScreenshotSection({ link }: { link: ZBookmarkedLink }) {
   return (
     <div className="relative h-full min-w-full">
@@ -60,6 +70,8 @@ export default function LinkContentSection({
   let content;
   if (section === "cached") {
     content = <CachedContentSection link={bookmark.content} />;
+  } else if (section === "archive") {
+    content = <FullPageArchiveSection link={bookmark.content} />;
   } else {
     content = <ScreenshotSection link={bookmark.content} />;
   }
@@ -78,6 +90,12 @@ export default function LinkContentSection({
               disabled={!bookmark.content.screenshotAssetId}
             >
               Screenshot
+            </SelectItem>
+            <SelectItem
+              value="archive"
+              disabled={!bookmark.content.fullPageArchiveAssetId}
+            >
+              Archive
             </SelectItem>
           </SelectGroup>
         </SelectContent>

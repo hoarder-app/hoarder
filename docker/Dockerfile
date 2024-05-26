@@ -74,6 +74,7 @@ RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-lin
 
 FROM node:21-alpine AS workers
 WORKDIR /app
+RUN apk add --no-cache monolith
 
 COPY --from=workers_builder /prod apps/workers
 
