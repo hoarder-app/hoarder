@@ -6,7 +6,8 @@ import { keepPreviousData } from "@tanstack/react-query";
 function useSearchQuery() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("q") ?? "";
-  return { searchQuery };
+  const advanced = searchParams.get("advanced") ?? "";
+  return { searchQuery, advanced };
 }
 
 export function useDoBookmarkSearch() {
@@ -23,17 +24,17 @@ export function useDoBookmarkSearch() {
     };
   }, [timeoutId]);
 
-  const doSearch = (val: string) => {
+  const doSearch = (val: string, advanced: boolean) => {
     setTimeoutId(undefined);
-    router.replace(`/dashboard/search?q=${val}`);
+    router.replace(`/dashboard/search?q=${val}&advanced=${advanced}`);
   };
 
-  const debounceSearch = (val: string) => {
+  const debounceSearch = (val: string, advanced: boolean) => {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
     const id = setTimeout(() => {
-      doSearch(val);
+      doSearch(val, advanced);
     }, 10);
     setTimeoutId(id);
   };
@@ -46,12 +47,13 @@ export function useDoBookmarkSearch() {
 }
 
 export function useBookmarkSearch() {
-  const { searchQuery } = useSearchQuery();
+  const { searchQuery, advanced } = useSearchQuery();
 
   const { data, isPending, isPlaceholderData, error } =
     api.bookmarks.searchBookmarks.useQuery(
       {
         text: searchQuery,
+        advanced: advanced,
       },
       {
         placeholderData: keepPreviousData,

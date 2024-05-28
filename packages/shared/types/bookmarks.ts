@@ -98,6 +98,8 @@ const zCursorV2 = z.object({
 });
 
 export const zGetBookmarksRequestSchema = z.object({
+  text: z.string().optional(),
+  advanced: z.boolean().optional(),
   ids: z.array(z.string()).optional(),
   archived: z.boolean().optional(),
   favourited: z.boolean().optional(),
@@ -114,7 +116,9 @@ export type ZGetBookmarksRequest = z.infer<typeof zGetBookmarksRequestSchema>;
 
 export const zGetBookmarksResponseSchema = z.object({
   bookmarks: z.array(zBookmarkSchema),
+  bookmarkCursor: z.array(z.string()).optional(),
   nextCursor: zCursorV2.or(z.date()).nullable(),
+  errorMessage: z.string().optional(),
 });
 export type ZGetBookmarksResponse = z.infer<typeof zGetBookmarksResponseSchema>;
 

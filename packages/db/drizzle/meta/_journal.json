@@ -162,6 +162,13 @@
       "when": 1716679762529,
       "tag": "0022_tough_nextwave",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1717316580648,
+      "tag": "0023_futuristic_iron_lad",
+      "breakpoints": true
     }
   ]
 }

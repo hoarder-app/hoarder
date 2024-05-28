@@ -11,7 +11,7 @@ export default async function BookmarksPage() {
       <div className="my-4 flex-1">
         <Bookmarks
           header={<p className="text-2xl">Bookmarks</p>}
-          query={{ archived: false }}
+          query={{ archived: false, useCursorV2: true }}
           showEditorCard={true}
         />
       </div>

@@ -1,0 +1,42 @@
+SearchQuery {
+  Query       = Exp OrderBy?
+  Exp         = Or
+               | AndExp
+  Or        = Exp caseInsensitive<"or"> AndExp
+  And         = AndExp caseInsensitive<"and"> Term
+  AndExp      = And
+               | Term
+  Term        = Group
+               | KeyVal
+               | TagsIn
+               | TagsNotIn
+               | ListKeyVal
+  Group       = "(" Exp ")"
+  KeyVal      = TextKeyVal
+               | CreatedDateKeyVal
+               | CreatedDateKeyValRelative
+               | FavouriteKeyVal
+               | ArchivedKeyVal
+               | BookmarkTypeKeyVal
+  TagsIn      = "tags" "in" "[" Elements "]"
+  TagsNotIn   = "tags" "not" "in" "[" Elements "]"
+  ListKeyVal     = "list" "=" string
+  TextKeyVal  = "text" "=" string
+  CreatedDateKeyVal = "createdDate" ("<=" | ">=" | "=" | "<" | ">") date
+  CreatedDateKeyValRelative = "createdDate" ("<=" | ">=" | "=" | "<" | ">") "\"" "-" number ("d" | "w" | "m" | "y") "\""
+  FavouriteKeyVal = "favourite" "=" boolean
+  ArchivedKeyVal = "archived" "=" boolean
+  BookmarkTypeKeyVal = "bookmarkType" "=" "\"" ("link" | "text" | "asset") "\""
+  Elements    = string ("," string)*
+  boolean     = "true" | "false"
+  string      = "\"" anyChar* "\""
+  date        = "\"" digit digit? "-" digit digit? "-" digit digit digit digit "\""
+  number      = digit+
+  anyChar   = ~"\"" any
+
+  OrderBy     = caseInsensitive<"order by"> SortList
+  SortList    = SortItem ("," SortItem)*
+  SortItem    = SortKey SortOrder?
+  SortKey     = "rank" | "favourite" | "createdDate" | "archived" | "bookmarkType"
+  SortOrder   = caseInsensitive<"asc"> | caseInsensitive<"desc">
+}

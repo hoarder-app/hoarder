@@ -8,28 +8,33 @@ import { Separator } from "@/components/ui/separator";
 import { useBookmarkSearch } from "@/lib/hooks/bookmark-search";
 
 function SearchComp() {
-  const { data } = useBookmarkSearch();
+    const { data } = useBookmarkSearch();
 
-  const inputRef: React.MutableRefObject<HTMLInputElement | null> =
-    useRef<HTMLInputElement | null>(null);
+    const inputRef: React.MutableRefObject<HTMLInputElement | null> =
+        useRef<HTMLInputElement | null>(null);
 
-  return (
-    <div className="flex flex-col gap-3">
-      <SearchInput ref={inputRef} autoFocus={true} />
-      <Separator />
-      {data ? (
-        <BookmarksGrid bookmarks={data.bookmarks} />
-      ) : (
-        <FullPageSpinner />
-      )}
-    </div>
-  );
+    return (
+        <div className="flex flex-col gap-3">
+            <SearchInput ref={inputRef} autoFocus={true}/>
+            {data?.errorMessage &&
+                <div className="flex h-10 w-full rounded-md bg-red-600 px-3 py-2" >
+                    ${data.errorMessage}
+                </div>
+            }
+            <Separator/>
+            {data ? (
+                <BookmarksGrid bookmarks={data.bookmarks}/>
+            ) : (
+                <FullPageSpinner/>
+            )}
+        </div>
+    );
 }
 
 export default function SearchPage() {
-  return (
-    <Suspense>
-      <SearchComp />
-    </Suspense>
-  );
+    return (
+        <Suspense>
+            <SearchComp/>
+        </Suspense>
+    );
 }

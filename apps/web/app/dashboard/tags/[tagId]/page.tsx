@@ -40,7 +40,7 @@ export default async function TagPage({
           </TagOptions>
         </div>
       }
-      query={{ tagId: tag.id }}
+      query={{ tagId: tag.id, useCursorV2: true }}
       showEditorCard={true}
     />
   );

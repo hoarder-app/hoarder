@@ -258,9 +258,10 @@ describe("Bookmark Routes", () => {
     const user = await apiCallers[0].users.whoami();
     let now = 100_000;
 
-    const bookmarkWithDate = (date_ms: number) => ({
+    const bookmarkWithDate = (date_ms: number): {createdAt: Date, type: "text", userId: any} => ({
       userId: user.id,
       createdAt: new Date(date_ms),
+      type: "text",
     });
 
     // One normal bookmark

@@ -487,6 +487,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.0.2
         version: 1.0.2(@types/react@18.2.58)(react@18.2.0)
+      '@radix-ui/react-switch':
+        specifier: ^1.0.3
+        version: 1.0.3(@types/react-dom@18.2.19)(@types/react@18.2.58)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       '@radix-ui/react-tabs':
         specifier: ^1.0.4
         version: 1.0.4(@types/react-dom@18.2.19)(@types/react@18.2.58)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
@@ -904,9 +907,15 @@ importers:
       bcryptjs:
         specifier: ^2.4.3
         version: 2.4.3
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
       drizzle-orm:
         specifier: ^0.29.4
         version: 0.29.4(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0)
+      ohm-js:
+        specifier: ^17.1.0
+        version: 17.1.0
       superjson:
         specifier: ^2.2.1
         version: 2.2.1
@@ -926,6 +935,9 @@ importers:
       '@hoarder/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
+      '@ohm-js/cli':
+        specifier: ^2.0.0
+        version: 2.0.0(ohm-js@17.1.0)
       '@types/bcryptjs':
         specifier: ^2.4.6
         version: 2.4.6
@@ -2977,6 +2989,12 @@ packages:
     engines: {node: '>=10'}
     deprecated: This functionality has been moved to @npmcli/fs
 
+  '@ohm-js/cli@2.0.0':
+    resolution: {integrity: sha512-yiO6QEqW4wQQe1l9c+jOIfmhGm2LlHEhjmaB5Qu9hhz6rEQvL/vhz44azgHegLb0m23D0S7a78orURbPClRtyA==}
+    hasBin: true
+    peerDependencies:
+      ohm-js: ^17.0.0
+
   '@panva/hkdf@1.1.1':
     resolution: {integrity: sha512-dhPeilub1NuIG0X5Kvhh9lH4iW3ZsHlnzwgwbOlgwQ2wG1IqFzsgHqmKPk3WzsdWAeaxKJxgM0+W433RmN45GA==}
 
@@ -3313,6 +3331,19 @@ packages:
       react: ^16.8 || ^17.0 || ^18.0
     peerDependenciesMeta:
       '@types/react':
+        optional: true
+
+  '@radix-ui/react-switch@1.0.3':
+    resolution: {integrity: sha512-mxm87F88HyHztsI7N+ZUmEoARGkC22YVW5CaC+Byc+HRpuvCrOBPTAnXgf+tZ/7i0Sg/eOePGdMhUKhPaQEqow==}
+    peerDependencies:
+      '@types/react': '*'
+      '@types/react-dom': '*'
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
         optional: true
 
   '@radix-ui/react-tabs@1.0.4':
@@ -5769,6 +5800,9 @@ packages:
   data-urls@5.0.0:
     resolution: {integrity: sha512-ZYP5VBHshaDAiVZxjbRVcFJpc+4xGgT0bK3vzy1HLN8jTO975HEbuYzZJcHoQEY5K1a0z8YayJkyVETa08eNTg==}
     engines: {node: '>=18'}
+
+  date-fns@3.6.0:
+    resolution: {integrity: sha512-fRHTG8g/Gif+kSh50gaGEdToemgfj74aRX3swtiouboip5JDLAyDE9F11nHMIcvOaXeOC6D7SpNhi7uFyB7Uww==}
 
   dayjs@1.11.10:
     resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}
@@ -9217,6 +9251,10 @@ packages:
 
   obuf@1.1.2:
     resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
+
+  ohm-js@17.1.0:
+    resolution: {integrity: sha512-xc3B5dgAjTBQGHaH7B58M2Pmv6WvzrJ/3/7LeUzXNg0/sY3jQPdSd/S2SstppaleO77rifR1tyhdfFGNIwxf2Q==}
+    engines: {node: '>=0.12.1'}
 
   oidc-token-hash@5.0.3:
     resolution: {integrity: sha512-IF4PcGgzAr6XXSff26Sk/+P4KZFJVuHAJZj3wgO3vX2bMdNVp/QXTP3P7CEm9V1IdG8lDLY3HhiqpsE/nOwpPw==}
@@ -16292,6 +16330,13 @@ snapshots:
       rimraf: 3.0.2
     dev: false
 
+  '@ohm-js/cli@2.0.0(ohm-js@17.1.0)':
+    dependencies:
+      commander: 8.3.0
+      fast-glob: 3.3.2
+      ohm-js: 17.1.0
+    dev: true
+
   '@panva/hkdf@1.1.1':
     dev: false
 
@@ -16695,6 +16740,22 @@ snapshots:
       '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.58)(react@18.2.0)
       '@types/react': 18.2.58
       react: 18.2.0
+    dev: false
+
+  '@radix-ui/react-switch@1.0.3(@types/react-dom@18.2.19)(@types/react@18.2.58)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      '@babel/runtime': 7.23.9
+      '@radix-ui/primitive': 1.0.1
+      '@radix-ui/react-compose-refs': 1.0.1(@types/react@18.2.58)(react@18.2.0)
+      '@radix-ui/react-context': 1.0.1(@types/react@18.2.58)(react@18.2.0)
+      '@radix-ui/react-primitive': 1.0.3(@types/react-dom@18.2.19)(@types/react@18.2.58)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@radix-ui/react-use-controllable-state': 1.0.1(@types/react@18.2.58)(react@18.2.0)
+      '@radix-ui/react-use-previous': 1.0.1(@types/react@18.2.58)(react@18.2.0)
+      '@radix-ui/react-use-size': 1.0.1(@types/react@18.2.58)(react@18.2.0)
+      '@types/react': 18.2.58
+      '@types/react-dom': 18.2.19
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   '@radix-ui/react-tabs@1.0.4(@types/react-dom@18.2.19)(@types/react@18.2.58)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
@@ -19864,8 +19925,7 @@ snapshots:
   commander@7.2.0:
     dev: false
 
-  commander@8.3.0:
-    dev: false
+  commander@8.3.0: {}
 
   commander@9.5.0: {}
 
@@ -20298,6 +20358,9 @@ snapshots:
     dependencies:
       whatwg-mimetype: 4.0.0
       whatwg-url: 14.0.0
+    dev: false
+
+  date-fns@3.6.0:
     dev: false
 
   dayjs@1.11.10:
@@ -25245,6 +25308,8 @@ snapshots:
 
   obuf@1.1.2:
     dev: false
+
+  ohm-js@17.1.0: {}
 
   oidc-token-hash@5.0.3:
     dev: false

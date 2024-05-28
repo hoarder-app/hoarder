@@ -37,6 +37,7 @@ import {
 
 import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";
+import { performSearch } from "../search/searchProvider";
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: Context;
@@ -128,7 +129,7 @@ async function dummyDrizzleReturnType() {
   return x;
 }
 
-type BookmarkQueryReturnType = Awaited<
+export type BookmarkQueryReturnType = Awaited<
   ReturnType<typeof dummyDrizzleReturnType>
 >;
 
@@ -157,7 +158,7 @@ async function cleanupAssetForBookmark(
   );
 }
 
-function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
+export function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
   const { tagsOnBookmarks, link, text, asset, ...rest } = bookmark;
 
   let content: ZBookmarkContent;
@@ -186,6 +187,17 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
   };
 }
 
+function getBookmarkType(type: string): "link" | "text" | "asset" {
+  switch (type) {
+    case "asset":
+    case "text":
+    case "link":
+      return type;
+    default:
+      throw new TRPCError({ code: "BAD_REQUEST" });
+  }
+}
+
 export const bookmarksAppRouter = router({
   createBookmark: authedProcedure
     .input(zNewBookmarkRequestSchema)
@@ -210,6 +222,7 @@ export const bookmarksAppRouter = router({
             .insert(bookmarks)
             .values({
               userId: ctx.user.id,
+              type: getBookmarkType(input.type),
             })
             .returning()
         )[0];
@@ -420,6 +433,7 @@ export const bookmarksAppRouter = router({
     .input(
       z.object({
         text: z.string(),
+        advanced: z.string().optional(),
       }),
     )
     .output(zGetBookmarksResponseSchema)
@@ -431,42 +445,8 @@ export const bookmarksAppRouter = router({
           message: "Search functionality is not configured",
         });
       }
-      const resp = await client.search(input.text, {
-        filter: [`userId = '${ctx.user.id}'`],
-        showRankingScore: true,
-        attributesToRetrieve: ["id"],
-        sort: ["createdAt:desc"],
-      });
-
-      if (resp.hits.length == 0) {
-        return { bookmarks: [], nextCursor: null };
-      }
-      const idToRank = resp.hits.reduce<Record<string, number>>((acc, r) => {
-        acc[r.id] = r._rankingScore!;
-        return acc;
-      }, {});
-      const results = await ctx.db.query.bookmarks.findMany({
-        where: and(
-          eq(bookmarks.userId, ctx.user.id),
-          inArray(
-            bookmarks.id,
-            resp.hits.map((h) => h.id),
-          ),
-        ),
-        with: {
-          tagsOnBookmarks: {
-            with: {
-              tag: true,
-            },
-          },
-          link: true,
-          text: true,
-          asset: true,
-        },
-      });
-      results.sort((a, b) => idToRank[b.id] - idToRank[a.id]);
-
-      return { bookmarks: results.map(toZodSchema), nextCursor: null };
+        const advancedQuery = {text: input.text, advanced: input.advanced === "true", useCursorV2: true};
+        return performSearch(advancedQuery, ctx, client);
     }),
   getBookmarks: authedProcedure
     .input(zGetBookmarksRequestSchema)
@@ -479,6 +459,19 @@ export const bookmarksAppRouter = router({
         input.limit = DEFAULT_NUM_BOOKMARKS_PER_PAGE;
       }
 
+      const client = await getSearchIdxClient();
+      if (!client) {
+          throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Search functionality is not configured",
+          });
+      }
+
+      console.log("getBookmarks", JSON.stringify(input, null, 4));
+      const newStartTime = performance.now();
+      const advancedSearchResult = await performSearch(input, ctx, client);
+      console.log("new query finished after: ", performance.now() - newStartTime);
+
       const sq = ctx.db.$with("bookmarksSq").as(
         ctx.db
           .select()
@@ -486,39 +479,7 @@ export const bookmarksAppRouter = router({
           .where(
             and(
               eq(bookmarks.userId, ctx.user.id),
-              input.archived !== undefined
-                ? eq(bookmarks.archived, input.archived)
-                : undefined,
-              input.favourited !== undefined
-                ? eq(bookmarks.favourited, input.favourited)
-                : undefined,
               input.ids ? inArray(bookmarks.id, input.ids) : undefined,
-              input.tagId !== undefined
-                ? exists(
-                    ctx.db
-                      .select()
-                      .from(tagsOnBookmarks)
-                      .where(
-                        and(
-                          eq(tagsOnBookmarks.bookmarkId, bookmarks.id),
-                          eq(tagsOnBookmarks.tagId, input.tagId),
-                        ),
-                      ),
-                  )
-                : undefined,
-              input.listId !== undefined
-                ? exists(
-                    ctx.db
-                      .select()
-                      .from(bookmarksInLists)
-                      .where(
-                        and(
-                          eq(bookmarksInLists.bookmarkId, bookmarks.id),
-                          eq(bookmarksInLists.listId, input.listId),
-                        ),
-                      ),
-                  )
-                : undefined,
               input.cursor
                 ? input.cursor instanceof Date
                   ? lte(bookmarks.createdAt, input.cursor)
@@ -535,84 +496,11 @@ export const bookmarksAppRouter = router({
           .limit(input.limit + 1)
           .orderBy(desc(bookmarks.createdAt), desc(bookmarks.id)),
       );
-      // TODO: Consider not inlining the tags in the response of getBookmarks as this query is getting kinda expensive
-      const results = await ctx.db
-        .with(sq)
-        .select()
-        .from(sq)
-        .leftJoin(tagsOnBookmarks, eq(sq.id, tagsOnBookmarks.bookmarkId))
-        .leftJoin(bookmarkTags, eq(tagsOnBookmarks.tagId, bookmarkTags.id))
-        .leftJoin(bookmarkLinks, eq(bookmarkLinks.id, sq.id))
-        .leftJoin(bookmarkTexts, eq(bookmarkTexts.id, sq.id))
-        .leftJoin(bookmarkAssets, eq(bookmarkAssets.id, sq.id))
-        .orderBy(desc(sq.createdAt), desc(sq.id));
 
-      const bookmarksRes = results.reduce<Record<string, ZBookmark>>(
-        (acc, row) => {
-          const bookmarkId = row.bookmarksSq.id;
-          if (!acc[bookmarkId]) {
-            let content: ZBookmarkContent;
-            if (row.bookmarkLinks) {
-              content = { type: "link", ...row.bookmarkLinks };
-            } else if (row.bookmarkTexts) {
-              content = { type: "text", text: row.bookmarkTexts.text ?? "" };
-            } else if (row.bookmarkAssets) {
-              content = {
-                type: "asset",
-                assetId: row.bookmarkAssets.assetId,
-                assetType: row.bookmarkAssets.assetType,
-                fileName: row.bookmarkAssets.fileName,
-              };
-            } else {
-              content = { type: "unknown" };
-            }
-            acc[bookmarkId] = {
-              ...row.bookmarksSq,
-              content,
-              tags: [],
-            };
-          }
+        console.log(advancedSearchResult.bookmarks.length);
+        console.log(advancedSearchResult.nextCursor);
 
-          if (row.bookmarkTags) {
-            invariant(
-              row.tagsOnBookmarks,
-              "if bookmark tag is set, its many-to-many relation must also be set",
-            );
-            acc[bookmarkId].tags.push({
-              ...row.bookmarkTags,
-              attachedBy: row.tagsOnBookmarks.attachedBy,
-            });
-          }
-
-          return acc;
-        },
-        {},
-      );
-
-      const bookmarksArr = Object.values(bookmarksRes);
-
-      bookmarksArr.sort((a, b) => {
-        if (a.createdAt != b.createdAt) {
-          return b.createdAt.getTime() - a.createdAt.getTime();
-        } else {
-          return b.id.localeCompare(a.id);
-        }
-      });
-
-      let nextCursor = null;
-      if (bookmarksArr.length > input.limit) {
-        const nextItem = bookmarksArr.pop()!;
-        if (input.useCursorV2) {
-          nextCursor = {
-            id: nextItem.id,
-            createdAt: nextItem.createdAt,
-          };
-        } else {
-          nextCursor = nextItem.createdAt;
-        }
-      }
-
-      return { bookmarks: bookmarksArr, nextCursor };
+      return { bookmarks: advancedSearchResult.bookmarks, nextCursor: advancedSearchResult.nextCursor };
     }),
 
   updateTags: authedProcedure
@@ -638,7 +526,7 @@ export const bookmarksAppRouter = router({
     )
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      return await ctx.db.transaction(async (tx) => {
+      return ctx.db.transaction(async (tx) => {
         // Detaches
         if (input.detach.length > 0) {
           await tx.delete(tagsOnBookmarks).where(
