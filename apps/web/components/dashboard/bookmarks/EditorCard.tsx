@@ -69,8 +69,8 @@ export default function EditorCard({ className }: { className?: string }) {
       }
       form.reset();
     },
-    onError: () => {
-      toast({ description: "Something went wrong", variant: "destructive" });
+    onError: (e) => {
+      toast({ description: e.message, variant: "destructive" });
     },
   });
 
