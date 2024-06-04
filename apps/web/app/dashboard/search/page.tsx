@@ -1,17 +1,26 @@
 "use client";
 
 import { Suspense, useRef } from "react";
-import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
 import { SearchInput } from "@/components/dashboard/search/SearchInput";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Separator } from "@/components/ui/separator";
 import { useBookmarkSearch } from "@/lib/hooks/bookmark-search";
+import { api } from "@/lib/trpc";
+import UpdatableBookmarksGrid from "@/components/dashboard/bookmarks/UpdatableBookmarksGrid";
 
 function SearchComp() {
-    const { data } = useBookmarkSearch();
+    const { data, searchQuery, advanced } = useBookmarkSearch();
+    const apiUtils = api.useUtils();
 
     const inputRef: React.MutableRefObject<HTMLInputElement | null> =
         useRef<HTMLInputElement | null>(null);
+
+    // TODO: This doesn't seem right. The query gets executed too often.
+    //  BookmarkSearch should already do the first search and that should be it, until you click on "Load more"
+    //  Might also make sense to only load data for advanced queries on "enter", because the query is mostly invalid when you are typing
+    apiUtils.bookmarks.getBookmarks.invalidate();
+
+    const query = {advanced, text: searchQuery};
 
     return (
         <div className="flex flex-col gap-3">
@@ -23,7 +32,7 @@ function SearchComp() {
             }
             <Separator/>
             {data ? (
-                <BookmarksGrid bookmarks={data.bookmarks}/>
+                <UpdatableBookmarksGrid query={query} bookmarks={data}></UpdatableBookmarksGrid>
             ) : (
                 <FullPageSpinner/>
             )}

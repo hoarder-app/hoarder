@@ -3,7 +3,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 
-function useSearchQuery() {
+export function useSearchQuery() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("q") ?? "";
   const advanced = searchParams.get("advanced") ?? "";
@@ -67,6 +67,7 @@ export function useBookmarkSearch() {
 
   return {
     searchQuery,
+    advanced: advanced === "true",
     error,
     data,
     isPending,

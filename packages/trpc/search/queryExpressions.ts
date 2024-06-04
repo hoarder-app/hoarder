@@ -382,7 +382,7 @@ export class SearchByIdExpression extends ParsedExpression {
 
 export class SelectAllSearchExpression extends ParsedExpression {
     constructor() {
-        super(ExpressionType.SEARCH_BY_ID);
+        super(ExpressionType.SELECT_ALL);
     }
 
     async execute(

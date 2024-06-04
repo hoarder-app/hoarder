@@ -472,33 +472,8 @@ export const bookmarksAppRouter = router({
       const advancedSearchResult = await performSearch(input, ctx, client);
       console.log("new query finished after: ", performance.now() - newStartTime);
 
-      const sq = ctx.db.$with("bookmarksSq").as(
-        ctx.db
-          .select()
-          .from(bookmarks)
-          .where(
-            and(
-              eq(bookmarks.userId, ctx.user.id),
-              input.ids ? inArray(bookmarks.id, input.ids) : undefined,
-              input.cursor
-                ? input.cursor instanceof Date
-                  ? lte(bookmarks.createdAt, input.cursor)
-                  : or(
-                      lt(bookmarks.createdAt, input.cursor.createdAt),
-                      and(
-                        eq(bookmarks.createdAt, input.cursor.createdAt),
-                        lte(bookmarks.id, input.cursor.id),
-                      ),
-                    )
-                : undefined,
-            ),
-          )
-          .limit(input.limit + 1)
-          .orderBy(desc(bookmarks.createdAt), desc(bookmarks.id)),
-      );
-
-        console.log(advancedSearchResult.bookmarks.length);
-        console.log(advancedSearchResult.nextCursor);
+      console.log(advancedSearchResult.bookmarks.length);
+      console.log(advancedSearchResult.nextCursor);
 
       return { bookmarks: advancedSearchResult.bookmarks, nextCursor: advancedSearchResult.nextCursor };
     }),

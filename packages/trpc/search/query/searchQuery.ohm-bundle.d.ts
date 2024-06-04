@@ -5,7 +5,6 @@ import {
   BaseActionDict,
   Grammar,
   IterationNode,
-  Node,
   NonterminalNode,
   Semantics,
   TerminalNode
