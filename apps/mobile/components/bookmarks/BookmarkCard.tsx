@@ -227,6 +227,7 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
     throw new Error("Wrong content type rendered");
   }
   const content = bookmark.content.text;
+  // TODO: replace this markdown also? I am not really sure how to test if everything still works
   return (
     <View className="flex max-h-96 gap-2 p-2">
       {bookmark.title && (
