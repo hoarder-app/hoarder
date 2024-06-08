@@ -69,3 +69,17 @@ export const SearchIndexingQueue = new Queue<ZSearchIndexingRequest, void>(
     },
   },
 );
+
+export function triggerReindex(bookmarkId: string) {
+  SearchIndexingQueue.add("search_indexing", {
+    bookmarkId,
+    type: "index",
+  });
+}
+
+export function triggerDeletion(bookmarkId: string) {
+  SearchIndexingQueue.add("search_indexing", {
+    bookmarkId: bookmarkId,
+    type: "delete",
+  });
+}

@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { ZAttachedByEnum } from "@hoarder/shared/types/tags";
 import { SqliteError } from "@hoarder/db";
 import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
-import { SearchIndexingQueue } from "@hoarder/shared/queues";
+import { triggerReindex } from "@hoarder/shared/queues";
 import { zGetTagResponseSchema } from "@hoarder/shared/types/tags";
 
 import type { Context } from "../index";
@@ -102,18 +102,20 @@ export const tagsAppRouter = router({
     )
     .use(ensureTagOwnership)
     .mutation(async ({ input, ctx }) => {
+      const affectedBookmarks = await ctx.db
+        .select({
+          bookmarkId: tagsOnBookmarks.bookmarkId,
+        })
+        .from(tagsOnBookmarks)
+        .where(eq(tagsOnBookmarks.tagId, input.tagId));
+
       const res = await ctx.db
         .delete(bookmarkTags)
-        .where(
-          and(
-            conditionFromInput(input, ctx.user.id),
-            eq(bookmarkTags.userId, ctx.user.id),
-          ),
-        );
+        .where(conditionFromInput(input, ctx.user.id));
       if (res.changes == 0) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
-      // TODO: Update affected bookmarks in search index
+      affectedBookmarks.forEach(({ bookmarkId }) => triggerReindex(bookmarkId));
     }),
   deleteUnused: authedProcedure
     .output(
@@ -184,12 +186,7 @@ export const tagsAppRouter = router({
           await Promise.all([
             affectedBookmarks
               .map((b) => b.bookmarkId)
-              .map((id) =>
-                SearchIndexingQueue.add("search_indexing", {
-                  bookmarkId: id,
-                  type: "index",
-                }),
-              ),
+              .map((id) => triggerReindex(id)),
           ]);
         } catch (e) {
           // Best Effort attempt to reindex affected bookmarks
@@ -305,14 +302,7 @@ export const tagsAppRouter = router({
       );
 
       try {
-        await Promise.all([
-          affectedBookmarks.map((id) =>
-            SearchIndexingQueue.add("search_indexing", {
-              bookmarkId: id,
-              type: "index",
-            }),
-          ),
-        ]);
+        await Promise.all([affectedBookmarks.map((id) => triggerReindex(id))]);
       } catch (e) {
         // Best Effort attempt to reindex affected bookmarks
         console.error("Failed to reindex affected bookmarks", e);

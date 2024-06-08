@@ -22,7 +22,8 @@ import { deleteAsset } from "@hoarder/shared/assetdb";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
-  SearchIndexingQueue,
+  triggerDeletion,
+  triggerReindex,
 } from "@hoarder/shared/queues";
 import { getSearchIdxClient } from "@hoarder/shared/search";
 import {
@@ -295,10 +296,7 @@ export const bookmarksAppRouter = router({
           break;
         }
       }
-      SearchIndexingQueue.add("search_indexing", {
-        bookmarkId: bookmark.id,
-        type: "index",
-      });
+      triggerReindex(bookmark.id);
       return bookmark;
     }),
 
@@ -328,10 +326,7 @@ export const bookmarksAppRouter = router({
           message: "Bookmark not found",
         });
       }
-      SearchIndexingQueue.add("search_indexing", {
-        bookmarkId: input.bookmarkId,
-        type: "index",
-      });
+      triggerReindex(input.bookmarkId);
       return res[0];
     }),
 
@@ -357,10 +352,7 @@ export const bookmarksAppRouter = router({
           message: "Bookmark not found",
         });
       }
-      SearchIndexingQueue.add("search_indexing", {
-        bookmarkId: input.bookmarkId,
-        type: "index",
-      });
+      triggerReindex(input.bookmarkId);
     }),
 
   deleteBookmark: authedProcedure
@@ -385,10 +377,7 @@ export const bookmarksAppRouter = router({
             eq(bookmarks.id, input.bookmarkId),
           ),
         );
-      SearchIndexingQueue.add("search_indexing", {
-        bookmarkId: input.bookmarkId,
-        type: "delete",
-      });
+      triggerDeletion(input.bookmarkId);
       if (deleted.changes > 0 && bookmark) {
         await cleanupAssetForBookmark({
           asset: bookmark.asset,
@@ -638,7 +627,7 @@ export const bookmarksAppRouter = router({
     )
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      return await ctx.db.transaction(async (tx) => {
+      return ctx.db.transaction(async (tx) => {
         // Detaches
         if (input.detach.length > 0) {
           await tx.delete(tagsOnBookmarks).where(
@@ -653,6 +642,7 @@ export const bookmarksAppRouter = router({
         }
 
         if (input.attach.length == 0) {
+          triggerReindex(input.bookmarkId);
           return {
             bookmarkId: input.bookmarkId,
             attached: [],
@@ -708,6 +698,7 @@ export const bookmarksAppRouter = router({
             })),
           )
           .onConflictDoNothing();
+        triggerReindex(input.bookmarkId);
         return {
           bookmarkId: input.bookmarkId,
           attached: allIds,
