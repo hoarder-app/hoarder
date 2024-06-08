@@ -45,7 +45,6 @@ export default function TextCard({
 
   return (
     <>
-      {/* TODO: Where is that used? Is it simply unused?*/}
       <BookmarkedTextViewer
         content={bookmarkedText.text}
         open={previewModalOpen}
