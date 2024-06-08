@@ -30,7 +30,7 @@
     "vite": "^5.1.0"
   },
   "scripts": {
-    "build": "vite build",
+    "build": "tsc buildscripts/updateVersionString.ts && node buildscripts/updateVersionString.js",
     "run": "tsx src/index.ts",
     "lint": "eslint .",
     "format": "prettier . --ignore-path ../../.prettierignore",
@@ -43,6 +43,7 @@
   },
   "eslintConfig": {
     "root": true,
+    "ignorePatterns": ["buildscripts/*"],
     "extends": [
       "@hoarder/eslint-config/base"
     ]
