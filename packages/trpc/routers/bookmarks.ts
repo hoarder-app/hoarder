@@ -615,8 +615,13 @@ export const bookmarksAppRouter = router({
             tagName: z.string().optional(),
           }),
         ),
-        // Detach by tag ids
-        detach: z.array(z.object({ tagId: z.string() })),
+        detach: z.array(
+          z.object({
+            // At least one of the two must be set
+            tagId: z.string().optional(),
+            tagName: z.string().optional(), // Also allow removing by tagName, to make CLI usage easier
+          }),
+        ),
       }),
     )
     .output(
@@ -627,25 +632,51 @@ export const bookmarksAppRouter = router({
     )
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      return await ctx.db.transaction(async (tx) => {
+      return ctx.db.transaction(async (tx) => {
         // Detaches
+        const idsToRemove: string[] = [];
         if (input.detach.length > 0) {
-          await tx.delete(tagsOnBookmarks).where(
-            and(
-              eq(tagsOnBookmarks.bookmarkId, input.bookmarkId),
-              inArray(
-                tagsOnBookmarks.tagId,
-                input.detach.map((t) => t.tagId),
+          const namesToRemove: string[] = [];
+          input.detach.forEach((detachInfo) => {
+            if (detachInfo.tagId) {
+              idsToRemove.push(detachInfo.tagId);
+            }
+            if (detachInfo.tagName) {
+              namesToRemove.push(detachInfo.tagName);
+            }
+          });
+
+          if (namesToRemove.length > 0) {
+            (
+              await tx.query.bookmarkTags.findMany({
+                where: and(
+                  eq(bookmarkTags.userId, ctx.user.id),
+                  inArray(bookmarkTags.name, namesToRemove),
+                ),
+                columns: {
+                  id: true,
+                },
+              })
+            ).forEach((tag) => {
+              idsToRemove.push(tag.id);
+            });
+          }
+
+          await tx
+            .delete(tagsOnBookmarks)
+            .where(
+              and(
+                eq(tagsOnBookmarks.bookmarkId, input.bookmarkId),
+                inArray(tagsOnBookmarks.tagId, idsToRemove),
               ),
-            ),
-          );
+            );
         }
 
         if (input.attach.length == 0) {
           return {
             bookmarkId: input.bookmarkId,
             attached: [],
-            detached: input.detach.map((t) => t.tagId),
+            detached: idsToRemove,
           };
         }
 
@@ -701,7 +732,7 @@ export const bookmarksAppRouter = router({
         return {
           bookmarkId: input.bookmarkId,
           attached: allIds,
-          detached: input.detach.map((t) => t.tagId),
+          detached: idsToRemove,
         };
       });
     }),
