@@ -11,12 +11,10 @@ import resolveConfig from "tailwindcss/resolveConfig";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
-import AssetCard from "./AssetCard";
+import BookmarkCard from "./BookmarkCard";
 import EditorCard from "./EditorCard";
-import LinkCard from "./LinkCard";
-import TextCard from "./TextCard";
 
-function BookmarkCard({ children }: { children: React.ReactNode }) {
+function StyledBookmarkCard({ children }: { children: React.ReactNode }) {
   return (
     <Slot className="mb-4 border border-border bg-card duration-300 ease-in hover:shadow-lg hover:transition-all">
       {children}
@@ -34,24 +32,6 @@ function getBreakpointConfig() {
   breakpointColumnsObj[parseInt(fullConfig.theme.screens.md)] = 1;
   breakpointColumnsObj[parseInt(fullConfig.theme.screens.sm)] = 1;
   return breakpointColumnsObj;
-}
-
-function renderBookmark(bookmark: ZBookmark) {
-  let comp;
-  switch (bookmark.content.type) {
-    case "link":
-      comp = <LinkCard bookmark={{ ...bookmark, content: bookmark.content }} />;
-      break;
-    case "text":
-      comp = <TextCard bookmark={{ ...bookmark, content: bookmark.content }} />;
-      break;
-    case "asset":
-      comp = (
-        <AssetCard bookmark={{ ...bookmark, content: bookmark.content }} />
-      );
-      break;
-  }
-  return <BookmarkCard key={bookmark.id}>{comp}</BookmarkCard>;
 }
 
 export default function BookmarksGrid({
@@ -76,11 +56,15 @@ export default function BookmarksGrid({
 
   const children = [
     showEditorCard && (
-      <BookmarkCard key={"editor"}>
+      <StyledBookmarkCard key={"editor"}>
         <EditorCard />
-      </BookmarkCard>
+      </StyledBookmarkCard>
     ),
-    ...bookmarks.map((b) => renderBookmark(b)),
+    ...bookmarks.map((b) => (
+      <StyledBookmarkCard key={b.id}>
+        <BookmarkCard bookmark={b} />
+      </StyledBookmarkCard>
+    )),
   ];
   return (
     <>

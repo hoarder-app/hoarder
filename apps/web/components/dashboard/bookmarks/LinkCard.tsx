@@ -2,13 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { api } from "@/lib/trpc";
 
 import type { ZBookmarkTypeLink } from "@hoarder/shared/types/bookmarks";
 import {
   getBookmarkLinkImageUrl,
   isBookmarkStillCrawling,
-  isBookmarkStillLoading,
 } from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
@@ -80,38 +78,12 @@ function LinkUrl({ bookmark }: { bookmark: ZBookmarkTypeLink }) {
 }
 
 export default function LinkCard({
-  bookmark: initialData,
+  bookmark: bookmarkLink,
   className,
 }: {
   bookmark: ZBookmarkTypeLink;
   className?: string;
 }) {
-  const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
-    {
-      bookmarkId: initialData.id,
-    },
-    {
-      initialData,
-      refetchInterval: (query) => {
-        const data = query.state.data;
-        if (!data) {
-          return false;
-        }
-        // If the link is not crawled or not tagged
-        if (isBookmarkStillLoading(data)) {
-          return 1000;
-        }
-        return false;
-      },
-    },
-  );
-
-  if (bookmark.content.type !== "link") {
-    throw new Error("Invalid bookmark type");
-  }
-
-  const bookmarkLink = { ...bookmark, content: bookmark.content };
-
   return (
     <BookmarkLayoutAdaptingCard
       title={<LinkTitle bookmark={bookmarkLink} />}

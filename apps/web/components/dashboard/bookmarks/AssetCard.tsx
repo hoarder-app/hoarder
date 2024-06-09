@@ -2,14 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { api } from "@/lib/trpc";
 
-import type {
-  ZBookmark,
-  ZBookmarkTypeAsset,
-} from "@hoarder/shared/types/bookmarks";
+import type { ZBookmarkTypeAsset } from "@hoarder/shared/types/bookmarks";
 import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
-import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 
@@ -51,37 +46,12 @@ function AssetImage({
 }
 
 export default function AssetCard({
-  bookmark: initialData,
+  bookmark: bookmarkedAsset,
   className,
 }: {
-  bookmark: ZBookmark;
+  bookmark: ZBookmarkTypeAsset;
   className?: string;
 }) {
-  const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
-    {
-      bookmarkId: initialData.id,
-    },
-    {
-      initialData,
-      refetchInterval: (query) => {
-        const data = query.state.data;
-        if (!data) {
-          return false;
-        }
-        if (isBookmarkStillTagging(data)) {
-          return 1000;
-        }
-        return false;
-      },
-    },
-  );
-
-  if (bookmark.content.type != "asset") {
-    throw new Error("Unexpected bookmark type");
-  }
-
-  const bookmarkedAsset = { ...bookmark, content: bookmark.content };
-
   return (
     <BookmarkLayoutAdaptingCard
       title={bookmarkedAsset.title ?? bookmarkedAsset.content.fileName}

@@ -2,46 +2,23 @@
 
 import { useState } from "react";
 import { MarkdownComponent } from "@/components/ui/markdown-component";
-import { api } from "@/lib/trpc";
 import { bookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
-import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
+import type { ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
 
 import { BookmarkedTextViewer } from "./BookmarkedTextViewer";
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 
 export default function TextCard({
-  bookmark: initialData,
+  bookmark,
   className,
 }: {
-  bookmark: ZBookmark;
+  bookmark: ZBookmarkTypeText;
   className?: string;
 }) {
-  const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
-    {
-      bookmarkId: initialData.id,
-    },
-    {
-      initialData,
-      refetchInterval: (query) => {
-        const data = query.state.data;
-        if (!data) {
-          return false;
-        }
-        if (isBookmarkStillTagging(data)) {
-          return 1000;
-        }
-        return false;
-      },
-    },
-  );
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const bookmarkedText = bookmark.content;
-  if (bookmarkedText.type != "text") {
-    throw new Error("Unexpected bookmark type");
-  }
 
   return (
     <>
