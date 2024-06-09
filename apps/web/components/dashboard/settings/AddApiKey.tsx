@@ -41,13 +41,11 @@ function ApiKeySuccess({ apiKey }: { apiKey: string }) {
       </div>
       <div className="flex space-x-2 pt-2">
         <Input value={apiKey} readOnly />
-        <Button className="align-middle">
-          <CopyBtn
-            getStringToCopy={() => {
-              return apiKey;
-            }}
-          ></CopyBtn>
-        </Button>
+        <CopyBtn
+          getStringToCopy={() => {
+            return apiKey;
+          }}
+        />
       </div>
     </div>
   );

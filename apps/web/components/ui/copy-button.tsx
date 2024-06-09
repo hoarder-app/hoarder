@@ -1,15 +1,20 @@
-import React from "react";
-import { Copy, CopyCheck } from "lucide-react";
+import React, { useEffect } from "react";
+import { Check, Copy } from "lucide-react";
 
 export default function CopyBtn({
-  classes,
+  className,
   getStringToCopy,
 }: {
-  classes?: string;
+  className?: string;
   getStringToCopy: () => string;
 }) {
   const [copyOk, setCopyOk] = React.useState(false);
-  const isDisabled = !navigator.clipboard;
+  const [disabled, setDisabled] = React.useState(false);
+  useEffect(() => {
+    if (!navigator || !navigator.clipboard) {
+      setDisabled(true);
+    }
+  });
 
   const handleClick = async () => {
     await navigator.clipboard.writeText(getStringToCopy());
@@ -20,22 +25,13 @@ export default function CopyBtn({
   };
 
   return (
-    <div className={classes}>
-      {copyOk ? (
-        <button onClick={handleClick}>
-          <CopyCheck />
-        </button>
-      ) : (
-        <button
-          onClick={handleClick}
-          disabled={isDisabled}
-          title={
-            isDisabled ? "Copying is only available on localhost or https" : ""
-          }
-        >
-          <Copy />
-        </button>
-      )}
-    </div>
+    <button
+      className={className}
+      onClick={handleClick}
+      disabled={disabled}
+      title={disabled ? "Copying is only available over https" : undefined}
+    >
+      {copyOk ? <Check /> : <Copy />}
+    </button>
   );
 }
