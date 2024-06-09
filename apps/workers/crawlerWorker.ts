@@ -39,7 +39,7 @@ import {
   LinkCrawlerQueue,
   OpenAIQueue,
   queueConnectionDetails,
-  triggerReindex,
+  triggerSearchReindex,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
 
@@ -490,7 +490,7 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   }
 
   // Update the search index
-  triggerReindex(bookmarkId);
+  triggerSearchReindex(bookmarkId);
 
   // Do the archival as a separate last step as it has the potential for failure
   if (serverConfig.crawler.fullPageArchive) {

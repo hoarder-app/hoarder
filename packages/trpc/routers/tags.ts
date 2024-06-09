@@ -5,7 +5,7 @@ import { z } from "zod";
 import type { ZAttachedByEnum } from "@hoarder/shared/types/tags";
 import { SqliteError } from "@hoarder/db";
 import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
-import { triggerReindex } from "@hoarder/shared/queues";
+import { triggerSearchReindex } from "@hoarder/shared/queues";
 import { zGetTagResponseSchema } from "@hoarder/shared/types/tags";
 
 import type { Context } from "../index";
@@ -107,7 +107,7 @@ export const tagsAppRouter = router({
           bookmarkId: tagsOnBookmarks.bookmarkId,
         })
         .from(tagsOnBookmarks)
-        .where(eq(tagsOnBookmarks.tagId, input.tagId));
+        .where(conditionFromInput(input, ctx.user.id));
 
       const res = await ctx.db
         .delete(bookmarkTags)
@@ -115,7 +115,9 @@ export const tagsAppRouter = router({
       if (res.changes == 0) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
-      affectedBookmarks.forEach(({ bookmarkId }) => triggerReindex(bookmarkId));
+      affectedBookmarks.forEach(({ bookmarkId }) =>
+        triggerSearchReindex(bookmarkId),
+      );
     }),
   deleteUnused: authedProcedure
     .output(
@@ -186,7 +188,7 @@ export const tagsAppRouter = router({
           await Promise.all([
             affectedBookmarks
               .map((b) => b.bookmarkId)
-              .map((id) => triggerReindex(id)),
+              .map((id) => triggerSearchReindex(id)),
           ]);
         } catch (e) {
           // Best Effort attempt to reindex affected bookmarks
@@ -302,7 +304,9 @@ export const tagsAppRouter = router({
       );
 
       try {
-        await Promise.all([affectedBookmarks.map((id) => triggerReindex(id))]);
+        await Promise.all([
+          affectedBookmarks.map((id) => triggerSearchReindex(id)),
+        ]);
       } catch (e) {
         // Best Effort attempt to reindex affected bookmarks
         console.error("Failed to reindex affected bookmarks", e);
