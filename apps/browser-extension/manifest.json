@@ -11,6 +11,9 @@
   "action": {
     "default_popup": "index.html"
   },
+  "background": {
+    "service_worker": "src/background/background.ts"
+  },
   "options_ui": {
     "page": "index.html#options",
     "open_in_tab": false
@@ -23,5 +26,5 @@
   "content_security_policy": {
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
-  "permissions": ["storage", "tabs"]
+  "permissions": ["storage", "tabs", "contextMenus"]
 }

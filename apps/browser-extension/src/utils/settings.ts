@@ -21,3 +21,14 @@ export default function usePluginSettings() {
 export async function getPluginSettings() {
   return (await chrome.storage.sync.get("settings")).settings as Settings;
 }
+
+export function subscribeToSettingsChanges(
+  callback: (settings: Settings) => void,
+) {
+  chrome.storage.sync.onChanged.addListener((changes) => {
+    if (changes.settings === undefined) {
+      return;
+    }
+    callback(changes.settings.newValue as Settings);
+  });
+}
