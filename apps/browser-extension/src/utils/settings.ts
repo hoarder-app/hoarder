@@ -26,6 +26,9 @@ export function subscribeToSettingsChanges(
   callback: (settings: Settings) => void,
 ) {
   chrome.storage.sync.onChanged.addListener((changes) => {
+    if (changes.settings === undefined) {
+      return;
+    }
     callback(changes.settings.newValue as Settings);
   });
 }
