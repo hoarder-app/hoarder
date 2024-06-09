@@ -22,7 +22,8 @@ import { deleteAsset } from "@hoarder/shared/assetdb";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
-  SearchIndexingQueue,
+  triggerSearchDeletion,
+  triggerSearchReindex,
 } from "@hoarder/shared/queues";
 import { getSearchIdxClient } from "@hoarder/shared/search";
 import {
@@ -295,10 +296,7 @@ export const bookmarksAppRouter = router({
           break;
         }
       }
-      SearchIndexingQueue.add("search_indexing", {
-        bookmarkId: bookmark.id,
-        type: "index",
-      });
+      triggerSearchReindex(bookmark.id);
       return bookmark;
     }),
 
@@ -328,10 +326,7 @@ export const bookmarksAppRouter = router({
           message: "Bookmark not found",
         });
       }
-      SearchIndexingQueue.add("search_indexing", {
-        bookmarkId: input.bookmarkId,
-        type: "index",
-      });
+      triggerSearchReindex(input.bookmarkId);
       return res[0];
     }),
 
@@ -357,10 +352,7 @@ export const bookmarksAppRouter = router({
           message: "Bookmark not found",
         });
       }
-      SearchIndexingQueue.add("search_indexing", {
-        bookmarkId: input.bookmarkId,
-        type: "index",
-      });
+      triggerSearchReindex(input.bookmarkId);
     }),
 
   deleteBookmark: authedProcedure
@@ -385,10 +377,7 @@ export const bookmarksAppRouter = router({
             eq(bookmarks.id, input.bookmarkId),
           ),
         );
-      SearchIndexingQueue.add("search_indexing", {
-        bookmarkId: input.bookmarkId,
-        type: "delete",
-      });
+      triggerSearchDeletion(input.bookmarkId);
       if (deleted.changes > 0 && bookmark) {
         await cleanupAssetForBookmark({
           asset: bookmark.asset,
@@ -708,6 +697,7 @@ export const bookmarksAppRouter = router({
             })),
           )
           .onConflictDoNothing();
+        triggerSearchReindex(input.bookmarkId);
         return {
           bookmarkId: input.bookmarkId,
           attached: allIds,

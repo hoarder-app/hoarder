@@ -6,6 +6,7 @@ import {
   LinkCrawlerQueue,
   OpenAIQueue,
   SearchIndexingQueue,
+  triggerSearchReindex,
 } from "@hoarder/shared/queues";
 
 import { adminProcedure, router } from "../index";
@@ -129,13 +130,6 @@ export const adminAppRouter = router({
       },
     });
 
-    await Promise.all(
-      bookmarkIds.map((b) =>
-        SearchIndexingQueue.add("search_indexing", {
-          bookmarkId: b.id,
-          type: "index",
-        }),
-      ),
-    );
+    await Promise.all(bookmarkIds.map((b) => triggerSearchReindex(b.id)));
   }),
 });

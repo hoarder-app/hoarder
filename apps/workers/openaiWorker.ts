@@ -17,7 +17,7 @@ import logger from "@hoarder/shared/logger";
 import {
   OpenAIQueue,
   queueConnectionDetails,
-  SearchIndexingQueue,
+  triggerSearchReindex,
   zOpenAIRequestSchema,
 } from "@hoarder/shared/queues";
 
@@ -396,8 +396,5 @@ async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
   await connectTags(bookmarkId, tags, bookmark.userId);
 
   // Update the search index
-  SearchIndexingQueue.add("search_indexing", {
-    bookmarkId,
-    type: "index",
-  });
+  triggerSearchReindex(bookmarkId);
 }
