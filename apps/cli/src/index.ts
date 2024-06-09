@@ -22,7 +22,11 @@ const program = new Command()
       .makeOptionMandatory(true)
       .env("HOARDER_SERVER_ADDR"),
   )
-  .version(process.env.npm_package_version ?? "0.0.0");
+  .version(
+    import.meta.env && "CLI_VERSION" in import.meta.env
+      ? import.meta.env.CLI_VERSION
+      : "0.0.0",
+  );
 
 program.addCommand(bookmarkCmd);
 program.addCommand(listsCmd);
