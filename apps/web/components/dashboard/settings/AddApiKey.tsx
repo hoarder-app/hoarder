@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
+import CopyBtn from "@/components/ui/copy-button";
 import {
   Dialog,
   DialogClose,
@@ -28,19 +29,10 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Check, Copy } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 function ApiKeySuccess({ apiKey }: { apiKey: string }) {
-  const [isCopied, setCopied] = useState(false);
-
-  const onCopy = () => {
-    navigator.clipboard.writeText(apiKey);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
     <div>
       <div className="py-4">
@@ -49,13 +41,11 @@ function ApiKeySuccess({ apiKey }: { apiKey: string }) {
       </div>
       <div className="flex space-x-2 pt-2">
         <Input value={apiKey} readOnly />
-        <Button onClick={onCopy}>
-          {!isCopied ? (
-            <Copy className="size-4" />
-          ) : (
-            <Check className="size-4" />
-          )}
-        </Button>
+        <CopyBtn
+          getStringToCopy={() => {
+            return apiKey;
+          }}
+        />
       </div>
     </div>
   );

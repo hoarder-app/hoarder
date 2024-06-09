@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { MarkdownComponent } from "@/components/ui/markdown-component";
 import { api } from "@/lib/trpc";
 import { bookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
-import Markdown from "react-markdown";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
@@ -52,11 +52,7 @@ export default function TextCard({
       />
       <BookmarkLayoutAdaptingCard
         title={bookmark.title}
-        content={
-          <Markdown className="prose dark:prose-invert">
-            {bookmarkedText.text}
-          </Markdown>
-        }
+        content={<MarkdownComponent>{bookmarkedText.text}</MarkdownComponent>}
         footer={null}
         wrapTags={true}
         bookmark={bookmark}
