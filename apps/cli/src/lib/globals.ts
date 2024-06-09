@@ -1,6 +1,7 @@
 export interface GlobalOptions {
   apiKey: string;
   serverAddr: string;
+  json?: true;
 }
 
 export let globalOpts: GlobalOptions | undefined = undefined;

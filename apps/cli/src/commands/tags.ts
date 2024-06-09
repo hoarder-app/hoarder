@@ -1,3 +1,10 @@
+import { getGlobalOptions } from "@/lib/globals";
+import {
+  printError,
+  printErrorMessageWithReason,
+  printObject,
+  printSuccess,
+} from "@/lib/output";
 import { getAPIClient } from "@/lib/trpc";
 import { Command } from "@commander-js/extra-typings";
 import { getBorderCharacters, table } from "table";
@@ -12,17 +19,27 @@ tagsCmd
   .action(async () => {
     const api = getAPIClient();
 
-    const tags = (await api.tags.list.query()).tags;
-    tags.sort((a, b) => b.count - a.count);
+    try {
+      const tags = (await api.tags.list.query()).tags;
+      tags.sort((a, b) => b.count - a.count);
+      if (getGlobalOptions().json) {
+        printObject(tags);
+      } else {
+        const data: string[][] = [["Id", "Name", "Num bookmarks"]];
 
-    const data: string[][] = [["Id", "Name", "Num bookmarks"]];
-
-    tags.forEach((tag) => {
-      data.push([tag.id, tag.name, tag.count.toString()]);
-    });
-    console.log(
-      table(data, { border: getBorderCharacters("ramac"), singleLine: true }),
-    );
+        tags.forEach((tag) => {
+          data.push([tag.id, tag.name, tag.count.toString()]);
+        });
+        console.log(
+          table(data, {
+            border: getBorderCharacters("ramac"),
+            singleLine: true,
+          }),
+        );
+      }
+    } catch (error) {
+      printErrorMessageWithReason("Failed to list all tags", error as object);
+    }
   });
 
 tagsCmd
@@ -32,9 +49,10 @@ tagsCmd
   .action(async (id) => {
     const api = getAPIClient();
 
-    await api.tags.delete.mutate({
-      tagId: id,
-    });
-
-    console.log("Successfully delete the tag with id:", id);
+    await api.tags.delete
+      .mutate({
+        tagId: id,
+      })
+      .then(printSuccess(`Successfully deleted the tag with the id "${id}"`))
+      .catch(printError(`Failed to delete the tag with the id "${id}"`));
   });

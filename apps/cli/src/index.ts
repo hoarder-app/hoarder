@@ -22,6 +22,7 @@ const program = new Command()
       .makeOptionMandatory(true)
       .env("HOARDER_SERVER_ADDR"),
   )
+  .addOption(new Option("--json", "to output the result as JSON"))
   .version(
     import.meta.env && "CLI_VERSION" in import.meta.env
       ? import.meta.env.CLI_VERSION
