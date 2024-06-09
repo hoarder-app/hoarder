@@ -5,6 +5,7 @@ import Link from "next/link";
 import { api } from "@/lib/trpc";
 
 import type { ZBookmarkTypeLink } from "@hoarder/shared/types/bookmarks";
+import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
 import {
   getBookmarkLinkImageUrl,
   isBookmarkStillCrawling,
@@ -47,6 +48,14 @@ function LinkImage({
   let img: React.ReactNode = null;
   if (isBookmarkStillCrawling(bookmark)) {
     img = imgComponent("/blur.avif", false);
+  } else if (link.pdfAssetId) {
+    return (
+      <iframe
+        title={link.pdfAssetId}
+        className={className}
+        src={getAssetUrl(link.pdfAssetId)}
+      />
+    );
   } else if (imageDetails) {
     img = imgComponent(imageDetails.url, !imageDetails.localAsset);
   } else {

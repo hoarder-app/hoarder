@@ -1,5 +1,7 @@
 import assert from "assert";
 import * as dns from "dns";
+import { IncomingMessage } from "http";
+import https from "https";
 import type { Job } from "bullmq";
 import type { Browser } from "puppeteer";
 import { Readability } from "@mozilla/readability";
@@ -22,12 +24,13 @@ import metascraperUrl from "metascraper-url";
 import puppeteer from "puppeteer-extra";
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { withTimeout } from "utils";
+import { readPDFText, withTimeout } from "utils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
 import { bookmarkLinks, bookmarks } from "@hoarder/db/schema";
 import {
+  ASSET_TYPES,
   deleteAsset,
   newAssetId,
   saveAsset,
@@ -204,6 +207,7 @@ async function getBookmarkDetails(bookmarkId: string) {
     screenshotAssetId: bookmark.link.screenshotAssetId,
     imageAssetId: bookmark.link.imageAssetId,
     fullPageArchiveAssetId: bookmark.link.fullPageArchiveAssetId,
+    pdfAssetId: bookmark.link.pdfAssetId,
   };
 }
 
@@ -223,7 +227,7 @@ function validateUrl(url: string) {
   }
 }
 
-async function crawlPage(jobId: string, url: string) {
+async function crawlPage(userId: string, jobId: string, url: string) {
   let browser: Browser;
   if (serverConfig.crawler.browserConnectOnDemand) {
     browser = await startBrowserInstance();
@@ -239,6 +243,24 @@ async function crawlPage(jobId: string, url: string) {
     await page.setUserAgent(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     );
+
+    const documentInfo = {
+      first: true,
+      contentType: "",
+      url: "",
+    };
+    page.on("response", (response) => {
+      if (
+        documentInfo.first &&
+        response.request().resourceType() === "document" &&
+        response.status() === 200
+      ) {
+        const headers = response.headers();
+        documentInfo.contentType = headers["content-type"] ?? "";
+        documentInfo.first = false;
+        documentInfo.url = response.url();
+      }
+    });
 
     await page.goto(url, {
       timeout: serverConfig.crawler.navigateTimeoutSec * 1000,
@@ -271,7 +293,7 @@ async function crawlPage(jobId: string, url: string) {
     logger.info(
       `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
     );
-    return { htmlContent, screenshot, url: page.url() };
+    return { htmlContent, screenshot, url: page.url(), documentInfo };
   } finally {
     await context.close();
   }
@@ -382,6 +404,58 @@ async function downloadAndStoreImage(
   }
 }
 
+async function downloadPdf(url: string, userId: string, jobId: string) {
+  logger.info(`[Crawler][${jobId}] Storing pdf ...`);
+
+  const downloadFileToBuffer = (url: string): Promise<Buffer> => {
+    return new Promise((resolve, reject) => {
+      https
+        .get(url, (response: IncomingMessage) => {
+          const data: Buffer[] = [];
+          response.on("data", (chunk: Buffer) => data.push(chunk));
+          response.on("end", () => resolve(Buffer.concat(data)));
+        })
+        .on("error", (error: Error) => {
+          reject(error.message);
+        });
+    });
+  };
+
+  const asset = await downloadFileToBuffer(url);
+  const readingBuffer = Buffer.from(asset);
+
+  const pdfAssetId = newAssetId();
+
+  await saveAsset({
+    userId,
+    assetId: pdfAssetId,
+    asset,
+    metadata: {
+      contentType: ASSET_TYPES.APPLICATION_PDF,
+    },
+  });
+
+  const content = await readPDFText(readingBuffer);
+  const storableContent = {
+    title: "",
+    content: "",
+    textContent: content.text,
+    length: content.text.length,
+    excerpt: "",
+    byline: "",
+    dir: "",
+    siteName: "",
+    lang: "",
+    publishedTime: "",
+  };
+
+  logger.info(
+    `[Crawler][${jobId}] Done storing the pdf as assertId: ${pdfAssetId}`,
+  );
+
+  return { pdfAssetId, storableContent };
+}
+
 async function archiveWebpage(
   html: string,
   url: string,
@@ -404,7 +478,7 @@ async function archiveWebpage(
     assetId,
     assetPath,
     metadata: {
-      contentType: "text/html",
+      contentType: ASSET_TYPES.TEXT_HTML,
     },
   });
 
@@ -433,6 +507,7 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     screenshotAssetId: oldScreenshotAssetId,
     imageAssetId: oldImageAssetId,
     fullPageArchiveAssetId: oldFullPageArchiveAssetId,
+    pdfAssetId: oldPdfAssetId,
   } = await getBookmarkDetails(bookmarkId);
 
   logger.info(
@@ -444,13 +519,25 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     htmlContent,
     screenshot,
     url: browserUrl,
-  } = await crawlPage(jobId, url);
+    documentInfo,
+  } = await crawlPage(userId, jobId, url);
 
   const [meta, readableContent, screenshotAssetId] = await Promise.all([
     extractMetadata(htmlContent, browserUrl, jobId),
     extractReadableContent(htmlContent, browserUrl, jobId),
     storeScreenshot(screenshot, userId, jobId),
   ]);
+  let storableContent = readableContent;
+
+  let pdfAssetId: string | null = null;
+  if (documentInfo.contentType === (ASSET_TYPES.APPLICATION_PDF as string)) {
+    ({ pdfAssetId, storableContent } = await downloadPdf(
+      documentInfo.url,
+      userId,
+      jobId,
+    ));
+  }
+
   let imageAssetId: string | null = null;
   if (meta.image) {
     imageAssetId = await downloadAndStoreImage(meta.image, userId, jobId);
@@ -464,10 +551,11 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
       description: meta.description,
       imageUrl: meta.image,
       favicon: meta.logo,
-      content: readableContent?.textContent,
-      htmlContent: readableContent?.content,
+      content: storableContent?.textContent,
+      htmlContent: storableContent?.content,
       screenshotAssetId,
       imageAssetId,
+      pdfAssetId,
       crawledAt: new Date(),
     })
     .where(eq(bookmarkLinks.id, bookmarkId));
@@ -479,6 +567,9 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
       : {},
     oldImageAssetId
       ? deleteAsset({ userId, assetId: oldImageAssetId }).catch(() => ({}))
+      : {},
+    oldPdfAssetId
+      ? deleteAsset({ userId, assetId: oldPdfAssetId }).catch(() => ({}))
       : {},
   ]);
 

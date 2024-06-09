@@ -183,15 +183,16 @@ async function inferTagsFromImage(
 async function inferTagsFromPDF(
   jobId: string,
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
+  assetId: string,
   inferenceClient: InferenceClient,
 ) {
   const { asset } = await readAsset({
     userId: bookmark.userId,
-    assetId: bookmark.asset.assetId,
+    assetId,
   });
   if (!asset) {
     throw new Error(
-      `[inference][${jobId}] AssetId ${bookmark.asset.assetId} for bookmark ${bookmark.id} not found`,
+      `[inference][${jobId}] AssetId ${assetId} for bookmark ${bookmark.id} not found`,
     );
   }
   const pdfParse = await readPDFText(asset);
@@ -237,7 +238,12 @@ async function inferTags(
         response = await inferTagsFromImage(jobId, bookmark, inferenceClient);
         break;
       case "pdf":
-        response = await inferTagsFromPDF(jobId, bookmark, inferenceClient);
+        response = await inferTagsFromPDF(
+          jobId,
+          bookmark,
+          bookmark.asset.assetId,
+          inferenceClient,
+        );
         break;
       default:
         throw new Error(`[inference][${jobId}] Unsupported bookmark type`);

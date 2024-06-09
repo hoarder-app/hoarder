@@ -126,33 +126,38 @@ export const bookmarks = sqliteTable(
   }),
 );
 
-export const bookmarkLinks = sqliteTable("bookmarkLinks", {
-  id: text("id")
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => createId())
-    .references(() => bookmarks.id, { onDelete: "cascade" }),
-  url: text("url").notNull(),
+export const bookmarkLinks = sqliteTable(
+  "bookmarkLinks",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId())
+      .references(() => bookmarks.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
 
-  // Crawled info
-  title: text("title"),
-  description: text("description"),
-  imageUrl: text("imageUrl"),
-  favicon: text("favicon"),
-  content: text("content"),
-  htmlContent: text("htmlContent"),
-  screenshotAssetId: text("screenshotAssetId"),
-  fullPageArchiveAssetId: text("fullPageArchiveAssetId"),
-  imageAssetId: text("imageAssetId"),
-  crawledAt: integer("crawledAt", { mode: "timestamp" }),
-  crawlStatus: text("crawlStatus", {
-    enum: ["pending", "failure", "success"],
-  }).default("pending"),
-}, (bl) => {
-  return {
-    urlIdx: index("bookmarkLinks_url_idx").on(bl.url),
-  };
-});
+    // Crawled info
+    title: text("title"),
+    description: text("description"),
+    imageUrl: text("imageUrl"),
+    favicon: text("favicon"),
+    content: text("content"),
+    htmlContent: text("htmlContent"),
+    screenshotAssetId: text("screenshotAssetId"),
+    fullPageArchiveAssetId: text("fullPageArchiveAssetId"),
+    pdfAssetId: text("pdfAssetId"),
+    imageAssetId: text("imageAssetId"),
+    crawledAt: integer("crawledAt", { mode: "timestamp" }),
+    crawlStatus: text("crawlStatus", {
+      enum: ["pending", "failure", "success"],
+    }).default("pending"),
+  },
+  (bl) => {
+    return {
+      urlIdx: index("bookmarkLinks_url_idx").on(bl.url),
+    };
+  },
+);
 
 export const bookmarkTexts = sqliteTable("bookmarkTexts", {
   id: text("id")
@@ -231,8 +236,10 @@ export const bookmarkLists = sqliteTable(
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    parentId: text("parentId")
-      .references((): AnySQLiteColumn => bookmarkLists.id, { onDelete: "set null" }),
+    parentId: text("parentId").references(
+      (): AnySQLiteColumn => bookmarkLists.id,
+      { onDelete: "set null" },
+    ),
   },
   (bl) => ({
     userIdIdx: index("bookmarkLists_userId_idx").on(bl.userId),

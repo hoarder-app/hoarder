@@ -40,6 +40,15 @@ function ScreenshotSection({ link }: { link: ZBookmarkedLink }) {
 function CachedContentSection({ link }: { link: ZBookmarkedLink }) {
   let content;
   if (!link.htmlContent) {
+    if (link.pdfAssetId) {
+      return (
+        <iframe
+          title={link.pdfAssetId}
+          className="h-full w-full"
+          src={`/api/assets/${link.pdfAssetId}`}
+        />
+      );
+    }
     content = (
       <div className="text-destructive">Failed to fetch link content ...</div>
     );
