@@ -154,6 +154,14 @@ export const bookmarkLinks = sqliteTable("bookmarkLinks", {
   };
 });
 
+export const linkBookmarkAssets = sqliteTable("linkBookmarkAssets", {
+  id: text("id")
+      .notNull()
+      .references(() => bookmarks.id, { onDelete: "cascade" }),
+  assetType: text("assetType", { enum: ["image", "screenshot", "fullPageArchive"] }).notNull(),
+  assetId: text("assetId").notNull(),
+});
+
 export const bookmarkTexts = sqliteTable("bookmarkTexts", {
   id: text("id")
     .notNull()

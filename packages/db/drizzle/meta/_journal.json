@@ -162,6 +162,13 @@
       "when": 1716679762529,
       "tag": "0022_tough_nextwave",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "5",
+      "when": 1718137395992,
+      "tag": "0023_first_captain_britain",
+      "breakpoints": true
     }
   ]
 }
