@@ -11,6 +11,8 @@ import {
   unique,
 } from "drizzle-orm/sqlite-core";
 
+import { LinkBookmarkAssetTypes } from "@hoarder/shared/types/bookmarks";
+
 function createdAtField() {
   return integer("createdAt", { mode: "timestamp" })
     .notNull()
@@ -126,39 +128,46 @@ export const bookmarks = sqliteTable(
   }),
 );
 
-export const bookmarkLinks = sqliteTable("bookmarkLinks", {
-  id: text("id")
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => createId())
-    .references(() => bookmarks.id, { onDelete: "cascade" }),
-  url: text("url").notNull(),
+export const bookmarkLinks = sqliteTable(
+  "bookmarkLinks",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId())
+      .references(() => bookmarks.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
 
-  // Crawled info
-  title: text("title"),
-  description: text("description"),
-  imageUrl: text("imageUrl"),
-  favicon: text("favicon"),
-  content: text("content"),
-  htmlContent: text("htmlContent"),
-  screenshotAssetId: text("screenshotAssetId"),
-  fullPageArchiveAssetId: text("fullPageArchiveAssetId"),
-  imageAssetId: text("imageAssetId"),
-  crawledAt: integer("crawledAt", { mode: "timestamp" }),
-  crawlStatus: text("crawlStatus", {
-    enum: ["pending", "failure", "success"],
-  }).default("pending"),
-}, (bl) => {
-  return {
-    urlIdx: index("bookmarkLinks_url_idx").on(bl.url),
-  };
-});
+    // Crawled info
+    title: text("title"),
+    description: text("description"),
+    imageUrl: text("imageUrl"),
+    favicon: text("favicon"),
+    content: text("content"),
+    htmlContent: text("htmlContent"),
+    crawledAt: integer("crawledAt", { mode: "timestamp" }),
+    crawlStatus: text("crawlStatus", {
+      enum: ["pending", "failure", "success"],
+    }).default("pending"),
+  },
+  (bl) => {
+    return {
+      urlIdx: index("bookmarkLinks_url_idx").on(bl.url),
+    };
+  },
+);
 
 export const linkBookmarkAssets = sqliteTable("linkBookmarkAssets", {
   id: text("id")
-      .notNull()
-      .references(() => bookmarks.id, { onDelete: "cascade" }),
-  assetType: text("assetType", { enum: ["image", "screenshot", "fullPageArchive"] }).notNull(),
+    .notNull()
+    .references(() => bookmarks.id, { onDelete: "cascade" }),
+  assetType: text("assetType", {
+    enum: [
+      LinkBookmarkAssetTypes.IMAGE,
+      LinkBookmarkAssetTypes.SCREENSHOT,
+      LinkBookmarkAssetTypes.FULL_PAGE_ARCHIVE,
+    ],
+  }).notNull(),
   assetId: text("assetId").notNull(),
 });
 
@@ -239,8 +248,10 @@ export const bookmarkLists = sqliteTable(
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    parentId: text("parentId")
-      .references((): AnySQLiteColumn => bookmarkLists.id, { onDelete: "set null" }),
+    parentId: text("parentId").references(
+      (): AnySQLiteColumn => bookmarkLists.id,
+      { onDelete: "set null" },
+    ),
   },
   (bl) => ({
     userIdIdx: index("bookmarkLists_userId_idx").on(bl.userId),
@@ -293,7 +304,18 @@ export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
   }),
   tagsOnBookmarks: many(tagsOnBookmarks),
   bookmarksInLists: many(bookmarksInLists),
+  linkBookmarkAssets: many(linkBookmarkAssets),
 }));
+
+export const linkBookmarkAssetsRelations = relations(
+  linkBookmarkAssets,
+  ({ one }) => ({
+    bookmark: one(bookmarks, {
+      fields: [linkBookmarkAssets.id],
+      references: [bookmarks.id],
+    }),
+  }),
+);
 
 export const bookmarkTagsRelations = relations(
   bookmarkTags,

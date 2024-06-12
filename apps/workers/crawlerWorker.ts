@@ -26,7 +26,11 @@ import { withTimeout } from "utils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
-import { bookmarkLinks, bookmarks } from "@hoarder/db/schema";
+import {
+  bookmarkLinks,
+  bookmarks,
+  linkBookmarkAssets,
+} from "@hoarder/db/schema";
 import {
   deleteAsset,
   newAssetId,
@@ -42,6 +46,10 @@ import {
   triggerSearchReindex,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
+import {
+  LinkBookmarkAssetTypes,
+  zLinkBookmarkAsset,
+} from "@hoarder/shared/types/bookmarks";
 
 const metascraperParser = metascraper([
   metascraperAmazon(),
@@ -192,7 +200,10 @@ async function changeBookmarkStatus(
 async function getBookmarkDetails(bookmarkId: string) {
   const bookmark = await db.query.bookmarks.findFirst({
     where: eq(bookmarks.id, bookmarkId),
-    with: { link: true },
+    with: {
+      link: true,
+      linkBookmarkAssets: true,
+    },
   });
 
   if (!bookmark || !bookmark.link) {
@@ -201,9 +212,7 @@ async function getBookmarkDetails(bookmarkId: string) {
   return {
     url: bookmark.link.url,
     userId: bookmark.userId,
-    screenshotAssetId: bookmark.link.screenshotAssetId,
-    imageAssetId: bookmark.link.imageAssetId,
-    fullPageArchiveAssetId: bookmark.link.fullPageArchiveAssetId,
+    linkBookmarkAssets: bookmark.linkBookmarkAssets,
   };
 }
 
@@ -427,13 +436,8 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   }
 
   const { bookmarkId } = request.data;
-  const {
-    url,
-    userId,
-    screenshotAssetId: oldScreenshotAssetId,
-    imageAssetId: oldImageAssetId,
-    fullPageArchiveAssetId: oldFullPageArchiveAssetId,
-  } = await getBookmarkDetails(bookmarkId);
+  const { url, userId, linkBookmarkAssets } =
+    await getBookmarkDetails(bookmarkId);
 
   logger.info(
     `[Crawler][${jobId}] Will crawl "${url}" for link with id "${bookmarkId}"`,
@@ -466,21 +470,28 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
       favicon: meta.logo,
       content: readableContent?.textContent,
       htmlContent: readableContent?.content,
-      screenshotAssetId,
-      imageAssetId,
       crawledAt: new Date(),
     })
     .where(eq(bookmarkLinks.id, bookmarkId));
 
+  await addAssetToLinkBookmark(
+    LinkBookmarkAssetTypes.SCREENSHOT,
+    bookmarkId,
+    screenshotAssetId as string,
+  );
+  await addAssetToLinkBookmark(
+    LinkBookmarkAssetTypes.IMAGE,
+    bookmarkId,
+    imageAssetId,
+  );
+
   // Delete the old assets if any
-  await Promise.all([
-    oldScreenshotAssetId
-      ? deleteAsset({ userId, assetId: oldScreenshotAssetId }).catch(() => ({}))
-      : {},
-    oldImageAssetId
-      ? deleteAsset({ userId, assetId: oldImageAssetId }).catch(() => ({}))
-      : {},
-  ]);
+  const assetDeletionPromises = linkBookmarkAssets
+    .filter(
+      (asset) => asset.assetType !== LinkBookmarkAssetTypes.FULL_PAGE_ARCHIVE,
+    )
+    .map((asset) => createAssetDeletionPromise(userId, asset.id));
+  await Promise.all(assetDeletionPromises);
 
   // Enqueue openai job (if not set, assume it's true for backward compatibility)
   if (job.data.runInference !== false) {
@@ -501,17 +512,54 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
       jobId,
     );
 
-    await db
-      .update(bookmarkLinks)
-      .set({
-        fullPageArchiveAssetId,
-      })
-      .where(eq(bookmarkLinks.id, bookmarkId));
+    await addAssetToLinkBookmark(
+      LinkBookmarkAssetTypes.FULL_PAGE_ARCHIVE,
+      bookmarkId,
+      fullPageArchiveAssetId,
+    );
 
-    if (oldFullPageArchiveAssetId) {
-      deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
-        () => ({}),
-      );
-    }
+    const oldFullPageArchiveAsset = linkBookmarkAssets.filter(
+      (asset) => asset.assetType === LinkBookmarkAssetTypes.FULL_PAGE_ARCHIVE,
+    );
+    await deleteAssets(userId, oldFullPageArchiveAsset);
   }
+}
+
+/**
+ * Adds an entry to the linkBookmarkAssets table
+ * @param assetType the type of the asset
+ * @param bookmarkId the bookmark the asset belongs to
+ * @param assetId the id of the asset
+ */
+async function addAssetToLinkBookmark(
+  assetType: LinkBookmarkAssetTypes,
+  bookmarkId: string,
+  assetId: string | null,
+) {
+  if (assetId === null) {
+    return;
+  }
+  await db.insert(linkBookmarkAssets).values({
+    id: bookmarkId,
+    assetType,
+    assetId,
+  });
+}
+
+/**
+ * Deletes all passed in assets
+ * @param userId the userId the asset belongs to
+ * @param assets the assets to delete
+ */
+async function deleteAssets(userId: string, assets: zLinkBookmarkAsset[]) {
+  const assetDeletionPromises = assets.map((asset) =>
+    createAssetDeletionPromise(userId, asset.id),
+  );
+  await Promise.all(assetDeletionPromises);
+}
+
+function createAssetDeletionPromise(userId: string, assetId: string) {
+  return () => {
+    deleteAsset({ userId, assetId }).catch(() => ({}));
+  };
 }

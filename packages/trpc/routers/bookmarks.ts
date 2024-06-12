@@ -16,6 +16,7 @@ import {
   bookmarksInLists,
   bookmarkTags,
   bookmarkTexts,
+  linkBookmarkAssets,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
 import { deleteAsset } from "@hoarder/shared/assetdb";
@@ -83,6 +84,7 @@ async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
       link: true,
       text: true,
       asset: true,
+      linkBookmarkAssets: true,
     },
   });
   if (!bookmark) {
@@ -121,6 +123,7 @@ async function dummyDrizzleReturnType() {
       link: true,
       text: true,
       asset: true,
+      linkBookmarkAssets: true,
     },
   });
   if (!x) {
@@ -134,22 +137,20 @@ type BookmarkQueryReturnType = Awaited<
 >;
 
 async function cleanupAssetForBookmark(
-  bookmark: Pick<BookmarkQueryReturnType, "asset" | "link" | "userId">,
+  bookmark: Pick<
+    BookmarkQueryReturnType,
+    "asset" | "link" | "userId" | "linkBookmarkAssets"
+  >,
 ) {
   const assetIds = [];
   if (bookmark.asset) {
     assetIds.push(bookmark.asset.assetId);
   }
   if (bookmark.link) {
-    if (bookmark.link.screenshotAssetId) {
-      assetIds.push(bookmark.link.screenshotAssetId);
-    }
-    if (bookmark.link.imageAssetId) {
-      assetIds.push(bookmark.link.imageAssetId);
-    }
-    if (bookmark.link.fullPageArchiveAssetId) {
-      assetIds.push(bookmark.link.fullPageArchiveAssetId);
-    }
+    const linkAssetIds = bookmark.linkBookmarkAssets.map(
+      (asset) => asset.assetId,
+    );
+    assetIds.push(...linkAssetIds);
   }
   await Promise.all(
     assetIds.map((assetId) =>
@@ -159,11 +160,12 @@ async function cleanupAssetForBookmark(
 }
 
 function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
-  const { tagsOnBookmarks, link, text, asset, ...rest } = bookmark;
+  const { tagsOnBookmarks, link, text, asset, linkBookmarkAssets, ...rest } =
+    bookmark;
 
   let content: ZBookmarkContent;
   if (link) {
-    content = { type: "link", ...link };
+    content = { type: "link", linkBookmarkAssets, ...link };
   } else if (text) {
     content = { type: "text", text: text.text ?? "" };
   } else if (asset) {
@@ -199,7 +201,7 @@ export const bookmarksAppRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       if (input.type == "link") {
-        // This doesn't 100% protect from duplicates because of races but it's more than enough for this usecase.
+        // This doesn't 100% protect from duplicates because of races, but it's more than enough for this usecase.
         const alreadyExists = await attemptToDedupLink(ctx, input.url);
         if (alreadyExists) {
           return { ...alreadyExists, alreadyExists: true };
@@ -367,6 +369,7 @@ export const bookmarksAppRouter = router({
         with: {
           asset: true,
           link: true,
+          linkBookmarkAssets: true,
         },
       });
       const deleted = await ctx.db
@@ -383,6 +386,7 @@ export const bookmarksAppRouter = router({
           asset: bookmark.asset,
           link: bookmark.link,
           userId: ctx.user.id,
+          linkBookmarkAssets: bookmark.linkBookmarkAssets,
         });
       }
     }),
@@ -451,6 +455,7 @@ export const bookmarksAppRouter = router({
           link: true,
           text: true,
           asset: true,
+          linkBookmarkAssets: true,
         },
       });
       results.sort((a, b) => idToRank[b.id] - idToRank[a.id]);
@@ -534,6 +539,7 @@ export const bookmarksAppRouter = router({
         .leftJoin(bookmarkLinks, eq(bookmarkLinks.id, sq.id))
         .leftJoin(bookmarkTexts, eq(bookmarkTexts.id, sq.id))
         .leftJoin(bookmarkAssets, eq(bookmarkAssets.id, sq.id))
+        .leftJoin(linkBookmarkAssets, eq(linkBookmarkAssets.id, sq.id))
         .orderBy(desc(sq.createdAt), desc(sq.id));
 
       const bookmarksRes = results.reduce<Record<string, ZBookmark>>(
@@ -627,7 +633,7 @@ export const bookmarksAppRouter = router({
     )
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      return await ctx.db.transaction(async (tx) => {
+      return ctx.db.transaction(async (tx) => {
         // Detaches
         if (input.detach.length > 0) {
           await tx.delete(tagsOnBookmarks).where(
