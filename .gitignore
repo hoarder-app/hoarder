@@ -49,3 +49,7 @@ data
 
 # Turbo
 .turbo
+
+# IntelliJ IDEA
+.idea
+*.iml

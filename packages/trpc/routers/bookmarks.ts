@@ -204,6 +204,13 @@ export const bookmarksAppRouter = router({
         if (alreadyExists) {
           return { ...alreadyExists, alreadyExists: true };
         }
+      } else if (input.type === "text") {
+        if (!input.text) {
+          throw new TRPCError({
+            message: "Creating empty bookmarks is not allowed",
+            code: "BAD_REQUEST",
+          });
+        }
       }
       const bookmark = await ctx.db.transaction(async (tx) => {
         const bookmark = (

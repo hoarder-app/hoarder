@@ -97,6 +97,9 @@ export default function EditorCard({ className }: { className?: string }) {
 
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
     const text = data.text.trim();
+    if (!text) {
+      return;
+    }
     try {
       tryToImportUrls(text);
     } catch (e) {
