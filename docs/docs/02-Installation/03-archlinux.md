@@ -2,6 +2,8 @@
 
 ## Installation
 
+> [Hoarder on AUR](https://aur.archlinux.org/packages/hoarder) is not maintained by the hoarder official.
+
 1. Install hoarder
 
     ```shell
