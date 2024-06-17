@@ -17,6 +17,8 @@ import { z } from "zod";
 
 import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
 
+import { useUploadAsset } from "../UploadDropzone";
+
 function useFocusOnKeyPress(inputRef: React.RefObject<HTMLTextAreaElement>) {
   useEffect(() => {
     function handleKeyPress(e: KeyboardEvent) {
@@ -74,6 +76,8 @@ export default function EditorCard({ className }: { className?: string }) {
     },
   });
 
+  const uploadAsset = useUploadAsset();
+
   function tryToImportUrls(text: string): void {
     const lines = text.split("\n");
     const urls: URL[] = [];
@@ -118,6 +122,21 @@ export default function EditorCard({ className }: { className?: string }) {
     list: undefined,
   });
 
+  const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    if (event?.clipboardData?.items) {
+      Promise.all(
+        Array.from(event.clipboardData.items)
+          .filter((item) => item?.type?.startsWith("image"))
+          .map((item) => {
+            const blob = item.getAsFile();
+            if (blob) {
+              uploadAsset(blob);
+            }
+          }),
+      );
+    }
+  };
+
   return (
     <Form {...form}>
       <form
@@ -144,7 +163,7 @@ export default function EditorCard({ className }: { className?: string }) {
               disabled={isPending}
               className="h-full w-full resize-none border-none text-lg focus-visible:ring-0"
               placeholder={
-                "Paste a link, write a note or drag and drop an image in here ..."
+                "Paste a link, paste an image, write a note or drag and drop an image in here ..."
               }
               onKeyDown={(e) => {
                 if (demoMode) {
@@ -153,6 +172,13 @@ export default function EditorCard({ className }: { className?: string }) {
                 if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
                   form.handleSubmit(onSubmit, onError)();
                 }
+              }}
+              onPaste={(e) => {
+                if (demoMode) {
+                  e.preventDefault();
+                  return;
+                }
+                handlePaste(e);
               }}
               {...textFieldProps}
             />
