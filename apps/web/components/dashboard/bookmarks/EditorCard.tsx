@@ -122,15 +122,17 @@ export default function EditorCard({ className }: { className?: string }) {
     list: undefined,
   });
 
-  const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+  const handlePaste = async (
+    event: React.ClipboardEvent<HTMLTextAreaElement>,
+  ) => {
     if (event?.clipboardData?.items) {
-      Promise.all(
+      await Promise.all(
         Array.from(event.clipboardData.items)
           .filter((item) => item?.type?.startsWith("image"))
           .map((item) => {
             const blob = item.getAsFile();
             if (blob) {
-              uploadAsset(blob);
+              return uploadAsset(blob);
             }
           }),
       );
@@ -163,7 +165,7 @@ export default function EditorCard({ className }: { className?: string }) {
               disabled={isPending}
               className="h-full w-full resize-none border-none text-lg focus-visible:ring-0"
               placeholder={
-                "Paste a link, paste an image, write a note or drag and drop an image in here ..."
+                "Paste a link or an image, write a note or drag and drop an image in here ..."
               }
               onKeyDown={(e) => {
                 if (demoMode) {
@@ -174,8 +176,8 @@ export default function EditorCard({ className }: { className?: string }) {
                 }
               }}
               onPaste={(e) => {
+                e.preventDefault();
                 if (demoMode) {
-                  e.preventDefault();
                   return;
                 }
                 handlePaste(e);
