@@ -4,15 +4,35 @@ import { zBookmarkTagSchema } from "./tags";
 
 const MAX_TITLE_LENGTH = 100;
 
+export const enum AssetTypes {
+  LINK_BANNER_IMAGE = "linkBannerImage",
+  LINK_SCREENSHOT = "linkScreenshot",
+  LINK_FULL_PAGE_ARCHIVE = "linkFullPageArchive",
+}
+
+export const AssetPropertyMapping: Record<AssetTypes, string> = {
+  [AssetTypes.LINK_BANNER_IMAGE]: "imageAssetId",
+  [AssetTypes.LINK_SCREENSHOT]: "screenshotAssetId",
+  [AssetTypes.LINK_FULL_PAGE_ARCHIVE]: "fullPageArchiveAssetId",
+};
+
 export const zBookmarkedLinkSchema = z.object({
   type: z.literal("link"),
   url: z.string().url(),
   title: z.string().nullish(),
   description: z.string().nullish(),
   imageUrl: z.string().url().nullish(),
-  imageAssetId: z.string().nullish(),
-  screenshotAssetId: z.string().nullish(),
-  fullPageArchiveAssetId: z.string().nullish(),
+  assets: z
+    .object({
+      [AssetPropertyMapping[AssetTypes.LINK_BANNER_IMAGE]]: z
+        .string()
+        .nullish(),
+      [AssetPropertyMapping[AssetTypes.LINK_SCREENSHOT]]: z.string().nullish(),
+      [AssetPropertyMapping[AssetTypes.LINK_FULL_PAGE_ARCHIVE]]: z
+        .string()
+        .nullish(),
+    })
+    .nullish(),
   favicon: z.string().url().nullish(),
   htmlContent: z.string().nullish(),
   crawledAt: z.date().nullish(),

@@ -4,9 +4,11 @@ import type { Job } from "bullmq";
 import type { Browser } from "puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
+import Database from "better-sqlite3";
 import { Worker } from "bullmq";
 import DOMPurify from "dompurify";
-import { eq } from "drizzle-orm";
+import { eq, ExtractTablesWithRelations } from "drizzle-orm";
+import { SQLiteTransaction } from "drizzle-orm/sqlite-core";
 import { execa } from "execa";
 import { isShuttingDown } from "exit";
 import { JSDOM } from "jsdom";
@@ -25,18 +27,13 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
-import { db } from "@hoarder/db";
+import { db, schema } from "@hoarder/db";
+import { assets, bookmarkLinks, bookmarks } from "@hoarder/db/schema";
 import {
-  assets,
-  AssetTypes,
-  bookmarkLinks,
-  bookmarks,
-} from "@hoarder/db/schema";
-import {
-  deleteAsset,
   newAssetId,
   saveAsset,
   saveAssetFromFile,
+  silentDeleteAsset,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
@@ -47,6 +44,7 @@ import {
   triggerSearchReindex,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
+import { AssetTypes } from "@hoarder/shared/types/bookmarks";
 
 const metascraperParser = metascraper([
   metascraperAmazon(),
@@ -73,7 +71,7 @@ async function startBrowserInstance() {
     logger.info(
       `[Crawler] Connecting to existing browser websocket address: ${serverConfig.crawler.browserWebSocketUrl}`,
     );
-    return await puppeteer.connect({
+    return puppeteer.connect({
       browserWSEndpoint: serverConfig.crawler.browserWebSocketUrl,
       defaultViewport,
     });
@@ -88,13 +86,13 @@ async function startBrowserInstance() {
     logger.info(
       `[Crawler] Successfully resolved IP address, new address: ${webUrl.toString()}`,
     );
-    return await puppeteer.connect({
+    return puppeteer.connect({
       browserURL: webUrl.toString(),
       defaultViewport,
     });
   } else {
     logger.info(`Launching a new browser instance`);
-    return await puppeteer.launch({
+    return puppeteer.launch({
       headless: serverConfig.crawler.headlessBrowser,
       defaultViewport,
     });
@@ -485,37 +483,26 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
       })
       .where(eq(bookmarkLinks.id, bookmarkId));
 
-    if (screenshotAssetId) {
-      if (oldScreenshotAssetId) {
-        await txn.delete(assets).where(eq(assets.id, oldScreenshotAssetId));
-      }
-      await txn.insert(assets).values({
-        id: screenshotAssetId,
-        assetType: AssetTypes.LINK_SCREENSHOT,
-        bookmarkId,
-      });
-    }
-
-    if (imageAssetId) {
-      if (oldImageAssetId) {
-        await txn.delete(assets).where(eq(assets.id, oldImageAssetId));
-      }
-      await txn.insert(assets).values({
-        id: imageAssetId,
-        assetType: AssetTypes.LINK_BANNER_IMAGE,
-        bookmarkId,
-      });
-    }
+    await updateAsset(
+      screenshotAssetId,
+      oldScreenshotAssetId,
+      bookmarkId,
+      AssetTypes.LINK_SCREENSHOT,
+      txn,
+    );
+    await updateAsset(
+      imageAssetId,
+      oldImageAssetId,
+      bookmarkId,
+      AssetTypes.LINK_BANNER_IMAGE,
+      txn,
+    );
   });
 
   // Delete the old assets if any
   await Promise.all([
-    oldScreenshotAssetId
-      ? deleteAsset({ userId, assetId: oldScreenshotAssetId }).catch(() => ({}))
-      : {},
-    oldImageAssetId
-      ? deleteAsset({ userId, assetId: oldImageAssetId }).catch(() => ({}))
-      : {},
+    silentDeleteAsset(userId, oldScreenshotAssetId),
+    silentDeleteAsset(userId, oldImageAssetId),
   ]);
 
   // Enqueue openai job (if not set, assume it's true for backward compatibility)
@@ -538,21 +525,46 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
     );
 
     await db.transaction(async (txn) => {
-      if (oldFullPageArchiveAssetId) {
-        await txn
-          .delete(assets)
-          .where(eq(assets.id, oldFullPageArchiveAssetId));
-      }
-      await txn.insert(assets).values({
-        id: fullPageArchiveAssetId,
-        assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+      await updateAsset(
+        fullPageArchiveAssetId,
+        oldFullPageArchiveAssetId,
         bookmarkId,
-      });
-    });
-    if (oldFullPageArchiveAssetId) {
-      deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
-        () => ({}),
+        AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+        txn,
       );
+    });
+    await silentDeleteAsset(userId, oldFullPageArchiveAssetId);
+  }
+}
+
+/**
+ * Removes the old asset and adds a new one instead
+ * @param newAssetId the new assetId to add
+ * @param oldAssetId the old assetId to remove (if it exists)
+ * @param bookmarkId the id of the bookmark the asset belongs to
+ * @param assetType the type of the asset
+ * @param txn the transaction where this update should happen in
+ */
+async function updateAsset(
+  newAssetId: string | null,
+  oldAssetId: string | undefined,
+  bookmarkId: string,
+  assetType: AssetTypes,
+  txn: SQLiteTransaction<
+    "sync",
+    Database.RunResult,
+    typeof schema,
+    ExtractTablesWithRelations<typeof schema>
+  >,
+) {
+  if (newAssetId) {
+    if (oldAssetId) {
+      await txn.delete(assets).where(eq(assets.id, oldAssetId));
     }
+    await txn.insert(assets).values({
+      id: newAssetId,
+      assetType,
+      bookmarkId,
+    });
   }
 }

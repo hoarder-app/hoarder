@@ -3,15 +3,10 @@ import { and, desc, eq, exists, inArray, lt, lte, or } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
-import type {
-  ZBookmark,
-  ZBookmarkContent,
-} from "@hoarder/shared/types/bookmarks";
 import type { ZBookmarkTags } from "@hoarder/shared/types/tags";
 import { db as DONT_USE_db } from "@hoarder/db";
 import {
   assets,
-  AssetTypes,
   bookmarkAssets,
   bookmarkLinks,
   bookmarks,
@@ -29,8 +24,11 @@ import {
 } from "@hoarder/shared/queues";
 import { getSearchIdxClient } from "@hoarder/shared/search";
 import {
+  AssetPropertyMapping,
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
   zBareBookmarkSchema,
+  ZBookmark,
+  ZBookmarkContent,
   zBookmarkSchema,
   zGetBookmarksRequestSchema,
   zGetBookmarksResponseSchema,
@@ -157,20 +155,18 @@ async function cleanupAssetForBookmark(
 function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
   const { tagsOnBookmarks, link, text, asset, assets, ...rest } = bookmark;
 
-  const assetIdFromType = (type: AssetTypes) =>
-    assets.find((a) => a.assetType == type)?.id;
-
   let content: ZBookmarkContent;
   if (link) {
     content = {
       type: "link",
-      screenshotAssetId: assetIdFromType(AssetTypes.LINK_SCREENSHOT),
-      fullPageArchiveAssetId: assetIdFromType(
-        AssetTypes.LINK_FULL_PAGE_ARCHIVE,
-      ),
-      imageAssetId: assetIdFromType(AssetTypes.LINK_BANNER_IMAGE),
+      assets: {},
       ...link,
     };
+    if (assets.length > 0) {
+      for (const asset of assets) {
+        content.assets![AssetPropertyMapping[asset.assetType]] = asset.id;
+      }
+    }
   } else if (text) {
     content = { type: "text", text: text.text ?? "" };
   } else if (asset) {
@@ -237,6 +233,7 @@ export const bookmarksAppRouter = router({
             )[0];
             content = {
               type: "link",
+              assets: {},
               ...link,
             };
             break;
@@ -552,7 +549,7 @@ export const bookmarksAppRouter = router({
           if (!acc[bookmarkId]) {
             let content: ZBookmarkContent;
             if (row.bookmarkLinks) {
-              content = { type: "link", ...row.bookmarkLinks };
+              content = { type: "link", assets: {}, ...row.bookmarkLinks };
             } else if (row.bookmarkTexts) {
               content = { type: "text", text: row.bookmarkTexts.text ?? "" };
             } else if (row.bookmarkAssets) {
@@ -570,6 +567,13 @@ export const bookmarksAppRouter = router({
               content,
               tags: [],
             };
+          }
+
+          const bookmarkContent = acc[bookmarkId].content;
+          if (row.assets && "assets" in bookmarkContent) {
+            const asset = row.assets;
+            bookmarkContent.assets![AssetPropertyMapping[asset.assetType]] =
+              asset.id;
           }
 
           if (row.bookmarkTags) {

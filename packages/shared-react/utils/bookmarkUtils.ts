@@ -8,11 +8,14 @@ import { getAssetUrl } from "./assetUtils";
 const MAX_LOADING_MSEC = 30 * 1000;
 
 export function getBookmarkLinkImageUrl(bookmark: ZBookmarkedLink) {
-  if (bookmark.imageAssetId) {
-    return { url: getAssetUrl(bookmark.imageAssetId), localAsset: true };
+  if (bookmark.assets?.imageAssetId) {
+    return { url: getAssetUrl(bookmark.assets.imageAssetId), localAsset: true };
   }
-  if (bookmark.screenshotAssetId) {
-    return { url: getAssetUrl(bookmark.screenshotAssetId), localAsset: true };
+  if (bookmark.assets?.screenshotAssetId) {
+    return {
+      url: getAssetUrl(bookmark.assets.screenshotAssetId),
+      localAsset: true,
+    };
   }
   return bookmark.imageUrl
     ? { url: bookmark.imageUrl, localAsset: false }

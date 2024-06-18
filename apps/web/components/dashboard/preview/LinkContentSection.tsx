@@ -16,7 +16,7 @@ function FullPageArchiveSection({ link }: { link: ZBookmarkedLink }) {
   return (
     <iframe
       title={link.url}
-      src={`/api/assets/${link.fullPageArchiveAssetId}`}
+      src={`/api/assets/${link.assets?.fullPageArchiveAssetId}`}
       className="relative h-full min-w-full"
     />
   );
@@ -27,7 +27,7 @@ function ScreenshotSection({ link }: { link: ZBookmarkedLink }) {
     <div className="relative h-full min-w-full">
       <Image
         alt="screenshot"
-        src={`/api/assets/${link.screenshotAssetId}`}
+        src={`/api/assets/${link.assets?.screenshotAssetId}`}
         width={0}
         height={0}
         sizes="100vw"
@@ -87,13 +87,13 @@ export default function LinkContentSection({
             <SelectItem value="cached">Cached Content</SelectItem>
             <SelectItem
               value="screenshot"
-              disabled={!bookmark.content.screenshotAssetId}
+              disabled={!bookmark.content.assets?.screenshotAssetId}
             >
               Screenshot
             </SelectItem>
             <SelectItem
               value="archive"
-              disabled={!bookmark.content.fullPageArchiveAssetId}
+              disabled={!bookmark.content.assets?.fullPageArchiveAssetId}
             >
               Archive
             </SelectItem>
