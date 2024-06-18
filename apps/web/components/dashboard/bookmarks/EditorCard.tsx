@@ -176,7 +176,6 @@ export default function EditorCard({ className }: { className?: string }) {
                 }
               }}
               onPaste={(e) => {
-                e.preventDefault();
                 if (demoMode) {
                   return;
                 }
