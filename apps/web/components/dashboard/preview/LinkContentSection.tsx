@@ -10,18 +10,13 @@ import {
 } from "@/components/ui/select";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
-import { getAssetFromBookmark } from "@hoarder/shared-react/utils/bookmarkUtils";
-import {
-  LinkBookmarkAssetTypes,
-  ZBookmark,
-  ZBookmarkedLink,
-} from "@hoarder/shared/types/bookmarks";
+import { ZBookmark, ZBookmarkedLink } from "@hoarder/shared/types/bookmarks";
 
 function FullPageArchiveSection({ link }: { link: ZBookmarkedLink }) {
   return (
     <iframe
       title={link.url}
-      src={`/api/assets/${getAssetFromBookmark(link, LinkBookmarkAssetTypes.FULL_PAGE_ARCHIVE)!.assetId}`}
+      src={`/api/assets/${link.fullPageArchiveAssetId}`}
       className="relative h-full min-w-full"
     />
   );
@@ -32,7 +27,7 @@ function ScreenshotSection({ link }: { link: ZBookmarkedLink }) {
     <div className="relative h-full min-w-full">
       <Image
         alt="screenshot"
-        src={`/api/assets/${getAssetFromBookmark(link, LinkBookmarkAssetTypes.SCREENSHOT)!.assetId}`}
+        src={`/api/assets/${link.screenshotAssetId}`}
         width={0}
         height={0}
         sizes="100vw"
@@ -92,23 +87,13 @@ export default function LinkContentSection({
             <SelectItem value="cached">Cached Content</SelectItem>
             <SelectItem
               value="screenshot"
-              disabled={
-                !getAssetFromBookmark(
-                  bookmark.content,
-                  LinkBookmarkAssetTypes.SCREENSHOT,
-                )
-              }
+              disabled={!bookmark.content.screenshotAssetId}
             >
               Screenshot
             </SelectItem>
             <SelectItem
               value="archive"
-              disabled={
-                !getAssetFromBookmark(
-                  bookmark.content,
-                  LinkBookmarkAssetTypes.FULL_PAGE_ARCHIVE,
-                )
-              }
+              disabled={!bookmark.content.fullPageArchiveAssetId}
             >
               Archive
             </SelectItem>

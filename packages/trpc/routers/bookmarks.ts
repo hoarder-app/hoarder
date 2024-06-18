@@ -10,13 +10,14 @@ import type {
 import type { ZBookmarkTags } from "@hoarder/shared/types/tags";
 import { db as DONT_USE_db } from "@hoarder/db";
 import {
+  assets,
+  AssetTypes,
   bookmarkAssets,
   bookmarkLinks,
   bookmarks,
   bookmarksInLists,
   bookmarkTags,
   bookmarkTexts,
-  linkBookmarkAssets,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
 import { deleteAsset } from "@hoarder/shared/assetdb";
@@ -84,7 +85,7 @@ async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
       link: true,
       text: true,
       asset: true,
-      linkBookmarkAssets: true,
+      assets: true,
     },
   });
   if (!bookmark) {
@@ -123,7 +124,7 @@ async function dummyDrizzleReturnType() {
       link: true,
       text: true,
       asset: true,
-      linkBookmarkAssets: true,
+      assets: true,
     },
   });
   if (!x) {
@@ -137,35 +138,39 @@ type BookmarkQueryReturnType = Awaited<
 >;
 
 async function cleanupAssetForBookmark(
-  bookmark: Pick<
-    BookmarkQueryReturnType,
-    "asset" | "link" | "userId" | "linkBookmarkAssets"
-  >,
+  bookmark: Pick<BookmarkQueryReturnType, "asset" | "userId" | "assets">,
 ) {
-  const assetIds = [];
+  const assetIds: Set<string> = new Set<string>(
+    bookmark.assets.map((a) => a.id),
+  );
+  // Todo: Remove when the bookmark asset is also in the assets table
   if (bookmark.asset) {
-    assetIds.push(bookmark.asset.assetId);
-  }
-  if (bookmark.link) {
-    const linkAssetIds = bookmark.linkBookmarkAssets.map(
-      (asset) => asset.assetId,
-    );
-    assetIds.push(...linkAssetIds);
+    assetIds.add(bookmark.asset.assetId);
   }
   await Promise.all(
-    assetIds.map((assetId) =>
+    Array.from(assetIds).map((assetId) =>
       deleteAsset({ userId: bookmark.userId, assetId }),
     ),
   );
 }
 
 function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
-  const { tagsOnBookmarks, link, text, asset, linkBookmarkAssets, ...rest } =
-    bookmark;
+  const { tagsOnBookmarks, link, text, asset, assets, ...rest } = bookmark;
+
+  const assetIdFromType = (type: AssetTypes) =>
+    assets.find((a) => a.assetType == type)?.id;
 
   let content: ZBookmarkContent;
   if (link) {
-    content = { type: "link", linkBookmarkAssets, ...link };
+    content = {
+      type: "link",
+      screenshotAssetId: assetIdFromType(AssetTypes.LINK_SCREENSHOT),
+      fullPageArchiveAssetId: assetIdFromType(
+        AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+      ),
+      imageAssetId: assetIdFromType(AssetTypes.LINK_BANNER_IMAGE),
+      ...link,
+    };
   } else if (text) {
     content = { type: "text", text: text.text ?? "" };
   } else if (asset) {
@@ -369,7 +374,7 @@ export const bookmarksAppRouter = router({
         with: {
           asset: true,
           link: true,
-          linkBookmarkAssets: true,
+          assets: true,
         },
       });
       const deleted = await ctx.db
@@ -384,9 +389,8 @@ export const bookmarksAppRouter = router({
       if (deleted.changes > 0 && bookmark) {
         await cleanupAssetForBookmark({
           asset: bookmark.asset,
-          link: bookmark.link,
           userId: ctx.user.id,
-          linkBookmarkAssets: bookmark.linkBookmarkAssets,
+          assets: bookmark.assets,
         });
       }
     }),
@@ -455,7 +459,7 @@ export const bookmarksAppRouter = router({
           link: true,
           text: true,
           asset: true,
-          linkBookmarkAssets: true,
+          assets: true,
         },
       });
       results.sort((a, b) => idToRank[b.id] - idToRank[a.id]);
@@ -539,7 +543,7 @@ export const bookmarksAppRouter = router({
         .leftJoin(bookmarkLinks, eq(bookmarkLinks.id, sq.id))
         .leftJoin(bookmarkTexts, eq(bookmarkTexts.id, sq.id))
         .leftJoin(bookmarkAssets, eq(bookmarkAssets.id, sq.id))
-        .leftJoin(linkBookmarkAssets, eq(linkBookmarkAssets.id, sq.id))
+        .leftJoin(assets, eq(assets.bookmarkId, sq.id))
         .orderBy(desc(sq.createdAt), desc(sq.id));
 
       const bookmarksRes = results.reduce<Record<string, ZBookmark>>(
