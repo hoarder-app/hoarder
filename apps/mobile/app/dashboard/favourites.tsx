@@ -8,6 +8,7 @@ export default function Favourites() {
       <UpdatingBookmarkList
         query={{
           favourited: true,
+          archived: false 
         }}
         header={<PageTitle title="⭐️ Favourites" />}
       />
