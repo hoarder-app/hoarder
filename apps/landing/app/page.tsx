@@ -4,11 +4,20 @@ import HoarderLogo from "@/components/HoarderLogo";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import appStoreBadge from "@/public/app-store-badge.png";
-import playStoreBadge from "@/public/google-play-badge.webp";
 import chromeExtensionBadge from "@/public/chrome-extension-badge.png";
 import firefoxAddonBadge from "@/public/firefox-addon.png";
+import playStoreBadge from "@/public/google-play-badge.webp";
 import screenshot from "@/public/hero.webp";
-import { ArrowDownNarrowWide, Bookmark, BrainCircuit, ExternalLink, Github, Server, SunMoon, TextSearch, WalletCards } from "lucide-react";
+import {
+  ArrowDownNarrowWide,
+  Bookmark,
+  BrainCircuit,
+  Github,
+  Server,
+  SunMoon,
+  TextSearch,
+  WalletCards,
+} from "lucide-react";
 
 const GITHUB_LINK = "https://github.com/hoarder-app/hoarder";
 const DOCS_LINK = "https://docs.hoarder.app";
@@ -41,39 +50,41 @@ const featuresList = [
   {
     icon: Bookmark,
     title: "Bookmark",
-    description: "Bookmark links, take simple notes and store images."
+    description: "Bookmark links, take simple notes and store images.",
   },
   {
     icon: BrainCircuit,
     title: "AI Tagging",
-    description: "Automatically tags your bookmarks using AI for faster retrieval."
+    description:
+      "Automatically tags your bookmarks using AI for faster retrieval.",
   },
   {
     icon: ArrowDownNarrowWide,
     title: "Auto Fetch",
-    description: "Automatically fetches title, description and images for links."
+    description:
+      "Automatically fetches title, description and images for links.",
   },
   {
     icon: WalletCards,
     title: "Lists",
-    description: "Sort your bookmarks into lists for better organization."
+    description: "Sort your bookmarks into lists for better organization.",
   },
   {
     icon: TextSearch,
     title: "Search",
-    description: "Search through all your bookmarks using full text search."
+    description: "Search through all your bookmarks using full text search.",
   },
   {
     icon: Server,
     title: "Self Hosting",
-    description: "Easy self hosting with docker for privacy and control."
+    description: "Easy self hosting with docker for privacy and control.",
   },
   {
     icon: SunMoon,
     title: "Dark Mode",
     description: "Hoarder supports dark mode for better reading experience",
   },
-]
+];
 
 function NavBar() {
   return (
@@ -96,7 +107,7 @@ function NavBar() {
           href={DEMO_LINK}
           target="_blank"
           className={cn(
-            "flex h-full w-28 gap-2 text",
+            "text flex h-full w-28 gap-2",
             buttonVariants({ variant: "default" }),
           )}
         >
@@ -131,7 +142,7 @@ function Hero() {
           href={DEMO_LINK}
           target="_blank"
           className={cn(
-            "flex w-28 gap-2 text",
+            "text flex w-28 gap-2",
             buttonVariants({ variant: "default", size: "lg" }),
           )}
         >
@@ -155,8 +166,12 @@ function Hero() {
 function Platforms() {
   return (
     <div className="py-20 bg-gray-100">
-      <h2 className="text-3xl font-semibold text-center">Apps & Extensions for Seamless Access</h2>
-      <p className="mt-2 text-center text-gray-600">Enjoy seamless access with our mobile apps and browser extensions.</p>
+      <h2 className="text-3xl font-semibold text-center">
+        Apps & Extensions for Seamless Access
+      </h2>
+      <p className="mt-2 text-center text-gray-600">
+        Enjoy seamless access with our mobile apps and browser extensions.
+      </p>
       <div className="flex flex-wrap items-center justify-center gap-6 px-6 mt-6">
         {platforms.map((platform) => (
           <div key={platform.name}>
@@ -165,39 +180,43 @@ function Platforms() {
               target="_blank"
               className="flex items-center justify-center gap-2"
             >
-              <Image className="w-full h-12 rounded-md" alt={platform.name} src={platform.badge} />
+              <Image
+                className="w-full h-12 rounded-md"
+                alt={platform.name}
+                src={platform.badge}
+              />
             </Link>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function Features() {
   return (
-    <div className="block px-10 py-20 mx-auto sm:px-0 sm:w-4/5">
-      <div className="grid grid-cols-1 gap-8 sm:gap-14 sm:grid-cols-4">
+    <div className="block px-10 py-20 mx-auto sm:w-4/5 sm:px-0">
+      <div className="grid grid-cols-1 gap-8 sm:grid-cols-4 sm:gap-14">
         {featuresList.map((feature) => (
           <div key={feature.title} className="flex flex-col gap-1 sm:gap-2">
             <div className="flex gap-2">
               <feature.icon size={20} />
-              <h3 className="font-semibold text-gray-800 text-md">{feature.title}</h3>
+              <h3 className="font-semibold text-gray-800 text-md">
+                {feature.title}
+              </h3>
             </div>
             <p className="text-gray-600">{feature.description}</p>
           </div>
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function Footer() {
   return (
     <div className="flex items-center justify-between px-10 py-6 text-sm text-gray-300 bg-black">
-      <div>
-        © 2024 hoarder.app
-      </div>
+      <div>© 2024 hoarder.app</div>
       <div className="flex items-center gap-6">
         <Link
           href={DOCS_LINK}
@@ -213,7 +232,7 @@ function Footer() {
         </Link>
       </div>
     </div>
-  )
+  );
 }
 
 function Screenshots() {
