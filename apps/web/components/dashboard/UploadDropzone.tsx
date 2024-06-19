@@ -17,7 +17,7 @@ import LoadingSpinner from "../ui/spinner";
 import { toast } from "../ui/use-toast";
 import BookmarkAlreadyExistsToast from "../utils/BookmarkAlreadyExistsToast";
 
-function useUploadAsset() {
+export function useUploadAsset() {
   const { mutateAsync: createBookmark } = useCreateBookmarkWithPostHook({
     onSuccess: (resp) => {
       if (resp.alreadyExists) {
