@@ -90,7 +90,7 @@ function NavBar() {
   return (
     <div className="flex justify-between px-3 py-4">
       <HoarderLogo height={24} gap="8px" />
-      <div className="items-center hidden gap-6 sm:flex">
+      <div className="hidden items-center gap-6 sm:flex">
         <Link
           href={DOCS_LINK}
           className="flex justify-center gap-2 text-center"
@@ -120,16 +120,16 @@ function NavBar() {
 
 function Hero() {
   return (
-    <div className="flex flex-col items-center justify-center flex-grow gap-6 mt-10 sm:mt-20">
-      <div className="w-full mt-4 space-y-6 text-center">
-        <h1 className="text-3xl font-bold text-center sm:text-6xl">
+    <div className="mt-10 flex flex-grow flex-col items-center justify-center gap-6 sm:mt-20">
+      <div className="mt-4 w-full space-y-6 text-center">
+        <h1 className="text-center text-3xl font-bold sm:text-6xl">
           The{" "}
-          <span className="text-transparent bg-gradient-to-r from-purple-600 to-red-600 bg-clip-text">
+          <span className="bg-gradient-to-r from-purple-600 to-red-600 bg-clip-text text-transparent">
             Bookmark Everything
           </span>{" "}
           App
         </h1>
-        <div className="w-full gap-2 mx-auto text-base md:w-3/6">
+        <div className="mx-auto w-full gap-2 text-base md:w-3/6">
           <p className="text-center text-gray-600">
             Quickly save links, notes, and images and hoarder will automatically
             tag them for you using AI for faster retrieval. Built for the data
@@ -165,14 +165,14 @@ function Hero() {
 
 function Platforms() {
   return (
-    <div className="py-20 bg-gray-100">
-      <h2 className="text-3xl font-semibold text-center">
+    <div className="bg-gray-100 py-20">
+      <h2 className="text-center text-3xl font-semibold">
         Apps & Extensions for Seamless Access
       </h2>
       <p className="mt-2 text-center text-gray-600">
         Enjoy seamless access with our mobile apps and browser extensions.
       </p>
-      <div className="flex flex-wrap items-center justify-center gap-6 px-6 mt-6">
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-6 px-6">
         {platforms.map((platform) => (
           <div key={platform.name}>
             <Link
@@ -181,7 +181,7 @@ function Platforms() {
               className="flex items-center justify-center gap-2"
             >
               <Image
-                className="w-full h-12 rounded-md"
+                className="h-12 w-full rounded-md"
                 alt={platform.name}
                 src={platform.badge}
               />
@@ -195,13 +195,13 @@ function Platforms() {
 
 function Features() {
   return (
-    <div className="block px-10 py-20 mx-auto sm:w-4/5 sm:px-0">
+    <div className="mx-auto block px-10 py-20 sm:w-4/5 sm:px-0">
       <div className="grid grid-cols-1 gap-8 sm:grid-cols-4 sm:gap-14">
         {featuresList.map((feature) => (
           <div key={feature.title} className="flex flex-col gap-1 sm:gap-2">
             <div className="flex gap-2">
               <feature.icon size={20} />
-              <h3 className="font-semibold text-gray-800 text-md">
+              <h3 className="text-md font-semibold text-gray-800">
                 {feature.title}
               </h3>
             </div>
@@ -215,7 +215,7 @@ function Features() {
 
 function Footer() {
   return (
-    <div className="flex items-center justify-between px-10 py-6 text-sm text-gray-300 bg-black">
+    <div className="flex items-center justify-between bg-black px-10 py-6 text-sm text-gray-300">
       <div>© 2024 hoarder.app</div>
       <div className="flex items-center gap-6">
         <Link
@@ -237,7 +237,7 @@ function Footer() {
 
 function Screenshots() {
   return (
-    <div className="w-10/12 mx-auto mt-6">
+    <div className="mx-auto mt-6 w-10/12">
       <Image alt="screenshot" src={screenshot} />
     </div>
   );
@@ -245,7 +245,7 @@ function Screenshots() {
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <div className="container flex flex-col pb-10">
         <NavBar />
         <Hero />
