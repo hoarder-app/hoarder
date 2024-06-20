@@ -4,13 +4,12 @@ import { ActionButton } from "@/components/ui/action-button";
 import { Form, FormControl, FormItem } from "@/components/ui/form";
 import InfoTooltip from "@/components/ui/info-tooltip";
 import MultipleChoiceDialog from "@/components/ui/multiple-choice-dialog";
-import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import BookmarkAlreadyExistsToast from "@/components/utils/BookmarkAlreadyExistsToast";
 import { useClientConfig } from "@/lib/clientConfig";
 import { useBookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
-import { cn } from "@/lib/utils";
+import { cn, getOS } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -139,31 +138,33 @@ export default function EditorCard({ className }: { className?: string }) {
     }
   };
 
+  const OS = getOS();
+
   return (
     <Form {...form}>
       <form
         className={cn(
           className,
-          "flex flex-col gap-2 rounded-xl bg-card p-4",
+          "relative flex flex-col gap-2 rounded-xl bg-card p-4",
           cardHeight,
         )}
         onSubmit={form.handleSubmit(onSubmit, onError)}
       >
-        <div className="flex justify-between">
-          <p className="text-sm">NEW ITEM</p>
+        <div
+          className={`absolute right-2 top-2 ${!inputRef.current?.value ? "block" : "hidden"} `}
+        >
           <InfoTooltip size={15}>
             <p className="text-center">
               You can quickly focus on this field by pressing ⌘ + E
             </p>
           </InfoTooltip>
         </div>
-        <Separator />
         <FormItem className="flex-1">
           <FormControl>
             <Textarea
               ref={inputRef}
               disabled={isPending}
-              className="h-full w-full resize-none border-none text-lg focus-visible:ring-0"
+              className={`h-full w-full resize-none border-none p-0 text-lg focus-visible:ring-0 ${!inputRef.current?.value ? "pr-4" : "pr-0"}`}
               placeholder={
                 "Paste a link or an image, write a note or drag and drop an image in here ..."
               }
@@ -185,11 +186,16 @@ export default function EditorCard({ className }: { className?: string }) {
             />
           </FormControl>
         </FormItem>
-        <ActionButton loading={isPending} type="submit" variant="default">
+        <ActionButton
+          loading={isPending}
+          type="submit"
+          variant="default"
+          disabled={!inputRef.current?.value}
+        >
           {form.formState.dirtyFields.text
             ? demoMode
               ? "Submissions are disabled"
-              : "Press ⌘ + Enter to Save"
+              : `Save (${OS === "macos" ? "⌘" : "Ctrl"} + Enter)`
             : "Save"}
         </ActionButton>
 
