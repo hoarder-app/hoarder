@@ -49,6 +49,9 @@ const nextConfig = withPWA({
       },
     ];
   },
+  env: {
+    MEILISEARCH_ENABLED: !!process.env.MEILI_ADDR,
+  },
 
   // transpilePackages: ["@hoarder/shared", "@hoarder/db", "@hoarder/trpc"],
 

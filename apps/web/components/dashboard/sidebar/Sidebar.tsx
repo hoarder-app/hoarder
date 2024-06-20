@@ -4,9 +4,7 @@ import HoarderLogo from "@/components/HoarderIcon";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
-import { Home, Search, Settings, Shield, Tag } from "lucide-react";
-
-import serverConfig from "@hoarder/shared/config";
+import { Home, Settings, Shield, Tag } from "lucide-react";
 
 import AllLists from "./AllLists";
 import SidebarItem from "./SidebarItem";
@@ -33,13 +31,6 @@ export default async function Sidebar() {
             name="Home"
             path="/dashboard/bookmarks"
           />
-          {serverConfig.meilisearch && (
-            <SidebarItem
-              logo={<Search />}
-              name="Search"
-              path="/dashboard/search"
-            />
-          )}
           <SidebarItem logo={<Tag />} name="Tags" path="/dashboard/tags" />
           <SidebarItem
             logo={<Settings />}

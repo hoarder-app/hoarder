@@ -1,20 +1,37 @@
-import React from "react";
-import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
-import TopNav from "@/components/dashboard/bookmarks/TopNav";
-import { Separator } from "@/components/ui/separator";
+"use client";
 
-export default async function BookmarksPage() {
+import { Suspense, useRef } from "react";
+import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
+import { SearchInput } from "@/components/dashboard/search/SearchInput";
+import { FullPageSpinner } from "@/components/ui/full-page-spinner";
+import { Separator } from "@/components/ui/separator";
+import { useBookmarkSearch } from "@/lib/hooks/bookmark-search";
+
+function BookmarksComp() {
+  const { data } = useBookmarkSearch();
+
+  const inputRef: React.MutableRefObject<HTMLInputElement | null> =
+    useRef<HTMLInputElement | null>(null);
+
+  const showEditorCard = !inputRef.current?.value.length
+
   return (
-    <div>
-      <TopNav />
+    <div className="flex flex-col gap-3">
+      <SearchInput ref={inputRef} />
       <Separator />
-      <div className="my-4 flex-1">
-        <Bookmarks
-          header={<p className="text-2xl">Bookmarks</p>}
-          query={{ archived: false }}
-          showEditorCard={true}
-        />
-      </div>
+      {data ? (
+        <BookmarksGrid bookmarks={data.bookmarks} showEditorCard={showEditorCard} />
+      ) : (
+        <FullPageSpinner />
+      )}
     </div>
+  );
+}
+
+export default function BookmarksPage() {
+  return (
+    <Suspense>
+      <BookmarksComp />
+    </Suspense>
   );
 }

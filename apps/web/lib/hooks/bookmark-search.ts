@@ -25,7 +25,7 @@ export function useDoBookmarkSearch() {
 
   const doSearch = (val: string) => {
     setTimeoutId(undefined);
-    router.replace(`/dashboard/search?q=${val}`);
+    router.replace(`/dashboard/bookmarks?q=${val}`);
   };
 
   const debounceSearch = (val: string) => {
