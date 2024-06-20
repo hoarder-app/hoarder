@@ -13,14 +13,17 @@ function BookmarksComp() {
   const inputRef: React.MutableRefObject<HTMLInputElement | null> =
     useRef<HTMLInputElement | null>(null);
 
-  const showEditorCard = !inputRef.current?.value.length
+  const showEditorCard = !inputRef.current?.value.length;
 
   return (
     <div className="flex flex-col gap-3">
       <SearchInput ref={inputRef} />
       <Separator />
       {data ? (
-        <BookmarksGrid bookmarks={data.bookmarks} showEditorCard={showEditorCard} />
+        <BookmarksGrid
+          bookmarks={data.bookmarks}
+          showEditorCard={showEditorCard}
+        />
       ) : (
         <FullPageSpinner />
       )}
