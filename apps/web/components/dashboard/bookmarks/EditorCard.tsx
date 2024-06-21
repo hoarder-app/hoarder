@@ -9,7 +9,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import BookmarkAlreadyExistsToast from "@/components/utils/BookmarkAlreadyExistsToast";
 import { useClientConfig } from "@/lib/clientConfig";
-import { useBookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
+import {
+  useBookmarkLayout,
+  useBookmarkLayoutSwitch,
+} from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -48,6 +51,7 @@ export default function EditorCard({ className }: { className?: string }) {
     React.useState<MultiUrlImportState | null>(null);
 
   const demoMode = !!useClientConfig().demoMode;
+  const bookmarkLayout = useBookmarkLayout();
   const formSchema = z.object({
     text: z.string(),
   });
@@ -163,7 +167,10 @@ export default function EditorCard({ className }: { className?: string }) {
             <Textarea
               ref={inputRef}
               disabled={isPending}
-              className="h-full w-full resize-none border-none text-lg focus-visible:ring-0"
+              className={cn(
+                "h-full w-full border-none text-lg focus-visible:ring-0",
+                { "resize-none": bookmarkLayout !== "list" },
+              )}
               placeholder={
                 "Paste a link or an image, write a note or drag and drop an image in here ..."
               }
