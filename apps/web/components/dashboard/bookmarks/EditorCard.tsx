@@ -103,6 +103,21 @@ export default function EditorCard({ className }: { className?: string }) {
     setMultiUrlImportState({ urls, text });
   }
 
+  const onInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    // Expand the textarea to a max of half the screen size in the list layout only
+    if (bookmarkLayout === "list") {
+      const target = e.target as HTMLTextAreaElement;
+      const maxHeight = window.innerHeight * 0.5;
+      target.style.height = "auto";
+
+      if (target.scrollHeight <= maxHeight) {
+        target.style.height = `${target.scrollHeight}px`;
+      } else {
+        target.style.height = `${maxHeight}px`;
+      }
+    }
+  };
+
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
     const text = data.text.trim();
     try {
@@ -188,20 +203,7 @@ export default function EditorCard({ className }: { className?: string }) {
                 }
                 handlePaste(e);
               }}
-              onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
-                // Expand the textarea to a max of half the screen size in the list layout only
-                if (bookmarkLayout === "list") {
-                  const target = e.target as HTMLTextAreaElement;
-                  const maxHeight = window.innerHeight * 0.5;
-                  target.style.height = "auto";
-
-                  if (target.scrollHeight <= maxHeight) {
-                    target.style.height = `${target.scrollHeight}px`;
-                  } else {
-                    target.style.height = `${maxHeight}px`;
-                  }
-                }
-              }}
+              onInput={onInput}
               {...textFieldProps}
             />
           </FormControl>
