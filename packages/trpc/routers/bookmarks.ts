@@ -341,7 +341,7 @@ export const bookmarksAppRouter = router({
     .input(
       z.object({
         bookmarkId: z.string(),
-        text: z.string().max(2000),
+        text: z.string(),
       }),
     )
     .use(ensureBookmarkOwnership)

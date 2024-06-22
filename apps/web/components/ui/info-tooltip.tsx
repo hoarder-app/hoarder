@@ -21,7 +21,11 @@ export default function InfoTooltip({
     <Tooltip>
       <TooltipTrigger asChild>
         {variant === "tip" ? (
-          <Info className={cn("cursor-pointer", className)} size={size} />
+          <Info
+            color="#494949"
+            className={cn("cursor-pointer", className)}
+            size={size}
+          />
         ) : (
           <HelpCircle className={cn("cursor-pointer", className)} size={size} />
         )}
