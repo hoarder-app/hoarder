@@ -13,7 +13,7 @@ import {
   useBookmarkLayout,
   useBookmarkLayoutSwitch,
 } from "@/lib/userLocalSettings/bookmarksLayout";
-import { cn } from "@/lib/utils";
+import { cn, getOS } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -123,6 +123,7 @@ export default function EditorCard({ className }: { className?: string }) {
 
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
     const text = data.text.trim();
+    if (!text.length) return;
     try {
       tryToImportUrls(text);
     } catch (e) {
@@ -162,12 +163,14 @@ export default function EditorCard({ className }: { className?: string }) {
     }
   };
 
+  const OS = getOS();
+
   return (
     <Form {...form}>
       <form
         className={cn(
           className,
-          "flex flex-col gap-2 rounded-xl bg-card p-4",
+          "relative flex flex-col gap-2 rounded-xl bg-card p-4",
           cardHeight,
         )}
         onSubmit={form.handleSubmit(onSubmit, onError)}
@@ -187,7 +190,7 @@ export default function EditorCard({ className }: { className?: string }) {
               ref={inputRef}
               disabled={isPending}
               className={cn(
-                "h-full w-full border-none text-lg focus-visible:ring-0",
+                "h-full w-full border-none p-0 text-lg focus-visible:ring-0",
                 { "resize-none": bookmarkLayout !== "list" },
               )}
               placeholder={
@@ -216,7 +219,7 @@ export default function EditorCard({ className }: { className?: string }) {
           {form.formState.dirtyFields.text
             ? demoMode
               ? "Submissions are disabled"
-              : "Press ⌘ + Enter to Save"
+              : `Save (${OS === "macos" ? "⌘" : "Ctrl"} + Enter)`
             : "Save"}
         </ActionButton>
 
