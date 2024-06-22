@@ -438,7 +438,10 @@ async function getContentType(
     logger.info(
       `[Crawler][${jobId}] Attempting to determine the content-type for the url ${url}`,
     );
-    const response = await fetch(url, { method: "HEAD" });
+    const response = await fetch(url, {
+      method: "HEAD",
+      signal: AbortSignal.timeout(5000),
+    });
     const contentType = response.headers.get("content-type");
     logger.info(
       `[Crawler][${jobId}] Content-type for the url ${url} is "${contentType}"`,
