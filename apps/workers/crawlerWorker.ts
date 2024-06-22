@@ -441,7 +441,7 @@ async function getContentType(
     const response = await fetch(url, { method: "HEAD" });
     const contentType = response.headers.get("content-type");
     logger.info(
-      `[Crawler][${jobId}] Content-type for the url ${url} is "${contentType}`,
+      `[Crawler][${jobId}] Content-type for the url ${url} is "${contentType}"`,
     );
     return contentType;
   } catch (e) {
@@ -452,10 +452,6 @@ async function getContentType(
   }
 }
 
-async function isPDF(url: string, jobId: string) {
-  const contentType = await getContentType(url, jobId);
-  return contentType === ASSET_TYPES.APPLICATION_PDF;
-}
 /**
  * Downloads the pdf asset from the URL and transforms the linkBookmark to an assetBookmark
  * @param url the url the user provided
@@ -484,44 +480,17 @@ async function handlePDFAsAssetBookmark(
     });
     await trx.delete(bookmarkLinks).where(eq(bookmarkLinks.id, bookmarkId));
   });
-
-  OpenAIQueue.add("openai", {
-    bookmarkId,
-  });
-  triggerSearchReindex(bookmarkId);
 }
 
-async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
-  const jobId = job.id ?? "unknown";
-
-  const request = zCrawlLinkRequestSchema.safeParse(job.data);
-  if (!request.success) {
-    logger.error(
-      `[Crawler][${jobId}] Got malformed job request: ${request.error.toString()}`,
-    );
-    return;
-  }
-
-  const { bookmarkId } = request.data;
-  const {
-    url,
-    userId,
-    screenshotAssetId: oldScreenshotAssetId,
-    imageAssetId: oldImageAssetId,
-    fullPageArchiveAssetId: oldFullPageArchiveAssetId,
-  } = await getBookmarkDetails(bookmarkId);
-
-  logger.info(
-    `[Crawler][${jobId}] Will crawl "${url}" for link with id "${bookmarkId}"`,
-  );
-  validateUrl(url);
-
-  // Link bookmarks get transformed into asset bookmarks if they point to a pdf asset instead of a webpage
-  if (await isPDF(url, jobId)) {
-    await handlePDFAsAssetBookmark(url, userId, jobId, bookmarkId);
-    return;
-  }
-
+async function crawlAndParseUrl(
+  url: string,
+  userId: string,
+  jobId: string,
+  bookmarkId: string,
+  oldScreenshotAssetId: string | null,
+  oldImageAssetId: string | null,
+  oldFullPageArchiveAssetId: string | null,
+) {
   const {
     htmlContent,
     screenshot,
@@ -564,6 +533,78 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
       : {},
   ]);
 
+  return async () => {
+    if (serverConfig.crawler.fullPageArchive) {
+      const fullPageArchiveAssetId = await archiveWebpage(
+        htmlContent,
+        browserUrl,
+        userId,
+        jobId,
+      );
+
+      await db
+        .update(bookmarkLinks)
+        .set({
+          fullPageArchiveAssetId,
+        })
+        .where(eq(bookmarkLinks.id, bookmarkId));
+
+      if (oldFullPageArchiveAssetId) {
+        deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
+          () => ({}),
+        );
+      }
+    }
+  };
+}
+
+async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
+  const jobId = job.id ?? "unknown";
+
+  const request = zCrawlLinkRequestSchema.safeParse(job.data);
+  if (!request.success) {
+    logger.error(
+      `[Crawler][${jobId}] Got malformed job request: ${request.error.toString()}`,
+    );
+    return;
+  }
+
+  const { bookmarkId } = request.data;
+  const {
+    url,
+    userId,
+    screenshotAssetId: oldScreenshotAssetId,
+    imageAssetId: oldImageAssetId,
+    fullPageArchiveAssetId: oldFullPageArchiveAssetId,
+  } = await getBookmarkDetails(bookmarkId);
+
+  logger.info(
+    `[Crawler][${jobId}] Will crawl "${url}" for link with id "${bookmarkId}"`,
+  );
+  validateUrl(url);
+
+  const contentType = await getContentType(url, jobId);
+
+  // Link bookmarks get transformed into asset bookmarks if they point to a pdf asset instead of a webpage
+  const isPdf = contentType === ASSET_TYPES.APPLICATION_PDF;
+
+  let archivalLogic: () => Promise<void> = () => {
+    return Promise.resolve();
+  };
+  if (isPdf) {
+    await handlePDFAsAssetBookmark(url, userId, jobId, bookmarkId);
+  } else {
+    archivalLogic = await crawlAndParseUrl(
+      url,
+      userId,
+      jobId,
+      bookmarkId,
+      oldScreenshotAssetId,
+      oldImageAssetId,
+      oldFullPageArchiveAssetId,
+    );
+  }
+
   // Enqueue openai job (if not set, assume it's true for backward compatibility)
   if (job.data.runInference !== false) {
     OpenAIQueue.add("openai", {
@@ -575,25 +616,5 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   triggerSearchReindex(bookmarkId);
 
   // Do the archival as a separate last step as it has the potential for failure
-  if (serverConfig.crawler.fullPageArchive) {
-    const fullPageArchiveAssetId = await archiveWebpage(
-      htmlContent,
-      browserUrl,
-      userId,
-      jobId,
-    );
-
-    await db
-      .update(bookmarkLinks)
-      .set({
-        fullPageArchiveAssetId,
-      })
-      .where(eq(bookmarkLinks.id, bookmarkId));
-
-    if (oldFullPageArchiveAssetId) {
-      deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
-        () => ({}),
-      );
-    }
-  }
+  await archivalLogic();
 }
