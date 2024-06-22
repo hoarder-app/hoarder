@@ -125,8 +125,13 @@ export default function EditorCard({ className }: { className?: string }) {
     } catch (e) {
       // Not a URL
       mutate({ type: "text", text });
+    } finally {
+      if (inputRef?.current?.style) {
+        inputRef.current.style.height = "auto";
+      }
     }
   };
+
   const onError: SubmitErrorHandler<z.infer<typeof formSchema>> = (errors) => {
     toast({
       description: Object.values(errors)
