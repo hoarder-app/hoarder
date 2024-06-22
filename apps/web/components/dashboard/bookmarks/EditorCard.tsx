@@ -74,6 +74,9 @@ export default function EditorCard({ className }: { className?: string }) {
         });
       }
       form.reset();
+      if (inputRef?.current?.style) {
+        inputRef.current.style.height = "auto";
+      }
     },
     onError: (e) => {
       toast({ description: e.message, variant: "destructive" });
@@ -125,10 +128,6 @@ export default function EditorCard({ className }: { className?: string }) {
     } catch (e) {
       // Not a URL
       mutate({ type: "text", text });
-    } finally {
-      if (inputRef?.current?.style) {
-        inputRef.current.style.height = "auto";
-      }
     }
   };
 
