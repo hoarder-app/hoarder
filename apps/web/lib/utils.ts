@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export type OS = "macos" | "ios" | "windows" | "android" | "linux" | null;
 
 export function getOS() {
-  if (typeof window === 'undefined') return
+  if (typeof window === "undefined") return;
   const userAgent = window.navigator.userAgent.toLowerCase();
   const macosPlatforms = /(macintosh|macintel|macppc|mac68k|macos)/i;
   const windowsPlatforms = /(win32|win64|windows|wince)/i;
