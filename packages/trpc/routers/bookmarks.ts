@@ -172,6 +172,7 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
       assetType: asset.assetType,
       assetId: asset.assetId,
       fileName: asset.fileName,
+      sourceUrl: asset.sourceUrl,
     };
   } else {
     content = { type: "unknown" };
@@ -257,6 +258,7 @@ export const bookmarksAppRouter = router({
                 content: null,
                 metadata: null,
                 fileName: input.fileName ?? null,
+                sourceUrl: null,
               })
               .returning();
             content = {
