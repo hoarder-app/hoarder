@@ -23,7 +23,7 @@ import metascraperUrl from "metascraper-url";
 import puppeteer from "puppeteer-extra";
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { readPDFText, withTimeout } from "utils";
+import { withTimeout } from "utils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
@@ -348,7 +348,6 @@ async function downloadAndStoreFile(
   userId: string,
   jobId: string,
   fileType: string,
-  returnBuffer: boolean,
 ) {
   try {
     logger.info(`[Crawler][${jobId}] Downloading ${fileType} from "${url}"`);
@@ -364,11 +363,6 @@ async function downloadAndStoreFile(
       throw new Error("No content type in the response");
     }
 
-    let copiedBuffer;
-    if (returnBuffer) {
-      copiedBuffer = Buffer.from(buffer);
-    }
-
     await saveAsset({
       userId,
       assetId,
@@ -380,7 +374,7 @@ async function downloadAndStoreFile(
       `[Crawler][${jobId}] Downloaded ${fileType} as assetId: ${assetId}`,
     );
 
-    return { assetId, buffer: copiedBuffer };
+    return assetId;
   } catch (e) {
     logger.error(
       `[Crawler][${jobId}] Failed to download and store ${fileType}: ${e}`,
@@ -400,7 +394,7 @@ async function downloadAndStoreImage(
     );
     return null;
   }
-  return downloadAndStoreFile(url, userId, jobId, "image", false);
+  return downloadAndStoreFile(url, userId, jobId, "image");
 }
 
 async function archiveWebpage(
@@ -475,18 +469,16 @@ async function handlePDFAsAssetBookmark(
   jobId: string,
   bookmarkId: string,
 ) {
-  const asset = await downloadAndStoreFile(url, userId, jobId, "pdf", true);
-  if (!asset || !asset.buffer) {
+  const assetId = await downloadAndStoreFile(url, userId, jobId, "pdf");
+  if (!assetId) {
     return;
   }
-  const { assetId, buffer } = asset;
-  const pdf = await readPDFText(buffer);
   await db.transaction(async (trx) => {
     await trx.insert(bookmarkAssets).values({
       id: bookmarkId,
       assetType: "pdf",
       assetId,
-      content: pdf.text,
+      content: null,
       fileName: path.basename(new URL(url).pathname),
       sourceUrl: url,
     });
@@ -543,8 +535,7 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   ]);
   let imageAssetId: string | null = null;
   if (meta.image) {
-    imageAssetId = (await downloadAndStoreImage(meta.image, userId, jobId))
-      ?.assetId as string;
+    imageAssetId = await downloadAndStoreImage(meta.image, userId, jobId);
   }
 
   // TODO(important): Restrict the size of content to store
