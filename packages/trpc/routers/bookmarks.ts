@@ -73,39 +73,23 @@ export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   return opts.next();
 });
 
-function assetTypeToBookmarkField(
-  asset:
-    | {
-        id: string;
-        assetType: AssetTypes;
-      }
-    | undefined,
-) {
-  if (!asset) {
-    return undefined;
-  }
-  switch (asset.assetType) {
-    case AssetTypes.LINK_SCREENSHOT:
-      return { screenshotAssetId: asset.id };
-    case AssetTypes.LINK_FULL_PAGE_ARCHIVE:
-      return { fullPageArchiveAssetId: asset.id };
-    case AssetTypes.LINK_BANNER_IMAGE:
-      return { imageAssetId: asset.id };
-  }
+interface Asset {
+  id: string;
+  assetType: AssetTypes;
 }
 
-function getBookmarkAssets(assets: { id: string; assetType: AssetTypes }[]) {
-  return {
-    ...assetTypeToBookmarkField(
-      assets.find((a) => a.assetType == AssetTypes.LINK_SCREENSHOT),
-    ),
-    ...assetTypeToBookmarkField(
-      assets.find((a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE),
-    ),
-    ...assetTypeToBookmarkField(
-      assets.find((a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE),
-    ),
-  };
+const ASSET_TYE_MAPPING: Record<AssetTypes, string> = {
+  [AssetTypes.LINK_SCREENSHOT]: "screenshotAssetId",
+  [AssetTypes.LINK_FULL_PAGE_ARCHIVE]: "fullPageArchiveAssetId",
+  [AssetTypes.LINK_BANNER_IMAGE]: "imageAssetId",
+};
+
+function mapAssetsToBookmarkFields(assets: Asset | Asset[] = []) {
+  const assetsArray = Array.isArray(assets) ? assets : [assets];
+  return assetsArray.reduce((result: Record<string, string>, asset: Asset) => {
+    result[ASSET_TYE_MAPPING[asset.assetType]] = asset.id;
+    return result;
+  }, {});
 }
 
 async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
@@ -196,7 +180,7 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
   if (link) {
     content = {
       type: "link",
-      ...getBookmarkAssets(assets),
+      ...mapAssetsToBookmarkFields(assets),
       ...link,
     };
   } else if (text) {
@@ -616,7 +600,7 @@ export const bookmarksAppRouter = router({
           if (row.assets) {
             acc[bookmarkId].content = {
               ...acc[bookmarkId].content,
-              ...assetTypeToBookmarkField(row.assets),
+              ...mapAssetsToBookmarkFields(row.assets),
             };
           }
 
