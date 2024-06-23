@@ -27,7 +27,13 @@ import { withTimeout } from "utils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
-import { bookmarkAssets, bookmarkLinks, bookmarks } from "@hoarder/db/schema";
+import {
+  assets,
+  AssetTypes,
+  bookmarkAssets,
+  bookmarkLinks,
+  bookmarks,
+} from "@hoarder/db/schema";
 import {
   ASSET_TYPES,
   deleteAsset,
@@ -194,7 +200,10 @@ async function changeBookmarkStatus(
 async function getBookmarkDetails(bookmarkId: string) {
   const bookmark = await db.query.bookmarks.findFirst({
     where: eq(bookmarks.id, bookmarkId),
-    with: { link: true },
+    with: {
+      link: true,
+      assets: true,
+    },
   });
 
   if (!bookmark || !bookmark.link) {
@@ -203,9 +212,15 @@ async function getBookmarkDetails(bookmarkId: string) {
   return {
     url: bookmark.link.url,
     userId: bookmark.userId,
-    screenshotAssetId: bookmark.link.screenshotAssetId,
-    imageAssetId: bookmark.link.imageAssetId,
-    fullPageArchiveAssetId: bookmark.link.fullPageArchiveAssetId,
+    screenshotAssetId: bookmark.assets.find(
+      (a) => a.assetType == AssetTypes.LINK_SCREENSHOT,
+    )?.id,
+    imageAssetId: bookmark.assets.find(
+      (a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE,
+    )?.id,
+    fullPageArchiveAssetId: bookmark.assets.find(
+      (a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+    )?.id,
   };
 }
 
@@ -490,9 +505,9 @@ async function crawlAndParseUrl(
   userId: string,
   jobId: string,
   bookmarkId: string,
-  oldScreenshotAssetId: string | null,
-  oldImageAssetId: string | null,
-  oldFullPageArchiveAssetId: string | null,
+  oldScreenshotAssetId: string | undefined,
+  oldImageAssetId: string | undefined,
+  oldFullPageArchiveAssetId: string | undefined,
 ) {
   const {
     htmlContent,
@@ -511,20 +526,42 @@ async function crawlAndParseUrl(
   }
 
   // TODO(important): Restrict the size of content to store
-  await db
-    .update(bookmarkLinks)
-    .set({
-      title: meta.title,
-      description: meta.description,
-      imageUrl: meta.image,
-      favicon: meta.logo,
-      content: readableContent?.textContent,
-      htmlContent: readableContent?.content,
-      screenshotAssetId,
-      imageAssetId,
-      crawledAt: new Date(),
-    })
-    .where(eq(bookmarkLinks.id, bookmarkId));
+  await db.transaction(async (txn) => {
+    await txn
+      .update(bookmarkLinks)
+      .set({
+        title: meta.title,
+        description: meta.description,
+        imageUrl: meta.image,
+        favicon: meta.logo,
+        content: readableContent?.textContent,
+        htmlContent: readableContent?.content,
+        crawledAt: new Date(),
+      })
+      .where(eq(bookmarkLinks.id, bookmarkId));
+
+    if (screenshotAssetId) {
+      if (oldScreenshotAssetId) {
+        await txn.delete(assets).where(eq(assets.id, oldScreenshotAssetId));
+      }
+      await txn.insert(assets).values({
+        id: screenshotAssetId,
+        assetType: AssetTypes.LINK_SCREENSHOT,
+        bookmarkId,
+      });
+    }
+
+    if (imageAssetId) {
+      if (oldImageAssetId) {
+        await txn.delete(assets).where(eq(assets.id, oldImageAssetId));
+      }
+      await txn.insert(assets).values({
+        id: imageAssetId,
+        assetType: AssetTypes.LINK_BANNER_IMAGE,
+        bookmarkId,
+      });
+    }
+  });
 
   // Delete the old assets if any
   await Promise.all([
@@ -545,13 +582,18 @@ async function crawlAndParseUrl(
         jobId,
       );
 
-      await db
-        .update(bookmarkLinks)
-        .set({
-          fullPageArchiveAssetId,
-        })
-        .where(eq(bookmarkLinks.id, bookmarkId));
-
+      await db.transaction(async (txn) => {
+        if (oldFullPageArchiveAssetId) {
+          await txn
+            .delete(assets)
+            .where(eq(assets.id, oldFullPageArchiveAssetId));
+        }
+        await txn.insert(assets).values({
+          id: fullPageArchiveAssetId,
+          assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+          bookmarkId,
+        });
+      });
       if (oldFullPageArchiveAssetId) {
         deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
           () => ({}),

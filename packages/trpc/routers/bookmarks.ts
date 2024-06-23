@@ -10,6 +10,8 @@ import type {
 import type { ZBookmarkTags } from "@hoarder/shared/types/tags";
 import { db as DONT_USE_db } from "@hoarder/db";
 import {
+  assets,
+  AssetTypes,
   bookmarkAssets,
   bookmarkLinks,
   bookmarks,
@@ -71,6 +73,41 @@ export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   return opts.next();
 });
 
+function assetTypeToBookmarkField(
+  asset:
+    | {
+        id: string;
+        assetType: AssetTypes;
+      }
+    | undefined,
+) {
+  if (!asset) {
+    return undefined;
+  }
+  switch (asset.assetType) {
+    case AssetTypes.LINK_SCREENSHOT:
+      return { screenshotAssetId: asset.id };
+    case AssetTypes.LINK_FULL_PAGE_ARCHIVE:
+      return { fullPageArchiveAssetId: asset.id };
+    case AssetTypes.LINK_BANNER_IMAGE:
+      return { imageAssetId: asset.id };
+  }
+}
+
+function getBookmarkAssets(assets: { id: string; assetType: AssetTypes }[]) {
+  return {
+    ...assetTypeToBookmarkField(
+      assets.find((a) => a.assetType == AssetTypes.LINK_SCREENSHOT),
+    ),
+    ...assetTypeToBookmarkField(
+      assets.find((a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE),
+    ),
+    ...assetTypeToBookmarkField(
+      assets.find((a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE),
+    ),
+  };
+}
+
 async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
   const bookmark = await ctx.db.query.bookmarks.findFirst({
     where: and(eq(bookmarks.userId, ctx.user.id), eq(bookmarks.id, bookmarkId)),
@@ -83,6 +120,7 @@ async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
       link: true,
       text: true,
       asset: true,
+      assets: true,
     },
   });
   if (!bookmark) {
@@ -121,6 +159,7 @@ async function dummyDrizzleReturnType() {
       link: true,
       text: true,
       asset: true,
+      assets: true,
     },
   });
   if (!x) {
@@ -134,36 +173,32 @@ type BookmarkQueryReturnType = Awaited<
 >;
 
 async function cleanupAssetForBookmark(
-  bookmark: Pick<BookmarkQueryReturnType, "asset" | "link" | "userId">,
+  bookmark: Pick<BookmarkQueryReturnType, "asset" | "userId" | "assets">,
 ) {
-  const assetIds = [];
+  const assetIds: Set<string> = new Set<string>(
+    bookmark.assets.map((a) => a.id),
+  );
+  // Todo: Remove when the bookmark asset is also in the assets table
   if (bookmark.asset) {
-    assetIds.push(bookmark.asset.assetId);
-  }
-  if (bookmark.link) {
-    if (bookmark.link.screenshotAssetId) {
-      assetIds.push(bookmark.link.screenshotAssetId);
-    }
-    if (bookmark.link.imageAssetId) {
-      assetIds.push(bookmark.link.imageAssetId);
-    }
-    if (bookmark.link.fullPageArchiveAssetId) {
-      assetIds.push(bookmark.link.fullPageArchiveAssetId);
-    }
+    assetIds.add(bookmark.asset.assetId);
   }
   await Promise.all(
-    assetIds.map((assetId) =>
+    Array.from(assetIds).map((assetId) =>
       deleteAsset({ userId: bookmark.userId, assetId }),
     ),
   );
 }
 
 function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
-  const { tagsOnBookmarks, link, text, asset, ...rest } = bookmark;
+  const { tagsOnBookmarks, link, text, asset, assets, ...rest } = bookmark;
 
   let content: ZBookmarkContent;
   if (link) {
-    content = { type: "link", ...link };
+    content = {
+      type: "link",
+      ...getBookmarkAssets(assets),
+      ...link,
+    };
   } else if (text) {
     content = { type: "text", text: text.text ?? "" };
   } else if (asset) {
@@ -200,7 +235,7 @@ export const bookmarksAppRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       if (input.type == "link") {
-        // This doesn't 100% protect from duplicates because of races but it's more than enough for this usecase.
+        // This doesn't 100% protect from duplicates because of races, but it's more than enough for this usecase.
         const alreadyExists = await attemptToDedupLink(ctx, input.url);
         if (alreadyExists) {
           return { ...alreadyExists, alreadyExists: true };
@@ -369,6 +404,7 @@ export const bookmarksAppRouter = router({
         with: {
           asset: true,
           link: true,
+          assets: true,
         },
       });
       const deleted = await ctx.db
@@ -383,8 +419,8 @@ export const bookmarksAppRouter = router({
       if (deleted.changes > 0 && bookmark) {
         await cleanupAssetForBookmark({
           asset: bookmark.asset,
-          link: bookmark.link,
           userId: ctx.user.id,
+          assets: bookmark.assets,
         });
       }
     }),
@@ -453,6 +489,7 @@ export const bookmarksAppRouter = router({
           link: true,
           text: true,
           asset: true,
+          assets: true,
         },
       });
       results.sort((a, b) => idToRank[b.id] - idToRank[a.id]);
@@ -536,6 +573,7 @@ export const bookmarksAppRouter = router({
         .leftJoin(bookmarkLinks, eq(bookmarkLinks.id, sq.id))
         .leftJoin(bookmarkTexts, eq(bookmarkTexts.id, sq.id))
         .leftJoin(bookmarkAssets, eq(bookmarkAssets.id, sq.id))
+        .leftJoin(assets, eq(assets.bookmarkId, sq.id))
         .orderBy(desc(sq.createdAt), desc(sq.id));
 
       const bookmarksRes = results.reduce<Record<string, ZBookmark>>(
@@ -573,6 +611,13 @@ export const bookmarksAppRouter = router({
               ...row.bookmarkTags,
               attachedBy: row.tagsOnBookmarks.attachedBy,
             });
+          }
+
+          if (row.assets) {
+            acc[bookmarkId].content = {
+              ...acc[bookmarkId].content,
+              ...assetTypeToBookmarkField(row.assets),
+            };
           }
 
           return acc;
@@ -629,7 +674,7 @@ export const bookmarksAppRouter = router({
     )
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      return await ctx.db.transaction(async (tx) => {
+      return ctx.db.transaction(async (tx) => {
         // Detaches
         if (input.detach.length > 0) {
           await tx.delete(tagsOnBookmarks).where(
