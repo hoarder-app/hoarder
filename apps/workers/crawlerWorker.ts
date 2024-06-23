@@ -4,8 +4,10 @@ import * as path from "node:path";
 import type { Browser } from "puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
+import Database from "better-sqlite3";
 import DOMPurify from "dompurify";
-import { eq } from "drizzle-orm";
+import { eq, ExtractTablesWithRelations } from "drizzle-orm";
+import { SQLiteTransaction } from "drizzle-orm/sqlite-core";
 import { execa } from "execa";
 import { isShuttingDown } from "exit";
 import { JSDOM } from "jsdom";
@@ -35,11 +37,11 @@ import {
 import { DequeuedJob, Runner } from "@hoarder/queue";
 import {
   ASSET_TYPES,
-  deleteAsset,
   IMAGE_ASSET_TYPES,
   newAssetId,
   saveAsset,
   saveAssetFromFile,
+  silentDeleteAsset,
   SUPPORTED_UPLOAD_ASSET_TYPES,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
@@ -563,12 +565,8 @@ async function crawlAndParseUrl(
 
   // Delete the old assets if any
   await Promise.all([
-    oldScreenshotAssetId
-      ? deleteAsset({ userId, assetId: oldScreenshotAssetId }).catch(() => ({}))
-      : {},
-    oldImageAssetId
-      ? deleteAsset({ userId, assetId: oldImageAssetId }).catch(() => ({}))
-      : {},
+    silentDeleteAsset(userId, oldScreenshotAssetId),
+    silentDeleteAsset(userId, oldImageAssetId),
   ]);
 
   return async () => {
@@ -590,9 +588,7 @@ async function crawlAndParseUrl(
         );
       });
       if (oldFullPageArchiveAssetId) {
-        await deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
-          () => ({}),
-        );
+        await silentDeleteAsset(userId, oldFullPageArchiveAssetId);
       }
     }
   };
@@ -663,31 +659,4 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
 
   // Do the archival as a separate last step as it has the potential for failure
   await archivalLogic();
-}
-
-/**
- * Removes the old asset and adds a new one instead
- * @param newAssetId the new assetId to add
- * @param oldAssetId the old assetId to remove (if it exists)
- * @param bookmarkId the id of the bookmark the asset belongs to
- * @param assetType the type of the asset
- * @param txn the transaction where this update should happen in
- */
-async function updateAsset(
-  newAssetId: string | null,
-  oldAssetId: string | undefined,
-  bookmarkId: string,
-  assetType: AssetTypes,
-  txn: HoarderDBTransaction,
-) {
-  if (newAssetId) {
-    if (oldAssetId) {
-      await txn.delete(assets).where(eq(assets.id, oldAssetId));
-    }
-    await txn.insert(assets).values({
-      id: newAssetId,
-      assetType,
-      bookmarkId,
-    });
-  }
 }
