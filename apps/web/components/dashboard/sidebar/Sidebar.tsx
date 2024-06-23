@@ -63,7 +63,7 @@ export default async function Sidebar() {
       path: "/dashboard/settings",
     },
     ...adminItem,
-  ].filter((item) => Object.keys(item).length !== 0); // to remove empty objects
+  ];
 
   return (
     <aside className="flex h-screen w-60 flex-col gap-5 border-r p-4">

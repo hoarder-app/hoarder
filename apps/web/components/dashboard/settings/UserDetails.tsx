@@ -1,20 +1,17 @@
-"use client";
-
 import { Input } from "@/components/ui/input";
-import { useSession } from "next-auth/react";
+import { api } from "@/server/api/client";
 
-export default function UserDetails() {
-  const { data: session } = useSession();
+export default async function UserDetails() {
+  const whoami = await api.users.whoami();
 
-  if (!session?.user) return null;
   const details = [
     {
       label: "Name",
-      value: session.user.name ?? undefined,
+      value: whoami.name ?? undefined,
     },
     {
       label: "Email",
-      value: session.user.email ?? undefined,
+      value: whoami.email ?? undefined,
     },
   ];
 
