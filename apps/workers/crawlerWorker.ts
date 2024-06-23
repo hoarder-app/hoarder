@@ -37,9 +37,11 @@ import {
 import {
   ASSET_TYPES,
   deleteAsset,
+  IMAGE_ASSET_TYPES,
   newAssetId,
   saveAsset,
   saveAssetFromFile,
+  SUPPORTED_UPLOAD_ASSET_TYPES,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
@@ -471,26 +473,28 @@ async function getContentType(
 }
 
 /**
- * Downloads the pdf asset from the URL and transforms the linkBookmark to an assetBookmark
+ * Downloads the asset from the URL and transforms the linkBookmark to an assetBookmark
  * @param url the url the user provided
+ * @param assetType the type of the asset we're downloading
  * @param userId the id of the user
  * @param jobId the id of the job for logging
  * @param bookmarkId the id of the bookmark
  */
-async function handlePDFAsAssetBookmark(
+async function handleAsAssetBookmark(
   url: string,
+  assetType: "image" | "pdf",
   userId: string,
   jobId: string,
   bookmarkId: string,
 ) {
-  const assetId = await downloadAndStoreFile(url, userId, jobId, "pdf");
+  const assetId = await downloadAndStoreFile(url, userId, jobId, assetType);
   if (!assetId) {
     return;
   }
   await db.transaction(async (trx) => {
     await trx.insert(bookmarkAssets).values({
       id: bookmarkId,
-      assetType: "pdf",
+      assetType,
       assetId,
       content: null,
       fileName: path.basename(new URL(url).pathname),
@@ -630,14 +634,20 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
 
   const contentType = await getContentType(url, jobId);
 
-  // Link bookmarks get transformed into asset bookmarks if they point to a pdf asset instead of a webpage
+  // Link bookmarks get transformed into asset bookmarks if they point to a supported asset instead of a webpage
   const isPdf = contentType === ASSET_TYPES.APPLICATION_PDF;
 
   let archivalLogic: () => Promise<void> = () => {
     return Promise.resolve();
   };
   if (isPdf) {
-    await handlePDFAsAssetBookmark(url, userId, jobId, bookmarkId);
+    await handleAsAssetBookmark(url, "pdf", userId, jobId, bookmarkId);
+  } else if (
+    contentType &&
+    IMAGE_ASSET_TYPES.has(contentType) &&
+    SUPPORTED_UPLOAD_ASSET_TYPES.has(contentType)
+  ) {
+    await handleAsAssetBookmark(url, "image", userId, jobId, bookmarkId);
   } else {
     archivalLogic = await crawlAndParseUrl(
       url,

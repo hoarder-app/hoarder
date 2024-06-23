@@ -14,16 +14,20 @@ export const enum ASSET_TYPES {
   TEXT_HTML = "text/html",
 }
 
-// The assets that we allow the users to upload
-export const SUPPORTED_UPLOAD_ASSET_TYPES: Set<string> = new Set<string>([
+export const IMAGE_ASSET_TYPES: Set<string> = new Set<string>([
   ASSET_TYPES.IMAGE_JPEG,
   ASSET_TYPES.IMAGE_PNG,
   ASSET_TYPES.IMAGE_WEBP,
+]);
+
+// The assets that we allow the users to upload
+export const SUPPORTED_UPLOAD_ASSET_TYPES: Set<string> = new Set<string>([
+  ...IMAGE_ASSET_TYPES,
   ASSET_TYPES.APPLICATION_PDF,
 ]);
 
 // The assets that we support saving in the asset db
-export const SUPPORTED_ASSET_TYPES = new Set([
+export const SUPPORTED_ASSET_TYPES: Set<string> = new Set<string>([
   ...SUPPORTED_UPLOAD_ASSET_TYPES,
   ASSET_TYPES.TEXT_HTML,
 ]);
