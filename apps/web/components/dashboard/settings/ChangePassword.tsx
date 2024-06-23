@@ -11,7 +11,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,13 +53,14 @@ export function ChangePassword() {
   }
 
   return (
-    <div className="w-full pt-4">
-      <span className="text-xl">Change Password</span>
-      <Separator className="my-2" />
+    <div className="flex flex-col sm:flex-row">
+      <div className="mb-4 w-full text-lg font-medium sm:w-1/3">
+        Change Password
+      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col gap-2 pt-4 lg:w-1/2"
+          className="flex w-full flex-col gap-2"
         >
           <FormField
             control={form.control}
@@ -120,7 +120,7 @@ export function ChangePassword() {
             }}
           />
           <ActionButton
-            className="h-full"
+            className="mt-4 h-10 w-max px-8"
             type="submit"
             loading={mutator.isPending}
           >

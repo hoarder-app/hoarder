@@ -47,8 +47,8 @@ export default function DeleteApiKey({
         </ActionButton>
       )}
     >
-      <Button variant="destructive">
-        <Trash className="size-5" />
+      <Button variant="outline">
+        <Trash size={18} color="red" />
       </Button>
     </ActionConfirmingDialog>
   );

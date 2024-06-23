@@ -14,7 +14,7 @@ export default async function Bookmarks({
   showEditorCard = false,
 }: {
   query: ZGetBookmarksRequest;
-  header: React.ReactNode;
+  header?: React.ReactNode;
   showDivider?: boolean;
   showEditorCard?: boolean;
 }) {
