@@ -7,6 +7,16 @@ export default function UserDetails() {
   const { data: session } = useSession();
 
   if (!session?.user) return null;
+  const details = [
+    {
+      label: "Name",
+      value: session.user.name ?? undefined,
+    },
+    {
+      label: "Email",
+      value: session.user.email ?? undefined,
+    },
+  ];
 
   return (
     <div className="mb-8 flex flex-col sm:flex-row">
@@ -14,10 +24,12 @@ export default function UserDetails() {
         Basic Details
       </div>
       <div className="w-full">
-        <div className="mb-2 text-sm font-medium">Name</div>
-        <Input value={session.user.name} disabled />
-        <div className="mb-2 mt-2 text-sm font-medium">Email</div>
-        <Input value={session.user.email} disabled className="block" />
+        {details.map(({ label, value }) => (
+          <div className="mb-2" key={label}>
+            <div className="mb-2 text-sm font-medium">{label}</div>
+            <Input value={value} disabled />
+          </div>
+        ))}
       </div>
     </div>
   );
