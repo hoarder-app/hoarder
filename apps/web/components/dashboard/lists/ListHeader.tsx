@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import ChangeLayout from "@/components/dashboard/ChangeLayout";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 
@@ -32,15 +33,18 @@ export default function ListHeader({
   }
 
   return (
-    <div className="flex justify-between">
+    <div className="flex items-center justify-between">
       <span className="text-2xl">
         {list.icon} {list.name}
       </span>
-      <ListOptions list={list}>
-        <Button variant="ghost">
-          <MoreHorizontal />
-        </Button>
-      </ListOptions>
+      <div>
+        <ListOptions list={list}>
+          <Button variant="ghost">
+            <MoreHorizontal />
+          </Button>
+        </ListOptions>
+        <ChangeLayout />
+      </div>
     </div>
   );
 }
