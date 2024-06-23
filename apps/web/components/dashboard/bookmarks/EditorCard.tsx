@@ -9,8 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import BookmarkAlreadyExistsToast from "@/components/utils/BookmarkAlreadyExistsToast";
 import { useClientConfig } from "@/lib/clientConfig";
-import { useBookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
-import { cn } from "@/lib/utils";
+import {
+  useBookmarkLayout,
+  useBookmarkLayoutSwitch,
+} from "@/lib/userLocalSettings/bookmarksLayout";
+import { cn, getOS } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -48,6 +51,7 @@ export default function EditorCard({ className }: { className?: string }) {
     React.useState<MultiUrlImportState | null>(null);
 
   const demoMode = !!useClientConfig().demoMode;
+  const bookmarkLayout = useBookmarkLayout();
   const formSchema = z.object({
     text: z.string(),
   });
@@ -70,6 +74,9 @@ export default function EditorCard({ className }: { className?: string }) {
         });
       }
       form.reset();
+      if (inputRef?.current?.style) {
+        inputRef.current.style.height = "auto";
+      }
     },
     onError: (e) => {
       toast({ description: e.message, variant: "destructive" });
@@ -99,8 +106,24 @@ export default function EditorCard({ className }: { className?: string }) {
     setMultiUrlImportState({ urls, text });
   }
 
+  const onInput = (e: React.FormEvent<HTMLTextAreaElement>) => {
+    // Expand the textarea to a max of half the screen size in the list layout only
+    if (bookmarkLayout === "list") {
+      const target = e.target as HTMLTextAreaElement;
+      const maxHeight = window.innerHeight * 0.5;
+      target.style.height = "auto";
+
+      if (target.scrollHeight <= maxHeight) {
+        target.style.height = `${target.scrollHeight}px`;
+      } else {
+        target.style.height = `${maxHeight}px`;
+      }
+    }
+  };
+
   const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (data) => {
     const text = data.text.trim();
+    if (!text.length) return;
     try {
       tryToImportUrls(text);
     } catch (e) {
@@ -108,6 +131,7 @@ export default function EditorCard({ className }: { className?: string }) {
       mutate({ type: "text", text });
     }
   };
+
   const onError: SubmitErrorHandler<z.infer<typeof formSchema>> = (errors) => {
     toast({
       description: Object.values(errors)
@@ -139,12 +163,14 @@ export default function EditorCard({ className }: { className?: string }) {
     }
   };
 
+  const OS = getOS();
+
   return (
     <Form {...form}>
       <form
         className={cn(
           className,
-          "flex flex-col gap-2 rounded-xl bg-card p-4",
+          "relative flex flex-col gap-2 rounded-xl bg-card p-4",
           cardHeight,
         )}
         onSubmit={form.handleSubmit(onSubmit, onError)}
@@ -163,7 +189,10 @@ export default function EditorCard({ className }: { className?: string }) {
             <Textarea
               ref={inputRef}
               disabled={isPending}
-              className="h-full w-full resize-none border-none text-lg focus-visible:ring-0"
+              className={cn(
+                "h-full w-full border-none p-0 text-lg focus-visible:ring-0",
+                { "resize-none": bookmarkLayout !== "list" },
+              )}
               placeholder={
                 "Paste a link or an image, write a note or drag and drop an image in here ..."
               }
@@ -181,6 +210,7 @@ export default function EditorCard({ className }: { className?: string }) {
                 }
                 handlePaste(e);
               }}
+              onInput={onInput}
               {...textFieldProps}
             />
           </FormControl>
@@ -189,7 +219,7 @@ export default function EditorCard({ className }: { className?: string }) {
           {form.formState.dirtyFields.text
             ? demoMode
               ? "Submissions are disabled"
-              : "Press ⌘ + Enter to Save"
+              : `Save (${OS === "macos" ? "⌘" : "Ctrl"} + Enter)`
             : "Save"}
         </ActionButton>
 

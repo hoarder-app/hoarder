@@ -49,3 +49,7 @@ data
 
 # Turbo
 .turbo
+
+# Idea
+.idea
+*.iml

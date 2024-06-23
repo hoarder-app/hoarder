@@ -1,4 +1,3 @@
-import { Separator } from "@/components/ui/separator";
 import {
   Table,
   TableBody,
@@ -15,13 +14,12 @@ import DeleteApiKey from "./DeleteApiKey";
 export default async function ApiKeys() {
   const keys = await api.apiKeys.list();
   return (
-    <div className="pt-4">
-      <span className="text-xl">API Keys</span>
-      <Separator className="my-2" />
-      <div className="flex flex-col space-y-3">
-        <div className="flex flex-1 justify-end">
-          <AddApiKey />
-        </div>
+    <div>
+      <div className="flex items-center justify-between">
+        <div className="mb-2 text-lg font-medium">API Keys</div>
+        <AddApiKey />
+      </div>
+      <div className="mt-2">
         <Table>
           <TableHeader>
             <TableRow>
