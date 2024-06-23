@@ -73,6 +73,41 @@ export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   return opts.next();
 });
 
+function assetTypeToBookmarkField(
+  asset:
+    | {
+        id: string;
+        assetType: AssetTypes;
+      }
+    | undefined,
+) {
+  if (!asset) {
+    return undefined;
+  }
+  switch (asset.assetType) {
+    case AssetTypes.LINK_SCREENSHOT:
+      return { screenshotAssetId: asset.id };
+    case AssetTypes.LINK_FULL_PAGE_ARCHIVE:
+      return { fullPageArchiveAssetId: asset.id };
+    case AssetTypes.LINK_BANNER_IMAGE:
+      return { imageAssetId: asset.id };
+  }
+}
+
+function getBookmarkAssets(assets: { id: string; assetType: AssetTypes }[]) {
+  return {
+    ...assetTypeToBookmarkField(
+      assets.find((a) => a.assetType == AssetTypes.LINK_SCREENSHOT),
+    ),
+    ...assetTypeToBookmarkField(
+      assets.find((a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE),
+    ),
+    ...assetTypeToBookmarkField(
+      assets.find((a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE),
+    ),
+  };
+}
+
 async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
   const bookmark = await ctx.db.query.bookmarks.findFirst({
     where: and(eq(bookmarks.userId, ctx.user.id), eq(bookmarks.id, bookmarkId)),
@@ -157,18 +192,11 @@ async function cleanupAssetForBookmark(
 function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
   const { tagsOnBookmarks, link, text, asset, assets, ...rest } = bookmark;
 
-  const assetIdFromType = (type: AssetTypes) =>
-    assets.find((a) => a.assetType == type)?.id;
-
   let content: ZBookmarkContent;
   if (link) {
     content = {
       type: "link",
-      screenshotAssetId: assetIdFromType(AssetTypes.LINK_SCREENSHOT),
-      fullPageArchiveAssetId: assetIdFromType(
-        AssetTypes.LINK_FULL_PAGE_ARCHIVE,
-      ),
-      imageAssetId: assetIdFromType(AssetTypes.LINK_BANNER_IMAGE),
+      ...getBookmarkAssets(assets),
       ...link,
     };
   } else if (text) {
@@ -583,6 +611,13 @@ export const bookmarksAppRouter = router({
               ...row.bookmarkTags,
               attachedBy: row.tagsOnBookmarks.attachedBy,
             });
+          }
+
+          if (row.assets) {
+            acc[bookmarkId].content = {
+              ...acc[bookmarkId].content,
+              ...assetTypeToBookmarkField(row.assets),
+            };
           }
 
           return acc;
