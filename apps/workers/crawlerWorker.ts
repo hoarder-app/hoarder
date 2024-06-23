@@ -1,5 +1,6 @@
 import assert from "assert";
 import * as dns from "dns";
+import * as path from "node:path";
 import type { Job } from "bullmq";
 import type { Browser } from "puppeteer";
 import { Readability } from "@mozilla/readability";
@@ -29,10 +30,12 @@ import { db } from "@hoarder/db";
 import {
   assets,
   AssetTypes,
+  bookmarkAssets,
   bookmarkLinks,
   bookmarks,
 } from "@hoarder/db/schema";
 import {
+  ASSET_TYPES,
   deleteAsset,
   newAssetId,
   saveAsset,
@@ -73,7 +76,7 @@ async function startBrowserInstance() {
     logger.info(
       `[Crawler] Connecting to existing browser websocket address: ${serverConfig.crawler.browserWebSocketUrl}`,
     );
-    return await puppeteer.connect({
+    return puppeteer.connect({
       browserWSEndpoint: serverConfig.crawler.browserWebSocketUrl,
       defaultViewport,
     });
@@ -88,13 +91,13 @@ async function startBrowserInstance() {
     logger.info(
       `[Crawler] Successfully resolved IP address, new address: ${webUrl.toString()}`,
     );
-    return await puppeteer.connect({
+    return puppeteer.connect({
       browserURL: webUrl.toString(),
       defaultViewport,
     });
   } else {
     logger.info(`Launching a new browser instance`);
-    return await puppeteer.launch({
+    return puppeteer.launch({
       headless: serverConfig.crawler.headlessBrowser,
       defaultViewport,
     });
@@ -285,7 +288,11 @@ async function crawlPage(jobId: string, url: string) {
     logger.info(
       `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
     );
-    return { htmlContent, screenshot, url: page.url() };
+    return {
+      htmlContent,
+      screenshot,
+      url: page.url(),
+    };
   } finally {
     await context.close();
   }
@@ -351,22 +358,17 @@ async function storeScreenshot(
   return assetId;
 }
 
-async function downloadAndStoreImage(
+async function downloadAndStoreFile(
   url: string,
   userId: string,
   jobId: string,
+  fileType: string,
 ) {
-  if (!serverConfig.crawler.downloadBannerImage) {
-    logger.info(
-      `[Crawler][${jobId}] Skipping downloading the image as per the config.`,
-    );
-    return null;
-  }
   try {
-    logger.info(`[Crawler][${jobId}] Downloading image from "${url}"`);
+    logger.info(`[Crawler][${jobId}] Downloading ${fileType} from "${url}"`);
     const response = await fetch(url);
     if (!response.ok) {
-      throw new Error(`Failed to download image: ${response.status}`);
+      throw new Error(`Failed to download ${fileType}: ${response.status}`);
     }
     const buffer = await response.arrayBuffer();
     const assetId = newAssetId();
@@ -384,16 +386,30 @@ async function downloadAndStoreImage(
     });
 
     logger.info(
-      `[Crawler][${jobId}] Downloaded the image as assetId: ${assetId}`,
+      `[Crawler][${jobId}] Downloaded ${fileType} as assetId: ${assetId}`,
     );
 
     return assetId;
   } catch (e) {
     logger.error(
-      `[Crawler][${jobId}] Failed to download and store image: ${e}`,
+      `[Crawler][${jobId}] Failed to download and store ${fileType}: ${e}`,
     );
     return null;
   }
+}
+
+async function downloadAndStoreImage(
+  url: string,
+  userId: string,
+  jobId: string,
+) {
+  if (!serverConfig.crawler.downloadBannerImage) {
+    logger.info(
+      `[Crawler][${jobId}] Skipping downloading the image as per the config.`,
+    );
+    return null;
+  }
+  return downloadAndStoreFile(url, userId, jobId, "image");
 }
 
 async function archiveWebpage(
@@ -429,31 +445,70 @@ async function archiveWebpage(
   return assetId;
 }
 
-async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
-  const jobId = job.id ?? "unknown";
-
-  const request = zCrawlLinkRequestSchema.safeParse(job.data);
-  if (!request.success) {
-    logger.error(
-      `[Crawler][${jobId}] Got malformed job request: ${request.error.toString()}`,
+async function getContentType(
+  url: string,
+  jobId: string,
+): Promise<string | null> {
+  try {
+    logger.info(
+      `[Crawler][${jobId}] Attempting to determine the content-type for the url ${url}`,
     );
+    const response = await fetch(url, {
+      method: "HEAD",
+      signal: AbortSignal.timeout(5000),
+    });
+    const contentType = response.headers.get("content-type");
+    logger.info(
+      `[Crawler][${jobId}] Content-type for the url ${url} is "${contentType}"`,
+    );
+    return contentType;
+  } catch (e) {
+    logger.error(
+      `[Crawler][${jobId}] Failed to determine the content-type for the url ${url}: ${e}`,
+    );
+    return null;
+  }
+}
+
+/**
+ * Downloads the pdf asset from the URL and transforms the linkBookmark to an assetBookmark
+ * @param url the url the user provided
+ * @param userId the id of the user
+ * @param jobId the id of the job for logging
+ * @param bookmarkId the id of the bookmark
+ */
+async function handlePDFAsAssetBookmark(
+  url: string,
+  userId: string,
+  jobId: string,
+  bookmarkId: string,
+) {
+  const assetId = await downloadAndStoreFile(url, userId, jobId, "pdf");
+  if (!assetId) {
     return;
   }
+  await db.transaction(async (trx) => {
+    await trx.insert(bookmarkAssets).values({
+      id: bookmarkId,
+      assetType: "pdf",
+      assetId,
+      content: null,
+      fileName: path.basename(new URL(url).pathname),
+      sourceUrl: url,
+    });
+    await trx.delete(bookmarkLinks).where(eq(bookmarkLinks.id, bookmarkId));
+  });
+}
 
-  const { bookmarkId } = request.data;
-  const {
-    url,
-    userId,
-    screenshotAssetId: oldScreenshotAssetId,
-    imageAssetId: oldImageAssetId,
-    fullPageArchiveAssetId: oldFullPageArchiveAssetId,
-  } = await getBookmarkDetails(bookmarkId);
-
-  logger.info(
-    `[Crawler][${jobId}] Will crawl "${url}" for link with id "${bookmarkId}"`,
-  );
-  validateUrl(url);
-
+async function crawlAndParseUrl(
+  url: string,
+  userId: string,
+  jobId: string,
+  bookmarkId: string,
+  oldScreenshotAssetId: string | undefined,
+  oldImageAssetId: string | undefined,
+  oldFullPageArchiveAssetId: string | undefined,
+) {
   const {
     htmlContent,
     screenshot,
@@ -518,6 +573,83 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
       : {},
   ]);
 
+  return async () => {
+    if (serverConfig.crawler.fullPageArchive) {
+      const fullPageArchiveAssetId = await archiveWebpage(
+        htmlContent,
+        browserUrl,
+        userId,
+        jobId,
+      );
+
+      await db.transaction(async (txn) => {
+        if (oldFullPageArchiveAssetId) {
+          await txn
+            .delete(assets)
+            .where(eq(assets.id, oldFullPageArchiveAssetId));
+        }
+        await txn.insert(assets).values({
+          id: fullPageArchiveAssetId,
+          assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+          bookmarkId,
+        });
+      });
+      if (oldFullPageArchiveAssetId) {
+        deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
+          () => ({}),
+        );
+      }
+    }
+  };
+}
+
+async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
+  const jobId = job.id ?? "unknown";
+
+  const request = zCrawlLinkRequestSchema.safeParse(job.data);
+  if (!request.success) {
+    logger.error(
+      `[Crawler][${jobId}] Got malformed job request: ${request.error.toString()}`,
+    );
+    return;
+  }
+
+  const { bookmarkId } = request.data;
+  const {
+    url,
+    userId,
+    screenshotAssetId: oldScreenshotAssetId,
+    imageAssetId: oldImageAssetId,
+    fullPageArchiveAssetId: oldFullPageArchiveAssetId,
+  } = await getBookmarkDetails(bookmarkId);
+
+  logger.info(
+    `[Crawler][${jobId}] Will crawl "${url}" for link with id "${bookmarkId}"`,
+  );
+  validateUrl(url);
+
+  const contentType = await getContentType(url, jobId);
+
+  // Link bookmarks get transformed into asset bookmarks if they point to a pdf asset instead of a webpage
+  const isPdf = contentType === ASSET_TYPES.APPLICATION_PDF;
+
+  let archivalLogic: () => Promise<void> = () => {
+    return Promise.resolve();
+  };
+  if (isPdf) {
+    await handlePDFAsAssetBookmark(url, userId, jobId, bookmarkId);
+  } else {
+    archivalLogic = await crawlAndParseUrl(
+      url,
+      userId,
+      jobId,
+      bookmarkId,
+      oldScreenshotAssetId,
+      oldImageAssetId,
+      oldFullPageArchiveAssetId,
+    );
+  }
+
   // Enqueue openai job (if not set, assume it's true for backward compatibility)
   if (job.data.runInference !== false) {
     OpenAIQueue.add("openai", {
@@ -529,30 +661,5 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
   triggerSearchReindex(bookmarkId);
 
   // Do the archival as a separate last step as it has the potential for failure
-  if (serverConfig.crawler.fullPageArchive) {
-    const fullPageArchiveAssetId = await archiveWebpage(
-      htmlContent,
-      browserUrl,
-      userId,
-      jobId,
-    );
-
-    await db.transaction(async (txn) => {
-      if (oldFullPageArchiveAssetId) {
-        await txn
-          .delete(assets)
-          .where(eq(assets.id, oldFullPageArchiveAssetId));
-      }
-      await txn.insert(assets).values({
-        id: fullPageArchiveAssetId,
-        assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
-        bookmarkId,
-      });
-    });
-    if (oldFullPageArchiveAssetId) {
-      deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
-        () => ({}),
-      );
-    }
-  }
+  await archivalLogic();
 }

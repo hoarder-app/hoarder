@@ -65,6 +65,16 @@ function CreationTime({ createdAt }: { createdAt: Date }) {
   );
 }
 
+function getSourceUrl(bookmark: ZBookmark) {
+  if (bookmark.content.type === "link") {
+    return bookmark.content.url;
+  }
+  if (bookmark.content.type === "asset") {
+    return bookmark.content.sourceUrl;
+  }
+  return null;
+}
+
 export default function BookmarkPreview({
   bookmarkId,
   initialData,
@@ -112,6 +122,8 @@ export default function BookmarkPreview({
     }
   }
 
+  const sourceUrl = getSourceUrl(bookmark);
+
   return (
     <div className="grid h-full grid-rows-3 gap-2 overflow-hidden bg-background lg:grid-cols-3 lg:grid-rows-none">
       <div className="row-span-2 h-full w-full overflow-auto p-2 md:col-span-2 lg:row-auto">
@@ -120,9 +132,9 @@ export default function BookmarkPreview({
       <div className="lg:col-span1 row-span-1 flex flex-col gap-4 overflow-auto bg-accent p-4 lg:row-auto">
         <div className="flex w-full flex-col items-center justify-center gap-y-2">
           <EditableTitle bookmark={bookmark} />
-          {bookmark.content.type == "link" && (
+          {sourceUrl && (
             <Link
-              href={bookmark.content.url}
+              href={sourceUrl}
               className="flex items-center gap-2 text-gray-400"
             >
               <span>View Original</span>

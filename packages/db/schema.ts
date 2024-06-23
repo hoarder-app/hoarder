@@ -204,6 +204,7 @@ export const bookmarkAssets = sqliteTable("bookmarkAssets", {
   content: text("content"),
   metadata: text("metadata"),
   fileName: text("fileName"),
+  sourceUrl: text("sourceUrl"),
 });
 
 export const bookmarkTags = sqliteTable(

@@ -30,6 +30,7 @@ export const zBookmarkedAssetSchema = z.object({
   assetType: z.enum(["image", "pdf"]),
   assetId: z.string(),
   fileName: z.string().nullish(),
+  sourceUrl: z.string().nullish(),
 });
 export type ZBookmarkedAsset = z.infer<typeof zBookmarkedAssetSchema>;
 

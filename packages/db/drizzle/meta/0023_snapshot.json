@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "c407f2cf-a9db-48cf-8acf-d762c6a28917",
+  "id": "d33de747-6acb-4160-a5ec-a4a7adee3023",
   "prevId": "f2897961-faba-4fc4-9d82-85e7cf316218",
   "tables": {
     "account": {
@@ -193,65 +193,6 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "assets": {
-      "name": "assets",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "assetType": {
-          "name": "assetType",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "bookmarkId": {
-          "name": "bookmarkId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "assets_bookmarkId_idx": {
-          "name": "assets_bookmarkId_idx",
-          "columns": [
-            "bookmarkId"
-          ],
-          "isUnique": false
-        },
-        "assets_assetType_idx": {
-          "name": "assets_assetType_idx",
-          "columns": [
-            "assetType"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {
-        "assets_bookmarkId_bookmarks_id_fk": {
-          "name": "assets_bookmarkId_bookmarks_id_fk",
-          "tableFrom": "assets",
-          "tableTo": "bookmarks",
-          "columnsFrom": [
-            "bookmarkId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
     "bookmarkAssets": {
       "name": "bookmarkAssets",
       "columns": {
@@ -292,6 +233,13 @@
         },
         "fileName": {
           "name": "fileName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "sourceUrl": {
+          "name": "sourceUrl",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -371,6 +319,27 @@
         },
         "htmlContent": {
           "name": "htmlContent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "screenshotAssetId": {
+          "name": "screenshotAssetId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "fullPageArchiveAssetId": {
+          "name": "fullPageArchiveAssetId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "imageAssetId": {
+          "name": "imageAssetId",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
