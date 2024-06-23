@@ -20,6 +20,51 @@ export default async function Sidebar() {
 
   const lists = await api.lists.list();
 
+  const searchItem = serverConfig.meilisearch
+    ? [
+        {
+          name: "Search",
+          icon: <Search size={18} />,
+          path: "/dashboard/search",
+        },
+      ]
+    : [];
+
+  const adminItem =
+    session.user.role == "admin"
+      ? [
+          {
+            name: "Admin",
+            icon: <Shield size={18} />,
+            path: "/dashboard/admin",
+          },
+        ]
+      : [];
+
+  const menu: {
+    name: string;
+    icon: JSX.Element;
+    path: string;
+  }[] = [
+    {
+      name: "Home",
+      icon: <Home size={18} />,
+      path: "/dashboard/bookmarks",
+    },
+    ...searchItem,
+    {
+      name: "Tags",
+      icon: <Tag size={18} />,
+      path: "/dashboard/tags",
+    },
+    {
+      name: "Settings",
+      icon: <Settings size={18} />,
+      path: "/dashboard/settings",
+    },
+    ...adminItem,
+  ];
+
   return (
     <aside className="flex h-screen w-60 flex-col gap-5 border-r p-4">
       <Link href={"/dashboard/bookmarks"}>
@@ -28,31 +73,14 @@ export default async function Sidebar() {
       <Separator />
       <div>
         <ul className="space-y-2 text-sm font-medium">
-          <SidebarItem
-            logo={<Home />}
-            name="Home"
-            path="/dashboard/bookmarks"
-          />
-          {serverConfig.meilisearch && (
+          {menu.map((item) => (
             <SidebarItem
-              logo={<Search />}
-              name="Search"
-              path="/dashboard/search"
+              key={item.name}
+              logo={item.icon}
+              name={item.name}
+              path={item.path}
             />
-          )}
-          <SidebarItem logo={<Tag />} name="Tags" path="/dashboard/tags" />
-          <SidebarItem
-            logo={<Settings />}
-            name="Settings"
-            path="/dashboard/settings"
-          />
-          {session.user.role == "admin" && (
-            <SidebarItem
-              logo={<Shield />}
-              name="Admin"
-              path="/dashboard/admin"
-            />
-          )}
+          ))}
         </ul>
       </div>
       <Separator />
