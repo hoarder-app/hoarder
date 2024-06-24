@@ -1,10 +1,10 @@
 import { MarkdownComponent } from "@/components/ui/markdown-component";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 export function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
-  if (bookmark.content.type != "text") {
+  if (bookmark.content.type != BookmarkTypes.TEXT) {
     throw new Error("Invalid content type");
   }
   return (

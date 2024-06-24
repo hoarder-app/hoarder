@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { api } from "@/lib/trpc";
 
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+
 export default function AddNote() {
   const [text, setText] = useState("");
   const [error, setError] = useState<string | undefined>();
@@ -54,7 +56,7 @@ export default function AddNote() {
         autoFocus
       />
       <Button
-        onPress={() => mutate({ type: "link", url: text })}
+        onPress={() => mutate({ type: BookmarkTypes.LINK, url: text })}
         label="Add Link"
       />
     </View>

@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 import {
   zUploadErrorSchema,
   zUploadResponseSchema,
@@ -59,7 +59,7 @@ export function useUploadAsset(
       const assetId = resp.assetId;
       const assetType =
         resp.contentType === "application/pdf" ? "pdf" : "image";
-      createBookmark({ type: "asset", assetId, assetType });
+      createBookmark({ type: BookmarkTypes.ASSET, assetId, assetType });
     },
     onError: (e) => {
       if (options.onError) {

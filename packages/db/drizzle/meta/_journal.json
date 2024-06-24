@@ -176,6 +176,13 @@
       "when": 1719135100480,
       "tag": "0024_premium_hammerhead",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "5",
+      "when": 1719251349398,
+      "tag": "0025_aspiring_skaar",
+      "breakpoints": true
     }
   ]
 }

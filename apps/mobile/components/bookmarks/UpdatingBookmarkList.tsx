@@ -44,9 +44,7 @@ export default function UpdatingBookmarkList({
 
   return (
     <BookmarkList
-      bookmarks={data.pages
-        .flatMap((p) => p.bookmarks)
-        .filter((b) => b.content.type != "unknown")}
+      bookmarks={data.pages.flatMap((p) => p.bookmarks)}
       header={header}
       onRefresh={onRefresh}
       fetchNextPage={fetchNextPage}

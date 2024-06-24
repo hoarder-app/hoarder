@@ -19,6 +19,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import { useUploadAsset } from "../UploadDropzone";
 
@@ -99,7 +100,7 @@ export default function EditorCard({ className }: { className?: string }) {
 
     if (urls.length === 1) {
       // Only 1 url in the textfield --> simply import it
-      mutate({ type: "link", url: text });
+      mutate({ type: BookmarkTypes.LINK, url: text });
       return;
     }
     // multiple urls found --> ask the user if it should be imported as multiple URLs or as a text bookmark
@@ -128,7 +129,7 @@ export default function EditorCard({ className }: { className?: string }) {
       tryToImportUrls(text);
     } catch (e) {
       // Not a URL
-      mutate({ type: "text", text });
+      mutate({ type: BookmarkTypes.TEXT, text });
     }
   };
 
@@ -240,7 +241,10 @@ export default function EditorCard({ className }: { className?: string }) {
                   variant="secondary"
                   loading={isPending}
                   onClick={() => {
-                    mutate({ type: "text", text: multiUrlImportState.text });
+                    mutate({
+                      type: BookmarkTypes.TEXT,
+                      text: multiUrlImportState.text,
+                    });
                     setMultiUrlImportState(null);
                   }}
                 >
@@ -254,7 +258,7 @@ export default function EditorCard({ className }: { className?: string }) {
                   loading={isPending}
                   onClick={() => {
                     multiUrlImportState.urls.forEach((url) =>
-                      mutate({ type: "link", url: url.toString() }),
+                      mutate({ type: BookmarkTypes.LINK, url: url.toString() }),
                     );
                     setMultiUrlImportState(null);
                   }}
