@@ -181,7 +181,7 @@ function Platforms() {
               className="flex items-center justify-center gap-2"
             >
               <Image
-                className="h-12 w-full rounded-md"
+                className="h-12 w-auto rounded-md"
                 alt={platform.name}
                 src={platform.badge}
               />
