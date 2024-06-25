@@ -92,41 +92,36 @@ export default function ServerStats() {
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:gap-8">
-        <div className="sm:w-1/2">
-          <div className="mb-2 mt-8 text-xl font-medium">Background Jobs</div>
-          <Table className="rounded-md border">
-            <TableHeader className="bg-gray-200">
-              <TableHead>Job</TableHead>
-              <TableHead>Queued</TableHead>
-              <TableHead>Pending</TableHead>
-              <TableHead>Failed</TableHead>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="lg:w-2/3">Crawling Jobs</TableCell>
-                <TableCell>{serverStats.crawlStats.queuedInRedis}</TableCell>
-                <TableCell>{serverStats.crawlStats.pending}</TableCell>
-                <TableCell>{serverStats.crawlStats.failed}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Indexing Jobs</TableCell>
-                <TableCell>{serverStats.indexingStats.queuedInRedis}</TableCell>
-                <TableCell>-</TableCell>
-                <TableCell>-</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Inference Jobs</TableCell>
-                <TableCell>
-                  {serverStats.inferenceStats.queuedInRedis}
-                </TableCell>
-                <TableCell>{serverStats.inferenceStats.pending}</TableCell>
-                <TableCell>{serverStats.inferenceStats.failed}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
-        <AdminActions />
+      <div className="sm:w-1/2">
+        <div className="mb-2 mt-8 text-xl font-medium">Background Jobs</div>
+        <Table className="rounded-md border">
+          <TableHeader className="bg-gray-200">
+            <TableHead>Job</TableHead>
+            <TableHead>Queued</TableHead>
+            <TableHead>Pending</TableHead>
+            <TableHead>Failed</TableHead>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell className="lg:w-2/3">Crawling Jobs</TableCell>
+              <TableCell>{serverStats.crawlStats.queuedInRedis}</TableCell>
+              <TableCell>{serverStats.crawlStats.pending}</TableCell>
+              <TableCell>{serverStats.crawlStats.failed}</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Indexing Jobs</TableCell>
+              <TableCell>{serverStats.indexingStats.queuedInRedis}</TableCell>
+              <TableCell>-</TableCell>
+              <TableCell>-</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Inference Jobs</TableCell>
+              <TableCell>{serverStats.inferenceStats.queuedInRedis}</TableCell>
+              <TableCell>{serverStats.inferenceStats.pending}</TableCell>
+              <TableCell>{serverStats.inferenceStats.failed}</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
       </div>
     </>
   );

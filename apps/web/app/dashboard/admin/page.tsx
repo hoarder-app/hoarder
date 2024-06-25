@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import AdminActions from "@/components/dashboard/admin/AdminActions";
 import ServerStats from "@/components/dashboard/admin/ServerStats";
-import Users from "@/components/dashboard/admin/Users";
+import UserList from "@/components/dashboard/admin/UserList";
 import LoadingSpinner from "@/components/ui/spinner";
 import { useSession } from "next-auth/react";
 
@@ -23,9 +24,10 @@ export default function AdminPage() {
     <>
       <div className="rounded-md border bg-background p-4">
         <ServerStats />
+        <AdminActions />
       </div>
       <div className="mt-4 rounded-md border bg-background p-4">
-        <Users />
+        <UserList />
       </div>
     </>
   );

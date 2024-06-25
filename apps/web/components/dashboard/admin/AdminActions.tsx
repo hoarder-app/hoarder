@@ -36,7 +36,7 @@ export default function AdminActions() {
   return (
     <div>
       <div className="mb-2 mt-8 text-xl font-medium">Actions</div>
-      <div className="flex max-w-screen-sm flex-col gap-2">
+      <div className="flex flex-col gap-2 sm:w-1/2">
         <ActionButton
           variant="destructive"
           loading={isRecrawlPending}
