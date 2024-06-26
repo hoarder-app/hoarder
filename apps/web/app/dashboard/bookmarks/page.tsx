@@ -1,6 +1,6 @@
 import React from "react";
 import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
-import ChangeLayout from "@/components/dashboard/ChangeLayout";
+import GlobalActions from "@/components/dashboard/GlobalActions";
 import { SearchInput } from "@/components/dashboard/search/SearchInput";
 
 export default async function BookmarksPage() {
@@ -8,9 +8,9 @@ export default async function BookmarksPage() {
     <div>
       <div className="flex gap-2">
         <SearchInput />
-        <ChangeLayout />
+        <GlobalActions />
       </div>
-      <div className="my-4 flex-1">
+      <div className="my-4">
         <Bookmarks query={{ archived: false }} showEditorCard={true} />
       </div>
     </div>

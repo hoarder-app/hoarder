@@ -1,5 +1,5 @@
 import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
-import ChangeLayout from "@/components/dashboard/ChangeLayout";
+import GlobalActions from "@/components/dashboard/GlobalActions";
 
 export default async function FavouritesBookmarkPage() {
   return (
@@ -7,7 +7,7 @@ export default async function FavouritesBookmarkPage() {
       header={
         <div className="flex items-center justify-between">
           <p className="text-2xl">⭐️ Favourites</p>
-          <ChangeLayout />
+          <GlobalActions />
         </div>
       }
       query={{ favourited: true }}

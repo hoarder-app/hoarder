@@ -22,7 +22,7 @@ export default function BookmarkActionBar({
         href={`/dashboard/preview/${bookmark.id}`}
         className={cn(buttonVariants({ variant: "ghost" }), "px-2")}
       >
-        <Maximize2 size="20" />
+        <Maximize2 size={16} />
       </Link>
       <BookmarkOptions bookmark={bookmark} />
     </div>
