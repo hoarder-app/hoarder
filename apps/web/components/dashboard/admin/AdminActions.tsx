@@ -1,3 +1,5 @@
+"use client";
+
 import { ActionButton } from "@/components/ui/action-button";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
