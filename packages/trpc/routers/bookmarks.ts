@@ -177,7 +177,9 @@ async function cleanupAssetForBookmark(
 function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
   const { tagsOnBookmarks, link, text, asset, assets, ...rest } = bookmark;
 
-  let content: ZBookmarkContent;
+  let content: ZBookmarkContent = {
+    type: BookmarkTypes.UNKNWON,
+  };
   switch (bookmark.type) {
     case BookmarkTypes.LINK:
       content = {
@@ -227,6 +229,9 @@ export const bookmarksAppRouter = router({
         if (alreadyExists) {
           return { ...alreadyExists, alreadyExists: true };
         }
+      }
+      if (input.type == BookmarkTypes.UNKNWON) {
+        throw new TRPCError({ code: "BAD_REQUEST" });
       }
       const bookmark = await ctx.db.transaction(async (tx) => {
         const bookmark = (

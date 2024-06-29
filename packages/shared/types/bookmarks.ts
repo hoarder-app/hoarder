@@ -8,6 +8,7 @@ export const enum BookmarkTypes {
   LINK = "link",
   TEXT = "text",
   ASSET = "asset",
+  UNKNWON = "unknown",
 }
 
 export const zBookmarkedLinkSchema = z.object({
@@ -44,6 +45,7 @@ export const zBookmarkContentSchema = z.discriminatedUnion("type", [
   zBookmarkedLinkSchema,
   zBookmarkedTextSchema,
   zBookmarkedAssetSchema,
+  z.object({ type: z.literal(BookmarkTypes.UNKNWON) }),
 ]);
 export type ZBookmarkContent = z.infer<typeof zBookmarkContentSchema>;
 

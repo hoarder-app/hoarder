@@ -2,6 +2,7 @@ import { Text } from "react-native";
 import { api } from "@/lib/trpc";
 
 import type { ZGetBookmarksRequest } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import FullPageSpinner from "../ui/FullPageSpinner";
 import BookmarkList from "./BookmarkList";
@@ -44,7 +45,9 @@ export default function UpdatingBookmarkList({
 
   return (
     <BookmarkList
-      bookmarks={data.pages.flatMap((p) => p.bookmarks)}
+      bookmarks={data.pages
+        .flatMap((p) => p.bookmarks)
+        .filter((b) => b.content.type != BookmarkTypes.UNKNWON)}
       header={header}
       onRefresh={onRefresh}
       fetchNextPage={fetchNextPage}
