@@ -5,11 +5,9 @@ import type { Job } from "bullmq";
 import type { Browser } from "puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
-import Database from "better-sqlite3";
 import { Worker } from "bullmq";
 import DOMPurify from "dompurify";
-import { eq, ExtractTablesWithRelations } from "drizzle-orm";
-import { SQLiteTransaction } from "drizzle-orm/sqlite-core";
+import { eq } from "drizzle-orm";
 import { execa } from "execa";
 import { isShuttingDown } from "exit";
 import { JSDOM } from "jsdom";
@@ -28,7 +26,7 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
-import { db, schema } from "@hoarder/db";
+import { db, HoarderDBTransaction } from "@hoarder/db";
 import {
   assets,
   AssetTypes,
@@ -38,11 +36,11 @@ import {
 } from "@hoarder/db/schema";
 import {
   ASSET_TYPES,
+  deleteAsset,
   IMAGE_ASSET_TYPES,
   newAssetId,
   saveAsset,
   saveAssetFromFile,
-  silentDeleteAsset,
   SUPPORTED_UPLOAD_ASSET_TYPES,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
@@ -564,8 +562,12 @@ async function crawlAndParseUrl(
 
   // Delete the old assets if any
   await Promise.all([
-    silentDeleteAsset(userId, oldScreenshotAssetId),
-    silentDeleteAsset(userId, oldImageAssetId),
+    oldScreenshotAssetId
+      ? deleteAsset({ userId, assetId: oldScreenshotAssetId }).catch(() => ({}))
+      : {},
+    oldImageAssetId
+      ? deleteAsset({ userId, assetId: oldImageAssetId }).catch(() => ({}))
+      : {},
   ]);
 
   return async () => {
@@ -587,7 +589,9 @@ async function crawlAndParseUrl(
         );
       });
       if (oldFullPageArchiveAssetId) {
-        await silentDeleteAsset(userId, oldFullPageArchiveAssetId);
+        await deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
+          () => ({}),
+        );
       }
     }
   };
@@ -673,12 +677,7 @@ async function updateAsset(
   oldAssetId: string | undefined,
   bookmarkId: string,
   assetType: AssetTypes,
-  txn: SQLiteTransaction<
-    "sync",
-    Database.RunResult,
-    typeof schema,
-    ExtractTablesWithRelations<typeof schema>
-  >,
+  txn: HoarderDBTransaction,
 ) {
   if (newAssetId) {
     if (oldAssetId) {
