@@ -26,7 +26,7 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
-import { db } from "@hoarder/db";
+import { db, HoarderDBTransaction } from "@hoarder/db";
 import {
   assets,
   AssetTypes,
@@ -544,27 +544,20 @@ async function crawlAndParseUrl(
       })
       .where(eq(bookmarkLinks.id, bookmarkId));
 
-    if (screenshotAssetId) {
-      if (oldScreenshotAssetId) {
-        await txn.delete(assets).where(eq(assets.id, oldScreenshotAssetId));
-      }
-      await txn.insert(assets).values({
-        id: screenshotAssetId,
-        assetType: AssetTypes.LINK_SCREENSHOT,
-        bookmarkId,
-      });
-    }
-
-    if (imageAssetId) {
-      if (oldImageAssetId) {
-        await txn.delete(assets).where(eq(assets.id, oldImageAssetId));
-      }
-      await txn.insert(assets).values({
-        id: imageAssetId,
-        assetType: AssetTypes.LINK_BANNER_IMAGE,
-        bookmarkId,
-      });
-    }
+    await updateAsset(
+      screenshotAssetId,
+      oldScreenshotAssetId,
+      bookmarkId,
+      AssetTypes.LINK_SCREENSHOT,
+      txn,
+    );
+    await updateAsset(
+      imageAssetId,
+      oldImageAssetId,
+      bookmarkId,
+      AssetTypes.LINK_BANNER_IMAGE,
+      txn,
+    );
   });
 
   // Delete the old assets if any
@@ -587,19 +580,16 @@ async function crawlAndParseUrl(
       );
 
       await db.transaction(async (txn) => {
-        if (oldFullPageArchiveAssetId) {
-          await txn
-            .delete(assets)
-            .where(eq(assets.id, oldFullPageArchiveAssetId));
-        }
-        await txn.insert(assets).values({
-          id: fullPageArchiveAssetId,
-          assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+        await updateAsset(
+          fullPageArchiveAssetId,
+          oldFullPageArchiveAssetId,
           bookmarkId,
-        });
+          AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+          txn,
+        );
       });
       if (oldFullPageArchiveAssetId) {
-        deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
+        await deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
           () => ({}),
         );
       }
@@ -672,4 +662,31 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
 
   // Do the archival as a separate last step as it has the potential for failure
   await archivalLogic();
+}
+
+/**
+ * Removes the old asset and adds a new one instead
+ * @param newAssetId the new assetId to add
+ * @param oldAssetId the old assetId to remove (if it exists)
+ * @param bookmarkId the id of the bookmark the asset belongs to
+ * @param assetType the type of the asset
+ * @param txn the transaction where this update should happen in
+ */
+async function updateAsset(
+  newAssetId: string | null,
+  oldAssetId: string | undefined,
+  bookmarkId: string,
+  assetType: AssetTypes,
+  txn: HoarderDBTransaction,
+) {
+  if (newAssetId) {
+    if (oldAssetId) {
+      await txn.delete(assets).where(eq(assets.id, oldAssetId));
+    }
+    await txn.insert(assets).values({
+      id: newAssetId,
+      assetType,
+      bookmarkId,
+    });
+  }
 }
