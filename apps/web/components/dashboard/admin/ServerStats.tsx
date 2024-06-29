@@ -46,8 +46,9 @@ function ReleaseInfo() {
         target="_blank"
         className="text-blue-500"
         rel="noreferrer"
+        title="Update available"
       >
-        (New release available: {latestRelease})
+        ({latestRelease} ⬆️)
       </a>
     );
   }

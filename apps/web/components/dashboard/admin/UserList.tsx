@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
 import LoadingSpinner from "@/components/ui/spinner";
 import {
@@ -18,7 +17,6 @@ import { useSession } from "next-auth/react";
 
 export default function UsersSection() {
   const { data: session } = useSession();
-  const router = useRouter();
   const invalidateUserList = api.useUtils().users.list.invalidate;
   const { data: users } = api.users.list.useQuery();
   const { mutate: deleteUser, isPending: isDeletionPending } =
@@ -37,18 +35,13 @@ export default function UsersSection() {
       },
     });
 
-  if (!session || session.user.role != "admin") {
-    router.push("/");
-    return;
-  }
-
   if (!users) {
     return <LoadingSpinner />;
   }
 
   return (
     <>
-      <div className="mb-2 text-xl font-medium">Users list</div>
+      <div className="mb-2 text-xl font-medium">Users List</div>
 
       <Table>
         <TableHeader className="bg-gray-200">
@@ -68,7 +61,7 @@ export default function UsersSection() {
                   variant="outline"
                   onClick={() => deleteUser({ userId: u.id })}
                   loading={isDeletionPending}
-                  disabled={session.user.id == u.id}
+                  disabled={session!.user.id == u.id}
                 >
                   <Trash size={16} color="red" />
                 </ActionButton>
