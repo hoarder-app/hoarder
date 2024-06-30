@@ -737,6 +737,9 @@ importers:
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
+      yt-dlp-wrap:
+        specifier: ^2.3.12
+        version: 2.3.12
       zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -10669,18 +10672,22 @@ packages:
 
   rimraf@2.4.5:
     resolution: {integrity: sha512-J5xnxTyqaiw06JjMftq7L9ouA448dw/E7dKghkP9WpKNuwmARNNg+Gk8/u5ryb9N/Yo2+z3MCwuqFK/+qPOPfQ==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rimraf@2.6.3:
     resolution: {integrity: sha512-mwqeW5XsA2qAejG46gYdENaxXjx9onRNCfn7L0duuP4hCuTIi/QO7PDK07KJfp1d+izWPrzEJDcSqBa0OZQriA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rimraf@2.7.1:
     resolution: {integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rimraf@3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
+    deprecated: Rimraf versions prior to v4 are no longer supported
     hasBin: true
 
   rollup-plugin-terser@7.0.2:
@@ -12387,6 +12394,9 @@ packages:
   yoctocolors@2.0.2:
     resolution: {integrity: sha512-Ct97huExsu7cWeEjmrXlofevF8CvzUglJ4iGUet5B8xn1oumtAZBpHU4GzYuoE6PVqcZ5hghtBrSlhwHuR1Jmw==}
     engines: {node: '>=18'}
+
+  yt-dlp-wrap@2.3.12:
+    resolution: {integrity: sha512-P8fJ+6M1YjukyJENCTviNLiZ8mokxprR54ho3DsSKPWDcac489OjRiStGEARJr6un6ETS6goTn4CWl/b/rM3aA==}
 
   zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
@@ -29398,6 +29408,9 @@ snapshots:
   yocto-queue@1.0.0: {}
 
   yoctocolors@2.0.2:
+    dev: false
+
+  yt-dlp-wrap@2.3.12:
     dev: false
 
   zod@3.22.4: {}

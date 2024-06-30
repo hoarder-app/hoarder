@@ -6,8 +6,7 @@ import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
 import Database from "better-sqlite3";
 import DOMPurify from "dompurify";
-import { eq, ExtractTablesWithRelations } from "drizzle-orm";
-import { SQLiteTransaction } from "drizzle-orm/sqlite-core";
+import { eq } from "drizzle-orm";
 import { execa } from "execa";
 import { isShuttingDown } from "exit";
 import { JSDOM } from "jsdom";
@@ -35,6 +34,8 @@ import {
   bookmarks,
 } from "@hoarder/db/schema";
 import { DequeuedJob, Runner } from "@hoarder/queue";
+import { db } from "@hoarder/db";
+import { bookmarkAssets, bookmarkLinks, bookmarks } from "@hoarder/db/schema";
 import {
   ASSET_TYPES,
   IMAGE_ASSET_TYPES,
@@ -50,9 +51,14 @@ import {
   LinkCrawlerQueue,
   OpenAIQueue,
   triggerSearchReindex,
+  triggerVideoWorker,
+  ZCrawlLinkRequest,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+import { DBAssetTypes } from "@hoarder/shared/utils/bookmarkUtils";
+
+import { getBookmarkDetails, updateAsset } from "./workerUtils";
 
 const metascraperParser = metascraper([
   metascraperAmazon(),
@@ -198,33 +204,6 @@ async function changeBookmarkStatus(
       crawlStatus,
     })
     .where(eq(bookmarkLinks.id, bookmarkId));
-}
-
-async function getBookmarkDetails(bookmarkId: string) {
-  const bookmark = await db.query.bookmarks.findFirst({
-    where: eq(bookmarks.id, bookmarkId),
-    with: {
-      link: true,
-      assets: true,
-    },
-  });
-
-  if (!bookmark || !bookmark.link) {
-    throw new Error("The bookmark either doesn't exist or not a link");
-  }
-  return {
-    url: bookmark.link.url,
-    userId: bookmark.userId,
-    screenshotAssetId: bookmark.assets.find(
-      (a) => a.assetType == AssetTypes.LINK_SCREENSHOT,
-    )?.id,
-    imageAssetId: bookmark.assets.find(
-      (a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE,
-    )?.id,
-    fullPageArchiveAssetId: bookmark.assets.find(
-      (a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE,
-    )?.id,
-  };
 }
 
 /**
@@ -551,14 +530,14 @@ async function crawlAndParseUrl(
       screenshotAssetId,
       oldScreenshotAssetId,
       bookmarkId,
-      AssetTypes.LINK_SCREENSHOT,
+      DBAssetTypes.LINK_SCREENSHOT,
       txn,
     );
     await updateAsset(
       imageAssetId,
       oldImageAssetId,
       bookmarkId,
-      AssetTypes.LINK_BANNER_IMAGE,
+      DBAssetTypes.LINK_BANNER_IMAGE,
       txn,
     );
   });
@@ -583,7 +562,7 @@ async function crawlAndParseUrl(
           fullPageArchiveAssetId,
           oldFullPageArchiveAssetId,
           bookmarkId,
-          AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+          DBAssetTypes.LINK_FULL_PAGE_ARCHIVE,
           txn,
         );
       });
@@ -656,6 +635,8 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
 
   // Update the search index
   await triggerSearchReindex(bookmarkId);
+  // Trigger a potential download of a video from the URL
+  await triggerVideoWorker(bookmarkId, url);
 
   // Do the archival as a separate last step as it has the potential for failure
   await archivalLogic();
