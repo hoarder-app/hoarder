@@ -1,17 +1,26 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import {
   bookmarkLayoutSwitch,
   useBookmarkLayout,
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import tailwindConfig from "@/tailwind.config";
+import { Slot } from "@radix-ui/react-slot";
 import Masonry from "react-masonry-css";
 import resolveConfig from "tailwindcss/resolveConfig";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
-import Bookmark, { BookmarkCard } from "./Bookmark";
+import BookmarkCard from "./BookmarkCard";
 import EditorCard from "./EditorCard";
+
+function StyledBookmarkCard({ children }: { children: React.ReactNode }) {
+  return (
+    <Slot className="mb-4 border border-border bg-card duration-300 ease-in hover:shadow-lg hover:transition-all">
+      {children}
+    </Slot>
+  );
+}
 
 function getBreakpointConfig() {
   const fullConfig = resolveConfig(tailwindConfig);
@@ -47,11 +56,15 @@ export default function BookmarksGrid({
 
   const children = [
     showEditorCard && (
-      <BookmarkCard key={"editor"}>
+      <StyledBookmarkCard key={"editor"}>
         <EditorCard />
-      </BookmarkCard>
+      </StyledBookmarkCard>
     ),
-    ...bookmarks.map((b) => <Bookmark key={b.id} bookmark={b}></Bookmark>),
+    ...bookmarks.map((b) => (
+      <StyledBookmarkCard key={b.id}>
+        <BookmarkCard bookmark={b} />
+      </StyledBookmarkCard>
+    )),
   ];
   return (
     <>

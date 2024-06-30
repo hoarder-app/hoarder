@@ -74,7 +74,6 @@ export default function AllLists({
                 </span>
               }
               name={node.item.name}
-              id={node.item.id}
               path={`/dashboard/lists/${node.item.id}`}
               right={
                 <ListOptions list={node.item}>
