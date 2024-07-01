@@ -178,7 +178,7 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
   const { tagsOnBookmarks, link, text, asset, assets, ...rest } = bookmark;
 
   let content: ZBookmarkContent = {
-    type: BookmarkTypes.UNKNWON,
+    type: BookmarkTypes.UNKNOWN,
   };
   switch (bookmark.type) {
     case BookmarkTypes.LINK:
@@ -230,7 +230,7 @@ export const bookmarksAppRouter = router({
           return { ...alreadyExists, alreadyExists: true };
         }
       }
-      if (input.type == BookmarkTypes.UNKNWON) {
+      if (input.type == BookmarkTypes.UNKNOWN) {
         throw new TRPCError({ code: "BAD_REQUEST" });
       }
       const bookmark = await ctx.db.transaction(async (tx) => {
@@ -603,7 +603,7 @@ export const bookmarksAppRouter = router({
 
           if (
             row.bookmarkTags &&
-            // Duplicates may accur because of the join, so we need to make sure we're not adding the same tag twice
+            // Duplicates may occur because of the join, so we need to make sure we're not adding the same tag twice
             !acc[bookmarkId].tags.some((t) => t.id == row.bookmarkTags!.id)
           ) {
             invariant(
