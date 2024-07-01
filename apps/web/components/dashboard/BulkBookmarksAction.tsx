@@ -2,61 +2,28 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { ActionButtonWithTooltip } from "@/components/ui/action-button";
-import { Button, ButtonWithTooltip } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  ActionButton,
+  ActionButtonWithTooltip,
+} from "@/components/ui/action-button";
+import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import bulkActions from "@/store/useBulkBookmarksAction";
-import { Archive, ArchiveRestore, Pencil, Star, Trash2, X } from "lucide-react";
+import {
+  Archive,
+  ArchiveRestore,
+  Pencil,
+  Star,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useTheme } from "next-themes";
 
 import {
   useDeleteBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
-
-function DeleteModal({
-  open,
-  setOpen,
-  deleteBookmarks,
-}: {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  deleteBookmarks: () => void;
-}) {
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Delete Bookmarks</DialogTitle>
-          <DialogClose />
-        </DialogHeader>
-        <p>Are you sure you want to delete these bookmarks?</p>
-        <DialogFooter>
-          <Button variant="ghost" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button
-            variant="destructive"
-            onClick={() => {
-              deleteBookmarks();
-              setOpen(false);
-            }}
-          >
-            Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
-}
 
 export default function BulkBookmarksAction() {
   const { theme } = useTheme();
@@ -66,7 +33,6 @@ export default function BulkBookmarksAction() {
   );
   const { toast } = useToast();
   const pathname = usePathname();
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   useEffect(() => {
@@ -94,6 +60,33 @@ export default function BulkBookmarksAction() {
     },
     onError,
   });
+
+  const DeleteButton = () => {
+    return (
+      <ActionConfirmingDialog
+        title={"Delete Bookmarks"}
+        description={<p>Are you sure you want to delete these bookmarks?</p>}
+        actionButton={() => (
+          <ActionButton
+            type="button"
+            variant="destructive"
+            loading={isButtonLoading}
+            onClick={() => deleteBookmarks()}
+          >
+            Delete
+          </ActionButton>
+        )}
+      >
+        <ButtonWithTooltip
+          tooltip="Delete"
+          disabled={!selectedBookmarks.length}
+          variant="ghost"
+        >
+          <Trash2 size={18} color="red" />
+        </ButtonWithTooltip>
+      </ActionConfirmingDialog>
+    );
+  };
 
   interface UpdateBookmarkProps {
     favourited?: boolean;
@@ -164,13 +157,14 @@ export default function BulkBookmarksAction() {
     },
     {
       name: "Delete",
-      icon: <Trash2 size={18} />,
-      action: () => setShowDeleteModal(true),
+      component: <DeleteButton />,
+      // action: () => DeleteButton(),
     },
     {
       name: "Close bulk edit",
       icon: <X size={18} />,
       action: () => setIsBulkEditEnabled(false),
+      alwaysEnable: true,
     },
   ];
 
@@ -198,31 +192,28 @@ export default function BulkBookmarksAction() {
 
   return (
     <div className="transition-all" style={{ width: getUIWidth() }}>
-      {showDeleteModal && (
-        <DeleteModal
-          open={showDeleteModal}
-          setOpen={setShowDeleteModal}
-          deleteBookmarks={deleteBookmarks}
-        />
-      )}
-
       {!isBulkEditEnabled ? (
         <BulkEditButton />
       ) : (
         <div className="flex">
-          {actionList.map(({ name, icon: Icon, action }) => (
-            <ActionButtonWithTooltip
-              tooltip={name}
-              disabled={!selectedBookmarks.length}
-              delayDuration={100}
-              loading={isButtonLoading}
-              variant="ghost"
-              key={name}
-              onClick={action}
-            >
-              {Icon}
-            </ActionButtonWithTooltip>
-          ))}
+          {actionList.map(
+            ({ name, icon: Icon, component, action, alwaysEnable }) =>
+              component ? (
+                component
+              ) : (
+                <ActionButtonWithTooltip
+                  tooltip={name}
+                  disabled={!selectedBookmarks.length && !alwaysEnable}
+                  delayDuration={100}
+                  loading={isButtonLoading}
+                  variant="ghost"
+                  key={name}
+                  onClick={action}
+                >
+                  {Icon}
+                </ActionButtonWithTooltip>
+              ),
+          )}
         </div>
       )}
     </div>
