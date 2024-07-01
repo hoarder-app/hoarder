@@ -33,6 +33,7 @@ function useFocusOnKeyPress(inputRef: React.RefObject<HTMLTextAreaElement>) {
         inputRef.current.focus();
       }
     }
+
     document.addEventListener("keydown", handleKeyPress);
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
@@ -75,7 +76,8 @@ export default function EditorCard({ className }: { className?: string }) {
         });
       }
       form.reset();
-      if (inputRef?.current?.style) {
+      // if the list layout is used, we reset the size of the editor card to the original size after submitting
+      if (bookmarkLayout === "list" && inputRef?.current?.style) {
         inputRef.current.style.height = "auto";
       }
     },
