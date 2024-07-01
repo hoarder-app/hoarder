@@ -35,12 +35,13 @@ import {
   bookmarks,
 } from "@hoarder/db/schema";
 import {
-  ASSET_TYPES, deleteAsset,
+  ASSET_TYPES,
+  deleteAsset,
   IMAGE_ASSET_TYPES,
   newAssetId,
   saveAsset,
   saveAssetFromFile,
-  SUPPORTED_UPLOAD_ASSET_TYPES
+  SUPPORTED_UPLOAD_ASSET_TYPES,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
