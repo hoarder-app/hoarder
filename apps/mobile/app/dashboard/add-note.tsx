@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { api } from "@/lib/trpc";
 
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+
 export default function AddNote() {
   const [text, setText] = useState("");
   const [error, setError] = useState<string | undefined>();
@@ -45,7 +47,10 @@ export default function AddNote() {
         placeholder="What's on your mind?"
         autoFocus
       />
-      <Button onPress={() => mutate({ type: "text", text })} label="Add Note" />
+      <Button
+        onPress={() => mutate({ type: BookmarkTypes.TEXT, text })}
+        label="Add Note"
+      />
     </View>
   );
 }

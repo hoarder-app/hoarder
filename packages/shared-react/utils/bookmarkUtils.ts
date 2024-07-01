@@ -1,4 +1,5 @@
-import type {
+import {
+  BookmarkTypes,
   ZBookmark,
   ZBookmarkedLink,
 } from "@hoarder/shared/types/bookmarks";
@@ -21,7 +22,7 @@ export function getBookmarkLinkImageUrl(bookmark: ZBookmarkedLink) {
 
 export function isBookmarkStillCrawling(bookmark: ZBookmark) {
   return (
-    bookmark.content.type == "link" &&
+    bookmark.content.type == BookmarkTypes.LINK &&
     !bookmark.content.crawledAt &&
     Date.now().valueOf() - bookmark.createdAt.valueOf() < MAX_LOADING_MSEC
   );

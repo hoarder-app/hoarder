@@ -17,11 +17,11 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { CalendarDays, ExternalLink } from "lucide-react";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 import {
   isBookmarkStillCrawling,
   isBookmarkStillLoading,
 } from "@hoarder/shared-react/utils/bookmarkUtils";
+import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import ActionBar from "./ActionBar";
 import { AssetContentSection } from "./AssetContentSection";
@@ -66,10 +66,10 @@ function CreationTime({ createdAt }: { createdAt: Date }) {
 }
 
 function getSourceUrl(bookmark: ZBookmark) {
-  if (bookmark.content.type === "link") {
+  if (bookmark.content.type === BookmarkTypes.LINK) {
     return bookmark.content.url;
   }
-  if (bookmark.content.type === "asset") {
+  if (bookmark.content.type === BookmarkTypes.ASSET) {
     return bookmark.content.sourceUrl;
   }
   return null;
@@ -108,15 +108,15 @@ export default function BookmarkPreview({
 
   let content;
   switch (bookmark.content.type) {
-    case "link": {
+    case BookmarkTypes.LINK: {
       content = <LinkContentSection bookmark={bookmark} />;
       break;
     }
-    case "text": {
+    case BookmarkTypes.TEXT: {
       content = <TextContentSection bookmark={bookmark} />;
       break;
     }
-    case "asset": {
+    case BookmarkTypes.ASSET: {
       content = <AssetContentSection bookmark={bookmark} />;
       break;
     }

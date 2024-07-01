@@ -8,6 +8,7 @@ import { TRPCClientError } from "@trpc/client";
 import DropZone from "react-dropzone";
 
 import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 import {
   zUploadErrorSchema,
   zUploadResponseSchema,
@@ -50,7 +51,7 @@ export function useUploadAsset() {
     onSuccess: async (resp) => {
       const assetType =
         resp.contentType === "application/pdf" ? "pdf" : "image";
-      return createBookmark({ ...resp, type: "asset", assetType });
+      return createBookmark({ ...resp, type: BookmarkTypes.ASSET, assetType });
     },
     onError: (error, req) => {
       const err = zUploadErrorSchema.parse(JSON.parse(error.message));
@@ -68,7 +69,7 @@ export function useUploadAsset() {
     onSuccess: async (resp) => {
       return Promise.all(
         resp.map((url) =>
-          createBookmark({ type: "link", url: url.toString() }),
+          createBookmark({ type: BookmarkTypes.LINK, url: url.toString() }),
         ),
       );
     },

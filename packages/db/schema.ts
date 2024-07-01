@@ -11,6 +11,8 @@ import {
   unique,
 } from "drizzle-orm/sqlite-core";
 
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+
 function createdAtField() {
   return integer("createdAt", { mode: "timestamp" })
     .notNull()
@@ -117,6 +119,9 @@ export const bookmarks = sqliteTable(
       enum: ["pending", "failure", "success"],
     }).default("pending"),
     note: text("note"),
+    type: text("type", {
+      enum: [BookmarkTypes.LINK, BookmarkTypes.TEXT, BookmarkTypes.ASSET],
+    }).notNull(),
   },
   (b) => ({
     userIdIdx: index("bookmarks_userId_idx").on(b.userId),

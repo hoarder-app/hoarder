@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 export function BookmarkedTextEditor({
   bookmark,
@@ -27,7 +27,9 @@ export function BookmarkedTextEditor({
 }) {
   const isNewBookmark = bookmark === undefined;
   const [noteText, setNoteText] = useState(
-    bookmark && bookmark.content.type == "text" ? bookmark.content.text : "",
+    bookmark && bookmark.content.type == BookmarkTypes.TEXT
+      ? bookmark.content.text
+      : "",
   );
 
   const invalidateOneBookmarksCache =

@@ -1,6 +1,7 @@
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
 import { bookmarks } from "@hoarder/db/schema";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import type { CustomTestContext } from "../testUtils";
 import { defaultBeforeEach } from "../testUtils";
@@ -12,15 +13,15 @@ describe("Bookmark Routes", () => {
     const api = apiCallers[0].bookmarks;
     const bookmark = await api.createBookmark({
       url: "https://google.com",
-      type: "link",
+      type: BookmarkTypes.LINK,
     });
 
     const res = await api.getBookmark({ bookmarkId: bookmark.id });
-    assert(res.content.type == "link");
+    assert(res.content.type == BookmarkTypes.LINK);
     expect(res.content.url).toEqual("https://google.com");
     expect(res.favourited).toEqual(false);
     expect(res.archived).toEqual(false);
-    expect(res.content.type).toEqual("link");
+    expect(res.content.type).toEqual(BookmarkTypes.LINK);
   });
 
   test<CustomTestContext>("delete bookmark", async ({ apiCallers }) => {
@@ -29,7 +30,7 @@ describe("Bookmark Routes", () => {
     // Create the bookmark
     const bookmark = await api.createBookmark({
       url: "https://google.com",
-      type: "link",
+      type: BookmarkTypes.LINK,
     });
 
     // It should exist
@@ -50,7 +51,7 @@ describe("Bookmark Routes", () => {
     // Create the bookmark
     const bookmark = await api.createBookmark({
       url: "https://google.com",
-      type: "link",
+      type: BookmarkTypes.LINK,
     });
 
     await api.updateBookmark({
@@ -71,12 +72,12 @@ describe("Bookmark Routes", () => {
 
     const bookmark1 = await api.createBookmark({
       url: "https://google.com",
-      type: "link",
+      type: BookmarkTypes.LINK,
     });
 
     const bookmark2 = await api.createBookmark({
       url: "https://google2.com",
-      type: "link",
+      type: BookmarkTypes.LINK,
     });
 
     {
@@ -120,7 +121,7 @@ describe("Bookmark Routes", () => {
     const api = apiCallers[0].bookmarks;
     const createdBookmark = await api.createBookmark({
       url: "https://google.com",
-      type: "link",
+      type: BookmarkTypes.LINK,
     });
 
     await api.updateTags({
@@ -161,7 +162,7 @@ describe("Bookmark Routes", () => {
     const api = apiCallers[0].bookmarks;
     const createdBookmark = await api.createBookmark({
       text: "HELLO WORLD",
-      type: "text",
+      type: BookmarkTypes.TEXT,
     });
 
     await api.updateBookmarkText({
@@ -170,17 +171,17 @@ describe("Bookmark Routes", () => {
     });
 
     const bookmark = await api.getBookmark({ bookmarkId: createdBookmark.id });
-    assert(bookmark.content.type == "text");
+    assert(bookmark.content.type == BookmarkTypes.TEXT);
     expect(bookmark.content.text).toEqual("WORLD HELLO");
   });
 
   test<CustomTestContext>("privacy", async ({ apiCallers }) => {
     const user1Bookmark = await apiCallers[0].bookmarks.createBookmark({
-      type: "link",
+      type: BookmarkTypes.LINK,
       url: "https://google.com",
     });
     const user2Bookmark = await apiCallers[1].bookmarks.createBookmark({
-      type: "link",
+      type: BookmarkTypes.LINK,
       url: "https://google.com",
     });
 
@@ -219,20 +220,20 @@ describe("Bookmark Routes", () => {
     // Two users with google in their bookmarks
     const bookmark1User1 = await apiCallers[0].bookmarks.createBookmark({
       url: "https://google.com",
-      type: "link",
+      type: BookmarkTypes.LINK,
     });
     expect(bookmark1User1.alreadyExists).toEqual(false);
 
     const bookmark1User2 = await apiCallers[1].bookmarks.createBookmark({
       url: "https://google.com",
-      type: "link",
+      type: BookmarkTypes.LINK,
     });
     expect(bookmark1User2.alreadyExists).toEqual(false);
 
     // User1 attempting to re-add google. Should return the existing bookmark
     const bookmark2User1 = await apiCallers[0].bookmarks.createBookmark({
       url: "https://google.com",
-      type: "link",
+      type: BookmarkTypes.LINK,
     });
     expect(bookmark2User1.alreadyExists).toEqual(true);
     expect(bookmark2User1.id).toEqual(bookmark1User1.id);
@@ -240,7 +241,7 @@ describe("Bookmark Routes", () => {
     // User2 attempting to re-add google. Should return the existing bookmark
     const bookmark2User2 = await apiCallers[1].bookmarks.createBookmark({
       url: "https://google.com",
-      type: "link",
+      type: BookmarkTypes.LINK,
     });
     expect(bookmark2User2.alreadyExists).toEqual(true);
     expect(bookmark2User2.id).toEqual(bookmark1User2.id);
@@ -248,7 +249,7 @@ describe("Bookmark Routes", () => {
     // User1 adding google2. Should not return an existing bookmark
     const bookmark3User1 = await apiCallers[0].bookmarks.createBookmark({
       url: "https://google2.com",
-      type: "link",
+      type: BookmarkTypes.LINK,
     });
     expect(bookmark3User1.alreadyExists).toEqual(false);
   });
@@ -261,6 +262,7 @@ describe("Bookmark Routes", () => {
     const bookmarkWithDate = (date_ms: number) => ({
       userId: user.id,
       createdAt: new Date(date_ms),
+      type: BookmarkTypes.TEXT as const,
     });
 
     // One normal bookmark
@@ -274,7 +276,7 @@ describe("Bookmark Routes", () => {
     for (let i = 0; i < 10; i++) {
       values.push(bookmarkWithDate(now));
     }
-    // And then another one with a second afterards
+    // And then another one with a second afterwards
     for (let i = 0; i < 10; i++) {
       now -= 1000;
       values.push(bookmarkWithDate(now));

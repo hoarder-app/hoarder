@@ -1,7 +1,7 @@
 import { api } from "@/lib/trpc";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 import { isBookmarkStillLoading } from "@hoarder/shared-react/utils/bookmarkUtils";
+import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import AssetCard from "./AssetCard";
 import LinkCard from "./LinkCard";
@@ -34,21 +34,21 @@ export default function BookmarkCard({
   );
 
   switch (bookmark.content.type) {
-    case "link":
+    case BookmarkTypes.LINK:
       return (
         <LinkCard
           className={className}
           bookmark={{ ...bookmark, content: bookmark.content }}
         />
       );
-    case "text":
+    case BookmarkTypes.TEXT:
       return (
         <TextCard
           className={className}
           bookmark={{ ...bookmark, content: bookmark.content }}
         />
       );
-    case "asset":
+    case BookmarkTypes.ASSET:
       return (
         <AssetCard
           className={className}

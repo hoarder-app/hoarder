@@ -52,6 +52,7 @@ import {
   triggerSearchReindex,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 const metascraperParser = metascraper([
   metascraperAmazon(),
@@ -500,6 +501,11 @@ async function handleAsAssetBookmark(
       fileName: path.basename(new URL(url).pathname),
       sourceUrl: url,
     });
+    // Switch the type of the bookmark from LINK to ASSET
+    await trx
+      .update(bookmarks)
+      .set({ type: BookmarkTypes.ASSET })
+      .where(eq(bookmarks.id, bookmarkId));
     await trx.delete(bookmarkLinks).where(eq(bookmarkLinks.id, bookmarkId));
   });
 }
