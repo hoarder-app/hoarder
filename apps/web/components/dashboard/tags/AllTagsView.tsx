@@ -13,16 +13,11 @@ import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
 import { toast } from "@/components/ui/use-toast";
-import { useDragAndDrop } from "@/lib/drag-and-drop";
 import { api } from "@/lib/trpc";
 import { ArrowDownAZ, Combine } from "lucide-react";
-import Draggable from "react-draggable";
 
 import type { ZGetTagResponse } from "@hoarder/shared/types/tags";
-import {
-  useDeleteUnusedTags,
-  useMergeTag,
-} from "@hoarder/shared-react/hooks/tags";
+import { useDeleteUnusedTags } from "@hoarder/shared-react/hooks/tags";
 
 import { TagPill } from "./TagPill";
 
@@ -79,17 +74,6 @@ export default function AllTagsView({
   const [draggingEnabled, setDraggingEnabled] = React.useState(false);
   const [sortByName, setSortByName] = React.useState(false);
 
-  const { handleDragStart, handleDragEnd } = useDragAndDrop(
-    "data-id",
-    "data-id",
-    (dragSourceId: string, dragTargetId: string) => {
-      mergeTag({
-        fromTagIds: [dragSourceId],
-        intoTagId: dragTargetId,
-      });
-    },
-  );
-
   function toggleSortByName(): void {
     setSortByName(!sortByName);
   }
@@ -98,40 +82,9 @@ export default function AllTagsView({
     setDraggingEnabled(!draggingEnabled);
   }
 
-  const { mutate: mergeTag } = useMergeTag({
-    onSuccess: () => {
-      toast({
-        description: "Tags have been merged!",
-      });
-    },
-    onError: (e) => {
-      if (e.data?.code == "BAD_REQUEST") {
-        if (e.data.zodError) {
-          toast({
-            variant: "destructive",
-            description: Object.values(e.data.zodError.fieldErrors)
-              .flat()
-              .join("\n"),
-          });
-        } else {
-          toast({
-            variant: "destructive",
-            description: e.message,
-          });
-        }
-      } else {
-        toast({
-          variant: "destructive",
-          title: "Something went wrong",
-        });
-      }
-    },
-  });
-
   const { data } = api.tags.list.useQuery(undefined, {
     initialData: { tags: initialData },
   });
-
   // Sort tags by usage desc
   const allTags = data.tags.sort(sortByName ? byNameSorter : byUsageSorter);
 
@@ -145,21 +98,13 @@ export default function AllTagsView({
       tagPill = (
         <div className="flex flex-wrap gap-3">
           {tags.map((t) => (
-            <Draggable
+            <TagPill
               key={t.id}
-              axis="both"
-              onStart={handleDragStart}
-              onStop={handleDragEnd}
-              disabled={!draggingEnabled}
-              defaultClassNameDragging={
-                "position-relative z-10 pointer-events-none"
-              }
-              position={{ x: 0, y: 0 }}
-            >
-              <div className="cursor-grab" data-id={t.id}>
-                <TagPill id={t.id} name={t.name} count={t.count} />
-              </div>
-            </Draggable>
+              id={t.id}
+              name={t.name}
+              count={t.count}
+              isDraggable={draggingEnabled}
+            />
           ))}
         </div>
       );
@@ -173,6 +118,7 @@ export default function AllTagsView({
       <div className="flex justify-end gap-x-2">
         <Toggle
           variant="outline"
+          aria-label="Toggle bold"
           pressed={draggingEnabled}
           onPressedChange={toggleDraggingEnabled}
         >
@@ -184,6 +130,7 @@ export default function AllTagsView({
         </Toggle>
         <Toggle
           variant="outline"
+          aria-label="Toggle bold"
           pressed={sortByName}
           onPressedChange={toggleSortByName}
         >
@@ -196,22 +143,16 @@ export default function AllTagsView({
           <p>Tags that were attached at least once by you</p>
         </InfoTooltip>
       </span>
-
       {tagsToPill(humanTags)}
-
       <Separator />
-
       <span className="flex items-center gap-2">
         <p className="text-lg">AI Tags</p>
         <InfoTooltip size={15} className="my-auto" variant="explain">
           <p>Tags that were only attached automatically (by AI)</p>
         </InfoTooltip>
       </span>
-
       {tagsToPill(aiTags)}
-
       <Separator />
-
       <span className="flex items-center gap-2">
         <p className="text-lg">Unused Tags</p>
         <InfoTooltip size={15} className="my-auto" variant="explain">

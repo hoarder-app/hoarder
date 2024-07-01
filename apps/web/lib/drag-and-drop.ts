@@ -1,31 +1,48 @@
 import React from "react";
-import { DraggableData, DraggableEvent } from "react-draggable";
+import { DraggableEvent } from "react-draggable";
+
+export interface DraggingState {
+  isDragging: boolean;
+  initialX: number;
+  initialY: number;
+}
 
 export function useDragAndDrop(
-  dragSourceIdAttribute: string,
   dragTargetIdAttribute: string,
-  onDragOver: (dragSourceId: string, dragTargetId: string) => void,
+  onDragOver: (dragTargetId: string) => void,
+  setDraggingState?: React.Dispatch<React.SetStateAction<DraggingState>>,
 ) {
-  const [dragSourceId, setDragSourceId] = React.useState<string | null>(null);
+  function findTargetId(element: HTMLElement): string | null {
+    let currentElement: HTMLElement | null = element;
+    while (currentElement) {
+      const listId = currentElement.getAttribute(dragTargetIdAttribute);
+      if (listId) {
+        return listId;
+      }
+      currentElement = currentElement.parentElement;
+    }
+    return null;
+  }
 
   const handleDragStart = React.useCallback(
-    (_e: DraggableEvent, { node }: DraggableData) => {
-      const id = node.getAttribute(dragSourceIdAttribute);
-      setDragSourceId(id);
+    (e: DraggableEvent) => {
+      const rect = (e.target as HTMLElement).getBoundingClientRect();
+      setDraggingState?.({
+        isDragging: true,
+        initialX: rect.x,
+        initialY: rect.y,
+      });
     },
-    [],
+    [setDraggingState],
   );
 
   const handleDragEnd = React.useCallback(
     (e: DraggableEvent) => {
       const { target } = e;
-      const dragTargetId = (target as HTMLElement).getAttribute(
-        dragTargetIdAttribute,
-      );
+      const dragTargetId = findTargetId(target as HTMLElement);
 
-      if (dragSourceId && dragTargetId && dragSourceId !== dragTargetId) {
-        /*
-          As Draggable tries to setState when the 
+      if (dragTargetId) {
+        /*          As Draggable tries to setState when the 
           component is unmounted, it is needed to
           push onCombine to the event loop queue.
           onCombine would be run after setState on
@@ -33,12 +50,16 @@ export function useDragAndDrop(
           they fix it on their end.
       */
         setTimeout(() => {
-          onDragOver(dragSourceId, dragTargetId);
+          onDragOver(dragTargetId);
         }, 0);
       }
-      setDragSourceId(null);
+      setDraggingState?.({
+        isDragging: false,
+        initialX: 0,
+        initialY: 0,
+      });
     },
-    [dragSourceId, onDragOver],
+    [onDragOver],
   );
 
   return {
