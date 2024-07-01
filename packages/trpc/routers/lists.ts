@@ -15,7 +15,7 @@ const zNewBookmarkListSchema = z.object({
   name: z
     .string()
     .min(1, "List name can't be empty")
-    .max(20, "List name is at most 20 chars"),
+    .max(40, "List name is at most 40 chars"),
   icon: z.string(),
   parentId: z.string().nullish(),
 });
