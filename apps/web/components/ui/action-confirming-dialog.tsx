@@ -24,7 +24,7 @@ export default function ActionConfirmingDialog({
   title: React.ReactNode;
   description: React.ReactNode;
   actionButton: (setDialogOpen: (open: boolean) => void) => React.ReactNode;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   const [customIsOpen, setCustomIsOpen] = useState(false);
   const [isDialogOpen, setDialogOpen] = [
@@ -33,7 +33,7 @@ export default function ActionConfirmingDialog({
   ];
   return (
     <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
