@@ -46,7 +46,7 @@ const ActionButtonWithTooltip = React.forwardRef<
 >(({ tooltip, delayDuration, ...props }, ref) => {
   return (
     <Tooltip delayDuration={delayDuration}>
-      <TooltipTrigger>
+      <TooltipTrigger asChild>
         <ActionButton ref={ref} {...props} />
       </TooltipTrigger>
       <TooltipPortal>

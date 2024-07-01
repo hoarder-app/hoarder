@@ -6,25 +6,24 @@ import {
   ActionButtonWithTooltip,
 } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
-import { ButtonWithTooltip } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import bulkActions from "@/store/useBulkBookmarksAction";
-import { Archive, ArchiveRestore, Pencil, Star, Trash2, X } from "lucide-react";
-import { useTheme } from "next-themes";
+import useBulkActionsStore from "@/lib/bulkActions";
+import { Pencil, Trash2, X } from "lucide-react";
 
 import {
   useDeleteBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
 
+import { ArchivedActionIcon, FavouritedActionIcon } from "./bookmarks/icons";
+
 export default function BulkBookmarksAction() {
-  const { theme } = useTheme();
-  const { selectedBookmarks, isBulkEditEnabled } = bulkActions();
-  const setIsBulkEditEnabled = bulkActions(
+  const { selectedBookmarks, isBulkEditEnabled } = useBulkActionsStore();
+  const setIsBulkEditEnabled = useBulkActionsStore(
     (state) => state.setIsBulkEditEnabled,
   );
   const { toast } = useToast();
-  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     setIsBulkEditEnabled(false); // turn off toggle + clear selected bookmarks on mount
@@ -52,65 +51,38 @@ export default function BulkBookmarksAction() {
     onError,
   });
 
-  const DeleteButton = () => {
-    return (
-      <ActionConfirmingDialog
-        title={"Delete Bookmarks"}
-        description={<p>Are you sure you want to delete these bookmarks?</p>}
-        actionButton={() => (
-          <ActionButton
-            type="button"
-            variant="destructive"
-            loading={isButtonLoading}
-            onClick={() => deleteBookmarks()}
-          >
-            Delete
-          </ActionButton>
-        )}
-      >
-        <ButtonWithTooltip
-          tooltip="Delete"
-          disabled={!selectedBookmarks.length}
-          variant="ghost"
-        >
-          <Trash2 size={18} color="red" />
-        </ButtonWithTooltip>
-      </ActionConfirmingDialog>
-    );
-  };
-
   interface UpdateBookmarkProps {
     favourited?: boolean;
     archived?: boolean;
   }
 
-  const updateBookmarks = ({
+  const updateBookmarks = async ({
     favourited,
     archived,
-  }: UpdateBookmarkProps): void => {
-    setIsButtonLoading(true);
-    selectedBookmarks.map((item) => {
-      updateBookmarkMutator.mutate({
-        bookmarkId: item.id,
-        favourited: favourited ?? item.favourited,
-        archived: archived ?? item.archived,
-      });
-    });
+  }: UpdateBookmarkProps) => {
+    await Promise.all(
+      selectedBookmarks.map((item) =>
+        updateBookmarkMutator.mutateAsync({
+          bookmarkId: item.id,
+          favourited,
+          archived,
+        }),
+      ),
+    );
     toast({
       description: `${selectedBookmarks.length} bookmarks have been updated!`,
     });
-    setIsButtonLoading(false);
   };
 
-  const deleteBookmarks = () => {
-    setIsButtonLoading(true);
-    selectedBookmarks.map((item) => {
-      deleteBookmarkMutator.mutate({ bookmarkId: item.id });
-    });
+  const deleteBookmarks = async () => {
+    await Promise.all(
+      selectedBookmarks.map((item) =>
+        deleteBookmarkMutator.mutateAsync({ bookmarkId: item.id }),
+      ),
+    );
     toast({
       description: `${selectedBookmarks.length} bookmarks have been deleted!`,
     });
-    setIsButtonLoading(false);
   };
 
   const alreadyFavourited =
@@ -124,87 +96,76 @@ export default function BulkBookmarksAction() {
   const actionList = [
     {
       name: alreadyFavourited ? "Unfavourite" : "Favourite",
-      icon: (
-        <Star
-          color={
-            alreadyFavourited ? "#ebb434" : theme === "dark" ? "#fff" : "#000"
-          }
-          fill={alreadyFavourited ? "#ebb434" : "transparent"}
-          size={18}
-        />
-      ),
+      icon: <FavouritedActionIcon favourited={!!alreadyFavourited} size={18} />,
       action: () => updateBookmarks({ favourited: !alreadyFavourited }),
+      isPending: updateBookmarkMutator.isPending,
+      hidden: !isBulkEditEnabled,
     },
     {
       name: alreadyArchived ? "Un-arhcive" : "Archive",
-      icon: alreadyArchived ? (
-        <ArchiveRestore size={18} />
-      ) : (
-        <Archive size={18} />
-      ),
+      icon: <ArchivedActionIcon size={18} archived={!!alreadyArchived} />,
       action: () => updateBookmarks({ archived: !alreadyArchived }),
+      isPending: updateBookmarkMutator.isPending,
+      hidden: !isBulkEditEnabled,
     },
     {
       name: "Delete",
-      component: <DeleteButton />,
-      // action: () => DeleteButton(),
+      icon: <Trash2 size={18} color="red" />,
+      action: () => setIsDeleteDialogOpen(true),
+      hidden: !isBulkEditEnabled,
     },
     {
       name: "Close bulk edit",
       icon: <X size={18} />,
       action: () => setIsBulkEditEnabled(false),
       alwaysEnable: true,
+      hidden: !isBulkEditEnabled,
+    },
+    {
+      name: "Bulk Edit",
+      icon: <Pencil size={18} />,
+      action: () => setIsBulkEditEnabled(true),
+      alwaysEnable: true,
+      hidden: isBulkEditEnabled,
     },
   ];
 
-  const getUIWidth = () => {
-    const SINGLE_ACTION_WIDTH = 50;
-    const ALL_ACTIONS_WIDTH = `${actionList.length * SINGLE_ACTION_WIDTH}px`;
-    const PENCIL_ICON_WIDTH = `${SINGLE_ACTION_WIDTH}px`;
-    return isBulkEditEnabled ? ALL_ACTIONS_WIDTH : PENCIL_ICON_WIDTH;
-  };
-
-  const BulkEditButton = () => {
-    return (
-      <div>
-        <ButtonWithTooltip
-          tooltip="Bulk Edit"
-          delayDuration={100}
-          variant="ghost"
-          onClick={() => setIsBulkEditEnabled(true)}
-        >
-          <Pencil size={18} />
-        </ButtonWithTooltip>
-      </div>
-    );
-  };
-
   return (
-    <div className="transition-all" style={{ width: getUIWidth() }}>
-      {!isBulkEditEnabled ? (
-        <BulkEditButton />
-      ) : (
-        <div className="flex">
-          {actionList.map(
-            ({ name, icon: Icon, component, action, alwaysEnable }) =>
-              component ? (
-                component
-              ) : (
-                <ActionButtonWithTooltip
-                  tooltip={name}
-                  disabled={!selectedBookmarks.length && !alwaysEnable}
-                  delayDuration={100}
-                  loading={isButtonLoading}
-                  variant="ghost"
-                  key={name}
-                  onClick={action}
-                >
-                  {Icon}
-                </ActionButtonWithTooltip>
-              ),
-          )}
-        </div>
-      )}
+    <div>
+      <ActionConfirmingDialog
+        open={isDeleteDialogOpen}
+        setOpen={setIsDeleteDialogOpen}
+        title={"Delete Bookmarks"}
+        description={<p>Are you sure you want to delete these bookmarks?</p>}
+        actionButton={() => (
+          <ActionButton
+            type="button"
+            variant="destructive"
+            loading={deleteBookmarkMutator.isPending}
+            onClick={() => deleteBookmarks()}
+          >
+            Delete
+          </ActionButton>
+        )}
+      />
+      <div className="flex">
+        {actionList.map(
+          ({ name, icon: Icon, action, isPending, hidden, alwaysEnable }) => (
+            <ActionButtonWithTooltip
+              className={hidden ? "hidden" : "block"}
+              tooltip={name}
+              disabled={!selectedBookmarks.length && !alwaysEnable}
+              delayDuration={100}
+              loading={!!isPending}
+              variant="ghost"
+              key={name}
+              onClick={action}
+            >
+              {Icon}
+            </ActionButtonWithTooltip>
+          ),
+        )}
+      </div>
     </div>
   );
 }

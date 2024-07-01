@@ -1,12 +1,12 @@
 import type { BookmarksLayoutTypes } from "@/lib/userLocalSettings/types";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import useBulkActionsStore from "@/lib/bulkActions";
 import {
   bookmarkLayoutSwitch,
   useBookmarkLayout,
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
-import bulkActions from "@/store/useBulkBookmarksAction";
 import dayjs from "dayjs";
 import { Check } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -49,8 +49,8 @@ function BottomRow({
 }
 
 function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
-  const { selectedBookmarks, isBulkEditEnabled } = bulkActions();
-  const toggleBookmark = bulkActions((state) => state.toggleBookmark);
+  const { selectedBookmarks, isBulkEditEnabled } = useBulkActionsStore();
+  const toggleBookmark = useBulkActionsStore((state) => state.toggleBookmark);
   const [isSelected, setIsSelected] = useState(false);
   const { theme } = useTheme();
 

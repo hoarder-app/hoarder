@@ -10,7 +10,7 @@ interface BookmarkState {
   toggleBookmark: (bookmark: ZBookmark) => void;
 }
 
-const selectedBookmarksStore = create<BookmarkState>((set, get) => ({
+const useBulkActionsStore = create<BookmarkState>((set, get) => ({
   selectedBookmarks: [],
   isBulkEditEnabled: false,
 
@@ -36,4 +36,4 @@ const selectedBookmarksStore = create<BookmarkState>((set, get) => ({
   },
 }));
 
-export default selectedBookmarksStore;
+export default useBulkActionsStore;
