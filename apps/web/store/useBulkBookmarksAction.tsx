@@ -6,9 +6,8 @@ import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 interface BookmarkState {
   selectedBookmarks: ZBookmark[];
   isBulkEditEnabled: boolean;
-  handleBulkEdit: (isEnabled: boolean) => void;
+  setIsBulkEditEnabled: (isEnabled: boolean) => void;
   toggleBookmark: (bookmark: ZBookmark) => void;
-  getSelectedBookmarks: () => ZBookmark[];
 }
 
 const selectedBookmarksStore = create<BookmarkState>((set, get) => ({
@@ -31,13 +30,9 @@ const selectedBookmarksStore = create<BookmarkState>((set, get) => ({
     }
   },
 
-  handleBulkEdit: (isEnabled) => {
+  setIsBulkEditEnabled: (isEnabled) => {
     set({ isBulkEditEnabled: isEnabled });
     set({ selectedBookmarks: [] });
-  },
-
-  getSelectedBookmarks: (): ZBookmark[] => {
-    return get().selectedBookmarks;
   },
 }));
 

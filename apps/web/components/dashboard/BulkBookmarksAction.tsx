@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { ActionButtonWithTooltip } from "@/components/ui/action-button";
 import { Button, ButtonWithTooltip } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,8 +13,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/use-toast";
-import bulkActions from "@/store/bulkBookmarksAction";
+import bulkActions from "@/store/useBulkBookmarksAction";
 import { Archive, ArchiveRestore, Pencil, Star, Trash2, X } from "lucide-react";
+import { useTheme } from "next-themes";
 
 import {
   useDeleteBookmark,
@@ -57,14 +59,18 @@ function DeleteModal({
 }
 
 export default function BulkBookmarksAction() {
+  const { theme } = useTheme();
   const { selectedBookmarks, isBulkEditEnabled } = bulkActions();
-  const handleBulkEdit = bulkActions((state) => state.handleBulkEdit);
+  const setIsBulkEditEnabled = bulkActions(
+    (state) => state.setIsBulkEditEnabled,
+  );
   const { toast } = useToast();
   const pathname = usePathname();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   useEffect(() => {
-    handleBulkEdit(false); // turn off toggle + clear selected bookmarks on mount
+    setIsBulkEditEnabled(false); // turn off toggle + clear selected bookmarks on mount
   }, []);
 
   const onError = () => {
@@ -77,14 +83,14 @@ export default function BulkBookmarksAction() {
 
   const deleteBookmarkMutator = useDeleteBookmark({
     onSuccess: () => {
-      handleBulkEdit(false);
+      setIsBulkEditEnabled(false);
     },
     onError,
   });
 
   const updateBookmarkMutator = useUpdateBookmark({
     onSuccess: () => {
-      handleBulkEdit(false);
+      setIsBulkEditEnabled(false);
     },
     onError,
   });
@@ -98,6 +104,7 @@ export default function BulkBookmarksAction() {
     favourited,
     archived,
   }: UpdateBookmarkProps): void => {
+    setIsButtonLoading(true);
     selectedBookmarks.map((item) => {
       updateBookmarkMutator.mutate({
         bookmarkId: item.id,
@@ -108,15 +115,18 @@ export default function BulkBookmarksAction() {
     toast({
       description: `${selectedBookmarks.length} bookmarks have been updated!`,
     });
+    setIsButtonLoading(false);
   };
 
   const deleteBookmarks = () => {
+    setIsButtonLoading(true);
     selectedBookmarks.map((item) => {
       deleteBookmarkMutator.mutate({ bookmarkId: item.id });
     });
     toast({
       description: `${selectedBookmarks.length} bookmarks have been deleted!`,
     });
+    setIsButtonLoading(false);
   };
 
   const alreadyFavourited =
@@ -134,7 +144,9 @@ export default function BulkBookmarksAction() {
       name: alreadyFavourited ? "Unfavourite" : "Favourite",
       icon: (
         <Star
-          color={alreadyFavourited ? "#ebb434" : "#000"}
+          color={
+            alreadyFavourited ? "#ebb434" : theme === "dark" ? "#fff" : "#000"
+          }
           fill={alreadyFavourited ? "#ebb434" : "transparent"}
           size={18}
         />
@@ -158,27 +170,34 @@ export default function BulkBookmarksAction() {
     {
       name: "Close bulk edit",
       icon: <X size={18} />,
-      action: () => handleBulkEdit(false),
+      action: () => setIsBulkEditEnabled(false),
     },
   ];
 
-  if (!isBulkEditEnabled) {
+  const getUIWidth = () => {
+    const SINGLE_ACTION_WIDTH = 50;
+    const ALL_ACTIONS_WIDTH = `${actionList.length * SINGLE_ACTION_WIDTH}px`;
+    const PENCIL_ICON_WIDTH = `${SINGLE_ACTION_WIDTH}px`;
+    return isBulkEditEnabled ? ALL_ACTIONS_WIDTH : PENCIL_ICON_WIDTH;
+  };
+
+  const BulkEditButton = () => {
     return (
       <div>
         <ButtonWithTooltip
           tooltip="Bulk Edit"
           delayDuration={100}
           variant="ghost"
-          onClick={() => handleBulkEdit(true)}
+          onClick={() => setIsBulkEditEnabled(true)}
         >
           <Pencil size={18} />
         </ButtonWithTooltip>
       </div>
     );
-  }
+  };
 
   return (
-    <div>
+    <div className="transition-all" style={{ width: getUIWidth() }}>
       {showDeleteModal && (
         <DeleteModal
           open={showDeleteModal}
@@ -186,19 +205,25 @@ export default function BulkBookmarksAction() {
           deleteBookmarks={deleteBookmarks}
         />
       )}
-      <div className="flex">
-        {actionList.map(({ name, icon: Icon, action }) => (
-          <ButtonWithTooltip
-            tooltip={name}
-            delayDuration={100}
-            variant="ghost"
-            key={name}
-            onClick={action}
-          >
-            {Icon}
-          </ButtonWithTooltip>
-        ))}
-      </div>
+
+      {!isBulkEditEnabled ? (
+        <BulkEditButton />
+      ) : (
+        <div className="flex">
+          {actionList.map(({ name, icon: Icon, action }) => (
+            <ActionButtonWithTooltip
+              tooltip={name}
+              delayDuration={100}
+              loading={isButtonLoading}
+              variant="ghost"
+              key={name}
+              onClick={action}
+            >
+              {Icon}
+            </ActionButtonWithTooltip>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

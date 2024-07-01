@@ -6,9 +6,10 @@ import {
   useBookmarkLayout,
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
-import bulkActions from "@/store/bulkBookmarksAction";
+import bulkActions from "@/store/useBulkBookmarksAction";
 import dayjs from "dayjs";
 import { Check } from "lucide-react";
+import { useTheme } from "next-themes";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
@@ -51,6 +52,7 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
   const { selectedBookmarks, isBulkEditEnabled } = bulkActions();
   const toggleBookmark = bulkActions((state) => state.toggleBookmark);
   const [isSelected, setIsSelected] = useState(false);
+  const { theme } = useTheme();
 
   useEffect(() => {
     setIsSelected(selectedBookmarks.some((item) => item.id === bookmark.id));
@@ -58,24 +60,39 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
 
   if (!isBulkEditEnabled) return null;
 
+  const getIconColor = () => {
+    if (theme === "dark") {
+      return isSelected ? "black" : "white";
+    }
+    return isSelected ? "white" : "black";
+  };
+
+  const getIconBackgroundColor = () => {
+    if (theme === "dark") {
+      return isSelected ? "bg-white" : "bg-white bg-opacity-10";
+    }
+    return isSelected ? "bg-black" : "bg-white bg-opacity-40";
+  };
+
   return (
     <button
       className={cn(
-        "absolute left-0 top-0 z-50 h-full w-full bg-black bg-opacity-0",
+        "absolute left-0 top-0 z-50 h-full w-full bg-opacity-0",
         {
           "bg-opacity-10": isSelected,
         },
+        theme === "dark" ? "bg-white" : "bg-black",
       )}
       onClick={() => toggleBookmark(bookmark)}
     >
       <button className="absolute right-2 top-2 z-50 opacity-100">
         <div
           className={cn(
-            "flex h-4 w-4 items-center justify-center rounded-full border border-dashed border-gray-600",
-            isSelected ? "bg-black" : "bg-white bg-opacity-40",
+            "flex h-4 w-4 items-center justify-center rounded-full border border-gray-600",
+            getIconBackgroundColor(),
           )}
         >
-          <Check size={12} color={isSelected ? "white" : "black"} />
+          <Check size={12} color={getIconColor()} />
         </div>
       </button>
     </button>

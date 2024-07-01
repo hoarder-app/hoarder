@@ -2,19 +2,10 @@
 
 import BulkBookmarksAction from "@/components/dashboard/BulkBookmarksAction";
 import ChangeLayout from "@/components/dashboard/ChangeLayout";
-import { cn } from "@/lib/utils";
-import bulkActions from "@/store/bulkBookmarksAction";
 
 export default function GlobalActions() {
-  const { isBulkEditEnabled } = bulkActions();
-
   return (
-    <div
-      className={cn(
-        "flex rounded-md border bg-background transition-all",
-        isBulkEditEnabled ? "w-[251px]" : "w-[102px]",
-      )}
-    >
+    <div className="flex min-w-max flex-wrap overflow-hidden rounded-md border bg-background">
       <ChangeLayout />
       <BulkBookmarksAction />
     </div>
