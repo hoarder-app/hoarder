@@ -601,7 +601,11 @@ export const bookmarksAppRouter = router({
             };
           }
 
-          if (row.bookmarkTags) {
+          if (
+            row.bookmarkTags &&
+            // Duplicates may accur because of the join, so we need to make sure we're not adding the same tag twice
+            !acc[bookmarkId].tags.some((t) => t.id == row.bookmarkTags!.id)
+          ) {
             invariant(
               row.tagsOnBookmarks,
               "if bookmark tag is set, its many-to-many relation must also be set",
