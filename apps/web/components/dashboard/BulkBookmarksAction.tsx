@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import {
   ActionButton,
   ActionButtonWithTooltip,
@@ -10,14 +9,7 @@ import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import bulkActions from "@/store/useBulkBookmarksAction";
-import {
-  Archive,
-  ArchiveRestore,
-  Pencil,
-  Star,
-  Trash2,
-  X,
-} from "lucide-react";
+import { Archive, ArchiveRestore, Pencil, Star, Trash2, X } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import {
@@ -32,7 +24,6 @@ export default function BulkBookmarksAction() {
     (state) => state.setIsBulkEditEnabled,
   );
   const { toast } = useToast();
-  const pathname = usePathname();
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   useEffect(() => {
@@ -123,14 +114,12 @@ export default function BulkBookmarksAction() {
   };
 
   const alreadyFavourited =
-    (selectedBookmarks.length &&
-      selectedBookmarks.every((item) => item.favourited === true)) ||
-    pathname.includes("favourites");
+    selectedBookmarks.length &&
+    selectedBookmarks.every((item) => item.favourited === true);
 
   const alreadyArchived =
-    (selectedBookmarks.length &&
-      selectedBookmarks.every((item) => item.archived === true)) ||
-    pathname.includes("archive");
+    selectedBookmarks.length &&
+    selectedBookmarks.every((item) => item.archived === true);
 
   const actionList = [
     {
