@@ -213,6 +213,7 @@ export default function BulkBookmarksAction() {
           {actionList.map(({ name, icon: Icon, action }) => (
             <ActionButtonWithTooltip
               tooltip={name}
+              disabled={!selectedBookmarks.length}
               delayDuration={100}
               loading={isButtonLoading}
               variant="ghost"
