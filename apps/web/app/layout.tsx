@@ -18,7 +18,10 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { clientConfig } from "@hoarder/shared/config";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  fallback: ["sans-serif"],
+});
 
 export const metadata: Metadata = {
   title: "Hoarder",
