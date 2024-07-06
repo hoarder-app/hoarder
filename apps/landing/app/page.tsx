@@ -12,6 +12,7 @@ import {
   ArrowDownNarrowWide,
   Bookmark,
   BrainCircuit,
+  CheckCheck,
   Github,
   Server,
   SunMoon,
@@ -50,7 +51,7 @@ const featuresList = [
   {
     icon: Bookmark,
     title: "Bookmark",
-    description: "Bookmark links, take simple notes and store images.",
+    description: "Bookmark links, take simple notes and store images and pdfs.",
   },
   {
     icon: BrainCircuit,
@@ -80,9 +81,14 @@ const featuresList = [
     description: "Easy self hosting with docker for privacy and control.",
   },
   {
+    icon: CheckCheck,
+    title: "Bulk Actions",
+    description: "Quickly manage your bookmarks with bulk actions.",
+  },
+  {
     icon: SunMoon,
     title: "Dark Mode",
-    description: "Hoarder supports dark mode for better reading experience",
+    description: "Hoarder supports dark mode for better reading experience.",
   },
 ];
 
