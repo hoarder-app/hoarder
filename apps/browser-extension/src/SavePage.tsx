@@ -19,17 +19,26 @@ export default function SavePage() {
   });
 
   useEffect(() => {
+    async function getUrlFromStorage(): Promise<string> {
+      const { url } = await chrome.storage.session.get("url");
+      // Delete the URL immediately to avoid issues with lingering values
+      await chrome.storage.session.set({ url: void 0 });
+      return url as string;
+    }
+
     async function runSave() {
-      let currentUrl;
-      const [currentTab] = await chrome.tabs.query({
-        active: true,
-        lastFocusedWindow: true,
-      });
-      if (currentTab?.url) {
-        currentUrl = currentTab.url;
-      } else {
-        setError("Couldn't find the URL of the current tab");
-        return;
+      let currentUrl = await getUrlFromStorage();
+      if (!currentUrl) {
+        const [currentTab] = await chrome.tabs.query({
+          active: true,
+          lastFocusedWindow: true,
+        });
+        if (currentTab?.url) {
+          currentUrl = currentTab.url;
+        } else {
+          setError("Couldn't find the URL of the current tab");
+          return;
+        }
       }
 
       createBookmark({
