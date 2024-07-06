@@ -39,7 +39,10 @@ function BottomRow({
     <div className="justify flex w-full shrink-0 justify-between text-gray-500">
       <div className="flex items-center gap-2 overflow-hidden text-nowrap">
         {footer && <>{footer}•</>}
-        <Link href={`/dashboard/preview/${bookmark.id}`}>
+        <Link
+          href={`/dashboard/preview/${bookmark.id}`}
+          suppressHydrationWarning
+        >
           {dayjs(bookmark.createdAt).format("MMM DD")}
         </Link>
       </div>
