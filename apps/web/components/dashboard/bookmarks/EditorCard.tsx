@@ -94,15 +94,14 @@ export default function EditorCard({ className }: { className?: string }) {
     for (const line of lines) {
       // parsing can also throw an exception, but will be caught outside
       const url = new URL(line);
-      if (url.protocol != "http:" && url.protocol != "https:") {
-        throw new Error("Invalid URL");
+      if (url.protocol == "http:" || url.protocol == "https:") {
+        urls.push(url);
       }
-      urls.push(url);
     }
 
     if (urls.length === 1) {
-      // Only 1 url in the textfield --> simply import it
-      mutate({ type: BookmarkTypes.LINK, url: text });
+      // Only 1 url in the textfield --> simply import it. Don't take "text", as it might contain some undesirable URLs like about:config
+      mutate({ type: BookmarkTypes.LINK, url: urls[0].toString() });
       return;
     }
     // multiple urls found --> ask the user if it should be imported as multiple URLs or as a text bookmark
