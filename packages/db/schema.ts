@@ -297,6 +297,11 @@ export const bookmarksInLists = sqliteTable(
   }),
 );
 
+export const config = sqliteTable("config", {
+  key: text("key").notNull().primaryKey(),
+  value: text("value").notNull(),
+});
+
 // Relations
 
 export const userRelations = relations(users, ({ many }) => ({
