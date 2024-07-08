@@ -108,7 +108,7 @@ export const serverConfig: ServerConfig = {
     openApiKey: new ConfigValue({
       key: "OPENAI_API_KEY",
       name: "OpenAPI Key",
-      type: ConfigType.STRING,
+      type: ConfigType.PASSWORD,
       defaultValue: "",
       validator: z.string(),
     }),

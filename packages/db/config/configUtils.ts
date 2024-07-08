@@ -10,18 +10,14 @@ import { ConfigType, ConfigTypeMap, ConfigValue } from "./configValue";
 async function getConfigValueFromDB<T extends ConfigType>(
   configValue: ConfigValue<T>,
 ): Promise<ConfigTypeMap[T] | undefined> {
-  try {
-    const rows = await db
-      .select()
-      .from(config)
-      .where(eq(config.key, configValue.key));
-    if (rows.length === 0) {
-      return void 0;
-    }
-    return parseValue(configValue, rows[0].value);
-  } catch (e) {
+  const rows = await db
+    .select()
+    .from(config)
+    .where(eq(config.key, configValue.key));
+  if (rows.length === 0) {
     return void 0;
   }
+  return parseValue(configValue, rows[0].value);
 }
 
 /**
@@ -31,7 +27,7 @@ export function getConfigValueFromEnv<T extends ConfigType>(
   configValue: ConfigValue<T>,
 ): ConfigTypeMap[T] | undefined {
   const environmentValue = process.env[configValue.key];
-  if (!environmentValue) {
+  if (environmentValue === undefined) {
     return void 0;
   }
   return parseValue(configValue, environmentValue);
@@ -58,25 +54,11 @@ export async function storeValue<T extends ConfigType>(
   configValue: ConfigValue<T>,
 ): Promise<void> {
   const value = configValue.value?.toString() ?? "";
-  await db.transaction(async () => {
-    const rows = db
-      .select()
-      .from(config)
-      .where(eq(config.key, configValue.key))
-      .all();
-
-    if (rows.length > 0) {
-      // If the record exists, update it
-      await db
-        .update(config)
-        .set({ value })
-        .where(eq(config.key, configValue.key))
-        .execute();
-    } else {
-      // If the record doesn't exist, insert it
-      await db.insert(config).values({ key: configValue.key, value }).execute();
-    }
-  });
+  await db
+    .insert(config)
+    .values({ key: configValue.key, value })
+    .onConflictDoUpdate({ target: config.key, set: { value } })
+    .execute();
 }
 
 function parseValue<T extends ConfigType>(
@@ -84,8 +66,8 @@ function parseValue<T extends ConfigType>(
   value: string,
 ): ConfigTypeMap[T] | undefined {
   const parsed = configValue.validator.safeParse(value);
-  if (parsed.success) {
-    return parsed.data as ConfigTypeMap[T];
+  if (!parsed.success) {
+    return undefined;
   }
-  return undefined;
+  return parsed.data as ConfigTypeMap[T];
 }
