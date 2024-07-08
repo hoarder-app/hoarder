@@ -59,6 +59,7 @@ function createTab(sectionName: string, section: ConfigSubSection) {
 const LOOKUP_TABLE = {
   [ConfigType.BOOLEAN]: createBooleanRow,
   [ConfigType.STRING]: createStringRow,
+  [ConfigType.PASSWORD]: createPasswordRow,
   [ConfigType.NUMBER]: createNumberRow,
   [ConfigType.INFERENCE_PROVIDER_ENUM]: createInferenceProviderRow,
 };
@@ -89,6 +90,16 @@ function createStringRow(configValue: ConfigValue<ConfigType>) {
   return (
     <Input
       type="text"
+      value={configValue.defaultValue?.toString()}
+      className="w-100"
+    />
+  );
+}
+
+function createPasswordRow(configValue: ConfigValue<ConfigType>) {
+  return (
+    <Input
+      type="password"
       value={configValue.defaultValue?.toString()}
       className="w-100"
     />

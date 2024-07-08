@@ -3,6 +3,7 @@ import { z } from "zod";
 export enum ConfigType {
   BOOLEAN,
   STRING,
+  PASSWORD,
   NUMBER,
   INFERENCE_PROVIDER_ENUM,
 }
@@ -25,6 +26,7 @@ export type InferenceProviderEnumZodType =
 export interface ConfigTypeMap {
   [ConfigType.BOOLEAN]: boolean;
   [ConfigType.STRING]: string;
+  [ConfigType.PASSWORD]: string;
   [ConfigType.NUMBER]: number;
   [ConfigType.INFERENCE_PROVIDER_ENUM]: string;
 }
@@ -32,6 +34,7 @@ export interface ConfigTypeMap {
 export interface ConfigValidatorMap {
   [ConfigType.BOOLEAN]: z.ZodBoolean;
   [ConfigType.STRING]: z.ZodString;
+  [ConfigType.PASSWORD]: z.ZodString;
   [ConfigType.NUMBER]: z.ZodNumber;
   [ConfigType.INFERENCE_PROVIDER_ENUM]: InferenceProviderEnumZodType;
 }
@@ -44,7 +47,7 @@ export interface ConfigProperties<T extends ConfigType> {
   validator: ConfigValidatorMap[T];
 }
 
-export class ConfigValue<T extends ConfigType> {
+export class ConfigValue<T extends ConfigType> implements ConfigProperties<T> {
   key: string;
   name: string;
   type: T;
