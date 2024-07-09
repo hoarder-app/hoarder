@@ -15,6 +15,7 @@ function getTRPCClient(settings: Settings) {
     links: [
       httpBatchLink({
         url: `${settings.address}/api/trpc`,
+        maxURLLength: 14000,
         headers() {
           return {
             Authorization: settings.apiKey
