@@ -7,15 +7,15 @@ import { ConfigType, ConfigTypeMap, ConfigValue } from "./configValue";
 /**
  * @returns the value only from the database without taking the value from the environment into consideration. Undefined if it does not exist
  */
-async function getConfigValueFromDB<T extends ConfigType>(
+export async function getConfigValueFromDB<T extends ConfigType>(
   configValue: ConfigValue<T>,
-): Promise<ConfigTypeMap[T] | undefined> {
+): Promise<ConfigTypeMap[T]> {
   const rows = await db
     .select()
     .from(config)
     .where(eq(config.key, configValue.key));
   if (rows.length === 0) {
-    return void 0;
+    return configValue.defaultValue;
   }
   return parseValue(configValue, rows[0].value);
 }
@@ -50,10 +50,11 @@ export async function getConfigValue<T extends ConfigType>(
   return configValue.defaultValue;
 }
 
-export async function storeValue<T extends ConfigType>(
+export async function storeConfigValue<T extends ConfigType>(
   configValue: ConfigValue<T>,
+  valueToStore: ConfigTypeMap[T],
 ): Promise<void> {
-  const value = configValue.value?.toString() ?? "";
+  const value = valueToStore.toString();
   await db
     .insert(config)
     .values({ key: configValue.key, value })
@@ -61,13 +62,41 @@ export async function storeValue<T extends ConfigType>(
     .execute();
 }
 
+export async function deleteConfigValue<T extends ConfigType>(
+  configValue: ConfigValue<T>,
+): Promise<void> {
+  await db.delete(config).where(eq(config.key, configValue.key));
+}
+
+/**
+ * Parses a value based on the configValue configuration
+ * @param configValue the configValue that is being parsed
+ * @param value the value to parse
+ */
 function parseValue<T extends ConfigType>(
   configValue: ConfigValue<T>,
   value: string,
-): ConfigTypeMap[T] | undefined {
+): ConfigTypeMap[T] {
+  if (Array.isArray(configValue.validator)) {
+    for (const validator of configValue.validator) {
+      const parsed = validator.safeParse(value);
+      if (parsed.success) {
+        return parsed.data as ConfigTypeMap[T];
+      }
+    }
+    throw new Error(
+      `"${configValue.key}" contains an invalid value: "${value}"`,
+    );
+  }
+  // Zod parsing for booleans is considering everything truthy as true, so it needs special handling
+  if (configValue.type === ConfigType.BOOLEAN) {
+    return (value === "true") as ConfigTypeMap[T];
+  }
   const parsed = configValue.validator.safeParse(value);
   if (!parsed.success) {
-    return undefined;
+    throw new Error(
+      `"${configValue.key}" contains an invalid value: "${value}"`,
+    );
   }
   return parsed.data as ConfigTypeMap[T];
 }
