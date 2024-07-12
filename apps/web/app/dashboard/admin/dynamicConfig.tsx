@@ -12,10 +12,10 @@ import {
 } from "@hoarder/db/config/config";
 import { ConfigTypes } from "@hoarder/db/config/configValue";
 
-function useConfigValues(
-  refreshKey: number,
-): Record<ConfigSectionName, Record<ConfigKeys, ConfigTypes>> | undefined {
-  const { data, error } = api.admin.getConfig.useQuery(refreshKey);
+function useConfigValues():
+  | Record<ConfigSectionName, Record<ConfigKeys, ConfigTypes>>
+  | undefined {
+  const { data, error } = api.admin.getConfig.useQuery();
   if (error) {
     throw error;
   }
@@ -24,8 +24,7 @@ function useConfigValues(
 }
 
 export function DynamicConfig() {
-  const [refreshKey, setRefreshKey] = React.useState(0);
-  const configValues = useConfigValues(refreshKey);
+  const configValues = useConfigValues();
 
   if (!configValues) {
     return null;
@@ -39,9 +38,6 @@ export function DynamicConfig() {
             key={configSectionName}
             config={configValues[configSectionName]}
             configSectionName={configSectionName}
-            onSave={() => {
-              setRefreshKey((prevRefreshKey) => prevRefreshKey + 1);
-            }}
           />
         );
       })}

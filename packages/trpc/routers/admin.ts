@@ -143,7 +143,6 @@ export const adminAppRouter = router({
     await Promise.all(bookmarkIds.map((b) => triggerSearchReindex(b.id)));
   }),
   getConfig: adminProcedure
-    .input(z.number())
     .output(
       z.record(
         z.string(),
