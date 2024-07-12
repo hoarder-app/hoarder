@@ -1,9 +1,12 @@
-import { z } from "zod";
+import { ZodLiteral, ZodTypeAny } from "zod";
+
+import { ConfigKeys } from "./config";
 
 export enum ConfigType {
   BOOLEAN,
   STRING,
   PASSWORD,
+  URL,
   NUMBER,
   INFERENCE_PROVIDER_ENUM,
 }
@@ -14,46 +17,36 @@ export enum InferenceProviderEnum {
   OLLAMA = "ollama",
 }
 
-export const InferenceProviderEnumValidator = z.enum([
-  InferenceProviderEnum.DISABLED,
-  InferenceProviderEnum.OPEN_AI,
-  InferenceProviderEnum.OLLAMA,
-]);
-
-export type InferenceProviderEnumZodType =
-  typeof InferenceProviderEnumValidator;
-
 export interface ConfigTypeMap {
   [ConfigType.BOOLEAN]: boolean;
   [ConfigType.STRING]: string;
   [ConfigType.PASSWORD]: string;
+  [ConfigType.URL]: string;
   [ConfigType.NUMBER]: number;
   [ConfigType.INFERENCE_PROVIDER_ENUM]: string;
 }
 
-export interface ConfigValidatorMap {
-  [ConfigType.BOOLEAN]: z.ZodBoolean;
-  [ConfigType.STRING]: z.ZodString;
-  [ConfigType.PASSWORD]: z.ZodString;
-  [ConfigType.NUMBER]: z.ZodNumber;
-  [ConfigType.INFERENCE_PROVIDER_ENUM]: InferenceProviderEnumZodType;
-}
+export type ConfigTypes = boolean | number | string;
 
 export interface ConfigProperties<T extends ConfigType> {
-  key: string;
+  key: ConfigKeys;
   name: string;
   type: T;
   defaultValue: ConfigTypeMap[T];
-  validator: ConfigValidatorMap[T];
+  validator: ZodTypeAny | ZodLiteral<string>[];
+  dependsOn?: ConfigKeys[];
+  renderIf?: (value: ConfigTypes) => boolean;
 }
 
-export class ConfigValue<T extends ConfigType> implements ConfigProperties<T> {
-  key: string;
+export class ConfigValue<T extends ConfigType> {
+  key: ConfigKeys;
   name: string;
   type: T;
   defaultValue: ConfigTypeMap[T];
-  validator: ConfigValidatorMap[T];
+  validator: ZodTypeAny | ZodLiteral<string>[];
   value: ConfigTypeMap[T] | undefined;
+  dependsOn: ConfigKeys[];
+  renderIf?: (value: ConfigTypes) => boolean;
 
   constructor(props: ConfigProperties<T>) {
     this.key = props.key;
@@ -61,9 +54,22 @@ export class ConfigValue<T extends ConfigType> implements ConfigProperties<T> {
     this.type = props.type;
     this.defaultValue = props.defaultValue;
     this.validator = props.validator;
+    this.dependsOn = props.dependsOn ?? [];
+    this.renderIf = props.renderIf;
   }
 
-  setValue(value: ConfigTypeMap[T]): void {
-    this.value = value;
+  shouldRender(currentValues: Record<ConfigKeys, ConfigTypes>): boolean {
+    if (this.renderIf) {
+      for (const key of Object.keys(currentValues)) {
+        const configKey = key as ConfigKeys;
+        if (
+          this.dependsOn.includes(configKey) &&
+          !this.renderIf(currentValues[configKey])
+        ) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }
