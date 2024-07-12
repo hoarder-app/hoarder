@@ -154,7 +154,6 @@ export const adminAppRouter = router({
     );
   }),
   getConfig: adminProcedure
-    .input(z.number())
     .output(
       z.record(
         z.string(),
