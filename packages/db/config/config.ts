@@ -93,7 +93,7 @@ export const serverConfig: ServerConfig = {
       validator: z.boolean(),
       dependsOn: [ConfigKeys.CRAWLER_STORE_SCREENSHOT],
       renderIf: (value) => {
-        return !!value;
+        return !value;
       },
     }),
     [ConfigKeys.CRAWLER_FULL_PAGE_ARCHIVE]: new ConfigValue({

@@ -45,11 +45,9 @@ import {
 } from "@hoarder/db/config/configValue";
 
 export function DynamicConfigTab<T extends ConfigSectionName>({
-  onSave,
   configSectionName,
   config,
 }: {
-  onSave: () => void;
   configSectionName: T;
   config?: Record<ConfigKeys, ConfigTypes>;
 }) {
@@ -59,13 +57,39 @@ export function DynamicConfigTab<T extends ConfigSectionName>({
     resolver: zodResolver(configSchema),
   });
 
+  /**
+   * @param values the current values of the form
+   * @returns the new config values where all the hidden elements get reset to the default value to have the correct state again
+   */
+  function resetUnusedConfigValues(values: Record<ConfigKeys, ConfigTypes>) {
+    const updatedValues: Record<ConfigKeys, ConfigTypes> = {} as Record<
+      ConfigKeys,
+      ConfigTypes
+    >;
+    Object.values(serverConfig[configSectionName]).forEach((configValue) => {
+      if (
+        !configValue.shouldRender(values) &&
+        values[configValue.key] !== configValue.defaultValue
+      ) {
+        // Element is hidden --> reset to the default value
+        updatedValues[configValue.key] = configValue.defaultValue;
+      } else {
+        updatedValues[configValue.key] = values[configValue.key];
+      }
+    });
+    return updatedValues;
+  }
+
   const { mutate: storeConfig } = api.admin.storeConfig.useMutation({
     onSuccess: () => {
       toast({
         description: "Config updated!",
       });
-      form.reset(form.getValues());
-      onSave();
+      form.reset(
+        resetUnusedConfigValues(
+          form.getValues() as Record<ConfigKeys, ConfigTypes>,
+        ),
+      );
     },
     onError: (error) => {
       toast({
@@ -91,10 +115,10 @@ export function DynamicConfigTab<T extends ConfigSectionName>({
         </div>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(async (value) => {
+            onSubmit={form.handleSubmit(async (values) => {
               storeConfig({
                 configSectionName,
-                values: value as Record<ConfigKeys, ConfigTypes>,
+                values: values as Record<ConfigKeys, ConfigTypes>,
               });
             })}
           >
