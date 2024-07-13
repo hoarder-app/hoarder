@@ -58,6 +58,7 @@ function EditMode({
         onKeyDown={(e) => {
           if (e.key === "Enter") {
             e.preventDefault();
+            onSave();
           }
         }}
       />
