@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1720980389423,
+      "tag": "0000_blue_weapon_omega",
+      "breakpoints": true
+    }
+  ]
+}
