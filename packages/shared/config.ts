@@ -10,6 +10,11 @@ const stringBool = (defaultValue: string) =>
 const allEnv = z.object({
   API_URL: z.string().url().default("http://localhost:3000"),
   DISABLE_SIGNUPS: stringBool("false"),
+  OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING: stringBool("false"),
+  OAUTH_WELLKNOWN_URL: z.string().url().optional(),
+  OAUTH_CLIENT_SECRET: z.string().optional(),
+  OAUTH_CLIENT_ID: z.string().optional(),
+  OAUTH_PROVIDER_NAME: z.string().default("Custom Provider"),
   OPENAI_API_KEY: z.string().optional(),
   OPENAI_BASE_URL: z.string().url().optional(),
   OLLAMA_BASE_URL: z.string().url().optional(),
@@ -49,6 +54,14 @@ const serverConfigSchema = allEnv.transform((val) => {
     apiUrl: val.API_URL,
     auth: {
       disableSignups: val.DISABLE_SIGNUPS,
+      oauth: {
+        allowDangerousEmailAccountLinking:
+          val.OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING,
+        wellKnownUrl: val.OAUTH_WELLKNOWN_URL,
+        clientSecret: val.OAUTH_CLIENT_SECRET,
+        clientId: val.OAUTH_CLIENT_ID,
+        name: val.OAUTH_PROVIDER_NAME,
+      },
     },
     inference: {
       openAIApiKey: val.OPENAI_API_KEY,
