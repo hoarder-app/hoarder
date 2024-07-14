@@ -422,15 +422,12 @@ async function archiveWebpage(
   jobId: string,
 ) {
   logger.info(`[Crawler][${jobId}] Will attempt to archive page ...`);
-  const urlParsed = new URL(url);
-  const baseUrl = `${urlParsed.protocol}//${urlParsed.host}`;
-
   const assetId = newAssetId();
   const assetPath = `/tmp/${assetId}`;
 
   await execa({
     input: html,
-  })`monolith  - -Ije -t 5 -b ${baseUrl} -o ${assetPath}`;
+  })`monolith  - -Ije -t 5 -b ${url} -o ${assetPath}`;
 
   await saveAssetFromFile({
     userId,
@@ -442,7 +439,7 @@ async function archiveWebpage(
   });
 
   logger.info(
-    `[Crawler][${jobId}] Done archiving the page as assertId: ${assetId}`,
+    `[Crawler][${jobId}] Done archiving the page as assetId: ${assetId}`,
   );
 
   return assetId;
