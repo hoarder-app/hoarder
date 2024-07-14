@@ -58,7 +58,6 @@ The demo is seeded with some content, but it's in read-only mode to prevent abus
 - [tRPC](https://trpc.io) for client->server communication.
 - [Puppeteer](https://pptr.dev/) for crawling the bookmarks.
 - [OpenAI](https://openai.com/) because AI is so hot right now.
-- [BullMQ](https://bullmq.io) for scheduling the background jobs.
 - [Meilisearch](https://meilisearch.com) for the full content search.
 
 ## Why did I build it?

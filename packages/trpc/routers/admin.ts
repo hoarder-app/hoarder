@@ -54,7 +54,7 @@ export const adminAppRouter = router({
         ctx.db.select({ value: count() }).from(bookmarks),
 
         // Crawls
-        LinkCrawlerQueue.getWaitingCount(),
+        LinkCrawlerQueue.stats(),
         ctx.db
           .select({ value: count() })
           .from(bookmarkLinks)
@@ -65,10 +65,10 @@ export const adminAppRouter = router({
           .where(eq(bookmarkLinks.crawlStatus, "failure")),
 
         // Indexing
-        SearchIndexingQueue.getWaitingCount(),
+        SearchIndexingQueue.stats(),
 
         // Inference
-        OpenAIQueue.getWaitingCount(),
+        OpenAIQueue.stats(),
         ctx.db
           .select({ value: count() })
           .from(bookmarks)
@@ -83,17 +83,22 @@ export const adminAppRouter = router({
         numUsers,
         numBookmarks,
         crawlStats: {
-          queuedInRedis: pendingCrawlsInRedis,
+          queuedInRedis:
+            pendingCrawlsInRedis.pending + pendingCrawlsInRedis.pending_retry,
           pending: pendingCrawls,
           failed: failedCrawls,
         },
         inferenceStats: {
-          queuedInRedis: pendingInferenceInRedis,
+          queuedInRedis:
+            pendingInferenceInRedis.pending +
+            pendingInferenceInRedis.pending_retry,
           pending: pendingInference,
           failed: failedInference,
         },
         indexingStats: {
-          queuedInRedis: pendingIndexingInRedis,
+          queuedInRedis:
+            pendingIndexingInRedis.pending +
+            pendingIndexingInRedis.pending_retry,
         },
       };
     }),
@@ -116,7 +121,7 @@ export const adminAppRouter = router({
 
       await Promise.all(
         bookmarkIds.map((b) =>
-          LinkCrawlerQueue.add("crawl", {
+          LinkCrawlerQueue.enqueue({
             bookmarkId: b.id,
             runInference: input.runInference,
           }),

@@ -310,14 +310,14 @@ export const bookmarksAppRouter = router({
       switch (bookmark.content.type) {
         case BookmarkTypes.LINK: {
           // The crawling job triggers openai when it's done
-          await LinkCrawlerQueue.add("crawl", {
+          await LinkCrawlerQueue.enqueue({
             bookmarkId: bookmark.id,
           });
           break;
         }
         case BookmarkTypes.TEXT:
         case BookmarkTypes.ASSET: {
-          await OpenAIQueue.add("openai", {
+          await OpenAIQueue.enqueue({
             bookmarkId: bookmark.id,
           });
           break;
@@ -418,7 +418,7 @@ export const bookmarksAppRouter = router({
     .input(z.object({ bookmarkId: z.string() }))
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input }) => {
-      await LinkCrawlerQueue.add("crawl", {
+      await LinkCrawlerQueue.enqueue({
         bookmarkId: input.bookmarkId,
       });
     }),
