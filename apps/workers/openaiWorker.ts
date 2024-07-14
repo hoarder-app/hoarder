@@ -1,5 +1,3 @@
-import type { Job } from "bullmq";
-import { Worker } from "bullmq";
 import { and, Column, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 
@@ -11,12 +9,12 @@ import {
   bookmarkTags,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
+import { DequeuedJob, Runner } from "@hoarder/queue";
 import { readAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
 import {
   OpenAIQueue,
-  queueConnectionDetails,
   triggerSearchReindex,
   zOpenAIRequestSchema,
 } from "@hoarder/shared/queues";
@@ -63,26 +61,29 @@ async function attemptMarkTaggingStatus(
 export class OpenAiWorker {
   static build() {
     logger.info("Starting inference worker ...");
-    const worker = new Worker<ZOpenAIRequest, void>(
-      OpenAIQueue.name,
-      runOpenAI,
+    const worker = new Runner<ZOpenAIRequest>(
+      OpenAIQueue,
       {
-        connection: queueConnectionDetails,
-        autorun: false,
+        run: runOpenAI,
+        onComplete: async (job) => {
+          const jobId = job?.id ?? "unknown";
+          logger.info(`[inference][${jobId}] Completed successfully`);
+          await attemptMarkTaggingStatus(job?.data, "success");
+        },
+        onError: async (job) => {
+          const jobId = job?.id ?? "unknown";
+          logger.error(
+            `[inference][${jobId}] inference job failed: ${job.error}`,
+          );
+          await attemptMarkTaggingStatus(job?.data, "failure");
+        },
+      },
+      {
+        concurrency: 1,
+        pollIntervalMs: 1000,
+        timeoutSecs: 30,
       },
     );
-
-    worker.on("completed", (job) => {
-      const jobId = job?.id ?? "unknown";
-      logger.info(`[inference][${jobId}] Completed successfully`);
-      attemptMarkTaggingStatus(job?.data, "success");
-    });
-
-    worker.on("failed", (job, error) => {
-      const jobId = job?.id ?? "unknown";
-      logger.error(`[inference][${jobId}] inference job failed: ${error}`);
-      attemptMarkTaggingStatus(job?.data, "failure");
-    });
 
     return worker;
   }
@@ -361,7 +362,7 @@ async function connectTags(
   });
 }
 
-async function runOpenAI(job: Job<ZOpenAIRequest, void>) {
+async function runOpenAI(job: DequeuedJob<ZOpenAIRequest>) {
   const jobId = job.id ?? "unknown";
 
   const inferenceClient = InferenceClientFactory.build();
