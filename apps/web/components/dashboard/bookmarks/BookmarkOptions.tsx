@@ -12,6 +12,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
 import { useTranslation } from "@/lib/i18n/client";
 import {
+  Download,
   FileDown,
   Link,
   List,
@@ -187,6 +188,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
           )}
 
           {bookmark.content.type === BookmarkTypes.LINK && (
+              <>
             <DropdownMenuItem
               onClick={() => {
                 navigator.clipboard.writeText(
@@ -200,6 +202,14 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               <Link className="mr-2 size-4" />
               <span>{t("actions.copy_link")}</span>
             </DropdownMenuItem>
+
+                <DropdownMenuItem>
+                  <Download className="mr-2 size-4"></Download>
+                  <a href={`/api/epub?assetId=${bookmark.id}`}>
+                    Download as EPUB
+                  </a>
+                </DropdownMenuItem>
+              </>
           )}
           <DropdownMenuItem onClick={() => setTagModalIsOpen(true)}>
             <Tags className="mr-2 size-4" />
