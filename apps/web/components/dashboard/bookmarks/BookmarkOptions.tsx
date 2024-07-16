@@ -11,6 +11,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
 import {
+  Download,
   Link,
   List,
   ListX,
@@ -153,19 +154,28 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
           </DropdownMenuItem>
           {bookmark.content.type === BookmarkTypes.LINK && (
-            <DropdownMenuItem
-              onClick={() => {
-                navigator.clipboard.writeText(
-                  (bookmark.content as ZBookmarkedLink).url,
-                );
-                toast({
-                  description: "Link was added to your clipboard!",
-                });
-              }}
-            >
-              <Link className="mr-2 size-4" />
-              <span>Copy Link</span>
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuItem
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    (bookmark.content as ZBookmarkedLink).url,
+                  );
+                  toast({
+                    description: "Link was added to your clipboard!",
+                  });
+                }}
+              >
+                <Link className="mr-2 size-4" />
+                <span>Copy Link</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem>
+                <Download className="mr-2 size-4"></Download>
+                <a href={`/api/epub?assetId=${bookmark.id}`}>
+                  Download as EPUB
+                </a>
+              </DropdownMenuItem>
+            </>
           )}
           <DropdownMenuItem onClick={() => setTagModalIsOpen(true)}>
             <Tags className="mr-2 size-4" />
