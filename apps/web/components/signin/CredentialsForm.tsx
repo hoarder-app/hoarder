@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
 import {
   Form,
@@ -28,9 +28,18 @@ const signInSchema = z.object({
   password: z.string(),
 });
 
+const SIGNIN_FAILED = "Incorrect username or password";
+const OAUTH_FAILED = "OAuth login failed: ";
+
 function SignIn() {
-  const [signinError, setSigninError] = useState(false);
+  const [signinError, setSigninError] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const oAuthError = searchParams.get("error");
+  if (oAuthError && !signinError) {
+    setSigninError(`${OAUTH_FAILED} ${oAuthError}`);
+  }
+
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
   });
@@ -45,7 +54,7 @@ function SignIn() {
             password: value.password,
           });
           if (!resp || !resp?.ok) {
-            setSigninError(true);
+            setSigninError(SIGNIN_FAILED);
             return;
           }
           router.replace("/");
@@ -53,9 +62,7 @@ function SignIn() {
       >
         <div className="flex w-full flex-col space-y-2">
           {signinError && (
-            <p className="w-full text-center text-destructive">
-              Incorrect username or password
-            </p>
+            <p className="w-full text-center text-destructive">{signinError}</p>
           )}
           <FormField
             control={form.control}
