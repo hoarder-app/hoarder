@@ -115,8 +115,10 @@ export const tagsAppRouter = router({
       if (res.changes == 0) {
         throw new TRPCError({ code: "NOT_FOUND" });
       }
-      affectedBookmarks.forEach(({ bookmarkId }) =>
-        triggerSearchReindex(bookmarkId),
+      await Promise.all(
+        affectedBookmarks.map(({ bookmarkId }) =>
+          triggerSearchReindex(bookmarkId),
+        ),
       );
     }),
   deleteUnused: authedProcedure
@@ -185,11 +187,11 @@ export const tagsAppRouter = router({
               },
             },
           );
-          await Promise.all([
+          await Promise.all(
             affectedBookmarks
               .map((b) => b.bookmarkId)
               .map((id) => triggerSearchReindex(id)),
-          ]);
+          );
         } catch (e) {
           // Best Effort attempt to reindex affected bookmarks
           console.error("Failed to reindex affected bookmarks", e);
@@ -304,9 +306,9 @@ export const tagsAppRouter = router({
       );
 
       try {
-        await Promise.all([
+        await Promise.all(
           affectedBookmarks.map((id) => triggerSearchReindex(id)),
-        ]);
+        );
       } catch (e) {
         // Best Effort attempt to reindex affected bookmarks
         console.error("Failed to reindex affected bookmarks", e);
