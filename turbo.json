@@ -1,12 +1,18 @@
 {
   "$schema": "https://turborepo.org/schema.json",
-  "globalDependencies": ["**/.env"],
-  "pipeline": {
+  "globalDependencies": [
+    "**/.env"
+  ],
+  "tasks": {
     "topo": {
-      "dependsOn": ["^topo"]
+      "dependsOn": [
+        "^topo"
+      ]
     },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": [
+        "^build"
+      ],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
@@ -21,16 +27,26 @@
       "cache": false
     },
     "format": {
-      "outputs": ["node_modules/.cache/.prettiercache"],
-      "outputMode": "new-only"
+      "outputs": [
+        "node_modules/.cache/.prettiercache"
+      ],
+      "outputLogs": "new-only"
     },
     "lint": {
-      "dependsOn": ["^topo"],
-      "outputs": ["node_modules/.cache/.eslintcache"]
+      "dependsOn": [
+        "^topo"
+      ],
+      "outputs": [
+        "node_modules/.cache/.eslintcache"
+      ]
     },
     "typecheck": {
-      "dependsOn": ["^topo"],
-      "outputs": ["node_modules/.cache/tsbuildinfo.json"]
+      "dependsOn": [
+        "^topo"
+      ],
+      "outputs": [
+        "node_modules/.cache/tsbuildinfo.json"
+      ]
     },
     "clean": {
       "cache": false
