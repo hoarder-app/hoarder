@@ -106,19 +106,19 @@ export default function ServerStats() {
           <TableBody>
             <TableRow>
               <TableCell className="lg:w-2/3">Crawling Jobs</TableCell>
-              <TableCell>{serverStats.crawlStats.queuedInRedis}</TableCell>
+              <TableCell>{serverStats.crawlStats.queued}</TableCell>
               <TableCell>{serverStats.crawlStats.pending}</TableCell>
               <TableCell>{serverStats.crawlStats.failed}</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Indexing Jobs</TableCell>
-              <TableCell>{serverStats.indexingStats.queuedInRedis}</TableCell>
+              <TableCell>{serverStats.indexingStats.queued}</TableCell>
               <TableCell>-</TableCell>
               <TableCell>-</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>Inference Jobs</TableCell>
-              <TableCell>{serverStats.inferenceStats.queuedInRedis}</TableCell>
+              <TableCell>{serverStats.inferenceStats.queued}</TableCell>
               <TableCell>{serverStats.inferenceStats.pending}</TableCell>
               <TableCell>{serverStats.inferenceStats.failed}</TableCell>
             </TableRow>
