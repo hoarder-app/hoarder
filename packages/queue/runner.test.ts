@@ -157,9 +157,9 @@ describe("SqiteQueueRunner", () => {
       barrier,
     );
 
-    queue.enqueue({ increment: 1 });
-    queue.enqueue({ increment: 2 });
-    queue.enqueue({ increment: 3 });
+    await queue.enqueue({ increment: 1 });
+    await queue.enqueue({ increment: 2 });
+    await queue.enqueue({ increment: 3 });
 
     expect(await queue.stats()).toEqual({
       pending: 3,
@@ -215,9 +215,9 @@ describe("SqiteQueueRunner", () => {
     barrier.allowParticipantsToProceed();
     const { runner, results } = buildRunner(queue, defaultRunnerOpts, barrier);
 
-    queue.enqueue({ increment: 1, succeedAfter: 2 });
-    queue.enqueue({ increment: 1, succeedAfter: 10 });
-    queue.enqueue({ increment: 3, succeedAfter: 0 });
+    await queue.enqueue({ increment: 1, succeedAfter: 2 });
+    await queue.enqueue({ increment: 1, succeedAfter: 10 });
+    await queue.enqueue({ increment: 3, succeedAfter: 0 });
 
     const runnerPromise = runner.runUntilEmpty();
 
@@ -256,7 +256,7 @@ describe("SqiteQueueRunner", () => {
       barrier,
     );
 
-    queue.enqueue({ increment: 1, blockForSec: 10 });
+    await queue.enqueue({ increment: 1, blockForSec: 10 });
     await runner.runUntilEmpty();
 
     expect(await queue.stats()).toEqual({
