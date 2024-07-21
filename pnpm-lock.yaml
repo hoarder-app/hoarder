@@ -445,6 +445,9 @@ importers:
       '@emoji-mart/react':
         specifier: ^1.1.1
         version: 1.1.1(emoji-mart@5.5.2)(react@18.2.0)
+      '@epubkit/epub-gen-memory':
+        specifier: 1.0.10-aplha.8
+        version: 1.0.10-aplha.8
       '@hoarder/db':
         specifier: workspace:^0.1.0
         version: link:../../packages/db
@@ -532,9 +535,6 @@ importers:
       drizzle-orm:
         specifier: ^0.29.4
         version: 0.29.4(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0)
-      epub-gen-memory:
-        specifier: ^1.0.10
-        version: 1.0.10
       fastest-levenshtein:
         specifier: ^1.0.16
         version: 1.0.16
@@ -2253,6 +2253,10 @@ packages:
 
   '@emotion/weak-memoize@0.3.1':
     resolution: {integrity: sha512-EsBwpc7hBUJWAsNPBmJy4hxWx12v6bshQsldrVmjxJoc3isbxhOrF2IcCpaXxfvq03NwkI7sbsOLXbYuqF/8Ww==}
+
+  '@epubkit/epub-gen-memory@1.0.10-aplha.8':
+    resolution: {integrity: sha512-YGHltjJnmSRceyQyY74vL5WTRpswQtdv+nR6oiHFLUIj5P1gfC4O0MnX7v5Wi5oX4VDzAyxouCz9OwWqmF0zag==}
+    engines: {node: '>=10.0.0'}
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
@@ -6253,10 +6257,6 @@ packages:
 
   eol@0.9.1:
     resolution: {integrity: sha512-Ds/TEoZjwggRoz/Q2O7SE3i4Jm66mqTDfmdHdq/7DKVk3bro9Q8h6WdXKdPqFLMoqxrDK5SVRzHVPOS6uuGtrg==}
-
-  epub-gen-memory@1.0.10:
-    resolution: {integrity: sha512-QS4rEGCO/AUaaofhvAzXAxz0bJ/u23ZGdsdfjVBsWE6LHqM1Mi4R0rs+f6BbGDrHWBvASZkadvrfMc73TFpC6Q==}
-    engines: {node: '>=10.0.0'}
 
   err-code@2.0.3:
     resolution: {integrity: sha512-2bmlRpNKBxT/CRmPOlyISQpNj+qSeYvcym/uT0Jx2bMOlKLtSy1ZmLuVxSEKKyor/N5yhvp/ZiG1oE3DEYMSFA==}
@@ -15429,6 +15429,25 @@ snapshots:
   '@emotion/weak-memoize@0.3.1':
     dev: false
 
+  '@epubkit/epub-gen-memory@1.0.10-aplha.8':
+    dependencies:
+      abort-controller: 3.0.0
+      css-select: 4.3.0
+      diacritics: 1.3.0
+      dom-serializer: 1.4.1
+      domhandler: 4.3.1
+      domutils: 2.8.0
+      ejs: 3.1.9
+      htmlparser2: 7.2.0
+      jszip: 3.10.1
+      mime: 2.6.0
+      node-fetch: 2.7.0
+      ow: 0.28.2
+      slugify: 1.6.6
+    transitivePeerDependencies:
+      - encoding
+    dev: false
+
   '@esbuild-kit/core-utils@3.3.2':
     dependencies:
       esbuild: 0.18.20
@@ -20886,25 +20905,6 @@ snapshots:
     dev: false
 
   eol@0.9.1:
-    dev: false
-
-  epub-gen-memory@1.0.10:
-    dependencies:
-      abort-controller: 3.0.0
-      css-select: 4.3.0
-      diacritics: 1.3.0
-      dom-serializer: 1.4.1
-      domhandler: 4.3.1
-      domutils: 2.8.0
-      ejs: 3.1.9
-      htmlparser2: 7.2.0
-      jszip: 3.10.1
-      mime: 2.6.0
-      node-fetch: 2.7.0
-      ow: 0.28.2
-      slugify: 1.6.6
-    transitivePeerDependencies:
-      - encoding
     dev: false
 
   err-code@2.0.3:
