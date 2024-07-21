@@ -84,19 +84,18 @@ export const zvideoRequestSchema = z.object({
 });
 export type ZVideoRequest = z.infer<typeof zvideoRequestSchema>;
 
-export const VideoWorkerQueue = new Queue<ZVideoRequest, void>("video_queue", {
-  connection: queueConnectionDetails,
-  defaultJobOptions: {
-    attempts: 3,
-    backoff: {
-      type: "exponential",
-      delay: 500,
+export const VideoWorkerQueue = new SqliteQueue<ZVideoRequest>(
+  "video_queue",
+  queueDB,
+  {
+    defaultJobArgs: {
+      numRetries: 5,
     },
   },
-});
+);
 
-export function triggerVideoWorker(bookmarkId: string, url: string) {
-  VideoWorkerQueue.add("video_queue", {
+export async function triggerVideoWorker(bookmarkId: string, url: string) {
+  await VideoWorkerQueue.enqueue({
     bookmarkId,
     url,
   });

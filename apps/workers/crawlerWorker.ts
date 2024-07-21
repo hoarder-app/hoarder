@@ -4,7 +4,6 @@ import * as path from "node:path";
 import type { Browser } from "puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
-import Database from "better-sqlite3";
 import DOMPurify from "dompurify";
 import { eq } from "drizzle-orm";
 import { execa } from "execa";
@@ -24,18 +23,9 @@ import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
 
-import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
-import { db, HoarderDBTransaction } from "@hoarder/db";
-import {
-  assets,
-  AssetTypes,
-  bookmarkAssets,
-  bookmarkLinks,
-  bookmarks,
-} from "@hoarder/db/schema";
-import { DequeuedJob, Runner } from "@hoarder/queue";
 import { db } from "@hoarder/db";
 import { bookmarkAssets, bookmarkLinks, bookmarks } from "@hoarder/db/schema";
+import { DequeuedJob, Runner } from "@hoarder/queue";
 import {
   ASSET_TYPES,
   IMAGE_ASSET_TYPES,
