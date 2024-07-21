@@ -64,15 +64,15 @@ export const SearchIndexingQueue = new SqliteQueue<ZSearchIndexingRequest>(
   },
 );
 
-export function triggerSearchReindex(bookmarkId: string) {
-  SearchIndexingQueue.enqueue({
+export async function triggerSearchReindex(bookmarkId: string) {
+  await SearchIndexingQueue.enqueue({
     bookmarkId,
     type: "index",
   });
 }
 
-export function triggerSearchDeletion(bookmarkId: string) {
-  SearchIndexingQueue.enqueue({
+export async function triggerSearchDeletion(bookmarkId: string) {
+  await SearchIndexingQueue.enqueue({
     bookmarkId: bookmarkId,
     type: "delete",
   });

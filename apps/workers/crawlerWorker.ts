@@ -653,13 +653,13 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
 
   // Enqueue openai job (if not set, assume it's true for backward compatibility)
   if (job.data.runInference !== false) {
-    OpenAIQueue.enqueue({
+    await OpenAIQueue.enqueue({
       bookmarkId,
     });
   }
 
   // Update the search index
-  triggerSearchReindex(bookmarkId);
+  await triggerSearchReindex(bookmarkId);
 
   // Do the archival as a separate last step as it has the potential for failure
   await archivalLogic();

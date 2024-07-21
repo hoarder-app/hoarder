@@ -397,5 +397,5 @@ async function runOpenAI(job: DequeuedJob<ZOpenAIRequest>) {
   await connectTags(bookmarkId, tags, bookmark.userId);
 
   // Update the search index
-  triggerSearchReindex(bookmarkId);
+  await triggerSearchReindex(bookmarkId);
 }

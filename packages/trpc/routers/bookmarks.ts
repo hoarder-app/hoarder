@@ -323,7 +323,7 @@ export const bookmarksAppRouter = router({
           break;
         }
       }
-      triggerSearchReindex(bookmark.id);
+      await triggerSearchReindex(bookmark.id);
       return bookmark;
     }),
 
@@ -353,7 +353,7 @@ export const bookmarksAppRouter = router({
           message: "Bookmark not found",
         });
       }
-      triggerSearchReindex(input.bookmarkId);
+      await triggerSearchReindex(input.bookmarkId);
       return res[0];
     }),
 
@@ -379,7 +379,7 @@ export const bookmarksAppRouter = router({
           message: "Bookmark not found",
         });
       }
-      triggerSearchReindex(input.bookmarkId);
+      await triggerSearchReindex(input.bookmarkId);
     }),
 
   deleteBookmark: authedProcedure
@@ -405,7 +405,7 @@ export const bookmarksAppRouter = router({
             eq(bookmarks.id, input.bookmarkId),
           ),
         );
-      triggerSearchDeletion(input.bookmarkId);
+      await triggerSearchDeletion(input.bookmarkId);
       if (deleted.changes > 0 && bookmark) {
         await cleanupAssetForBookmark({
           asset: bookmark.asset,
@@ -747,7 +747,7 @@ export const bookmarksAppRouter = router({
             })),
           )
           .onConflictDoNothing();
-        triggerSearchReindex(input.bookmarkId);
+        await triggerSearchReindex(input.bookmarkId);
         return {
           bookmarkId: input.bookmarkId,
           attached: allIds,
