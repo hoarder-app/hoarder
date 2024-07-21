@@ -1,18 +1,13 @@
 import fs from "fs";
 import path from "path";
-import type { Job } from "bullmq";
-import { Worker } from "bullmq";
 import YTDlpWrap from "yt-dlp-wrap";
 
 import { db } from "@hoarder/db";
+import { DequeuedJob, Runner } from "@hoarder/queue";
 import { newAssetId, saveAssetFromFile } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
-import {
-  queueConnectionDetails,
-  VideoWorkerQueue,
-  ZVideoRequest,
-} from "@hoarder/shared/queues";
+import { VideoWorkerQueue, ZVideoRequest } from "@hoarder/shared/queues";
 import { DBAssetTypes } from "@hoarder/shared/utils/bookmarkUtils";
 
 import { withTimeout } from "./utils";
@@ -36,34 +31,34 @@ export class VideoWorker {
       return;
     }
 
-    const worker = new Worker<ZVideoRequest, void>(
-      VideoWorkerQueue.name,
-      withTimeout(
-        runCrawler,
-        /* timeoutSec */ serverConfig.crawler.downloadVideoTimeout,
-      ),
+    return new Runner<ZVideoRequest>(
+      VideoWorkerQueue,
       {
+        run: withTimeout(
+          runCrawler,
+          /* timeoutSec */ serverConfig.crawler.downloadVideoTimeout,
+        ),
+        onComplete: async (job) => {
+          const jobId = job?.id ?? "unknown";
+          logger.info(
+            `[VideoCrawler][${jobId}] Video Download Completed successfully`,
+          );
+          return Promise.resolve();
+        },
+        onError: async (job) => {
+          const jobId = job?.id ?? "unknown";
+          logger.error(
+            `[VideoCrawler][${jobId}] Video Download job failed: ${job.error}`,
+          );
+          return Promise.resolve();
+        },
+      },
+      {
+        pollIntervalMs: 1000,
+        timeoutSecs: serverConfig.crawler.downloadVideoTimeout,
         concurrency: 1,
-        connection: queueConnectionDetails,
-        autorun: false,
       },
     );
-
-    worker.on("completed", (job) => {
-      const jobId = job?.id ?? "unknown";
-      logger.info(
-        `[VideoCrawler][${jobId}] Video Download Completed successfully`,
-      );
-    });
-
-    worker.on("failed", (job, error) => {
-      const jobId = job?.id ?? "unknown";
-      logger.error(
-        `[VideoCrawler][${jobId}] Video Download job failed: ${error}`,
-      );
-    });
-
-    return worker;
   }
 }
 
@@ -114,7 +109,7 @@ function prepareYtDlpArguments(url: string, assetPath: string) {
   return ytDlpArguments;
 }
 
-async function runCrawler(job: Job<ZVideoRequest, void>) {
+async function runCrawler(job: DequeuedJob<ZVideoRequest>) {
   const jobId = job.id ?? "unknown";
   const { bookmarkId } = job.data;
 

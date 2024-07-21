@@ -4,7 +4,6 @@ import * as path from "node:path";
 import type { Browser } from "puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
-import Database from "better-sqlite3";
 import DOMPurify from "dompurify";
 import { eq } from "drizzle-orm";
 import { execa } from "execa";
@@ -24,18 +23,9 @@ import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
 
-import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
-import { db, HoarderDBTransaction } from "@hoarder/db";
-import {
-  assets,
-  AssetTypes,
-  bookmarkAssets,
-  bookmarkLinks,
-  bookmarks,
-} from "@hoarder/db/schema";
-import { DequeuedJob, Runner } from "@hoarder/queue";
 import { db } from "@hoarder/db";
 import { bookmarkAssets, bookmarkLinks, bookmarks } from "@hoarder/db/schema";
+import { DequeuedJob, Runner } from "@hoarder/queue";
 import {
   ASSET_TYPES,
   IMAGE_ASSET_TYPES,
@@ -634,9 +624,9 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
   }
 
   // Update the search index
-  triggerSearchReindex(bookmarkId);
+  await triggerSearchReindex(bookmarkId);
   // Trigger a potential download of a video from the URL
-  triggerVideoWorker(bookmarkId, url);
+  await triggerVideoWorker(bookmarkId, url);
 
   // Do the archival as a separate last step as it has the potential for failure
   await archivalLogic();
