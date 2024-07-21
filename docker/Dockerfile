@@ -111,3 +111,37 @@ ARG SERVER_VERSION=nightly
 ENV SERVER_VERSION=${SERVER_VERSION}
 
 ENTRYPOINT ["node", "index.mjs"]
+
+
+################# All-in-one ##############
+
+# Start from the web container as its the one with the most configuration
+FROM web AS aio
+
+WORKDIR /app
+
+ARG S6_OVERLAY_VERSION=3.2.0.0
+ARG TARGETARCH
+
+# Install s6-overlay
+ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
+RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
+RUN case ${TARGETARCH} in \
+            "amd64")  S6_ARCH=x86_64   ;; \
+            "arm64")  S6_ARCH=aarch64  ;; \
+        esac \
+    && echo https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz -O /tmp/s6-overlay-${S6_ARCH}.tar.xz \
+    && wget https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-${S6_ARCH}.tar.xz -O /tmp/s6-overlay-${S6_ARCH}.tar.xz \
+    && tar -C / -Jxpf /tmp/s6-overlay-${S6_ARCH}.tar.xz \
+    && rm -f /tmp/s6-overlay-${S6_ARCH}.tar.xz
+
+# Install runtime deps
+RUN apk add --no-cache monolith
+
+# Copy workers code
+COPY --from=workers_builder /prod /app/apps/workers
+RUN corepack enable
+
+COPY --chmod=755 ./docker/root/etc/s6-overlay /etc/s6-overlay
+
+ENTRYPOINT ["/init"]
