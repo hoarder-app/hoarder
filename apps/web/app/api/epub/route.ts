@@ -1,10 +1,18 @@
-import { inArray } from "drizzle-orm";
-import epub, { Chapter } from "epub-gen-memory";
+import { getServerAuthSession } from "@/server/auth";
+import epub, { Chapter } from "@epubkit/epub-gen-memory";
+import { and, eq, inArray } from "drizzle-orm";
 
 import { db } from "@hoarder/db";
-import { bookmarkLinks } from "@hoarder/db/schema";
+import { bookmarkLinks, bookmarks } from "@hoarder/db/schema";
 
 export async function GET(request: Request) {
+  const session = await getServerAuthSession();
+  if (!session || !session.user) {
+    return new Response("", {
+      status: 401,
+    });
+  }
+
   const { searchParams } = new URL(request.url);
   const assetIds = searchParams.getAll("assetId");
 
@@ -20,7 +28,13 @@ export async function GET(request: Request) {
       htmlContent: bookmarkLinks.htmlContent,
     })
     .from(bookmarkLinks)
-    .where(inArray(bookmarkLinks.id, assetIds));
+    .leftJoin(bookmarks, eq(bookmarks.id, bookmarkLinks.id))
+    .where(
+      and(
+        eq(bookmarks.userId, session.user.id),
+        inArray(bookmarkLinks.id, assetIds),
+      ),
+    );
 
   if (!bookmarkInformation || bookmarkInformation.length === 0) {
     return new Response("", {
@@ -28,7 +42,7 @@ export async function GET(request: Request) {
     });
   }
 
-  const chapters = bookmarkInformation.map((information) => {
+  const chapters: Chapter[] = bookmarkInformation.map((information) => {
     return {
       content: information.htmlContent ?? "",
       title: information.title ?? "",
@@ -37,7 +51,10 @@ export async function GET(request: Request) {
 
   const title = getTitle(chapters);
 
-  const generatedEpub = await epub(title, chapters);
+  const generatedEpub = await epub(
+    { title, ignoreFailedDownloads: true },
+    chapters,
+  );
 
   return new Response(generatedEpub, {
     status: 200,
