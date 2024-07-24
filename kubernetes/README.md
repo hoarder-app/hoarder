@@ -2,7 +2,7 @@
 
 You can:
 
-- edit the configuration in `hoarder-env-configman.yaml`.
+- edit the configuration in `hoarder-env-configmap.yaml`.
 - change some deployment parameters such as the Hoarder version in `kustomization.yaml`
 
 Then run `make deploy`.
