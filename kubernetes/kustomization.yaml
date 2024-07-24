@@ -4,8 +4,8 @@ kind: Kustomization
 namespace: hoarder
 
 configMapGenerator:
-- literals:
-  - HOARDER_VERSION=release
+- envs:
+  - .env
   name: hoarder-env
 
 resources:

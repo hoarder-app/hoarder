@@ -12,7 +12,7 @@ You can clone the repository and copy the `/kubernetes` directory into another d
 
 ### 2. Populate the environment variables
 
-To configure the app, edit the configuration in `hoarder-env-configmap.yaml`.
+To configure the app, edit the configuration in `.env`.
 
 
 You **should** change the random strings. You can use `openssl rand -base64 36` to generate the random strings. You should also change the `NEXTAUTH_URL` variable to point to your server address.
@@ -24,7 +24,7 @@ Using `HOARDER_VERSION=release` will pull the latest stable version. You might w
 To enable automatic tagging, you'll need to configure OpenAI. This is optional though but hightly recommended.
 
 - Follow [OpenAI's help](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) to get an API key.
-- Add the OpenAI API key to the configmap file (`hoarder-env-configmap.yaml`):
+- Add the OpenAI API key to the `.env` file:
 
 ```
 OPENAI_API_KEY=<key>
