@@ -191,6 +191,24 @@ bookmarkCmd
   .option("--no-archive", "if set, the bookmark will be unarchived")
   .option("--favourite", "if set, the bookmark will be favourited")
   .option("--no-favourite", "if set, the bookmark will be unfavourited")
+  .argument("<id>", "the id of the bookmark to update")
+  .action(async (id, opts) => {
+    const api = getAPIClient();
+    await api.bookmarks.updateBookmark
+      .mutate({
+        bookmarkId: id,
+        archived: opts.archive,
+        favourited: opts.favourite,
+        title: opts.title,
+        note: opts.note,
+      })
+      .then(printObject)
+      .catch(printError(`Failed to update bookmark with id "${id}"`));
+  });
+
+bookmarkCmd
+  .command("update-tags")
+  .description("update the tags of a bookmark")
   .option(
     "--add-tag <tag>",
     "if set, this tag will be added to the bookmark. Specify multiple times to add multiple tags",
@@ -203,28 +221,9 @@ bookmarkCmd
     collect<string>,
     [],
   )
-  .argument("<id>", "the id of the bookmark to get")
+  .argument("<id>", "the id of the bookmark to update")
   .action(async (id, opts) => {
-    const api = getAPIClient();
     await updateTags(opts.addTag, opts.removeTag, id);
-
-    if (
-      "archive" in opts ||
-      "favourite" in opts ||
-      "title" in opts ||
-      "note" in opts
-    ) {
-      await api.bookmarks.updateBookmark
-        .mutate({
-          bookmarkId: id,
-          archived: opts.archive,
-          favourited: opts.favourite,
-          title: opts.title,
-          note: opts.note,
-        })
-        .then(printObject)
-        .catch(printError(`Failed to update bookmark with id "${id}"`));
-    }
   });
 
 bookmarkCmd
