@@ -63,9 +63,12 @@ bookmarkCmd
     [],
   )
   .option("--stdin", "reads the data from stdin and store it as a note")
-  .option("--list <id>", "if set, the bookmark(s) will be added to this list")
   .option(
-    "--tag <tag>",
+    "--list-id <id>",
+    "if set, the bookmark(s) will be added to this list",
+  )
+  .option(
+    "--tag-name <tag>",
     "if set, this tag will be added to the bookmark(s). Specify multiple times to add multiple tags",
     collect<string>,
     [],
@@ -116,12 +119,13 @@ bookmarkCmd
 
     await Promise.allSettled(promises);
     printObject(results);
-    for (const bookmark of results) {
-      await updateTags(opts.tag, [], bookmark.id);
-      if (opts.list) {
-        await addToList(opts.list, bookmark.id);
-      }
-    }
+
+    await Promise.allSettled(
+      results.flatMap((r) => [
+        updateTags(opts.tagName, [], r.id),
+        opts.listId ? addToList(opts.listId, r.id) : Promise.resolve(),
+      ]),
+    );
   });
 
 bookmarkCmd
@@ -188,13 +192,13 @@ bookmarkCmd
   .option("--favourite", "if set, the bookmark will be favourited")
   .option("--no-favourite", "if set, the bookmark will be unfavourited")
   .option(
-    "--addtag <tag>",
+    "--add-tag <tag>",
     "if set, this tag will be added to the bookmark. Specify multiple times to add multiple tags",
     collect<string>,
     [],
   )
   .option(
-    "--removetag <tag>",
+    "--remove-tag <tag>",
     "if set, this tag will be removed from the bookmark. Specify multiple times to remove multiple tags",
     collect<string>,
     [],
@@ -202,15 +206,21 @@ bookmarkCmd
   .argument("<id>", "the id of the bookmark to get")
   .action(async (id, opts) => {
     const api = getAPIClient();
-    await updateTags(opts.addtag, opts.removetag, id);
+    await updateTags(opts.addTag, opts.removeTag, id);
 
-    if ("archive" in opts || "favourite" in opts || "title" in opts) {
+    if (
+      "archive" in opts ||
+      "favourite" in opts ||
+      "title" in opts ||
+      "note" in opts
+    ) {
       await api.bookmarks.updateBookmark
         .mutate({
           bookmarkId: id,
           archived: opts.archive,
           favourited: opts.favourite,
           title: opts.title,
+          note: opts.note,
         })
         .then(printObject)
         .catch(printError(`Failed to update bookmark with id "${id}"`));
