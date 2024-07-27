@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import ChangeLayout from "@/components/dashboard/ChangeLayout";
+import GlobalActions from "@/components/dashboard/GlobalActions";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 
@@ -37,13 +37,13 @@ export default function ListHeader({
       <span className="text-2xl">
         {list.icon} {list.name}
       </span>
-      <div>
+      <div className="flex">
         <ListOptions list={list}>
           <Button variant="ghost">
             <MoreHorizontal />
           </Button>
         </ListOptions>
-        <ChangeLayout />
+        <GlobalActions />
       </div>
     </div>
   );

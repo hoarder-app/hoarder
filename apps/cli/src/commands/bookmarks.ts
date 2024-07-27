@@ -10,7 +10,10 @@ import { getAPIClient } from "@/lib/trpc";
 import { Command } from "@commander-js/extra-typings";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
-import { MAX_NUM_BOOKMARKS_PER_PAGE } from "@hoarder/shared/types/bookmarks";
+import {
+  BookmarkTypes,
+  MAX_NUM_BOOKMARKS_PER_PAGE,
+} from "@hoarder/shared/types/bookmarks";
 
 export const bookmarkCmd = new Command()
   .name("bookmarks")
@@ -31,7 +34,7 @@ function normalizeBookmark(bookmark: ZBookmark): Bookmark {
     tags: bookmark.tags.map((t) => t.name),
   };
 
-  if (ret.content.type == "link" && ret.content.htmlContent) {
+  if (ret.content.type == BookmarkTypes.LINK && ret.content.htmlContent) {
     if (ret.content.htmlContent.length > 10) {
       ret.content.htmlContent =
         ret.content.htmlContent.substring(0, 10) + "... <CROPPED>";
@@ -75,7 +78,7 @@ bookmarkCmd
     const promises = [
       ...opts.link.map((url) =>
         api.bookmarks.createBookmark
-          .mutate({ type: "link", url })
+          .mutate({ type: BookmarkTypes.LINK, url })
           .then((bookmark: ZBookmark) => {
             results.push(normalizeBookmark(bookmark));
           })
@@ -83,7 +86,7 @@ bookmarkCmd
       ),
       ...opts.note.map((text) =>
         api.bookmarks.createBookmark
-          .mutate({ type: "text", text })
+          .mutate({ type: BookmarkTypes.TEXT, text })
           .then((bookmark: ZBookmark) => {
             results.push(normalizeBookmark(bookmark));
           })
@@ -99,7 +102,7 @@ bookmarkCmd
       const text = fs.readFileSync(0, "utf-8");
       promises.push(
         api.bookmarks.createBookmark
-          .mutate({ type: "text", text })
+          .mutate({ type: BookmarkTypes.TEXT, text })
           .then((bookmark: ZBookmark) => {
             results.push(normalizeBookmark(bookmark));
           })

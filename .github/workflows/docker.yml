@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [web, workers, cli]
+        package: [web, workers, cli, aio]
     runs-on: ubuntu-latest
     permissions:
       packages: write

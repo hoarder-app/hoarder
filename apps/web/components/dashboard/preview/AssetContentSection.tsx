@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 export function AssetContentSection({ bookmark }: { bookmark: ZBookmark }) {
-  if (bookmark.content.type != "asset") {
+  if (bookmark.content.type != BookmarkTypes.ASSET) {
     throw new Error("Invalid content type");
   }
 

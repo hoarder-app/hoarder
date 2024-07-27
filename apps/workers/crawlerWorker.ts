@@ -1,11 +1,9 @@
 import assert from "assert";
 import * as dns from "dns";
 import * as path from "node:path";
-import type { Job } from "bullmq";
 import type { Browser } from "puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
-import { Worker } from "bullmq";
 import DOMPurify from "dompurify";
 import { eq } from "drizzle-orm";
 import { execa } from "execa";
@@ -26,7 +24,7 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
-import { db } from "@hoarder/db";
+import { db, HoarderDBTransaction } from "@hoarder/db";
 import {
   assets,
   AssetTypes,
@@ -34,6 +32,7 @@ import {
   bookmarkLinks,
   bookmarks,
 } from "@hoarder/db/schema";
+import { DequeuedJob, Runner } from "@hoarder/queue";
 import {
   ASSET_TYPES,
   deleteAsset,
@@ -48,10 +47,10 @@ import logger from "@hoarder/shared/logger";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
-  queueConnectionDetails,
   triggerSearchReindex,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 const metascraperParser = metascraper([
   metascraperAmazon(),
@@ -152,36 +151,36 @@ export class CrawlerWorker {
     }
 
     logger.info("Starting crawler worker ...");
-    const worker = new Worker<ZCrawlLinkRequest, void>(
-      LinkCrawlerQueue.name,
-      withTimeout(
-        runCrawler,
-        /* timeoutSec */ serverConfig.crawler.jobTimeoutSec,
-      ),
+    const worker = new Runner<ZCrawlLinkRequest>(
+      LinkCrawlerQueue,
       {
+        run: withTimeout(
+          runCrawler,
+          /* timeoutSec */ serverConfig.crawler.jobTimeoutSec,
+        ),
+        onComplete: async (job) => {
+          const jobId = job?.id ?? "unknown";
+          logger.info(`[Crawler][${jobId}] Completed successfully`);
+          const bookmarkId = job?.data.bookmarkId;
+          if (bookmarkId) {
+            await changeBookmarkStatus(bookmarkId, "success");
+          }
+        },
+        onError: async (job) => {
+          const jobId = job?.id ?? "unknown";
+          logger.error(`[Crawler][${jobId}] Crawling job failed: ${job.error}`);
+          const bookmarkId = job.data?.bookmarkId;
+          if (bookmarkId) {
+            await changeBookmarkStatus(bookmarkId, "failure");
+          }
+        },
+      },
+      {
+        pollIntervalMs: 1000,
+        timeoutSecs: serverConfig.crawler.jobTimeoutSec,
         concurrency: serverConfig.crawler.numWorkers,
-        connection: queueConnectionDetails,
-        autorun: false,
       },
     );
-
-    worker.on("completed", (job) => {
-      const jobId = job?.id ?? "unknown";
-      logger.info(`[Crawler][${jobId}] Completed successfully`);
-      const bookmarkId = job?.data.bookmarkId;
-      if (bookmarkId) {
-        changeBookmarkStatus(bookmarkId, "success");
-      }
-    });
-
-    worker.on("failed", (job, error) => {
-      const jobId = job?.id ?? "unknown";
-      logger.error(`[Crawler][${jobId}] Crawling job failed: ${error}`);
-      const bookmarkId = job?.data.bookmarkId;
-      if (bookmarkId) {
-        changeBookmarkStatus(bookmarkId, "failure");
-      }
-    });
 
     return worker;
   }
@@ -421,15 +420,12 @@ async function archiveWebpage(
   jobId: string,
 ) {
   logger.info(`[Crawler][${jobId}] Will attempt to archive page ...`);
-  const urlParsed = new URL(url);
-  const baseUrl = `${urlParsed.protocol}//${urlParsed.host}`;
-
   const assetId = newAssetId();
   const assetPath = `/tmp/${assetId}`;
 
   await execa({
     input: html,
-  })`monolith  - -Ije -t 5 -b ${baseUrl} -o ${assetPath}`;
+  })`monolith  - -Ije -t 5 -b ${url} -o ${assetPath}`;
 
   await saveAssetFromFile({
     userId,
@@ -441,7 +437,7 @@ async function archiveWebpage(
   });
 
   logger.info(
-    `[Crawler][${jobId}] Done archiving the page as assertId: ${assetId}`,
+    `[Crawler][${jobId}] Done archiving the page as assetId: ${assetId}`,
   );
 
   return assetId;
@@ -500,6 +496,11 @@ async function handleAsAssetBookmark(
       fileName: path.basename(new URL(url).pathname),
       sourceUrl: url,
     });
+    // Switch the type of the bookmark from LINK to ASSET
+    await trx
+      .update(bookmarks)
+      .set({ type: BookmarkTypes.ASSET })
+      .where(eq(bookmarks.id, bookmarkId));
     await trx.delete(bookmarkLinks).where(eq(bookmarkLinks.id, bookmarkId));
   });
 }
@@ -544,27 +545,20 @@ async function crawlAndParseUrl(
       })
       .where(eq(bookmarkLinks.id, bookmarkId));
 
-    if (screenshotAssetId) {
-      if (oldScreenshotAssetId) {
-        await txn.delete(assets).where(eq(assets.id, oldScreenshotAssetId));
-      }
-      await txn.insert(assets).values({
-        id: screenshotAssetId,
-        assetType: AssetTypes.LINK_SCREENSHOT,
-        bookmarkId,
-      });
-    }
-
-    if (imageAssetId) {
-      if (oldImageAssetId) {
-        await txn.delete(assets).where(eq(assets.id, oldImageAssetId));
-      }
-      await txn.insert(assets).values({
-        id: imageAssetId,
-        assetType: AssetTypes.LINK_BANNER_IMAGE,
-        bookmarkId,
-      });
-    }
+    await updateAsset(
+      screenshotAssetId,
+      oldScreenshotAssetId,
+      bookmarkId,
+      AssetTypes.LINK_SCREENSHOT,
+      txn,
+    );
+    await updateAsset(
+      imageAssetId,
+      oldImageAssetId,
+      bookmarkId,
+      AssetTypes.LINK_BANNER_IMAGE,
+      txn,
+    );
   });
 
   // Delete the old assets if any
@@ -587,19 +581,16 @@ async function crawlAndParseUrl(
       );
 
       await db.transaction(async (txn) => {
-        if (oldFullPageArchiveAssetId) {
-          await txn
-            .delete(assets)
-            .where(eq(assets.id, oldFullPageArchiveAssetId));
-        }
-        await txn.insert(assets).values({
-          id: fullPageArchiveAssetId,
-          assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+        await updateAsset(
+          fullPageArchiveAssetId,
+          oldFullPageArchiveAssetId,
           bookmarkId,
-        });
+          AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+          txn,
+        );
       });
       if (oldFullPageArchiveAssetId) {
-        deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
+        await deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
           () => ({}),
         );
       }
@@ -607,7 +598,7 @@ async function crawlAndParseUrl(
   };
 }
 
-async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
+async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
   const jobId = job.id ?? "unknown";
 
   const request = zCrawlLinkRequestSchema.safeParse(job.data);
@@ -662,14 +653,41 @@ async function runCrawler(job: Job<ZCrawlLinkRequest, void>) {
 
   // Enqueue openai job (if not set, assume it's true for backward compatibility)
   if (job.data.runInference !== false) {
-    OpenAIQueue.add("openai", {
+    await OpenAIQueue.enqueue({
       bookmarkId,
     });
   }
 
   // Update the search index
-  triggerSearchReindex(bookmarkId);
+  await triggerSearchReindex(bookmarkId);
 
   // Do the archival as a separate last step as it has the potential for failure
   await archivalLogic();
+}
+
+/**
+ * Removes the old asset and adds a new one instead
+ * @param newAssetId the new assetId to add
+ * @param oldAssetId the old assetId to remove (if it exists)
+ * @param bookmarkId the id of the bookmark the asset belongs to
+ * @param assetType the type of the asset
+ * @param txn the transaction where this update should happen in
+ */
+async function updateAsset(
+  newAssetId: string | null,
+  oldAssetId: string | undefined,
+  bookmarkId: string,
+  assetType: AssetTypes,
+  txn: HoarderDBTransaction,
+) {
+  if (newAssetId) {
+    if (oldAssetId) {
+      await txn.delete(assets).where(eq(assets.id, oldAssetId));
+    }
+    await txn.insert(assets).values({
+      id: newAssetId,
+      assetType,
+      bookmarkId,
+    });
+  }
 }

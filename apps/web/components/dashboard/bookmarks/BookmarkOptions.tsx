@@ -32,6 +32,7 @@ import {
 } from "@hoarder/shared-react/hooks//bookmarks";
 import { useRemoveBookmarkFromList } from "@hoarder/shared-react/hooks//lists";
 import { useBookmarkGridContext } from "@hoarder/shared-react/hooks/bookmark-grid-context";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
 import { ArchivedActionIcon, FavouritedActionIcon } from "./icons";
@@ -115,7 +116,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-fit">
-          {bookmark.content.type === "text" && (
+          {bookmark.content.type === BookmarkTypes.TEXT && (
             <DropdownMenuItem onClick={() => setTextEditorOpen(true)}>
               <Pencil className="mr-2 size-4" />
               <span>Edit</span>
@@ -151,7 +152,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             />
             <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
           </DropdownMenuItem>
-          {bookmark.content.type === "link" && (
+          {bookmark.content.type === BookmarkTypes.LINK && (
             <DropdownMenuItem
               onClick={() => {
                 navigator.clipboard.writeText(
@@ -191,7 +192,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             </DropdownMenuItem>
           )}
 
-          {bookmark.content.type === "link" && (
+          {bookmark.content.type === BookmarkTypes.LINK && (
             <DropdownMenuItem
               disabled={demoMode}
               onClick={() =>

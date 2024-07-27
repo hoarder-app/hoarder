@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/ui/button";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,15 +20,19 @@ const iconMap = {
   list: LayoutList,
 };
 
-export default function SidebarProfileOptions() {
+export default function ChangeLayout() {
   const layout = useBookmarkLayout();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline">
+        <ButtonWithTooltip
+          tooltip="Change layout"
+          delayDuration={100}
+          variant="ghost"
+        >
           {React.createElement(iconMap[layout], { size: 18 })}
-        </Button>
+        </ButtonWithTooltip>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
         {Object.keys(iconMap).map((key) => (

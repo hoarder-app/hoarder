@@ -7,7 +7,7 @@ import { api } from "@/lib/trpc";
 import { useUploadAsset } from "@/lib/upload";
 import { z } from "zod";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 type Mode =
   | { type: "idle" }
@@ -45,9 +45,9 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
       const val = z.string().url();
       if (val.safeParse(shareIntent.text).success) {
         // This is a URL, else treated as text
-        mutate({ type: "link", url: shareIntent.text });
+        mutate({ type: BookmarkTypes.LINK, url: shareIntent.text });
       } else {
-        mutate({ type: "text", text: shareIntent.text });
+        mutate({ type: BookmarkTypes.TEXT, text: shareIntent.text });
       }
     } else if (!isPending && shareIntent?.files) {
       uploadAsset({

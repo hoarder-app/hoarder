@@ -4,8 +4,15 @@ import { zBookmarkTagSchema } from "./tags";
 
 const MAX_TITLE_LENGTH = 100;
 
+export const enum BookmarkTypes {
+  LINK = "link",
+  TEXT = "text",
+  ASSET = "asset",
+  UNKNOWN = "unknown",
+}
+
 export const zBookmarkedLinkSchema = z.object({
-  type: z.literal("link"),
+  type: z.literal(BookmarkTypes.LINK),
   url: z.string().url(),
   title: z.string().nullish(),
   description: z.string().nullish(),
@@ -20,13 +27,13 @@ export const zBookmarkedLinkSchema = z.object({
 export type ZBookmarkedLink = z.infer<typeof zBookmarkedLinkSchema>;
 
 export const zBookmarkedTextSchema = z.object({
-  type: z.literal("text"),
+  type: z.literal(BookmarkTypes.TEXT),
   text: z.string(),
 });
 export type ZBookmarkedText = z.infer<typeof zBookmarkedTextSchema>;
 
 export const zBookmarkedAssetSchema = z.object({
-  type: z.literal("asset"),
+  type: z.literal(BookmarkTypes.ASSET),
   assetType: z.enum(["image", "pdf"]),
   assetId: z.string(),
   fileName: z.string().nullish(),
@@ -38,7 +45,7 @@ export const zBookmarkContentSchema = z.discriminatedUnion("type", [
   zBookmarkedLinkSchema,
   zBookmarkedTextSchema,
   zBookmarkedAssetSchema,
-  z.object({ type: z.literal("unknown") }),
+  z.object({ type: z.literal(BookmarkTypes.UNKNOWN) }),
 ]);
 export type ZBookmarkContent = z.infer<typeof zBookmarkContentSchema>;
 

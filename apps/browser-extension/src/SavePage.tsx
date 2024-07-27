@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
+import { BookmarkTypes } from "../../../packages/shared/types/bookmarks";
 import Spinner from "./Spinner";
 import { api } from "./utils/trpc";
 
@@ -32,7 +33,7 @@ export default function SavePage() {
       }
 
       createBookmark({
-        type: "link",
+        type: BookmarkTypes.LINK,
         url: currentUrl,
       });
     }

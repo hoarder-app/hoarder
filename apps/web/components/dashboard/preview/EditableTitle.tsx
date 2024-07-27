@@ -1,7 +1,7 @@
 import { toast } from "@/components/ui/use-toast";
 
 import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
-import { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import { EditableText } from "../EditableText";
 
@@ -16,13 +16,13 @@ export function EditableTitle({ bookmark }: { bookmark: ZBookmark }) {
 
   let title: string | null = null;
   switch (bookmark.content.type) {
-    case "link":
+    case BookmarkTypes.LINK:
       title = bookmark.content.title ?? bookmark.content.url;
       break;
-    case "text":
+    case BookmarkTypes.TEXT:
       title = null;
       break;
-    case "asset":
+    case BookmarkTypes.ASSET:
       title = bookmark.content.fileName ?? null;
       break;
   }

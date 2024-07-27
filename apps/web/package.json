@@ -63,6 +63,7 @@
     "react-masonry-css": "^1.0.16",
     "react-select": "^5.8.0",
     "react-syntax-highlighter": "^15.5.0",
+    "remark-gfm": "^4.0.0",
     "sharp": "^0.33.3",
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.1",

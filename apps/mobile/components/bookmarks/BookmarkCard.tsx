@@ -26,6 +26,7 @@ import {
   isBookmarkStillLoading,
   isBookmarkStillTagging,
 } from "@hoarder/shared-react/utils/bookmarkUtils";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import { TailwindResolver } from "../TailwindResolver";
 import { Divider } from "../ui/Divider";
@@ -161,7 +162,7 @@ function TagList({ bookmark }: { bookmark: ZBookmark }) {
 
 function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
   const { settings } = useAppSettings();
-  if (bookmark.content.type !== "link") {
+  if (bookmark.content.type !== BookmarkTypes.LINK) {
     throw new Error("Wrong content type rendered");
   }
 
@@ -223,7 +224,7 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
 }
 
 function TextCard({ bookmark }: { bookmark: ZBookmark }) {
-  if (bookmark.content.type !== "text") {
+  if (bookmark.content.type !== BookmarkTypes.TEXT) {
     throw new Error("Wrong content type rendered");
   }
   const content = bookmark.content.text;
@@ -262,7 +263,7 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
 
 function AssetCard({ bookmark }: { bookmark: ZBookmark }) {
   const { settings } = useAppSettings();
-  if (bookmark.content.type !== "asset") {
+  if (bookmark.content.type !== BookmarkTypes.ASSET) {
     throw new Error("Wrong content type rendered");
   }
   const title = bookmark.title ?? bookmark.content.fileName;
@@ -322,13 +323,13 @@ export default function BookmarkCard({
 
   let comp;
   switch (bookmark.content.type) {
-    case "link":
+    case BookmarkTypes.LINK:
       comp = <LinkCard bookmark={bookmark} />;
       break;
-    case "text":
+    case BookmarkTypes.TEXT:
       comp = <TextCard bookmark={bookmark} />;
       break;
-    case "asset":
+    case BookmarkTypes.ASSET:
       comp = <AssetCard bookmark={bookmark} />;
       break;
   }

@@ -18,17 +18,17 @@ export const adminAppRouter = router({
         numUsers: z.number(),
         numBookmarks: z.number(),
         crawlStats: z.object({
-          queuedInRedis: z.number(),
+          queued: z.number(),
           pending: z.number(),
           failed: z.number(),
         }),
         inferenceStats: z.object({
-          queuedInRedis: z.number(),
+          queued: z.number(),
           pending: z.number(),
           failed: z.number(),
         }),
         indexingStats: z.object({
-          queuedInRedis: z.number(),
+          queued: z.number(),
         }),
       }),
     )
@@ -38,15 +38,15 @@ export const adminAppRouter = router({
         [{ value: numBookmarks }],
 
         // Crawls
-        pendingCrawlsInRedis,
+        queuedCrawls,
         [{ value: pendingCrawls }],
         [{ value: failedCrawls }],
 
         // Indexing
-        pendingIndexingInRedis,
+        queuedIndexing,
 
         // Inference
-        pendingInferenceInRedis,
+        queuedInferences,
         [{ value: pendingInference }],
         [{ value: failedInference }],
       ] = await Promise.all([
@@ -54,7 +54,7 @@ export const adminAppRouter = router({
         ctx.db.select({ value: count() }).from(bookmarks),
 
         // Crawls
-        LinkCrawlerQueue.getWaitingCount(),
+        LinkCrawlerQueue.stats(),
         ctx.db
           .select({ value: count() })
           .from(bookmarkLinks)
@@ -65,10 +65,10 @@ export const adminAppRouter = router({
           .where(eq(bookmarkLinks.crawlStatus, "failure")),
 
         // Indexing
-        SearchIndexingQueue.getWaitingCount(),
+        SearchIndexingQueue.stats(),
 
         // Inference
-        OpenAIQueue.getWaitingCount(),
+        OpenAIQueue.stats(),
         ctx.db
           .select({ value: count() })
           .from(bookmarks)
@@ -83,17 +83,17 @@ export const adminAppRouter = router({
         numUsers,
         numBookmarks,
         crawlStats: {
-          queuedInRedis: pendingCrawlsInRedis,
+          queued: queuedCrawls.pending + queuedCrawls.pending_retry,
           pending: pendingCrawls,
           failed: failedCrawls,
         },
         inferenceStats: {
-          queuedInRedis: pendingInferenceInRedis,
+          queued: queuedInferences.pending + queuedInferences.pending_retry,
           pending: pendingInference,
           failed: failedInference,
         },
         indexingStats: {
-          queuedInRedis: pendingIndexingInRedis,
+          queued: queuedIndexing.pending + queuedIndexing.pending_retry,
         },
       };
     }),
@@ -116,7 +116,7 @@ export const adminAppRouter = router({
 
       await Promise.all(
         bookmarkIds.map((b) =>
-          LinkCrawlerQueue.add("crawl", {
+          LinkCrawlerQueue.enqueue({
             bookmarkId: b.id,
             runInference: input.runInference,
           }),

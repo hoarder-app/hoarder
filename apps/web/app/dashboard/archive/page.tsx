@@ -1,5 +1,5 @@
 import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
-import ChangeLayout from "@/components/dashboard/ChangeLayout";
+import GlobalActions from "@/components/dashboard/GlobalActions";
 import InfoTooltip from "@/components/ui/info-tooltip";
 
 function header() {
@@ -12,7 +12,7 @@ function header() {
         </InfoTooltip>
       </div>
       <div>
-        <ChangeLayout />
+        <GlobalActions />
       </div>
     </div>
   );

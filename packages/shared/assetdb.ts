@@ -89,12 +89,15 @@ export async function saveAssetFromFile({
   await fs.promises.mkdir(assetDir, { recursive: true });
 
   await Promise.all([
-    fs.promises.rename(assetPath, path.join(assetDir, "asset.bin")),
+    // We'll have to copy first then delete the original file as inside the docker container
+    // we can't move file between mounts.
+    fs.promises.copyFile(assetPath, path.join(assetDir, "asset.bin")),
     fs.promises.writeFile(
       path.join(assetDir, "metadata.json"),
       JSON.stringify(metadata),
     ),
   ]);
+  await fs.promises.rm(assetPath);
 }
 
 export async function readAsset({

@@ -68,6 +68,7 @@ export default function Providers({
         httpBatchLink({
           // TODO: Change this to be a full URL exposed as a client side setting
           url: `/api/trpc`,
+          maxURLLength: 14000,
           transformer: superjson,
         }),
       ],
