@@ -1,10 +1,12 @@
-import type { Adapter } from "next-auth/adapters";
+import type { Adapter, AdapterUser } from "next-auth/adapters";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { and, count, eq } from "drizzle-orm";
 import NextAuth, {
+  Account,
   DefaultSession,
   getServerSession,
   NextAuthOptions,
+  User,
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Provider } from "next-auth/providers/index";
@@ -14,11 +16,13 @@ import { users } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
 import { validatePassword } from "@hoarder/trpc/auth";
 
+type UserRole = "admin" | "user";
+
 declare module "next-auth/jwt" {
   export interface JWT {
     user: {
       id: string;
-      role: "admin" | "user";
+      role: UserRole;
     } & DefaultSession["user"];
   }
 }
@@ -30,13 +34,75 @@ declare module "next-auth" {
   export interface Session {
     user: {
       id: string;
-      role: "admin" | "user";
+      role: UserRole;
     } & DefaultSession["user"];
   }
 
   export interface DefaultUser {
-    role: "admin" | "user" | null;
+    role: UserRole | null;
   }
+}
+
+/**
+ * OAuth does not provide role information, so we have to read the role from the database, when OAuth is used
+ * @param userId the id of the user to find the roles for
+ */
+async function getRoleForOAuthUser(userId: string) {
+  const result = await db
+    .select({ role: users.role })
+    .from(users)
+    .where(eq(users.id, userId));
+
+  // User already exists-->take what is written in the DB
+  if (result && result.length) {
+    return result[0].role;
+  }
+
+  return null;
+}
+
+/**
+ * If a new user is created based on OAuth credentials, we need to promote the first user to admin, so we have at least 1 admin
+ */
+async function updateRoleForOAuthUser() {
+  let role: UserRole = "user";
+
+  // If there is not a single user yet, we just assign the admin permissions, to have at least 1 admin
+  // Perform in a transaction to prevent 2 users getting promoted to admin if 2 users sign up at the same time
+  return db.transaction(async () => {
+    const [{ count: userCount }] = await db
+      .select({ count: count() })
+      .from(users);
+    if (userCount === 1) {
+      role = "admin";
+
+      // Only 1 user exists --> update the role to admin
+      await db.update(users).set({ role: "admin" });
+    }
+    return role;
+  });
+}
+
+/**
+ * Gets the assigned role for a user
+ * @param user the user object
+ * @param account information about where that account is coming from (oauth or not)
+ * @param isNewUser if this is a new user or not
+ */
+async function getUserRole(
+  user: User | AdapterUser,
+  account: Account | null,
+  isNewUser: boolean | undefined,
+) {
+  let role = user.role;
+  if (account && account.type === "oauth") {
+    if (isNewUser) {
+      role = await updateRoleForOAuthUser();
+    } else {
+      role = await getRoleForOAuthUser(user.id);
+    }
+  }
+  return role;
 }
 
 const providers: Provider[] = [
@@ -83,7 +149,7 @@ if (oauth.clientId && oauth.clientSecret && oauth.wellKnownUrl) {
         name: profile.name,
         email: profile.email,
         image: profile.picture,
-        role: "user",
+        role: "user", //will be updated correctly at a later point, when it is already in the database
       };
     },
   });
@@ -129,14 +195,15 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, isNewUser, account }) {
       if (user) {
+        const role = await getUserRole(user, account, isNewUser);
         token.user = {
           id: user.id,
           name: user.name,
           email: user.email,
           image: user.image,
-          role: user.role ?? "user",
+          role: role ?? "user",
         };
       }
       return token;
