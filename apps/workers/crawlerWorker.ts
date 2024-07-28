@@ -114,6 +114,10 @@ async function launchBrowser() {
       logger.error(
         "[Crawler] Failed to connect to the browser instance, will retry in 5 secs",
       );
+      if (isShuttingDown) {
+        logger.info("[Crawler] We're shutting down so won't retry.");
+        return;
+      }
       setTimeout(() => {
         launchBrowser();
       }, 5000);

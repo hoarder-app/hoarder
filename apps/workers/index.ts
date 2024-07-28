@@ -23,6 +23,11 @@ async function main() {
     Promise.all([crawler.run(), openai.run(), search.run()]),
     shutdownPromise,
   ]);
+  logger.info("Shutting down crawler, openai and search workers ...");
+
+  crawler.stop();
+  openai.stop();
+  search.stop();
 }
 
 main();
