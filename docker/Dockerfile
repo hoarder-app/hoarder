@@ -20,113 +20,38 @@ RUN cd packages/db && \
     cp -R drizzle /db_migrations
 
 
-################# The Web builder ##############
+# Compile the web app
+RUN (cd apps/web && pnpm next experimental-compile)
 
-# Rebuild the source code only when needed
-FROM base AS web_builder
+# Build the worker code
+RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-linker=isolated --filter @hoarder/workers --prod /prod/workers
 
-WORKDIR /app/apps/web
+# Build the cli
+RUN (cd apps/cli && pnpm build)
 
-RUN pnpm next experimental-compile
+################# The All-in-one builder ##############
 
-################# The Web App ##############
-
-FROM node:21-alpine AS web
+FROM node:21-alpine AS aio_builder
 WORKDIR /app
 
-ENV NODE_ENV production
-ENV NEXT_TELEMETRY_DISABLED 1
+ARG SERVER_VERSION=nightly
+ENV SERVER_VERSION=${SERVER_VERSION}
 
-COPY --from=web_builder --chown=node:node /app/apps/web/.next/standalone ./
-COPY --from=web_builder /app/apps/web/public ./apps/web/public
-COPY --from=web_builder /db_migrations /db_migrations
-
-# Set the correct permission for prerender cache
-RUN mkdir -p ./apps/web/.next
-RUN chown node:node ./apps/web/.next
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=web_builder --chown=node:node /app/apps/web/.next/static ./apps/web/.next/static
-
-WORKDIR /app/apps/web
 USER root
-EXPOSE 3000
 
 ENV PORT 3000
-# set hostname to localhost
 ENV HOSTNAME "0.0.0.0"
+EXPOSE 3000
 
-ARG SERVER_VERSION=nightly
-ENV SERVER_VERSION=${SERVER_VERSION}
-
-# server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["/bin/sh", "-c", "(cd /db_migrations && node index.js) && node server.js"]
-
-################# The workers builder ##############
-
-FROM base AS workers_builder
-
-RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-linker=isolated --filter @hoarder/workers --prod /prod
-
-################# The workers ##############
-
-FROM node:21-alpine AS workers
-WORKDIR /app
-RUN apk add --no-cache monolith
-
-COPY --from=workers_builder /prod apps/workers
-
-RUN corepack enable
-
-WORKDIR /app/apps/workers
-
-USER root
-
-ARG SERVER_VERSION=nightly
-ENV SERVER_VERSION=${SERVER_VERSION}
-
-CMD ["pnpm", "run", "start:prod"]
-
-################# The cli builder ##############
-
-FROM base AS cli_builder
-
-WORKDIR /app/apps/cli
-
-RUN pnpm run build
-
-################# The cli ##############
-
-FROM node:21-alpine AS cli
-WORKDIR /app
-
-
-COPY --from=cli_builder /app/apps/cli/dist/index.mjs apps/cli/index.mjs
-
-WORKDIR /app/apps/cli
-
-ARG SERVER_VERSION=nightly
-ENV SERVER_VERSION=${SERVER_VERSION}
-
-ENTRYPOINT ["node", "index.mjs"]
-
-
-################# All-in-one ##############
-
-# Start from the web container as its the one with the most configuration
-FROM web AS aio
-
-WORKDIR /app
-
+######################
+# Prepare s6-overlay
+######################
 ARG S6_OVERLAY_VERSION=3.2.0.0
 ARG TARGETARCH
 
-# Install s6-overlay
 ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz /tmp
-RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz
-RUN case ${TARGETARCH} in \
+RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
+    && case ${TARGETARCH} in \
             "amd64")  S6_ARCH=x86_64   ;; \
             "arm64")  S6_ARCH=aarch64  ;; \
         esac \
@@ -135,13 +60,74 @@ RUN case ${TARGETARCH} in \
     && tar -C / -Jxpf /tmp/s6-overlay-${S6_ARCH}.tar.xz \
     && rm -f /tmp/s6-overlay-${S6_ARCH}.tar.xz
 
-# Install runtime deps
-RUN apk add --no-cache monolith
-
-# Copy workers code
-COPY --from=workers_builder /prod /app/apps/workers
-RUN corepack enable
-
+# Copy the s6-overlay config
 COPY --chmod=755 ./docker/root/etc/s6-overlay /etc/s6-overlay
 
+######################
+# Install runtime deps
+######################
+RUN apk add --no-cache monolith
+
+######################
+# Prepare the web app
+######################
+
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+COPY --from=base --chown=node:node /app/apps/web/.next/standalone ./
+COPY --from=base /app/apps/web/public ./apps/web/public
+COPY --from=base /db_migrations /db_migrations
+
+# Set the correct permission for prerender cache
+RUN mkdir -p ./apps/web/.next && chown node:node ./apps/web/.next
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=base --chown=node:node /app/apps/web/.next/static ./apps/web/.next/static
+
+######################
+# Prepare the workers app
+######################
+COPY --from=base /prod/workers /app/apps/workers
+RUN corepack enable
+
 ENTRYPOINT ["/init"]
+
+################# The AIO ##############
+
+FROM aio_builder AS aio
+
+RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/init-db-migration \
+    /etc/s6-overlay/s6-rc.d/user/contents.d/svc-web \
+    /etc/s6-overlay/s6-rc.d/user/contents.d/svc-workers
+
+################# The web container ##############
+
+FROM aio_builder AS web
+
+RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/init-db-migration \
+    /etc/s6-overlay/s6-rc.d/user/contents.d/svc-web
+
+################# The workers container ##############
+
+FROM aio_builder AS workers
+
+# In the current implemtation, the workers assume the migration
+# is done for them.
+RUN rm /etc/s6-overlay/s6-rc.d/svc-workers/dependencies.d/init-db-migration \
+    && touch /etc/s6-overlay/s6-rc.d/user/contents.d/svc-workers
+
+################# The cli ##############
+
+FROM node:21-alpine AS cli
+WORKDIR /app
+
+COPY --from=base /app/apps/cli/dist/index.mjs apps/cli/index.mjs
+
+WORKDIR /app/apps/cli
+
+ARG SERVER_VERSION=nightly
+ENV SERVER_VERSION=${SERVER_VERSION}
+
+ENTRYPOINT ["node", "index.mjs"]

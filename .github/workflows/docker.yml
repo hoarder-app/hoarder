@@ -12,7 +12,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [web, workers, cli, aio]
+        include:
+          - package: hoarder-web
+            target: web
+          - package: hoarder-workers
+            target: workers
+          - package: hoarder-cli
+            target: cli
+          - package: hoarder
+            target: aio
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -36,12 +44,12 @@ jobs:
           context: .
           build-args: SERVER_VERSION=nightly
           file: docker/Dockerfile
-          target: ${{ matrix.package }}
+          target: ${{ matrix.target }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/hoarder-app/hoarder-${{ matrix.package }}:latest,ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:latest
-          cache-from: type=registry,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.package }}
-          cache-to: type=registry,mode=max,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.package }}
+          tags: ghcr.io/hoarder-app/${{ matrix.package }}:latest,ghcr.io/mohamedbassem/${{ matrix.package }}:latest
+          cache-from: type=registry,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.target }}
+          cache-to: type=registry,mode=max,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.target }}
 
       - name: Build ${{ matrix.package }} (release)
         uses: docker/build-push-action@v5
@@ -50,9 +58,9 @@ jobs:
           context: .
           build-args: SERVER_VERSION=${{ github.event.release.name }}
           file: docker/Dockerfile
-          target: ${{ matrix.package }}
+          target: ${{ matrix.target }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/hoarder-app/hoarder-${{ matrix.package }}:${{ github.event.release.name }},ghcr.io/hoarder-app/hoarder-${{ matrix.package }}:release,ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:${{ github.event.release.name }},ghcr.io/mohamedbassem/hoarder-${{ matrix.package }}:release
-          cache-from: type=registry,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.package }}
-          cache-to: type=registry,mode=max,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.package }}
+          tags: ghcr.io/hoarder-app/${{ matrix.package }}:${{ github.event.release.name }},ghcr.io/hoarder-app/${{ matrix.package }}:release,ghcr.io/mohamedbassem/${{ matrix.package }}:${{ github.event.release.name }},ghcr.io/mohamedbassem/${{ matrix.package }}:release
+          cache-from: type=registry,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.target }}
+          cache-to: type=registry,mode=max,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.target }}
