@@ -3,8 +3,10 @@
 import { ActionButton } from "@/components/ui/action-button";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
+import { useTheme } from "next-themes";
 
 export default function AdminActions() {
+  const { theme } = useTheme();
   const { mutate: recrawlLinks, isPending: isRecrawlPending } =
     api.admin.recrawlLinks.useMutation({
       onSuccess: () => {
@@ -36,7 +38,13 @@ export default function AdminActions() {
     });
 
   return (
-    <div>
+    <div
+      className={`rounded-md p-4 ${
+        theme === "dark"
+          ? "bg-gray-900 bg-opacity-70 text-white"
+          : "bg-white bg-opacity-70 text-gray-900"
+      } backdrop-blur-lg backdrop-filter`}
+    >
       <div className="mb-2 mt-8 text-xl font-medium">Actions</div>
       <div className="flex flex-col gap-2 sm:w-1/2">
         <ActionButton
@@ -45,6 +53,7 @@ export default function AdminActions() {
           onClick={() =>
             recrawlLinks({ crawlStatus: "failure", runInference: true })
           }
+          className="w-max"
         >
           Recrawl Failed Links Only
         </ActionButton>
@@ -54,6 +63,7 @@ export default function AdminActions() {
           onClick={() =>
             recrawlLinks({ crawlStatus: "all", runInference: true })
           }
+          className="w-max"
         >
           Recrawl All Links
         </ActionButton>
@@ -63,6 +73,7 @@ export default function AdminActions() {
           onClick={() =>
             recrawlLinks({ crawlStatus: "all", runInference: false })
           }
+          className="w-max"
         >
           Recrawl All Links (Without Inference)
         </ActionButton>
@@ -70,6 +81,7 @@ export default function AdminActions() {
           variant="destructive"
           loading={isReindexPending}
           onClick={() => reindexBookmarks()}
+          className="w-max"
         >
           Reindex All Bookmarks
         </ActionButton>

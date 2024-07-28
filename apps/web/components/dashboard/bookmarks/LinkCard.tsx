@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Play } from "lucide-react";
+import { useTheme } from "next-themes";
 
 import type { ZBookmarkTypeLink } from "@hoarder/shared/types/bookmarks";
 import {
@@ -15,7 +17,7 @@ function LinkTitle({ bookmark }: { bookmark: ZBookmarkTypeLink }) {
   const link = bookmark.content;
   const parsedUrl = new URL(link.url);
   return (
-    <Link href={link.url} target="_blank">
+    <Link href={link.url} target="_blank" className="">
       {bookmark.title ?? link?.title ?? parsedUrl.host}
     </Link>
   );
@@ -29,6 +31,8 @@ function LinkImage({
   className?: string;
 }) {
   const link = bookmark.content;
+  const isYouTubeLink =
+    link.url.includes("youtube.com") || link.url.includes("youtu.be");
 
   const imgComponent = (url: string, unoptimized: boolean) => (
     <Image
@@ -58,7 +62,15 @@ function LinkImage({
 
   return (
     <Link href={link.url} target="_blank" className={className}>
-      <div className="relative size-full flex-1">{img}</div>
+      <div className="group relative size-full flex-1">
+        {img}
+        {isYouTubeLink && (
+          // Play icon overlay
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Play className="h-16 w-16 transform text-white opacity-80 transition-transform group-hover:scale-125 group-hover:font-extrabold" />
+          </div>
+        )}
+      </div>
     </Link>
   );
 }
@@ -68,7 +80,7 @@ function LinkUrl({ bookmark }: { bookmark: ZBookmarkTypeLink }) {
   const parsedUrl = new URL(link.url);
   return (
     <Link
-      className="line-clamp-1 hover:text-foreground"
+      className="line-clamp-1 text-gray-400 hover:text-foreground"
       href={link.url}
       target="_blank"
     >
@@ -84,6 +96,13 @@ export default function LinkCard({
   bookmark: ZBookmarkTypeLink;
   className?: string;
 }) {
+  const { theme } = useTheme();
+
+  const themeClass =
+    theme === "dark"
+      ? "bg-gray-800 text-white border-gray-700 opacity-90 hover:opacity-100"
+      : "bg-white text-gray-900 border-gray-300 opacity-90 hover:opacity-100";
+
   return (
     <BookmarkLayoutAdaptingCard
       title={<LinkTitle bookmark={bookmarkLink} />}
@@ -93,7 +112,7 @@ export default function LinkCard({
       image={(_layout, className) => (
         <LinkImage className={className} bookmark={bookmarkLink} />
       )}
-      className={className}
+      className={`${className} ${themeClass}`}
     />
   );
 }

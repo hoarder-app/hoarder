@@ -5,12 +5,14 @@ import { SearchInput } from "@/components/dashboard/search/SearchInput";
 
 export default async function BookmarksPage() {
   return (
-    <div>
-      <div className="flex gap-2">
-        <SearchInput />
+    <div className="p-4">
+      <div className="mb-4 flex gap-2">
+        <SearchInput className="flex-1" />
         <GlobalActions />
       </div>
-      <div className="my-4">
+      <div className="mt-1 w-full">
+        {" "}
+        {/* Change from w-max to w-full */}
         <Bookmarks query={{ archived: false }} showEditorCard={true} />
       </div>
     </div>

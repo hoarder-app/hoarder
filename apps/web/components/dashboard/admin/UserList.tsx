@@ -14,8 +14,10 @@ import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { Trash } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 export default function UsersSection() {
+  const { theme, resolvedTheme } = useTheme();
   const { data: session } = useSession();
   const invalidateUserList = api.useUtils().users.list.invalidate;
   const { data: users } = api.users.list.useQuery();
@@ -40,11 +42,18 @@ export default function UsersSection() {
   }
 
   return (
-    <>
+    <div
+      className={`rounded-lg p-6 ${
+        resolvedTheme === "dark"
+          ? "bg-gray-900 bg-opacity-70 text-white"
+          : "bg-white bg-opacity-70 text-gray-900"
+      } backdrop-blur-lg backdrop-filter`}
+    >
       <div className="mb-2 text-xl font-medium">Users List</div>
-
-      <Table>
-        <TableHeader className="bg-gray-200">
+      <Table className="rounded-md border">
+        <TableHeader
+          className={`${theme === "dark" ? "bg-gray-800" : "bg-gray-200"}`}
+        >
           <TableHead>Name</TableHead>
           <TableHead>Email</TableHead>
           <TableHead>Role</TableHead>
@@ -70,6 +79,6 @@ export default function UsersSection() {
           ))}
         </TableBody>
       </Table>
-    </>
+    </div>
   );
 }

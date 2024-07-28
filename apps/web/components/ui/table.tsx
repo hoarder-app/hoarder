@@ -1,26 +1,47 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { useTheme } from "next-themes";
 
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
-    <table
-      ref={ref}
-      className={cn("w-full caption-bottom text-sm", className)}
-      {...props}
-    />
-  </div>
-));
+>(({ className, ...props }, ref) => {
+  const { theme } = useTheme();
+  return (
+    <div className="relative w-full overflow-auto">
+      <table
+        ref={ref}
+        className={cn(
+          "w-full caption-bottom text-sm",
+          theme === "dark"
+            ? "bg-gray-900 text-white"
+            : "bg-white text-gray-900",
+          className,
+        )}
+        {...props}
+      />
+    </div>
+  );
+});
 Table.displayName = "Table";
 
 const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
-));
+>(({ className, ...props }, ref) => {
+  const { theme } = useTheme();
+  return (
+    <thead
+      ref={ref}
+      className={cn(
+        "[&_tr]:border-b",
+        theme === "dark" ? "bg-gray-800" : "bg-gray-200",
+        className,
+      )}
+      {...props}
+    />
+  );
+});
 TableHeader.displayName = "TableHeader";
 
 const TableBody = React.forwardRef<
@@ -38,16 +59,22 @@ TableBody.displayName = "TableBody";
 const TableFooter = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <tfoot
-    ref={ref}
-    className={cn(
-      "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
-      className,
-    )}
-    {...props}
-  />
-));
+>(({ className, ...props }, ref) => {
+  const { theme } = useTheme();
+  return (
+    <tfoot
+      ref={ref}
+      className={cn(
+        "border-t bg-muted/50 font-medium [&>tr]:last:border-b-0",
+        theme === "dark"
+          ? "bg-gray-800 text-white"
+          : "bg-gray-200 text-gray-900",
+        className,
+      )}
+      {...props}
+    />
+  );
+});
 TableFooter.displayName = "TableFooter";
 
 const TableRow = React.forwardRef<
@@ -68,16 +95,20 @@ TableRow.displayName = "TableRow";
 const TableHead = React.forwardRef<
   HTMLTableCellElement,
   React.ThHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <th
-    ref={ref}
-    className={cn(
-      "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
-      className,
-    )}
-    {...props}
-  />
-));
+>(({ className, ...props }, ref) => {
+  const { theme } = useTheme();
+  return (
+    <th
+      ref={ref}
+      className={cn(
+        "h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0",
+        theme === "dark" ? "text-white" : "text-gray-900",
+        className,
+      )}
+      {...props}
+    />
+  );
+});
 TableHead.displayName = "TableHead";
 
 const TableCell = React.forwardRef<

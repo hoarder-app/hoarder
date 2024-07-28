@@ -55,23 +55,31 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
   const { selectedBookmarks, isBulkEditEnabled } = useBulkActionsStore();
   const toggleBookmark = useBulkActionsStore((state) => state.toggleBookmark);
   const [isSelected, setIsSelected] = useState(false);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Mark the component as mounted to avoid hydration mismatch
+    setMounted(true);
     setIsSelected(selectedBookmarks.some((item) => item.id === bookmark.id));
   }, [selectedBookmarks]);
 
   if (!isBulkEditEnabled) return null;
 
+  if (!mounted) {
+    // Render a fallback UI to avoid hydration mismatch
+    return <div />;
+  }
+
   const getIconColor = () => {
-    if (theme === "dark") {
+    if (resolvedTheme === "dark") {
       return isSelected ? "black" : "white";
     }
     return isSelected ? "white" : "black";
   };
 
   const getIconBackgroundColor = () => {
-    if (theme === "dark") {
+    if (resolvedTheme === "dark") {
       return isSelected ? "bg-white" : "bg-white bg-opacity-10";
     }
     return isSelected ? "bg-black" : "bg-white bg-opacity-40";
@@ -84,7 +92,7 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
         {
           "bg-opacity-10": isSelected,
         },
-        theme === "dark" ? "bg-white" : "bg-black",
+        resolvedTheme === "dark" ? "bg-white" : "bg-black",
       )}
       onClick={() => toggleBookmark(bookmark)}
     >
@@ -110,10 +118,26 @@ function ListView({
   footer,
   className,
 }: Props) {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Mark the component as mounted to avoid hydration mismatch
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    // Render a fallback UI to avoid hydration mismatch
+    return <div />;
+  }
+
   return (
     <div
       className={cn(
         "relative flex max-h-96 gap-4 overflow-hidden rounded-lg p-2 shadow-md",
+        resolvedTheme === "dark"
+          ? "bg-gray-800 text-white"
+          : "bg-white text-gray-900",
         className,
       )}
     >
@@ -153,12 +177,28 @@ function GridView({
   layout,
   fitHeight = false,
 }: Props & { layout: BookmarksLayoutTypes }) {
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // Mark the component as mounted to avoid hydration mismatch
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    // Render a fallback UI to avoid hydration mismatch
+    return <div />;
+  }
+
   const img = image("grid", "h-56 min-h-56 w-full object-cover rounded-t-lg");
 
   return (
     <div
       className={cn(
         "relative flex flex-col overflow-hidden rounded-lg shadow-md",
+        resolvedTheme === "dark"
+          ? "bg-gray-800 text-white"
+          : "bg-white text-gray-900",
         className,
         fitHeight && layout != "grid" ? "max-h-96" : "h-96",
       )}

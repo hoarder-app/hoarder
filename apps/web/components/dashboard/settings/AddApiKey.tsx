@@ -29,6 +29,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTheme } from "next-themes";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -122,12 +123,20 @@ function AddApiKeyForm({ onSuccess }: { onSuccess: (key: string) => void }) {
 export default function AddApiKey() {
   const [key, setKey] = useState<string | undefined>(undefined);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const { theme } = useTheme();
+
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button>New API Key</Button>
+        <Button className=" text-orange-500">New API Key</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent
+        className={`${
+          theme === "dark"
+            ? "bg-gray-900 bg-opacity-70 text-white"
+            : "bg-white bg-opacity-70 text-gray-900"
+        } backdrop-blur-lg backdrop-filter`}
+      >
         <DialogHeader>
           <DialogTitle>
             {key ? "Key was successfully created" : "Create API key"}

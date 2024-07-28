@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,13 +23,13 @@ import type {
   ZBookmark,
   ZBookmarkedLink,
 } from "@hoarder/shared/types/bookmarks";
+import { useBookmarkGridContext } from "@hoarder/shared-react/hooks/bookmark-grid-context";
 import {
   useDeleteBookmark,
   useRecrawlBookmark,
   useUpdateBookmark,
-} from "@hoarder/shared-react/hooks//bookmarks";
-import { useRemoveBookmarkFromList } from "@hoarder/shared-react/hooks//lists";
-import { useBookmarkGridContext } from "@hoarder/shared-react/hooks/bookmark-grid-context";
+} from "@hoarder/shared-react/hooks/bookmarks";
+import { useRemoveBookmarkFromList } from "@hoarder/shared-react/hooks/lists";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
@@ -108,10 +106,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="px-1 focus-visible:ring-0 focus-visible:ring-offset-0"
-          >
+          <Button variant="ghost" className="border-none px-0">
             <MoreHorizontal />
           </Button>
         </DropdownMenuTrigger>

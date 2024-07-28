@@ -24,7 +24,7 @@ export default async function Dashboard({
           <Separator />
         </div>
         {modal}
-        <div className="container min-h-screen p-4">{children}</div>
+        <div className="min-h-screen p-2">{children}</div>
       </main>
     </div>
   );

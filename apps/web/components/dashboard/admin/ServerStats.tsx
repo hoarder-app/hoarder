@@ -12,6 +12,7 @@ import {
 import { useClientConfig } from "@/lib/clientConfig";
 import { api } from "@/lib/trpc";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useTheme } from "next-themes";
 
 const REPO_LATEST_RELEASE_API =
   "https://api.github.com/repos/hoarder-app/hoarder/releases/latest";
@@ -39,7 +40,7 @@ function ReleaseInfo() {
   const latestRelease = useLatestRelease();
 
   let newRelease;
-  if (latestRelease && currentRelease != latestRelease) {
+  if (latestRelease && currentRelease !== latestRelease) {
     newRelease = (
       <a
         href={REPO_RELEASE_PAGE}
@@ -61,6 +62,7 @@ function ReleaseInfo() {
 }
 
 export default function ServerStats() {
+  const { resolvedTheme } = useTheme();
   const { data: serverStats } = api.admin.stats.useQuery(undefined, {
     refetchInterval: 1000,
     placeholderData: keepPreviousData,
@@ -72,13 +74,31 @@ export default function ServerStats() {
 
   return (
     <>
-      <div className="mb-2 text-xl font-medium">Server Stats</div>
+      <div
+        className={`mb-2 text-xl font-medium ${
+          resolvedTheme === "dark" ? "text-white" : "text-gray-900"
+        }`}
+      >
+        Server Stats
+      </div>
       <div className="flex flex-col gap-4 sm:flex-row">
-        <div className="rounded-md border bg-background p-4 sm:w-1/4">
+        <div
+          className={`rounded-md border p-4 sm:w-1/4 ${
+            resolvedTheme === "dark"
+              ? "bg-gray-900 bg-opacity-70 text-white"
+              : "bg-white bg-opacity-70 text-gray-900"
+          } backdrop-blur-lg backdrop-filter`}
+        >
           <div className="text-sm font-medium text-gray-400">Total Users</div>
           <div className="text-3xl font-semibold">{serverStats.numUsers}</div>
         </div>
-        <div className="rounded-md border bg-background p-4 sm:w-1/4">
+        <div
+          className={`rounded-md border p-4 sm:w-1/4 ${
+            resolvedTheme === "dark"
+              ? "bg-gray-900 bg-opacity-70 text-white"
+              : "bg-white bg-opacity-70 text-gray-900"
+          } backdrop-blur-lg backdrop-filter`}
+        >
           <div className="text-sm font-medium text-gray-400">
             Total Bookmarks
           </div>
@@ -86,7 +106,13 @@ export default function ServerStats() {
             {serverStats.numBookmarks}
           </div>
         </div>
-        <div className="rounded-md border bg-background p-4 sm:w-1/4">
+        <div
+          className={`rounded-md border p-4 sm:w-1/4 ${
+            resolvedTheme === "dark"
+              ? "bg-gray-900 bg-opacity-70 text-white"
+              : "bg-white bg-opacity-70 text-gray-900"
+          } backdrop-blur-lg backdrop-filter`}
+        >
           <div className="text-sm font-medium text-gray-400">
             Server Version
           </div>
@@ -97,11 +123,15 @@ export default function ServerStats() {
       <div className="sm:w-1/2">
         <div className="mb-2 mt-8 text-xl font-medium">Background Jobs</div>
         <Table className="rounded-md border">
-          <TableHeader className="bg-gray-200">
-            <TableHead>Job</TableHead>
-            <TableHead>Queued</TableHead>
-            <TableHead>Pending</TableHead>
-            <TableHead>Failed</TableHead>
+          <TableHeader
+            className={`${
+              resolvedTheme === "dark" ? "bg-gray-800" : "bg-gray-200"
+            }`}
+          >
+            <TableHead className="text-orange-500">Job</TableHead>
+            <TableHead className="text-orange-500">Queued</TableHead>
+            <TableHead className="text-orange-500">Pending</TableHead>
+            <TableHead className="text-orange-500">Failed</TableHead>
           </TableHeader>
           <TableBody>
             <TableRow>

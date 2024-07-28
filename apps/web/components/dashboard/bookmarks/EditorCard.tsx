@@ -173,14 +173,14 @@ export default function EditorCard({ className }: { className?: string }) {
       <form
         className={cn(
           className,
-          "relative flex flex-col gap-2 rounded-xl bg-card p-4",
+          "relative flex flex-col gap-2 rounded-xl border border-solid border-white bg-card bg-opacity-50 p-4",
           cardHeight,
         )}
         onSubmit={form.handleSubmit(onSubmit, onError)}
       >
         <div className="flex justify-between">
-          <p className="text-sm">NEW ITEM</p>
-          <InfoTooltip size={15}>
+          <p className="text-sm text-slate-500">NEW ITEM</p>
+          <InfoTooltip size={20}>
             <p className="text-center">
               You can quickly focus on this field by pressing ⌘ + E
             </p>
@@ -193,7 +193,7 @@ export default function EditorCard({ className }: { className?: string }) {
               ref={inputRef}
               disabled={isPending}
               className={cn(
-                "h-full w-full border-none p-0 text-lg focus-visible:ring-0",
+                "h-full w-full border-none p-0 text-lg opacity-95 focus-visible:ring-0",
                 { "resize-none": bookmarkLayout !== "list" },
               )}
               placeholder={
@@ -218,7 +218,12 @@ export default function EditorCard({ className }: { className?: string }) {
             />
           </FormControl>
         </FormItem>
-        <ActionButton loading={isPending} type="submit" variant="default">
+        <ActionButton
+          loading={isPending}
+          type="submit"
+          variant="default"
+          className="w-35 absolute bottom-4 right-4 bg-orange-500"
+        >
           {form.formState.dirtyFields.text
             ? demoMode
               ? "Submissions are disabled"

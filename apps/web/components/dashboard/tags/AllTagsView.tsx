@@ -15,6 +15,7 @@ import { Toggle } from "@/components/ui/toggle";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { ArrowDownAZ, Combine } from "lucide-react";
+import { useTheme } from "next-themes";
 
 import type { ZGetTagResponse } from "@hoarder/shared/types/tags";
 import { useDeleteUnusedTags } from "@hoarder/shared-react/hooks/tags";
@@ -73,6 +74,7 @@ export default function AllTagsView({
 }) {
   const [draggingEnabled, setDraggingEnabled] = React.useState(false);
   const [sortByName, setSortByName] = React.useState(false);
+  const { theme } = useTheme();
 
   function toggleSortByName(): void {
     setSortByName(!sortByName);
@@ -113,6 +115,7 @@ export default function AllTagsView({
     }
     return tagPill;
   };
+
   return (
     <>
       <div className="flex justify-end gap-x-2">
@@ -121,6 +124,9 @@ export default function AllTagsView({
           aria-label="Toggle bold"
           pressed={draggingEnabled}
           onPressedChange={toggleDraggingEnabled}
+          className={`${
+            theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"
+          }`}
         >
           <Combine className="mr-2 size-4" />
           Drag & Drop Merging
@@ -133,36 +139,60 @@ export default function AllTagsView({
           aria-label="Toggle bold"
           pressed={sortByName}
           onPressedChange={toggleSortByName}
+          className={`${
+            theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-black"
+          }`}
         >
           <ArrowDownAZ className="mr-2 size-4" /> Sort by Name
         </Toggle>
       </div>
-      <span className="flex items-center gap-2">
-        <p className="text-lg">Your Tags</p>
+      <span className="flex items-center gap-2 pt-5">
+        <p
+          className={`text-lg ${theme === "dark" ? "text-white" : "text-black"}`}
+        >
+          Your Tags
+        </p>
         <InfoTooltip size={15} className="my-auto" variant="explain">
           <p>Tags that were attached at least once by you</p>
         </InfoTooltip>
       </span>
       {tagsToPill(humanTags)}
-      <Separator />
-      <span className="flex items-center gap-2">
-        <p className="text-lg">AI Tags</p>
+      <Separator className="m-5" />
+      <span className="flex items-center gap-2 pt-5">
+        <p
+          className={`text-lg ${theme === "dark" ? "text-white" : "text-black"}`}
+        >
+          AI Tags
+        </p>
         <InfoTooltip size={15} className="my-auto" variant="explain">
           <p>Tags that were only attached automatically (by AI)</p>
         </InfoTooltip>
       </span>
       {tagsToPill(aiTags)}
-      <Separator />
-      <span className="flex items-center gap-2">
-        <p className="text-lg">Unused Tags</p>
+      <Separator className="m-5" />
+      <span className="flex items-center gap-2 pb-10 pt-10">
+        <p
+          className={`text-lg ${theme === "dark" ? "text-white" : "text-black"}`}
+        >
+          Unused Tags
+        </p>
         <InfoTooltip size={15} className="my-auto" variant="explain">
           <p>Tags that are not attached to any bookmarks</p>
         </InfoTooltip>
       </span>
+      <Separator className="m-5" />
       <Collapsible>
         <div className="space-x-1 pb-2">
           <CollapsibleTrigger asChild>
-            <Button variant="secondary" disabled={emptyTags.length == 0}>
+            <Button
+              variant="secondary"
+              disabled={emptyTags.length == 0}
+              className={`${
+                theme === "dark"
+                  ? "bg-gray-800 text-white"
+                  : "bg-white text-black"
+              }`}
+            >
               {emptyTags.length > 0
                 ? `Show ${emptyTags.length} unused tags`
                 : "You don't have any unused tags"}

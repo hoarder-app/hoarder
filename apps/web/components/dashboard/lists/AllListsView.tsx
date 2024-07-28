@@ -4,7 +4,8 @@ import Link from "next/link";
 import { EditListModal } from "@/components/dashboard/lists/EditListModal";
 import { Button } from "@/components/ui/button";
 import { CollapsibleTriggerChevron } from "@/components/ui/collapsible";
-import { MoreHorizontal, Plus } from "lucide-react";
+import { Archive, MoreHorizontal, Plus, Star } from "lucide-react";
+import { useTheme } from "next-themes";
 
 import type { ZBookmarkList } from "@hoarder/shared/types/lists";
 
@@ -21,16 +22,22 @@ function ListItem({
   collapsible,
 }: {
   name: string;
-  icon: string;
+  icon: React.ReactNode;
   path: string;
   style?: React.CSSProperties;
   list?: ZBookmarkList;
   open?: boolean;
   collapsible: boolean;
 }) {
+  const { theme } = useTheme();
+
   return (
     <li
-      className="my-2 flex items-center justify-between rounded-md border border-border p-2 hover:bg-accent/50"
+      className={`my-2 flex items-center justify-between rounded-md border p-2 hover:bg-opacity-50 ${
+        theme === "dark"
+          ? "border-gray-700 bg-gray-800"
+          : "border-gray-300 bg-white"
+      }`}
       style={style}
     >
       <span className="flex flex-1 items-center gap-1">
@@ -58,45 +65,58 @@ function ListItem({
 }
 
 export default function AllListsView({
-  initialData,
+  initialData = [],
 }: {
   initialData: ZBookmarkList[];
 }) {
+  const { theme } = useTheme();
+
   return (
-    <ul>
-      <EditListModal>
-        <Button className="mb-2 flex h-full w-full items-center">
-          <Plus />
-          <span>New List</span>
-        </Button>
-      </EditListModal>
+    <ul
+      className={`rounded-md bg-opacity-60 p-4 backdrop-blur-lg backdrop-filter ${
+        theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+      }`}
+    >
+      <li className="mb-2 flex items-center justify-between">
+        <span className="font-bold">Lists</span>
+        <EditListModal>
+          <Button className="flex h-full items-center font-semibold">
+            <Plus className="text-orange-500" />
+            <span>New List</span>
+          </Button>
+        </EditListModal>
+      </li>
       <ListItem
         collapsible={false}
         name="Favourites"
-        icon="⭐️"
+        icon={<Star className="text-lg" />}
         path={`/dashboard/favourites`}
       />
       <ListItem
         collapsible={false}
         name="Archive"
-        icon="🗄️"
+        icon={<Archive className="text-lg" />}
         path={`/dashboard/archive`}
       />
-      <CollapsibleBookmarkLists
-        initialData={initialData}
-        render={({ item, level, open }) => (
-          <ListItem
-            key={item.item.id}
-            name={item.item.name}
-            icon={item.item.icon}
-            list={item.item}
-            path={`/dashboard/lists/${item.item.id}`}
-            collapsible={item.children.length > 0}
-            open={open}
-            style={{ marginLeft: `${level * 1}rem` }}
-          />
-        )}
-      />
+      {initialData.length > 0 ? (
+        <CollapsibleBookmarkLists
+          initialData={initialData}
+          render={({ item, level, open }) => (
+            <ListItem
+              key={item.item.id}
+              name={item.item.name}
+              icon={<span className="text-lg">{item.item.icon}</span>}
+              list={item.item}
+              path={`/dashboard/lists/${item.item.id}`}
+              collapsible={item.children.length > 0}
+              open={open}
+              style={{ marginLeft: `${level * 1}rem` }}
+            />
+          )}
+        />
+      ) : (
+        <p className="text-center text-gray-500">No lists available</p>
+      )}
     </ul>
   );
 }

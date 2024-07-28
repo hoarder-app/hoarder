@@ -1,11 +1,11 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { CollapsibleTriggerTriangle } from "@/components/ui/collapsible";
-import { MoreHorizontal, Plus } from "lucide-react";
+import { Archive, Clipboard, MoreHorizontal, Plus, Star } from "lucide-react";
 
 import type { ZBookmarkList } from "@hoarder/shared/types/lists";
 import { ZBookmarkListTreeNode } from "@hoarder/shared/utils/listUtils";
@@ -17,49 +17,80 @@ import SidebarItem from "./SidebarItem";
 
 export default function AllLists({
   initialData,
+  isCollapsed = false,
 }: {
   initialData: { lists: ZBookmarkList[] };
+  isCollapsed?: boolean;
 }) {
   const pathName = usePathname();
+
   const isNodeOpen = useCallback(
     (node: ZBookmarkListTreeNode) => pathName.includes(node.item.id),
     [pathName],
   );
+
+  const { lists } = initialData;
+
+  useEffect(() => {
+    //console.log("initialData:", initialData);
+  }, [initialData]);
+
   return (
-    <ul className="max-h-full gap-y-2 overflow-auto text-sm font-medium">
-      <li className="flex justify-between pb-2 font-bold">
-        <p>Lists</p>
+    <ul className="max-h-full gap-y-4 overflow-auto pt-5 text-sm font-medium">
+      <li
+        className={`flex ${isCollapsed ? "justify-center" : "justify-between"} pb-2 font-bold`}
+      >
+        {!isCollapsed && <p className="text-orange-500">Lists</p>}
         <EditListModal>
-          <Link href="#">
-            <Plus />
+          <Link
+            href="#"
+            className={`flex items-center ${isCollapsed ? "w-full justify-center" : ""}`}
+          >
+            <Plus className="text-orange-500" />
           </Link>
         </EditListModal>
       </li>
       <SidebarItem
-        logo={<span className="text-lg">📋</span>}
-        name="All Lists"
+        logo={<Clipboard className="mr-2 text-lg" />}
+        name={!isCollapsed ? "All Lists" : ""}
         path={`/dashboard/lists`}
-        className="py-0.5"
+        isCollapsed={isCollapsed}
+        className="py-3"
+        style={{
+          paddingLeft: isCollapsed ? "0.5rem" : "1rem",
+          justifyContent: isCollapsed ? "center" : "flex-start",
+        }}
       />
       <SidebarItem
-        logo={<span className="text-lg">⭐️</span>}
-        name="Favourites"
+        logo={<Star className="mr-2 text-lg" />}
+        name={!isCollapsed ? "Favourites" : ""}
         path={`/dashboard/favourites`}
-        className="py-0.5"
+        isCollapsed={isCollapsed}
+        className="py-3"
+        style={{
+          paddingLeft: isCollapsed ? "0.5rem" : "1rem",
+          justifyContent: isCollapsed ? "center" : "flex-start",
+        }}
       />
       <SidebarItem
-        logo={<span className="text-lg">🗄️</span>}
-        name="Archive"
+        logo={<Archive className="mr-2 text-lg" />}
+        name={!isCollapsed ? "Archive" : ""}
         path={`/dashboard/archive`}
-        className="py-0.5"
+        isCollapsed={isCollapsed}
+        className="py-3"
+        style={{
+          paddingLeft: isCollapsed ? "0.5rem" : "1rem",
+          justifyContent: isCollapsed ? "center" : "flex-start",
+        }}
       />
 
-      {
+      {lists && lists.length > 0 ? (
         <CollapsibleBookmarkLists
-          initialData={initialData.lists}
+          initialData={lists}
           isOpenFunc={isNodeOpen}
           render={({ item: node, level, open }) => (
             <SidebarItem
+              key={node.item.id}
               collapseButton={
                 node.children.length > 0 && (
                   <CollapsibleTriggerTriangle
@@ -70,11 +101,14 @@ export default function AllLists({
               }
               logo={
                 <span className="flex">
-                  <span className="text-lg"> {node.item.icon}</span>
+                  <span className={`text-lg ${!isCollapsed ? "ml-5" : ""}`}>
+                    {node.item.icon}
+                  </span>
                 </span>
               }
-              name={node.item.name}
+              name={!isCollapsed ? node.item.name : ""}
               path={`/dashboard/lists/${node.item.id}`}
+              isCollapsed={isCollapsed}
               right={
                 <ListOptions list={node.item}>
                   <Button
@@ -86,12 +120,17 @@ export default function AllLists({
                   </Button>
                 </ListOptions>
               }
-              className="group py-0.5"
-              style={{ marginLeft: `${level * 1}rem` }}
+              className="group py-3"
+              style={{
+                paddingLeft: isCollapsed ? "0.5rem" : `${level * 1}rem`,
+                justifyContent: isCollapsed ? "center" : "flex-start",
+              }}
             />
           )}
         />
-      }
+      ) : (
+        <p className="text-center text-gray-500">-</p>
+      )}
     </ul>
   );
 }

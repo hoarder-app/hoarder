@@ -19,26 +19,24 @@ export default function UpdatableBookmarksGrid({
   query: ZGetBookmarksRequest;
   bookmarks: ZGetBookmarksResponse;
   showEditorCard?: boolean;
-  itemsPerPage?: number;
 }) {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     api.bookmarks.getBookmarks.useInfiniteQuery(
       { ...query, useCursorV2: true },
       {
-        initialData: () => ({
+        initialData: {
           pages: [initialBookmarks],
           pageParams: [query.cursor],
-        }),
-        initialCursor: null,
+        },
         getNextPageParam: (lastPage) => lastPage.nextCursor,
       },
     );
 
   const grid = (
     <BookmarksGrid
-      bookmarks={data!.pages.flatMap((b) => b.bookmarks)}
+      bookmarks={data?.pages.flatMap((b) => b.bookmarks) ?? []}
       hasNextPage={hasNextPage}
-      fetchNextPage={() => fetchNextPage()}
+      fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
       showEditorCard={showEditorCard}
     />
