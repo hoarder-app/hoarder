@@ -22,10 +22,6 @@ resources:
 - meilisearch-pvc.yaml
 - data-pvc.yaml
 
-
-patches:
-- path: amd64-patch.yaml
-
 replacements:
 - source:
     fieldPath: data.HOARDER_VERSION

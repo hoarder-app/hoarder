@@ -2,7 +2,7 @@
 
 ### Requirements
 
-- A kubernetes cluster with at least a amd64 node.
+- A kubernetes cluster
 - kubectl
 - kustomize
 
