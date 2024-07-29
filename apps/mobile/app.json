@@ -3,7 +3,7 @@
     "name": "Hoarder App",
     "slug": "hoarder",
     "scheme": "hoarder",
-    "version": "1.5.0",
+    "version": "1.6.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -47,7 +47,7 @@
         }
       },
       "package": "app.hoarder.hoardermobile",
-      "versionCode": 4
+      "versionCode": 5
     },
     "plugins": [
       "expo-router",

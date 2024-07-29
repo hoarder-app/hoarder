@@ -32,6 +32,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Build Android app
+        working-directory: apps/mobile
         run: eas build --platform android --local --output ${{ github.workspace }}/app-release.aab
 
       - name: Upload AAB artifact

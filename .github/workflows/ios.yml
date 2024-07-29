@@ -23,6 +23,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Build iOS app
+        working-directory: apps/mobile
         run: eas build --platform ios --local --non-interactive --output ${{ github.workspace }}/app-release.ipa
 
       - name: Upload IPA artifact
