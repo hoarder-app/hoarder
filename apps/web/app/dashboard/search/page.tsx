@@ -22,7 +22,9 @@ function SearchComp() {
       {data ? (
         <BookmarksGrid bookmarks={data.bookmarks} />
       ) : (
-        <FullPageSpinner />
+        <div className="pt-10">
+          <FullPageSpinner />
+        </div>
       )}
     </div>
   );

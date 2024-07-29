@@ -1,92 +1,115 @@
-import Link from "next/link";
-import { redirect } from "next/navigation";
+"use client";
+
+import { useEffect, useState } from "react";
 import HoarderLogo from "@/components/HoarderIcon";
 import { Separator } from "@/components/ui/separator";
-import { api } from "@/server/api/client";
-import { getServerAuthSession } from "@/server/auth";
-import { Home, Search, Settings, Shield, Tag } from "lucide-react";
-
-import serverConfig from "@hoarder/shared/config";
+import { api } from "@/lib/trpc";
+import { Home, Search, Tag } from "lucide-react";
+import { Session } from "next-auth";
+import { getSession } from "next-auth/react";
+import { useTheme } from "next-themes";
 
 import AllLists from "./AllLists";
 import SidebarItem from "./SidebarItem";
 import SidebarProfileOptions from "./SidebarProfileOptions";
 
-export default async function Sidebar() {
-  const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/");
+const menuItems = [
+  { name: "Home", icon: <Home size={24} />, path: "/dashboard/bookmarks" },
+  { name: "Search", icon: <Search size={24} />, path: "/dashboard/search" },
+  { name: "Tags", icon: <Tag size={24} />, path: "/dashboard/tags" },
+];
+
+export default function Sidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(true);
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const [session, setSession] = useState<Session | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  // Use the TRPC hook to fetch lists
+  const { data: listsData } = api.lists.list.useQuery();
+
+  useEffect(() => {
+    // Mark the component as mounted to avoid hydration mismatch
+    setMounted(true);
+
+    // Fetch session data
+    const fetchSession = async () => {
+      const sessionData = await getSession();
+      setSession(sessionData);
+    };
+    fetchSession();
+
+    // Restore the sidebar state from localStorage
+    const savedState = localStorage.getItem("sidebar-collapsed");
+    if (savedState !== null) {
+      setIsCollapsed(JSON.parse(savedState) as boolean);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Apply the theme
+    setTheme(theme ?? "dark");
+  }, [theme, setTheme]);
+
+  const toggleSidebar = () => {
+    setIsCollapsed((prevState) => !prevState);
+    localStorage.setItem("sidebar-collapsed", JSON.stringify(!isCollapsed));
+  };
+
+  if (!mounted) {
+    // Render a fallback UI to avoid hydration mismatch
+    return <div />;
   }
 
-  const lists = await api.lists.list();
-
-  const searchItem = serverConfig.meilisearch
-    ? [
-        {
-          name: "Search",
-          icon: <Search size={18} />,
-          path: "/dashboard/search",
-        },
-      ]
-    : [];
-
-  const adminItem =
-    session.user.role == "admin"
-      ? [
-          {
-            name: "Admin",
-            icon: <Shield size={18} />,
-            path: "/dashboard/admin",
-          },
-        ]
-      : [];
-
-  const menu: {
-    name: string;
-    icon: JSX.Element;
-    path: string;
-  }[] = [
-    {
-      name: "Home",
-      icon: <Home size={18} />,
-      path: "/dashboard/bookmarks",
-    },
-    ...searchItem,
-    {
-      name: "Tags",
-      icon: <Tag size={18} />,
-      path: "/dashboard/tags",
-    },
-    {
-      name: "Settings",
-      icon: <Settings size={18} />,
-      path: "/dashboard/settings",
-    },
-    ...adminItem,
-  ];
-
   return (
-    <aside className="flex h-screen w-60 flex-col gap-5 border-r p-4">
-      <Link href={"/dashboard/bookmarks"}>
-        <HoarderLogo height={20} gap="8px" />
-      </Link>
-      <Separator />
-      <div>
-        <ul className="space-y-2 text-sm font-medium">
-          {menu.map((item) => (
+    <aside
+      className={`flex h-screen flex-col p-2.5 transition-all duration-300 ${
+        isCollapsed ? "w-21" : "w-60"
+      } ${resolvedTheme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}
+    >
+      <div className="mb-5 flex items-center justify-center">
+        <button
+          onClick={toggleSidebar}
+          className={`flex w-full items-center justify-center py-3 `}
+        >
+          <HoarderLogo
+            height={isCollapsed ? 40 : 40}
+            gap="8px"
+            isCollapsed={isCollapsed}
+          />
+        </button>
+      </div>
+      <div className="my-5 flex flex-1 flex-col items-center">
+        <ul className="my-3 w-full space-y-2">
+          {menuItems.map((item) => (
             <SidebarItem
               key={item.name}
               logo={item.icon}
               name={item.name}
               path={item.path}
+              isCollapsed={isCollapsed}
+              className={`flex items-center py-1 transition-all duration-300 ${
+                isCollapsed ? "justify-center" : "justify-start"
+              }`}
+              style={{ paddingLeft: isCollapsed ? "1.5rem" : "1rem" }}
             />
           ))}
         </ul>
+        <Separator className="my-4" />
+        <AllLists
+          initialData={{ lists: listsData?.lists ?? [] }}
+          isCollapsed={isCollapsed}
+        />
       </div>
-      <Separator />
-      <AllLists initialData={lists} />
-      <div className="mt-auto flex justify-between justify-self-end">
-        <div className="my-auto"> {session.user.name} </div>
+      <Separator className="my-4" />
+      <div className="mt-auto flex items-center justify-between ">
+        <div className="font-bold text-orange-500">
+          {session?.user?.name
+            ? isCollapsed
+              ? session.user.name.charAt(0)
+              : session.user.name
+            : ""}
+        </div>
         <SidebarProfileOptions />
       </div>
     </aside>

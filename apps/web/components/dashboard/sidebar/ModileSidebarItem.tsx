@@ -15,8 +15,8 @@ export default function MobileSidebarItem({
   return (
     <li
       className={cn(
-        "flex w-full rounded-lg hover:bg-background",
-        path == currentPath ? "bg-background" : "",
+        "flex w-full rounded-lg hover:bg-gray-700",
+        path == currentPath ? "bg-gray-700" : "",
       )}
     >
       <Link href={path} className="m-auto px-3 py-2">

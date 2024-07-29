@@ -15,6 +15,7 @@ import {
 } from "@/lib/userLocalSettings/types";
 import { getServerAuthSession } from "@/server/auth";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { ThemeProvider } from "next-themes"; // Import ThemeProvider
 
 import { clientConfig } from "@hoarder/shared/config";
 
@@ -53,20 +54,28 @@ export default async function RootLayout({
   const session = await getServerAuthSession();
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Providers
-          session={session}
-          clientConfig={clientConfig}
-          userLocalSettings={
-            parseUserLocalSettings(
-              cookies().get(USER_LOCAL_SETTINGS_COOKIE_NAME)?.value,
-            ) ?? defaultUserLocalSettings()
-          }
+      <body
+        className={`${inter.className} ${cookies().get("theme")?.value === "dark" ? "bg-white text-gray-900" : "bg-gray-900 text-white"}`}
+      >
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={true}
         >
-          {children}
-          <ReactQueryDevtools initialIsOpen={false} />
-        </Providers>
-        <Toaster />
+          <Providers
+            session={session}
+            clientConfig={clientConfig}
+            userLocalSettings={
+              parseUserLocalSettings(
+                cookies().get(USER_LOCAL_SETTINGS_COOKIE_NAME)?.value,
+              ) ?? defaultUserLocalSettings()
+            }
+          >
+            {children}
+            <ReactQueryDevtools initialIsOpen={false} />
+          </Providers>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );

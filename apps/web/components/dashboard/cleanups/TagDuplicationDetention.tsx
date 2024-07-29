@@ -79,7 +79,7 @@ function ApplyAllButton({ suggestions }: { suggestions: Suggestion[] }) {
     await Promise.all(promises)
       .then(() => {
         toast({
-          description: "All suggestions has been applied!",
+          description: "All suggestions have been applied!",
         });
       })
       .catch(() => ({}))
@@ -231,7 +231,7 @@ export function TagDuplicationDetection() {
       }
     }
     setSuggestions(initialSuggestions);
-  }, [allTags]);
+  }, [allTags, setSuggestions]);
 
   if (!allTags) {
     return <LoadingSpinner />;

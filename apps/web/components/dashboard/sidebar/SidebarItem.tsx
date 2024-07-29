@@ -9,6 +9,7 @@ export default function SidebarItem({
   name,
   logo,
   path,
+  isCollapsed,
   className,
   style,
   collapseButton,
@@ -17,6 +18,7 @@ export default function SidebarItem({
   name: string;
   logo: React.ReactNode;
   path: string;
+  isCollapsed: boolean;
   style?: React.CSSProperties;
   className?: string;
   right?: React.ReactNode;
@@ -29,17 +31,16 @@ export default function SidebarItem({
         "relative rounded-lg px-3 py-2 hover:bg-accent",
         path == currentPath ? "bg-accent/50" : "",
         className,
+        isCollapsed ? "flex justify-center" : "flex items-center justify-start",
       )}
       style={style}
     >
       {collapseButton}
-      <div className="flex justify-between">
-        <Link href={path} className="flex w-full gap-x-2">
-          {logo}
-          <span className="my-auto"> {name} </span>
-        </Link>
+      <Link href={path} className="flex w-full items-center gap-x-2">
+        <div className="flex items-center">{logo}</div>
+        {!isCollapsed && <span className="my-auto">{name}</span>}
         {right}
-      </div>
+      </Link>
     </li>
   );
 }

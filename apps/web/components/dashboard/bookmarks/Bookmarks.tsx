@@ -26,7 +26,13 @@ export default async function Bookmarks({
   const bookmarks = await api.bookmarks.getBookmarks(query);
 
   return (
-    <div className="flex flex-col gap-3">
+    <div
+      className="flex flex-col gap-3 rounded-full p-2"
+      style={{
+        backgroundColor: "var(--background-color)",
+        color: "var(--text-color)",
+      }}
+    >
       {header}
       {showDivider && <Separator />}
       <UpdatableBookmarksGrid

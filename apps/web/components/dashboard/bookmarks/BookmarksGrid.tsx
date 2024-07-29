@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import {
   bookmarkLayoutSwitch,
@@ -6,6 +6,7 @@ import {
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import tailwindConfig from "@/tailwind.config";
 import { Slot } from "@radix-ui/react-slot";
+import { useTheme } from "next-themes";
 import Masonry from "react-masonry-css";
 import resolveConfig from "tailwindcss/resolveConfig";
 
@@ -16,7 +17,7 @@ import EditorCard from "./EditorCard";
 
 function StyledBookmarkCard({ children }: { children: React.ReactNode }) {
   return (
-    <Slot className="mb-4 border border-border bg-card duration-300 ease-in hover:shadow-lg hover:transition-all">
+    <Slot className="mb-4 border border-border bg-card bg-opacity-50 duration-300 ease-in hover:shadow-lg hover:transition-all">
       {children}
     </Slot>
   );
@@ -49,8 +50,20 @@ export default function BookmarksGrid({
 }) {
   const layout = useBookmarkLayout();
   const breakpointConfig = useMemo(() => getBreakpointConfig(), []);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
-  if (bookmarks.length == 0 && !showEditorCard) {
+  useEffect(() => {
+    // Mark the component as mounted to avoid hydration mismatch
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    // Render a fallback UI to avoid hydration mismatch
+    return <div />;
+  }
+
+  if (bookmarks.length === 0 && !showEditorCard) {
     return <p>No bookmarks</p>;
   }
 
@@ -66,18 +79,27 @@ export default function BookmarksGrid({
       </StyledBookmarkCard>
     )),
   ];
+
   return (
-    <>
+    <div
+      className={`rounded-lg p-2 transition-all duration-300 ${
+        resolvedTheme === "dark" ? "bg-gray-900" : "bg-gray-200"
+      }`}
+    >
       {bookmarkLayoutSwitch(layout, {
         masonry: (
-          <Masonry className="flex gap-4" breakpointCols={breakpointConfig}>
+          <Masonry
+            className="flex gap-2"
+            breakpointCols={breakpointConfig}
+            columnClassName="flex flex-col"
+          >
             {children}
           </Masonry>
         ),
         grid: (
-          <Masonry className="flex gap-4" breakpointCols={breakpointConfig}>
+          <div className="`grid gap-2` grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {children}
-          </Masonry>
+          </div>
         ),
         list: <div className="grid grid-cols-1">{children}</div>,
       })}
@@ -93,6 +115,6 @@ export default function BookmarksGrid({
           </ActionButton>
         </div>
       )}
-    </>
+    </div>
   );
 }
