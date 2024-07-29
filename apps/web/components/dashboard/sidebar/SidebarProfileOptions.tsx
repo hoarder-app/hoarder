@@ -47,12 +47,6 @@ export default function SidebarProfileOptions() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
-        <DropdownMenuItem asChild>
-          <Link href="/dashboard/cleanups">
-            <Paintbrush className="mr-2 size-4" />
-            Cleanups
-          </Link>
-        </DropdownMenuItem>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <span className="mr-2 size-4">Theme</span>
@@ -66,12 +60,14 @@ export default function SidebarProfileOptions() {
               <Sun className="mr-2 size-4" />
               <span>Light</span>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("orange")}>
-              <span className="mr-2 size-4">🟧</span>
-              <span>Orange</span>
-            </DropdownMenuItem>
           </DropdownMenuSubContent>
         </DropdownMenuSub>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard/cleanups">
+            <Paintbrush className="mr-2 size-4" />
+            Cleanups
+          </Link>
+        </DropdownMenuItem>
         {session?.user?.role === "admin" && (
           <DropdownMenuItem asChild>
             <Link href="/dashboard/admin">

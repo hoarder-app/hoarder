@@ -30,6 +30,7 @@ import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -55,6 +56,7 @@ export function EditListModal({
   children?: React.ReactNode;
 }) {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
   if (
     (userOpen !== undefined && !userSetOpen) ||
     (userOpen === undefined && userSetOpen)
@@ -165,7 +167,13 @@ export function EditListModal({
       }}
     >
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
-      <DialogContent>
+      <DialogContent
+        className={`${
+          resolvedTheme === "dark"
+            ? "bg-gray-900 text-white"
+            : "bg-white text-gray-900"
+        }`}
+      >
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit((value) => {
@@ -215,7 +223,11 @@ export function EditListModal({
                       <FormControl>
                         <Input
                           type="text"
-                          className="w-full"
+                          className={`w-full ${
+                            resolvedTheme === "dark"
+                              ? "bg-gray-800 text-white"
+                              : "bg-white text-gray-900"
+                          }`}
                           placeholder="List Name"
                           {...field}
                         />
@@ -260,11 +272,27 @@ export function EditListModal({
             />
             <DialogFooter className="sm:justify-end">
               <DialogClose asChild>
-                <Button type="button" variant="secondary">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className={`${
+                    resolvedTheme === "dark"
+                      ? "bg-gray-800 text-white"
+                      : "bg-white text-gray-900"
+                  }`}
+                >
                   Close
                 </Button>
               </DialogClose>
-              <ActionButton type="submit" loading={isPending}>
+              <ActionButton
+                type="submit"
+                loading={isPending}
+                className={`${
+                  resolvedTheme === "dark"
+                    ? "bg-gray-800 text-white"
+                    : "bg-white text-gray-900"
+                }`}
+              >
                 {list ? "Save" : "Create"}
               </ActionButton>
             </DialogFooter>

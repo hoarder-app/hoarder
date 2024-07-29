@@ -63,8 +63,8 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`flex h-screen flex-col p-5 transition-all duration-300 ${
-        isCollapsed ? "w-10/12" : "w-60"
+      className={`flex h-screen flex-col p-2.5 transition-all duration-300 ${
+        isCollapsed ? "w-21" : "w-60"
       } ${resolvedTheme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}
     >
       <div className="flex items-center justify-between">

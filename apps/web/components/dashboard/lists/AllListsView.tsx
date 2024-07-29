@@ -35,8 +35,8 @@ function ListItem({
     <li
       className={`my-2 flex items-center justify-between rounded-md border p-2 hover:bg-opacity-50 ${
         theme === "dark"
-          ? "border-gray-700 bg-gray-800"
-          : "border-gray-300 bg-white"
+          ? "border-gray-700 bg-gray-800 text-white"
+          : "border-gray-300 bg-white text-gray-900"
       }`}
       style={style}
     >
@@ -82,7 +82,7 @@ export default function AllListsView({
         <EditListModal>
           <Button className="flex h-full items-center font-semibold">
             <Plus className="text-orange-500" />
-            <span>New List</span>
+            <span className="ml-2">New List</span>
           </Button>
         </EditListModal>
       </li>

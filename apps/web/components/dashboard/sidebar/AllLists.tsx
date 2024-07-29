@@ -41,14 +41,6 @@ export default function AllLists({
         className={`flex ${isCollapsed ? "justify-center" : "justify-between"} pb-2 font-bold`}
       >
         {!isCollapsed && <p className="text-orange-500">Lists</p>}
-        <EditListModal>
-          <Link
-            href="#"
-            className={`flex items-center ${isCollapsed ? "w-full justify-center" : ""}`}
-          >
-            <Plus className="text-orange-500" />
-          </Link>
-        </EditListModal>
       </li>
       <SidebarItem
         logo={<Clipboard className="mr-2 text-lg" />}
@@ -83,7 +75,17 @@ export default function AllLists({
           justifyContent: isCollapsed ? "center" : "flex-start",
         }}
       />
-
+      <EditListModal>
+        <Link
+          href="#"
+          className={`flex items-center ${isCollapsed ? "justify-center" : "justify-start"} w-full`}
+        >
+          <Plus className="mx-3 my-6 text-orange-500" />
+          {!isCollapsed && (
+            <span className="ml-2 text-gray-900 dark:text-white">New List</span>
+          )}
+        </Link>
+      </EditListModal>
       {lists && lists.length > 0 ? (
         <CollapsibleBookmarkLists
           initialData={lists}
