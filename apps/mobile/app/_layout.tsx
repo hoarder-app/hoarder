@@ -45,12 +45,7 @@ export default function RootLayout() {
                 }}
               >
                 <Stack.Screen name="index" />
-                <Stack.Screen
-                  name="sharing"
-                  options={{
-                    presentation: "modal",
-                  }}
-                />
+                <Stack.Screen name="sharing" />
               </StyledStack>
               <StatusBar style="auto" />
             </View>
