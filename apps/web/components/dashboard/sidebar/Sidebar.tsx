@@ -67,10 +67,10 @@ export default function Sidebar() {
         isCollapsed ? "w-21" : "w-60"
       } ${resolvedTheme === "dark" ? "bg-gray-900 text-white" : "bg-white text-gray-900"}`}
     >
-      <div className="flex items-center justify-between">
+      <div className="mb-5 flex items-center justify-center">
         <button
           onClick={toggleSidebar}
-          className={`flex ${isCollapsed ? "justify-center" : ""} w-full py-3`}
+          className={`flex w-full items-center justify-center py-3 `}
         >
           <HoarderLogo
             height={isCollapsed ? 40 : 40}
@@ -79,30 +79,31 @@ export default function Sidebar() {
           />
         </button>
       </div>
-      <Separator className="my-5" />
-      <ul className="flex-1 space-y-2">
-        {menuItems.map((item) => (
-          <SidebarItem
-            key={item.name}
-            logo={item.icon}
-            name={item.name}
-            path={item.path}
-            isCollapsed={isCollapsed}
-            className={`py-1 transition-all duration-300 ${
-              isCollapsed ? "justify-center" : "justify-start"
-            }`}
-            style={{ paddingLeft: isCollapsed ? "0.5rem" : "1rem" }}
-          />
-        ))}
-        <Separator className="my-0" />
+      <div className="my-5 flex flex-1 flex-col items-center">
+        <ul className="my-3 w-full space-y-2">
+          {menuItems.map((item) => (
+            <SidebarItem
+              key={item.name}
+              logo={item.icon}
+              name={item.name}
+              path={item.path}
+              isCollapsed={isCollapsed}
+              className={`flex items-center py-1 transition-all duration-300 ${
+                isCollapsed ? "justify-center" : "justify-start"
+              }`}
+              style={{ paddingLeft: isCollapsed ? "1.5rem" : "1rem" }}
+            />
+          ))}
+        </ul>
+        <Separator className="my-4" />
         <AllLists
           initialData={{ lists: listsData?.lists ?? [] }}
           isCollapsed={isCollapsed}
         />
-      </ul>
-      <Separator className="my-0" />
-      <div className="mt-auto flex items-center justify-between">
-        <div className="my-auto font-bold text-orange-500">
+      </div>
+      <Separator className="my-4" />
+      <div className="mt-auto flex items-center justify-between ">
+        <div className="font-bold text-orange-500">
           {session?.user?.name
             ? isCollapsed
               ? session.user.name.charAt(0)

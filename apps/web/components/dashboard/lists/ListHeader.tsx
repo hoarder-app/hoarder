@@ -33,17 +33,20 @@ export default function ListHeader({
   }
 
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-2xl">
-        {list.icon} {list.name}
-      </span>
-      <div className="flex">
-        <ListOptions list={list}>
-          <Button variant="ghost">
-            <MoreHorizontal />
-          </Button>
-        </ListOptions>
-        <GlobalActions />
+    <div className="w-100 container space-y-4 rounded-md border bg-background bg-opacity-60 p-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 text-orange-500">
+          <span className="text-2xl">{list.icon}</span>
+          <p className="text-2xl">{list.name}</p>
+        </div>
+        <div className="relative flex w-max items-center space-x-2">
+          <ListOptions list={list}>
+            <Button variant="ghost">
+              <MoreHorizontal />
+            </Button>
+          </ListOptions>
+          <GlobalActions />
+        </div>
       </div>
     </div>
   );

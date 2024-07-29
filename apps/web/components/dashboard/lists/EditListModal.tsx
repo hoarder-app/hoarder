@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
@@ -170,9 +172,9 @@ export function EditListModal({
       <DialogContent
         className={`${
           resolvedTheme === "dark"
-            ? "bg-gray-900 text-white"
-            : "bg-white text-gray-900"
-        }`}
+            ? "bg-gray-900 text-white opacity-80 backdrop-blur-lg"
+            : "bg-white text-gray-900  opacity-80 backdrop-blur-lg"
+        } rounded-lg p-6`}
       >
         <Form {...form}>
           <form
@@ -277,8 +279,8 @@ export function EditListModal({
                   variant="secondary"
                   className={`${
                     resolvedTheme === "dark"
-                      ? "bg-gray-800 text-white"
-                      : "bg-white text-gray-900"
+                      ? "rounded-lg bg-gray-600 text-white hover:bg-gray-700"
+                      : "rounded-lg bg-gray-200 text-gray-900 hover:bg-gray-300"
                   }`}
                 >
                   Close
@@ -289,8 +291,8 @@ export function EditListModal({
                 loading={isPending}
                 className={`${
                   resolvedTheme === "dark"
-                    ? "bg-gray-800 text-white"
-                    : "bg-white text-gray-900"
+                    ? "rounded-lg bg-orange-600 text-white hover:bg-orange-700"
+                    : "rounded-lg bg-orange-500 text-white hover:bg-orange-600"
                 }`}
               >
                 {list ? "Save" : "Create"}

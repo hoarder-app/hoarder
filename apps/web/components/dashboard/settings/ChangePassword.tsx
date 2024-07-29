@@ -133,7 +133,7 @@ export function ChangePassword() {
             )}
           />
           <ActionButton
-            className="mt-4 h-10 w-max px-8 text-orange-500"
+            className="mt-4 h-10 w-max rounded-lg bg-orange-500 px-8 text-white"
             type="submit"
             loading={mutator.isPending}
           >

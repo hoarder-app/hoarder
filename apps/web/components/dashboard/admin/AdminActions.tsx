@@ -53,7 +53,7 @@ export default function AdminActions() {
           onClick={() =>
             recrawlLinks({ crawlStatus: "failure", runInference: true })
           }
-          className="w-max"
+          className="w-max rounded-lg"
         >
           Recrawl Failed Links Only
         </ActionButton>
@@ -63,7 +63,7 @@ export default function AdminActions() {
           onClick={() =>
             recrawlLinks({ crawlStatus: "all", runInference: true })
           }
-          className="w-max"
+          className="w-max rounded-lg"
         >
           Recrawl All Links
         </ActionButton>
@@ -73,7 +73,7 @@ export default function AdminActions() {
           onClick={() =>
             recrawlLinks({ crawlStatus: "all", runInference: false })
           }
-          className="w-max"
+          className="w-max rounded-lg"
         >
           Recrawl All Links (Without Inference)
         </ActionButton>
@@ -81,7 +81,7 @@ export default function AdminActions() {
           variant="destructive"
           loading={isReindexPending}
           onClick={() => reindexBookmarks()}
-          className="w-max"
+          className="w-max rounded-lg"
         >
           Reindex All Bookmarks
         </ActionButton>

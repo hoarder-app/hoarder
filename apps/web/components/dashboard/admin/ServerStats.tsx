@@ -76,7 +76,7 @@ export default function ServerStats() {
     <>
       <div
         className={`mb-2 text-xl font-medium ${
-          resolvedTheme === "dark" ? "text-white" : "text-gray-900"
+          resolvedTheme === "dark" ? "text-orange-500" : "text-orange-500"
         }`}
       >
         Server Stats
@@ -89,7 +89,7 @@ export default function ServerStats() {
               : "bg-white bg-opacity-70 text-gray-900"
           } backdrop-blur-lg backdrop-filter`}
         >
-          <div className="text-sm font-medium text-gray-400">Total Users</div>
+          <div className="text-sm font-medium ">Total Users</div>
           <div className="text-3xl font-semibold">{serverStats.numUsers}</div>
         </div>
         <div
@@ -99,9 +99,7 @@ export default function ServerStats() {
               : "bg-white bg-opacity-70 text-gray-900"
           } backdrop-blur-lg backdrop-filter`}
         >
-          <div className="text-sm font-medium text-gray-400">
-            Total Bookmarks
-          </div>
+          <div className="text-sm font-medium ">Total Bookmarks</div>
           <div className="text-3xl font-semibold">
             {serverStats.numBookmarks}
           </div>
@@ -113,9 +111,7 @@ export default function ServerStats() {
               : "bg-white bg-opacity-70 text-gray-900"
           } backdrop-blur-lg backdrop-filter`}
         >
-          <div className="text-sm font-medium text-gray-400">
-            Server Version
-          </div>
+          <div className="text-sm font-medium ">Server Version</div>
           <ReleaseInfo />
         </div>
       </div>
@@ -128,10 +124,10 @@ export default function ServerStats() {
               resolvedTheme === "dark" ? "bg-gray-800" : "bg-gray-200"
             }`}
           >
-            <TableHead className="text-orange-500">Job</TableHead>
-            <TableHead className="text-orange-500">Queued</TableHead>
-            <TableHead className="text-orange-500">Pending</TableHead>
-            <TableHead className="text-orange-500">Failed</TableHead>
+            <TableHead className="font-bold">Job</TableHead>
+            <TableHead className="font-bold">Queued</TableHead>
+            <TableHead className="font-bold">Pending</TableHead>
+            <TableHead className="font-bold">Failed</TableHead>
           </TableHeader>
           <TableBody>
             <TableRow>

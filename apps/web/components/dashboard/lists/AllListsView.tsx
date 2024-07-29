@@ -72,51 +72,53 @@ export default function AllListsView({
   const { theme } = useTheme();
 
   return (
-    <ul
-      className={`rounded-md bg-opacity-60 p-4 backdrop-blur-lg backdrop-filter ${
-        theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-900"
-      }`}
-    >
-      <li className="mb-2 flex items-center justify-between">
-        <span className="font-bold">Lists</span>
+    <div className="w-100 container space-y-4 rounded-md border bg-background bg-opacity-60 p-4">
+      <div className="flex justify-end">
         <EditListModal>
-          <Button className="flex h-full items-center font-semibold">
+          <Button className="flex h-full items-center rounded-lg font-semibold">
             <Plus className="text-orange-500" />
             <span className="ml-2">New List</span>
           </Button>
         </EditListModal>
-      </li>
-      <ListItem
-        collapsible={false}
-        name="Favourites"
-        icon={<Star className="text-lg" />}
-        path={`/dashboard/favourites`}
-      />
-      <ListItem
-        collapsible={false}
-        name="Archive"
-        icon={<Archive className="text-lg" />}
-        path={`/dashboard/archive`}
-      />
-      {initialData.length > 0 ? (
-        <CollapsibleBookmarkLists
-          initialData={initialData}
-          render={({ item, level, open }) => (
-            <ListItem
-              key={item.item.id}
-              name={item.item.name}
-              icon={<span className="text-lg">{item.item.icon}</span>}
-              list={item.item}
-              path={`/dashboard/lists/${item.item.id}`}
-              collapsible={item.children.length > 0}
-              open={open}
-              style={{ marginLeft: `${level * 1}rem` }}
-            />
-          )}
+      </div>
+
+      <ul
+        className={`rounded-md bg-opacity-60 p-4 backdrop-blur-lg backdrop-filter ${
+          theme === "dark" ? "bg-gray-800 text-white" : "bg-white text-gray-900"
+        }`}
+      >
+        <ListItem
+          collapsible={false}
+          name="Favourites"
+          icon={<Star className="text-lg" />}
+          path={`/dashboard/favourites`}
         />
-      ) : (
-        <p className="text-center text-gray-500">No lists available</p>
-      )}
-    </ul>
+        <ListItem
+          collapsible={false}
+          name="Archive"
+          icon={<Archive className="text-lg" />}
+          path={`/dashboard/archive`}
+        />
+        {initialData.length > 0 ? (
+          <CollapsibleBookmarkLists
+            initialData={initialData}
+            render={({ item, level, open }) => (
+              <ListItem
+                key={item.item.id}
+                name={item.item.name}
+                icon={<span className="text-lg">{item.item.icon}</span>}
+                list={item.item}
+                path={`/dashboard/lists/${item.item.id}`}
+                collapsible={item.children.length > 0}
+                open={open}
+                style={{ marginLeft: `${level * 1}rem` }}
+              />
+            )}
+          />
+        ) : (
+          <p className="text-center text-gray-500">No lists available</p>
+        )}
+      </ul>
+    </div>
   );
 }

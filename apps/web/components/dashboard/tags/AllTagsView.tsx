@@ -111,7 +111,7 @@ export default function AllTagsView({
         </div>
       );
     } else {
-      tagPill = "No Tags";
+      tagPill = "- no tags -";
     }
     return tagPill;
   };
@@ -189,8 +189,8 @@ export default function AllTagsView({
               disabled={emptyTags.length == 0}
               className={`${
                 theme === "dark"
-                  ? "bg-gray-800 text-white"
-                  : "bg-white text-black"
+                  ? "bg-orange-500 text-white"
+                  : "bg-orange-500 text-white"
               }`}
             >
               {emptyTags.length > 0

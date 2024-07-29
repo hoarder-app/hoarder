@@ -222,7 +222,7 @@ export default function EditorCard({ className }: { className?: string }) {
           loading={isPending}
           type="submit"
           variant="default"
-          className="w-35 absolute bottom-4 right-4 bg-orange-500"
+          className="w-35 absolute bottom-4 right-4 rounded-lg bg-orange-500"
         >
           {form.formState.dirtyFields.text
             ? demoMode

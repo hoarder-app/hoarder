@@ -49,7 +49,7 @@ export default function AllLists({
         isCollapsed={isCollapsed}
         className="py-3"
         style={{
-          paddingLeft: isCollapsed ? "0.5rem" : "1rem",
+          paddingLeft: isCollapsed ? "1.5rem" : "1rem",
           justifyContent: isCollapsed ? "center" : "flex-start",
         }}
       />
@@ -60,7 +60,7 @@ export default function AllLists({
         isCollapsed={isCollapsed}
         className="py-3"
         style={{
-          paddingLeft: isCollapsed ? "0.5rem" : "1rem",
+          paddingLeft: isCollapsed ? "1.5rem" : "1rem",
           justifyContent: isCollapsed ? "center" : "flex-start",
         }}
       />
@@ -71,7 +71,7 @@ export default function AllLists({
         isCollapsed={isCollapsed}
         className="py-3"
         style={{
-          paddingLeft: isCollapsed ? "0.5rem" : "1rem",
+          paddingLeft: isCollapsed ? "1.5rem" : "1rem",
           justifyContent: isCollapsed ? "center" : "flex-start",
         }}
       />
@@ -79,8 +79,12 @@ export default function AllLists({
         <Link
           href="#"
           className={`flex items-center ${isCollapsed ? "justify-center" : "justify-start"} w-full`}
+          style={{ paddingLeft: isCollapsed ? "1.5rem" : "1rem" }}
         >
-          <Plus className="mx-3 my-6 text-orange-500" />
+          <Plus
+            className="my-6 text-orange-500"
+            style={{ marginLeft: isCollapsed ? "-2.0rem" : "0" }}
+          />
           {!isCollapsed && (
             <span className="ml-2 text-gray-900 dark:text-white">New List</span>
           )}
@@ -124,7 +128,7 @@ export default function AllLists({
               }
               className="group py-3"
               style={{
-                paddingLeft: isCollapsed ? "0.5rem" : `${level * 1}rem`,
+                paddingLeft: isCollapsed ? "1.5rem" : `${level * 1}rem`,
                 justifyContent: isCollapsed ? "center" : "flex-start",
               }}
             />

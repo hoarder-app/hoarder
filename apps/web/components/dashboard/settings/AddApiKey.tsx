@@ -128,7 +128,9 @@ export default function AddApiKey() {
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button className=" text-orange-500">New API Key</Button>
+        <Button className=" rounded-lg bg-orange-500 text-white">
+          New API Key
+        </Button>
       </DialogTrigger>
       <DialogContent
         className={`${

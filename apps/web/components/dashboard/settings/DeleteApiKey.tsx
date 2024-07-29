@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 import { Trash } from "lucide-react";
+import { useTheme } from "next-themes";
 
 export default function DeleteApiKey({
   name,
@@ -16,6 +17,7 @@ export default function DeleteApiKey({
   id: string;
 }) {
   const router = useRouter();
+  const { resolvedTheme } = useTheme();
   const mutator = api.apiKeys.revoke.useMutation({
     onSuccess: () => {
       toast({
@@ -27,11 +29,19 @@ export default function DeleteApiKey({
 
   return (
     <ActionConfirmingDialog
-      title={"Delete API Key"}
+      title={
+        <span
+          className={resolvedTheme === "dark" ? "text-white" : "text-gray-900"}
+        >
+          Delete 🚀 {name}?
+        </span>
+      }
       description={
-        <p>
-          Are you sure you want to delete the API key &quot;{name}&quot;? Any
-          service using this API key will lose access.
+        <p
+          className={resolvedTheme === "dark" ? "text-white" : "text-gray-900"}
+        >
+          Are you sure you want to delete 🚀 {name}? Any service using this API
+          key will lose access.
         </p>
       }
       actionButton={(setDialogOpen) => (
@@ -42,13 +52,28 @@ export default function DeleteApiKey({
           onClick={() =>
             mutator.mutate({ id }, { onSuccess: () => setDialogOpen(false) })
           }
+          className={`${
+            resolvedTheme === "dark"
+              ? "rounded-lg bg-orange-600 text-white hover:bg-orange-700"
+              : "rounded-lg bg-orange-500 text-white hover:bg-orange-600"
+          }`}
         >
           Delete
         </ActionButton>
       )}
     >
-      <Button variant="outline">
-        <Trash size={18} color="red" />
+      <Button
+        variant="outline"
+        className={`${
+          resolvedTheme === "dark"
+            ? "border-gray-600 text-gray-300 hover:bg-gray-700"
+            : "border-gray-300 text-gray-700 hover:bg-gray-200"
+        }`}
+      >
+        <Trash
+          size={18}
+          color={resolvedTheme === "dark" ? "#ffffff" : "#ff0000"}
+        />
       </Button>
     </ActionConfirmingDialog>
   );
