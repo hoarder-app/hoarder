@@ -1,0 +1,51 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: hoarder
+
+configMapGenerator:
+- envs:
+  - .env
+  name: hoarder-env
+
+resources:
+- namespace.yaml
+- web-deployment.yaml
+- web-service.yaml
+- redis-deployment.yaml
+- redis-service.yaml
+- chrome-deployment.yaml
+- meilisearch-deployment.yaml
+- meilisearch-service.yaml
+- workers-deployment.yaml
+- redis-pvc.yaml
+- meilisearch-pvc.yaml
+- data-pvc.yaml
+
+replacements:
+- source:
+    fieldPath: data.HOARDER_VERSION
+    kind: ConfigMap
+    name: hoarder-env
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.0.image
+    options:
+      delimiter: ':'
+      index: 1
+    select:
+      group: apps
+      kind: Deployment
+      name: web
+      version: v1
+  - fieldPaths:
+    - spec.template.spec.containers.0.image
+    options:
+      delimiter: ':'
+      index: 1
+    select:
+      group: apps
+      kind: Deployment
+      name: workers
+      version: v1

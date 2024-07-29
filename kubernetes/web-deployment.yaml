@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hoarder-web
+  template:
+    metadata:
+      labels:
+        app: hoarder-web
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/hoarder-app/hoarder-web:HOARDER_VERSION_PLACEHOLDER
+          ports:
+            - containerPort: 3000
+          env:
+            - name: REDIS_HOST
+              value: redis
+            - name: REDIS_PORT
+              value: '6379'
+            - name: MEILI_ADDR
+              value: http://meilisearch:7700
+            - name: DATA_DIR
+              value: /data
+          volumeMounts:
+            - mountPath: /data
+              name: data
+          envFrom:
+            - configMapRef:
+                name: hoarder-env
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: data-pvc
