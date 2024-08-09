@@ -53,16 +53,18 @@ function ListItem({
         open,
       })}
       <CollapsibleContent>
-        {node.children.map((l) => (
-          <ListItem
-            isOpenFunc={isOpenFunc}
-            key={l.item.id}
-            node={l}
-            render={render}
-            level={level + 1}
-            className={className}
-          />
-        ))}
+        {node.children
+          .sort((a, b) => a.item.name.localeCompare(b.item.name))
+          .map((l) => (
+            <ListItem
+              isOpenFunc={isOpenFunc}
+              key={l.item.id}
+              node={l}
+              render={render}
+              level={level + 1}
+              className={className}
+            />
+          ))}
       </CollapsibleContent>
     </Collapsible>
   );
