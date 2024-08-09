@@ -96,16 +96,18 @@ export function CollapsibleBookmarkLists({
 
   return (
     <div>
-      {Object.values(root).map((l) => (
-        <ListItem
-          key={l.item.id}
-          node={l}
-          render={render}
-          level={0}
-          className={className}
-          isOpenFunc={isOpenFunc ?? (() => false)}
-        />
-      ))}
+      {Object.values(root)
+        .sort((a, b) => a.item.name.localeCompare(b.item.name))
+        .map((l) => (
+          <ListItem
+            key={l.item.id}
+            node={l}
+            render={render}
+            level={0}
+            className={className}
+            isOpenFunc={isOpenFunc ?? (() => false)}
+          />
+        ))}
     </div>
   );
 }
