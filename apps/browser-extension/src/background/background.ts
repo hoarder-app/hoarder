@@ -1,8 +1,14 @@
 import {
+  BookmarkTypes,
+  ZNewBookmarkRequest,
+} from "@hoarder/shared/types/bookmarks.ts";
+
+import {
   getPluginSettings,
   Settings,
   subscribeToSettingsChanges,
 } from "../utils/settings.ts";
+import { NEW_BOOKMARK_REQUEST_KEY_NAME } from "./protocol.ts";
 
 const OPEN_HOARDER_ID = "open-hoarder";
 const ADD_LINK_TO_HOARDER_ID = "add-link";
@@ -34,7 +40,7 @@ function registerContextMenus() {
   chrome.contextMenus.create({
     id: ADD_LINK_TO_HOARDER_ID,
     title: "Add to Hoarder",
-    contexts: ["link"],
+    contexts: ["link", "page", "selection", "image"],
   });
 }
 
@@ -48,9 +54,26 @@ async function handleContextMenuClick(info: chrome.contextMenus.OnClickData) {
     getPluginSettings().then((settings: Settings) => {
       chrome.tabs.create({ url: settings.address, active: true });
     });
-  } else if (menuItemId === ADD_LINK_TO_HOARDER_ID && info.linkUrl) {
-    await chrome.storage.session.set({ url: info.linkUrl });
-    await chrome.action.openPopup();
+  } else if (menuItemId === ADD_LINK_TO_HOARDER_ID) {
+    let newBookmark: ZNewBookmarkRequest | null = null;
+    if (info.selectionText) {
+      newBookmark = {
+        type: BookmarkTypes.TEXT,
+        text: info.selectionText,
+        // TODO: Include a source url in the snippet
+      };
+    } else if (info.srcUrl ?? info.linkUrl ?? info.pageUrl) {
+      newBookmark = {
+        type: BookmarkTypes.LINK,
+        url: info.srcUrl ?? info.linkUrl ?? info.pageUrl,
+      };
+    }
+    if (newBookmark) {
+      await chrome.storage.session.set({
+        [NEW_BOOKMARK_REQUEST_KEY_NAME]: newBookmark,
+      });
+      await chrome.action.openPopup();
+    }
   }
 }
 

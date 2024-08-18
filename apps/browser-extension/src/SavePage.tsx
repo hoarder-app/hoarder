@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
-import { BookmarkTypes } from "../../../packages/shared/types/bookmarks";
+import {
+  BookmarkTypes,
+  ZNewBookmarkRequest,
+  zNewBookmarkRequestSchema,
+} from "@hoarder/shared/types/bookmarks";
+
+import { NEW_BOOKMARK_REQUEST_KEY_NAME } from "./background/protocol";
 import Spinner from "./Spinner";
 import { api } from "./utils/trpc";
 
@@ -19,32 +25,37 @@ export default function SavePage() {
   });
 
   useEffect(() => {
-    async function getUrlFromStorage(): Promise<string> {
-      const { url } = await chrome.storage.session.get("url");
-      // Delete the URL immediately to avoid issues with lingering values
-      await chrome.storage.session.set({ url: void 0 });
-      return url as string;
+    async function getNewBookmarkRequestFromBackgroundScriptIfAny(): Promise<ZNewBookmarkRequest | null> {
+      const { [NEW_BOOKMARK_REQUEST_KEY_NAME]: req } =
+        await chrome.storage.session.get(NEW_BOOKMARK_REQUEST_KEY_NAME);
+      if (!req) {
+        return null;
+      }
+      // Delete the request immediately to avoid issues with lingering values
+      await chrome.storage.session.remove(NEW_BOOKMARK_REQUEST_KEY_NAME);
+      return zNewBookmarkRequestSchema.parse(req);
     }
 
     async function runSave() {
-      let currentUrl = await getUrlFromStorage();
-      if (!currentUrl) {
+      let newBookmarkRequest =
+        await getNewBookmarkRequestFromBackgroundScriptIfAny();
+      if (!newBookmarkRequest) {
         const [currentTab] = await chrome.tabs.query({
           active: true,
           lastFocusedWindow: true,
         });
         if (currentTab?.url) {
-          currentUrl = currentTab.url;
+          newBookmarkRequest = {
+            type: BookmarkTypes.LINK,
+            url: currentTab.url,
+          };
         } else {
           setError("Couldn't find the URL of the current tab");
           return;
         }
       }
 
-      createBookmark({
-        type: BookmarkTypes.LINK,
-        url: currentUrl,
-      });
+      createBookmark(newBookmarkRequest);
     }
     runSave();
   }, [createBookmark]);

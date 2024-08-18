@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hoarder/shared-react": "workspace:^0.1.0",
+    "@hoarder/shared": "workspace:^0.1.0",
     "@hoarder/trpc": "workspace:^0.1.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.0.7",
