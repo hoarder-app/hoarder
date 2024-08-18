@@ -310,20 +310,20 @@ export const bookmarksAppRouter = router({
       switch (bookmark.content.type) {
         case BookmarkTypes.LINK: {
           // The crawling job triggers openai when it's done
-          await LinkCrawlerQueue.add("crawl", {
+          await LinkCrawlerQueue.enqueue({
             bookmarkId: bookmark.id,
           });
           break;
         }
         case BookmarkTypes.TEXT:
         case BookmarkTypes.ASSET: {
-          await OpenAIQueue.add("openai", {
+          await OpenAIQueue.enqueue({
             bookmarkId: bookmark.id,
           });
           break;
         }
       }
-      triggerSearchReindex(bookmark.id);
+      await triggerSearchReindex(bookmark.id);
       return bookmark;
     }),
 
@@ -353,7 +353,7 @@ export const bookmarksAppRouter = router({
           message: "Bookmark not found",
         });
       }
-      triggerSearchReindex(input.bookmarkId);
+      await triggerSearchReindex(input.bookmarkId);
       return res[0];
     }),
 
@@ -379,7 +379,7 @@ export const bookmarksAppRouter = router({
           message: "Bookmark not found",
         });
       }
-      triggerSearchReindex(input.bookmarkId);
+      await triggerSearchReindex(input.bookmarkId);
     }),
 
   deleteBookmark: authedProcedure
@@ -405,7 +405,7 @@ export const bookmarksAppRouter = router({
             eq(bookmarks.id, input.bookmarkId),
           ),
         );
-      triggerSearchDeletion(input.bookmarkId);
+      await triggerSearchDeletion(input.bookmarkId);
       if (deleted.changes > 0 && bookmark) {
         await cleanupAssetForBookmark({
           asset: bookmark.asset,
@@ -418,7 +418,7 @@ export const bookmarksAppRouter = router({
     .input(z.object({ bookmarkId: z.string() }))
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input }) => {
-      await LinkCrawlerQueue.add("crawl", {
+      await LinkCrawlerQueue.enqueue({
         bookmarkId: input.bookmarkId,
       });
     }),
@@ -665,8 +665,13 @@ export const bookmarksAppRouter = router({
             tagName: z.string().optional(),
           }),
         ),
-        // Detach by tag ids
-        detach: z.array(z.object({ tagId: z.string() })),
+        detach: z.array(
+          z.object({
+            // At least one of the two must be set
+            tagId: z.string().optional(),
+            tagName: z.string().optional(), // Also allow removing by tagName, to make CLI usage easier
+          }),
+        ),
       }),
     )
     .output(
@@ -679,23 +684,49 @@ export const bookmarksAppRouter = router({
     .mutation(async ({ input, ctx }) => {
       return ctx.db.transaction(async (tx) => {
         // Detaches
+        const idsToRemove: string[] = [];
         if (input.detach.length > 0) {
-          await tx.delete(tagsOnBookmarks).where(
-            and(
-              eq(tagsOnBookmarks.bookmarkId, input.bookmarkId),
-              inArray(
-                tagsOnBookmarks.tagId,
-                input.detach.map((t) => t.tagId),
+          const namesToRemove: string[] = [];
+          input.detach.forEach((detachInfo) => {
+            if (detachInfo.tagId) {
+              idsToRemove.push(detachInfo.tagId);
+            }
+            if (detachInfo.tagName) {
+              namesToRemove.push(detachInfo.tagName);
+            }
+          });
+
+          if (namesToRemove.length > 0) {
+            (
+              await tx.query.bookmarkTags.findMany({
+                where: and(
+                  eq(bookmarkTags.userId, ctx.user.id),
+                  inArray(bookmarkTags.name, namesToRemove),
+                ),
+                columns: {
+                  id: true,
+                },
+              })
+            ).forEach((tag) => {
+              idsToRemove.push(tag.id);
+            });
+          }
+
+          await tx
+            .delete(tagsOnBookmarks)
+            .where(
+              and(
+                eq(tagsOnBookmarks.bookmarkId, input.bookmarkId),
+                inArray(tagsOnBookmarks.tagId, idsToRemove),
               ),
-            ),
-          );
+            );
         }
 
         if (input.attach.length == 0) {
           return {
             bookmarkId: input.bookmarkId,
             attached: [],
-            detached: input.detach.map((t) => t.tagId),
+            detached: idsToRemove,
           };
         }
 
@@ -747,11 +778,11 @@ export const bookmarksAppRouter = router({
             })),
           )
           .onConflictDoNothing();
-        triggerSearchReindex(input.bookmarkId);
+        await triggerSearchReindex(input.bookmarkId);
         return {
           bookmarkId: input.bookmarkId,
           attached: allIds,
-          detached: input.detach.map((t) => t.tagId),
+          detached: idsToRemove,
         };
       });
     }),

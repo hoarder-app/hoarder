@@ -10,6 +10,7 @@ export function getAPIClient() {
     links: [
       httpBatchLink({
         url: `${globals.serverAddr}/api/trpc`,
+        maxURLLength: 14000,
         transformer: superjson,
         headers() {
           return {

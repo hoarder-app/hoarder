@@ -126,23 +126,37 @@ describe("Bookmark Routes", () => {
 
     await api.updateTags({
       bookmarkId: createdBookmark.id,
-      attach: [{ tagName: "tag1" }, { tagName: "tag2" }],
+      attach: [
+        { tagName: "tag1" },
+        { tagName: "tag2" },
+        { tagName: "tag3" },
+        { tagName: "tag4" },
+      ],
       detach: [],
     });
 
     let bookmark = await api.getBookmark({ bookmarkId: createdBookmark.id });
-    expect(bookmark.tags.map((t) => t.name).sort()).toEqual(["tag1", "tag2"]);
+    expect(bookmark.tags.map((t) => t.name).sort()).toEqual([
+      "tag1",
+      "tag2",
+      "tag3",
+      "tag4",
+    ]);
 
     const tag1Id = bookmark.tags.filter((t) => t.name == "tag1")[0].id;
 
     await api.updateTags({
       bookmarkId: bookmark.id,
-      attach: [{ tagName: "tag3" }],
-      detach: [{ tagId: tag1Id }],
+      attach: [{ tagName: "tag5" }],
+      detach: [{ tagId: tag1Id }, { tagName: "tag4" }],
     });
 
     bookmark = await api.getBookmark({ bookmarkId: bookmark.id });
-    expect(bookmark.tags.map((t) => t.name).sort()).toEqual(["tag2", "tag3"]);
+    expect(bookmark.tags.map((t) => t.name).sort()).toEqual([
+      "tag2",
+      "tag3",
+      "tag5",
+    ]);
 
     await api.updateTags({
       bookmarkId: bookmark.id,

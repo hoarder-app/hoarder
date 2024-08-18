@@ -32,8 +32,8 @@ Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic taggin
 | OPENAI_API_KEY        | No       | Not set            | The OpenAI key used for automatic tagging. More on that in [here](/openai).                                                                                                                     |
 | OPENAI_BASE_URL       | No       | Not set            | If you just want to use OpenAI you don't need to pass this variable. If, however, you want to use some other openai compatible API (e.g. azure openai service), set this to the url of the API. |
 | OLLAMA_BASE_URL       | No       | Not set            | If you want to use ollama for local inference, set the address of ollama API here.                                                                                                              |
-| INFERENCE_TEXT_MODEL  | No       | gpt-3.5-turbo-0125 | The model to use for text inference. You'll need to change this to some other model if you're using ollama.                                                                                     |
-| INFERENCE_IMAGE_MODEL | No       | gpt-4o-2024-05-13  | The model to use for image inference. You'll need to change this to some other model if you're using ollama and that model needs to support vision APIs (e.g. llava).                           |
+| INFERENCE_TEXT_MODEL  | No       | gpt-4o-mini | The model to use for text inference. You'll need to change this to some other model if you're using ollama.                                                                                     |
+| INFERENCE_IMAGE_MODEL | No       | gpt-4o-mini  | The model to use for image inference. You'll need to change this to some other model if you're using ollama and that model needs to support vision APIs (e.g. llava).                           |
 | INFERENCE_LANG        | No       | english            | The language in which the tags will be generated.                                                                                                                                               |
 
 ## Crawler Configs

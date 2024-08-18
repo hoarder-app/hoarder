@@ -183,6 +183,13 @@
       "when": 1719251349398,
       "tag": "0025_aspiring_skaar",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "5",
+      "when": 1720334457344,
+      "tag": "0026_silky_imperial_guard",
+      "breakpoints": true
     }
   ]
 }

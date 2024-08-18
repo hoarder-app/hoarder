@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -13,6 +14,7 @@ import { Link } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { MenuView } from "@react-native-menu/menu";
 import { Ellipsis, Star } from "lucide-react-native";
 
@@ -32,6 +34,7 @@ import { TailwindResolver } from "../TailwindResolver";
 import { Divider } from "../ui/Divider";
 import { Skeleton } from "../ui/Skeleton";
 import { useToast } from "../ui/Toast";
+import ListPickerModal from "./ListPickerModal";
 
 function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
@@ -70,6 +73,8 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
       onError,
     });
 
+  const manageListsSheetRef = useRef<BottomSheetModal>(null);
+
   return (
     <View className="flex flex-row gap-4">
       {(isArchivePending || isDeletionPending) && <ActivityIndicator />}
@@ -89,6 +94,12 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         )}
       </Pressable>
 
+      <ListPickerModal
+        ref={manageListsSheetRef}
+        snapPoints={["50%", "90%"]}
+        bookmarkId={bookmark.id}
+      />
+
       <MenuView
         onPressAction={({ nativeEvent }) => {
           Haptics.selectionAsync();
@@ -101,6 +112,8 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
               bookmarkId: bookmark.id,
               archived: !bookmark.archived,
             });
+          } else if (nativeEvent.event === "manage_list") {
+            manageListsSheetRef?.current?.present();
           }
         }}
         actions={[
@@ -119,6 +132,13 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             },
             image: Platform.select({
               ios: "trash",
+            }),
+          },
+          {
+            id: "manage_list",
+            title: "Manage Lists",
+            image: Platform.select({
+              ios: "list",
             }),
           },
         ]}

@@ -3,7 +3,7 @@ name: iOS App Release Build
 on:
   push:
     tags:
-      - 'ios/v[0-9]+.[0-9]+.[0-9]+'
+      - 'ios/v[0-9]+.[0-9]+.[0-9]+-[0-9]+'
 
 jobs:
   build:
@@ -23,6 +23,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Build iOS app
+        working-directory: apps/mobile
         run: eas build --platform ios --local --non-interactive --output ${{ github.workspace }}/app-release.ipa
 
       - name: Upload IPA artifact

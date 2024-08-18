@@ -83,6 +83,7 @@ export default function BulkBookmarksAction() {
     toast({
       description: `${selectedBookmarks.length} bookmarks have been deleted!`,
     });
+    setIsDeleteDialogOpen(false);
   };
 
   const alreadyFavourited =
@@ -102,7 +103,7 @@ export default function BulkBookmarksAction() {
       hidden: !isBulkEditEnabled,
     },
     {
-      name: alreadyArchived ? "Un-arhcive" : "Archive",
+      name: alreadyArchived ? "Un-archive" : "Archive",
       icon: <ArchivedActionIcon size={18} archived={!!alreadyArchived} />,
       action: () => updateBookmarks({ archived: !alreadyArchived }),
       isPending: updateBookmarkMutator.isPending,

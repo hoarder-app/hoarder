@@ -18,14 +18,14 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 
 ## Features
 
-- 🔗 Bookmark links, take simple notes and store images.
+- 🔗 Bookmark links, take simple notes and store images and pdfs.
 - ⬇️ Automatic fetching for link titles, descriptions and images.
 - 📋 Sort your bookmarks into lists.
 - 🔎 Full text search of all the content stored.
 - ✨ AI-based (aka chatgpt) automatic tagging. With supports for local models using ollama!
 - 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje) and [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/hoarder/) for quick bookmarking.
 - 📱 An [iOS app](https://apps.apple.com/us/app/hoarder-app/id6479258022), and an [Android app](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
-- 🌙 Dark mode support (web only so far).
+- 🌙 Dark mode support.
 - 💾 Self-hosting first.
 - [Planned] Downloading the content for offline reading.
 
@@ -58,7 +58,6 @@ The demo is seeded with some content, but it's in read-only mode to prevent abus
 - [tRPC](https://trpc.io) for client->server communication.
 - [Puppeteer](https://pptr.dev/) for crawling the bookmarks.
 - [OpenAI](https://openai.com/) because AI is so hot right now.
-- [BullMQ](https://bullmq.io) for scheduling the background jobs.
 - [Meilisearch](https://meilisearch.com) for the full content search.
 
 ## Why did I build it?

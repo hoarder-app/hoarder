@@ -11,7 +11,7 @@ Hoarder is an open source "Bookmark Everything" app that uses AI for automatical
 
 ## Features
 
-- 🔗 Bookmark links, take simple notes and store images.
+- 🔗 Bookmark links, take simple notes and store images and pdfs.
 - ⬇️ Automatic fetching for link titles, descriptions and images.
 - 📋 Sort your bookmarks into lists.
 - 🔎 Full text search of all the content stored.
