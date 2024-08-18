@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { apiKeys } from "@hoarder/db/schema";
 
-import { authenticateApiKey, generateApiKey, validatePassword } from "../auth";
+import { generateApiKey, validatePassword } from "../auth";
 import { authedProcedure, publicProcedure, router } from "../index";
 
 const zApiKeySchema = z.object({
@@ -80,11 +80,5 @@ export const apiKeysAppRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       return await generateApiKey(input.keyName, user.id);
-    }),
-  validate: publicProcedure
-    .input(z.object({ apiKey: z.string() }))
-    .output(z.boolean())
-    .mutation(async ({ input }) => {
-      return (await authenticateApiKey(input.apiKey)) !== null;
     }),
 });
