@@ -69,9 +69,11 @@ async function handleContextMenuClick(info: chrome.contextMenus.OnClickData) {
       };
     }
     if (newBookmark) {
-      await chrome.storage.session.set({
+      chrome.storage.session.set({
         [NEW_BOOKMARK_REQUEST_KEY_NAME]: newBookmark,
       });
+      // NOTE: Firefox only allows opening context menus if it's triggered by a user action.
+      // awaiting on any promise before calling this function will lose the "user action" context.
       await chrome.action.openPopup();
     }
   }

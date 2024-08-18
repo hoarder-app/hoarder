@@ -12,7 +12,8 @@
     "default_popup": "index.html"
   },
   "background": {
-    "service_worker": "src/background/background.ts"
+    "service_worker": "src/background/background.ts",
+    "scripts": ["src/background/background.ts"]
   },
   "options_ui": {
     "page": "index.html#options",

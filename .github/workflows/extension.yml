@@ -15,12 +15,24 @@ jobs:
       - name: Setup
         uses: ./tooling/github/setup
 
-      - name: Build the extension
+      - name: Build the extension (chrome)
         working-directory: apps/browser-extension
-        run: pnpm run build
+        run: pnpm run build --outDir dist-chrome
 
-      - name: Upload Extension Archive
+      - name: Build the extension (firefox)
+        env:
+          VITE_BUILD_FIREFOX: true
+        working-directory: apps/browser-extension
+        run: pnpm run build --outDir dist-firefox
+
+      - name: Upload Extension Archive (chrome)
         uses: actions/upload-artifact@v4
         with:
-          name: hoarder-extension
-          path: apps/browser-extension/dist/*
+          name: hoarder-extension-chrome
+          path: apps/browser-extension/dist-chrome/*
+
+      - name: Upload Extension Archive (firefox)
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoarder-extension-firefox
+          path: apps/browser-extension/dist-firefox/*
