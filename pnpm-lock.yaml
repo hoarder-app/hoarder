@@ -35,7 +35,7 @@ importers:
         specifier: ^0.13.0
         version: 0.13.0
       prettier:
-        specifier: 3.2.5
+        specifier: ^3.2.5
         version: 3.2.5
       turbo:
         specifier: ^2.0.9
@@ -13096,7 +13096,7 @@ snapshots:
   '@babel/plugin-syntax-async-generators@7.8.4(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-syntax-async-generators@7.8.4(@babel/core@7.24.0)':
@@ -13270,7 +13270,7 @@ snapshots:
   '@babel/plugin-syntax-numeric-separator@7.10.4(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-syntax-numeric-separator@7.10.4(@babel/core@7.24.0)':
@@ -13294,7 +13294,7 @@ snapshots:
   '@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.24.0)':
@@ -13318,7 +13318,7 @@ snapshots:
   '@babel/plugin-syntax-private-property-in-object@7.14.5(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-syntax-private-property-in-object@7.14.5(@babel/core@7.24.0)':
@@ -13747,7 +13747,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.23.9
       '@babel/helper-create-regexp-features-plugin': 7.22.15(@babel/core@7.23.9)
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-named-capturing-groups-regex@7.22.5(@babel/core@7.24.0)':
@@ -13892,7 +13892,7 @@ snapshots:
       '@babel/core': 7.23.9
       '@babel/helper-annotate-as-pure': 7.22.5
       '@babel/helper-create-class-features-plugin': 7.24.0(@babel/core@7.23.9)
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
       '@babel/plugin-syntax-private-property-in-object': 7.14.5(@babel/core@7.23.9)
     dev: false
 
@@ -13993,7 +13993,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.23.9
       '@babel/helper-annotate-as-pure': 7.22.5
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-react-pure-annotations@7.23.3(@babel/core@7.24.0)':
@@ -14084,7 +14084,7 @@ snapshots:
   '@babel/plugin-transform-sticky-regex@7.23.3(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-sticky-regex@7.23.3(@babel/core@7.24.0)':
@@ -14165,7 +14165,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.23.9
       '@babel/helper-create-regexp-features-plugin': 7.22.15(@babel/core@7.23.9)
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-unicode-regex@7.23.3(@babel/core@7.24.0)':
