@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useShareIntentContext } from "expo-share-intent";
+import ListPickerModal from "@/components/bookmarks/ListPickerModal";
+import { Button } from "@/components/ui/Button";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
 import { useUploadAsset } from "@/lib/upload";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { z } from "zod";
 
 import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
@@ -80,18 +83,39 @@ export default function Sharing() {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>({ type: "idle" });
 
+  let autoCloseTimeoutId: NodeJS.Timeout | null = null;
+  const addToListSheetRef = useRef<BottomSheetModal>(null);
+
   let comp;
   switch (mode.type) {
     case "idle": {
       comp = <SaveBookmark setMode={setMode} />;
       break;
     }
+    case "alreadyExists":
     case "success": {
-      comp = <Text className="text-4xl text-foreground">Hoarded!</Text>;
-      break;
-    }
-    case "alreadyExists": {
-      comp = <Text className="text-4xl text-foreground">Already Hoarded!</Text>;
+      comp = (
+        <View className="items-center gap-4">
+          <ListPickerModal
+            ref={addToListSheetRef}
+            snapPoints={["90%"]}
+            bookmarkId={mode.bookmarkId}
+            onDismiss={() => router.replace("dashboard")}
+          />
+          <Text className="text-4xl text-foreground">
+            {mode.type === "alreadyExists" ? "Already Hoarded!" : "Hoarded!"}
+          </Text>
+          <Button
+            label="Add to List"
+            onPress={() => {
+              addToListSheetRef.current?.present();
+              if (autoCloseTimeoutId) {
+                clearTimeout(autoCloseTimeoutId);
+              }
+            }}
+          />
+        </View>
+      );
       break;
     }
     case "error": {
@@ -106,11 +130,11 @@ export default function Sharing() {
       return;
     }
 
-    const timeoutId = setTimeout(() => {
+    autoCloseTimeoutId = setTimeout(() => {
       router.replace("dashboard");
     }, 2000);
 
-    return () => clearTimeout(timeoutId);
+    return () => clearTimeout(autoCloseTimeoutId!);
   }, [mode.type]);
 
   return (

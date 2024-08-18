@@ -4,22 +4,22 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev --parallel",
+    "build": "turbo --no-daemon build",
+    "dev": "turbo --no-daemon dev --parallel",
     "clean": "git clean -xdf node_modules",
-    "clean:workspaces": "turbo clean",
+    "clean:workspaces": "turbo --no-daemon clean",
     "db:migrate": "pnpm --filter @hoarder/db run migrate",
     "db:studio": "pnpm --filter @hoarder/db studio",
     "workers": "pnpm --filter @hoarder/workers run start",
     "web": "pnpm --filter @hoarder/web run dev",
     "prepare": "husky",
-    "format": "turbo format --continue -- --cache --cache-location node_modules/.cache/.prettiercache",
-    "format:fix": "turbo format --continue -- --write --cache --cache-location node_modules/.cache/.prettiercache",
-    "lint": "turbo lint --continue -- --cache --cache-location node_modules/.cache/.eslintcache",
-    "lint:fix": "turbo lint --continue -- --fix --cache --cache-location node_modules/.cache/.eslintcache",
+    "format": "turbo --no-daemon format --continue -- --cache --cache-location node_modules/.cache/.prettiercache",
+    "format:fix": "turbo --no-daemon format --continue -- --write --cache --cache-location node_modules/.cache/.prettiercache",
+    "lint": "turbo --no-daemon lint --continue -- --cache --cache-location node_modules/.cache/.eslintcache",
+    "lint:fix": "turbo --no-daemon lint --continue -- --fix --cache --cache-location node_modules/.cache/.eslintcache",
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm lint:ws",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo --no-daemon typecheck"
   },
   "devDependencies": {
     "@hoarder/prettier-config": "workspace:^0.1.0",
@@ -29,8 +29,8 @@
     "eslint": "^8.57.0",
     "husky": "^9.0.11",
     "install": "^0.13.0",
-    "prettier": "3.2.5",
-    "turbo": "^1.13.2"
+    "prettier": "^3.2.5",
+    "turbo": "^2.0.9"
   },
   "prettier": "@hoarder/prettier-config",
   "packageManager": "pnpm@9.0.0-alpha.8+sha256.a433a59569b00389a951352956faf25d1fdf43b568213fbde591c36274d4bc30",

@@ -2,6 +2,7 @@ import "dotenv/config";
 
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
+import { runQueueDBMigrations } from "@hoarder/shared/queues";
 
 import { CrawlerWorker } from "./crawlerWorker";
 import { shutdownPromise } from "./exit";
@@ -10,6 +11,8 @@ import { SearchIndexingWorker } from "./searchWorker";
 
 async function main() {
   logger.info(`Workers version: ${serverConfig.serverVersion ?? "not set"}`);
+  runQueueDBMigrations();
+
   const [crawler, openai, search] = [
     await CrawlerWorker.build(),
     OpenAiWorker.build(),
@@ -20,6 +23,11 @@ async function main() {
     Promise.all([crawler.run(), openai.run(), search.run()]),
     shutdownPromise,
   ]);
+  logger.info("Shutting down crawler, openai and search workers ...");
+
+  crawler.stop();
+  openai.stop();
+  search.stop();
 }
 
 main();

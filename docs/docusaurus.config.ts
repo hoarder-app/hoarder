@@ -59,6 +59,10 @@ const config: Config = {
       },
       items: [
         {
+          type: 'docsVersionDropdown',
+          position: 'right',
+        },
+        {
           href: 'https://hoarder.app',
           label: 'Homepage',
           position: 'right',
