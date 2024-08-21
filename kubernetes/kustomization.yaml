@@ -15,6 +15,7 @@ resources:
 - redis-deployment.yaml
 - redis-service.yaml
 - chrome-deployment.yaml
+- chrome-service.yaml
 - meilisearch-deployment.yaml
 - meilisearch-service.yaml
 - workers-deployment.yaml
