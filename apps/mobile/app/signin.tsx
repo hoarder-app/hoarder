@@ -82,7 +82,7 @@ export default function Signin() {
               keyboardType="url"
               onChangeText={(e) => {
                 setServerAddress(e);
-                setSettings({ ...settings, address: e });
+                setSettings({ ...settings, address: e.replace(/\/$/, "") });
               }}
             />
           </View>
