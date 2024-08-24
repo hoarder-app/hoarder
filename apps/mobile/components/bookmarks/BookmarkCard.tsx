@@ -114,9 +114,21 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             });
           } else if (nativeEvent.event === "manage_list") {
             manageListsSheetRef?.current?.present();
+          } else if (nativeEvent.event === "edit") {
+            router.push(`/dashboard/add-note?bookmarkId=${bookmark.id}`);
           }
         }}
         actions={[
+          {
+            id: "edit",
+            title: "Edit",
+            image: Platform.select({
+              ios: "edit",
+            }),
+            attributes: {
+              hidden: bookmark.content.type !== BookmarkTypes.TEXT,
+            },
+          },
           {
             id: "archive",
             title: bookmark.archived ? "Un-archive" : "Archive",
