@@ -44,8 +44,10 @@ export default function AddNote() {
         value={text}
         onChangeText={setText}
         multiline
+        numberOfLines={8}
         placeholder="What's on your mind?"
         autoFocus
+        textAlignVertical="top"
       />
       <Button
         onPress={() => mutate({ type: BookmarkTypes.TEXT, text })}
