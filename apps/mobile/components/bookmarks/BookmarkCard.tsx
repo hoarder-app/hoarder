@@ -8,9 +8,8 @@ import {
   Text,
   View,
 } from "react-native";
-import Markdown from "react-native-markdown-display";
 import * as Haptics from "expo-haptics";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
@@ -30,10 +29,11 @@ import {
 } from "@hoarder/shared-react/utils/bookmarkUtils";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
-import { TailwindResolver } from "../TailwindResolver";
 import { Divider } from "../ui/Divider";
 import { Skeleton } from "../ui/Skeleton";
 import { useToast } from "../ui/Toast";
+import BookmarkAssetImage from "./BookmarkAssetImage";
+import BookmarkTextMarkdown from "./BookmarkTextMarkdown";
 import ListPickerModal from "./ListPickerModal";
 
 function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
@@ -250,26 +250,21 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
   const content = bookmark.content.text;
   return (
     <View className="flex max-h-96 gap-2 p-2">
-      {bookmark.title && (
-        <Text className="line-clamp-2 text-xl font-bold text-foreground">
-          {bookmark.title}
-        </Text>
-      )}
+      <Pressable
+        onPress={() => router.push(`/dashboard/bookmarks/${bookmark.id}`)}
+      >
+        {bookmark.title && (
+          <Text className="line-clamp-2 text-xl font-bold text-foreground">
+            {bookmark.title}
+          </Text>
+        )}
+      </Pressable>
       <View className="max-h-56 overflow-hidden p-2 text-foreground">
-        <TailwindResolver
-          className="text-foreground"
-          comp={(styles) => (
-            <Markdown
-              style={{
-                text: {
-                  color: styles?.color?.toString(),
-                },
-              }}
-            >
-              {content}
-            </Markdown>
-          )}
-        />
+        <Pressable
+          onPress={() => router.push(`/dashboard/bookmarks/${bookmark.id}`)}
+        >
+          <BookmarkTextMarkdown text={content} />
+        </Pressable>
       </View>
       <TagList bookmark={bookmark} />
       <Divider orientation="vertical" className="mt-2 h-0.5 w-full" />
@@ -282,7 +277,6 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
 }
 
 function AssetCard({ bookmark }: { bookmark: ZBookmark }) {
-  const { settings } = useAppSettings();
   if (bookmark.content.type !== BookmarkTypes.ASSET) {
     throw new Error("Wrong content type rendered");
   }
@@ -290,21 +284,24 @@ function AssetCard({ bookmark }: { bookmark: ZBookmark }) {
 
   return (
     <View className="flex gap-2">
-      <Image
-        source={{
-          uri: `${settings.address}/api/assets/${bookmark.content.assetId}`,
-          headers: {
-            Authorization: `Bearer ${settings.apiKey}`,
-          },
-        }}
-        className="h-56 min-h-56 w-full object-cover"
-      />
+      <Pressable
+        onPress={() => router.push(`/dashboard/bookmarks/${bookmark.id}`)}
+      >
+        <BookmarkAssetImage
+          assetId={bookmark.content.assetId}
+          className="h-56 min-h-56 w-full object-cover"
+        />
+      </Pressable>
       <View className="flex gap-2 p-2">
-        {title && (
-          <Text className="line-clamp-2 text-xl font-bold text-foreground">
-            {title}
-          </Text>
-        )}
+        <Pressable
+          onPress={() => router.push(`/dashboard/bookmarks/${bookmark.id}`)}
+        >
+          {title && (
+            <Text className="line-clamp-2 text-xl font-bold text-foreground">
+              {title}
+            </Text>
+          )}
+        </Pressable>
         <TagList bookmark={bookmark} />
         <Divider orientation="vertical" className="mt-2 h-0.5 w-full" />
         <View className="mt-2 flex flex-row justify-between px-2 pb-2">
