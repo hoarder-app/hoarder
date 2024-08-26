@@ -54,13 +54,6 @@ export default function Dashboard() {
           headerTransparent: true,
         }}
       />
-      <Stack.Screen
-        name="add-link"
-        options={{
-          title: "New link",
-          presentation: "modal",
-        }}
-      />
     </StyledStack>
   );
 }

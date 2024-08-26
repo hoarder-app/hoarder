@@ -2,7 +2,6 @@ import { useRef } from "react";
 import { Platform, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router";
 import NoteEditorModal from "@/components/bookmarks/NewBookmarkModal";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
@@ -20,7 +19,6 @@ function HeaderRight({
   openNewBookmarkModal: () => void;
 }) {
   const { toast } = useToast();
-  const router = useRouter();
   const { settings } = useAppSettings();
   const { uploadAsset } = useUploadAsset(settings, {
     onError: (e) => {
@@ -31,10 +29,8 @@ function HeaderRight({
     <MenuView
       onPressAction={async ({ nativeEvent }) => {
         Haptics.selectionAsync();
-        if (nativeEvent.event === "note") {
+        if (nativeEvent.event === "new") {
           openNewBookmarkModal();
-        } else if (nativeEvent.event === "link") {
-          router.navigate("dashboard/add-link");
         } else if (nativeEvent.event === "library") {
           const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -52,15 +48,8 @@ function HeaderRight({
       }}
       actions={[
         {
-          id: "link",
-          title: "New Link",
-          image: Platform.select({
-            ios: "link",
-          }),
-        },
-        {
-          id: "note",
-          title: "New Note",
+          id: "new",
+          title: "New Bookmark",
           image: Platform.select({
             ios: "note.text",
           }),
