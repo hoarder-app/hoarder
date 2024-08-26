@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Keyboard, Pressable, Text } from "react-native";
+import ImageView from "react-native-image-viewing";
+import { useAssetUrl } from "@/lib/hooks";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -122,15 +124,27 @@ function BookmarkTextView({ bookmark }: { bookmark: ZBookmark }) {
 }
 
 function BookmarkAssetView({ bookmark }: { bookmark: ZBookmark }) {
+  const [imageZoom, setImageZoom] = useState(false);
   if (bookmark.content.type !== BookmarkTypes.ASSET) {
     throw new Error("Wrong content type rendered");
   }
+  const assetSource = useAssetUrl(bookmark.content.assetId);
   return (
     <BottomSheetView className="flex gap-2">
-      <BookmarkAssetImage
-        assetId={bookmark.content.assetId}
-        className="h-56 min-h-56 w-full object-cover"
+      <ImageView
+        visible={imageZoom}
+        imageIndex={0}
+        onRequestClose={() => setImageZoom(false)}
+        doubleTapToZoomEnabled={true}
+        images={[assetSource]}
       />
+
+      <Pressable onPress={() => setImageZoom(true)}>
+        <BookmarkAssetImage
+          assetId={bookmark.content.assetId}
+          className="h-56 min-h-56 w-full object-cover"
+        />
+      </Pressable>
     </BottomSheetView>
   );
 }

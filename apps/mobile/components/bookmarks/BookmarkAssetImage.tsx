@@ -1,5 +1,5 @@
 import { Image } from "react-native";
-import useAppSettings from "@/lib/settings";
+import { useAssetUrl } from "@/lib/hooks";
 
 export default function BookmarkAssetImage({
   assetId,
@@ -8,16 +8,7 @@ export default function BookmarkAssetImage({
   assetId: string;
   className: string;
 }) {
-  const { settings } = useAppSettings();
-  return (
-    <Image
-      source={{
-        uri: `${settings.address}/api/assets/${assetId}`,
-        headers: {
-          Authorization: `Bearer ${settings.apiKey}`,
-        },
-      }}
-      className={className}
-    />
-  );
+  const assetSource = useAssetUrl(assetId);
+
+  return <Image source={assetSource} className={className} />;
 }
