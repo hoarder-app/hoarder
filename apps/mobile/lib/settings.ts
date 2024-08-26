@@ -1,13 +1,17 @@
 import * as SecureStore from "expo-secure-store";
+import { z } from "zod";
 import { create } from "zustand";
 
 const SETTING_NAME = "settings";
 
-export interface Settings {
-  apiKey?: string;
-  apiKeyId?: string;
-  address: string;
-}
+const zSettingsSchema = z.object({
+  apiKey: z.string().optional(),
+  apiKeyId: z.string().optional(),
+  address: z.string(),
+  imageQuality: z.number().optional().default(0.2),
+});
+
+export type Settings = z.infer<typeof zSettingsSchema>;
 
 interface AppSettingsState {
   settings: { isLoading: boolean; settings: Settings };
@@ -18,7 +22,7 @@ interface AppSettingsState {
 const useSettings = create<AppSettingsState>((set, get) => ({
   settings: {
     isLoading: true,
-    settings: { address: "" },
+    settings: { address: "", imageQuality: 0.2 },
   },
   setSettings: async (settings) => {
     await SecureStore.setItemAsync(SETTING_NAME, JSON.stringify(settings));
@@ -36,7 +40,7 @@ const useSettings = create<AppSettingsState>((set, get) => ({
       return;
     }
     // TODO Wipe the state if invalid
-    const parsed = JSON.parse(strVal) as Settings;
+    const parsed = zSettingsSchema.parse(JSON.parse(strVal));
     set((_state) => ({ settings: { isLoading: false, settings: parsed } }));
   },
 }));

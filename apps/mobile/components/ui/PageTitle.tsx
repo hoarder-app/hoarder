@@ -1,7 +1,16 @@
 import { Text } from "react-native";
+import { cx } from "class-variance-authority";
 
-export default function PageTitle({ title }: { title: string }) {
+export default function PageTitle({
+  title,
+  className,
+}: {
+  title: string;
+  className?: string;
+}) {
   return (
-    <Text className="p-4 text-4xl font-bold text-foreground">{title}</Text>
+    <Text className={cx("p-4 text-4xl font-bold text-foreground", className)}>
+      {title}
+    </Text>
   );
 }

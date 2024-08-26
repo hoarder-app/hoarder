@@ -378,6 +378,9 @@ importers:
       react-native:
         specifier: 0.73.4
         version: 0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0)
+      react-native-awesome-slider:
+        specifier: ^2.5.3
+        version: 2.5.3(react-native-gesture-handler@2.14.1(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native-reanimated@3.8.0(@babel/core@7.23.9)(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)
       react-native-gesture-handler:
         specifier: ~2.14.0
         version: 2.14.1(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)
@@ -10339,6 +10342,15 @@ packages:
     resolution: {integrity: sha512-KSW0hR2VQmltt/qAa3eXOctQDyOu7+ZBevtKgpNDSzT7k5LA/0XntNa9z9HKCdz3QlxmJHglTZ18e4sX4V8zZQ==}
     peerDependencies:
       react: '>=16.0.0'
+
+  react-native-awesome-slider@2.5.3:
+    resolution: {integrity: sha512-dKgwcKz2hobR1xd0FFdxP99vcPhVJK6sZgTyjwbGBK97cnFB8mB5WhIRXzPLnSgrNMABPS6IbdseLRNhpp57gQ==}
+    engines: {node: '>= 18.0.0'}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+      react-native-gesture-handler: '>=2.0.0'
+      react-native-reanimated: '>=3.0.0'
 
   react-native-css-interop@0.0.36:
     resolution: {integrity: sha512-ZWoKQlq6XrI5DB4BdPk5ABvJQsX7zls1SQYWuYXOQB8u5QE0KH3OfOGAGRZPekTjgkhjqGO4Bf8G2JTSWAYMSg==}
@@ -26519,6 +26531,14 @@ snapshots:
   react-masonry-css@1.0.16(react@18.2.0):
     dependencies:
       react: 18.2.0
+    dev: false
+
+  react-native-awesome-slider@2.5.3(react-native-gesture-handler@2.14.1(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native-reanimated@3.8.0(@babel/core@7.23.9)(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0):
+    dependencies:
+      react: 18.2.0
+      react-native: 0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0)
+      react-native-gesture-handler: 2.14.1(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)
+      react-native-reanimated: 3.8.0(@babel/core@7.23.9)(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)
     dev: false
 
   react-native-css-interop@0.0.36(@babel/core@7.23.9)(react-native-reanimated@3.8.0(@babel/core@7.23.9)(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native-safe-area-context@4.8.2(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native-svg@15.1.0(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)(tailwindcss@3.4.1):

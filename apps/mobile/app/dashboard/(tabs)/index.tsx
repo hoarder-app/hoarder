@@ -34,7 +34,7 @@ function HeaderRight({
         } else if (nativeEvent.event === "library") {
           const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 0,
+            quality: settings.imageQuality,
             allowsMultipleSelection: false,
           });
           if (!result.canceled) {
