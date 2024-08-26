@@ -9,7 +9,6 @@ import {
   View,
 } from "react-native";
 import * as Haptics from "expo-haptics";
-import { Link, router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
@@ -35,7 +34,8 @@ import { useToast } from "../ui/Toast";
 import BookmarkAssetImage from "./BookmarkAssetImage";
 import BookmarkTextMarkdown from "./BookmarkTextMarkdown";
 import ListPickerModal from "./ListPickerModal";
-import NoteEditorModal from "./NewBookmarkModal";
+import TagPill from "./TagPill";
+import ViewBookmarkModal from "./ViewBookmarkModal";
 
 function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
@@ -75,7 +75,6 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
     });
 
   const manageListsSheetRef = useRef<BottomSheetModal>(null);
-  const editBookmarkModal = useRef<BottomSheetModal>(null);
 
   return (
     <View className="flex flex-row gap-4">
@@ -101,13 +100,6 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         snapPoints={["50%", "90%"]}
         bookmarkId={bookmark.id}
       />
-      {bookmark.content.type === BookmarkTypes.TEXT && (
-        <NoteEditorModal
-          ref={editBookmarkModal}
-          bookmark={bookmark}
-          snapPoints={["90%", "60%"]}
-        />
-      )}
 
       <MenuView
         onPressAction={({ nativeEvent }) => {
@@ -123,21 +115,9 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             });
           } else if (nativeEvent.event === "manage_list") {
             manageListsSheetRef?.current?.present();
-          } else if (nativeEvent.event === "edit") {
-            editBookmarkModal.current?.present();
           }
         }}
         actions={[
-          {
-            id: "edit",
-            title: "Edit",
-            image: Platform.select({
-              ios: "edit",
-            }),
-            attributes: {
-              hidden: bookmark.content.type !== BookmarkTypes.TEXT,
-            },
-          },
           {
             id: "archive",
             title: bookmark.archived ? "Un-archive" : "Archive",
@@ -187,21 +167,19 @@ function TagList({ bookmark }: { bookmark: ZBookmark }) {
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       <View className="flex flex-row gap-2">
         {tags.map((t) => (
-          <View
-            key={t.id}
-            className="rounded-full border border-accent px-2.5 py-0.5 text-xs font-semibold"
-          >
-            <Link className="text-foreground" href={`dashboard/tags/${t.id}`}>
-              {t.name}
-            </Link>
-          </View>
+          <TagPill key={t.id} tag={t} />
         ))}
       </View>
     </ScrollView>
   );
 }
 
-function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
+function LinkCard({
+  bookmark,
+}: {
+  bookmark: ZBookmark;
+  onOpenBookmark: () => void;
+}) {
   const { settings } = useAppSettings();
   if (bookmark.content.type !== BookmarkTypes.LINK) {
     throw new Error("Wrong content type rendered");
@@ -264,16 +242,20 @@ function LinkCard({ bookmark }: { bookmark: ZBookmark }) {
   );
 }
 
-function TextCard({ bookmark }: { bookmark: ZBookmark }) {
+function TextCard({
+  bookmark,
+  onOpenBookmark,
+}: {
+  bookmark: ZBookmark;
+  onOpenBookmark: () => void;
+}) {
   if (bookmark.content.type !== BookmarkTypes.TEXT) {
     throw new Error("Wrong content type rendered");
   }
   const content = bookmark.content.text;
   return (
     <View className="flex max-h-96 gap-2 p-2">
-      <Pressable
-        onPress={() => router.push(`/dashboard/bookmarks/${bookmark.id}`)}
-      >
+      <Pressable onPress={onOpenBookmark}>
         {bookmark.title && (
           <Text className="line-clamp-2 text-xl font-bold text-foreground">
             {bookmark.title}
@@ -281,9 +263,7 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
         )}
       </Pressable>
       <View className="max-h-56 overflow-hidden p-2 text-foreground">
-        <Pressable
-          onPress={() => router.push(`/dashboard/bookmarks/${bookmark.id}`)}
-        >
+        <Pressable onPress={onOpenBookmark}>
           <BookmarkTextMarkdown text={content} />
         </Pressable>
       </View>
@@ -297,7 +277,13 @@ function TextCard({ bookmark }: { bookmark: ZBookmark }) {
   );
 }
 
-function AssetCard({ bookmark }: { bookmark: ZBookmark }) {
+function AssetCard({
+  bookmark,
+  onOpenBookmark,
+}: {
+  bookmark: ZBookmark;
+  onOpenBookmark: () => void;
+}) {
   if (bookmark.content.type !== BookmarkTypes.ASSET) {
     throw new Error("Wrong content type rendered");
   }
@@ -305,18 +291,14 @@ function AssetCard({ bookmark }: { bookmark: ZBookmark }) {
 
   return (
     <View className="flex gap-2">
-      <Pressable
-        onPress={() => router.push(`/dashboard/bookmarks/${bookmark.id}`)}
-      >
+      <Pressable onPress={onOpenBookmark}>
         <BookmarkAssetImage
           assetId={bookmark.content.assetId}
           className="h-56 min-h-56 w-full object-cover"
         />
       </Pressable>
       <View className="flex gap-2 p-2">
-        <Pressable
-          onPress={() => router.push(`/dashboard/bookmarks/${bookmark.id}`)}
-        >
+        <Pressable onPress={onOpenBookmark}>
           {title && (
             <Text className="line-clamp-2 text-xl font-bold text-foreground">
               {title}
@@ -359,21 +341,43 @@ export default function BookmarkCard({
     },
   );
 
+  const viewBookmarkModal = useRef<BottomSheetModal>(null);
+
   let comp;
   switch (bookmark.content.type) {
     case BookmarkTypes.LINK:
-      comp = <LinkCard bookmark={bookmark} />;
+      comp = (
+        <LinkCard
+          bookmark={bookmark}
+          onOpenBookmark={() => viewBookmarkModal.current?.present()}
+        />
+      );
       break;
     case BookmarkTypes.TEXT:
-      comp = <TextCard bookmark={bookmark} />;
+      comp = (
+        <TextCard
+          bookmark={bookmark}
+          onOpenBookmark={() => viewBookmarkModal.current?.present()}
+        />
+      );
       break;
     case BookmarkTypes.ASSET:
-      comp = <AssetCard bookmark={bookmark} />;
+      comp = (
+        <AssetCard
+          bookmark={bookmark}
+          onOpenBookmark={() => viewBookmarkModal.current?.present()}
+        />
+      );
       break;
   }
 
   return (
     <View className="overflow-hidden rounded-xl border-b border-accent bg-background">
+      <ViewBookmarkModal
+        bookmark={bookmark}
+        ref={viewBookmarkModal}
+        snapPoints={["95%"]}
+      />
       {comp}
     </View>
   );
