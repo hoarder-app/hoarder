@@ -61,13 +61,6 @@ export default function Dashboard() {
           presentation: "modal",
         }}
       />
-      <Stack.Screen
-        name="add-note"
-        options={{
-          title: "New Note",
-          presentation: "modal",
-        }}
-      />
     </StyledStack>
   );
 }

@@ -35,6 +35,7 @@ import { useToast } from "../ui/Toast";
 import BookmarkAssetImage from "./BookmarkAssetImage";
 import BookmarkTextMarkdown from "./BookmarkTextMarkdown";
 import ListPickerModal from "./ListPickerModal";
+import NoteEditorModal from "./NewBookmarkModal";
 
 function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
@@ -74,6 +75,7 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
     });
 
   const manageListsSheetRef = useRef<BottomSheetModal>(null);
+  const editBookmarkModal = useRef<BottomSheetModal>(null);
 
   return (
     <View className="flex flex-row gap-4">
@@ -99,6 +101,13 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         snapPoints={["50%", "90%"]}
         bookmarkId={bookmark.id}
       />
+      {bookmark.content.type === BookmarkTypes.TEXT && (
+        <NoteEditorModal
+          ref={editBookmarkModal}
+          bookmark={bookmark}
+          snapPoints={["90%", "60%"]}
+        />
+      )}
 
       <MenuView
         onPressAction={({ nativeEvent }) => {
@@ -115,7 +124,7 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
           } else if (nativeEvent.event === "manage_list") {
             manageListsSheetRef?.current?.present();
           } else if (nativeEvent.event === "edit") {
-            router.push(`/dashboard/add-note?bookmarkId=${bookmark.id}`);
+            editBookmarkModal.current?.present();
           }
         }}
         actions={[

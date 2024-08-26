@@ -1,17 +1,24 @@
+import { useRef } from "react";
 import { Platform, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
+import NoteEditorModal from "@/components/bookmarks/NewBookmarkModal";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import PageTitle from "@/components/ui/PageTitle";
 import { useToast } from "@/components/ui/Toast";
 import useAppSettings from "@/lib/settings";
 import { useUploadAsset } from "@/lib/upload";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { MenuView } from "@react-native-menu/menu";
 import { SquarePen } from "lucide-react-native";
 
-function HeaderRight() {
+function HeaderRight({
+  openNewBookmarkModal,
+}: {
+  openNewBookmarkModal: () => void;
+}) {
   const { toast } = useToast();
   const router = useRouter();
   const { settings } = useAppSettings();
@@ -25,7 +32,7 @@ function HeaderRight() {
       onPressAction={async ({ nativeEvent }) => {
         Haptics.selectionAsync();
         if (nativeEvent.event === "note") {
-          router.navigate("dashboard/add-note");
+          openNewBookmarkModal();
         } else if (nativeEvent.event === "link") {
           router.navigate("dashboard/add-link");
         } else if (nativeEvent.event === "library") {
@@ -79,14 +86,19 @@ function HeaderRight() {
 }
 
 export default function Home() {
+  const newBookmarkModal = useRef<BottomSheetModal>(null);
+
   return (
     <CustomSafeAreaView>
+      <NoteEditorModal ref={newBookmarkModal} snapPoints={["90%", "60%"]} />
       <UpdatingBookmarkList
         query={{ archived: false }}
         header={
           <View className="flex flex-row justify-between">
             <PageTitle title="Home" />
-            <HeaderRight />
+            <HeaderRight
+              openNewBookmarkModal={() => newBookmarkModal.current?.present()}
+            />
           </View>
         }
       />
