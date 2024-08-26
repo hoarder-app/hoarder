@@ -1,14 +1,31 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
+import * as Haptics from "expo-haptics";
 import { Link } from "expo-router";
+import NewListModal from "@/components/lists/NewListModal";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
-import { ChevronRight } from "lucide-react-native";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { ChevronRight, Plus } from "lucide-react-native";
 
 import { useBookmarkLists } from "@hoarder/shared-react/hooks/lists";
 import { ZBookmarkListTreeNode } from "@hoarder/shared/utils/listUtils";
+
+function HeaderRight({ openNewListModal }: { openNewListModal: () => void }) {
+  return (
+    <Pressable
+      className="my-auto px-4"
+      onPress={() => {
+        Haptics.selectionAsync();
+        openNewListModal();
+      }}
+    >
+      <Plus color="rgb(0, 122, 255)" />
+    </Pressable>
+  );
+}
 
 interface ListLink {
   id: string;
@@ -53,6 +70,7 @@ export default function Lists() {
     {},
   );
   const apiUtils = api.useUtils();
+  const newListModal = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
     setRefreshing(isPending);
@@ -94,9 +112,17 @@ export default function Lists() {
 
   return (
     <CustomSafeAreaView>
+      <NewListModal ref={newListModal} snapPoints={["90%"]} />
       <FlatList
         className="h-full"
-        ListHeaderComponent={<PageTitle title="Lists" />}
+        ListHeaderComponent={
+          <View className="flex flex-row justify-between">
+            <PageTitle title="Lists" />
+            <HeaderRight
+              openNewListModal={() => newListModal.current?.present()}
+            />
+          </View>
+        }
         contentContainerStyle={{
           gap: 5,
         }}
