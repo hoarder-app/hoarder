@@ -9,7 +9,6 @@ services:
     ports:
       - 3000:3000
     environment:
-      REDIS_HOST: redis
       MEILI_ADDR: http://meilisearch:7700
       DATA_DIR: /data
     command:
@@ -19,10 +18,6 @@ services:
     depends_on:
       prep:
         condition: service_completed_successfully
-  redis:
-    image: redis:7.2-alpine
-    volumes:
-      - redis:/data
   chrome:
     image: gcr.io/zenika-hub/alpine-chrome:123
     restart: unless-stopped
@@ -45,7 +40,6 @@ services:
       - ..:/app
     working_dir: /app
     environment:
-      REDIS_HOST: redis
       MEILI_ADDR: http://meilisearch:7700
       BROWSER_WEB_URL: http://chrome:9222
       DATA_DIR: /data
@@ -71,6 +65,5 @@ services:
       - "corepack enable && pnpm install --frozen-lockfile && pnpm run db:migrate"
 
 volumes:
-  redis:
   meilisearch:
   data:
