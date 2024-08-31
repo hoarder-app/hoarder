@@ -13,9 +13,9 @@
     "hoarder": "dist/index.mjs"
   },
   "devDependencies": {
+    "@commander-js/extra-typings": "^12.0.1",
     "@hoarder/eslint-config": "workspace:^0.2.0",
     "@hoarder/prettier-config": "workspace:^0.1.0",
-    "@commander-js/extra-typings": "^12.0.1",
     "@hoarder/shared": "workspace:^0.1.0",
     "@hoarder/trpc": "workspace:^0.1.0",
     "@hoarder/tsconfig": "workspace:^0.1.0",

@@ -5,10 +5,10 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "async-mutex": "^0.4.1",
     "better-sqlite3": "^9.4.3",
     "drizzle-orm": "^0.29.4",
-    "zod": "^3.22.4",
-    "async-mutex": "^0.4.1"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@hoarder/eslint-config": "workspace:^0.2.0",
