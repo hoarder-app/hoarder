@@ -9,16 +9,11 @@
 - The most important env variables to set are:
   - `DATA_DIR`: Where the database and assets will be stored. This is the only required env variable. You can use an absolute path so that all apps point to the same dir.
   - `NEXTAUTH_SECRET`: Random string used to sign the JWT tokens. Generate one with `openssl rand -base64 36`. Logging in will not work if this is missing!
-  - `REDIS_HOST` and `REDIS_PORT` default to `localhost` and `6379` change them if redis is running on a different address.
   - `MEILI_ADDR`: If not set, search will be disabled. You can set it to `http://127.0.0.1:7700` if you run meilisearch using the command below.
   - `OPENAI_API_KEY`: If you want to enable auto tag inference in the dev env.
 - run `pnpm run db:migrate` in the root of the repo to set up the database.
 
 ### Dependencies
-
-#### Redis
-
-Redis is used as the background job queue. The easiest way to get it running is with docker `docker run -p 6379:6379 redis:alpine`.
 
 #### Meilisearch
 
@@ -35,13 +30,11 @@ The worker app will automatically start headless chrome on startup for crawling 
 - Run `pnpm web` in the root of the repo.
 - Go to `http://localhost:3000`.
 
-> NOTE: The web app kinda works without any dependencies. However, search won't work unless meilisearch is running. Also, new items added won't get crawled/indexed unless redis is running.
+> NOTE: The web app kinda works without any dependencies. However, search won't work unless meilisearch is running. Also, new items added won't get crawled/indexed unless workers are running.
 
 ### Workers
 
 - Run `pnpm workers` in the root of the repo.
-
-> NOTE: The workers package requires having redis working as it's the queue provider.
 
 ### iOS Mobile App
 
