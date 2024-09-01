@@ -8,7 +8,7 @@ import {
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import useBulkActionsStore from "@/lib/bulkActions";
-import { List, Pencil, Trash2, X } from "lucide-react";
+import { CheckCheck, List, Pencil, Trash2, X } from "lucide-react";
 
 import {
   useDeleteBookmark,
@@ -163,7 +163,12 @@ export default function BulkBookmarksAction() {
         open={manageListsModal}
         setOpen={setManageListsModalOpen}
       />
-      <div className="flex">
+      <div className="flex items-center">
+        {isBulkEditEnabled && (
+          <p className="flex items-center gap-2">
+            ( <CheckCheck size={18} /> {selectedBookmarks.length} )
+          </p>
+        )}
         {actionList.map(
           ({ name, icon: Icon, action, isPending, hidden, alwaysEnable }) => (
             <ActionButtonWithTooltip
