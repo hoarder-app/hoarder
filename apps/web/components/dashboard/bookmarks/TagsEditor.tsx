@@ -1,4 +1,5 @@
 import type { ActionMeta } from "react-select";
+import { useState } from "react";
 import { useClientConfig } from "@/lib/clientConfig";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
@@ -17,7 +18,7 @@ interface EditableTag {
 }
 
 export function TagsEditor({
-  tags,
+  tags: _tags,
   onAttach,
   onDetach,
 }: {
@@ -26,6 +27,8 @@ export function TagsEditor({
   onDetach: (tag: { tagName: string; tagId: string }) => void;
 }) {
   const demoMode = !!useClientConfig().demoMode;
+
+  const [optimisticTags, setOptimisticTags] = useState<ZBookmarkTags[]>(_tags);
 
   const { data: existingTags, isLoading: isExistingTagsLoading } =
     api.tags.list.useQuery();
@@ -40,6 +43,9 @@ export function TagsEditor({
       case "pop-value":
       case "remove-value": {
         if (actionMeta.removedValue.value) {
+          setOptimisticTags((prev) =>
+            prev.filter((t) => t.id != actionMeta.removedValue.value),
+          );
           onDetach({
             tagId: actionMeta.removedValue.value,
             tagName: actionMeta.removedValue.label,
@@ -48,11 +54,27 @@ export function TagsEditor({
         break;
       }
       case "create-option": {
+        setOptimisticTags((prev) => [
+          ...prev,
+          {
+            id: "",
+            name: actionMeta.option.label,
+            attachedBy: "human" as const,
+          },
+        ]);
         onAttach({ tagName: actionMeta.option.label });
         break;
       }
       case "select-option": {
         if (actionMeta.option) {
+          setOptimisticTags((prev) => [
+            ...prev,
+            {
+              id: actionMeta.option?.value ?? "",
+              name: actionMeta.option!.label,
+              attachedBy: "human" as const,
+            },
+          ]);
           onAttach({
             tagName: actionMeta.option.label,
             tagId: actionMeta.option?.value,
@@ -74,7 +96,7 @@ export function TagsEditor({
           attachedBy: "human" as const,
         })) ?? []
       }
-      value={tags.map((t) => ({
+      value={optimisticTags.map((t) => ({
         label: t.name,
         value: t.id,
         attachedBy: t.attachedBy,
