@@ -44,6 +44,7 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
     actionMeta: ActionMeta<EditableTag>,
   ) => {
     switch (actionMeta.action) {
+      case "pop-value":
       case "remove-value": {
         if (actionMeta.removedValue.value) {
           mutate({
