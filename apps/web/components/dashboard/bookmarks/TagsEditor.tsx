@@ -1,14 +1,14 @@
 import type { ActionMeta } from "react-select";
-import { toast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { Sparkles } from "lucide-react";
 import CreateableSelect from "react-select/creatable";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
-import type { ZAttachedByEnum } from "@hoarder/shared/types/tags";
-import { useUpdateBookmarkTags } from "@hoarder/shared-react/hooks/bookmarks";
+import type {
+  ZAttachedByEnum,
+  ZBookmarkTags,
+} from "@hoarder/shared/types/tags";
 
 interface EditableTag {
   attachedBy: ZAttachedByEnum;
@@ -16,23 +16,16 @@ interface EditableTag {
   label: string;
 }
 
-export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
+export function TagsEditor({
+  tags,
+  onAttach,
+  onDetach,
+}: {
+  tags: ZBookmarkTags[];
+  onAttach: (tag: { tagName: string; tagId?: string }) => void;
+  onDetach: (tag: { tagName: string; tagId: string }) => void;
+}) {
   const demoMode = !!useClientConfig().demoMode;
-
-  const { mutate } = useUpdateBookmarkTags({
-    onSuccess: () => {
-      toast({
-        description: "Tags has been updated!",
-      });
-    },
-    onError: () => {
-      toast({
-        variant: "destructive",
-        title: "Something went wrong",
-        description: "There was a problem with your request.",
-      });
-    },
-  });
 
   const { data: existingTags, isLoading: isExistingTagsLoading } =
     api.tags.list.useQuery();
@@ -47,33 +40,22 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
       case "pop-value":
       case "remove-value": {
         if (actionMeta.removedValue.value) {
-          mutate({
-            bookmarkId: bookmark.id,
-            attach: [],
-            detach: [{ tagId: actionMeta.removedValue.value }],
+          onDetach({
+            tagId: actionMeta.removedValue.value,
+            tagName: actionMeta.removedValue.label,
           });
         }
         break;
       }
       case "create-option": {
-        mutate({
-          bookmarkId: bookmark.id,
-          attach: [{ tagName: actionMeta.option.label }],
-          detach: [],
-        });
+        onAttach({ tagName: actionMeta.option.label });
         break;
       }
       case "select-option": {
         if (actionMeta.option) {
-          mutate({
-            bookmarkId: bookmark.id,
-            attach: [
-              {
-                tagName: actionMeta.option.label,
-                tagId: actionMeta.option?.value,
-              },
-            ],
-            detach: [],
+          onAttach({
+            tagName: actionMeta.option.label,
+            tagId: actionMeta.option?.value,
           });
         }
         break;
@@ -92,7 +74,7 @@ export function TagsEditor({ bookmark }: { bookmark: ZBookmark }) {
           attachedBy: "human" as const,
         })) ?? []
       }
-      value={bookmark.tags.map((t) => ({
+      value={tags.map((t) => ({
         label: t.name,
         value: t.id,
         attachedBy: t.attachedBy,
