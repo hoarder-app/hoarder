@@ -101,7 +101,6 @@ function SignIn() {
 }
 
 function SignUp() {
-  const clientConfig = useClientConfig();
   const form = useForm<z.infer<typeof zSignUpSchema>>({
     resolver: zodResolver(zSignUpSchema),
   });
@@ -208,7 +207,6 @@ function SignUp() {
           <ActionButton
             type="submit"
             loading={form.formState.isSubmitting}
-            disabled={clientConfig.auth.disableSignups}
           >
             Sign Up
           </ActionButton>
@@ -219,6 +217,8 @@ function SignUp() {
 }
 
 export default function CredentialsForm() {
+  const clientConfig = useClientConfig();
+
   return (
     <Tabs defaultValue="signin" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
@@ -229,7 +229,11 @@ export default function CredentialsForm() {
         <SignIn />
       </TabsContent>
       <TabsContent value="signup">
-        <SignUp />
+        {clientConfig.auth.disableSignups ? (
+          <p>Signup has been disabled.</p>
+        ) : (
+          <SignUp />
+        )}
       </TabsContent>
     </Tabs>
   );
