@@ -9,7 +9,6 @@ import {
   View,
 } from "react-native";
 import * as Haptics from "expo-haptics";
-import * as WebBrowser from "expo-web-browser";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -176,6 +175,7 @@ function TagList({ bookmark }: { bookmark: ZBookmark }) {
 
 function LinkCard({
   bookmark,
+  onOpenBookmark,
 }: {
   bookmark: ZBookmark;
   onOpenBookmark: () => void;
@@ -221,11 +221,11 @@ function LinkCard({
 
   return (
     <View className="flex gap-2">
-      {imageComp}
+      <Pressable onPress={onOpenBookmark}>{imageComp}</Pressable>
       <View className="flex gap-2 p-2">
         <Text
           className="line-clamp-2 text-xl font-bold text-foreground"
-          onPress={() => WebBrowser.openBrowserAsync(url)}
+          onPress={onOpenBookmark}
         >
           {bookmark.title ?? bookmark.content.title ?? parsedUrl.host}
         </Text>

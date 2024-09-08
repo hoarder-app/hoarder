@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Keyboard, Pressable, Text } from "react-native";
 import ImageView from "react-native-image-viewing";
+import * as WebBrowser from "expo-web-browser";
 import { useAssetUrl } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -10,6 +12,7 @@ import {
   BottomSheetView,
   TouchableWithoutFeedback,
 } from "@gorhom/bottom-sheet";
+import { ExternalLink } from "lucide-react-native";
 
 import {
   useUpdateBookmark,
@@ -18,6 +21,8 @@ import {
 import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
 import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
+import { TailwindResolver } from "../TailwindResolver";
+import { buttonVariants } from "../ui/Button";
 import { Input } from "../ui/Input";
 import PageTitle from "../ui/PageTitle";
 import { Skeleton } from "../ui/Skeleton";
@@ -70,6 +75,51 @@ function NotesEditor({ bookmark }: { bookmark: ZBookmark }) {
         }
         defaultValue={bookmark.note ?? ""}
       />
+    </BottomSheetView>
+  );
+}
+
+function BookmarkLinkView({ bookmark }: { bookmark: ZBookmark }) {
+  const [imageZoom, setImageZoom] = useState(false);
+  if (bookmark.content.type !== BookmarkTypes.LINK) {
+    throw new Error("Wrong content type rendered");
+  }
+  const url = new URL(bookmark.content.url);
+
+  const imageAssetId =
+    bookmark.content.imageAssetId ?? bookmark.content.screenshotAssetId ?? "";
+  const assetSource = useAssetUrl(imageAssetId);
+  return (
+    <BottomSheetView className="flex gap-2">
+      <Pressable
+        className={cn(
+          buttonVariants({ variant: "default" }),
+          "flex w-fit flex-row items-center gap-2",
+        )}
+        onPress={() => WebBrowser.openBrowserAsync(url.toString())}
+      >
+        <Text className="text-background">{url.host}</Text>
+        <TailwindResolver
+          className="color-background"
+          comp={(styles) => (
+            <ExternalLink size={20} color={styles?.color?.toString()} />
+          )}
+        />
+      </Pressable>
+      <ImageView
+        visible={imageZoom}
+        imageIndex={0}
+        onRequestClose={() => setImageZoom(false)}
+        doubleTapToZoomEnabled={true}
+        images={[assetSource]}
+      />
+
+      <Pressable onPress={() => setImageZoom(true)}>
+        <BookmarkAssetImage
+          assetId={imageAssetId}
+          className="h-56 min-h-56 w-full object-cover"
+        />
+      </Pressable>
     </BottomSheetView>
   );
 }
@@ -162,7 +212,8 @@ const ViewBookmarkModal = React.forwardRef<
   let title = null;
   switch (bookmark.content.type) {
     case BookmarkTypes.LINK:
-      comp = null;
+      title = bookmark.title ?? bookmark.content.title;
+      comp = <BookmarkLinkView bookmark={bookmark} />;
       break;
     case BookmarkTypes.TEXT:
       title = bookmark.title;
@@ -188,7 +239,7 @@ const ViewBookmarkModal = React.forwardRef<
       <BottomSheetScrollView className="flex flex-1">
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <BottomSheetView className="flex flex-1">
-            <PageTitle title={title ?? "Untitled"} />
+            <PageTitle title={title ?? "Untitled"} className="line-clamp-2" />
             <BottomSheetView className="gap-4 px-4">
               {comp}
               <TagList bookmark={bookmark} />
