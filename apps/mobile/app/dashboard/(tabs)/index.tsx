@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Platform, View } from "react-native";
+import { Platform, Pressable, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import NoteEditorModal from "@/components/bookmarks/NewBookmarkModal";
@@ -11,7 +11,7 @@ import useAppSettings from "@/lib/settings";
 import { useUploadAsset } from "@/lib/upload";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { MenuView } from "@react-native-menu/menu";
-import { SquarePen } from "lucide-react-native";
+import { Plus, SquarePen } from "lucide-react-native";
 
 function HeaderRight({
   openNewBookmarkModal,
@@ -91,6 +91,12 @@ export default function Home() {
           </View>
         }
       />
+      <Pressable
+        className="absolute bottom-4 right-4 rounded-full bg-foreground p-6"
+        onPress={() => newBookmarkModal.current?.present()}
+      >
+        <Plus size={30} color="white" />
+      </Pressable>
     </CustomSafeAreaView>
   );
 }
