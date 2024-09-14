@@ -9,6 +9,7 @@ const zSettingsSchema = z.object({
   apiKeyId: z.string().optional(),
   address: z.string(),
   imageQuality: z.number().optional().default(0.2),
+  theme: z.enum(["light", "dark", "system"]).optional().default("system"),
 });
 
 export type Settings = z.infer<typeof zSettingsSchema>;
@@ -22,7 +23,7 @@ interface AppSettingsState {
 const useSettings = create<AppSettingsState>((set, get) => ({
   settings: {
     isLoading: true,
-    settings: { address: "", imageQuality: 0.2 },
+    settings: { address: "", imageQuality: 0.2, theme: "system" },
   },
   setSettings: async (settings) => {
     await SecureStore.setItemAsync(SETTING_NAME, JSON.stringify(settings));
@@ -39,9 +40,18 @@ const useSettings = create<AppSettingsState>((set, get) => ({
       }));
       return;
     }
-    // TODO Wipe the state if invalid
-    const parsed = zSettingsSchema.parse(JSON.parse(strVal));
-    set((_state) => ({ settings: { isLoading: false, settings: parsed } }));
+    const parsed = zSettingsSchema.safeParse(JSON.parse(strVal));
+    if (!parsed.success) {
+      // Wipe the state if invalid
+      set((state) => ({
+        settings: { isLoading: false, settings: state.settings.settings },
+      }));
+      return;
+    }
+
+    set((_state) => ({
+      settings: { isLoading: false, settings: parsed.data },
+    }));
   },
 }));
 

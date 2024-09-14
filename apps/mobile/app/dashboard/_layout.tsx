@@ -33,6 +33,9 @@ export default function Dashboard() {
     <StyledStack
       contentClassName="bg-gray-100 dark:bg-background"
       headerClassName="bg-gray-100 dark:bg-background text-foreground"
+      screenOptions={{
+        headerTransparent: true,
+      }}
     >
       <Stack.Screen
         name="(tabs)"
@@ -52,6 +55,14 @@ export default function Dashboard() {
           headerTitle: "",
           headerBackTitle: "Back",
           headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="settings/theme"
+        options={{
+          title: "Theme",
+          headerTitle: "Theme",
+          headerBackTitle: "Back",
         }}
       />
     </StyledStack>
