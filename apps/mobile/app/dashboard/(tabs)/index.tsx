@@ -4,6 +4,7 @@ import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import NoteEditorModal from "@/components/bookmarks/NewBookmarkModal";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
+import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import PageTitle from "@/components/ui/PageTitle";
 import { useToast } from "@/components/ui/Toast";
@@ -95,7 +96,12 @@ export default function Home() {
         className="absolute bottom-4 right-4 rounded-full bg-foreground p-6"
         onPress={() => newBookmarkModal.current?.present()}
       >
-        <Plus size={30} color="white" />
+        <TailwindResolver
+          comp={(styles) => (
+            <Plus size={30} color={styles?.color?.toString()} />
+          )}
+          className="text-background"
+        />
       </Pressable>
     </CustomSafeAreaView>
   );

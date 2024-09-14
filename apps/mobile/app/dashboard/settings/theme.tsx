@@ -23,7 +23,7 @@ export default function ThemePage() {
               ]
             }
           </Text>
-          {isChecked && <Check />}
+          {isChecked && <Check color="rgb(0, 122, 255)" />}
         </Pressable>,
         <Divider
           key={theme + "-divider"}
