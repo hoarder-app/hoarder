@@ -48,10 +48,19 @@ export default function RootLayout() {
                 contentClassName="bg-gray-100 dark:bg-background"
                 screenOptions={{
                   headerShown: false,
+                  headerTransparent: true,
                 }}
               >
                 <Stack.Screen name="index" />
                 <Stack.Screen name="sharing" />
+                <Stack.Screen
+                  name="test-connection"
+                  options={{
+                    title: "Test Connection",
+                    headerShown: true,
+                    presentation: "modal",
+                  }}
+                />
               </StyledStack>
               <StatusBar style="auto" />
             </View>

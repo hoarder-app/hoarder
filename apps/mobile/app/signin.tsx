@@ -3,19 +3,23 @@ import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { Redirect } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import Logo from "@/components/Logo";
 import { TailwindResolver } from "@/components/TailwindResolver";
-import { Button } from "@/components/ui/Button";
+import { Button, buttonVariants } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
+import { cn } from "@/lib/utils";
+import { Bug } from "lucide-react-native";
 
 export default function Signin() {
+  const router = useRouter();
   const { settings, setSettings } = useAppSettings();
   const [serverAddress, setServerAddress] = useState(settings.address);
 
@@ -109,12 +113,29 @@ export default function Signin() {
               onChangeText={(e) => setFormData((s) => ({ ...s, password: e }))}
             />
           </View>
-          <Button
-            className="w-full"
-            label="Sign In"
-            onPress={onSignin}
-            disabled={isPending}
-          />
+          <View className="flex flex-row items-center justify-between gap-2">
+            <Button
+              className="flex-1"
+              label="Sign In"
+              onPress={onSignin}
+              disabled={isPending}
+            />
+            <Pressable
+              className={cn(
+                buttonVariants({ variant: "default" }),
+                !settings.address && "bg-gray-500",
+              )}
+              onPress={() => router.push("/test-connection")}
+              disabled={!settings.address}
+            >
+              <TailwindResolver
+                comp={(styles) => (
+                  <Bug size={20} color={styles?.color?.toString()} />
+                )}
+                className="text-background"
+              />
+            </Pressable>
+          </View>
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
