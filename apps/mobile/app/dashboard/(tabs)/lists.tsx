@@ -2,9 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { Link } from "expo-router";
+import FullPageError from "@/components/FullPageError";
 import NewListModal from "@/components/lists/NewListModal";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
+import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -65,7 +67,7 @@ function traverseTree(
 
 export default function Lists() {
   const [refreshing, setRefreshing] = useState(false);
-  const { data: lists, isPending } = useBookmarkLists();
+  const { data: lists, isPending, error, refetch } = useBookmarkLists();
   const [showChildrenOf, setShowChildrenOf] = useState<Record<string, boolean>>(
     {},
   );
@@ -76,9 +78,12 @@ export default function Lists() {
     setRefreshing(isPending);
   }, [isPending]);
 
+  if (error) {
+    return <FullPageError error={error.message} onRetry={() => refetch()} />;
+  }
+
   if (!lists) {
-    // Add spinner
-    return <View />;
+    return <FullPageSpinner />;
   }
 
   const onRefresh = () => {

@@ -2,6 +2,7 @@ import { Alert, Platform, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
+import FullPageError from "@/components/FullPageError";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import PageTitle from "@/components/ui/PageTitle";
@@ -14,7 +15,11 @@ export default function ListView() {
   if (typeof slug !== "string") {
     throw new Error("Unexpected param type");
   }
-  const { data: list } = api.lists.get.useQuery({ listId: slug });
+  const {
+    data: list,
+    error,
+    refetch,
+  } = api.lists.get.useQuery({ listId: slug });
 
   return (
     <CustomSafeAreaView>
@@ -25,7 +30,9 @@ export default function ListView() {
           headerTransparent: true,
         }}
       />
-      {list ? (
+      {error ? (
+        <FullPageError error={error.message} onRetry={() => refetch()} />
+      ) : list ? (
         <View>
           <UpdatingBookmarkList
             query={{

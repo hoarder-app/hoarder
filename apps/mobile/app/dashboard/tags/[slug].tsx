@@ -1,6 +1,7 @@
 import { View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
+import FullPageError from "@/components/FullPageError";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import PageTitle from "@/components/ui/PageTitle";
@@ -12,7 +13,7 @@ export default function TagView() {
     throw new Error("Unexpected param type");
   }
 
-  const { data: tag } = api.tags.get.useQuery({ tagId: slug });
+  const { data: tag, error, refetch } = api.tags.get.useQuery({ tagId: slug });
 
   return (
     <CustomSafeAreaView>
@@ -23,7 +24,9 @@ export default function TagView() {
           headerTransparent: true,
         }}
       />
-      {tag ? (
+      {error ? (
+        <FullPageError error={error.message} onRetry={() => refetch()} />
+      ) : tag ? (
         <View>
           <UpdatingBookmarkList
             query={{

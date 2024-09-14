@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View } from "react-native";
 import BookmarkList from "@/components/bookmarks/BookmarkList";
+import FullPageError from "@/components/FullPageError";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
@@ -16,10 +17,15 @@ export default function Search() {
 
   const onRefresh = api.useUtils().bookmarks.searchBookmarks.invalidate;
 
-  const { data, isPending } = api.bookmarks.searchBookmarks.useQuery(
-    { text: query },
-    { placeholderData: keepPreviousData },
-  );
+  const { data, error, refetch, isPending } =
+    api.bookmarks.searchBookmarks.useQuery(
+      { text: query },
+      { placeholderData: keepPreviousData },
+    );
+
+  if (error) {
+    return <FullPageError error={error.message} onRetry={() => refetch()} />;
+  }
 
   if (!data) {
     return <FullPageSpinner />;
