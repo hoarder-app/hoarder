@@ -31,6 +31,7 @@ export default function TextCard({
           bookmarkLayoutSwitch(layout, {
             grid: null,
             masonry: null,
+            compact: null,
             list: (
               <div
                 className={cn(

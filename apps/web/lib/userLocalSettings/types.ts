@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const USER_LOCAL_SETTINGS_COOKIE_NAME = "hoarder-user-local-settings";
 
-const zBookmarkGridLayout = z.enum(["grid", "list", "masonry"]);
+const zBookmarkGridLayout = z.enum(["grid", "list", "masonry", "compact"]);
 export type BookmarksLayoutTypes = z.infer<typeof zBookmarkGridLayout>;
 
 export const zUserLocalSettings = z.object({

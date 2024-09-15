@@ -80,6 +80,7 @@ export default function BookmarksGrid({
           </Masonry>
         ),
         list: <div className="grid grid-cols-1">{children}</div>,
+        compact: <div className="grid grid-cols-1">{children}</div>,
       })}
       {hasNextPage && (
         <div className="flex justify-center">

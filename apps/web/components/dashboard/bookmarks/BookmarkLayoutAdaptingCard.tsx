@@ -1,5 +1,6 @@
 import type { BookmarksLayoutTypes } from "@/lib/userLocalSettings/types";
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import useBulkActionsStore from "@/lib/bulkActions";
 import {
@@ -8,11 +9,12 @@ import {
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
-import { Check } from "lucide-react";
+import { Check, Image as ImageIcon, NotebookPen } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import BookmarkActionBar from "./BookmarkActionBar";
 import TagList from "./TagList";
@@ -187,6 +189,58 @@ function GridView({
   );
 }
 
+function CompactView({ bookmark, title, footer, className }: Props) {
+  return (
+    <div
+      className={cn(
+        "relative flex flex-col overflow-hidden rounded-lg shadow-md",
+        className,
+        "max-h-96",
+      )}
+    >
+      <MultiBookmarkSelector bookmark={bookmark} />
+      <div className="flex h-full justify-between gap-2 overflow-hidden p-2">
+        <div className="flex items-center gap-2">
+          {bookmark.content.type === BookmarkTypes.LINK &&
+            bookmark.content.favicon && (
+              <Image
+                src={bookmark.content.favicon}
+                alt="favicon"
+                width={5}
+                unoptimized
+                height={5}
+                className="size-5"
+              />
+            )}
+          {bookmark.content.type === BookmarkTypes.TEXT && (
+            <NotebookPen className="size-5" />
+          )}
+          {bookmark.content.type === BookmarkTypes.ASSET && (
+            <ImageIcon className="size-5" />
+          )}
+          {
+            <div className="shrink-1 text-md line-clamp-1 overflow-hidden text-ellipsis break-words">
+              {title ?? "Untitled"}
+            </div>
+          }
+          {footer && (
+            <p className="flex shrink-0 gap-2 text-gray-500">•{footer}</p>
+          )}
+          <p className="text-gray-500">•</p>
+          <Link
+            href={`/dashboard/preview/${bookmark.id}`}
+            suppressHydrationWarning
+            className="shrink-0 gap-2 text-gray-500"
+          >
+            {dayjs(bookmark.createdAt).format("MMM DD")}
+          </Link>
+        </div>
+        <BookmarkActionBar bookmark={bookmark} />
+      </div>
+    </div>
+  );
+}
+
 export function BookmarkLayoutAdaptingCard(props: Props) {
   const layout = useBookmarkLayout();
 
@@ -194,5 +248,6 @@ export function BookmarkLayoutAdaptingCard(props: Props) {
     masonry: <GridView layout={layout} {...props} />,
     grid: <GridView layout={layout} {...props} />,
     list: <ListView {...props} />,
+    compact: <CompactView {...props} />,
   });
 }

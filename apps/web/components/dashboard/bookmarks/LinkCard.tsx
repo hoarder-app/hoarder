@@ -15,7 +15,7 @@ function LinkTitle({ bookmark }: { bookmark: ZBookmarkTypeLink }) {
   const link = bookmark.content;
   const parsedUrl = new URL(link.url);
   return (
-    <Link href={link.url} target="_blank">
+    <Link href={link.url} target="_blank" rel="noreferrer">
       {bookmark.title ?? link?.title ?? parsedUrl.host}
     </Link>
   );
@@ -42,7 +42,7 @@ function LinkImage({
 
   const imageDetails = getBookmarkLinkImageUrl(link);
 
-  let img: React.ReactNode = null;
+  let img: React.ReactNode;
   if (isBookmarkStillCrawling(bookmark)) {
     img = imgComponent("/blur.avif", false);
   } else if (imageDetails) {
@@ -57,7 +57,12 @@ function LinkImage({
   }
 
   return (
-    <Link href={link.url} target="_blank" className={className}>
+    <Link
+      href={link.url}
+      target="_blank"
+      rel="noreferrer"
+      className={className}
+    >
       <div className="relative size-full flex-1">{img}</div>
     </Link>
   );
@@ -71,6 +76,7 @@ function LinkUrl({ bookmark }: { bookmark: ZBookmarkTypeLink }) {
       className="line-clamp-1 hover:text-foreground"
       href={link.url}
       target="_blank"
+      rel="noreferrer"
     >
       {parsedUrl.host}
     </Link>
