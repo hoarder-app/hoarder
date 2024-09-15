@@ -9,6 +9,12 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { Provider } from "next-auth/providers/index";
 
 import { db } from "@hoarder/db";
+import {
+  accounts,
+  sessions,
+  users,
+  verificationTokens,
+} from "@hoarder/db/schema";
 import { validatePassword } from "@hoarder/trpc/auth";
 
 declare module "next-auth/jwt" {
@@ -63,7 +69,12 @@ const providers: Provider[] = [
 
 export const authOptions: NextAuthOptions = {
   // https://github.com/nextauthjs/next-auth/issues/9493
-  adapter: DrizzleAdapter(db) as Adapter,
+  adapter: DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens,
+  }) as Adapter,
   providers: providers,
   session: {
     strategy: "jwt",

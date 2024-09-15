@@ -15,7 +15,7 @@
     "format": "prettier --check . --ignore-path ../../.gitignore"
   },
   "dependencies": {
-    "@auth/drizzle-adapter": "^0.8.0",
+    "@auth/drizzle-adapter": "^1.4.2",
     "@emoji-mart/data": "^1.1.2",
     "@emoji-mart/react": "^1.1.1",
     "@hoarder/db": "workspace:^0.1.0",
@@ -46,7 +46,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "dayjs": "^1.11.10",
-    "drizzle-orm": "^0.29.4",
+    "drizzle-orm": "^0.33.0",
     "fastest-levenshtein": "^1.0.16",
     "lucide-react": "^0.330.0",
     "next": "14.1.4",
