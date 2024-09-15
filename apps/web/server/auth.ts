@@ -10,7 +10,12 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { Provider } from "next-auth/providers/index";
 
 import { db } from "@hoarder/db";
-import { users } from "@hoarder/db/schema";
+import {
+  accounts,
+  sessions,
+  users,
+  verificationTokens,
+} from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
 import { validatePassword } from "@hoarder/trpc/auth";
 
@@ -120,7 +125,12 @@ if (oauth.wellKnownUrl) {
 
 export const authOptions: NextAuthOptions = {
   // https://github.com/nextauthjs/next-auth/issues/9493
-  adapter: DrizzleAdapter(db) as Adapter,
+  adapter: DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens,
+  }) as Adapter,
   providers: providers,
   session: {
     strategy: "jwt",

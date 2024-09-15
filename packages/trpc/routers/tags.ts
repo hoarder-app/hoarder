@@ -107,7 +107,13 @@ export const tagsAppRouter = router({
           bookmarkId: tagsOnBookmarks.bookmarkId,
         })
         .from(tagsOnBookmarks)
-        .where(conditionFromInput(input, ctx.user.id));
+        .where(
+          and(
+            eq(tagsOnBookmarks.tagId, input.tagId),
+            // Tag ownership is checked in the ensureTagOwnership middleware
+            // eq(bookmarkTags.userId, ctx.user.id),
+          ),
+        );
 
       const res = await ctx.db
         .delete(bookmarkTags)

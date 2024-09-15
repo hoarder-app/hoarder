@@ -458,8 +458,8 @@ importers:
   apps/web:
     dependencies:
       '@auth/drizzle-adapter':
-        specifier: ^0.8.0
-        version: 0.8.0
+        specifier: ^1.4.2
+        version: 1.4.2
       '@emoji-mart/data':
         specifier: ^1.1.2
         version: 1.1.2
@@ -551,8 +551,8 @@ importers:
         specifier: ^1.11.10
         version: 1.11.10
       drizzle-orm:
-        specifier: ^0.29.4
-        version: 0.29.4(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0)
+        specifier: ^0.33.0
+        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0)
       fastest-levenshtein:
         specifier: ^1.0.16
         version: 1.0.16
@@ -690,8 +690,8 @@ importers:
         specifier: ^16.4.1
         version: 16.4.5
       drizzle-orm:
-        specifier: ^0.29.4
-        version: 0.29.4(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0)
+        specifier: ^0.33.0
+        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0)
       execa:
         specifier: ^9.1.0
         version: 9.1.0
@@ -833,8 +833,8 @@ importers:
         specifier: ^16.4.1
         version: 16.4.5
       drizzle-orm:
-        specifier: ^0.29.4
-        version: 0.29.4(@types/better-sqlite3@7.6.9)(better-sqlite3@9.4.3)
+        specifier: ^0.33.0
+        version: 0.33.0(@types/better-sqlite3@7.6.9)(better-sqlite3@9.4.3)
       tsx:
         specifier: ^4.7.1
         version: 4.7.1
@@ -867,8 +867,8 @@ importers:
         specifier: ^9.4.3
         version: 9.4.3
       drizzle-orm:
-        specifier: ^0.29.4
-        version: 0.29.4(@types/better-sqlite3@7.6.9)(better-sqlite3@9.4.3)
+        specifier: ^0.33.0
+        version: 0.33.0(@types/better-sqlite3@7.6.9)(better-sqlite3@9.4.3)
       zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -969,8 +969,8 @@ importers:
         specifier: ^2.4.3
         version: 2.4.3
       drizzle-orm:
-        specifier: ^0.29.4
-        version: 0.29.4(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0)
+        specifier: ^0.33.0
+        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0)
       superjson:
         specifier: ^2.2.1
         version: 2.2.1
@@ -1209,8 +1209,8 @@ packages:
       nodemailer:
         optional: true
 
-  '@auth/core@0.28.0':
-    resolution: {integrity: sha512-/fh/tb/L4NMSYcyPoo4Imn8vN6MskcVfgESF8/ndgtI4fhD/7u7i5fTVzWgNRZ4ebIEGHNDbWFRxaTu1NtQgvA==}
+  '@auth/core@0.34.2':
+    resolution: {integrity: sha512-KywHKRgLiF3l7PLyL73fjLSIBe1YNcA6sMeew4yMP6cfCWGXZrkkXd32AjRi1hlJ9nvovUBGZHvbn+LijO6ZeQ==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
       '@simplewebauthn/server': ^9.0.2
@@ -1223,8 +1223,8 @@ packages:
       nodemailer:
         optional: true
 
-  '@auth/drizzle-adapter@0.8.0':
-    resolution: {integrity: sha512-cwLMOJHf+R8VeHYFzdA5DReKelidWSx8bz9kJ6hydPjUugHate2F7u9XHoCOu7zXIA5azSPb3b2WR9C0Fjq7eA==}
+  '@auth/drizzle-adapter@1.4.2':
+    resolution: {integrity: sha512-rqukaT9CeWB8VOt6g2bQ6uYMHVOQIYCBkzddZXWshi8aqwLABatpRWAc+pehpcMDn0RSW/uvKMs7tkON+Bho9Q==}
 
   '@babel/code-frame@7.10.4':
     resolution: {integrity: sha512-vG6SvB6oYEhvgisZNFRmRCUkLz11c7rp+tbNTynGqc6mS1d5ATd/sGyV6W0KZZnXRKMTzZDRgQT3Ou9jhpAfUg==}
@@ -6083,20 +6083,25 @@ packages:
     resolution: {integrity: sha512-0fHv3YIEaUcSVPSGyaaBfOi9bmpajjhbJNdPsRMIUvYdLVxBu9eGjH8mRc3Qk7HVmEidFc/lhG1YyJhoXrn5yA==}
     hasBin: true
 
-  drizzle-orm@0.29.4:
-    resolution: {integrity: sha512-ZnSM8TAxFhzH7p1s3+w3pRE/eKaOeNkH9SKitm717pubDVVcV2I0BCDBPGKV+pe02+wMfw37ntlTcCyo2rA3IA==}
+  drizzle-orm@0.33.0:
+    resolution: {integrity: sha512-SHy72R2Rdkz0LEq0PSG/IdvnT3nGiWuRk+2tXZQ90GVq/XQhpCzu/EFT3V2rox+w8MlkBQxifF8pCStNYnERfA==}
     peerDependencies:
       '@aws-sdk/client-rds-data': '>=3'
       '@cloudflare/workers-types': '>=3'
+      '@electric-sql/pglite': '>=0.1.1'
       '@libsql/client': '*'
       '@neondatabase/serverless': '>=0.1'
+      '@op-engineering/op-sqlite': '>=2'
       '@opentelemetry/api': ^1.4.1
       '@planetscale/database': '>=1'
+      '@prisma/client': '*'
+      '@tidbcloud/serverless': '*'
       '@types/better-sqlite3': '*'
       '@types/pg': '*'
       '@types/react': '>=18'
       '@types/sql.js': '*'
-      '@vercel/postgres': '*'
+      '@vercel/postgres': '>=0.8.0'
+      '@xata.io/client': '*'
       better-sqlite3: '>=7'
       bun-types: '*'
       expo-sqlite: '>=13.2.0'
@@ -6105,6 +6110,7 @@ packages:
       mysql2: '>=2'
       pg: '>=8'
       postgres: '>=3'
+      prisma: '*'
       react: '>=18'
       sql.js: '>=1'
       sqlite3: '>=5'
@@ -6113,13 +6119,21 @@ packages:
         optional: true
       '@cloudflare/workers-types':
         optional: true
+      '@electric-sql/pglite':
+        optional: true
       '@libsql/client':
         optional: true
       '@neondatabase/serverless':
         optional: true
+      '@op-engineering/op-sqlite':
+        optional: true
       '@opentelemetry/api':
         optional: true
       '@planetscale/database':
+        optional: true
+      '@prisma/client':
+        optional: true
+      '@tidbcloud/serverless':
         optional: true
       '@types/better-sqlite3':
         optional: true
@@ -6130,6 +6144,8 @@ packages:
       '@types/sql.js':
         optional: true
       '@vercel/postgres':
+        optional: true
+      '@xata.io/client':
         optional: true
       better-sqlite3:
         optional: true
@@ -6146,6 +6162,8 @@ packages:
       pg:
         optional: true
       postgres:
+        optional: true
+      prisma:
         optional: true
       react:
         optional: true
@@ -9235,6 +9253,9 @@ packages:
 
   oauth4webapi@2.10.3:
     resolution: {integrity: sha512-9FkXEXfzVKzH63GUOZz1zMr3wBaICSzk6DLXx+CGdrQ10ItNk2ePWzYYc1fdmKq1ayGFb2aX97sRCoZ2s0mkDw==}
+
+  oauth4webapi@2.14.0:
+    resolution: {integrity: sha512-OuKZgPrt4qKFrLAhStRVU/aPbLYtIZufjO52bYdP45JXpBYhipvFvpgBFi4DONGByUVOiWuqkclTKaDfZShspA==}
 
   oauth@0.9.15:
     resolution: {integrity: sha512-a5ERWK1kh38ExDEfoO6qUHJb32rd7aYmPHuyCu3Fta/cnICvYmgd2uhuKXvPD+PXB+gCEYYEaQdIRAjCOwAKNA==}
@@ -12642,20 +12663,20 @@ snapshots:
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  '@auth/core@0.28.0':
+  '@auth/core@0.34.2':
     dependencies:
       '@panva/hkdf': 1.1.1
       '@types/cookie': 0.6.0
       cookie: 0.6.0
       jose: 5.2.2
-      oauth4webapi: 2.10.3
+      oauth4webapi: 2.14.0
       preact: 10.11.3
       preact-render-to-string: 5.2.3(preact@10.11.3)
     dev: false
 
-  '@auth/drizzle-adapter@0.8.0':
+  '@auth/drizzle-adapter@1.4.2':
     dependencies:
-      '@auth/core': 0.28.0
+      '@auth/core': 0.34.2
     transitivePeerDependencies:
       - '@simplewebauthn/browser'
       - '@simplewebauthn/server'
@@ -13134,7 +13155,7 @@ snapshots:
   '@babel/plugin-syntax-async-generators@7.8.4(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-syntax-async-generators@7.8.4(@babel/core@7.24.0)':
@@ -13308,7 +13329,7 @@ snapshots:
   '@babel/plugin-syntax-numeric-separator@7.10.4(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-syntax-numeric-separator@7.10.4(@babel/core@7.24.0)':
@@ -13320,7 +13341,7 @@ snapshots:
   '@babel/plugin-syntax-object-rest-spread@7.8.3(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-syntax-object-rest-spread@7.8.3(@babel/core@7.24.0)':
@@ -13332,7 +13353,7 @@ snapshots:
   '@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-syntax-optional-catch-binding@7.8.3(@babel/core@7.24.0)':
@@ -13356,7 +13377,7 @@ snapshots:
   '@babel/plugin-syntax-private-property-in-object@7.14.5(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-syntax-private-property-in-object@7.14.5(@babel/core@7.24.0)':
@@ -13437,7 +13458,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.23.9
       '@babel/helper-module-imports': 7.22.15
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
       '@babel/helper-remap-async-to-generator': 7.22.20(@babel/core@7.23.9)
     dev: false
 
@@ -13464,7 +13485,7 @@ snapshots:
   '@babel/plugin-transform-block-scoping@7.23.4(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-block-scoping@7.23.4(@babel/core@7.24.0)':
@@ -13510,7 +13531,7 @@ snapshots:
       '@babel/helper-compilation-targets': 7.23.6
       '@babel/helper-environment-visitor': 7.22.20
       '@babel/helper-function-name': 7.23.0
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
       '@babel/helper-replace-supers': 7.22.20(@babel/core@7.23.9)
       '@babel/helper-split-export-declaration': 7.22.6
       globals: 11.12.0
@@ -13532,7 +13553,7 @@ snapshots:
   '@babel/plugin-transform-computed-properties@7.23.3(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
       '@babel/template': 7.24.0
     dev: false
 
@@ -13546,7 +13567,7 @@ snapshots:
   '@babel/plugin-transform-destructuring@7.23.3(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-destructuring@7.23.3(@babel/core@7.24.0)':
@@ -13656,7 +13677,7 @@ snapshots:
       '@babel/core': 7.23.9
       '@babel/helper-compilation-targets': 7.23.6
       '@babel/helper-function-name': 7.23.0
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-function-name@7.23.3(@babel/core@7.24.0)':
@@ -13684,7 +13705,7 @@ snapshots:
   '@babel/plugin-transform-literals@7.23.3(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-literals@7.23.3(@babel/core@7.24.0)':
@@ -13737,7 +13758,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.23.9
       '@babel/helper-module-transforms': 7.23.3(@babel/core@7.23.9)
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
       '@babel/helper-simple-access': 7.22.5
     dev: false
 
@@ -13785,7 +13806,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.23.9
       '@babel/helper-create-regexp-features-plugin': 7.22.15(@babel/core@7.23.9)
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-named-capturing-groups-regex@7.22.5(@babel/core@7.24.0)':
@@ -13930,7 +13951,7 @@ snapshots:
       '@babel/core': 7.23.9
       '@babel/helper-annotate-as-pure': 7.22.5
       '@babel/helper-create-class-features-plugin': 7.24.0(@babel/core@7.23.9)
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
       '@babel/plugin-syntax-private-property-in-object': 7.14.5(@babel/core@7.23.9)
     dev: false
 
@@ -13964,7 +13985,7 @@ snapshots:
   '@babel/plugin-transform-react-display-name@7.23.3(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-react-display-name@7.23.3(@babel/core@7.24.0)':
@@ -14014,7 +14035,7 @@ snapshots:
       '@babel/core': 7.23.9
       '@babel/helper-annotate-as-pure': 7.22.5
       '@babel/helper-module-imports': 7.22.15
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
       '@babel/plugin-syntax-jsx': 7.23.3(@babel/core@7.23.9)
       '@babel/types': 7.24.0
     dev: false
@@ -14033,7 +14054,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.23.9
       '@babel/helper-annotate-as-pure': 7.22.5
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-react-pure-annotations@7.23.3(@babel/core@7.24.0)':
@@ -14110,7 +14131,7 @@ snapshots:
   '@babel/plugin-transform-spread@7.23.3(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
       '@babel/helper-skip-transparent-expression-wrappers': 7.22.5
     dev: false
 
@@ -14124,7 +14145,7 @@ snapshots:
   '@babel/plugin-transform-sticky-regex@7.23.3(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-sticky-regex@7.23.3(@babel/core@7.24.0)':
@@ -14205,7 +14226,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.23.9
       '@babel/helper-create-regexp-features-plugin': 7.22.15(@babel/core@7.23.9)
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
     dev: false
 
   '@babel/plugin-transform-unicode-regex@7.23.3(@babel/core@7.24.0)':
@@ -14430,7 +14451,7 @@ snapshots:
   '@babel/preset-react@7.23.3(@babel/core@7.23.9)':
     dependencies:
       '@babel/core': 7.23.9
-      '@babel/helper-plugin-utils': 7.24.8
+      '@babel/helper-plugin-utils': 7.24.0
       '@babel/helper-validator-option': 7.23.5
       '@babel/plugin-transform-react-display-name': 7.23.3(@babel/core@7.23.9)
       '@babel/plugin-transform-react-jsx': 7.23.4(@babel/core@7.23.9)
@@ -20724,13 +20745,13 @@ snapshots:
       - supports-color
     dev: true
 
-  drizzle-orm@0.29.4(@types/better-sqlite3@7.6.9)(better-sqlite3@9.4.3):
+  drizzle-orm@0.33.0(@types/better-sqlite3@7.6.9)(better-sqlite3@9.4.3):
     dependencies:
       '@types/better-sqlite3': 7.6.9
       better-sqlite3: 9.4.3
     dev: false
 
-  drizzle-orm@0.29.4(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0):
+  drizzle-orm@0.33.0(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0):
     dependencies:
       '@types/react': 18.2.58
       better-sqlite3: 9.4.3
@@ -25299,6 +25320,9 @@ snapshots:
     dev: false
 
   oauth4webapi@2.10.3:
+    dev: false
+
+  oauth4webapi@2.14.0:
     dev: false
 
   oauth@0.9.15:
