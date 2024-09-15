@@ -11,7 +11,7 @@ import {
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
-import { TagsEditor } from "./TagsEditor";
+import { BookmarkTagsEditor } from "./BookmarkTagsEditor";
 
 export default function TagModal({
   bookmark,
@@ -28,7 +28,7 @@ export default function TagModal({
         <DialogHeader>
           <DialogTitle>Edit Tags</DialogTitle>
         </DialogHeader>
-        <TagsEditor bookmark={bookmark} />
+        <BookmarkTagsEditor bookmark={bookmark} />
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
             <Button type="button" variant="secondary">

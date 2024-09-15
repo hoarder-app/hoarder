@@ -8,13 +8,15 @@ import {
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import useBulkActionsStore from "@/lib/bulkActions";
-import { Pencil, Trash2, X } from "lucide-react";
+import { CheckCheck, Hash, List, Pencil, Trash2, X } from "lucide-react";
 
 import {
   useDeleteBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
 
+import BulkManageListsModal from "./bookmarks/BulkManageListsModal";
+import BulkTagModal from "./bookmarks/BulkTagModal";
 import { ArchivedActionIcon, FavouritedActionIcon } from "./bookmarks/icons";
 
 export default function BulkBookmarksAction() {
@@ -24,6 +26,8 @@ export default function BulkBookmarksAction() {
   );
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [manageListsModal, setManageListsModalOpen] = useState(false);
+  const [bulkTagModal, setBulkTagModalOpen] = useState(false);
 
   useEffect(() => {
     setIsBulkEditEnabled(false); // turn off toggle + clear selected bookmarks on mount
@@ -96,6 +100,20 @@ export default function BulkBookmarksAction() {
 
   const actionList = [
     {
+      name: "Add to List",
+      icon: <List size={18} />,
+      action: () => setManageListsModalOpen(true),
+      isPending: false,
+      hidden: !isBulkEditEnabled,
+    },
+    {
+      name: "Edit Tags",
+      icon: <Hash size={18} />,
+      action: () => setBulkTagModalOpen(true),
+      isPending: false,
+      hidden: !isBulkEditEnabled,
+    },
+    {
       name: alreadyFavourited ? "Unfavourite" : "Favourite",
       icon: <FavouritedActionIcon favourited={!!alreadyFavourited} size={18} />,
       action: () => updateBookmarks({ favourited: !alreadyFavourited }),
@@ -149,7 +167,22 @@ export default function BulkBookmarksAction() {
           </ActionButton>
         )}
       />
-      <div className="flex">
+      <BulkManageListsModal
+        bookmarkIds={selectedBookmarks.map((b) => b.id)}
+        open={manageListsModal}
+        setOpen={setManageListsModalOpen}
+      />
+      <BulkTagModal
+        bookmarkIds={selectedBookmarks.map((b) => b.id)}
+        open={bulkTagModal}
+        setOpen={setBulkTagModalOpen}
+      />
+      <div className="flex items-center">
+        {isBulkEditEnabled && (
+          <p className="flex items-center gap-2">
+            ( <CheckCheck size={18} /> {selectedBookmarks.length} )
+          </p>
+        )}
         {actionList.map(
           ({ name, icon: Icon, action, isPending, hidden, alwaysEnable }) => (
             <ActionButtonWithTooltip

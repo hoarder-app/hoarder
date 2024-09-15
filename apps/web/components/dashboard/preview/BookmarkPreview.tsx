@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { TagsEditor } from "@/components/dashboard/bookmarks/TagsEditor";
+import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTagsEditor";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -147,7 +147,7 @@ export default function BookmarkPreview({
         <CreationTime createdAt={bookmark.createdAt} />
         <div className="flex items-center gap-4">
           <p className="text-sm text-gray-400">Tags</p>
-          <TagsEditor bookmark={bookmark} />
+          <BookmarkTagsEditor bookmark={bookmark} />
         </div>
         <div className="flex gap-4">
           <p className="pt-2 text-sm text-gray-400">Note</p>

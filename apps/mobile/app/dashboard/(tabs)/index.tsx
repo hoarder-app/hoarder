@@ -1,19 +1,25 @@
-import { Platform, View } from "react-native";
+import { useRef } from "react";
+import { Platform, Pressable, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
-import { useRouter } from "expo-router";
+import NoteEditorModal from "@/components/bookmarks/NewBookmarkModal";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
+import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import PageTitle from "@/components/ui/PageTitle";
 import { useToast } from "@/components/ui/Toast";
 import useAppSettings from "@/lib/settings";
 import { useUploadAsset } from "@/lib/upload";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { MenuView } from "@react-native-menu/menu";
-import { SquarePen } from "lucide-react-native";
+import { Plus, SquarePen } from "lucide-react-native";
 
-function HeaderRight() {
+function HeaderRight({
+  openNewBookmarkModal,
+}: {
+  openNewBookmarkModal: () => void;
+}) {
   const { toast } = useToast();
-  const router = useRouter();
   const { settings } = useAppSettings();
   const { uploadAsset } = useUploadAsset(settings, {
     onError: (e) => {
@@ -24,14 +30,12 @@ function HeaderRight() {
     <MenuView
       onPressAction={async ({ nativeEvent }) => {
         Haptics.selectionAsync();
-        if (nativeEvent.event === "note") {
-          router.navigate("dashboard/add-note");
-        } else if (nativeEvent.event === "link") {
-          router.navigate("dashboard/add-link");
+        if (nativeEvent.event === "new") {
+          openNewBookmarkModal();
         } else if (nativeEvent.event === "library") {
           const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 0,
+            quality: settings.imageQuality,
             allowsMultipleSelection: false,
           });
           if (!result.canceled) {
@@ -45,15 +49,8 @@ function HeaderRight() {
       }}
       actions={[
         {
-          id: "link",
-          title: "New Link",
-          image: Platform.select({
-            ios: "link",
-          }),
-        },
-        {
-          id: "note",
-          title: "New Note",
+          id: "new",
+          title: "New Bookmark",
           image: Platform.select({
             ios: "note.text",
           }),
@@ -79,17 +76,33 @@ function HeaderRight() {
 }
 
 export default function Home() {
+  const newBookmarkModal = useRef<BottomSheetModal>(null);
+
   return (
     <CustomSafeAreaView>
+      <NoteEditorModal ref={newBookmarkModal} snapPoints={["90%", "60%"]} />
       <UpdatingBookmarkList
         query={{ archived: false }}
         header={
           <View className="flex flex-row justify-between">
             <PageTitle title="Home" />
-            <HeaderRight />
+            <HeaderRight
+              openNewBookmarkModal={() => newBookmarkModal.current?.present()}
+            />
           </View>
         }
       />
+      <Pressable
+        className="absolute bottom-4 right-4 rounded-full bg-foreground p-6"
+        onPress={() => newBookmarkModal.current?.present()}
+      >
+        <TailwindResolver
+          comp={(styles) => (
+            <Plus size={30} color={styles?.color?.toString()} />
+          )}
+          className="text-background"
+        />
+      </Pressable>
     </CustomSafeAreaView>
   );
 }

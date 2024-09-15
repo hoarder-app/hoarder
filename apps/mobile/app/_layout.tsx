@@ -10,6 +10,7 @@ import { ShareIntentProvider, useShareIntent } from "expo-share-intent";
 import { StatusBar } from "expo-status-bar";
 import { StyledStack } from "@/components/navigation/stack";
 import { Providers } from "@/lib/providers";
+import useAppSettings from "@/lib/settings";
 import { cn } from "@/lib/utils";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useColorScheme } from "nativewind";
@@ -17,7 +18,8 @@ import { useColorScheme } from "nativewind";
 export default function RootLayout() {
   const router = useRouter();
   const { hasShareIntent } = useShareIntent();
-  const { colorScheme } = useColorScheme();
+  const { colorScheme, setColorScheme } = useColorScheme();
+  const { settings } = useAppSettings();
 
   useEffect(() => {
     if (hasShareIntent) {
@@ -26,6 +28,10 @@ export default function RootLayout() {
       });
     }
   }, [hasShareIntent]);
+
+  useEffect(() => {
+    setColorScheme(settings.theme);
+  }, [settings.theme]);
 
   return (
     <ShareIntentProvider>
@@ -42,10 +48,19 @@ export default function RootLayout() {
                 contentClassName="bg-gray-100 dark:bg-background"
                 screenOptions={{
                   headerShown: false,
+                  headerTransparent: true,
                 }}
               >
                 <Stack.Screen name="index" />
                 <Stack.Screen name="sharing" />
+                <Stack.Screen
+                  name="test-connection"
+                  options={{
+                    title: "Test Connection",
+                    headerShown: true,
+                    presentation: "modal",
+                  }}
+                />
               </StyledStack>
               <StatusBar style="auto" />
             </View>

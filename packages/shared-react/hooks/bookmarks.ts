@@ -21,6 +21,20 @@ export function useAutoRefreshingBookmarkQuery(
   });
 }
 
+export function useCreateBookmark(
+  ...opts: Parameters<typeof api.bookmarks.createBookmark.useMutation>
+) {
+  const apiUtils = api.useUtils();
+  return api.bookmarks.createBookmark.useMutation({
+    ...opts[0],
+    onSuccess: (res, req, meta) => {
+      apiUtils.bookmarks.getBookmarks.invalidate();
+      apiUtils.bookmarks.searchBookmarks.invalidate();
+      return opts[0]?.onSuccess?.(res, req, meta);
+    },
+  });
+}
+
 export function useCreateBookmarkWithPostHook(
   ...opts: Parameters<typeof api.bookmarks.createBookmark.useMutation>
 ) {
@@ -57,6 +71,21 @@ export function useUpdateBookmark(
 ) {
   const apiUtils = api.useUtils();
   return api.bookmarks.updateBookmark.useMutation({
+    ...opts[0],
+    onSuccess: (res, req, meta) => {
+      apiUtils.bookmarks.getBookmarks.invalidate();
+      apiUtils.bookmarks.searchBookmarks.invalidate();
+      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
+      return opts[0]?.onSuccess?.(res, req, meta);
+    },
+  });
+}
+
+export function useUpdateBookmarkText(
+  ...opts: Parameters<typeof api.bookmarks.updateBookmarkText.useMutation>
+) {
+  const apiUtils = api.useUtils();
+  return api.bookmarks.updateBookmarkText.useMutation({
     ...opts[0],
     onSuccess: (res, req, meta) => {
       apiUtils.bookmarks.getBookmarks.invalidate();

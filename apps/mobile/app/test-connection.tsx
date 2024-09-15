@@ -1,0 +1,113 @@
+import React from "react";
+import { Platform, Text, View } from "react-native";
+import * as Clipboard from "expo-clipboard";
+import { Button } from "@/components/ui/Button";
+import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
+import { Input } from "@/components/ui/Input";
+import useAppSettings from "@/lib/settings";
+import { cn } from "@/lib/utils";
+
+export default function TestConnection() {
+  const { settings, isLoading } = useAppSettings();
+  const [text, setText] = React.useState("");
+  const [randomId, setRandomId] = React.useState(Math.random());
+  const [status, setStatus] = React.useState<"running" | "success" | "error">(
+    "running",
+  );
+
+  const appendText = (text: string) => {
+    setText((prev) => prev + (prev ? "\n\n" : "") + text);
+  };
+
+  React.useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+    setStatus("running");
+    appendText("Running connection test ...");
+    function runTest() {
+      const request = new XMLHttpRequest();
+      request.onreadystatechange = () => {
+        if (request.readyState !== 4) {
+          return;
+        }
+
+        if (request.status === 0) {
+          appendText("Network connection failed: " + request.responseText);
+          setStatus("error");
+          return;
+        }
+
+        if (request.status !== 200) {
+          appendText("Recieve non success error code: " + request.status);
+          appendText("Got the following response:");
+          appendText(request.responseText);
+          setStatus("error");
+        }
+        if (request.status === 200) {
+          appendText("ALL GOOD");
+          setStatus("success");
+        }
+      };
+
+      appendText("Using address: " + settings.address);
+      request.open("GET", `${settings.address}`);
+      request.send();
+    }
+    runTest();
+  }, [settings.address, randomId]);
+
+  return (
+    <CustomSafeAreaView>
+      <View className="m-4 flex flex-col gap-2 p-2">
+        <Button
+          className="w-full"
+          label="Copy Diagnostics Result"
+          onPress={async () => {
+            await Clipboard.setStringAsync(text);
+          }}
+        />
+        <Button
+          className="w-full"
+          label="Retry"
+          onPress={() => {
+            setText("");
+            setRandomId(Math.random());
+          }}
+        />
+        <View
+          className={cn(
+            "w-full rounded-md p-2",
+            status === "running" && "bg-primary/50",
+            status === "success" && "bg-green-500",
+            status === "error" && "bg-red-500",
+          )}
+        >
+          <Text
+            className={cn(
+              "w-full text-center",
+              status === "running" && "text-primary-foreground",
+              status === "success" && "text-white",
+              status === "error" && "text-white",
+            )}
+          >
+            {status === "running" && "Running connection test ..."}
+            {status === "success" && "Connection test successful"}
+            {status === "error" && "Connection test failed"}
+          </Text>
+        </View>
+        <Input
+          className="h-fit leading-6"
+          style={{
+            fontFamily: Platform.OS === "ios" ? "Courier New" : "monospace",
+          }}
+          multiline={true}
+          scrollEnabled={true}
+          value={text}
+          onChangeText={setText}
+          editable={false}
+        />
+      </View>
+    </CustomSafeAreaView>
+  );
+}

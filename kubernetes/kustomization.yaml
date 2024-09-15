@@ -12,13 +12,10 @@ resources:
 - namespace.yaml
 - web-deployment.yaml
 - web-service.yaml
-- redis-deployment.yaml
-- redis-service.yaml
 - chrome-deployment.yaml
+- chrome-service.yaml
 - meilisearch-deployment.yaml
 - meilisearch-service.yaml
-- workers-deployment.yaml
-- redis-pvc.yaml
 - meilisearch-pvc.yaml
 - data-pvc.yaml
 
@@ -38,14 +35,4 @@ replacements:
       group: apps
       kind: Deployment
       name: web
-      version: v1
-  - fieldPaths:
-    - spec.template.spec.containers.0.image
-    options:
-      delimiter: ':'
-      index: 1
-    select:
-      group: apps
-      kind: Deployment
-      name: workers
       version: v1
