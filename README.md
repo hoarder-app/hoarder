@@ -27,6 +27,7 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 - 📱 An [iOS app](https://apps.apple.com/us/app/hoarder-app/id6479258022), and an [Android app](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
 - 🗄️ Full page archival (using [monolith](https://github.com/Y2Z/monolith)) to protect against link rot.
 - ☑️ Bulk actions support.
+- 🔐 SSO support.
 - 🌙 Dark mode support.
 - 💾 Self-hosting first.
 - [Planned] Downloading the content for offline reading.

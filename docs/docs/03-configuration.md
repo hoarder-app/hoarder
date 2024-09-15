@@ -21,15 +21,19 @@ The flags need to be provided to the `web` container.
 Only OIDC compliant OAuth providers are supported! For information on how to set it up, consult the documentation of your provider.
 :::
 
-| Name                                        | Required | Default                | Description                                                                                                                                             |
-| ------------------------------------------- | -------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DISABLE_SIGNUPS                             | No       | false                  | If enabled, no new signups will be allowed and the signup button will be disabled in the UI                                                             |
-| OAUTH_WELLKNOWN_URL                         | No       | Not set                | The "wellknown Url" for openid-configuration as provided by the OAuth provider                                                                          |
-| OAUTH_CLIENT_SECRET                         | No       | Not set                | The "Client Secret" as provided by the OAuth provider                                                                                                   |
-| OAUTH_CLIENT_ID                             | No       | Not set                | The "Client ID" as provided by the OAuth provider                                                                                                       |
-| OAUTH_SCOPE                                 | No       | "openid email profile" | "Full list of scopes to request (space delimited)"                                                                                                      |
-| OAUTH_PROVIDER_NAME                         | No       | "Custom Provider"      | The name of your provider. Will be shown on the signup page as "Sign in with <name>"                                                                    |
-| OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING | No       | false                  | Whether existing accounts in hoarder stored in the database should automatically be linked with your OAuth account. DANGEROUS, but can also be helpful! |
+:::info
+When setting up OAuth, the allowed redirect URLs configured at the provider should be set to `<HOARDER_ADDRESS>/api/auth/callback/custom` where `<HOARDER_ADDRESS>` is the address you configured in `NEXTAUTH_URL` (for example: `https://try.hoarder.app/api/auth/callback/custom`).
+:::
+
+| Name                                        | Required | Default                | Description                                                                                                                                                         |
+| ------------------------------------------- | -------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DISABLE_SIGNUPS                             | No       | false                  | If enabled, no new signups will be allowed and the signup button will be disabled in the UI                                                                         |
+| OAUTH_WELLKNOWN_URL                         | No       | Not set                | The "wellknown Url" for openid-configuration as provided by the OAuth provider                                                                                      |
+| OAUTH_CLIENT_SECRET                         | No       | Not set                | The "Client Secret" as provided by the OAuth provider                                                                                                               |
+| OAUTH_CLIENT_ID                             | No       | Not set                | The "Client ID" as provided by the OAuth provider                                                                                                                   |
+| OAUTH_SCOPE                                 | No       | "openid email profile" | "Full list of scopes to request (space delimited)"                                                                                                                  |
+| OAUTH_PROVIDER_NAME                         | No       | "Custom Provider"      | The name of your provider. Will be shown on the signup page as "Sign in with `<name>`"                                                                              |
+| OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING | No       | false                  | Whether existing accounts in hoarder stored in the database should automatically be linked with your OAuth account. Only enable it if you trust the OAuth provider! |
 
 For more information on `OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING`, check the [next-auth.js documentation](https://next-auth.js.org/configuration/providers/oauth#allowdangerousemailaccountlinking-option).
 
