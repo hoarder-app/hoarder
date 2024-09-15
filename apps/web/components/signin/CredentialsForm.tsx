@@ -204,10 +204,7 @@ function SignUp() {
               );
             }}
           />
-          <ActionButton
-            type="submit"
-            loading={form.formState.isSubmitting}
-          >
+          <ActionButton type="submit" loading={form.formState.isSubmitting}>
             Sign Up
           </ActionButton>
         </div>
@@ -230,7 +227,7 @@ export default function CredentialsForm() {
       </TabsContent>
       <TabsContent value="signup">
         {clientConfig.auth.disableSignups ? (
-          <p>Signup has been disabled.</p>
+          <p className="text-center">Signups are currently disabled.</p>
         ) : (
           <SignUp />
         )}
