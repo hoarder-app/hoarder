@@ -1,12 +1,10 @@
-import type { Adapter, AdapterUser } from "next-auth/adapters";
+import type { Adapter } from "next-auth/adapters";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { and, count, eq } from "drizzle-orm";
 import NextAuth, {
-  Account,
   DefaultSession,
   getServerSession,
   NextAuthOptions,
-  User,
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Provider } from "next-auth/providers/index";
@@ -44,65 +42,26 @@ declare module "next-auth" {
 }
 
 /**
- * OAuth does not provide role information, so we have to read the role from the database, when OAuth is used
- * @param userId the id of the user to find the roles for
+ * Returns true if the user table is empty, which indicates that this user is going to be
+ * the first one. This can be racy if multiple users are created at the same time, but
+ * that should be fine.
  */
-async function getRoleForOAuthUser(userId: string) {
-  const result = await db
-    .select({ role: users.role })
-    .from(users)
-    .where(eq(users.id, userId));
-
-  // User already exists-->take what is written in the DB
-  if (result && result.length) {
-    return result[0].role;
-  }
-
-  return null;
+async function isFirstUser(): Promise<boolean> {
+  const [{ count: userCount }] = await db
+    .select({ count: count() })
+    .from(users);
+  return userCount == 0;
 }
 
 /**
- * If a new user is created based on OAuth credentials, we need to promote the first user to admin, so we have at least 1 admin
+ * Returns true if the user is an admin
  */
-async function updateRoleForOAuthUser() {
-  let role: UserRole = "user";
-
-  // If there is not a single user yet, we just assign the admin permissions, to have at least 1 admin
-  // Perform in a transaction to prevent 2 users getting promoted to admin if 2 users sign up at the same time
-  return db.transaction(async () => {
-    const [{ count: userCount }] = await db
-      .select({ count: count() })
-      .from(users);
-    if (userCount === 1) {
-      role = "admin";
-
-      // Only 1 user exists --> update the role to admin
-      await db.update(users).set({ role: "admin" });
-    }
-    return role;
+async function isAdmin(email: string): Promise<boolean> {
+  const res = await db.query.users.findFirst({
+    columns: { role: true },
+    where: eq(users.email, email),
   });
-}
-
-/**
- * Gets the assigned role for a user
- * @param user the user object
- * @param account information about where that account is coming from (oauth or not)
- * @param isNewUser if this is a new user or not
- */
-async function getUserRole(
-  user: User | AdapterUser,
-  account: Account | null,
-  isNewUser: boolean | undefined,
-) {
-  let role = user.role;
-  if (account && account.type === "oauth") {
-    if (isNewUser) {
-      role = await updateRoleForOAuthUser();
-    } else {
-      role = await getRoleForOAuthUser(user.id);
-    }
-  }
-  return role;
+  return res?.role == "admin";
 }
 
 const providers: Provider[] = [
@@ -131,25 +90,29 @@ const providers: Provider[] = [
 ];
 
 const oauth = serverConfig.auth.oauth;
-if (oauth.clientId && oauth.clientSecret && oauth.wellKnownUrl) {
+if (oauth.wellKnownUrl) {
   providers.push({
     id: "custom",
     name: oauth.name,
     type: "oauth",
     wellKnown: oauth.wellKnownUrl,
-    authorization: { params: { scope: "openid email profile" } },
+    authorization: { params: { scope: oauth.scope } },
     clientId: oauth.clientId,
     clientSecret: oauth.clientSecret,
     allowDangerousEmailAccountLinking: oauth.allowDangerousEmailAccountLinking,
     idToken: true,
     checks: ["pkce", "state"],
-    profile(profile: Record<string, string>) {
+    async profile(profile: Record<string, string>) {
+      const [admin, firstUser] = await Promise.all([
+        isAdmin(profile.email),
+        isFirstUser(),
+      ]);
       return {
         id: profile.sub,
         name: profile.name,
         email: profile.email,
         image: profile.picture,
-        role: "user", //will be updated correctly at a later point, when it is already in the database
+        role: admin || firstUser ? "admin" : "user",
       };
     },
   });
@@ -169,8 +132,8 @@ export const authOptions: NextAuthOptions = {
     newUser: "/signin",
   },
   callbacks: {
-    async signIn({ account, profile }) {
-      if (account?.type === "credentials") {
+    async signIn({ credentials, profile }) {
+      if (credentials) {
         return true;
       }
       if (!profile?.email || !profile?.name) {
@@ -180,30 +143,21 @@ export const authOptions: NextAuthOptions = {
         .select({ count: count() })
         .from(users)
         .where(and(eq(users.email, profile.email)));
-      if (userCount === 1) {
-        // Users can change their name-->update the name in our users table as well
-        await db
-          .update(users)
-          .set({ name: profile.name })
-          .where(eq(users.email, profile.email));
-        // User used OAuth before to sign in
-        return true;
-      }
-      // User did not exist before --> check if signups are enabled
-      if (serverConfig.auth.disableSignups) {
+
+      // If it's a new user and signups are disabled, fail the sign in
+      if (userCount === 0 && serverConfig.auth.disableSignups) {
         throw new Error("Signups are disabled in server config");
       }
       return true;
     },
-    async jwt({ token, user, isNewUser, account }) {
+    async jwt({ token, user }) {
       if (user) {
-        const role = await getUserRole(user, account, isNewUser);
         token.user = {
           id: user.id,
           name: user.name,
           email: user.email,
           image: user.image,
-          role: role ?? "user",
+          role: user.role ?? "user",
         };
       }
       return token;
