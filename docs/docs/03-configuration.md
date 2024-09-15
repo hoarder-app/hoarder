@@ -9,9 +9,29 @@ The app is mainly configured by environment variables. All the used environment 
 | NEXTAUTH_SECRET           | Yes                                   | Not set | Random string used to sign the JWT tokens. Generate one with `openssl rand -base64 36`.                                                        |
 | MEILI_ADDR                | No                                    | Not set | The address of meilisearch. If not set, Search will be disabled. E.g. (`http://meilisearch:7700`)                                              |
 | MEILI_MASTER_KEY          | Only in Prod and if search is enabled | Not set | The master key configured for meilisearch. Not needed in development environment. Generate one with `openssl rand -base64 36`                  |
-| DISABLE_SIGNUPS           | No                                    | false   | If enabled, no new signups will be allowed and the signup button will be disabled in the UI                                                    |
 | MAX_ASSET_SIZE_MB         | No                                    | 4       | Sets the maximum allowed asset size (in MB) to be uploaded                                                                                     |
 | DISABLE_NEW_RELEASE_CHECK | No                                    | false   | If set to true, latest release check will be disabled in the admin panel.                                                                      |
+
+## Authentication / Signup
+
+By default, Hoarder uses the database to store users, but it is possible to also use OAuth.
+The flags need to be provided to the `web` container.
+
+:::info
+Only OIDC compliant OAuth providers are supported! For information on how to set it up, consult the documentation of your provider.
+:::
+
+| Name                                        | Required | Default                | Description                                                                                                                                             |
+| ------------------------------------------- | -------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DISABLE_SIGNUPS                             | No       | false                  | If enabled, no new signups will be allowed and the signup button will be disabled in the UI                                                             |
+| OAUTH_WELLKNOWN_URL                         | No       | Not set                | The "wellknown Url" for openid-configuration as provided by the OAuth provider                                                                          |
+| OAUTH_CLIENT_SECRET                         | No       | Not set                | The "Client Secret" as provided by the OAuth provider                                                                                                   |
+| OAUTH_CLIENT_ID                             | No       | Not set                | The "Client ID" as provided by the OAuth provider                                                                                                       |
+| OAUTH_SCOPE                                 | No       | "openid email profile" | "Full list of scopes to request (space delimited)"                                                                                                      |
+| OAUTH_PROVIDER_NAME                         | No       | "Custom Provider"      | The name of your provider. Will be shown on the signup page as "Sign in with <name>"                                                                    |
+| OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING | No       | false                  | Whether existing accounts in hoarder stored in the database should automatically be linked with your OAuth account. DANGEROUS, but can also be helpful! |
+
+For more information on `OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING`, check the [next-auth.js documentation](https://next-auth.js.org/configuration/providers/oauth#allowdangerousemailaccountlinking-option).
 
 ## Inference Configs (For automatic tagging)
 

@@ -1,5 +1,6 @@
 import type { Adapter } from "next-auth/adapters";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import { and, count, eq } from "drizzle-orm";
 import NextAuth, {
   DefaultSession,
   getServerSession,
@@ -15,13 +16,16 @@ import {
   users,
   verificationTokens,
 } from "@hoarder/db/schema";
+import serverConfig from "@hoarder/shared/config";
 import { validatePassword } from "@hoarder/trpc/auth";
+
+type UserRole = "admin" | "user";
 
 declare module "next-auth/jwt" {
   export interface JWT {
     user: {
       id: string;
-      role: "admin" | "user";
+      role: UserRole;
     } & DefaultSession["user"];
   }
 }
@@ -33,13 +37,36 @@ declare module "next-auth" {
   export interface Session {
     user: {
       id: string;
-      role: "admin" | "user";
+      role: UserRole;
     } & DefaultSession["user"];
   }
 
   export interface DefaultUser {
-    role: "admin" | "user" | null;
+    role: UserRole | null;
   }
+}
+
+/**
+ * Returns true if the user table is empty, which indicates that this user is going to be
+ * the first one. This can be racy if multiple users are created at the same time, but
+ * that should be fine.
+ */
+async function isFirstUser(): Promise<boolean> {
+  const [{ count: userCount }] = await db
+    .select({ count: count() })
+    .from(users);
+  return userCount == 0;
+}
+
+/**
+ * Returns true if the user is an admin
+ */
+async function isAdmin(email: string): Promise<boolean> {
+  const res = await db.query.users.findFirst({
+    columns: { role: true },
+    where: eq(users.email, email),
+  });
+  return res?.role == "admin";
 }
 
 const providers: Provider[] = [
@@ -67,6 +94,35 @@ const providers: Provider[] = [
   }),
 ];
 
+const oauth = serverConfig.auth.oauth;
+if (oauth.wellKnownUrl) {
+  providers.push({
+    id: "custom",
+    name: oauth.name,
+    type: "oauth",
+    wellKnown: oauth.wellKnownUrl,
+    authorization: { params: { scope: oauth.scope } },
+    clientId: oauth.clientId,
+    clientSecret: oauth.clientSecret,
+    allowDangerousEmailAccountLinking: oauth.allowDangerousEmailAccountLinking,
+    idToken: true,
+    checks: ["pkce", "state"],
+    async profile(profile: Record<string, string>) {
+      const [admin, firstUser] = await Promise.all([
+        isAdmin(profile.email),
+        isFirstUser(),
+      ]);
+      return {
+        id: profile.sub,
+        name: profile.name,
+        email: profile.email,
+        image: profile.picture,
+        role: admin || firstUser ? "admin" : "user",
+      };
+    },
+  });
+}
+
 export const authOptions: NextAuthOptions = {
   // https://github.com/nextauthjs/next-auth/issues/9493
   adapter: DrizzleAdapter(db, {
@@ -79,7 +135,31 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
+  pages: {
+    signIn: "/signin",
+    signOut: "/signin",
+    error: "/signin",
+    newUser: "/signin",
+  },
   callbacks: {
+    async signIn({ credentials, profile }) {
+      if (credentials) {
+        return true;
+      }
+      if (!profile?.email || !profile?.name) {
+        throw new Error("No profile");
+      }
+      const [{ count: userCount }] = await db
+        .select({ count: count() })
+        .from(users)
+        .where(and(eq(users.email, profile.email)));
+
+      // If it's a new user and signups are disabled, fail the sign in
+      if (userCount === 0 && serverConfig.auth.disableSignups) {
+        throw new Error("Signups are disabled in server config");
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.user = {
@@ -87,7 +167,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           image: user.image,
-          role: user.role || "user",
+          role: user.role ?? "user",
         };
       }
       return token;
