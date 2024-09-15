@@ -10,7 +10,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useBookmarkLayout } from "@/lib/userLocalSettings/bookmarksLayout";
 import { updateBookmarksLayout } from "@/lib/userLocalSettings/userLocalSettings";
-import { Check, LayoutDashboard, LayoutGrid, LayoutList } from "lucide-react";
+import {
+  Check,
+  LayoutDashboard,
+  LayoutGrid,
+  LayoutList,
+  List,
+} from "lucide-react";
 
 type LayoutType = "masonry" | "grid" | "list";
 
@@ -18,6 +24,7 @@ const iconMap = {
   masonry: LayoutDashboard,
   grid: LayoutGrid,
   list: LayoutList,
+  compact: List,
 };
 
 export default function ChangeLayout() {
