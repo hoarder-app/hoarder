@@ -1,5 +1,6 @@
 import { Ollama } from "ollama";
 import OpenAI from "openai";
+import { encoding_for_model, TiktokenModel } from "tiktoken";
 
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
@@ -9,6 +10,10 @@ export interface InferenceResponse {
   totalTokens: number | undefined;
 }
 
+export interface EmbeddingResponse {
+  embeddings: number[][];
+}
+
 export interface InferenceClient {
   inferFromText(prompt: string): Promise<InferenceResponse>;
   inferFromImage(
@@ -16,6 +21,7 @@ export interface InferenceClient {
     contentType: string,
     image: string,
   ): Promise<InferenceResponse>;
+  generateEmbeddingFromText(prompt: string): Promise<EmbeddingResponse>;
 }
 
 export class InferenceClientFactory {
@@ -30,7 +36,6 @@ export class InferenceClientFactory {
     return null;
   }
 }
-
 class OpenAIInferenceClient implements InferenceClient {
   openAI: OpenAI;
 
@@ -87,6 +92,30 @@ class OpenAIInferenceClient implements InferenceClient {
     }
     return { response, totalTokens: chatCompletion.usage?.total_tokens };
   }
+
+  truncateTextTokens(text: string, maxTokens: number, model: string) {
+    const encoding = encoding_for_model(model as TiktokenModel);
+    const encoded = encoding.encode(text);
+    if (encoded.length <= maxTokens) {
+      return text;
+    }
+
+    return new TextDecoder().decode(
+      encoding.decode(encoded.slice(0, maxTokens)),
+    );
+  }
+
+  async generateEmbeddingFromText(prompt: string): Promise<EmbeddingResponse> {
+    const model = serverConfig.inference.textModel;
+    const embedResponse = await this.openAI.embeddings.create({
+      model: model,
+      input: [this.truncateTextTokens(prompt, 2000, model)],
+    });
+    const embedding2D: number[][] = embedResponse.data.map(
+      (embedding: OpenAI.Embedding) => embedding.embedding,
+    );
+    return { embeddings: embedding2D };
+  }
 }
 
 class OllamaInferenceClient implements InferenceClient {
@@ -103,7 +132,6 @@ class OllamaInferenceClient implements InferenceClient {
       model: model,
       format: "json",
       stream: true,
-      keep_alive: serverConfig.inference.ollamaKeepAlive,
       messages: [
         { role: "user", content: prompt, images: image ? [image] : undefined },
       ],
@@ -134,6 +162,17 @@ class OllamaInferenceClient implements InferenceClient {
     return { response, totalTokens };
   }
 
+  async runEmbeddingModel(model: string, prompt: string, image?: string) {
+    const embedding = await this.ollama.embed({
+      model: model,
+      input: prompt,
+      // Truncate the input to fit into the model's max token limit,
+      // in the future we want to add a way to split the input into multiple parts.
+      truncate: true,
+    });
+    return { response: embedding };
+  }
+
   async inferFromText(prompt: string): Promise<InferenceResponse> {
     return await this.runModel(serverConfig.inference.textModel, prompt);
   }
@@ -148,5 +187,13 @@ class OllamaInferenceClient implements InferenceClient {
       prompt,
       image,
     );
+  }
+
+  async generateEmbeddingFromText(prompt: string): Promise<EmbeddingResponse> {
+    const embedResponse = await this.runEmbeddingModel(
+      serverConfig.inference.textModel,
+      prompt,
+    );
+    return { embeddings: embedResponse.response.embeddings };
   }
 }

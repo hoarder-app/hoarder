@@ -34,6 +34,7 @@
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-adblocker": "^2.13.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "tiktoken": "^1.0.16",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3",
     "zod": "^3.22.4"
