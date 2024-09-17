@@ -23,6 +23,8 @@ import type { InferenceClient } from "./inference";
 import { InferenceClientFactory } from "./inference";
 import { readPDFText, truncateContent } from "./utils";
 
+type BookmarkType = "link" | "text" | "image" | "pdf" | "unsupported";
+
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
 });
@@ -60,7 +62,7 @@ async function attemptMarkTaggingStatus(
 
 export class OpenAiWorker {
   static build() {
-    logger.info("Starting inference worker ...");
+    logger.info("Starting AI worker ...");
     const worker = new Runner<ZOpenAIRequest>(
       OpenAIQueue,
       {
@@ -114,17 +116,10 @@ Aim for 3-5 tags. If there are no good tags, leave the array empty.
 function buildPrompt(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
 ) {
-  if (bookmark.link) {
-    if (!bookmark.link.description && !bookmark.link.content) {
-      throw new Error(
-        `No content found for link "${bookmark.id}". Skipping ...`,
-      );
-    }
+  const content = extractTextFromBookmark(bookmark);
+  const bType = bookmarkType(bookmark);
 
-    let content = bookmark.link.content;
-    if (content) {
-      content = truncateContent(content);
-    }
+  if (bType === "link") {
     return `
 ${TEXT_PROMPT_BASE}
 URL: ${bookmark.link.url}
@@ -134,7 +129,7 @@ Content: ${content ?? ""}
 ${TEXT_PROMPT_INSTRUCTIONS}`;
   }
 
-  if (bookmark.text) {
+  if (bType == "text") {
     const content = truncateContent(bookmark.text.text ?? "");
     // TODO: Ensure that the content doesn't exceed the context length of openai
     return `
@@ -224,25 +219,39 @@ async function inferTagsFromText(
   return await inferenceClient.inferFromText(buildPrompt(bookmark));
 }
 
+function bookmarkType(
+  bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
+): BookmarkType {
+  if (bookmark.link) {
+    return "link";
+  } else if (bookmark.text) {
+    return "text";
+  }
+  switch (bookmark.asset.assetType) {
+    case "image":
+      return "image";
+      break;
+    case "pdf":
+      return "pdf";
+      break;
+    default:
+      return "unsupported";
+  }
+}
+
 async function inferTags(
   jobId: string,
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
   inferenceClient: InferenceClient,
 ) {
   let response;
-  if (bookmark.link || bookmark.text) {
+  const bType = bookmarkType(bookmark);
+  if (bType === "text" || bType == "link") {
     response = await inferTagsFromText(bookmark, inferenceClient);
-  } else if (bookmark.asset) {
-    switch (bookmark.asset.assetType) {
-      case "image":
-        response = await inferTagsFromImage(jobId, bookmark, inferenceClient);
-        break;
-      case "pdf":
-        response = await inferTagsFromPDF(jobId, bookmark, inferenceClient);
-        break;
-      default:
-        throw new Error(`[inference][${jobId}] Unsupported bookmark type`);
-    }
+  } else if (bType == "image") {
+    response = await inferTagsFromImage(jobId, bookmark, inferenceClient);
+  } else if (bType == "pdf") {
+    response = await inferTagsFromPDF(jobId, bookmark, inferenceClient);
   } else {
     throw new Error(`[inference][${jobId}] Unsupported bookmark type`);
   }
@@ -362,6 +371,59 @@ async function connectTags(
   });
 }
 
+// TODO: Make this function accept max tokens as an argument.
+function extractTextFromBookmark(
+  bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
+): string {
+  if (bookmark.link) {
+    if (!bookmark.link.description && !bookmark.link.content) {
+      throw new Error(
+        `No content found for link "${bookmark.id}". Skipping ...`,
+      );
+    }
+
+    let content = bookmark.link.content;
+    if (content) {
+      content = truncateContent(content);
+    }
+    return content || "";
+  }
+
+  if (bookmark.text) {
+    const content = truncateContent(bookmark.text.text ?? "");
+    return content;
+  }
+  logger.error(`[extractTextFromBookmark] Unsupported bookmark type`);
+  return "";
+}
+
+async function textEmbedBookmark(
+  bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
+  inferenceClient: InferenceClient,
+) {
+  const content = extractTextFromBookmark(bookmark);
+  const embedding = await inferenceClient.generateEmbeddingFromText(content);
+  return embedding;
+}
+
+async function embedBookmark(
+  jobId: string,
+  bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
+  inferenceClient: InferenceClient,
+) {
+  logger.info(`[embedding][${jobId}] Embedding bookmark ${bookmark.id}`);
+  const bType = bookmarkType(bookmark);
+  logger.info(`[embedding][${jobId}] Bookmark type: ${bType}`);
+  if (bType === "text") {
+    const embedding = await inferenceClient.generateEmbeddingFromText(
+      extractTextFromBookmark(bookmark),
+    );
+    logger.info(
+      `[embeddings] Embedding generated successfully: ${embedding.embeddings}`,
+    );
+  }
+}
+
 async function runOpenAI(job: DequeuedJob<ZOpenAIRequest>) {
   const jobId = job.id ?? "unknown";
 
@@ -398,4 +460,6 @@ async function runOpenAI(job: DequeuedJob<ZOpenAIRequest>) {
 
   // Update the search index
   await triggerSearchReindex(bookmarkId);
+
+  await embedBookmark(jobId, bookmark, inferenceClient);
 }
