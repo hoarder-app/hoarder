@@ -106,7 +106,7 @@ class OpenAIInferenceClient implements InferenceClient {
   }
 
   async generateEmbeddingFromText(prompt: string): Promise<EmbeddingResponse> {
-    const model = serverConfig.inference.textModel;
+    const model = serverConfig.embedding.textModel;
     const embedResponse = await this.openAI.embeddings.create({
       model: model,
       input: [this.truncateTextTokens(prompt, 2000, model)],
@@ -191,7 +191,7 @@ class OllamaInferenceClient implements InferenceClient {
 
   async generateEmbeddingFromText(prompt: string): Promise<EmbeddingResponse> {
     const embedResponse = await this.runEmbeddingModel(
-      serverConfig.inference.textModel,
+      serverConfig.embedding.textModel,
       prompt,
     );
     return { embeddings: embedResponse.response.embeddings };
