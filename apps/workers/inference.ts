@@ -36,6 +36,7 @@ export class InferenceClientFactory {
     return null;
   }
 }
+
 class OpenAIInferenceClient implements InferenceClient {
   openAI: OpenAI;
 
@@ -132,6 +133,7 @@ class OllamaInferenceClient implements InferenceClient {
       model: model,
       format: "json",
       stream: true,
+      keep_alive: serverConfig.inference.ollamaKeepAlive,
       messages: [
         { role: "user", content: prompt, images: image ? [image] : undefined },
       ],
