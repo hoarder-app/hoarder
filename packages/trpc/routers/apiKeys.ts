@@ -83,8 +83,11 @@ export const apiKeysAppRouter = router({
     }),
   validate: publicProcedure
     .input(z.object({ apiKey: z.string() }))
-    .output(z.boolean())
+    .output(z.object({ success: z.boolean() }))
     .mutation(async ({ input }) => {
-      return (await authenticateApiKey(input.apiKey)) !== null;
+      await authenticateApiKey(input.apiKey); // Throws if the key is invalid
+      return {
+        success: true,
+      };
     }),
 });

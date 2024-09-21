@@ -132,6 +132,11 @@ export default function SignInPage() {
           Login
         </Button>
       </form>
+      <div className="flex w-full flex-row items-center gap-3">
+        <hr className="flex-1" />
+        Or
+        <hr className="flex-1" />
+      </div>
 
       <form className="flex flex-col gap-y-2" onSubmit={onApiKeySubmit}>
         <div className="flex flex-col gap-y-1">
