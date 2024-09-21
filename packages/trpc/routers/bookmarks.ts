@@ -339,6 +339,7 @@ export const bookmarksAppRouter = router({
           archived: input.archived,
           favourited: input.favourited,
           note: input.note,
+          createdAt: input.createdAt,
         })
         .where(
           and(

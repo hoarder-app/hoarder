@@ -2,9 +2,9 @@
 
 ## Import using the WebUI
 
-Hoarder supports importing bookmarks using the Netscape HTML Format.
+Hoarder supports importing bookmarks using the Netscape HTML Format. Titles, tags and addition date will be preserved during the import. An automatically created list will contain all the imported bookmarks.
 
-Simply open the WebUI of your Hoarder instance and drag and drop the bookmarks file into the UI.
+To import the bookmark file, go to the settings and click "Import Bookmarks from HTML file".
 
 :::info
 All the URLs in the bookmarks file will be added automatically, you will not be able to pick and choose which bookmarks to import!

@@ -1,14 +1,18 @@
 "use client";
 
-import assert from "assert";
 import { useRouter } from "next/navigation";
 import FilePickerButton from "@/components/ui/file-picker-button";
 import { toast } from "@/components/ui/use-toast";
 import { parseNetscapeBookmarkFile } from "@/lib/netscapeBookmarkParser";
 import { useMutation } from "@tanstack/react-query";
+import { TRPCClientError } from "@trpc/client";
 import { Upload } from "lucide-react";
 
-import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
+import {
+  useCreateBookmarkWithPostHook,
+  useUpdateBookmark,
+  useUpdateBookmarkTags,
+} from "@hoarder/shared-react/hooks/bookmarks";
 import {
   useAddBookmarkToList,
   useCreateBookmarkList,
@@ -17,29 +21,112 @@ import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 export function Import() {
   const router = useRouter();
-  const { mutateAsync: createBookmark } = useCreateBookmarkWithPostHook();
 
+  const { mutateAsync: createBookmark } = useCreateBookmarkWithPostHook();
+  const { mutateAsync: updateBookmark } = useUpdateBookmark();
   const { mutateAsync: createList } = useCreateBookmarkList();
   const { mutateAsync: addToList } = useAddBookmarkToList();
+  const { mutateAsync: updateTags } = useUpdateBookmarkTags();
+
+  const { mutateAsync: parseAndCreateBookmark } = useMutation({
+    mutationFn: async (toImport: {
+      bookmark: {
+        title: string;
+        url: string | undefined;
+        tags: string[];
+        addDate?: number;
+      };
+      listId: string;
+    }) => {
+      const bookmark = toImport.bookmark;
+      if (bookmark.url === undefined) {
+        throw new Error("URL is undefined");
+      }
+      const url = new URL(bookmark.url);
+      const created = await createBookmark({
+        type: BookmarkTypes.LINK,
+        url: url.toString(),
+      });
+
+      await Promise.all([
+        // Update title and createdAt if they're set
+        bookmark.title.length > 0 || bookmark.addDate
+          ? updateBookmark({
+              bookmarkId: created.id,
+              title: bookmark.title,
+              createdAt: bookmark.addDate
+                ? new Date(bookmark.addDate * 1000)
+                : undefined,
+            })
+          : undefined,
+
+        // Add to import list
+        addToList({
+          bookmarkId: created.id,
+          listId: toImport.listId,
+        }).catch((e) => {
+          if (
+            e instanceof TRPCClientError &&
+            e.message.includes("already in the list")
+          ) {
+            /* empty */
+          } else {
+            throw e;
+          }
+        }),
+
+        // Update tags
+        updateTags({
+          bookmarkId: created.id,
+          attach: bookmark.tags.map((t) => ({ tagName: t })),
+          detach: [],
+        }),
+      ]);
+      return created;
+    },
+  });
 
   const { mutateAsync: runUploadBookmarkFile } = useMutation({
     mutationFn: async (file: File) => {
       return await parseNetscapeBookmarkFile(file);
     },
     onSuccess: async (resp) => {
-      const results = await Promise.allSettled(
-        resp.map((url) =>
-          createBookmark({ type: BookmarkTypes.LINK, url: url.toString() }),
-        ),
-      );
+      const importList = await createList({
+        name: `Imported Bookmarks`,
+        icon: "⬆️",
+      });
 
-      const failed = results.filter((r) => r.status == "rejected");
-      const successes = results.filter(
-        (r) => r.status == "fulfilled" && !r.value.alreadyExists,
-      );
-      const alreadyExisted = results.filter(
-        (r) => r.status == "fulfilled" && r.value.alreadyExists,
-      );
+      let done = 0;
+      const { id, update } = toast({
+        description: `Processed 0 bookmarks of ${resp.length}`,
+        variant: "default",
+      });
+
+      const successes = [];
+      const failed = [];
+      const alreadyExisted = [];
+      // Do the imports one by one
+      for (const parsedBookmark of resp) {
+        try {
+          const result = await parseAndCreateBookmark({
+            bookmark: parsedBookmark,
+            listId: importList.id,
+          });
+          if (result.alreadyExists) {
+            alreadyExisted.push(parsedBookmark);
+          } else {
+            successes.push(parsedBookmark);
+          }
+        } catch (e) {
+          failed.push(parsedBookmark);
+        }
+
+        update({
+          id,
+          description: `Processed ${done + 1} bookmarks of ${resp.length}`,
+        });
+        done++;
+      }
 
       if (successes.length > 0 || alreadyExisted.length > 0) {
         toast({
@@ -53,20 +140,6 @@ export function Import() {
           description: `Failed to import ${failed.length} bookmarks`,
           variant: "destructive",
         });
-      }
-
-      const importList = await createList({
-        name: `Imported Bookmarks`,
-        icon: "⬆️",
-      });
-
-      if (successes.length > 0) {
-        await Promise.allSettled(
-          successes.map((r) => {
-            assert(r.status == "fulfilled");
-            addToList({ bookmarkId: r.value.id, listId: importList.id });
-          }),
-        );
       }
 
       router.push(`/dashboard/lists/${importList.id}`);
