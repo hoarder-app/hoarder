@@ -1,18 +1,13 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
-import { parseNetscapeBookmarkFile } from "@/lib/netscapeBookmarkParser";
+import useUpload from "@/lib/hooks/upload-file";
 import { cn } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
 import DropZone from "react-dropzone";
 
 import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
-import {
-  zUploadErrorSchema,
-  zUploadResponseSchema,
-} from "@hoarder/shared/types/uploads";
 
 import LoadingSpinner from "../ui/spinner";
 import { toast } from "../ui/use-toast";
@@ -35,26 +30,13 @@ export function useUploadAsset() {
     },
   });
 
-  const { mutateAsync: runUploadAsset } = useMutation({
-    mutationFn: async (file: File) => {
-      const formData = new FormData();
-      formData.append("file", file);
-      const resp = await fetch("/api/assets", {
-        method: "POST",
-        body: formData,
-      });
-      if (!resp.ok) {
-        throw new Error(await resp.text());
-      }
-      return zUploadResponseSchema.parse(await resp.json());
-    },
+  const { mutateAsync: runUploadAsset } = useUpload({
     onSuccess: async (resp) => {
       const assetType =
         resp.contentType === "application/pdf" ? "pdf" : "image";
-      return createBookmark({ ...resp, type: BookmarkTypes.ASSET, assetType });
+      await createBookmark({ ...resp, type: BookmarkTypes.ASSET, assetType });
     },
-    onError: (error, req) => {
-      const err = zUploadErrorSchema.parse(JSON.parse(error.message));
+    onError: (err, req) => {
       toast({
         description: `${req.name}: ${err.error}`,
         variant: "destructive",
@@ -62,34 +44,11 @@ export function useUploadAsset() {
     },
   });
 
-  const { mutateAsync: runUploadBookmarkFile } = useMutation({
-    mutationFn: async (file: File) => {
-      return await parseNetscapeBookmarkFile(file);
-    },
-    onSuccess: async (resp) => {
-      return Promise.all(
-        resp.map((url) =>
-          createBookmark({ type: BookmarkTypes.LINK, url: url.toString() }),
-        ),
-      );
-    },
-    onError: (error) => {
-      toast({
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
   return useCallback(
     (file: File) => {
-      if (file.type === "text/html") {
-        return runUploadBookmarkFile(file);
-      } else {
-        return runUploadAsset(file);
-      }
+      return runUploadAsset(file);
     },
-    [runUploadAsset, runUploadBookmarkFile],
+    [runUploadAsset],
   );
 }
 

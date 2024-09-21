@@ -133,6 +133,7 @@ export const zUpdateBookmarksRequestSchema = z.object({
   favourited: z.boolean().optional(),
   note: z.string().optional(),
   title: z.string().max(MAX_TITLE_LENGTH).nullish(),
+  createdAt: z.date().optional(),
 });
 export type ZUpdateBookmarksRequest = z.infer<
   typeof zUpdateBookmarksRequestSchema

@@ -21,7 +21,7 @@ RUN cd packages/db && \
 
 
 # Compile the web app
-RUN (cd apps/web && pnpm next experimental-compile)
+RUN (cd apps/web && pnpm exec next build --experimental-build-mode compile)
 
 # Build the worker code
 RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-linker=isolated --filter @hoarder/workers --prod /prod/workers
