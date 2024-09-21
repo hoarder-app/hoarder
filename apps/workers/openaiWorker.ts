@@ -19,9 +19,11 @@ import {
   zOpenAIRequestSchema,
 } from "@hoarder/shared/queues";
 
-import type { InferenceClient } from "./inference";
+import type { EmbeddingResponse, InferenceClient } from "./inference";
 import { InferenceClientFactory } from "./inference";
 import { readPDFText, truncateContent } from "./utils";
+import * as sqliteVec from "sqlite-vec";
+import Database from "better-sqlite3";
 
 type BookmarkType = "link" | "text" | "image" | "pdf" | "unsupported";
 
@@ -374,7 +376,6 @@ async function connectTags(
 // TODO: Make this function accept max tokens as an argument.
 function extractTextFromBookmark(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
-  jobId: string,
 ): string {
   if (bookmark.link) {
     if (!bookmark.link.description && !bookmark.link.content) {
@@ -387,19 +388,19 @@ function extractTextFromBookmark(
     if (content) {
       content = truncateContent(content);
     }
-    return content || "";
+    return content ?? "";
   }
 
   if (!bookmark.text) {
     logger.error(
-      `[extractTextFromBookmark][${jobId}] Unsupported bookmark type, skipping ...`,
+      `[extractTextFromBookmark] Unsupported bookmark type, skipping ...`,
     );
     return "";
   }
   const content = truncateContent(bookmark.text.text ?? "");
   if (!content) {
     throw new Error(
-      `[inference][${jobId}] [UNEXPECTED] TruncateContent returned empty content for bookmark "${bookmark.id}". Skipping ...`,
+      `[inference] [UNEXPECTED] TruncateContent returned empty content for bookmark "${bookmark.id}". Skipping ...`,
     );
   }
   return content;
@@ -433,16 +434,6 @@ async function extractTextFromPDFBookmark(
   return content;
 }
 
-async function textEmbedBookmark(
-  jobId: string,
-  bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
-  inferenceClient: InferenceClient,
-) {
-  const content = extractTextFromBookmark(bookmark, jobId);
-  const embedding = await inferenceClient.generateEmbeddingFromText(content);
-  return embedding;
-}
-
 async function embedBookmark(
   jobId: string,
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
@@ -453,7 +444,7 @@ async function embedBookmark(
   logger.info(`[embedding][${jobId}] Bookmark type: ${bType}`);
   if (bType === "text") {
     const embedding = await inferenceClient.generateEmbeddingFromText(
-      extractTextFromBookmark(bookmark, jobId),
+      extractTextFromBookmark(bookmark),
     );
     logger.info(
       `[embeddings] Embedding generated successfully: ${embedding.embeddings}`,

@@ -162,7 +162,7 @@ class OllamaInferenceClient implements InferenceClient {
     return { response, totalTokens };
   }
 
-  async runEmbeddingModel(model: string, prompt: string, image?: string) {
+  async runEmbeddingModel(model: string, prompt: string) {
     const embedding = await this.ollama.embed({
       model: model,
       input: prompt,
