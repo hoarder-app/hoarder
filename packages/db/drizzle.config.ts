@@ -7,9 +7,9 @@ const databaseURL = serverConfig.dataDir
   : "./db.db";
 
 export default {
-  dialect: "sqlite",
   schema: "./schema.ts",
   out: "./drizzle",
+  driver: "better-sqlite",
   dbCredentials: {
     url: databaseURL,
   },
