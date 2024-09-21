@@ -374,6 +374,7 @@ async function connectTags(
 // TODO: Make this function accept max tokens as an argument.
 function extractTextFromBookmark(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
+  jobId: string,
 ): string {
   if (bookmark.link) {
     if (!bookmark.link.description && !bookmark.link.content) {
@@ -389,19 +390,55 @@ function extractTextFromBookmark(
     return content || "";
   }
 
-  if (bookmark.text) {
-    const content = truncateContent(bookmark.text.text ?? "");
-    return content;
+  if (!bookmark.text) {
+    logger.error(
+      `[extractTextFromBookmark][${jobId}] Unsupported bookmark type, skipping ...`,
+    );
+    return "";
   }
-  logger.error(`[extractTextFromBookmark] Unsupported bookmark type`);
-  return "";
+  const content = truncateContent(bookmark.text.text ?? "");
+  if (!content) {
+    throw new Error(
+      `[inference][${jobId}] [UNEXPECTED] TruncateContent returned empty content for bookmark "${bookmark.id}". Skipping ...`,
+    );
+  }
+  return content;
+}
+
+async function extractTextFromPDFBookmark(
+  bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
+  jobId: string,
+) {
+  const { asset } = await readAsset({
+    userId: bookmark.userId,
+    assetId: bookmark.asset.assetId,
+  });
+  if (!asset) {
+    throw new Error(
+      `[inference][${jobId}] AssetId ${bookmark.asset.assetId} for bookmark ${bookmark.id} not found`,
+    );
+  }
+  const pdfParse = await readPDFText(asset);
+  if (!pdfParse?.text) {
+    throw new Error(
+      `[inference][${jobId}] PDF text is empty. Please make sure that the PDF includes text and not just images.`,
+    );
+  }
+  const content = truncateContent(pdfParse.text);
+  if (!content) {
+    throw new Error(
+      `[inference][${jobId}] [UNEXPECTED] TruncateContent returned empty content for PDF "${bookmark.id}". Skipping ...`,
+    );
+  }
+  return content;
 }
 
 async function textEmbedBookmark(
+  jobId: string,
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
   inferenceClient: InferenceClient,
 ) {
-  const content = extractTextFromBookmark(bookmark);
+  const content = extractTextFromBookmark(bookmark, jobId);
   const embedding = await inferenceClient.generateEmbeddingFromText(content);
   return embedding;
 }
@@ -416,8 +453,14 @@ async function embedBookmark(
   logger.info(`[embedding][${jobId}] Bookmark type: ${bType}`);
   if (bType === "text") {
     const embedding = await inferenceClient.generateEmbeddingFromText(
-      extractTextFromBookmark(bookmark),
+      extractTextFromBookmark(bookmark, jobId),
     );
+    logger.info(
+      `[embeddings] Embedding generated successfully: ${embedding.embeddings}`,
+    );
+  } else if (bType == "pdf") {
+    const content = await extractTextFromPDFBookmark(bookmark, jobId);
+    const embedding = await inferenceClient.generateEmbeddingFromText(content);
     logger.info(
       `[embeddings] Embedding generated successfully: ${embedding.embeddings}`,
     );
