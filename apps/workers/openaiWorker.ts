@@ -19,11 +19,9 @@ import {
   zOpenAIRequestSchema,
 } from "@hoarder/shared/queues";
 
-import type { EmbeddingResponse, InferenceClient } from "./inference";
+import type { InferenceClient } from "./inference";
 import { InferenceClientFactory } from "./inference";
 import { readPDFText, truncateContent } from "./utils";
-import * as sqliteVec from "sqlite-vec";
-import Database from "better-sqlite3";
 
 type BookmarkType = "link" | "text" | "image" | "pdf" | "unsupported";
 
@@ -374,6 +372,8 @@ async function connectTags(
 }
 
 // TODO: Make this function accept max tokens as an argument.
+// TODO: Truncate text logic needs to be taken refactored such that the max token are tied to the model
+// being used and not done once per bookmark.
 function extractTextFromBookmark(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
 ): string {
@@ -439,7 +439,7 @@ async function embedBookmark(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
   inferenceClient: InferenceClient,
 ) {
-  logger.info(`[embedding][${jobId}] Embedding bookmark ${bookmark.id}`);
+  logger.info(`[embedding][${jobId}] ookmark ${bookmark.id}`);
   const bType = bookmarkType(bookmark);
   logger.info(`[embedding][${jobId}] Bookmark type: ${bType}`);
   if (bType === "text") {
