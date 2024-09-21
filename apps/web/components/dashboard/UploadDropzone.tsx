@@ -2,9 +2,7 @@
 
 import React, { useCallback, useState } from "react";
 import useUpload from "@/lib/hooks/upload-file";
-import { parseNetscapeBookmarkFile } from "@/lib/netscapeBookmarkParser";
 import { cn } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
 import DropZone from "react-dropzone";
 
@@ -46,34 +44,11 @@ export function useUploadAsset() {
     },
   });
 
-  const { mutateAsync: runUploadBookmarkFile } = useMutation({
-    mutationFn: async (file: File) => {
-      return await parseNetscapeBookmarkFile(file);
-    },
-    onSuccess: async (resp) => {
-      return Promise.all(
-        resp.map((url) =>
-          createBookmark({ type: BookmarkTypes.LINK, url: url.toString() }),
-        ),
-      );
-    },
-    onError: (error) => {
-      toast({
-        description: error.message,
-        variant: "destructive",
-      });
-    },
-  });
-
   return useCallback(
     (file: File) => {
-      if (file.type === "text/html") {
-        return runUploadBookmarkFile(file);
-      } else {
-        return runUploadAsset(file);
-      }
+      return runUploadAsset(file);
     },
-    [runUploadAsset, runUploadBookmarkFile],
+    [runUploadAsset],
   );
 }
 
