@@ -1,9 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import FilePickerButton from "@/components/ui/file-picker-button";
+import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/use-toast";
-import { parseNetscapeBookmarkFile } from "@/lib/netscapeBookmarkParser";
+import {
+  ParsedBookmark,
+  parseNetscapeBookmarkFile,
+  parsePocketBookmarkFile,
+} from "@/lib/importBookmarkParser";
 import { useMutation } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
 import { Upload } from "lucide-react";
@@ -22,6 +28,11 @@ import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 export function Import() {
   const router = useRouter();
 
+  const [importProgress, setImportProgress] = useState<{
+    done: number;
+    total: number;
+  } | null>(null);
+
   const { mutateAsync: createBookmark } = useCreateBookmarkWithPostHook();
   const { mutateAsync: updateBookmark } = useUpdateBookmark();
   const { mutateAsync: createList } = useCreateBookmarkList();
@@ -30,12 +41,7 @@ export function Import() {
 
   const { mutateAsync: parseAndCreateBookmark } = useMutation({
     mutationFn: async (toImport: {
-      bookmark: {
-        title: string;
-        url: string | undefined;
-        tags: string[];
-        addDate?: number;
-      };
+      bookmark: ParsedBookmark;
       listId: string;
     }) => {
       const bookmark = toImport.bookmark;
@@ -57,6 +63,8 @@ export function Import() {
               createdAt: bookmark.addDate
                 ? new Date(bookmark.addDate * 1000)
                 : undefined,
+            }).catch(() => {
+              /* empty */
             })
           : undefined,
 
@@ -76,31 +84,40 @@ export function Import() {
         }),
 
         // Update tags
-        updateTags({
-          bookmarkId: created.id,
-          attach: bookmark.tags.map((t) => ({ tagName: t })),
-          detach: [],
-        }),
+        bookmark.tags.length > 0
+          ? updateTags({
+              bookmarkId: created.id,
+              attach: bookmark.tags.map((t) => ({ tagName: t })),
+              detach: [],
+            })
+          : undefined,
       ]);
       return created;
     },
   });
 
   const { mutateAsync: runUploadBookmarkFile } = useMutation({
-    mutationFn: async (file: File) => {
-      return await parseNetscapeBookmarkFile(file);
+    mutationFn: async ({
+      file,
+      source,
+    }: {
+      file: File;
+      source: "html" | "pocket";
+    }) => {
+      if (source === "html") {
+        return await parseNetscapeBookmarkFile(file);
+      } else if (source === "pocket") {
+        return await parsePocketBookmarkFile(file);
+      } else {
+        throw new Error("Unknown source");
+      }
     },
     onSuccess: async (resp) => {
       const importList = await createList({
         name: `Imported Bookmarks`,
         icon: "⬆️",
       });
-
-      let done = 0;
-      const { id, update } = toast({
-        description: `Processed 0 bookmarks of ${resp.length}`,
-        variant: "default",
-      });
+      setImportProgress({ done: 0, total: resp.length });
 
       const successes = [];
       const failed = [];
@@ -120,12 +137,10 @@ export function Import() {
         } catch (e) {
           failed.push(parsedBookmark);
         }
-
-        update({
-          id,
-          description: `Processed ${done + 1} bookmarks of ${resp.length}`,
-        });
-        done++;
+        setImportProgress((prev) => ({
+          done: (prev?.done ?? 0) + 1,
+          total: resp.length,
+        }));
       }
 
       if (successes.length > 0 || alreadyExisted.length > 0) {
@@ -153,16 +168,44 @@ export function Import() {
   });
 
   return (
-    <div>
-      <FilePickerButton
-        accept=".html"
-        multiple={false}
-        className="flex items-center gap-2"
-        onFileSelect={runUploadBookmarkFile}
-      >
-        <Upload />
-        <p>Import Bookmarks from HTML file</p>
-      </FilePickerButton>
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-row gap-2">
+        <FilePickerButton
+          accept=".html"
+          multiple={false}
+          className="flex items-center gap-2"
+          onFileSelect={(file) =>
+            runUploadBookmarkFile({ file, source: "html" })
+          }
+        >
+          <Upload />
+          <p>Import Bookmarks from HTML file</p>
+        </FilePickerButton>
+
+        <FilePickerButton
+          accept=".html"
+          multiple={false}
+          className="flex items-center gap-2"
+          onFileSelect={(file) =>
+            runUploadBookmarkFile({ file, source: "pocket" })
+          }
+        >
+          <Upload />
+          <p>Import Bookmarks from Pocket export</p>
+        </FilePickerButton>
+      </div>
+      {importProgress && (
+        <div className="flex flex-col gap-2">
+          <p className="shrink-0 text-sm">
+            Processed {importProgress.done} of {importProgress.total} bookmarks
+          </p>
+          <div className="w-full">
+            <Progress
+              value={(importProgress.done * 100) / importProgress.total}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
