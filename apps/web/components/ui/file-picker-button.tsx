@@ -1,8 +1,8 @@
 import React, { ChangeEvent, useRef } from "react";
 
-import { Button, ButtonProps } from "./button";
+import { ActionButton, ActionButtonProps } from "./action-button";
 
-interface FilePickerButtonProps extends Omit<ButtonProps, "onClick"> {
+interface FilePickerButtonProps extends Omit<ActionButtonProps, "onClick"> {
   onFileSelect?: (file: File) => void;
   accept?: string;
   multiple?: boolean;
@@ -35,7 +35,7 @@ const FilePickerButton: React.FC<FilePickerButtonProps> = ({
 
   return (
     <div>
-      <Button onClick={handleButtonClick} {...buttonProps} />
+      <ActionButton onClick={handleButtonClick} {...buttonProps} />
       <input
         type="file"
         ref={fileInputRef}

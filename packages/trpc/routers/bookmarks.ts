@@ -31,6 +31,7 @@ import { getSearchIdxClient } from "@hoarder/shared/search";
 import {
   BookmarkTypes,
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
+  zAssetSchema,
   zBareBookmarkSchema,
   zBookmarkSchema,
   zGetBookmarksRequestSchema,
@@ -41,6 +42,11 @@ import {
 
 import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";
+import {
+  isAllowedToAttachAsset,
+  mapDBAssetTypeToUserType,
+  mapSchemaAssetTypeToDB,
+} from "../lib/attachments";
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: Context;
@@ -79,13 +85,12 @@ interface Asset {
   assetType: AssetTypes;
 }
 
-const ASSET_TYE_MAPPING: Record<AssetTypes, string> = {
-  [AssetTypes.LINK_SCREENSHOT]: "screenshotAssetId",
-  [AssetTypes.LINK_FULL_PAGE_ARCHIVE]: "fullPageArchiveAssetId",
-  [AssetTypes.LINK_BANNER_IMAGE]: "imageAssetId",
-};
-
 function mapAssetsToBookmarkFields(assets: Asset | Asset[] = []) {
+  const ASSET_TYE_MAPPING: Record<AssetTypes, string> = {
+    [AssetTypes.LINK_SCREENSHOT]: "screenshotAssetId",
+    [AssetTypes.LINK_FULL_PAGE_ARCHIVE]: "fullPageArchiveAssetId",
+    [AssetTypes.LINK_BANNER_IMAGE]: "imageAssetId",
+  };
   const assetsArray = Array.isArray(assets) ? assets : [assets];
   return assetsArray.reduce((result: Record<string, string>, asset: Asset) => {
     result[ASSET_TYE_MAPPING[asset.assetType]] = asset.id;
@@ -208,6 +213,10 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
       ...t.tag,
     })),
     content,
+    assets: assets.map((a) => ({
+      id: a.id,
+      assetType: mapDBAssetTypeToUserType(a.assetType),
+    })),
     ...rest,
   };
 }
@@ -301,6 +310,7 @@ export const bookmarksAppRouter = router({
         return {
           alreadyExists: false,
           tags: [] as ZBookmarkTags[],
+          assets: [],
           content,
           ...bookmark,
         };
@@ -599,6 +609,7 @@ export const bookmarksAppRouter = router({
               ...row.bookmarksSq,
               content,
               tags: [],
+              assets: [],
             };
           }
 
@@ -617,11 +628,18 @@ export const bookmarksAppRouter = router({
             });
           }
 
-          if (row.assets) {
+          if (
+            row.assets &&
+            !acc[bookmarkId].assets.some((a) => a.id == row.assets!.id)
+          ) {
             acc[bookmarkId].content = {
               ...acc[bookmarkId].content,
               ...mapAssetsToBookmarkFields(row.assets),
             };
+            acc[bookmarkId].assets.push({
+              id: row.assets.id,
+              assetType: mapDBAssetTypeToUserType(row.assets.assetType),
+            });
           }
 
           return acc;
@@ -786,5 +804,110 @@ export const bookmarksAppRouter = router({
           detached: idsToRemove,
         };
       });
+    }),
+
+  attachAsset: authedProcedure
+    .input(
+      z.object({
+        bookmarkId: z.string(),
+        asset: zAssetSchema,
+      }),
+    )
+    .output(zAssetSchema)
+    .use(ensureBookmarkOwnership)
+    .mutation(async ({ input, ctx }) => {
+      if (!isAllowedToAttachAsset(input.asset.assetType)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You can't attach this type of asset",
+        });
+      }
+      await ctx.db
+        .insert(assets)
+        .values({
+          id: input.asset.id,
+          assetType: mapSchemaAssetTypeToDB(input.asset.assetType),
+          bookmarkId: input.bookmarkId,
+        })
+        .returning();
+      return input.asset;
+    }),
+  replaceAsset: authedProcedure
+    .input(
+      z.object({
+        bookmarkId: z.string(),
+        oldAssetId: z.string(),
+        newAssetId: z.string(),
+      }),
+    )
+    .output(z.void())
+    .use(ensureBookmarkOwnership)
+    .mutation(async ({ input, ctx }) => {
+      const oldAsset = await ctx.db
+        .select()
+        .from(assets)
+        .where(
+          and(
+            eq(assets.id, input.oldAssetId),
+            eq(assets.bookmarkId, input.bookmarkId),
+          ),
+        )
+        .limit(1);
+      if (!oldAsset.length) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      if (
+        !isAllowedToAttachAsset(mapDBAssetTypeToUserType(oldAsset[0].assetType))
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You can't attach this type of asset",
+        });
+      }
+
+      const result = await ctx.db
+        .update(assets)
+        .set({
+          id: input.newAssetId,
+          bookmarkId: input.bookmarkId,
+        })
+        .where(
+          and(
+            eq(assets.id, input.oldAssetId),
+            eq(assets.bookmarkId, input.bookmarkId),
+          ),
+        );
+      if (result.changes == 0) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      await deleteAsset({
+        userId: ctx.user.id,
+        assetId: input.oldAssetId,
+      }).catch(() => ({}));
+    }),
+  detachAsset: authedProcedure
+    .input(
+      z.object({
+        bookmarkId: z.string(),
+        assetId: z.string(),
+      }),
+    )
+    .output(z.void())
+    .use(ensureBookmarkOwnership)
+    .mutation(async ({ input, ctx }) => {
+      const result = await ctx.db
+        .delete(assets)
+        .where(
+          and(
+            eq(assets.id, input.assetId),
+            eq(assets.bookmarkId, input.bookmarkId),
+          ),
+        );
+      if (result.changes == 0) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      await deleteAsset({ userId: ctx.user.id, assetId: input.assetId }).catch(
+        () => ({}),
+      );
     }),
 });

@@ -171,6 +171,7 @@ export function Import() {
     <div className="flex flex-col gap-3">
       <div className="flex flex-row gap-2">
         <FilePickerButton
+          loading={false}
           accept=".html"
           multiple={false}
           className="flex items-center gap-2"
@@ -183,6 +184,7 @@ export function Import() {
         </FilePickerButton>
 
         <FilePickerButton
+          loading={false}
           accept=".html"
           multiple={false}
           className="flex items-center gap-2"

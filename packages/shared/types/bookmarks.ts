@@ -11,6 +11,18 @@ export const enum BookmarkTypes {
   UNKNOWN = "unknown",
 }
 
+export const zAssetTypesSchema = z.enum([
+  "screenshot",
+  "bannerImage",
+  "fullPageArchive",
+]);
+export type ZAssetType = z.infer<typeof zAssetTypesSchema>;
+
+export const zAssetSchema = z.object({
+  id: z.string(),
+  assetType: zAssetTypesSchema,
+});
+
 export const zBookmarkedLinkSchema = z.object({
   type: z.literal(BookmarkTypes.LINK),
   url: z.string().url(),
@@ -63,6 +75,7 @@ export const zBookmarkSchema = zBareBookmarkSchema.merge(
   z.object({
     tags: z.array(zBookmarkTagSchema),
     content: zBookmarkContentSchema,
+    assets: z.array(zAssetSchema),
   }),
 );
 export type ZBookmark = z.infer<typeof zBookmarkSchema>;
@@ -71,6 +84,7 @@ const zBookmarkTypeLinkSchema = zBareBookmarkSchema.merge(
   z.object({
     tags: z.array(zBookmarkTagSchema),
     content: zBookmarkedLinkSchema,
+    assets: z.array(zAssetSchema),
   }),
 );
 export type ZBookmarkTypeLink = z.infer<typeof zBookmarkTypeLinkSchema>;
@@ -79,6 +93,7 @@ const zBookmarkTypeTextSchema = zBareBookmarkSchema.merge(
   z.object({
     tags: z.array(zBookmarkTagSchema),
     content: zBookmarkedTextSchema,
+    assets: z.array(zAssetSchema),
   }),
 );
 export type ZBookmarkTypeText = z.infer<typeof zBookmarkTypeTextSchema>;
@@ -87,6 +102,7 @@ const zBookmarkTypeAssetSchema = zBareBookmarkSchema.merge(
   z.object({
     tags: z.array(zBookmarkTagSchema),
     content: zBookmarkedAssetSchema,
+    assets: z.array(zAssetSchema),
   }),
 );
 export type ZBookmarkTypeAsset = z.infer<typeof zBookmarkTypeAssetSchema>;

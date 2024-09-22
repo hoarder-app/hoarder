@@ -25,6 +25,7 @@ import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import ActionBar from "./ActionBar";
 import { AssetContentSection } from "./AssetContentSection";
+import AttachmentBox from "./AttachmentBox";
 import { EditableTitle } from "./EditableTitle";
 import LinkContentSection from "./LinkContentSection";
 import { NoteEditor } from "./NoteEditor";
@@ -153,6 +154,7 @@ export default function BookmarkPreview({
           <p className="pt-2 text-sm text-gray-400">Note</p>
           <NoteEditor bookmark={bookmark} />
         </div>
+        <AttachmentBox bookmark={bookmark} />
         <ActionBar bookmark={bookmark} />
       </div>
     </div>
