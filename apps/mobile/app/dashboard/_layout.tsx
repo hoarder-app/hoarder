@@ -19,7 +19,7 @@ export default function Dashboard() {
   const isLoggedIn = useIsLoggedIn();
   useEffect(() => {
     if (isLoggedIn !== undefined && !isLoggedIn) {
-      return router.replace("signin");
+      return router.replace("server-address");
     }
   }, [isLoggedIn]);
 
