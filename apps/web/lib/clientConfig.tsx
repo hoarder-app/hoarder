@@ -6,6 +6,7 @@ export const ClientConfigCtx = createContext<ClientConfig>({
   demoMode: undefined,
   auth: {
     disableSignups: false,
+    disableLocalSignups: false,
   },
   serverVersion: undefined,
   disableNewReleaseCheck: true,

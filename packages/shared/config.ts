@@ -10,6 +10,7 @@ const stringBool = (defaultValue: string) =>
 const allEnv = z.object({
   API_URL: z.string().url().default("http://localhost:3000"),
   DISABLE_SIGNUPS: stringBool("false"),
+  DISABLE_LOCAL_SIGNUPS: stringBool("false"),
   OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING: stringBool("false"),
   OAUTH_WELLKNOWN_URL: z.string().url().optional(),
   OAUTH_CLIENT_SECRET: z.string().optional(),
@@ -53,6 +54,7 @@ const serverConfigSchema = allEnv.transform((val) => {
     apiUrl: val.API_URL,
     auth: {
       disableSignups: val.DISABLE_SIGNUPS,
+      disableLocalSignups: val.DISABLE_LOCAL_SIGNUPS,
       oauth: {
         allowDangerousEmailAccountLinking:
           val.OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING,
@@ -112,6 +114,7 @@ export const clientConfig = {
   demoMode: serverConfig.demoMode,
   auth: {
     disableSignups: serverConfig.auth.disableSignups,
+    disableLocalSignups: serverConfig.auth.disableLocalSignups,
   },
   serverVersion: serverConfig.serverVersion,
   disableNewReleaseCheck: serverConfig.disableNewReleaseCheck,
