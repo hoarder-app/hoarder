@@ -114,7 +114,7 @@ if (oauth.wellKnownUrl) {
       ]);
       return {
         id: profile.sub,
-        name: profile.name,
+        name: profile.name || profile.email,
         email: profile.email,
         image: profile.picture,
         role: admin || firstUser ? "admin" : "user",
@@ -146,7 +146,7 @@ export const authOptions: NextAuthOptions = {
       if (credentials) {
         return true;
       }
-      if (!profile?.email || !profile?.name) {
+      if (!profile?.email) {
         throw new Error("No profile");
       }
       const [{ count: userCount }] = await db
