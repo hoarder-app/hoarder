@@ -51,6 +51,7 @@
       "versionCode": 11
     },
     "plugins": [
+      "./plugins/trust-local-certs.js",
       "expo-router",
       [
         "expo-share-intent",
