@@ -426,11 +426,17 @@ export const bookmarksAppRouter = router({
       }
     }),
   recrawlBookmark: authedProcedure
-    .input(z.object({ bookmarkId: z.string() }))
+    .input(
+      z.object({
+        bookmarkId: z.string(),
+        archiveFullPage: z.boolean().optional().default(false),
+      }),
+    )
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input }) => {
       await LinkCrawlerQueue.enqueue({
         bookmarkId: input.bookmarkId,
+        archiveFullPage: input.archiveFullPage,
       });
     }),
   getBookmark: authedProcedure

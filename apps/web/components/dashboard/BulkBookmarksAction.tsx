@@ -8,10 +8,20 @@ import {
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import useBulkActionsStore from "@/lib/bulkActions";
-import { CheckCheck, Hash, List, Pencil, Trash2, X } from "lucide-react";
+import {
+  CheckCheck,
+  FileArchive,
+  Hash,
+  List,
+  Pencil,
+  RotateCw,
+  Trash2,
+  X,
+} from "lucide-react";
 
 import {
   useDeleteBookmark,
+  useRecrawlBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
 
@@ -55,10 +65,33 @@ export default function BulkBookmarksAction() {
     onError,
   });
 
+  const recrawlBookmarkMutator = useRecrawlBookmark({
+    onSuccess: () => {
+      setIsBulkEditEnabled(false);
+    },
+    onError,
+  });
+
   interface UpdateBookmarkProps {
     favourited?: boolean;
     archived?: boolean;
   }
+
+  const recrawlBookmarks = async (archiveFullPage: boolean) => {
+    await Promise.all(
+      selectedBookmarks.map((item) =>
+        recrawlBookmarkMutator.mutateAsync({
+          bookmarkId: item.id,
+          archiveFullPage,
+        }),
+      ),
+    );
+    let message = `${selectedBookmarks.length} bookmarks will be `;
+    message += archiveFullPage ? "re-crawled and archived!" : "refreshed!";
+    toast({
+      description: message,
+    });
+  };
 
   const updateBookmarks = async ({
     favourited,
@@ -125,6 +158,20 @@ export default function BulkBookmarksAction() {
       icon: <ArchivedActionIcon size={18} archived={!!alreadyArchived} />,
       action: () => updateBookmarks({ archived: !alreadyArchived }),
       isPending: updateBookmarkMutator.isPending,
+      hidden: !isBulkEditEnabled,
+    },
+    {
+      name: "Crawl Full Page Archive",
+      icon: <FileArchive size={18} />,
+      action: () => recrawlBookmarks(true),
+      isPending: false,
+      hidden: !isBulkEditEnabled,
+    },
+    {
+      name: "Refresh",
+      icon: <RotateCw size={18} />,
+      action: () => recrawlBookmarks(false),
+      isPending: false,
       hidden: !isBulkEditEnabled,
     },
     {
