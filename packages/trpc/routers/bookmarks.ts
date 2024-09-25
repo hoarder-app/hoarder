@@ -767,36 +767,42 @@ export const bookmarksAppRouter = router({
             .returning();
         }
 
-        const allIds = (
-          await tx.query.bookmarkTags.findMany({
-            where: and(
-              eq(bookmarkTags.userId, ctx.user.id),
-              or(
-                toAddTagIds.length > 0
-                  ? inArray(bookmarkTags.id, toAddTagIds)
-                  : undefined,
-                toAddTagNames.length > 0
-                  ? inArray(bookmarkTags.name, toAddTagNames)
-                  : undefined,
-              ),
-            ),
-            columns: {
-              id: true,
-            },
-          })
-        ).map((t) => t.id);
+        let allIds: string[] = [];
 
-        await tx
-          .insert(tagsOnBookmarks)
-          .values(
-            allIds.map((i) => ({
-              tagId: i,
-              bookmarkId: input.bookmarkId,
-              attachedBy: "human" as const,
-              userId: ctx.user.id,
-            })),
-          )
-          .onConflictDoNothing();
+        // If there is nothing to add, the "or" statement will become useless and
+        // the query below will simply select all the existing tags for this user and assign them to the bookmark
+        if (toAddTagNames.length > 0 || toAddTagIds.length > 0) {
+          allIds = (
+            await tx.query.bookmarkTags.findMany({
+              where: and(
+                eq(bookmarkTags.userId, ctx.user.id),
+                or(
+                  toAddTagIds.length > 0
+                    ? inArray(bookmarkTags.id, toAddTagIds)
+                    : undefined,
+                  toAddTagNames.length > 0
+                    ? inArray(bookmarkTags.name, toAddTagNames)
+                    : undefined,
+                ),
+              ),
+              columns: {
+                id: true,
+              },
+            })
+          ).map((t) => t.id);
+
+          await tx
+            .insert(tagsOnBookmarks)
+            .values(
+              allIds.map((i) => ({
+                tagId: i,
+                bookmarkId: input.bookmarkId,
+                attachedBy: "human" as const,
+                userId: ctx.user.id,
+              })),
+            )
+            .onConflictDoNothing();
+        }
         await triggerSearchReindex(input.bookmarkId);
         return {
           bookmarkId: input.bookmarkId,
