@@ -73,7 +73,7 @@ export class OpenAiWorker {
         onError: async (job) => {
           const jobId = job?.id ?? "unknown";
           logger.error(
-            `[inference][${jobId}] inference job failed: ${job.error}`,
+            `[inference][${jobId}] inference job failed: ${job.error}\n${job.error.stack}`,
           );
           await attemptMarkTaggingStatus(job?.data, "failure");
         },
