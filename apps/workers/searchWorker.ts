@@ -25,7 +25,9 @@ export class SearchIndexingWorker {
         },
         onError: (job) => {
           const jobId = job?.id ?? "unknown";
-          logger.error(`[search][${jobId}] search job failed: ${job.error}`);
+          logger.error(
+            `[search][${jobId}] search job failed: ${job.error}\n${job.error.stack}`,
+          );
           return Promise.resolve();
         },
       },
