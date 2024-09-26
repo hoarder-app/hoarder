@@ -24,15 +24,17 @@ export async function parseNetscapeBookmarkFile(
       const $a = $(a);
       const addDate = $a.attr("add_date");
       let tags: string[] = [];
+
+      const tagsStr = $a.attr("tags");
       try {
-        tags = $a.attr("tags")?.split(",") ?? [];
+        tags = tagsStr && tagsStr.length > 0 ? tagsStr.split(",") : [];
       } catch (e) {
         /* empty */
       }
       return {
         title: $a.text(),
         url: $a.attr("href"),
-        tags: tags,
+        tags,
         addDate: typeof addDate === "undefined" ? undefined : parseInt(addDate),
       };
     })
@@ -60,7 +62,7 @@ export async function parsePocketBookmarkFile(
       return {
         title: $a.text(),
         url: $a.attr("href"),
-        tags: tags,
+        tags,
         addDate: typeof addDate === "undefined" ? undefined : parseInt(addDate),
       };
     })
