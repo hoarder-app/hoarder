@@ -8,12 +8,13 @@ import {
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import useBulkActionsStore from "@/lib/bulkActions";
-import { CheckCheck, Hash, List, Pencil, Trash2, X } from "lucide-react";
+import { CheckCheck, Hash, Link, List, Pencil, Trash2, X } from "lucide-react";
 
 import {
   useDeleteBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import BulkManageListsModal from "./bookmarks/BulkManageListsModal";
 import BulkTagModal from "./bookmarks/BulkTagModal";
@@ -60,6 +61,31 @@ export default function BulkBookmarksAction() {
     archived?: boolean;
   }
 
+  function isClipboardAvailable() {
+    return navigator && navigator.clipboard;
+  }
+
+  const copyLinks = async () => {
+    if (!isClipboardAvailable()) {
+      toast({
+        description: `Copying is only available over https`,
+      });
+      return;
+    }
+    const copyString = selectedBookmarks
+      .map((item) => {
+        return item.content.type === BookmarkTypes.LINK && item.content.url;
+      })
+      .filter(Boolean)
+      .join("\n");
+
+    await navigator.clipboard.writeText(copyString);
+
+    toast({
+      description: `Added ${selectedBookmarks.length} bookmark links into the clipboard!`,
+    });
+  };
+
   const updateBookmarks = async ({
     favourited,
     archived,
@@ -99,6 +125,15 @@ export default function BulkBookmarksAction() {
     selectedBookmarks.every((item) => item.archived === true);
 
   const actionList = [
+    {
+      name: isClipboardAvailable()
+        ? "Copy Links"
+        : "Copying is only available over https",
+      icon: <Link size={18} />,
+      action: () => copyLinks(),
+      isPending: false,
+      hidden: !isBulkEditEnabled,
+    },
     {
       name: "Add to List",
       icon: <List size={18} />,
