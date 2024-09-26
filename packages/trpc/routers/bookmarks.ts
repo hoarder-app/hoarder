@@ -678,18 +678,28 @@ export const bookmarksAppRouter = router({
       z.object({
         bookmarkId: z.string(),
         attach: z.array(
-          z.object({
-            // At least one of the two must be set
-            tagId: z.string().optional(), // If the tag already exists and we know its id we should pass it
-            tagName: z.string().optional(),
-          }),
+          z
+            .object({
+              // At least one of the two must be set
+              tagId: z.string().optional(), // If the tag already exists and we know its id we should pass it
+              tagName: z.string().optional(),
+            })
+            .refine((val) => !!val.tagId || !!val.tagName, {
+              message: "You must provide either a tagId or a tagName",
+              path: ["tagId", "tagName"],
+            }),
         ),
         detach: z.array(
-          z.object({
-            // At least one of the two must be set
-            tagId: z.string().optional(),
-            tagName: z.string().optional(), // Also allow removing by tagName, to make CLI usage easier
-          }),
+          z
+            .object({
+              // At least one of the two must be set
+              tagId: z.string().optional(),
+              tagName: z.string().optional(), // Also allow removing by tagName, to make CLI usage easier
+            })
+            .refine((val) => !!val.tagId || !!val.tagName, {
+              message: "You must provide either a tagId or a tagName",
+              path: ["tagId", "tagName"],
+            }),
         ),
       }),
     )
@@ -767,6 +777,9 @@ export const bookmarksAppRouter = router({
             .returning();
         }
 
+        // If there is nothing to add, the "or" statement will become useless and
+        // the query below will simply select all the existing tags for this user and assign them to the bookmark
+        invariant(toAddTagNames.length > 0 || toAddTagIds.length > 0);
         const allIds = (
           await tx.query.bookmarkTags.findMany({
             where: and(
@@ -797,6 +810,7 @@ export const bookmarksAppRouter = router({
             })),
           )
           .onConflictDoNothing();
+
         await triggerSearchReindex(input.bookmarkId);
         return {
           bookmarkId: input.bookmarkId,
