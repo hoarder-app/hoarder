@@ -1,5 +1,6 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { ActionButton } from "@/components/ui/action-button";
+import useBulkActionsStore from "@/lib/bulkActions";
 import {
   bookmarkLayoutSwitch,
   useBookmarkLayout,
@@ -48,7 +49,15 @@ export default function BookmarksGrid({
   fetchNextPage?: () => void;
 }) {
   const layout = useBookmarkLayout();
+  const bulkActionsStore = useBulkActionsStore();
   const breakpointConfig = useMemo(() => getBreakpointConfig(), []);
+
+  useEffect(() => {
+    bulkActionsStore.setVisibleBookmarks(bookmarks);
+    return () => {
+      bulkActionsStore.setVisibleBookmarks([]);
+    };
+  }, [bookmarks]);
 
   if (bookmarks.length == 0 && !showEditorCard) {
     return <p>No bookmarks</p>;

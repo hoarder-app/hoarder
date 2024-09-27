@@ -25,6 +25,13 @@ export default function BulkBookmarksAction() {
   const setIsBulkEditEnabled = useBulkActionsStore(
     (state) => state.setIsBulkEditEnabled,
   );
+  const selectAllBookmarks = useBulkActionsStore((state) => state.selectAll);
+  const unSelectAllBookmarks = useBulkActionsStore(
+    (state) => state.unSelectAll,
+  );
+  const isEverythingSelected = useBulkActionsStore(
+    (state) => state.isEverythingSelected,
+  );
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [manageListsModal, setManageListsModalOpen] = useState(false);
@@ -169,6 +176,18 @@ export default function BulkBookmarksAction() {
       hidden: !isBulkEditEnabled,
     },
     {
+      name: isEverythingSelected() ? "Unselect All" : "Select All",
+      icon: (
+        <p className="flex items-center gap-2">
+          ( <CheckCheck size={18} /> {selectedBookmarks.length} )
+        </p>
+      ),
+      action: () =>
+        isEverythingSelected() ? unSelectAllBookmarks() : selectAllBookmarks(),
+      alwaysEnable: true,
+      hidden: !isBulkEditEnabled,
+    },
+    {
       name: "Close bulk edit",
       icon: <X size={18} />,
       action: () => setIsBulkEditEnabled(false),
@@ -213,11 +232,6 @@ export default function BulkBookmarksAction() {
         setOpen={setBulkTagModalOpen}
       />
       <div className="flex items-center">
-        {isBulkEditEnabled && (
-          <p className="flex items-center gap-2">
-            ( <CheckCheck size={18} /> {selectedBookmarks.length} )
-          </p>
-        )}
         {actionList.map(
           ({ name, icon: Icon, action, isPending, hidden, alwaysEnable }) => (
             <ActionButtonWithTooltip
