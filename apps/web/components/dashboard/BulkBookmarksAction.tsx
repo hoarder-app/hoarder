@@ -69,7 +69,7 @@ export default function BulkBookmarksAction() {
   }
 
   function isClipboardAvailable() {
-    return navigator && navigator.clipboard;
+    return window && window.navigator && window.navigator.clipboard;
   }
 
   const copyLinks = async () => {
