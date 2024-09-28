@@ -69,6 +69,9 @@ export default function BulkBookmarksAction() {
   }
 
   function isClipboardAvailable() {
+    if (typeof window === "undefined") {
+      return false;
+    }
     return window && window.navigator && window.navigator.clipboard;
   }
 
