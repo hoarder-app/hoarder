@@ -7,6 +7,7 @@ import {
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import tailwindConfig from "@/tailwind.config";
 import { Slot } from "@radix-ui/react-slot";
+import { useInView } from "react-intersection-observer";
 import Masonry from "react-masonry-css";
 import resolveConfig from "tailwindcss/resolveConfig";
 
@@ -51,6 +52,7 @@ export default function BookmarksGrid({
   const layout = useBookmarkLayout();
   const bulkActionsStore = useBulkActionsStore();
   const breakpointConfig = useMemo(() => getBreakpointConfig(), []);
+  const { ref: loadMoreRef, inView: loadMoreButtonInView } = useInView();
 
   useEffect(() => {
     bulkActionsStore.setVisibleBookmarks(bookmarks);
@@ -58,6 +60,12 @@ export default function BookmarksGrid({
       bulkActionsStore.setVisibleBookmarks([]);
     };
   }, [bookmarks]);
+
+  useEffect(() => {
+    if (loadMoreButtonInView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [loadMoreButtonInView]);
 
   if (bookmarks.length == 0 && !showEditorCard) {
     return <p>No bookmarks</p>;
@@ -94,6 +102,7 @@ export default function BookmarksGrid({
       {hasNextPage && (
         <div className="flex justify-center">
           <ActionButton
+            ref={loadMoreRef}
             ignoreDemoMode={true}
             loading={isFetchingNextPage}
             onClick={() => fetchNextPage()}
