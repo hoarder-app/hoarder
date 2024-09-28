@@ -864,8 +864,8 @@ importers:
         specifier: ^7.6.9
         version: 7.6.9
       drizzle-kit:
-        specifier: ^0.20.14
-        version: 0.20.14
+        specifier: ^0.24.02
+        version: 0.24.2
 
   packages/queue:
     dependencies:
@@ -2225,6 +2225,9 @@ packages:
     peerDependenciesMeta:
       '@docusaurus/types':
         optional: true
+
+  '@drizzle-team/brocli@0.10.1':
+    resolution: {integrity: sha512-AHy0vjc+n/4w/8Mif+w86qpppHuF3AyXbcWW+R/W7GNA3F5/p2nuhlkCJaTXSLZheB4l1rtHzOfr9A7NwoR/Zg==}
 
   '@drizzle-team/studio@0.0.39':
     resolution: {integrity: sha512-c5Hkm7MmQC2n5qAsKShjQrHoqlfGslB8+qWzsGGZ+2dHMRTNG60UuzalF0h0rvBax5uzPXuGkYLGaQ+TUX3yMw==}
@@ -6147,6 +6150,10 @@ packages:
 
   drizzle-kit@0.20.14:
     resolution: {integrity: sha512-0fHv3YIEaUcSVPSGyaaBfOi9bmpajjhbJNdPsRMIUvYdLVxBu9eGjH8mRc3Qk7HVmEidFc/lhG1YyJhoXrn5yA==}
+    hasBin: true
+
+  drizzle-kit@0.24.2:
+    resolution: {integrity: sha512-nXOaTSFiuIaTMhS8WJC2d4EBeIcN9OSt2A2cyFbQYBAZbi7lRsVGJNqDpEwPqYfJz38yxbY/UtbvBBahBfnExQ==}
     hasBin: true
 
   drizzle-orm@0.33.0:
@@ -15419,6 +15426,9 @@ snapshots:
       - webpack-cli
     dev: false
 
+  '@drizzle-team/brocli@0.10.1':
+    dev: true
+
   '@drizzle-team/studio@0.0.39':
     dependencies:
       superjson: 2.2.1
@@ -20885,6 +20895,16 @@ snapshots:
       minimatch: 7.4.6
       semver: 7.6.0
       zod: 3.22.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  drizzle-kit@0.24.2:
+    dependencies:
+      '@drizzle-team/brocli': 0.10.1
+      '@esbuild-kit/esm-loader': 2.6.5
+      esbuild: 0.19.12
+      esbuild-register: 3.5.0(esbuild@0.19.12)
     transitivePeerDependencies:
       - supports-color
     dev: true
