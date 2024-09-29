@@ -132,4 +132,15 @@ export const adminAppRouter = router({
 
     await Promise.all(bookmarkIds.map((b) => triggerSearchReindex(b.id)));
   }),
+  reRunInferenceOnAllBookmarks: adminProcedure.mutation(async ({ ctx }) => {
+    const bookmarkIds = await ctx.db.query.bookmarks.findMany({
+      columns: {
+        id: true,
+      },
+    });
+
+    await Promise.all(
+      bookmarkIds.map((b) => OpenAIQueue.enqueue({ bookmarkId: b.id })),
+    );
+  }),
 });
