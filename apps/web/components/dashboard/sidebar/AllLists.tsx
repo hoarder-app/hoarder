@@ -39,19 +39,19 @@ export default function AllLists({
         logo={<span className="text-lg">📋</span>}
         name="All Lists"
         path={`/dashboard/lists`}
-        className="py-0.5"
+        linkClassName="py-0.5"
       />
       <SidebarItem
         logo={<span className="text-lg">⭐️</span>}
         name="Favourites"
         path={`/dashboard/favourites`}
-        className="py-0.5"
+        linkClassName="py-0.5"
       />
       <SidebarItem
         logo={<span className="text-lg">🗄️</span>}
         name="Archive"
         path={`/dashboard/archive`}
-        className="py-0.5"
+        linkClassName="py-0.5"
       />
 
       {
@@ -86,7 +86,7 @@ export default function AllLists({
                   </Button>
                 </ListOptions>
               }
-              className="group py-0.5"
+              linkClassName="group py-0.5"
               style={{ marginLeft: `${level * 1}rem` }}
             />
           )}
