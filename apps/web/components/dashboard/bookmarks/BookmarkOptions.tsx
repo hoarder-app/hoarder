@@ -11,7 +11,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
 import {
-  FileArchive,
+  FileDown,
   Link,
   List,
   ListX,
@@ -172,8 +172,8 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
                 });
               }}
             >
-              <FileArchive className="mr-2 size-4" />
-              <span>Crawl Full Page Archive</span>
+              <FileDown className="mr-2 size-4" />
+              <span>Download Full Page Archive</span>
             </DropdownMenuItem>
           )}
 

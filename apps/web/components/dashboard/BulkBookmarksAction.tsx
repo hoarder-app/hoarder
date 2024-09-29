@@ -10,7 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import useBulkActionsStore from "@/lib/bulkActions";
 import {
   CheckCheck,
-  FileArchive,
+  FileDown,
   Hash,
   List,
   Pencil,
@@ -24,6 +24,7 @@ import {
   useRecrawlBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import BulkManageListsModal from "./bookmarks/BulkManageListsModal";
 import BulkTagModal from "./bookmarks/BulkTagModal";
@@ -78,18 +79,19 @@ export default function BulkBookmarksAction() {
   }
 
   const recrawlBookmarks = async (archiveFullPage: boolean) => {
+    const links = selectedBookmarks.filter(
+      (item) => item.content.type === BookmarkTypes.LINK,
+    );
     await Promise.all(
-      selectedBookmarks.map((item) =>
+      links.map((item) =>
         recrawlBookmarkMutator.mutateAsync({
           bookmarkId: item.id,
           archiveFullPage,
         }),
       ),
     );
-    let message = `${selectedBookmarks.length} bookmarks will be `;
-    message += archiveFullPage ? "re-crawled and archived!" : "refreshed!";
     toast({
-      description: message,
+      description: `${links.length} bookmarks will be ${archiveFullPage ? "re-crawled and archived!" : "refreshed!"}`,
     });
   };
 
@@ -161,17 +163,17 @@ export default function BulkBookmarksAction() {
       hidden: !isBulkEditEnabled,
     },
     {
-      name: "Crawl Full Page Archive",
-      icon: <FileArchive size={18} />,
+      name: "Download Full Page Archive",
+      icon: <FileDown size={18} />,
       action: () => recrawlBookmarks(true),
-      isPending: false,
+      isPending: recrawlBookmarkMutator.isPending,
       hidden: !isBulkEditEnabled,
     },
     {
       name: "Refresh",
       icon: <RotateCw size={18} />,
       action: () => recrawlBookmarks(false),
-      isPending: false,
+      isPending: recrawlBookmarkMutator.isPending,
       hidden: !isBulkEditEnabled,
     },
     {
