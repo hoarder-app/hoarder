@@ -8,10 +8,21 @@ import {
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import useBulkActionsStore from "@/lib/bulkActions";
-import { CheckCheck, Hash, Link, List, Pencil, Trash2, X } from "lucide-react";
+import {
+  CheckCheck,
+  FileDown,
+  Hash,
+  Link,
+  List,
+  Pencil,
+  RotateCw,
+  Trash2,
+  X,
+} from "lucide-react";
 
 import {
   useDeleteBookmark,
+  useRecrawlBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
@@ -63,10 +74,34 @@ export default function BulkBookmarksAction() {
     onError,
   });
 
+  const recrawlBookmarkMutator = useRecrawlBookmark({
+    onSuccess: () => {
+      setIsBulkEditEnabled(false);
+    },
+    onError,
+  });
+
   interface UpdateBookmarkProps {
     favourited?: boolean;
     archived?: boolean;
   }
+
+  const recrawlBookmarks = async (archiveFullPage: boolean) => {
+    const links = selectedBookmarks.filter(
+      (item) => item.content.type === BookmarkTypes.LINK,
+    );
+    await Promise.all(
+      links.map((item) =>
+        recrawlBookmarkMutator.mutateAsync({
+          bookmarkId: item.id,
+          archiveFullPage,
+        }),
+      ),
+    );
+    toast({
+      description: `${links.length} bookmarks will be ${archiveFullPage ? "re-crawled and archived!" : "refreshed!"}`,
+    });
+  };
 
   function isClipboardAvailable() {
     if (typeof window === "undefined") {
@@ -170,6 +205,20 @@ export default function BulkBookmarksAction() {
       icon: <ArchivedActionIcon size={18} archived={!!alreadyArchived} />,
       action: () => updateBookmarks({ archived: !alreadyArchived }),
       isPending: updateBookmarkMutator.isPending,
+      hidden: !isBulkEditEnabled,
+    },
+    {
+      name: "Download Full Page Archive",
+      icon: <FileDown size={18} />,
+      action: () => recrawlBookmarks(true),
+      isPending: recrawlBookmarkMutator.isPending,
+      hidden: !isBulkEditEnabled,
+    },
+    {
+      name: "Refresh",
+      icon: <RotateCw size={18} />,
+      action: () => recrawlBookmarks(false),
+      isPending: recrawlBookmarkMutator.isPending,
       hidden: !isBulkEditEnabled,
     },
     {

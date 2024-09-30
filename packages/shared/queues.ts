@@ -17,8 +17,9 @@ export function runQueueDBMigrations() {
 export const zCrawlLinkRequestSchema = z.object({
   bookmarkId: z.string(),
   runInference: z.boolean().optional(),
+  archiveFullPage: z.boolean().optional().default(false),
 });
-export type ZCrawlLinkRequest = z.infer<typeof zCrawlLinkRequestSchema>;
+export type ZCrawlLinkRequest = z.input<typeof zCrawlLinkRequestSchema>;
 
 export const LinkCrawlerQueue = new SqliteQueue<ZCrawlLinkRequest>(
   "link_crawler_queue",
