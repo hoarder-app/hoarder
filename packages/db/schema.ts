@@ -297,6 +297,27 @@ export const bookmarksInLists = sqliteTable(
   }),
 );
 
+
+export const customPrompts = sqliteTable(
+  "customPrompts",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    text: text("text").notNull(),
+    enabled: integer("enabled", { mode: "boolean" }).notNull(),
+    appliesTo: text("attachedBy", { enum: ["all", "text", "images"] }).notNull(),
+    createdAt: createdAtField(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (bl) => ({
+    userIdIdx: index("customPrompts_userId_idx").on(bl.userId),
+  }),
+);
+
 export const config = sqliteTable("config", {
   key: text("key").notNull().primaryKey(),
   value: text("value").notNull(),

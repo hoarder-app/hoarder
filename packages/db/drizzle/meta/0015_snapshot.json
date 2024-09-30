@@ -1,8 +1,6 @@
 {
-  "version": "5",
+  "version": "6",
   "dialect": "sqlite",
-  "id": "72cbe030-48d3-4cd6-ae90-8897291cd711",
-  "prevId": "55a06f75-6b46-41d9-9f39-d842f065551d",
   "tables": {
     "account": {
       "name": "account",
@@ -90,15 +88,15 @@
         "account_userId_user_id_fk": {
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
-          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -179,15 +177,15 @@
         "apiKey_userId_user_id_fk": {
           "name": "apiKey_userId_user_id_fk",
           "tableFrom": "apiKey",
-          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -244,15 +242,15 @@
         "bookmarkAssets_id_bookmarks_id_fk": {
           "name": "bookmarkAssets_id_bookmarks_id_fk",
           "tableFrom": "bookmarkAssets",
-          "tableTo": "bookmarks",
           "columnsFrom": [
             "id"
           ],
+          "tableTo": "bookmarks",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -330,15 +328,15 @@
         "bookmarkLinks_id_bookmarks_id_fk": {
           "name": "bookmarkLinks_id_bookmarks_id_fk",
           "tableFrom": "bookmarkLinks",
-          "tableTo": "bookmarks",
           "columnsFrom": [
             "id"
           ],
+          "tableTo": "bookmarks",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -404,15 +402,15 @@
         "bookmarkLists_userId_user_id_fk": {
           "name": "bookmarkLists_userId_user_id_fk",
           "tableFrom": "bookmarkLists",
-          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -478,15 +476,15 @@
         "bookmarkTags_userId_user_id_fk": {
           "name": "bookmarkTags_userId_user_id_fk",
           "tableFrom": "bookmarkTags",
-          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -515,15 +513,15 @@
         "bookmarkTexts_id_bookmarks_id_fk": {
           "name": "bookmarkTexts_id_bookmarks_id_fk",
           "tableFrom": "bookmarkTexts",
-          "tableTo": "bookmarks",
           "columnsFrom": [
             "id"
           ],
+          "tableTo": "bookmarks",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -619,15 +617,15 @@
         "bookmarks_userId_user_id_fk": {
           "name": "bookmarks_userId_user_id_fk",
           "tableFrom": "bookmarks",
-          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -678,28 +676,28 @@
         "bookmarksInLists_bookmarkId_bookmarks_id_fk": {
           "name": "bookmarksInLists_bookmarkId_bookmarks_id_fk",
           "tableFrom": "bookmarksInLists",
-          "tableTo": "bookmarks",
           "columnsFrom": [
             "bookmarkId"
           ],
+          "tableTo": "bookmarks",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "bookmarksInLists_listId_bookmarkLists_id_fk": {
           "name": "bookmarksInLists_listId_bookmarkLists_id_fk",
           "tableFrom": "bookmarksInLists",
-          "tableTo": "bookmarkLists",
           "columnsFrom": [
             "listId"
           ],
+          "tableTo": "bookmarkLists",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -743,15 +741,15 @@
         "session_userId_user_id_fk": {
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
-          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
+          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -809,28 +807,28 @@
         "tagsOnBookmarks_bookmarkId_bookmarks_id_fk": {
           "name": "tagsOnBookmarks_bookmarkId_bookmarks_id_fk",
           "tableFrom": "tagsOnBookmarks",
-          "tableTo": "bookmarks",
           "columnsFrom": [
             "bookmarkId"
           ],
+          "tableTo": "bookmarks",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         },
         "tagsOnBookmarks_tagId_bookmarkTags_id_fk": {
           "name": "tagsOnBookmarks_tagId_bookmarkTags_id_fk",
           "tableFrom": "tagsOnBookmarks",
-          "tableTo": "bookmarkTags",
           "columnsFrom": [
             "tagId"
           ],
+          "tableTo": "bookmarkTags",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "cascade"
         }
       },
       "compositePrimaryKeys": {
@@ -952,8 +950,9 @@
   },
   "enums": {},
   "_meta": {
-    "schemas": {},
     "tables": {},
     "columns": {}
-  }
+  },
+  "id": "72cbe030-48d3-4cd6-ae90-8897291cd711",
+  "prevId": "55a06f75-6b46-41d9-9f39-d842f065551d"
 }

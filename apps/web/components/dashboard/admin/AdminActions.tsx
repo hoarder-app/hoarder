@@ -35,6 +35,23 @@ export default function AdminActions() {
       },
     });
 
+  const {
+    mutate: reRunInferenceOnAllBookmarks,
+    isPending: isInferencePending,
+  } = api.admin.reRunInferenceOnAllBookmarks.useMutation({
+    onSuccess: () => {
+      toast({
+        description: "Inference jobs enqueued",
+      });
+    },
+    onError: (e) => {
+      toast({
+        variant: "destructive",
+        description: e.message,
+      });
+    },
+  });
+
   return (
     <div>
       <div className="mb-2 mt-8 text-xl font-medium">Actions</div>
@@ -65,6 +82,13 @@ export default function AdminActions() {
           }
         >
           Recrawl All Links (Without Inference)
+        </ActionButton>
+        <ActionButton
+          variant="destructive"
+          loading={isInferencePending}
+          onClick={() => reRunInferenceOnAllBookmarks()}
+        >
+          Regenerate AI Tags for All Bookmarks
         </ActionButton>
         <ActionButton
           variant="destructive"

@@ -1,6 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
+  "id": "486882c9-79bd-4665-948b-831834e3509c",
+  "prevId": "472a0256-4c40-464f-a2ff-851cdebb63c9",
   "tables": {
     "account": {
       "name": "account",
@@ -88,15 +90,15 @@
         "account_userId_user_id_fk": {
           "name": "account_userId_user_id_fk",
           "tableFrom": "account",
+          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -177,15 +179,74 @@
         "apiKey_userId_user_id_fk": {
           "name": "apiKey_userId_user_id_fk",
           "tableFrom": "apiKey",
+          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "assets": {
+      "name": "assets",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "assetType": {
+          "name": "assetType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "bookmarkId": {
+          "name": "bookmarkId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "assets_bookmarkId_idx": {
+          "name": "assets_bookmarkId_idx",
+          "columns": [
+            "bookmarkId"
+          ],
+          "isUnique": false
+        },
+        "assets_assetType_idx": {
+          "name": "assets_assetType_idx",
+          "columns": [
+            "assetType"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "assets_bookmarkId_bookmarks_id_fk": {
+          "name": "assets_bookmarkId_bookmarks_id_fk",
+          "tableFrom": "assets",
+          "tableTo": "bookmarks",
+          "columnsFrom": [
+            "bookmarkId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -235,6 +296,13 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "sourceUrl": {
+          "name": "sourceUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
@@ -242,15 +310,15 @@
         "bookmarkAssets_id_bookmarks_id_fk": {
           "name": "bookmarkAssets_id_bookmarks_id_fk",
           "tableFrom": "bookmarkAssets",
+          "tableTo": "bookmarks",
           "columnsFrom": [
             "id"
           ],
-          "tableTo": "bookmarks",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -321,22 +389,38 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "crawlStatus": {
+          "name": "crawlStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": "'pending'"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "bookmarkLinks_url_idx": {
+          "name": "bookmarkLinks_url_idx",
+          "columns": [
+            "url"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "bookmarkLinks_id_bookmarks_id_fk": {
           "name": "bookmarkLinks_id_bookmarks_id_fk",
           "tableFrom": "bookmarkLinks",
+          "tableTo": "bookmarks",
           "columnsFrom": [
             "id"
           ],
-          "tableTo": "bookmarks",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -379,6 +463,13 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "parentId": {
+          "name": "parentId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -388,29 +479,34 @@
             "userId"
           ],
           "isUnique": false
-        },
-        "bookmarkLists_name_userId_unique": {
-          "name": "bookmarkLists_name_userId_unique",
-          "columns": [
-            "name",
-            "userId"
-          ],
-          "isUnique": true
         }
       },
       "foreignKeys": {
         "bookmarkLists_userId_user_id_fk": {
           "name": "bookmarkLists_userId_user_id_fk",
           "tableFrom": "bookmarkLists",
+          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bookmarkLists_parentId_bookmarkLists_id_fk": {
+          "name": "bookmarkLists_parentId_bookmarkLists_id_fk",
+          "tableFrom": "bookmarkLists",
+          "tableTo": "bookmarkLists",
+          "columnsFrom": [
+            "parentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -476,15 +572,15 @@
         "bookmarkTags_userId_user_id_fk": {
           "name": "bookmarkTags_userId_user_id_fk",
           "tableFrom": "bookmarkTags",
+          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -513,15 +609,15 @@
         "bookmarkTexts_id_bookmarks_id_fk": {
           "name": "bookmarkTexts_id_bookmarks_id_fk",
           "tableFrom": "bookmarkTexts",
+          "tableTo": "bookmarks",
           "columnsFrom": [
             "id"
           ],
-          "tableTo": "bookmarks",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -542,6 +638,13 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "archived": {
@@ -581,6 +684,13 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
         }
       },
       "indexes": {
@@ -617,15 +727,15 @@
         "bookmarks_userId_user_id_fk": {
           "name": "bookmarks_userId_user_id_fk",
           "tableFrom": "bookmarks",
+          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -676,28 +786,28 @@
         "bookmarksInLists_bookmarkId_bookmarks_id_fk": {
           "name": "bookmarksInLists_bookmarkId_bookmarks_id_fk",
           "tableFrom": "bookmarksInLists",
+          "tableTo": "bookmarks",
           "columnsFrom": [
             "bookmarkId"
           ],
-          "tableTo": "bookmarks",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "bookmarksInLists_listId_bookmarkLists_id_fk": {
           "name": "bookmarksInLists_listId_bookmarkLists_id_fk",
           "tableFrom": "bookmarksInLists",
+          "tableTo": "bookmarkLists",
           "columnsFrom": [
             "listId"
           ],
-          "tableTo": "bookmarkLists",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -709,6 +819,102 @@
           "name": "bookmarksInLists_bookmarkId_listId_pk"
         }
       },
+      "uniqueConstraints": {}
+    },
+    "config": {
+      "name": "config",
+      "columns": {
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "customPrompts": {
+      "name": "customPrompts",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "text": {
+          "name": "text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "enabled": {
+          "name": "enabled",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "attachedBy": {
+          "name": "attachedBy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {
+        "customPrompts_userId_idx": {
+          "name": "customPrompts_userId_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {
+        "customPrompts_userId_user_id_fk": {
+          "name": "customPrompts_userId_user_id_fk",
+          "tableFrom": "customPrompts",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
     "session": {
@@ -741,15 +947,15 @@
         "session_userId_user_id_fk": {
           "name": "session_userId_user_id_fk",
           "tableFrom": "session",
+          "tableTo": "user",
           "columnsFrom": [
             "userId"
           ],
-          "tableTo": "user",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -807,28 +1013,28 @@
         "tagsOnBookmarks_bookmarkId_bookmarks_id_fk": {
           "name": "tagsOnBookmarks_bookmarkId_bookmarks_id_fk",
           "tableFrom": "tagsOnBookmarks",
+          "tableTo": "bookmarks",
           "columnsFrom": [
             "bookmarkId"
           ],
-          "tableTo": "bookmarks",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "tagsOnBookmarks_tagId_bookmarkTags_id_fk": {
           "name": "tagsOnBookmarks_tagId_bookmarkTags_id_fk",
           "tableFrom": "tagsOnBookmarks",
+          "tableTo": "bookmarkTags",
           "columnsFrom": [
             "tagId"
           ],
-          "tableTo": "bookmarkTags",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "cascade"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
@@ -950,9 +1156,11 @@
   },
   "enums": {},
   "_meta": {
+    "schemas": {},
     "tables": {},
     "columns": {}
   },
-  "id": "72b4a92d-dcf7-4a16-9f58-14dca905cbd4",
-  "prevId": "72cbe030-48d3-4cd6-ae90-8897291cd711"
+  "internal": {
+    "indexes": {}
+  }
 }

@@ -12,6 +12,7 @@ import {
   CheckCheck,
   FileDown,
   Hash,
+  Link,
   List,
   Pencil,
   RotateCw,
@@ -34,6 +35,13 @@ export default function BulkBookmarksAction() {
   const { selectedBookmarks, isBulkEditEnabled } = useBulkActionsStore();
   const setIsBulkEditEnabled = useBulkActionsStore(
     (state) => state.setIsBulkEditEnabled,
+  );
+  const selectAllBookmarks = useBulkActionsStore((state) => state.selectAll);
+  const unSelectAllBookmarks = useBulkActionsStore(
+    (state) => state.unSelectAll,
+  );
+  const isEverythingSelected = useBulkActionsStore(
+    (state) => state.isEverythingSelected,
   );
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -95,6 +103,34 @@ export default function BulkBookmarksAction() {
     });
   };
 
+  function isClipboardAvailable() {
+    if (typeof window === "undefined") {
+      return false;
+    }
+    return window && window.navigator && window.navigator.clipboard;
+  }
+
+  const copyLinks = async () => {
+    if (!isClipboardAvailable()) {
+      toast({
+        description: `Copying is only available over https`,
+      });
+      return;
+    }
+    const copyString = selectedBookmarks
+      .map((item) => {
+        return item.content.type === BookmarkTypes.LINK && item.content.url;
+      })
+      .filter(Boolean)
+      .join("\n");
+
+    await navigator.clipboard.writeText(copyString);
+
+    toast({
+      description: `Added ${selectedBookmarks.length} bookmark links into the clipboard!`,
+    });
+  };
+
   const updateBookmarks = async ({
     favourited,
     archived,
@@ -134,6 +170,15 @@ export default function BulkBookmarksAction() {
     selectedBookmarks.every((item) => item.archived === true);
 
   const actionList = [
+    {
+      name: isClipboardAvailable()
+        ? "Copy Links"
+        : "Copying is only available over https",
+      icon: <Link size={18} />,
+      action: () => copyLinks(),
+      isPending: false,
+      hidden: !isBulkEditEnabled,
+    },
     {
       name: "Add to List",
       icon: <List size={18} />,
@@ -183,6 +228,18 @@ export default function BulkBookmarksAction() {
       hidden: !isBulkEditEnabled,
     },
     {
+      name: isEverythingSelected() ? "Unselect All" : "Select All",
+      icon: (
+        <p className="flex items-center gap-2">
+          ( <CheckCheck size={18} /> {selectedBookmarks.length} )
+        </p>
+      ),
+      action: () =>
+        isEverythingSelected() ? unSelectAllBookmarks() : selectAllBookmarks(),
+      alwaysEnable: true,
+      hidden: !isBulkEditEnabled,
+    },
+    {
       name: "Close bulk edit",
       icon: <X size={18} />,
       action: () => setIsBulkEditEnabled(false),
@@ -227,11 +284,6 @@ export default function BulkBookmarksAction() {
         setOpen={setBulkTagModalOpen}
       />
       <div className="flex items-center">
-        {isBulkEditEnabled && (
-          <p className="flex items-center gap-2">
-            ( <CheckCheck size={18} /> {selectedBookmarks.length} )
-          </p>
-        )}
         {actionList.map(
           ({ name, icon: Icon, action, isPending, hidden, alwaysEnable }) => (
             <ActionButtonWithTooltip

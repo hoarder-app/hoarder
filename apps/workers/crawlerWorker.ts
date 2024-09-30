@@ -172,7 +172,9 @@ export class CrawlerWorker {
         },
         onError: async (job) => {
           const jobId = job?.id ?? "unknown";
-          logger.error(`[Crawler][${jobId}] Crawling job failed: ${job.error}`);
+          logger.error(
+            `[Crawler][${jobId}] Crawling job failed: ${job.error}\n${job.error.stack}`,
+          );
           const bookmarkId = job.data?.bookmarkId;
           if (bookmarkId) {
             await changeBookmarkStatus(bookmarkId, "failure");
