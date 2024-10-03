@@ -43,3 +43,12 @@ cat all_links.txt | xargs -I{} hoarder --api-key <key> --server-addr <addr> book
 - This will download an html file with all of your bookmarks.
 
 You can use this file to import the bookmarks using the UI or CLI method described above
+
+
+## Importing Bookmarks from Omnivore.app  
+
+Requirements - bash, curl and jq.  
+
+Add the script from here [https://github.com/hoarder-app/hoarder/issues/455#issuecomment-2391941238](https://github.com/hoarder-app/hoarder/issues/455#issuecomment-2391941238) into a file and run it passing in your Omnivore API key as an argument.  
+It will generate a `omnivore_bookmarks.html` file in the current directory.  
+You can then import the bookmarks via the upload feature in the Hoarder app.
