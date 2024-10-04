@@ -1,7 +1,6 @@
 import assert from "assert";
 import * as dns from "dns";
 import * as path from "node:path";
-import type { Browser } from "puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
 import DOMPurify from "dompurify";
@@ -18,6 +17,7 @@ import metascraperReadability from "metascraper-readability";
 import metascraperTitle from "metascraper-title";
 import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
+import { Browser, Frame, Page } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
@@ -264,17 +264,23 @@ async function crawlPage(jobId: string, url: string) {
 
     await page.goto(url, {
       timeout: serverConfig.crawler.navigateTimeoutSec * 1000,
+      waitUntil: "networkidle0",
     });
+
     logger.info(
       `[Crawler][${jobId}] Successfully navigated to "${url}". Waiting for the page to load ...`,
     );
 
-    // Wait until there's at most two connections for 2 seconds
-    // Attempt to wait only for 5 seconds
+    logger.info(`[Crawler][${jobId}] Clicking Cookie Consent Banner.`);
+    await acceptCookies(page, jobId);
+
+    logger.info(`[Crawler][${jobId}] Hiding Consent Banner if Still Visible.`);
+    await hideConsentBanner(page, jobId);
+
     await Promise.race([
       page.waitForNetworkIdle({
-        idleTime: 1000, // 1 sec
-        concurrency: 2,
+        idleTime: 2000, // Wait for 2 seconds of no significant nework activity
+        concurrency: 0, // No active network connections
       }),
       new Promise((f) => setTimeout(f, 5000)),
     ]);
@@ -301,6 +307,175 @@ async function crawlPage(jobId: string, url: string) {
   } finally {
     await context.close();
   }
+}
+
+async function hideConsentBanner(page: Page, jobId: string) {
+  // Hide banners in the main document
+  await applyHideConsentBanner(page);
+
+  // Hide banners in all iframes
+  const frames = page.frames();
+  for (const frame of frames) {
+    if (frame !== page.mainFrame()) {
+      try {
+        await applyHideConsentBanner(frame);
+      } catch (error) {
+        if (error instanceof Error) {
+          logger.warn(
+            `[Crawler][${jobId}] Unable to hide consent banner in frame "${frame.url()}": ${error.message}`,
+          );
+        } else {
+          logger.warn(
+            `[Crawler][${jobId}] Unknown error occurred while hiding consent banner in frame "${frame.url()}": ${String(error)}`,
+          );
+        }
+      }
+    }
+  }
+}
+
+async function applyHideConsentBanner(frame: Frame | Page) {
+  await frame.evaluate(() => {
+    const style = document.createElement("style");
+    style.textContent = `
+      .cookie-banner, .consent-banner, .gdpr-banner, .cookie-consent, .cookie-notice,
+      .cookie-popup, .cookie-policy-banner, .cookie-warning, .cookie-bar, .cookie-message,
+      .cookie-container, .cookie-acceptance, .cookie-disclaimer, .cookie-info, .cookie-overlay, .cmp-banner,
+      #cookieBanner, #cookieConsent, #cookieNotice, #cookiePolicy, #gdprBanner, #consentPopup, #privacyBanner {
+        display: none !important;
+      }
+    `;
+    document.head.appendChild(style);
+  });
+}
+
+async function acceptCookies(page: Page, jobId: string) {
+  const cookieKeywords = [
+    "accept",
+    "agree",
+    "got it",
+    "consent",
+    "allow",
+    "enable",
+    "continue",
+    "accept all",
+    "agree and proceed",
+    "confirm",
+    "accept cookies",
+    "accept and close",
+    "I accept",
+    "I agree", // English
+    "akzeptieren",
+    "zustimmen",
+    "alle akzeptieren",
+    "alle zustimmen",
+    "erlauben",
+    "weiter",
+    "zustimmen und fortfahren",
+    "zustimmen und weiter",
+    "bestätigen",
+    "cookies akzeptieren",
+    "ich akzeptiere",
+    "ich stimme zu",
+    "akzeptieren und schließen",
+    "akzeptieren und weiter", // German
+    "accepter",
+    "continuer",
+    "autoriser", // French
+    "aceptar",
+    "continuar",
+    "permitir", // Spanish
+    "accetta",
+    "consenti",
+    "continua", // Italian
+  ];
+
+  try {
+    // Attempt to click consent buttons in the main frame
+    const clicked = await clickConsentButton(page, cookieKeywords, jobId);
+    if (clicked) return;
+
+    // If no buttons were found in the main frame, check all iframes
+    const frames = page.frames();
+    for (const frame of frames) {
+      if (frame !== page.mainFrame()) {
+        try {
+          const frameClicked = await clickConsentButton(
+            frame,
+            cookieKeywords,
+            jobId,
+          );
+          if (frameClicked) return;
+        } catch (error) {
+          if (error instanceof Error) {
+            logger.warn(
+              `[Crawler][${jobId}] Unable to access frame "${frame.url()}": ${error.message}`,
+            );
+          } else {
+            logger.warn(
+              `[Crawler][${jobId}] Unknown error occurred while accessing frame "${frame.url()}": ${String(error)}`,
+            );
+          }
+        }
+      }
+    }
+    logger.warn(`[Crawler][${jobId}] No matching cookie consent button found.`);
+  } catch (error) {
+    if (error instanceof Error) {
+      logger.error(
+        `[Crawler][${jobId}] Error occurred while attempting to accept cookies: ${error.message}`,
+      );
+    } else {
+      logger.error(
+        `[Crawler][${jobId}] Unknown error occurred while attempting to accept cookies: ${String(error)}`,
+      );
+    }
+  }
+  logger.info(`[Crawler][${jobId}] Finished acceptCookies function.`);
+}
+
+async function clickConsentButton(
+  frame: Frame | Page,
+  cookieKeywords: string[],
+  jobId: string,
+) {
+  const elements = await frame.$$("button, a, span");
+  for (const element of elements) {
+    const text = await element.evaluate(
+      (el) => el.textContent?.toLowerCase().trim() ?? "",
+    );
+    const matchedKeyword = cookieKeywords.find((keyword) => text === keyword);
+    if (matchedKeyword) {
+      try {
+        const isVisible = await element.isIntersectingViewport({
+          threshold: 0.5,
+        });
+        if (!isVisible) {
+          continue; // Skip if element is not visible
+        }
+        await frame.evaluate((el) => {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+          el.click();
+        }, element);
+        logger.info(
+          `[Crawler][${jobId}] Clicked cookie consent button with text: "${text}" using keyword: "${matchedKeyword}".`,
+        );
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        return true;
+      } catch (error) {
+        if (error instanceof Error) {
+          logger.error(
+            `[Crawler][${jobId}] Failed to click the consent button with text: "${text}". Error: ${error.message}`,
+          );
+        } else {
+          logger.error(
+            `[Crawler][${jobId}] Unknown error occurred while clicking the consent button with text: "${text}". Error: ${String(error)}`,
+          );
+        }
+      }
+    }
+  }
+  return false;
 }
 
 async function extractMetadata(
