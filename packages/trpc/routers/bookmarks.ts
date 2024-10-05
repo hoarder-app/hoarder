@@ -123,6 +123,26 @@ async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
   return toZodSchema(bookmark);
 }
 
+async function attemptToDedupLinkWithBookmarkAssets(
+  ctx: AuthedContext,
+  url: string,
+) {
+  // Check if the URL was maybe stored as bookmarkAsset instead
+  const assetResult = await ctx.db
+    .select({
+      id: bookmarkAssets.id,
+    })
+    .from(bookmarkAssets)
+    .leftJoin(bookmarks, eq(bookmarks.id, bookmarkAssets.id))
+    .where(
+      and(eq(bookmarkAssets.sourceUrl, url), eq(bookmarks.userId, ctx.user.id)),
+    );
+  if (assetResult.length == 0) {
+    return null;
+  }
+  return getBookmark(ctx, assetResult[0].id);
+}
+
 async function attemptToDedupLink(ctx: AuthedContext, url: string) {
   const result = await ctx.db
     .select({
@@ -133,7 +153,7 @@ async function attemptToDedupLink(ctx: AuthedContext, url: string) {
     .where(and(eq(bookmarkLinks.url, url), eq(bookmarks.userId, ctx.user.id)));
 
   if (result.length == 0) {
-    return null;
+    return await attemptToDedupLinkWithBookmarkAssets(ctx, url);
   }
   return getBookmark(ctx, result[0].id);
 }
