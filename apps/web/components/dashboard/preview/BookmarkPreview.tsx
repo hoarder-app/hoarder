@@ -18,6 +18,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { CalendarDays, ExternalLink } from "lucide-react";
 
 import {
+  getSourceUrl,
   isBookmarkStillCrawling,
   isBookmarkStillLoading,
 } from "@hoarder/shared-react/utils/bookmarkUtils";
@@ -64,16 +65,6 @@ function CreationTime({ createdAt }: { createdAt: Date }) {
       </TooltipPortal>
     </Tooltip>
   );
-}
-
-function getSourceUrl(bookmark: ZBookmark) {
-  if (bookmark.content.type === BookmarkTypes.LINK) {
-    return bookmark.content.url;
-  }
-  if (bookmark.content.type === BookmarkTypes.ASSET) {
-    return bookmark.content.sourceUrl;
-  }
-  return null;
 }
 
 export default function BookmarkPreview({

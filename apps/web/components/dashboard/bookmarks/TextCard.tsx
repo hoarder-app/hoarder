@@ -5,8 +5,10 @@ import { bookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 
 import type { ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
+import { getSourceUrl } from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
+import FooterLinkURL from "./FooterLinkURL";
 
 export default function TextCard({
   bookmark,
@@ -22,7 +24,11 @@ export default function TextCard({
       <BookmarkLayoutAdaptingCard
         title={bookmark.title}
         content={<MarkdownComponent>{bookmarkedText.text}</MarkdownComponent>}
-        footer={null}
+        footer={
+          getSourceUrl(bookmark) && (
+            <FooterLinkURL url={getSourceUrl(bookmark)} />
+          )
+        }
         wrapTags={true}
         bookmark={bookmark}
         className={className}

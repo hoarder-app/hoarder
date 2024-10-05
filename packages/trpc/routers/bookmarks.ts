@@ -194,7 +194,11 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
       };
       break;
     case BookmarkTypes.TEXT:
-      content = { type: bookmark.type, text: text.text ?? "" };
+      content = {
+        type: bookmark.type,
+        text: text.text ?? "",
+        sourceUrl: text.sourceUrl,
+      };
       break;
     case BookmarkTypes.ASSET:
       content = {
@@ -276,12 +280,17 @@ export const bookmarksAppRouter = router({
             const text = (
               await tx
                 .insert(bookmarkTexts)
-                .values({ id: bookmark.id, text: input.text })
+                .values({
+                  id: bookmark.id,
+                  text: input.text,
+                  sourceUrl: input.sourceUrl,
+                })
                 .returning()
             )[0];
             content = {
               type: BookmarkTypes.TEXT,
               text: text.text ?? "",
+              sourceUrl: text.sourceUrl,
             };
             break;
           }
@@ -597,6 +606,7 @@ export const bookmarksAppRouter = router({
                 content = {
                   type: row.bookmarksSq.type,
                   text: row.bookmarkTexts?.text ?? "",
+                  sourceUrl: row.bookmarkTexts?.sourceUrl ?? null,
                 };
                 break;
               }
@@ -607,6 +617,7 @@ export const bookmarksAppRouter = router({
                   assetId: bookmarkAssets.assetId,
                   assetType: bookmarkAssets.assetType,
                   fileName: bookmarkAssets.fileName,
+                  sourceUrl: bookmarkAssets.sourceUrl ?? null,
                 };
                 break;
               }

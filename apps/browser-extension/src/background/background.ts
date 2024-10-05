@@ -60,7 +60,7 @@ async function handleContextMenuClick(info: chrome.contextMenus.OnClickData) {
       newBookmark = {
         type: BookmarkTypes.TEXT,
         text: info.selectionText,
-        // TODO: Include a source url in the snippet
+        sourceUrl: info.pageUrl,
       };
     } else if (info.srcUrl ?? info.linkUrl ?? info.pageUrl) {
       newBookmark = {

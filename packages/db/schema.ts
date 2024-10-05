@@ -196,6 +196,7 @@ export const bookmarkTexts = sqliteTable("bookmarkTexts", {
     .$defaultFn(() => createId())
     .references(() => bookmarks.id, { onDelete: "cascade" }),
   text: text("text"),
+  sourceUrl: text("sourceUrl"),
 });
 
 export const bookmarkAssets = sqliteTable("bookmarkAssets", {

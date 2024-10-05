@@ -41,6 +41,7 @@ export type ZBookmarkedLink = z.infer<typeof zBookmarkedLinkSchema>;
 export const zBookmarkedTextSchema = z.object({
   type: z.literal(BookmarkTypes.TEXT),
   text: z.string(),
+  sourceUrl: z.string().nullish(),
 });
 export type ZBookmarkedText = z.infer<typeof zBookmarkedTextSchema>;
 
