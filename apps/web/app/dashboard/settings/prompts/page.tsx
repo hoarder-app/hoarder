@@ -289,7 +289,7 @@ export function PromptDemo() {
           clientConfig.inference.inferredTagLang,
           (prompts ?? [])
             .filter((p) => p.appliesTo == "text" || p.appliesTo == "all")
-            .map((p) => p.text),
+            .map((p) => p.text.replaceAll("$tags", "[<TAGS_HERE>]")),
           "\n<CONTENT_HERE>\n",
         ).trim()}
       </code>
@@ -299,7 +299,7 @@ export function PromptDemo() {
           clientConfig.inference.inferredTagLang,
           (prompts ?? [])
             .filter((p) => p.appliesTo == "images" || p.appliesTo == "all")
-            .map((p) => p.text),
+            .map((p) => p.text.replaceAll("$tags", "[<TAGS_HERE>]")),
         ).trim()}
       </code>
     </div>

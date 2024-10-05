@@ -130,7 +130,7 @@ Content: ${content ?? ""}`,
 }
 
 async function fetchBookmark(linkId: string) {
-  return await db.query.bookmarks.findFirst({
+  return db.query.bookmarks.findFirst({
     where: eq(bookmarks.id, linkId),
     with: {
       link: true,
@@ -179,6 +179,21 @@ async function fetchCustomPrompts(
       text: true,
     },
   });
+
+  const containsTagsPlaceholder =
+    prompts.filter((p) => p.text.includes("$tags")).length > 0;
+
+  let tagsString = "";
+  if (containsTagsPlaceholder) {
+    const tags = await db.query.bookmarkTags.findMany({
+      where: eq(bookmarkTags.userId, userId),
+      columns: {
+        name: true,
+      },
+    });
+    tagsString = `[${tags.map((tag) => tag.name).join(",")}]`;
+    return prompts.map((p) => p.text.replaceAll("$tags", tagsString));
+  }
 
   return prompts.map((p) => p.text);
 }
@@ -272,7 +287,7 @@ async function inferTags(
 
     return tags;
   } catch (e) {
-    const responseSneak = response.response.substr(0, 20);
+    const responseSneak = response.response.substring(0, 20);
     throw new Error(
       `[inference][${jobId}] The model ignored our prompt and didn't respond with the expected JSON: ${JSON.stringify(e)}. Here's a sneak peak from the response: ${responseSneak}`,
     );
