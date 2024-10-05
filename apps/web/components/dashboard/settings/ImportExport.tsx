@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { buttonVariants } from "@/components/ui/button";
 import FilePickerButton from "@/components/ui/file-picker-button";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/use-toast";
@@ -10,9 +12,10 @@ import {
   parseNetscapeBookmarkFile,
   parsePocketBookmarkFile,
 } from "@/lib/importBookmarkParser";
+import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
 import { TRPCClientError } from "@trpc/client";
-import { Upload } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 
 import {
   useCreateBookmarkWithPostHook,
@@ -25,7 +28,22 @@ import {
 } from "@hoarder/shared-react/hooks/lists";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
-export function Import() {
+export function ExportButton() {
+  return (
+    <Link
+      href="/api/bookmarks/export"
+      className={cn(
+        buttonVariants({ variant: "default" }),
+        "flex items-center gap-2",
+      )}
+    >
+      <Download />
+      <p>Export Links and Notes</p>
+    </Link>
+  );
+}
+
+export function ImportExportRow() {
   const router = useRouter();
 
   const [importProgress, setImportProgress] = useState<{
@@ -195,6 +213,7 @@ export function Import() {
           <Upload />
           <p>Import Bookmarks from Pocket export</p>
         </FilePickerButton>
+        <ExportButton />
       </div>
       {importProgress && (
         <div className="flex flex-col gap-2">
@@ -216,10 +235,12 @@ export default function ImportExport() {
   return (
     <div>
       <div className="flex items-center justify-between">
-        <div className="mb-4 text-lg font-medium">Import Bookmarks</div>
+        <div className="mb-4 text-lg font-medium">
+          Import / Export Bookmarks
+        </div>
       </div>
       <div className="mt-2">
-        <Import />
+        <ImportExportRow />
       </div>
     </div>
   );
