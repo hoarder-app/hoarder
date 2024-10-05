@@ -13,16 +13,16 @@ export default async function Settings() {
         <ChangePassword />
       </div>
       <div className="mt-4 rounded-md border bg-background p-4">
-        <ImportExport />
-      </div>
-      <div className="mt-4 rounded-md border bg-background p-4">
         <Link
           className="flex items-center gap-2 text-lg font-medium"
-          href="/dashboard/settings/prompts"
+          href="/dashboard/settings/ai"
         >
-          Inference Settings
+          AI Settings
           <ExternalLink />
         </Link>
+      </div>
+      <div className="mt-4 rounded-md border bg-background p-4">
+        <ImportExport />
       </div>
       <div className="mt-4 rounded-md border bg-background p-4">
         <ApiKeySettings />

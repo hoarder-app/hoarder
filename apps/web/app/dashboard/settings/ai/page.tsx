@@ -251,12 +251,12 @@ export function PromptRow({ prompt }: { prompt: ZPrompt }) {
   );
 }
 
-export function CustomPrompts() {
+export function TaggingRules() {
   const { data: prompts, isLoading } = api.prompts.list.useQuery();
 
   return (
     <div className="mt-2 flex flex-col gap-2">
-      <div className="w-full text-xl font-medium sm:w-1/3">Custom Prompts</div>
+      <div className="w-full text-xl font-medium sm:w-1/3">Tagging Rules</div>
       <p className="mb-1 text-xs italic text-muted-foreground">
         Prompts that you add here will be included as rules to the model during
         tag generation. You can view the final prompts in the prompt preview
@@ -312,9 +312,9 @@ export default function PromptsPage() {
       <div className="rounded-md border bg-background p-4">
         <div className="mb-2 flex flex-col gap-3">
           <div className="w-full text-2xl font-medium sm:w-1/3">
-            Inference Settings
+            AI Settings
           </div>
-          <CustomPrompts />
+          <TaggingRules />
         </div>
       </div>
       <div className="mt-4 rounded-md border bg-background p-4">
