@@ -27,7 +27,11 @@ import {
   useReplaceBookmarkAsset,
 } from "@hoarder/shared-react/hooks/bookmarks";
 import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
-import { ZAssetType, ZBookmark } from "@hoarder/shared/types/bookmarks";
+import {
+  BookmarkTypes,
+  ZAssetType,
+  ZBookmark,
+} from "@hoarder/shared/types/bookmarks";
 import {
   humanFriendlyNameForAssertType,
   isAllowedToAttachAsset,
@@ -94,10 +98,12 @@ export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
     },
   });
 
-  if (!bookmark.assets.length) {
+  bookmark.assets.sort((a, b) => a.assetType.localeCompare(b.assetType));
+
+  if (bookmark.content.type == BookmarkTypes.ASSET) {
+    // Currently, we don't allow attaching assets to assets types.
     return null;
   }
-  bookmark.assets.sort((a, b) => a.assetType.localeCompare(b.assetType));
 
   return (
     <Collapsible>
