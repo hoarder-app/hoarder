@@ -187,7 +187,7 @@ export function ImportExportRow() {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-row gap-2">
+      <div className="flex flex-row flex-wrap gap-2">
         <FilePickerButton
           loading={false}
           accept=".html"
@@ -233,15 +233,9 @@ export function ImportExportRow() {
 
 export default function ImportExport() {
   return (
-    <div>
-      <div className="flex items-center justify-between">
-        <div className="mb-4 text-lg font-medium">
-          Import / Export Bookmarks
-        </div>
-      </div>
-      <div className="mt-2">
-        <ImportExportRow />
-      </div>
+    <div className="flex w-full flex-col gap-2">
+      <p className="mb-4 text-lg font-medium">Import / Export Bookmarks</p>
+      <ImportExportRow />
     </div>
   );
 }

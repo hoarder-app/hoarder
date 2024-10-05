@@ -306,7 +306,7 @@ export function PromptDemo() {
   );
 }
 
-export default function PromptsPage() {
+export default function AISettings() {
   return (
     <>
       <div className="rounded-md border bg-background p-4">
