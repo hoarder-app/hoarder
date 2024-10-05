@@ -16,14 +16,17 @@ function toExportFormat(bookmark: ZBookmark) {
         : null),
     tags: bookmark.tags.map((t) => t.name),
     type: bookmark.content.type,
-    url:
-      bookmark.content.type === BookmarkTypes.LINK
-        ? bookmark.content.url
-        : undefined,
-    text:
-      bookmark.content.type === BookmarkTypes.TEXT
-        ? bookmark.content.text
-        : undefined,
+    content: {
+      type: bookmark.content.type,
+      url:
+        bookmark.content.type === BookmarkTypes.LINK
+          ? bookmark.content.url
+          : undefined,
+      text:
+        bookmark.content.type === BookmarkTypes.TEXT
+          ? bookmark.content.text
+          : undefined,
+    },
     note: bookmark.note,
   };
 }
