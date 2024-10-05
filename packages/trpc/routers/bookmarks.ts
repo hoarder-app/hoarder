@@ -564,15 +564,13 @@ export const bookmarksAppRouter = router({
                   )
                 : undefined,
               input.cursor
-                ? input.cursor instanceof Date
-                  ? lte(bookmarks.createdAt, input.cursor)
-                  : or(
-                      lt(bookmarks.createdAt, input.cursor.createdAt),
-                      and(
-                        eq(bookmarks.createdAt, input.cursor.createdAt),
-                        lte(bookmarks.id, input.cursor.id),
-                      ),
-                    )
+                ? or(
+                    lt(bookmarks.createdAt, input.cursor.createdAt),
+                    and(
+                      eq(bookmarks.createdAt, input.cursor.createdAt),
+                      lte(bookmarks.id, input.cursor.id),
+                    ),
+                  )
                 : undefined,
             ),
           )
@@ -677,14 +675,10 @@ export const bookmarksAppRouter = router({
       let nextCursor = null;
       if (bookmarksArr.length > input.limit) {
         const nextItem = bookmarksArr.pop()!;
-        if (input.useCursorV2) {
-          nextCursor = {
-            id: nextItem.id,
-            createdAt: nextItem.createdAt,
-          };
-        } else {
-          nextCursor = nextItem.createdAt;
-        }
+        nextCursor = {
+          id: nextItem.id,
+          createdAt: nextItem.createdAt,
+        };
       }
 
       return { bookmarks: bookmarksArr, nextCursor };
