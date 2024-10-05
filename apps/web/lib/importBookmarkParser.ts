@@ -8,6 +8,56 @@ export interface ParsedBookmark {
   addDate?: number;
 }
 
+export async function parseTextBookmarkFile(
+  file: File,
+): Promise<ParsedBookmark[]> {
+  const textContent = await file.text();
+
+  const lines = textContent.split(/\r?\n/);
+
+  const bookmarks: ParsedBookmark[] = lines
+    .map((line) => {
+      const trimmedLine = line.trim();
+
+      if (!trimmedLine) {
+        return null;
+      }
+
+      // Regex to capture URL and optional tags
+      const regex = /^(https?:\/\/[^\s]+?)(?:\s*\[(.*?)\])?$/;
+      const match = trimmedLine.match(regex);
+
+      if (!match) {
+        return null;
+      }
+
+      const urlStr = match[1];
+      const tagsStr = match[2];
+
+      try {
+        const url = new URL(urlStr);
+        const tags = tagsStr
+          ? tagsStr
+              .split(",")
+              .map((tag) => tag.trim())
+              .filter((tag) => tag.length > 0)
+          : [];
+
+        return {
+          title: "",
+          url: url.toString(),
+          tags,
+          addDate: Math.floor(Date.now() / 1000),
+        } as ParsedBookmark;
+      } catch (e) {
+        return null;
+      }
+    })
+    .filter((bookmark): bookmark is ParsedBookmark => bookmark !== null); // Filter out nulls;
+
+  return bookmarks;
+}
+
 export async function parseNetscapeBookmarkFile(
   file: File,
 ): Promise<ParsedBookmark[]> {

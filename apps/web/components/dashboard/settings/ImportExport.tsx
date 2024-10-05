@@ -11,6 +11,7 @@ import {
   ParsedBookmark,
   parseNetscapeBookmarkFile,
   parsePocketBookmarkFile,
+  parseTextBookmarkFile,
 } from "@/lib/importBookmarkParser";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
@@ -72,16 +73,24 @@ export function ImportExportRow() {
         url: url.toString(),
       });
 
+      const updateData: {
+        bookmarkId: string;
+        title?: string;
+        createdAt?: Date;
+      } = { bookmarkId: created.id };
+
+      if (bookmark.title.length > 0) {
+        updateData.title = bookmark.title;
+      }
+
+      if (bookmark.addDate) {
+        updateData.createdAt = new Date(bookmark.addDate * 1000);
+      }
+
       await Promise.all([
         // Update title and createdAt if they're set
-        bookmark.title.length > 0 || bookmark.addDate
-          ? updateBookmark({
-              bookmarkId: created.id,
-              title: bookmark.title,
-              createdAt: bookmark.addDate
-                ? new Date(bookmark.addDate * 1000)
-                : undefined,
-            }).catch(() => {
+        updateData.title ?? updateData.createdAt
+          ? updateBookmark(updateData).catch(() => {
               /* empty */
             })
           : undefined,
@@ -120,15 +129,21 @@ export function ImportExportRow() {
       source,
     }: {
       file: File;
-      source: "html" | "pocket";
+      source: "txt" | "html" | "pocket";
     }) => {
+      if (source === "txt") {
+        return await parseTextBookmarkFile(file);
+      }
+
       if (source === "html") {
         return await parseNetscapeBookmarkFile(file);
-      } else if (source === "pocket") {
-        return await parsePocketBookmarkFile(file);
-      } else {
-        throw new Error("Unknown source");
       }
+
+      if (source === "pocket") {
+        return await parsePocketBookmarkFile(file);
+      }
+
+      throw new Error("Unknown source");
     },
     onSuccess: async (resp) => {
       const importList = await createList({
@@ -212,6 +227,19 @@ export function ImportExportRow() {
         >
           <Upload />
           <p>Import Bookmarks from Pocket export</p>
+        </FilePickerButton>
+
+        <FilePickerButton
+          loading={false}
+          accept=".txt"
+          multiple={false}
+          className="flex items-center gap-2"
+          onFileSelect={(file) =>
+            runUploadBookmarkFile({ file, source: "txt" })
+          }
+        >
+          <Upload />
+          <p>Import Bookmarks from TXT file</p>
         </FilePickerButton>
         <ExportButton />
       </div>
