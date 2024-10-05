@@ -1,10 +1,9 @@
 import { useRef } from "react";
-import { Platform, Pressable, View } from "react-native";
+import { Platform, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import NoteEditorModal from "@/components/bookmarks/NewBookmarkModal";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
-import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import PageTitle from "@/components/ui/PageTitle";
 import { useToast } from "@/components/ui/Toast";
@@ -12,7 +11,7 @@ import useAppSettings from "@/lib/settings";
 import { useUploadAsset } from "@/lib/upload";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { MenuView } from "@react-native-menu/menu";
-import { Plus, SquarePen } from "lucide-react-native";
+import { Plus } from "lucide-react-native";
 
 function HeaderRight({
   openNewBookmarkModal,
@@ -66,7 +65,7 @@ function HeaderRight({
       shouldOpenOnLongPress={false}
     >
       <View className="my-auto px-4">
-        <SquarePen
+        <Plus
           color="rgb(0, 122, 255)"
           onPress={() => Haptics.selectionAsync()}
         />
@@ -92,17 +91,6 @@ export default function Home() {
           </View>
         }
       />
-      <Pressable
-        className="absolute bottom-4 right-4 rounded-full bg-foreground p-6"
-        onPress={() => newBookmarkModal.current?.present()}
-      >
-        <TailwindResolver
-          comp={(styles) => (
-            <Plus size={30} color={styles?.color?.toString()} />
-          )}
-          className="text-background"
-        />
-      </Pressable>
     </CustomSafeAreaView>
   );
 }
