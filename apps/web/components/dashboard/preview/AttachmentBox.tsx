@@ -16,6 +16,7 @@ import {
   ChevronsDownUp,
   Download,
   Image,
+  Paperclip,
   Pencil,
   Plus,
   Trash2,
@@ -35,6 +36,7 @@ import {
 import {
   humanFriendlyNameForAssertType,
   isAllowedToAttachAsset,
+  isAllowedToDetachAsset,
 } from "@hoarder/trpc/lib/attachments";
 
 export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
@@ -42,6 +44,8 @@ export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
     screenshot: <Camera className="size-4" />,
     fullPageArchive: <Archive className="size-4" />,
     bannerImage: <Image className="size-4" />,
+    bookmarkAsset: <Paperclip className="size-4" />,
+    unknown: <Paperclip className="size-4" />,
   };
 
   const { mutate: attachAsset, isPending: isAttaching } =
@@ -100,11 +104,6 @@ export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
 
   bookmark.assets.sort((a, b) => a.assetType.localeCompare(b.assetType));
 
-  if (bookmark.content.type == BookmarkTypes.ASSET) {
-    // Currently, we don't allow attaching assets to assets types.
-    return null;
-  }
-
   return (
     <Collapsible>
       <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 text-sm text-gray-400">
@@ -156,59 +155,62 @@ export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
                   <Pencil className="size-4" />
                 </FilePickerButton>
               )}
-              <ActionConfirmingDialog
-                title="Delete Attachment?"
-                description={`Are you sure you want to delete the attachment of the bookmark?`}
-                actionButton={(setDialogOpen) => (
-                  <ActionButton
-                    loading={isDetaching}
-                    variant="destructive"
-                    onClick={() =>
-                      detachAsset(
-                        { bookmarkId: bookmark.id, assetId: asset.id },
-                        { onSettled: () => setDialogOpen(false) },
-                      )
-                    }
-                  >
-                    <Trash2 className="mr-2 size-4" />
-                    Delete
-                  </ActionButton>
-                )}
-              >
-                <Button variant="none" size="none" title="Delete">
-                  <Trash2 className="size-4" />
-                </Button>
-              </ActionConfirmingDialog>
+              {isAllowedToDetachAsset(asset.assetType) && (
+                <ActionConfirmingDialog
+                  title="Delete Attachment?"
+                  description={`Are you sure you want to delete the attachment of the bookmark?`}
+                  actionButton={(setDialogOpen) => (
+                    <ActionButton
+                      loading={isDetaching}
+                      variant="destructive"
+                      onClick={() =>
+                        detachAsset(
+                          { bookmarkId: bookmark.id, assetId: asset.id },
+                          { onSettled: () => setDialogOpen(false) },
+                        )
+                      }
+                    >
+                      <Trash2 className="mr-2 size-4" />
+                      Delete
+                    </ActionButton>
+                  )}
+                >
+                  <Button variant="none" size="none" title="Delete">
+                    <Trash2 className="size-4" />
+                  </Button>
+                </ActionConfirmingDialog>
+              )}
             </div>
           </div>
         ))}
-        {!bookmark.assets.some((asset) => asset.assetType == "bannerImage") && (
-          <FilePickerButton
-            title="Attach a Banner"
-            loading={isAttaching}
-            accept=".jgp,.JPG,.jpeg,.png,.webp"
-            multiple={false}
-            variant="ghost"
-            size="none"
-            className="flex w-full items-center justify-center gap-2"
-            onFileSelect={(file) =>
-              uploadAsset(file, {
-                onSuccess: (resp) => {
-                  attachAsset({
-                    bookmarkId: bookmark.id,
-                    asset: {
-                      id: resp.assetId,
-                      assetType: "bannerImage",
-                    },
-                  });
-                },
-              })
-            }
-          >
-            <Plus className="size-4" />
-            Attach a Banner
-          </FilePickerButton>
-        )}
+        {!bookmark.assets.some((asset) => asset.assetType == "bannerImage") &&
+          bookmark.content.type != BookmarkTypes.ASSET && (
+            <FilePickerButton
+              title="Attach a Banner"
+              loading={isAttaching}
+              accept=".jgp,.JPG,.jpeg,.png,.webp"
+              multiple={false}
+              variant="ghost"
+              size="none"
+              className="flex w-full items-center justify-center gap-2"
+              onFileSelect={(file) =>
+                uploadAsset(file, {
+                  onSuccess: (resp) => {
+                    attachAsset({
+                      bookmarkId: bookmark.id,
+                      asset: {
+                        id: resp.assetId,
+                        assetType: "bannerImage",
+                      },
+                    });
+                  },
+                })
+              }
+            >
+              <Plus className="size-4" />
+              Attach a Banner
+            </FilePickerButton>
+          )}
       </CollapsibleContent>
     </Collapsible>
   );

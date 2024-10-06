@@ -2,6 +2,7 @@ import { createContextFromRequest } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
 import type { ZUploadResponse } from "@hoarder/shared/types/uploads";
+import { assets, AssetTypes } from "@hoarder/db/schema";
 import {
   newAssetId,
   saveAsset,
@@ -43,8 +44,22 @@ export async function POST(request: Request) {
     return Response.json({ error: "Bad request" }, { status: 400 });
   }
 
-  const assetId = newAssetId();
   const fileName = data.name;
+  const [assetDb] = await ctx.db
+    .insert(assets)
+    .values({
+      id: newAssetId(),
+      // Initially, uploads are uploaded for unknown purpose
+      // And without an attached bookmark.
+      assetType: AssetTypes.UNKNOWN,
+      bookmarkId: null,
+      userId: ctx.user.id,
+      contentType,
+      size: data.size,
+      fileName,
+    })
+    .returning();
+  const assetId = assetDb.id;
 
   await saveAsset({
     userId: ctx.user.id,

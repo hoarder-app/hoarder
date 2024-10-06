@@ -164,6 +164,8 @@ export const enum AssetTypes {
   LINK_BANNER_IMAGE = "linkBannerImage",
   LINK_SCREENSHOT = "linkScreenshot",
   LINK_FULL_PAGE_ARCHIVE = "linkFullPageArchive",
+  BOOKMARK_ASSET = "bookmarkAsset",
+  UNKNOWN = "unknown",
 }
 
 export const assets = sqliteTable(
@@ -176,11 +178,16 @@ export const assets = sqliteTable(
         AssetTypes.LINK_BANNER_IMAGE,
         AssetTypes.LINK_SCREENSHOT,
         AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+        AssetTypes.BOOKMARK_ASSET,
+        AssetTypes.UNKNOWN,
       ],
     }).notNull(),
-    bookmarkId: text("bookmarkId")
-      .notNull()
-      .references(() => bookmarks.id, { onDelete: "cascade" }),
+    size: integer("size").notNull().default(0),
+    contentType: text("contentType"),
+    fileName: text("fileName"),
+    bookmarkId: text("bookmarkId").references(() => bookmarks.id, {
+      onDelete: "cascade",
+    }),
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
@@ -302,7 +309,6 @@ export const bookmarksInLists = sqliteTable(
   }),
 );
 
-
 export const customPrompts = sqliteTable(
   "customPrompts",
   {
@@ -312,7 +318,9 @@ export const customPrompts = sqliteTable(
       .$defaultFn(() => createId()),
     text: text("text").notNull(),
     enabled: integer("enabled", { mode: "boolean" }).notNull(),
-    appliesTo: text("attachedBy", { enum: ["all", "text", "images"] }).notNull(),
+    appliesTo: text("attachedBy", {
+      enum: ["all", "text", "images"],
+    }).notNull(),
     createdAt: createdAtField(),
     userId: text("userId")
       .notNull()

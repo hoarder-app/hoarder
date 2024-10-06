@@ -120,6 +120,18 @@ export async function readAsset({
   return { asset, metadata };
 }
 
+export async function getAssetSize({
+  userId,
+  assetId,
+}: {
+  userId: string;
+  assetId: string;
+}) {
+  const assetDir = getAssetDir(userId, assetId);
+  const stat = await fs.promises.stat(path.join(assetDir, "asset.bin"));
+  return stat.size;
+}
+
 export async function deleteAsset({
   userId,
   assetId,

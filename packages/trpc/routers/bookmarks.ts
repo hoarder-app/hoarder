@@ -44,6 +44,7 @@ import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";
 import {
   isAllowedToAttachAsset,
+  isAllowedToDetachAsset,
   mapDBAssetTypeToUserType,
   mapSchemaAssetTypeToDB,
 } from "../lib/attachments";
@@ -80,23 +81,35 @@ export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   return opts.next();
 });
 
-interface Asset {
-  id: string;
-  assetType: AssetTypes;
-}
-
-function mapAssetsToBookmarkFields(assets: Asset | Asset[] = []) {
-  const ASSET_TYE_MAPPING: Record<AssetTypes, string> = {
-    [AssetTypes.LINK_SCREENSHOT]: "screenshotAssetId",
-    [AssetTypes.LINK_FULL_PAGE_ARCHIVE]: "fullPageArchiveAssetId",
-    [AssetTypes.LINK_BANNER_IMAGE]: "imageAssetId",
-  };
-  const assetsArray = Array.isArray(assets) ? assets : [assets];
-  return assetsArray.reduce((result: Record<string, string>, asset: Asset) => {
-    result[ASSET_TYE_MAPPING[asset.assetType]] = asset.id;
-    return result;
-  }, {});
-}
+export const ensureAssetOwnership = async (opts: {
+  ctx: Context;
+  assetId: string;
+}) => {
+  const asset = await opts.ctx.db.query.assets.findFirst({
+    where: eq(bookmarks.id, opts.assetId),
+    columns: {
+      userId: true,
+    },
+  });
+  if (!opts.ctx.user) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "User is not authorized",
+    });
+  }
+  if (!asset) {
+    throw new TRPCError({
+      code: "NOT_FOUND",
+      message: "Asset not found",
+    });
+  }
+  if (asset.userId != opts.ctx.user.id) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "User is not allowed to access resource",
+    });
+  }
+};
 
 async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
   const bookmark = await ctx.db.query.bookmarks.findFirst({
@@ -189,7 +202,15 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
     case BookmarkTypes.LINK:
       content = {
         type: bookmark.type,
-        ...mapAssetsToBookmarkFields(assets),
+        screenshotAssetId: assets.find(
+          (a) => a.assetType == AssetTypes.LINK_SCREENSHOT,
+        )?.id,
+        fullPageArchiveAssetId: assets.find(
+          (a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+        )?.id,
+        imageAssetId: assets.find(
+          (a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE,
+        )?.id,
         ...link,
       };
       break;
@@ -307,6 +328,19 @@ export const bookmarksAppRouter = router({
                 sourceUrl: null,
               })
               .returning();
+            await ensureAssetOwnership({ ctx, assetId: input.assetId });
+            await tx
+              .update(assets)
+              .set({
+                bookmarkId: bookmark.id,
+                assetType: AssetTypes.BOOKMARK_ASSET,
+              })
+              .where(
+                and(
+                  eq(assets.id, input.assetId),
+                  eq(assets.userId, ctx.user.id),
+                ),
+              );
             content = {
               type: BookmarkTypes.ASSET,
               assetType: asset.assetType,
@@ -647,10 +681,20 @@ export const bookmarksAppRouter = router({
             row.assets &&
             !acc[bookmarkId].assets.some((a) => a.id == row.assets!.id)
           ) {
-            acc[bookmarkId].content = {
-              ...acc[bookmarkId].content,
-              ...mapAssetsToBookmarkFields(row.assets),
-            };
+            if (acc[bookmarkId].content.type == BookmarkTypes.LINK) {
+              const content = acc[bookmarkId].content;
+              invariant(content.type == BookmarkTypes.LINK);
+              if (row.assets.assetType == AssetTypes.LINK_SCREENSHOT) {
+                content.screenshotAssetId = row.assets.id;
+              }
+              if (row.assets.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE) {
+                content.fullPageArchiveAssetId = row.assets.id;
+              }
+              if (row.assets.assetType == AssetTypes.LINK_BANNER_IMAGE) {
+                content.imageAssetId = row.assets.id;
+              }
+              acc[bookmarkId].content = content;
+            }
             acc[bookmarkId].assets.push({
               id: row.assets.id,
               assetType: mapDBAssetTypeToUserType(row.assets.assetType),
@@ -841,6 +885,7 @@ export const bookmarksAppRouter = router({
     .output(zAssetSchema)
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
+      await ensureAssetOwnership({ ctx, assetId: input.asset.id });
       if (!isAllowedToAttachAsset(input.asset.assetType)) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -848,14 +893,14 @@ export const bookmarksAppRouter = router({
         });
       }
       await ctx.db
-        .insert(assets)
-        .values({
-          id: input.asset.id,
+        .update(assets)
+        .set({
           assetType: mapSchemaAssetTypeToDB(input.asset.assetType),
           bookmarkId: input.bookmarkId,
-          userId: ctx.user.id,
         })
-        .returning();
+        .where(
+          and(eq(assets.id, input.asset.id), eq(assets.userId, ctx.user.id)),
+        );
       return input.asset;
     }),
   replaceAsset: authedProcedure
@@ -869,21 +914,19 @@ export const bookmarksAppRouter = router({
     .output(z.void())
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      const oldAsset = await ctx.db
+      await Promise.all([
+        ensureAssetOwnership({ ctx, assetId: input.oldAssetId }),
+        ensureAssetOwnership({ ctx, assetId: input.newAssetId }),
+      ]);
+      const [oldAsset] = await ctx.db
         .select()
         .from(assets)
         .where(
-          and(
-            eq(assets.id, input.oldAssetId),
-            eq(assets.bookmarkId, input.bookmarkId),
-          ),
+          and(eq(assets.id, input.oldAssetId), eq(assets.userId, ctx.user.id)),
         )
         .limit(1);
-      if (!oldAsset.length) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
       if (
-        !isAllowedToAttachAsset(mapDBAssetTypeToUserType(oldAsset[0].assetType))
+        !isAllowedToAttachAsset(mapDBAssetTypeToUserType(oldAsset.assetType))
       ) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -891,21 +934,17 @@ export const bookmarksAppRouter = router({
         });
       }
 
-      const result = await ctx.db
-        .update(assets)
-        .set({
-          id: input.newAssetId,
-          bookmarkId: input.bookmarkId,
-        })
-        .where(
-          and(
-            eq(assets.id, input.oldAssetId),
-            eq(assets.bookmarkId, input.bookmarkId),
-          ),
-        );
-      if (result.changes == 0) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
+      await ctx.db.transaction(async (tx) => {
+        await tx.delete(assets).where(eq(assets.id, input.oldAssetId));
+        await tx
+          .update(assets)
+          .set({
+            bookmarkId: input.bookmarkId,
+            assetType: oldAsset.assetType,
+          })
+          .where(eq(assets.id, input.newAssetId));
+      });
+
       await deleteAsset({
         userId: ctx.user.id,
         assetId: input.oldAssetId,
@@ -921,6 +960,21 @@ export const bookmarksAppRouter = router({
     .output(z.void())
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
+      await ensureAssetOwnership({ ctx, assetId: input.assetId });
+      const [oldAsset] = await ctx.db
+        .select()
+        .from(assets)
+        .where(
+          and(eq(assets.id, input.assetId), eq(assets.userId, ctx.user.id)),
+        );
+      if (
+        !isAllowedToDetachAsset(mapDBAssetTypeToUserType(oldAsset.assetType))
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You can't deattach this type of asset",
+        });
+      }
       const result = await ctx.db
         .delete(assets)
         .where(

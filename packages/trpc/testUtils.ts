@@ -26,12 +26,13 @@ export async function seedUsers(db: TestDB) {
     .returning();
 }
 
-export function getApiCaller(db: TestDB, userId?: string) {
+export function getApiCaller(db: TestDB, userId?: string, email?: string) {
   const createCaller = createCallerFactory(appRouter);
   return createCaller({
     user: userId
       ? {
           id: userId,
+          email,
           role: "user",
         }
       : null,
@@ -55,7 +56,7 @@ export async function buildTestContext(
   if (seedDB) {
     users = await seedUsers(db);
   }
-  const callers = users.map((u) => getApiCaller(db, u.id));
+  const callers = users.map((u) => getApiCaller(db, u.id, u.email));
 
   return {
     apiCallers: callers,

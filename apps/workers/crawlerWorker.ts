@@ -36,6 +36,7 @@ import { DequeuedJob, Runner } from "@hoarder/queue";
 import {
   ASSET_TYPES,
   deleteAsset,
+  getAssetSize,
   IMAGE_ASSET_TYPES,
   newAssetId,
   saveAsset,
@@ -191,6 +192,8 @@ export class CrawlerWorker {
     return worker;
   }
 }
+
+type DBAssetType = typeof assets.$inferInsert;
 
 async function changeBookmarkStatus(
   bookmarkId: string,
@@ -353,16 +356,18 @@ async function storeScreenshot(
     return null;
   }
   const assetId = newAssetId();
+  const contentType = "image/png";
+  const fileName = "screenshot.png";
   await saveAsset({
     userId,
     assetId,
-    metadata: { contentType: "image/png", fileName: "screenshot.png" },
+    metadata: { contentType, fileName },
     asset: screenshot,
   });
   logger.info(
     `[Crawler][${jobId}] Stored the screenshot as assetId: ${assetId}`,
   );
-  return assetId;
+  return { assetId, contentType, fileName, size: screenshot.byteLength };
 }
 
 async function downloadAndStoreFile(
@@ -396,7 +401,7 @@ async function downloadAndStoreFile(
       `[Crawler][${jobId}] Downloaded ${fileType} as assetId: ${assetId}`,
     );
 
-    return assetId;
+    return { assetId, userId, contentType, size: buffer.byteLength };
   } catch (e) {
     logger.error(
       `[Crawler][${jobId}] Failed to download and store ${fileType}: ${e}`,
@@ -433,12 +438,14 @@ async function archiveWebpage(
     input: html,
   })`monolith  - -Ije -t 5 -b ${url} -o ${assetPath}`;
 
+  const contentType = "text/html";
+
   await saveAssetFromFile({
     userId,
     assetId,
     assetPath,
     metadata: {
-      contentType: "text/html",
+      contentType,
     },
   });
 
@@ -446,7 +453,11 @@ async function archiveWebpage(
     `[Crawler][${jobId}] Done archiving the page as assetId: ${assetId}`,
   );
 
-  return assetId;
+  return {
+    assetId,
+    contentType,
+    size: await getAssetSize({ userId, assetId }),
+  };
 }
 
 async function getContentType(
@@ -489,17 +500,31 @@ async function handleAsAssetBookmark(
   jobId: string,
   bookmarkId: string,
 ) {
-  const assetId = await downloadAndStoreFile(url, userId, jobId, assetType);
-  if (!assetId) {
+  const downloaded = await downloadAndStoreFile(url, userId, jobId, assetType);
+  if (!downloaded) {
     return;
   }
+  const fileName = path.basename(new URL(url).pathname);
   await db.transaction(async (trx) => {
+    await updateAsset(
+      undefined,
+      {
+        id: downloaded.assetId,
+        bookmarkId,
+        userId,
+        assetType: AssetTypes.BOOKMARK_ASSET,
+        contentType: downloaded.contentType,
+        size: downloaded.size,
+        fileName,
+      },
+      trx,
+    );
     await trx.insert(bookmarkAssets).values({
       id: bookmarkId,
       assetType,
-      assetId,
+      assetId: downloaded.assetId,
       content: null,
-      fileName: path.basename(new URL(url).pathname),
+      fileName,
       sourceUrl: url,
     });
     // Switch the type of the bookmark from LINK to ASSET
@@ -527,14 +552,24 @@ async function crawlAndParseUrl(
     url: browserUrl,
   } = await crawlPage(jobId, url);
 
-  const [meta, readableContent, screenshotAssetId] = await Promise.all([
+  const [meta, readableContent, screenshotAssetInfo] = await Promise.all([
     extractMetadata(htmlContent, browserUrl, jobId),
     extractReadableContent(htmlContent, browserUrl, jobId),
     storeScreenshot(screenshot, userId, jobId),
   ]);
-  let imageAssetId: string | null = null;
+  let imageAssetInfo: DBAssetType | null = null;
   if (meta.image) {
-    imageAssetId = await downloadAndStoreImage(meta.image, userId, jobId);
+    const downloaded = await downloadAndStoreImage(meta.image, userId, jobId);
+    if (downloaded) {
+      imageAssetInfo = {
+        id: downloaded.assetId,
+        bookmarkId,
+        userId,
+        assetType: AssetTypes.LINK_BANNER_IMAGE,
+        contentType: downloaded.contentType,
+        size: downloaded.size,
+      };
+    }
   }
 
   // TODO(important): Restrict the size of content to store
@@ -552,22 +587,24 @@ async function crawlAndParseUrl(
       })
       .where(eq(bookmarkLinks.id, bookmarkId));
 
-    await updateAsset(
-      screenshotAssetId,
-      oldScreenshotAssetId,
-      bookmarkId,
-      userId,
-      AssetTypes.LINK_SCREENSHOT,
-      txn,
-    );
-    await updateAsset(
-      imageAssetId,
-      oldImageAssetId,
-      bookmarkId,
-      userId,
-      AssetTypes.LINK_BANNER_IMAGE,
-      txn,
-    );
+    if (screenshotAssetInfo) {
+      await updateAsset(
+        oldScreenshotAssetId,
+        {
+          id: screenshotAssetInfo.assetId,
+          bookmarkId,
+          userId,
+          assetType: AssetTypes.LINK_SCREENSHOT,
+          contentType: screenshotAssetInfo.contentType,
+          size: screenshotAssetInfo.size,
+          fileName: screenshotAssetInfo.fileName,
+        },
+        txn,
+      );
+    }
+    if (imageAssetInfo) {
+      await updateAsset(oldImageAssetId, imageAssetInfo, txn);
+    }
   });
 
   // Delete the old assets if any
@@ -582,20 +619,24 @@ async function crawlAndParseUrl(
 
   return async () => {
     if (serverConfig.crawler.fullPageArchive || archiveFullPage) {
-      const fullPageArchiveAssetId = await archiveWebpage(
-        htmlContent,
-        browserUrl,
-        userId,
-        jobId,
-      );
+      const {
+        assetId: fullPageArchiveAssetId,
+        size,
+        contentType,
+      } = await archiveWebpage(htmlContent, browserUrl, userId, jobId);
 
       await db.transaction(async (txn) => {
         await updateAsset(
-          fullPageArchiveAssetId,
           oldFullPageArchiveAssetId,
-          bookmarkId,
-          userId,
-          AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+          {
+            id: fullPageArchiveAssetId,
+            bookmarkId,
+            userId,
+            assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+            contentType,
+            size,
+            fileName: null,
+          },
           txn,
         );
       });
@@ -676,31 +717,13 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
   await archivalLogic();
 }
 
-/**
- * Removes the old asset and adds a new one instead
- * @param newAssetId the new assetId to add
- * @param oldAssetId the old assetId to remove (if it exists)
- * @param bookmarkId the id of the bookmark the asset belongs to
- * @param assetType the type of the asset
- * @param txn the transaction where this update should happen in
- */
 async function updateAsset(
-  newAssetId: string | null,
   oldAssetId: string | undefined,
-  bookmarkId: string,
-  userId: string,
-  assetType: AssetTypes,
+  newAsset: DBAssetType,
   txn: HoarderDBTransaction,
 ) {
-  if (newAssetId) {
-    if (oldAssetId) {
-      await txn.delete(assets).where(eq(assets.id, oldAssetId));
-    }
-    await txn.insert(assets).values({
-      id: newAssetId,
-      assetType,
-      bookmarkId,
-      userId,
-    });
+  if (oldAssetId) {
+    await txn.delete(assets).where(eq(assets.id, oldAssetId));
   }
+  await txn.insert(assets).values(newAsset);
 }

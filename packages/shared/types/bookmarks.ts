@@ -15,6 +15,8 @@ export const zAssetTypesSchema = z.enum([
   "screenshot",
   "bannerImage",
   "fullPageArchive",
+  "bookmarkAsset",
+  "unknown",
 ]);
 export type ZAssetType = z.infer<typeof zAssetTypesSchema>;
 

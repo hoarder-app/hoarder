@@ -369,6 +369,24 @@ describe("Bookmark Routes", () => {
         bookmarkId: bookmark.id,
         userId,
       }),
+      db.insert(assets).values({
+        id: "asset4",
+        assetType: AssetTypes.UNKNOWN,
+        bookmarkId: null,
+        userId,
+      }),
+      db.insert(assets).values({
+        id: "asset5",
+        assetType: AssetTypes.UNKNOWN,
+        bookmarkId: null,
+        userId,
+      }),
+      db.insert(assets).values({
+        id: "asset6",
+        assetType: AssetTypes.UNKNOWN,
+        bookmarkId: null,
+        userId,
+      }),
     ]);
 
     const validateAssets = async (
@@ -424,7 +442,7 @@ describe("Bookmark Routes", () => {
         await api.replaceAsset({
           bookmarkId: bookmark.id,
           oldAssetId: "asset3",
-          newAssetId: "asset4",
+          newAssetId: "asset6",
         }),
     ).rejects.toThrow(/You can't attach this type of asset/);
     await expect(

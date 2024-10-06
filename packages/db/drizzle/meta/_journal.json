@@ -211,6 +211,13 @@
       "when": 1728214930701,
       "tag": "0029_short_gunslinger",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "6",
+      "when": 1728220453621,
+      "tag": "0030_blue_synch",
+      "breakpoints": true
     }
   ]
 }
