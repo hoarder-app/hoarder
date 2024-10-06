@@ -10,6 +10,7 @@ export default function SidebarItem({
   logo,
   path,
   className,
+  linkClassName,
   style,
   collapseButton,
   right = null,
@@ -19,6 +20,7 @@ export default function SidebarItem({
   path: string;
   style?: React.CSSProperties;
   className?: string;
+  linkClassName?: string;
   right?: React.ReactNode;
   collapseButton?: React.ReactNode;
 }) {
@@ -26,20 +28,28 @@ export default function SidebarItem({
   return (
     <li
       className={cn(
-        "relative rounded-lg px-3 py-2 hover:bg-accent",
+        "relative rounded-lg hover:bg-accent",
         path == currentPath ? "bg-accent/50" : "",
         className,
       )}
       style={style}
     >
       {collapseButton}
-      <div className="flex justify-between">
-        <Link href={path} className="flex w-full gap-x-2">
-          {logo}
-          <span className="my-auto"> {name} </span>
-        </Link>
-        {right}
-      </div>
+      <Link
+        href={path}
+        className={cn(
+          "flex w-full items-center rounded-[inherit] px-3 py-2",
+          linkClassName,
+        )}
+      >
+        <div className="flex w-full justify-between">
+          <div className="flex items-center gap-x-2">
+            {logo}
+            <span>{name}</span>
+          </div>
+          {right}
+        </div>
+      </Link>
     </li>
   );
 }

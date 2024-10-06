@@ -8,12 +8,24 @@ import {
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import useBulkActionsStore from "@/lib/bulkActions";
-import { CheckCheck, Hash, List, Pencil, Trash2, X } from "lucide-react";
+import {
+  CheckCheck,
+  FileDown,
+  Hash,
+  Link,
+  List,
+  Pencil,
+  RotateCw,
+  Trash2,
+  X,
+} from "lucide-react";
 
 import {
   useDeleteBookmark,
+  useRecrawlBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import BulkManageListsModal from "./bookmarks/BulkManageListsModal";
 import BulkTagModal from "./bookmarks/BulkTagModal";
@@ -23,6 +35,13 @@ export default function BulkBookmarksAction() {
   const { selectedBookmarks, isBulkEditEnabled } = useBulkActionsStore();
   const setIsBulkEditEnabled = useBulkActionsStore(
     (state) => state.setIsBulkEditEnabled,
+  );
+  const selectAllBookmarks = useBulkActionsStore((state) => state.selectAll);
+  const unSelectAllBookmarks = useBulkActionsStore(
+    (state) => state.unSelectAll,
+  );
+  const isEverythingSelected = useBulkActionsStore(
+    (state) => state.isEverythingSelected,
   );
   const { toast } = useToast();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -55,10 +74,62 @@ export default function BulkBookmarksAction() {
     onError,
   });
 
+  const recrawlBookmarkMutator = useRecrawlBookmark({
+    onSuccess: () => {
+      setIsBulkEditEnabled(false);
+    },
+    onError,
+  });
+
   interface UpdateBookmarkProps {
     favourited?: boolean;
     archived?: boolean;
   }
+
+  const recrawlBookmarks = async (archiveFullPage: boolean) => {
+    const links = selectedBookmarks.filter(
+      (item) => item.content.type === BookmarkTypes.LINK,
+    );
+    await Promise.all(
+      links.map((item) =>
+        recrawlBookmarkMutator.mutateAsync({
+          bookmarkId: item.id,
+          archiveFullPage,
+        }),
+      ),
+    );
+    toast({
+      description: `${links.length} bookmarks will be ${archiveFullPage ? "re-crawled and archived!" : "refreshed!"}`,
+    });
+  };
+
+  function isClipboardAvailable() {
+    if (typeof window === "undefined") {
+      return false;
+    }
+    return window && window.navigator && window.navigator.clipboard;
+  }
+
+  const copyLinks = async () => {
+    if (!isClipboardAvailable()) {
+      toast({
+        description: `Copying is only available over https`,
+      });
+      return;
+    }
+    const copyString = selectedBookmarks
+      .map((item) => {
+        return item.content.type === BookmarkTypes.LINK && item.content.url;
+      })
+      .filter(Boolean)
+      .join("\n");
+
+    await navigator.clipboard.writeText(copyString);
+
+    toast({
+      description: `Added ${selectedBookmarks.length} bookmark links into the clipboard!`,
+    });
+  };
 
   const updateBookmarks = async ({
     favourited,
@@ -100,6 +171,15 @@ export default function BulkBookmarksAction() {
 
   const actionList = [
     {
+      name: isClipboardAvailable()
+        ? "Copy Links"
+        : "Copying is only available over https",
+      icon: <Link size={18} />,
+      action: () => copyLinks(),
+      isPending: false,
+      hidden: !isBulkEditEnabled,
+    },
+    {
       name: "Add to List",
       icon: <List size={18} />,
       action: () => setManageListsModalOpen(true),
@@ -128,9 +208,35 @@ export default function BulkBookmarksAction() {
       hidden: !isBulkEditEnabled,
     },
     {
+      name: "Download Full Page Archive",
+      icon: <FileDown size={18} />,
+      action: () => recrawlBookmarks(true),
+      isPending: recrawlBookmarkMutator.isPending,
+      hidden: !isBulkEditEnabled,
+    },
+    {
+      name: "Refresh",
+      icon: <RotateCw size={18} />,
+      action: () => recrawlBookmarks(false),
+      isPending: recrawlBookmarkMutator.isPending,
+      hidden: !isBulkEditEnabled,
+    },
+    {
       name: "Delete",
       icon: <Trash2 size={18} color="red" />,
       action: () => setIsDeleteDialogOpen(true),
+      hidden: !isBulkEditEnabled,
+    },
+    {
+      name: isEverythingSelected() ? "Unselect All" : "Select All",
+      icon: (
+        <p className="flex items-center gap-2">
+          ( <CheckCheck size={18} /> {selectedBookmarks.length} )
+        </p>
+      ),
+      action: () =>
+        isEverythingSelected() ? unSelectAllBookmarks() : selectAllBookmarks(),
+      alwaysEnable: true,
       hidden: !isBulkEditEnabled,
     },
     {
@@ -178,11 +284,6 @@ export default function BulkBookmarksAction() {
         setOpen={setBulkTagModalOpen}
       />
       <div className="flex items-center">
-        {isBulkEditEnabled && (
-          <p className="flex items-center gap-2">
-            ( <CheckCheck size={18} /> {selectedBookmarks.length} )
-          </p>
-        )}
         {actionList.map(
           ({ name, icon: Icon, action, isPending, hidden, alwaysEnable }) => (
             <ActionButtonWithTooltip

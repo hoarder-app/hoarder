@@ -116,6 +116,9 @@ export const clientConfig = {
     disableSignups: serverConfig.auth.disableSignups,
     disableLocalSignups: serverConfig.auth.disableLocalSignups,
   },
+  inference: {
+    inferredTagLang: serverConfig.inference.inferredTagLang,
+  },
   serverVersion: serverConfig.serverVersion,
   disableNewReleaseCheck: serverConfig.disableNewReleaseCheck,
 };

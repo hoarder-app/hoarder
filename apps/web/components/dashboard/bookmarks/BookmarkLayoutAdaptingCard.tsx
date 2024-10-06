@@ -90,7 +90,7 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
       )}
       onClick={() => toggleBookmark(bookmark)}
     >
-      <button className="absolute right-2 top-2 z-50 opacity-100">
+      <div className="absolute right-2 top-2 z-50 opacity-100">
         <div
           className={cn(
             "flex h-4 w-4 items-center justify-center rounded-full border border-gray-600",
@@ -99,7 +99,7 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
         >
           <Check size={12} color={getIconColor()} />
         </div>
-      </button>
+      </div>
     </button>
   );
 }

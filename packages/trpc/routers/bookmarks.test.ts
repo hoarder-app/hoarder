@@ -169,7 +169,22 @@ describe("Bookmark Routes", () => {
       "tag2",
       "tag3",
       "tag4",
+      "tag5",
     ]);
+
+    await expect(() =>
+      api.updateTags({ bookmarkId: bookmark.id, attach: [{}], detach: [] }),
+    ).rejects.toThrow(/You must provide either a tagId or a tagName/);
+    await expect(() =>
+      api.updateTags({ bookmarkId: bookmark.id, attach: [], detach: [{}] }),
+    ).rejects.toThrow(/You must provide either a tagId or a tagName/);
+    await expect(() =>
+      api.updateTags({
+        bookmarkId: bookmark.id,
+        attach: [{ tagName: "" }],
+        detach: [{}],
+      }),
+    ).rejects.toThrow(/You must provide either a tagId or a tagName/);
   });
 
   test<CustomTestContext>("update bookmark text", async ({ apiCallers }) => {

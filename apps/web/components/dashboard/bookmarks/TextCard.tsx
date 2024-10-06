@@ -1,12 +1,17 @@
 "use client";
 
+import Image from "next/image";
+import Link from "next/link";
 import { MarkdownComponent } from "@/components/ui/markdown-component";
 import { bookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 
 import type { ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
+import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
+import { getSourceUrl } from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
+import FooterLinkURL from "./FooterLinkURL";
 
 export default function TextCard({
   bookmark,
@@ -17,12 +22,18 @@ export default function TextCard({
 }) {
   const bookmarkedText = bookmark.content;
 
+  const banner = bookmark.assets.find((a) => a.assetType == "bannerImage");
+
   return (
     <>
       <BookmarkLayoutAdaptingCard
         title={bookmark.title}
         content={<MarkdownComponent>{bookmarkedText.text}</MarkdownComponent>}
-        footer={null}
+        footer={
+          getSourceUrl(bookmark) && (
+            <FooterLinkURL url={getSourceUrl(bookmark)} />
+          )
+        }
         wrapTags={true}
         bookmark={bookmark}
         className={className}
@@ -32,7 +43,18 @@ export default function TextCard({
             grid: null,
             masonry: null,
             compact: null,
-            list: (
+            list: banner ? (
+              <div className="relative size-full flex-1">
+                <Link href={`/dashboard/preview/${bookmark.id}`}>
+                  <Image
+                    alt="card banner"
+                    fill={true}
+                    className={cn("flex-1", className)}
+                    src={getAssetUrl(banner.id)}
+                  />
+                </Link>
+              </div>
+            ) : (
               <div
                 className={cn(
                   "flex size-full items-center justify-center bg-accent text-center",

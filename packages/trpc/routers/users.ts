@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { count, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -144,7 +144,16 @@ export const usersAppRouter = router({
         email: z.string().nullish(),
       }),
     )
-    .query(({ ctx }) => {
+    .query(async ({ ctx }) => {
+      if (!ctx.user.email) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      const userDb = await ctx.db.query.users.findFirst({
+        where: and(eq(users.id, ctx.user.id), eq(users.email, ctx.user.email)),
+      });
+      if (!userDb) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
       return { id: ctx.user.id, name: ctx.user.name, email: ctx.user.email };
     }),
 });

@@ -172,7 +172,9 @@ export class CrawlerWorker {
         },
         onError: async (job) => {
           const jobId = job?.id ?? "unknown";
-          logger.error(`[Crawler][${jobId}] Crawling job failed: ${job.error}`);
+          logger.error(
+            `[Crawler][${jobId}] Crawling job failed: ${job.error}\n${job.error.stack}`,
+          );
           const bookmarkId = job.data?.bookmarkId;
           if (bookmarkId) {
             await changeBookmarkStatus(bookmarkId, "failure");
@@ -212,7 +214,7 @@ async function getBookmarkDetails(bookmarkId: string) {
   });
 
   if (!bookmark || !bookmark.link) {
-    throw new Error("The bookmark either doesn't exist or not a link");
+    throw new Error("The bookmark either doesn't exist or is not a link");
   }
   return {
     url: bookmark.link.url,
@@ -517,6 +519,7 @@ async function crawlAndParseUrl(
   oldScreenshotAssetId: string | undefined,
   oldImageAssetId: string | undefined,
   oldFullPageArchiveAssetId: string | undefined,
+  archiveFullPage: boolean,
 ) {
   const {
     htmlContent,
@@ -576,7 +579,7 @@ async function crawlAndParseUrl(
   ]);
 
   return async () => {
-    if (serverConfig.crawler.fullPageArchive) {
+    if (serverConfig.crawler.fullPageArchive || archiveFullPage) {
       const fullPageArchiveAssetId = await archiveWebpage(
         htmlContent,
         browserUrl,
@@ -613,7 +616,7 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
     return;
   }
 
-  const { bookmarkId } = request.data;
+  const { bookmarkId, archiveFullPage } = request.data;
   const {
     url,
     userId,
@@ -652,6 +655,7 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
       oldScreenshotAssetId,
       oldImageAssetId,
       oldFullPageArchiveAssetId,
+      archiveFullPage,
     );
   }
 

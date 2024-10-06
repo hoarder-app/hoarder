@@ -2,6 +2,7 @@ import MobileSidebar from "@/components/dashboard/sidebar/ModileSidebar";
 import Sidebar from "@/components/dashboard/sidebar/Sidebar";
 import DemoModeBanner from "@/components/DemoModeBanner";
 import { Separator } from "@/components/ui/separator";
+import ValidAccountCheck from "@/components/utils/ValidAccountCheck";
 
 import serverConfig from "@hoarder/shared/config";
 
@@ -14,6 +15,7 @@ export default async function Dashboard({
 }>) {
   return (
     <div className="flex min-h-screen w-screen flex-col sm:h-screen sm:flex-row">
+      <ValidAccountCheck />
       <div className="hidden flex-none sm:flex">
         <Sidebar />
       </div>

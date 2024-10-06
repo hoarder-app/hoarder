@@ -8,9 +8,8 @@ services:
       - ..:/app
     ports:
       - 3000:3000
-    environment:
-      MEILI_ADDR: http://meilisearch:7700
-      DATA_DIR: /data
+    env_file:
+      - .env  # Automatically load all variables from this file
     command:
       - pnpm
       - web
@@ -60,9 +59,9 @@ services:
       - data:/data
       - ..:/app
     command:
-      - /bin/sh
-      - -c
-      - "corepack enable && pnpm install --frozen-lockfile && pnpm run db:migrate"
+     - /bin/sh
+     - -c
+     - "pnpm install --frozen-lockfile && pnpm run db:migrate"
 
 volumes:
   meilisearch:

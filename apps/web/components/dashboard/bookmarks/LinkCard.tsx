@@ -6,10 +6,12 @@ import Link from "next/link";
 import type { ZBookmarkTypeLink } from "@hoarder/shared/types/bookmarks";
 import {
   getBookmarkLinkImageUrl,
+  getSourceUrl,
   isBookmarkStillCrawling,
 } from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
+import FooterLinkURL from "./FooterLinkURL";
 
 function LinkTitle({ bookmark }: { bookmark: ZBookmarkTypeLink }) {
   const link = bookmark.content;
@@ -68,21 +70,6 @@ function LinkImage({
   );
 }
 
-function LinkUrl({ bookmark }: { bookmark: ZBookmarkTypeLink }) {
-  const link = bookmark.content;
-  const parsedUrl = new URL(link.url);
-  return (
-    <Link
-      className="line-clamp-1 hover:text-foreground"
-      href={link.url}
-      target="_blank"
-      rel="noreferrer"
-    >
-      {parsedUrl.host}
-    </Link>
-  );
-}
-
 export default function LinkCard({
   bookmark: bookmarkLink,
   className,
@@ -93,7 +80,7 @@ export default function LinkCard({
   return (
     <BookmarkLayoutAdaptingCard
       title={<LinkTitle bookmark={bookmarkLink} />}
-      footer={<LinkUrl bookmark={bookmarkLink} />}
+      footer={<FooterLinkURL url={getSourceUrl(bookmarkLink)} />}
       bookmark={bookmarkLink}
       wrapTags={false}
       image={(_layout, className) => (

@@ -38,3 +38,16 @@ export function isBookmarkStillTagging(bookmark: ZBookmark) {
 export function isBookmarkStillLoading(bookmark: ZBookmark) {
   return isBookmarkStillTagging(bookmark) || isBookmarkStillCrawling(bookmark);
 }
+
+export function getSourceUrl(bookmark: ZBookmark) {
+  if (bookmark.content.type === BookmarkTypes.LINK) {
+    return bookmark.content.url;
+  }
+  if (bookmark.content.type === BookmarkTypes.ASSET) {
+    return bookmark.content.sourceUrl ?? null;
+  }
+  if (bookmark.content.type === BookmarkTypes.TEXT) {
+    return bookmark.content.sourceUrl ?? null;
+  }
+  return null;
+}

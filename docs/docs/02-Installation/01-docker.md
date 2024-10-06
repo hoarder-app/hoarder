@@ -73,7 +73,7 @@ Start the service by running:
 docker compose up -d
 ```
 
-Then visit `http://localhost:3000` and you should be greated with the Sign In page.
+Then visit `http://localhost:3000` and you should be greeted with the Sign In page.
 
 ### [Optional] 6. Setup quick sharing extensions
 

@@ -7,12 +7,14 @@ import {
   bookmarkAssets,
   bookmarks,
   bookmarkTags,
+  customPrompts,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
 import { DequeuedJob, Runner } from "@hoarder/queue";
 import { readAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
+import { buildImagePrompt, buildTextPrompt } from "@hoarder/shared/prompts";
 import {
   OpenAIQueue,
   triggerSearchReindex,
@@ -73,7 +75,7 @@ export class OpenAiWorker {
         onError: async (job) => {
           const jobId = job?.id ?? "unknown";
           logger.error(
-            `[inference][${jobId}] inference job failed: ${job.error}`,
+            `[inference][${jobId}] inference job failed: ${job.error}\n${job.error.stack}`,
           );
           await attemptMarkTaggingStatus(job?.data, "failure");
         },
@@ -89,31 +91,10 @@ export class OpenAiWorker {
   }
 }
 
-const IMAGE_PROMPT_BASE = `
-I'm building a read-it-later app and I need your help with automatic tagging.
-Please analyze the attached image and suggest relevant tags that describe its key themes, topics, and main ideas.
-Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}.
-If the tag is not generic enough, don't include it. Aim for 10-15 tags. If there are no good tags, don't emit any. You must respond in valid JSON
-with the key "tags" and the value is list of tags. Don't wrap the response in a markdown code.`;
-
-const TEXT_PROMPT_BASE = `
-I'm building a read-it-later app and I need your help with automatic tagging.
-Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT END HERE" and suggest relevant tags that describe its key themes, topics, and main ideas.
-Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres. The tags language must be ${serverConfig.inference.inferredTagLang}. If it's a famous website
-you may also include a tag for the website. If the tag is not generic enough, don't include it.
-The content can include text for cookie consent and privacy policy, ignore those while tagging.
-CONTENT START HERE
-`;
-
-const TEXT_PROMPT_INSTRUCTIONS = `
-CONTENT END HERE
-You must respond in JSON with the key "tags" and the value is an array of string tags. 
-Aim for 3-5 tags. If there are no good tags, leave the array empty.
-`;
-
-function buildPrompt(
+async function buildPrompt(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
 ) {
+  const prompts = await fetchCustomPrompts(bookmark.userId, "text");
   if (bookmark.link) {
     if (!bookmark.link.description && !bookmark.link.content) {
       throw new Error(
@@ -125,23 +106,24 @@ function buildPrompt(
     if (content) {
       content = truncateContent(content);
     }
-    return `
-${TEXT_PROMPT_BASE}
-URL: ${bookmark.link.url}
+    return buildTextPrompt(
+      serverConfig.inference.inferredTagLang,
+      prompts,
+      `URL: ${bookmark.link.url}
 Title: ${bookmark.link.title ?? ""}
 Description: ${bookmark.link.description ?? ""}
-Content: ${content ?? ""}
-${TEXT_PROMPT_INSTRUCTIONS}`;
+Content: ${content ?? ""}`,
+    );
   }
 
   if (bookmark.text) {
     const content = truncateContent(bookmark.text.text ?? "");
     // TODO: Ensure that the content doesn't exceed the context length of openai
-    return `
-${TEXT_PROMPT_BASE}
-${content}
-${TEXT_PROMPT_INSTRUCTIONS}
-  `;
+    return buildTextPrompt(
+      serverConfig.inference.inferredTagLang,
+      prompts,
+      content,
+    );
   }
 
   throw new Error("Unknown bookmark type");
@@ -175,10 +157,30 @@ async function inferTagsFromImage(
   }
   const base64 = asset.toString("base64");
   return inferenceClient.inferFromImage(
-    IMAGE_PROMPT_BASE,
+    buildImagePrompt(
+      serverConfig.inference.inferredTagLang,
+      await fetchCustomPrompts(bookmark.userId, "images"),
+    ),
     metadata.contentType,
     base64,
   );
+}
+
+async function fetchCustomPrompts(
+  userId: string,
+  appliesTo: "text" | "images",
+) {
+  const prompts = await db.query.customPrompts.findMany({
+    where: and(
+      eq(customPrompts.userId, userId),
+      inArray(customPrompts.appliesTo, ["all", appliesTo]),
+    ),
+    columns: {
+      text: true,
+    },
+  });
+
+  return prompts.map((p) => p.text);
 }
 
 async function inferTagsFromPDF(
@@ -210,10 +212,11 @@ async function inferTagsFromPDF(
     })
     .where(eq(bookmarkAssets.id, bookmark.id));
 
-  const prompt = `${TEXT_PROMPT_BASE}
-Content: ${truncateContent(pdfParse.text)}
-${TEXT_PROMPT_INSTRUCTIONS}
-`;
+  const prompt = buildTextPrompt(
+    serverConfig.inference.inferredTagLang,
+    await fetchCustomPrompts(bookmark.userId, "text"),
+    `Content: ${truncateContent(pdfParse.text)}`,
+  );
   return inferenceClient.inferFromText(prompt);
 }
 
@@ -221,7 +224,7 @@ async function inferTagsFromText(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
   inferenceClient: InferenceClient,
 ) {
-  return await inferenceClient.inferFromText(buildPrompt(bookmark));
+  return await inferenceClient.inferFromText(await buildPrompt(bookmark));
 }
 
 async function inferTags(

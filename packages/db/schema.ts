@@ -196,6 +196,7 @@ export const bookmarkTexts = sqliteTable("bookmarkTexts", {
     .$defaultFn(() => createId())
     .references(() => bookmarks.id, { onDelete: "cascade" }),
   text: text("text"),
+  sourceUrl: text("sourceUrl"),
 });
 
 export const bookmarkAssets = sqliteTable("bookmarkAssets", {
@@ -294,6 +295,27 @@ export const bookmarksInLists = sqliteTable(
     pk: primaryKey({ columns: [tb.bookmarkId, tb.listId] }),
     bookmarkIdIdx: index("bookmarksInLists_bookmarkId_idx").on(tb.bookmarkId),
     listIdIdx: index("bookmarksInLists_listId_idx").on(tb.listId),
+  }),
+);
+
+
+export const customPrompts = sqliteTable(
+  "customPrompts",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    text: text("text").notNull(),
+    enabled: integer("enabled", { mode: "boolean" }).notNull(),
+    appliesTo: text("attachedBy", { enum: ["all", "text", "images"] }).notNull(),
+    createdAt: createdAtField(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (bl) => ({
+    userIdIdx: index("customPrompts_userId_idx").on(bl.userId),
   }),
 );
 

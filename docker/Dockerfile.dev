@@ -1,6 +1,14 @@
 FROM node:21-alpine
 
-RUN apk add --no-cache libc6-compat make g++ py3-pip linux-headers
-ENV PUPPETEER_SKIP_DOWNLOAD true
-
 WORKDIR /app
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat make g++ py3-pip linux-headers git
+
+RUN corepack enable
+
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV PUPPETEER_SKIP_DOWNLOAD true

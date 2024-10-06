@@ -595,6 +595,9 @@ importers:
       react-hook-form:
         specifier: ^7.50.1
         version: 7.50.1(react@18.2.0)
+      react-intersection-observer:
+        specifier: ^9.13.1
+        version: 9.13.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-markdown:
         specifier: ^9.0.1
         version: 9.0.1(@types/react@18.2.58)(react@18.2.0)
@@ -738,8 +741,8 @@ importers:
         specifier: ^0.5.0
         version: 0.5.0
       openai:
-        specifier: ^4.29.0
-        version: 4.29.0
+        specifier: ^4.67.1
+        version: 4.67.1(zod@3.22.4)
       pdf2json:
         specifier: ^3.0.5
         version: 3.0.5
@@ -861,8 +864,8 @@ importers:
         specifier: ^7.6.9
         version: 7.6.9
       drizzle-kit:
-        specifier: ^0.20.14
-        version: 0.20.14
+        specifier: ^0.24.02
+        version: 0.24.2
 
   packages/queue:
     dependencies:
@@ -2222,6 +2225,9 @@ packages:
     peerDependenciesMeta:
       '@docusaurus/types':
         optional: true
+
+  '@drizzle-team/brocli@0.10.1':
+    resolution: {integrity: sha512-AHy0vjc+n/4w/8Mif+w86qpppHuF3AyXbcWW+R/W7GNA3F5/p2nuhlkCJaTXSLZheB4l1rtHzOfr9A7NwoR/Zg==}
 
   '@drizzle-team/studio@0.0.39':
     resolution: {integrity: sha512-c5Hkm7MmQC2n5qAsKShjQrHoqlfGslB8+qWzsGGZ+2dHMRTNG60UuzalF0h0rvBax5uzPXuGkYLGaQ+TUX3yMw==}
@@ -5072,9 +5078,6 @@ packages:
   bare-path@2.1.0:
     resolution: {integrity: sha512-DIIg7ts8bdRKwJRJrUMy/PICEaQZaPGZ26lsSx9MJSwIhSrcdHn7/C8W+XmnG/rKi6BaRcz+JO00CjZteybDtw==}
 
-  base-64@0.1.0:
-    resolution: {integrity: sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==}
-
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
@@ -6065,9 +6068,6 @@ packages:
   difflib@0.2.4:
     resolution: {integrity: sha512-9YVwmMb0wQHQNr5J9m6BSj6fk4pfGITGQOOs+D9Fl+INODWFOfvhIU1hNv6GgR1RBoC/9NJcwu77zShxV0kT7w==}
 
-  digest-fetch@1.3.0:
-    resolution: {integrity: sha512-CGJuv6iKNM7QyZlM2T3sPAdZWd/p9zQiRNS9G+9COUCwzWFTs0Xp8NF5iePx7wtvhDykReiRRrSeNb4oMmB8lA==}
-
   dir-glob@3.0.1:
     resolution: {integrity: sha512-WkrWp9GR4KXfKGYzOLmTuGVi1UWFfws377n9cc55/tb6DuqyF6pcQ5AbiHEshaDpY9v6oaSr2XCDidGmMwdzIA==}
     engines: {node: '>=8'}
@@ -6144,6 +6144,10 @@ packages:
 
   drizzle-kit@0.20.14:
     resolution: {integrity: sha512-0fHv3YIEaUcSVPSGyaaBfOi9bmpajjhbJNdPsRMIUvYdLVxBu9eGjH8mRc3Qk7HVmEidFc/lhG1YyJhoXrn5yA==}
+    hasBin: true
+
+  drizzle-kit@0.24.2:
+    resolution: {integrity: sha512-nXOaTSFiuIaTMhS8WJC2d4EBeIcN9OSt2A2cyFbQYBAZbi7lRsVGJNqDpEwPqYfJz38yxbY/UtbvBBahBfnExQ==}
     hasBin: true
 
   drizzle-orm@0.33.0:
@@ -9429,9 +9433,14 @@ packages:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
 
-  openai@4.29.0:
-    resolution: {integrity: sha512-ic6C681bSow1XQdKhADthM/OOKqNL05M1gCFLx1mRqLJ+yH49v6qnvaWQ76kwqI/IieCuVTXfRfTk3sz4cB45w==}
+  openai@4.67.1:
+    resolution: {integrity: sha512-2YbRFy6qaYRJabK2zLMn4txrB2xBy0KP5g/eoqeSPTT31mIJMnkT75toagvfE555IKa2RdrzJrZwdDsUipsAMw==}
     hasBin: true
+    peerDependencies:
+      zod: ^3.23.8
+    peerDependenciesMeta:
+      zod:
+        optional: true
 
   opener@1.5.2:
     resolution: {integrity: sha512-ur5UIdyw5Y7yEj9wLzhqXiy6GZ3Mwx0yGI+5sMn2r0N0v3cKJvUmFH5yPP+WXh9e0xfyzyJX95D8l088DNFj7A==}
@@ -10425,6 +10434,15 @@ packages:
     engines: {node: '>=12.22.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18
+
+  react-intersection-observer@9.13.1:
+    resolution: {integrity: sha512-tSzDaTy0qwNPLJHg8XZhlyHTgGW6drFKTtvjdL+p6um12rcnp8Z5XstE+QNBJ7c64n5o0Lj4ilUleA41bmDoMw==}
+    peerDependencies:
+      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -15407,6 +15425,9 @@ snapshots:
       - webpack-cli
     dev: false
 
+  '@drizzle-team/brocli@0.10.1':
+    dev: true
+
   '@drizzle-team/studio@0.0.39':
     dependencies:
       superjson: 2.2.1
@@ -19472,9 +19493,6 @@ snapshots:
     dev: false
     optional: true
 
-  base-64@0.1.0:
-    dev: false
-
   base64-js@1.5.1:
     dev: false
 
@@ -20756,12 +20774,6 @@ snapshots:
       heap: 0.2.7
     dev: true
 
-  digest-fetch@1.3.0:
-    dependencies:
-      base-64: 0.1.0
-      md5: 2.3.0
-    dev: false
-
   dir-glob@3.0.1:
     dependencies:
       path-type: 4.0.0
@@ -20873,6 +20885,16 @@ snapshots:
       minimatch: 7.4.6
       semver: 7.6.0
       zod: 3.22.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  drizzle-kit@0.24.2:
+    dependencies:
+      '@drizzle-team/brocli': 0.10.1
+      '@esbuild-kit/esm-loader': 2.6.5
+      esbuild: 0.19.12
+      esbuild-register: 3.5.0(esbuild@0.19.12)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -25592,17 +25614,16 @@ snapshots:
       is-wsl: 2.2.0
     dev: false
 
-  openai@4.29.0:
+  openai@4.67.1(zod@3.22.4):
     dependencies:
       '@types/node': 18.19.18
       '@types/node-fetch': 2.6.11
       abort-controller: 3.0.0
       agentkeepalive: 4.5.0
-      digest-fetch: 1.3.0
       form-data-encoder: 1.7.2
       formdata-node: 4.4.1
       node-fetch: 2.7.0
-      web-streams-polyfill: 3.3.3
+      zod: 3.22.4
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -26733,6 +26754,12 @@ snapshots:
   react-hook-form@7.50.1(react@18.2.0):
     dependencies:
       react: 18.2.0
+    dev: false
+
+  react-intersection-observer@9.13.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0):
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   react-is@16.13.1: {}

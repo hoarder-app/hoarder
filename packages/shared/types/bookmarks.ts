@@ -41,6 +41,7 @@ export type ZBookmarkedLink = z.infer<typeof zBookmarkedLinkSchema>;
 export const zBookmarkedTextSchema = z.object({
   type: z.literal(BookmarkTypes.TEXT),
   text: z.string(),
+  sourceUrl: z.string().nullish(),
 });
 export type ZBookmarkedText = z.infer<typeof zBookmarkedTextSchema>;
 
@@ -128,17 +129,17 @@ export const zGetBookmarksRequestSchema = z.object({
   tagId: z.string().optional(),
   listId: z.string().optional(),
   limit: z.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),
-  cursor: zCursorV2.or(z.date()).nullish(),
-  // TODO: Remove this field once all clients are updated to use the new cursor structure.
-  // This is done for backward comptability. If a client doesn't send this field, we'll assume it's an old client
-  // and repsond with the old cursor structure. Once all clients are updated, we can remove this field and drop the old cursor structure.
+  cursor: zCursorV2.nullish(),
+  // TODO: This was done for backward comptability. At this point, all clients should be settings this to true.
+  // The value is currently not being used, but keeping it so that client can still set it to true for older
+  // servers.
   useCursorV2: z.boolean().optional(),
 });
 export type ZGetBookmarksRequest = z.infer<typeof zGetBookmarksRequestSchema>;
 
 export const zGetBookmarksResponseSchema = z.object({
   bookmarks: z.array(zBookmarkSchema),
-  nextCursor: zCursorV2.or(z.date()).nullable(),
+  nextCursor: zCursorV2.nullable(),
 });
 export type ZGetBookmarksResponse = z.infer<typeof zGetBookmarksResponseSchema>;
 

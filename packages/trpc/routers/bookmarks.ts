@@ -194,7 +194,11 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
       };
       break;
     case BookmarkTypes.TEXT:
-      content = { type: bookmark.type, text: text.text ?? "" };
+      content = {
+        type: bookmark.type,
+        text: text.text ?? "",
+        sourceUrl: text.sourceUrl,
+      };
       break;
     case BookmarkTypes.ASSET:
       content = {
@@ -276,12 +280,17 @@ export const bookmarksAppRouter = router({
             const text = (
               await tx
                 .insert(bookmarkTexts)
-                .values({ id: bookmark.id, text: input.text })
+                .values({
+                  id: bookmark.id,
+                  text: input.text,
+                  sourceUrl: input.sourceUrl,
+                })
                 .returning()
             )[0];
             content = {
               type: BookmarkTypes.TEXT,
               text: text.text ?? "",
+              sourceUrl: text.sourceUrl,
             };
             break;
           }
@@ -426,11 +435,17 @@ export const bookmarksAppRouter = router({
       }
     }),
   recrawlBookmark: authedProcedure
-    .input(z.object({ bookmarkId: z.string() }))
+    .input(
+      z.object({
+        bookmarkId: z.string(),
+        archiveFullPage: z.boolean().optional().default(false),
+      }),
+    )
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input }) => {
       await LinkCrawlerQueue.enqueue({
         bookmarkId: input.bookmarkId,
+        archiveFullPage: input.archiveFullPage,
       });
     }),
   getBookmark: authedProcedure
@@ -549,15 +564,13 @@ export const bookmarksAppRouter = router({
                   )
                 : undefined,
               input.cursor
-                ? input.cursor instanceof Date
-                  ? lte(bookmarks.createdAt, input.cursor)
-                  : or(
-                      lt(bookmarks.createdAt, input.cursor.createdAt),
-                      and(
-                        eq(bookmarks.createdAt, input.cursor.createdAt),
-                        lte(bookmarks.id, input.cursor.id),
-                      ),
-                    )
+                ? or(
+                    lt(bookmarks.createdAt, input.cursor.createdAt),
+                    and(
+                      eq(bookmarks.createdAt, input.cursor.createdAt),
+                      lte(bookmarks.id, input.cursor.id),
+                    ),
+                  )
                 : undefined,
             ),
           )
@@ -591,6 +604,7 @@ export const bookmarksAppRouter = router({
                 content = {
                   type: row.bookmarksSq.type,
                   text: row.bookmarkTexts?.text ?? "",
+                  sourceUrl: row.bookmarkTexts?.sourceUrl ?? null,
                 };
                 break;
               }
@@ -601,6 +615,7 @@ export const bookmarksAppRouter = router({
                   assetId: bookmarkAssets.assetId,
                   assetType: bookmarkAssets.assetType,
                   fileName: bookmarkAssets.fileName,
+                  sourceUrl: bookmarkAssets.sourceUrl ?? null,
                 };
                 break;
               }
@@ -660,14 +675,10 @@ export const bookmarksAppRouter = router({
       let nextCursor = null;
       if (bookmarksArr.length > input.limit) {
         const nextItem = bookmarksArr.pop()!;
-        if (input.useCursorV2) {
-          nextCursor = {
-            id: nextItem.id,
-            createdAt: nextItem.createdAt,
-          };
-        } else {
-          nextCursor = nextItem.createdAt;
-        }
+        nextCursor = {
+          id: nextItem.id,
+          createdAt: nextItem.createdAt,
+        };
       }
 
       return { bookmarks: bookmarksArr, nextCursor };
@@ -678,18 +689,28 @@ export const bookmarksAppRouter = router({
       z.object({
         bookmarkId: z.string(),
         attach: z.array(
-          z.object({
-            // At least one of the two must be set
-            tagId: z.string().optional(), // If the tag already exists and we know its id we should pass it
-            tagName: z.string().optional(),
-          }),
+          z
+            .object({
+              // At least one of the two must be set
+              tagId: z.string().optional(), // If the tag already exists and we know its id we should pass it
+              tagName: z.string().optional(),
+            })
+            .refine((val) => !!val.tagId || !!val.tagName, {
+              message: "You must provide either a tagId or a tagName",
+              path: ["tagId", "tagName"],
+            }),
         ),
         detach: z.array(
-          z.object({
-            // At least one of the two must be set
-            tagId: z.string().optional(),
-            tagName: z.string().optional(), // Also allow removing by tagName, to make CLI usage easier
-          }),
+          z
+            .object({
+              // At least one of the two must be set
+              tagId: z.string().optional(),
+              tagName: z.string().optional(), // Also allow removing by tagName, to make CLI usage easier
+            })
+            .refine((val) => !!val.tagId || !!val.tagName, {
+              message: "You must provide either a tagId or a tagName",
+              path: ["tagId", "tagName"],
+            }),
         ),
       }),
     )
@@ -767,6 +788,9 @@ export const bookmarksAppRouter = router({
             .returning();
         }
 
+        // If there is nothing to add, the "or" statement will become useless and
+        // the query below will simply select all the existing tags for this user and assign them to the bookmark
+        invariant(toAddTagNames.length > 0 || toAddTagIds.length > 0);
         const allIds = (
           await tx.query.bookmarkTags.findMany({
             where: and(
@@ -797,6 +821,7 @@ export const bookmarksAppRouter = router({
             })),
           )
           .onConflictDoNothing();
+
         await triggerSearchReindex(input.bookmarkId);
         return {
           bookmarkId: input.bookmarkId,

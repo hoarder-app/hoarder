@@ -11,6 +11,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
 import {
+  FileDown,
   Link,
   List,
   ListX,
@@ -88,6 +89,15 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
     onError,
   });
 
+  const fullPageArchiveBookmarkMutator = useRecrawlBookmark({
+    onSuccess: () => {
+      toast({
+        description: "Full Page Archive creation has been triggered",
+      });
+    },
+    onError,
+  });
+
   const removeFromListMutator = useRemoveBookmarkFromList({
     onSuccess: () => {
       toast({
@@ -152,6 +162,21 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             />
             <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
           </DropdownMenuItem>
+
+          {bookmark.content.type === BookmarkTypes.LINK && (
+            <DropdownMenuItem
+              onClick={() => {
+                fullPageArchiveBookmarkMutator.mutate({
+                  bookmarkId: bookmark.id,
+                  archiveFullPage: true,
+                });
+              }}
+            >
+              <FileDown className="mr-2 size-4" />
+              <span>Download Full Page Archive</span>
+            </DropdownMenuItem>
+          )}
+
           {bookmark.content.type === BookmarkTypes.LINK && (
             <DropdownMenuItem
               onClick={() => {

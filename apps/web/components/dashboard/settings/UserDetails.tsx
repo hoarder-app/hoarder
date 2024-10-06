@@ -16,7 +16,7 @@ export default async function UserDetails() {
   ];
 
   return (
-    <div className="mb-8 flex flex-col sm:flex-row">
+    <div className="mb-8 flex w-full flex-col sm:flex-row">
       <div className="mb-4 w-full text-lg font-medium sm:w-1/3">
         Basic Details
       </div>

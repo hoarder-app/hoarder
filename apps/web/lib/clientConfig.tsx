@@ -8,6 +8,9 @@ export const ClientConfigCtx = createContext<ClientConfig>({
     disableSignups: false,
     disableLocalSignups: false,
   },
+  inference: {
+    inferredTagLang: "english",
+  },
   serverVersion: undefined,
   disableNewReleaseCheck: true,
 });
