@@ -156,6 +156,11 @@ export function EditListModal({
   const isEdit = !!list;
   const isPending = isCreating || isEditing;
 
+  const onSubmit = form.handleSubmit((value: z.infer<typeof formSchema>) => {
+    value.parentId = value.parentId === "" ? null : value.parentId;
+    isEdit ? editList({ ...value, listId: list.id }) : createList(value);
+  });
+
   return (
     <Dialog
       open={open}
@@ -167,14 +172,7 @@ export function EditListModal({
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent>
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit((value) => {
-              value.parentId = value.parentId === "" ? null : value.parentId;
-              isEdit
-                ? editList({ ...value, listId: list.id })
-                : createList(value);
-            })}
-          >
+          <form onSubmit={onSubmit}>
             <DialogHeader>
               <DialogTitle>{isEdit ? "Edit" : "New"} List</DialogTitle>
             </DialogHeader>
@@ -264,7 +262,11 @@ export function EditListModal({
                   Close
                 </Button>
               </DialogClose>
-              <ActionButton type="submit" loading={isPending}>
+              <ActionButton
+                type="submit"
+                onClick={onSubmit}
+                loading={isPending}
+              >
                 {list ? "Save" : "Create"}
               </ActionButton>
             </DialogFooter>
