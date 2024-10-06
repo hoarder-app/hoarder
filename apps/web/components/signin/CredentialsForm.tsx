@@ -234,7 +234,7 @@ export default function CredentialsForm() {
       </TabsContent>
       <TabsContent value="signup">
         {clientConfig.auth.disableSignups ||
-        clientConfig.auth.disableLocalSignups ? (
+        clientConfig.auth.disablePasswordSignups ? (
           <p className="text-center">Signups are currently disabled.</p>
         ) : (
           <SignUp />

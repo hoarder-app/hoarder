@@ -26,9 +26,9 @@ When setting up OAuth, the allowed redirect URLs configured at the provider shou
 :::
 
 | Name                                        | Required | Default                | Description                                                                                                                                                         |
-|---------------------------------------------| -------- | ---------------------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------------------------------- | -------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | DISABLE_SIGNUPS                             | No       | false                  | If enabled, no new signups will be allowed and the signup button will be disabled in the UI                                                                         |
-| DISABLE_LOCAL_SIGNUPS                       | No       | false                  | If enabled, only signups using OAuth are allowed and the signup button for a local account will be disabled in the UI                                                 |
+| DISABLE_PASSWORD_SIGNUPS                    | No       | false                  | If enabled, only signups using OAuth are allowed and the signup button for a local account will be disabled in the UI                                               |
 | OAUTH_WELLKNOWN_URL                         | No       | Not set                | The "wellknown Url" for openid-configuration as provided by the OAuth provider                                                                                      |
 | OAUTH_CLIENT_SECRET                         | No       | Not set                | The "Client Secret" as provided by the OAuth provider                                                                                                               |
 | OAUTH_CLIENT_ID                             | No       | Not set                | The "Client ID" as provided by the OAuth provider                                                                                                                   |
