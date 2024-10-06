@@ -344,6 +344,7 @@ describe("Bookmark Routes", () => {
 
   test<CustomTestContext>("mutate assets", async ({ apiCallers, db }) => {
     const api = apiCallers[0].bookmarks;
+    const userId = await apiCallers[0].users.whoami().then((u) => u.id);
 
     const bookmark = await api.createBookmark({
       url: "https://google.com",
@@ -354,16 +355,19 @@ describe("Bookmark Routes", () => {
         id: "asset1",
         assetType: AssetTypes.LINK_SCREENSHOT,
         bookmarkId: bookmark.id,
+        userId,
       }),
       db.insert(assets).values({
         id: "asset2",
         assetType: AssetTypes.LINK_BANNER_IMAGE,
         bookmarkId: bookmark.id,
+        userId,
       }),
       db.insert(assets).values({
         id: "asset3",
         assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
         bookmarkId: bookmark.id,
+        userId,
       }),
     ]);
 

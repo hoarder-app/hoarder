@@ -853,6 +853,7 @@ export const bookmarksAppRouter = router({
           id: input.asset.id,
           assetType: mapSchemaAssetTypeToDB(input.asset.assetType),
           bookmarkId: input.bookmarkId,
+          userId: ctx.user.id,
         })
         .returning();
       return input.asset;

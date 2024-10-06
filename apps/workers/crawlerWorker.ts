@@ -556,6 +556,7 @@ async function crawlAndParseUrl(
       screenshotAssetId,
       oldScreenshotAssetId,
       bookmarkId,
+      userId,
       AssetTypes.LINK_SCREENSHOT,
       txn,
     );
@@ -563,6 +564,7 @@ async function crawlAndParseUrl(
       imageAssetId,
       oldImageAssetId,
       bookmarkId,
+      userId,
       AssetTypes.LINK_BANNER_IMAGE,
       txn,
     );
@@ -592,6 +594,7 @@ async function crawlAndParseUrl(
           fullPageArchiveAssetId,
           oldFullPageArchiveAssetId,
           bookmarkId,
+          userId,
           AssetTypes.LINK_FULL_PAGE_ARCHIVE,
           txn,
         );
@@ -685,6 +688,7 @@ async function updateAsset(
   newAssetId: string | null,
   oldAssetId: string | undefined,
   bookmarkId: string,
+  userId: string,
   assetType: AssetTypes,
   txn: HoarderDBTransaction,
 ) {
@@ -696,6 +700,7 @@ async function updateAsset(
       id: newAssetId,
       assetType,
       bookmarkId,
+      userId,
     });
   }
 }

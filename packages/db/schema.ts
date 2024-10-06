@@ -181,11 +181,15 @@ export const assets = sqliteTable(
     bookmarkId: text("bookmarkId")
       .notNull()
       .references(() => bookmarks.id, { onDelete: "cascade" }),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
   },
 
   (tb) => ({
     bookmarkIdIdx: index("assets_bookmarkId_idx").on(tb.bookmarkId),
     assetTypeIdx: index("assets_assetType_idx").on(tb.assetType),
+    userIdIdx: index("assets_userId_idx").on(tb.userId),
   }),
 );
 
