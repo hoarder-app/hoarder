@@ -35,6 +35,8 @@ function SignIn() {
   const [signinError, setSigninError] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
+  const clientConfig = useClientConfig();
+
   const oAuthError = searchParams.get("error");
   if (oAuthError && !signinError) {
     setSigninError(`${OAUTH_FAILED} ${oAuthError}`);
@@ -43,6 +45,14 @@ function SignIn() {
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
   });
+
+  if (clientConfig.auth.disablePasswordAuth) {
+    return (
+      <p className="text-center">
+        Password authentication is currently disabled.
+      </p>
+    );
+  }
 
   return (
     <Form {...form}>
@@ -234,7 +244,7 @@ export default function CredentialsForm() {
       </TabsContent>
       <TabsContent value="signup">
         {clientConfig.auth.disableSignups ||
-        clientConfig.auth.disablePasswordSignups ? (
+        clientConfig.auth.disablePasswordAuth ? (
           <p className="text-center">Signups are currently disabled.</p>
         ) : (
           <SignUp />
