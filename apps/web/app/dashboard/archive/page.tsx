@@ -1,5 +1,4 @@
 import Bookmarks from "@/components/dashboard/bookmarks/Bookmarks";
-import GlobalActions from "@/components/dashboard/GlobalActions";
 import InfoTooltip from "@/components/ui/info-tooltip";
 
 function header() {
@@ -10,9 +9,6 @@ function header() {
         <InfoTooltip size={17} className="my-auto" variant="explain">
           <p>Archived bookmarks won&apos;t appear in the homepage</p>
         </InfoTooltip>
-      </div>
-      <div>
-        <GlobalActions />
       </div>
     </div>
   );

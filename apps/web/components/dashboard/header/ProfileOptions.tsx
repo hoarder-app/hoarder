@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useToggleTheme } from "@/components/theme-provider";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,9 +10,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Moon, MoreHorizontal, Paintbrush, Sun } from "lucide-react";
+import { LogOut, Moon, Paintbrush, Sun } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useTheme } from "next-themes";
+import { useSession } from "next-auth/react";
 
 function DarkModeToggle() {
   const { theme } = useTheme();
@@ -35,11 +37,14 @@ function DarkModeToggle() {
 
 export default function SidebarProfileOptions() {
   const toggleTheme = useToggleTheme();
+  const { data: session } = useSession();
+  if (!session) return redirect("/");
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost">
-          <MoreHorizontal />
+        <Button className="rounded-full bg-black p-0 aspect-square text-white border-4 border-new-gray-200" variant="ghost">
+          {session.user.name?.charAt(0) ?? "U"}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
