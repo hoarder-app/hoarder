@@ -48,9 +48,14 @@ function SignIn() {
 
   if (clientConfig.auth.disablePasswordAuth) {
     return (
-      <p className="text-center">
-        Password authentication is currently disabled.
-      </p>
+      <>
+        {signinError && (
+          <p className="w-full text-center text-destructive">{signinError}</p>
+        )}
+        <p className="text-center">
+          Password authentication is currently disabled.
+        </p>
+      </>
     );
   }
 
