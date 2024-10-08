@@ -3,6 +3,7 @@ import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { apiKeys } from "@hoarder/db/schema";
+import serverConfig from "@hoarder/shared/config";
 
 import { authenticateApiKey, generateApiKey, validatePassword } from "../auth";
 import { authedProcedure, publicProcedure, router } from "../index";
@@ -74,6 +75,13 @@ export const apiKeysAppRouter = router({
     .output(zApiKeySchema)
     .mutation(async ({ input }) => {
       let user;
+      // Special handling as otherwise the extension would show "username or password is wrong"
+      if (serverConfig.auth.disablePasswordAuth) {
+        throw new TRPCError({
+          message: "Password authentication is currently disabled",
+          code: "FORBIDDEN",
+        });
+      }
       try {
         user = await validatePassword(input.email, input.password);
       } catch (e) {

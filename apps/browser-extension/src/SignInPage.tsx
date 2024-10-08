@@ -80,11 +80,7 @@ export default function SignInPage() {
       break;
   }
   if (loginError) {
-    if (loginError.data?.code == "UNAUTHORIZED") {
-      errorMessage = "Wrong username or password";
-    } else {
-      errorMessage = loginError.message;
-    }
+    errorMessage = loginError.message || "Wrong username or password";
   }
 
   return (
