@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -22,6 +22,11 @@ export function TagPill({
   count: number;
   isDraggable: boolean;
 }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseOver = () => setIsHovered(true);
+  const handleMouseOut = () => setIsHovered(false);
+
   const { mutate: mergeTag } = useMergeTag({
     onSuccess: () => {
       toast({
@@ -62,6 +67,40 @@ export function TagPill({
     },
   );
 
+  const pill = (
+    <div
+      className="group relative flex"
+      onMouseOver={handleMouseOver}
+      onFocus={handleMouseOver}
+      onMouseOut={handleMouseOut}
+      onBlur={handleMouseOut}
+    >
+      <Link
+        className={
+          "flex gap-2 rounded-md border border-border bg-background px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
+        }
+        href={`/dashboard/tags/${id}`}
+        data-id={id}
+      >
+        {name} <Separator orientation="vertical" /> {count}
+      </Link>
+
+      {isHovered && (
+        <DeleteTagConfirmationDialog tag={{ name, id }}>
+          <Button
+            size="none"
+            variant="secondary"
+            className="-translate-1/2 absolute -right-1 -top-1 hidden rounded-full group-hover:block"
+          >
+            <X className="size-3" />
+          </Button>
+        </DeleteTagConfirmationDialog>
+      )}
+    </div>
+  );
+  if (!isDraggable) {
+    return pill;
+  }
   return (
     <Draggable
       key={id}
@@ -72,27 +111,7 @@ export function TagPill({
       defaultClassNameDragging={"position-relative z-10 pointer-events-none"}
       position={{ x: 0, y: 0 }}
     >
-      <div className="group relative flex">
-        <Link
-          className={
-            "flex gap-2 rounded-md border border-border bg-background px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
-          }
-          href={`/dashboard/tags/${id}`}
-          data-id={id}
-        >
-          {name} <Separator orientation="vertical" /> {count}
-        </Link>
-
-        <DeleteTagConfirmationDialog tag={{ name, id }}>
-          <Button
-            size="none"
-            variant="secondary"
-            className="-translate-1/2 absolute -right-1 -top-1 hidden rounded-full group-hover:block"
-          >
-            <X className="size-3" />
-          </Button>
-        </DeleteTagConfirmationDialog>
-      </div>
+      {pill}
     </Draggable>
   );
 }
