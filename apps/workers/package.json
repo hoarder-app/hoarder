@@ -43,10 +43,11 @@
     "@hoarder/prettier-config": "workspace:^0.1.0",
     "@types/dompurify": "^3.0.5",
     "@types/jsdom": "^21.1.6",
-    "@types/metascraper": "^5.14.3"
+    "@types/metascraper": "^5.14.3",
+    "nodemon": "^3.1.7"
   },
   "scripts": {
-    "start": "tsx watch index.ts",
+    "start": "nodemon --watch . --ext ts --legacy-watch --exec tsx index.ts",
     "start:prod": "tsx index.ts",
     "lint": "eslint .",
     "format": "prettier . --ignore-path ../../.prettierignore",
