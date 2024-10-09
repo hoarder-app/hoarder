@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import GlobalActions from "@/components/dashboard/GlobalActions";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
 
@@ -43,7 +42,6 @@ export default function ListHeader({
             <MoreHorizontal />
           </Button>
         </ListOptions>
-        <GlobalActions />
       </div>
     </div>
   );
