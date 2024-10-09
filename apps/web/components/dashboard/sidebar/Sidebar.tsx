@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
-import { Home, Search, Shield, Tag, Github } from "lucide-react";
+import { Home, Search, Archive, Tag, Github } from "lucide-react";
 
 
 import serverConfig from "@hoarder/shared/config";
@@ -28,17 +28,6 @@ export default async function Sidebar() {
       ]
     : [];
 
-  const adminItem =
-    session.user.role == "admin"
-      ? [
-          {
-            name: "Admin",
-            icon: <Shield size={18} />,
-            path: "/dashboard/admin",
-          },
-        ]
-      : [];
-
   const menu: {
     name: string;
     icon: JSX.Element;
@@ -55,7 +44,11 @@ export default async function Sidebar() {
       icon: <Tag size={18} />,
       path: "/dashboard/tags",
     },
-    ...adminItem,
+    {
+      name: "Archive",
+      icon: <Archive size={18} />,
+      path: "/dashboard/archive",
+    },
   ];
 
   return (
