@@ -2,8 +2,7 @@ import { redirect } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
-import { Home, Search, Archive, Tag, Github } from "lucide-react";
-
+import { Archive, Github, Home, Search, Tag } from "lucide-react";
 
 import serverConfig from "@hoarder/shared/config";
 

@@ -1,8 +1,8 @@
+import ProfileOptions from "@/components/dashboard/header/ProfileOptions";
 import HoarderLogoIcon from "@/public/icons/logo-icon.svg";
 import { ClipboardList, Search, Settings, Tag } from "lucide-react";
 
 import MobileSidebarItem from "./ModileSidebarItem";
-import ProfileOptions from "@/components/dashboard/header/ProfileOptions";
 
 export default async function MobileSidebar() {
   return (

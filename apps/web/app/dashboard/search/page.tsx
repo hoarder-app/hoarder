@@ -1,16 +1,12 @@
 "use client";
 
-import { Suspense, useRef } from "react";
+import { Suspense } from "react";
 import BookmarksGrid from "@/components/dashboard/bookmarks/BookmarksGrid";
-import { SearchInput } from "@/components/dashboard/search/SearchInput";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { useBookmarkSearch } from "@/lib/hooks/bookmark-search";
 
 function SearchComp() {
   const { data } = useBookmarkSearch();
-
-  const inputRef: React.MutableRefObject<HTMLInputElement | null> =
-    useRef<HTMLInputElement | null>(null);
 
   return (
     <div className="flex flex-col gap-3">

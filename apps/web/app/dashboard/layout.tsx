@@ -1,9 +1,10 @@
+import Header from "@/components/dashboard/header/Header";
 import MobileSidebar from "@/components/dashboard/sidebar/ModileSidebar";
 import Sidebar from "@/components/dashboard/sidebar/Sidebar";
 import DemoModeBanner from "@/components/DemoModeBanner";
 import { Separator } from "@/components/ui/separator";
 import ValidAccountCheck from "@/components/utils/ValidAccountCheck";
-import Header from "@/components/dashboard/header/Header";
+
 import serverConfig from "@hoarder/shared/config";
 
 export default async function Dashboard({
@@ -28,9 +29,9 @@ export default async function Dashboard({
             <Separator />
           </div>
           {modal}
-          <div className="container min-h-30 p-4">{children}</div>
+          <div className="min-h-30 container p-4">{children}</div>
         </main>
-    </div>
+      </div>
     </div>
   );
 }

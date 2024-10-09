@@ -1,10 +1,10 @@
 import React from "react";
 import Link from "next/link";
-import { SearchInput } from "@/components/dashboard/search/SearchInput";
+import { redirect } from "next/navigation";
 import GlobalActions from "@/components/dashboard/GlobalActions";
 import ProfileOptions from "@/components/dashboard/header/ProfileOptions";
+import { SearchInput } from "@/components/dashboard/search/SearchInput";
 import HoarderLogo from "@/components/HoarderIcon";
-import { Settings, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -12,16 +12,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { getServerAuthSession } from "@/server/auth";
-import { redirect } from "next/navigation";
+import { Settings, Shield } from "lucide-react";
 
 export default async function Header() {
-
   const session = await getServerAuthSession();
-if (!session) {
-  redirect("/");
-}
+  if (!session) {
+    redirect("/");
+  }
 
-const adminItem =
+  const adminItem =
     session.user.role == "admin"
       ? [
           {
@@ -32,27 +31,27 @@ const adminItem =
         ]
       : [];
 
-const headerItems = [
-  ...adminItem,
-  {
-    name: "Settings",
-    icon: <Settings size={18} />,
-    path: "/dashboard/settings",
-  },
-];
+  const headerItems = [
+    ...adminItem,
+    {
+      name: "Settings",
+      icon: <Settings size={18} />,
+      path: "/dashboard/settings",
+    },
+  ];
 
   return (
-    <header className="sticky h-16 top-0 left-0 right-0 flex items-center justify-between p-4 bg-white shadow z-50 overflow-auto">
+    <header className="sticky left-0 right-0 top-0 z-50 flex h-16 items-center justify-between overflow-auto bg-white p-4 shadow">
       <div className="hidden items-center sm:flex">
         <Link href={"/dashboard/bookmarks"} className="w-56">
           <HoarderLogo height={20} gap="8px" />
         </Link>
       </div>
-      <div className="flex gap-2 w-full">
+      <div className="flex w-full gap-2">
         <SearchInput className="min-w-40 bg-muted" />
         <GlobalActions />
       </div>
-      <div className="items-center hidden sm:flex">
+      <div className="hidden items-center sm:flex">
         {headerItems.map((item) => (
           <Tooltip key={item.name} delayDuration={0}>
             <TooltipTrigger asChild>
