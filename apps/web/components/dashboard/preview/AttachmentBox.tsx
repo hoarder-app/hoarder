@@ -44,6 +44,7 @@ export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
     screenshot: <Camera className="size-4" />,
     fullPageArchive: <Archive className="size-4" />,
     bannerImage: <Image className="size-4" />,
+    video: <Paperclip className="size-4" />,
     bookmarkAsset: <Paperclip className="size-4" />,
     unknown: <Paperclip className="size-4" />,
   };

@@ -22,9 +22,10 @@ import puppeteer from "puppeteer-extra";
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
+import { getBookmarkDetails, updateAsset } from "workerUtils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
-import { db, HoarderDBTransaction } from "@hoarder/db";
+import { db } from "@hoarder/db";
 import {
   assets,
   AssetTypes,
@@ -35,12 +36,12 @@ import {
 import { DequeuedJob, Runner } from "@hoarder/queue";
 import {
   ASSET_TYPES,
-  deleteAsset,
   getAssetSize,
   IMAGE_ASSET_TYPES,
   newAssetId,
   saveAsset,
   saveAssetFromFile,
+  silentDeleteAsset,
   SUPPORTED_UPLOAD_ASSET_TYPES,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
@@ -49,6 +50,7 @@ import {
   LinkCrawlerQueue,
   OpenAIQueue,
   triggerSearchReindex,
+  triggerVideoWorker,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
@@ -205,33 +207,6 @@ async function changeBookmarkStatus(
       crawlStatus,
     })
     .where(eq(bookmarkLinks.id, bookmarkId));
-}
-
-async function getBookmarkDetails(bookmarkId: string) {
-  const bookmark = await db.query.bookmarks.findFirst({
-    where: eq(bookmarks.id, bookmarkId),
-    with: {
-      link: true,
-      assets: true,
-    },
-  });
-
-  if (!bookmark || !bookmark.link) {
-    throw new Error("The bookmark either doesn't exist or is not a link");
-  }
-  return {
-    url: bookmark.link.url,
-    userId: bookmark.userId,
-    screenshotAssetId: bookmark.assets.find(
-      (a) => a.assetType == AssetTypes.LINK_SCREENSHOT,
-    )?.id,
-    imageAssetId: bookmark.assets.find(
-      (a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE,
-    )?.id,
-    fullPageArchiveAssetId: bookmark.assets.find(
-      (a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE,
-    )?.id,
-  };
 }
 
 /**
@@ -609,12 +584,8 @@ async function crawlAndParseUrl(
 
   // Delete the old assets if any
   await Promise.all([
-    oldScreenshotAssetId
-      ? deleteAsset({ userId, assetId: oldScreenshotAssetId }).catch(() => ({}))
-      : {},
-    oldImageAssetId
-      ? deleteAsset({ userId, assetId: oldImageAssetId }).catch(() => ({}))
-      : {},
+    silentDeleteAsset(userId, oldScreenshotAssetId),
+    silentDeleteAsset(userId, oldImageAssetId),
   ]);
 
   return async () => {
@@ -641,9 +612,7 @@ async function crawlAndParseUrl(
         );
       });
       if (oldFullPageArchiveAssetId) {
-        await deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
-          () => ({}),
-        );
+        silentDeleteAsset(userId, oldFullPageArchiveAssetId);
       }
     }
   };
@@ -713,17 +682,9 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
   // Update the search index
   await triggerSearchReindex(bookmarkId);
 
+  // Trigger a potential download of a video from the URL
+  await triggerVideoWorker(bookmarkId, url);
+
   // Do the archival as a separate last step as it has the potential for failure
   await archivalLogic();
-}
-
-async function updateAsset(
-  oldAssetId: string | undefined,
-  newAsset: DBAssetType,
-  txn: HoarderDBTransaction,
-) {
-  if (oldAssetId) {
-    await txn.delete(assets).where(eq(assets.id, oldAssetId));
-  }
-  await txn.insert(assets).values(newAsset);
 }

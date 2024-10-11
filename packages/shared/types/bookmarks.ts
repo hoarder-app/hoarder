@@ -15,6 +15,7 @@ export const zAssetTypesSchema = z.enum([
   "screenshot",
   "bannerImage",
   "fullPageArchive",
+  "video",
   "bookmarkAsset",
   "unknown",
 ]);
@@ -34,6 +35,7 @@ export const zBookmarkedLinkSchema = z.object({
   imageAssetId: z.string().nullish(),
   screenshotAssetId: z.string().nullish(),
   fullPageArchiveAssetId: z.string().nullish(),
+  videoAssetId: z.string().nullish(),
   favicon: z.string().url().nullish(),
   htmlContent: z.string().nullish(),
   crawledAt: z.date().nullish(),
