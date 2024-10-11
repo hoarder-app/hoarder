@@ -211,6 +211,8 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
         imageAssetId: assets.find(
           (a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE,
         )?.id,
+        videoAssetId: assets.find((a) => a.assetType == AssetTypes.LINK_VIDEO)
+          ?.id,
         ...link,
       };
       break;

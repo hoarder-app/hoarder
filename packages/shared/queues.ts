@@ -78,3 +78,26 @@ export async function triggerSearchDeletion(bookmarkId: string) {
     type: "delete",
   });
 }
+
+export const zvideoRequestSchema = z.object({
+  bookmarkId: z.string(),
+  url: z.string(),
+});
+export type ZVideoRequest = z.infer<typeof zvideoRequestSchema>;
+
+export const VideoWorkerQueue = new SqliteQueue<ZVideoRequest>(
+  "video_queue",
+  queueDB,
+  {
+    defaultJobArgs: {
+      numRetries: 5,
+    },
+  },
+);
+
+export async function triggerVideoWorker(bookmarkId: string, url: string) {
+  await VideoWorkerQueue.enqueue({
+    bookmarkId,
+    url,
+  });
+}

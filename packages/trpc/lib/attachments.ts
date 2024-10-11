@@ -8,6 +8,7 @@ export function mapDBAssetTypeToUserType(assetType: AssetTypes): ZAssetType {
     [AssetTypes.LINK_SCREENSHOT]: "screenshot",
     [AssetTypes.LINK_FULL_PAGE_ARCHIVE]: "fullPageArchive",
     [AssetTypes.LINK_BANNER_IMAGE]: "bannerImage",
+    [AssetTypes.LINK_VIDEO]: "video",
     [AssetTypes.BOOKMARK_ASSET]: "bookmarkAsset",
     [AssetTypes.UNKNOWN]: "bannerImage",
   };
@@ -21,6 +22,7 @@ export function mapSchemaAssetTypeToDB(
     screenshot: AssetTypes.LINK_SCREENSHOT,
     fullPageArchive: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
     bannerImage: AssetTypes.LINK_BANNER_IMAGE,
+    video: AssetTypes.LINK_VIDEO,
     bookmarkAsset: AssetTypes.BOOKMARK_ASSET,
     unknown: AssetTypes.UNKNOWN,
   };
@@ -32,6 +34,7 @@ export function humanFriendlyNameForAssertType(type: ZAssetType) {
     screenshot: "Screenshot",
     fullPageArchive: "Full Page Archive",
     bannerImage: "Banner Image",
+    video: "Video",
     bookmarkAsset: "Bookmark Asset",
     unknown: "Unknown",
   };
@@ -43,6 +46,7 @@ export function isAllowedToAttachAsset(type: ZAssetType) {
     screenshot: true,
     fullPageArchive: false,
     bannerImage: true,
+    video: false,
     bookmarkAsset: false,
     unknown: false,
   };
@@ -54,6 +58,7 @@ export function isAllowedToDetachAsset(type: ZAssetType) {
     screenshot: true,
     fullPageArchive: true,
     bannerImage: true,
+    video: true,
     bookmarkAsset: false,
     unknown: false,
   };
