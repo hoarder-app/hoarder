@@ -60,7 +60,11 @@ export function createTabsTrigger(
   configSubSection: ConfigSubSection,
 ) {
   return (
-    <TabsTrigger value={configSectionName} key={configSectionName}>
+    <TabsTrigger
+      className="flex items-center gap-2 p-3"
+      value={configSectionName}
+      key={configSectionName}
+    >
       {configSubSection[SectionSymbol].name}
     </TabsTrigger>
   );

@@ -10,6 +10,7 @@ import ServerStats from "@/components/dashboard/admin/ServerStats";
 import UserList from "@/components/dashboard/admin/UserList";
 import LoadingSpinner from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Info } from "lucide-react";
 import { useSession } from "next-auth/react";
 
 export default function AdminPage() {
@@ -26,10 +27,22 @@ export default function AdminPage() {
   }
   return (
     <>
-      <Tabs defaultValue="information" className="w-full">
-        <TabsList className="grid w-full grid-cols-6 p-5">
-          <TabsTrigger value="information">Information</TabsTrigger>
-          <DynamicConfigTabTriggers key={"asdf"}></DynamicConfigTabTriggers>
+      <Tabs
+        defaultValue="information"
+        orientation="horizontal"
+        className="flex flex-col gap-1"
+      >
+        <TabsList className="flex justify-start">
+          <TabsTrigger
+            className="flex items-center gap-2 p-3"
+            value="information"
+          >
+            <Info className="size-4" />
+            Information
+          </TabsTrigger>
+          <DynamicConfigTabTriggers
+            key={"configTabTriggers"}
+          ></DynamicConfigTabTriggers>
         </TabsList>
         <TabsContent value="information">
           <div className="rounded-md border bg-background p-4">
