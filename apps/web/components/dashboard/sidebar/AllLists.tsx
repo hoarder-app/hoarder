@@ -47,12 +47,6 @@ export default function AllLists({
         path={`/dashboard/favourites`}
         linkClassName="py-0.5"
       />
-      <SidebarItem
-        logo={<span className="text-lg">🗄️</span>}
-        name="Archive"
-        path={`/dashboard/archive`}
-        linkClassName="py-0.5"
-      />
 
       {
         <CollapsibleBookmarkLists
