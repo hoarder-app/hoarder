@@ -1,16 +1,6 @@
 import { count, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import {
-  ConfigKeys,
-  ConfigSectionName,
-  serverConfig,
-} from "@hoarder/db/config/config";
-import {
-  deleteConfigValue,
-  getConfigValueFromDB,
-  storeConfigValue,
-} from "@hoarder/db/config/configDatabaseUtils";
 import { bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
 import {
   LinkCrawlerQueue,
@@ -153,52 +143,4 @@ export const adminAppRouter = router({
       bookmarkIds.map((b) => OpenAIQueue.enqueue({ bookmarkId: b.id })),
     );
   }),
-  getConfig: adminProcedure
-    .output(
-      z.record(
-        z.string(),
-        z.record(z.string(), z.union([z.boolean(), z.number(), z.string()])),
-      ),
-    )
-    .query(async () => {
-      console.log("retrieving config");
-      const returnValue: Record<
-        string,
-        Record<string, boolean | string | number>
-      > = {};
-      for (const configSectionName of Object.values(ConfigSectionName)) {
-        const values: Record<string, boolean | string | number> = {};
-        const configSubSection = serverConfig[configSectionName];
-        for (const key in configSubSection) {
-          values[key] = await getConfigValueFromDB(configSubSection[key]);
-        }
-        returnValue[configSectionName] = values;
-      }
-      return returnValue;
-    }),
-  storeConfig: adminProcedure
-    .input(
-      z.object({
-        configSectionName: z.nativeEnum(ConfigSectionName),
-        values: z.record(
-          z.nativeEnum(ConfigKeys),
-          z.union([z.boolean(), z.number(), z.string()]),
-        ),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      const configSection = serverConfig[input.configSectionName];
-      const values = input.values;
-
-      // Fill the default value into the config for everything that was not provided (=all the hidden fields, so we need to reset them)
-      for (const [configKey, configValue] of Object.entries(configSection)) {
-        // Value is available to store --> store
-        if (configKey in values) {
-          await storeConfigValue(configValue, values[configKey as ConfigKeys]!);
-        } else {
-          // Value is not available --> delete from the config again. This prevents validation errors and keeps the db clean
-          await deleteConfigValue(configValue);
-        }
-      }
-    }),
 });
