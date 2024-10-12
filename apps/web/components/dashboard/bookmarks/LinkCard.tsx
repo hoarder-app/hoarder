@@ -44,7 +44,7 @@ function LinkImage({
     />
   );
 
-  const imageDetails = getBookmarkLinkImageUrl(link);
+  const imageDetails = getBookmarkLinkImageUrl(link, true);
 
   let img: React.ReactNode;
   if (isBookmarkStillCrawling(bookmark)) {
