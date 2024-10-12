@@ -66,7 +66,7 @@ export default async function Sidebar() {
       </div>
       <Separator />
       <AllLists initialData={lists} />
-      <div className="mt-auto flex items-center border-t pt-2">
+      <div className="mt-auto flex items-center border-t pt-2 text-sm text-gray-400">
         Hoarder v{serverConfig.serverVersion}
       </div>
     </aside>

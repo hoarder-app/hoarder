@@ -10,7 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, Moon, Paintbrush, Sun } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { LogOut, Moon, Paintbrush, Settings, Shield, Sun } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 
@@ -49,7 +50,32 @@ export default function SidebarProfileOptions() {
           {session.user.name?.charAt(0) ?? "U"}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-fit">
+      <DropdownMenuContent className="mr-2 min-w-64 p-2">
+        <div className="flex gap-2">
+          <div className="border-new-gray-200 flex aspect-square size-11 items-center justify-center rounded-full border-4 bg-black p-0 text-white">
+            {session.user.name?.charAt(0) ?? "U"}
+          </div>
+          <div className="flex flex-col">
+            <p>{session.user.name}</p>
+            <p className="text-sm text-gray-400">{session.user.email}</p>
+          </div>
+        </div>
+        <Separator className="my-2" />
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard/settings">
+            <Settings className="mr-2 size-4" />
+            User Settings
+          </Link>
+        </DropdownMenuItem>
+        {session.user.role == "admin" && (
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/admin">
+              <Shield className="mr-2 size-4" />
+              Admin Settings
+            </Link>
+          </DropdownMenuItem>
+        )}
+        <Separator className="my-2" />
         <DropdownMenuItem asChild>
           <Link href="/dashboard/cleanups">
             <Paintbrush className="mr-2 size-4" />
@@ -59,6 +85,7 @@ export default function SidebarProfileOptions() {
         <DropdownMenuItem onClick={toggleTheme}>
           <DarkModeToggle />
         </DropdownMenuItem>
+        <Separator className="my-2" />
         <DropdownMenuItem
           onClick={() =>
             signOut({
