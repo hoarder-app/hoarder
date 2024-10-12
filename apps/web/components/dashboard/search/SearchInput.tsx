@@ -29,7 +29,6 @@ const SearchInput = React.forwardRef<
       value={value}
       onChange={onChange}
       placeholder="Search"
-      defaultValue={searchQuery}
       className={className}
       {...props}
     />
