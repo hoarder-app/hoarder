@@ -104,6 +104,9 @@ class OllamaInferenceClient implements InferenceClient {
       format: "json",
       stream: true,
       keep_alive: serverConfig.inference.ollamaKeepAlive,
+      options: {
+        num_ctx: serverConfig.inference.contextLength,
+      },
       messages: [
         { role: "user", content: prompt, images: image ? [image] : undefined },
       ],

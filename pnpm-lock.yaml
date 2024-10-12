@@ -738,8 +738,8 @@ importers:
         specifier: ^5.43.4
         version: 5.45.0
       ollama:
-        specifier: ^0.5.0
-        version: 0.5.0
+        specifier: ^0.5.9
+        version: 0.5.9
       openai:
         specifier: ^4.67.1
         version: 4.67.1(zod@3.22.4)
@@ -9412,8 +9412,8 @@ packages:
     resolution: {integrity: sha512-IF4PcGgzAr6XXSff26Sk/+P4KZFJVuHAJZj3wgO3vX2bMdNVp/QXTP3P7CEm9V1IdG8lDLY3HhiqpsE/nOwpPw==}
     engines: {node: ^10.13.0 || >=12.0.0}
 
-  ollama@0.5.0:
-    resolution: {integrity: sha512-CRtRzsho210EGdK52GrUMohA2pU+7NbgEaBG3DcYeRmvQthDO7E2LHOkLlUUeaYUlNmEd8icbjC02ug9meSYnw==}
+  ollama@0.5.9:
+    resolution: {integrity: sha512-F/KZuDRC+ZsVCuMvcOYuQ6zj42/idzCkkuknGyyGVmNStMZ/sU3jQpvhnl4SyC0+zBzLiKNZJnJeuPFuieWZvQ==}
 
   on-finished@2.3.0:
     resolution: {integrity: sha512-ikqdkGAAyf/X/gPhXGvfgAytDZtDbr+bkNUJ0N9h5MI/dmdgCs3l6hoHrcUv41sRKew3jIwrp4qQDXiK99Utww==}
@@ -25611,7 +25611,7 @@ snapshots:
   oidc-token-hash@5.0.3:
     dev: false
 
-  ollama@0.5.0:
+  ollama@0.5.9:
     dependencies:
       whatwg-fetch: 3.6.20
     dev: false

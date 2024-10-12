@@ -1,3 +1,17 @@
+// TODO: Use a proper tokenizer
+function calculateNumTokens(text: string) {
+  return text.split(" ").length;
+}
+
+function truncateContent(content: string, length: number) {
+  let words = content.split(" ");
+  if (words.length > length) {
+    words = words.slice(0, length);
+    content = words.join(" ");
+  }
+  return content;
+}
+
 export function buildImagePrompt(lang: string, customPrompts: string[]) {
   return `
 You are a bot in a read-it-later app and your responsibility is to help with automatic tagging.
@@ -15,8 +29,9 @@ export function buildTextPrompt(
   lang: string,
   customPrompts: string[],
   content: string,
+  contextLength: number,
 ) {
-  return `
+  const constructPrompt = (c: string) => `
 You are a bot in a read-it-later app and your responsibility is to help with automatic tagging.
 Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT END HERE" and suggest relevant tags that describe its key themes, topics, and main ideas. The rules are:
 - Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres.
@@ -27,7 +42,11 @@ Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT 
 - If there are no good tags, leave the array empty.
 ${customPrompts && customPrompts.map((p) => `- ${p}`).join("\n")}
 CONTENT START HERE
-${content}
+${c}
 CONTENT END HERE
 You must respond in JSON with the key "tags" and the value is an array of string tags.`;
+
+  const promptSize = calculateNumTokens(constructPrompt(""));
+  const truncatedContent = truncateContent(content, contextLength - promptSize);
+  return constructPrompt(truncatedContent);
 }

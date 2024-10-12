@@ -24,6 +24,7 @@ const allEnv = z.object({
   INFERENCE_JOB_TIMEOUT_SEC: z.coerce.number().default(30),
   INFERENCE_TEXT_MODEL: z.string().default("gpt-4o-mini"),
   INFERENCE_IMAGE_MODEL: z.string().default("gpt-4o-mini"),
+  INFERENCE_CONTEXT_LENGTH: z.coerce.number().default(2048),
   CRAWLER_HEADLESS_BROWSER: stringBool("true"),
   BROWSER_WEB_URL: z.string().url().optional(),
   BROWSER_WEBSOCKET_URL: z.string().url().optional(),
@@ -74,6 +75,7 @@ const serverConfigSchema = allEnv.transform((val) => {
       textModel: val.INFERENCE_TEXT_MODEL,
       imageModel: val.INFERENCE_IMAGE_MODEL,
       inferredTagLang: val.INFERENCE_LANG,
+      contextLength: val.INFERENCE_CONTEXT_LENGTH,
     },
     crawler: {
       numWorkers: val.CRAWLER_NUM_WORKERS,

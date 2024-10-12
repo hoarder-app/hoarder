@@ -23,7 +23,7 @@ import {
 
 import type { InferenceClient } from "./inference";
 import { InferenceClientFactory } from "./inference";
-import { readPDFText, truncateContent } from "./utils";
+import { readPDFText } from "./utils";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
@@ -102,10 +102,7 @@ async function buildPrompt(
       );
     }
 
-    let content = bookmark.link.content;
-    if (content) {
-      content = truncateContent(content);
-    }
+    const content = bookmark.link.content;
     return buildTextPrompt(
       serverConfig.inference.inferredTagLang,
       prompts,
@@ -113,16 +110,16 @@ async function buildPrompt(
 Title: ${bookmark.link.title ?? ""}
 Description: ${bookmark.link.description ?? ""}
 Content: ${content ?? ""}`,
+      serverConfig.inference.contextLength,
     );
   }
 
   if (bookmark.text) {
-    const content = truncateContent(bookmark.text.text ?? "");
-    // TODO: Ensure that the content doesn't exceed the context length of openai
     return buildTextPrompt(
       serverConfig.inference.inferredTagLang,
       prompts,
-      content,
+      bookmark.text.text ?? "",
+      serverConfig.inference.contextLength,
     );
   }
 
@@ -215,7 +212,8 @@ async function inferTagsFromPDF(
   const prompt = buildTextPrompt(
     serverConfig.inference.inferredTagLang,
     await fetchCustomPrompts(bookmark.userId, "text"),
-    `Content: ${truncateContent(pdfParse.text)}`,
+    `Content: ${pdfParse.text}`,
+    serverConfig.inference.contextLength,
   );
   return inferenceClient.inferFromText(prompt);
 }

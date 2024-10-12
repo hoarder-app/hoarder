@@ -291,6 +291,7 @@ export function PromptDemo() {
             .filter((p) => p.appliesTo == "text" || p.appliesTo == "all")
             .map((p) => p.text),
           "\n<CONTENT_HERE>\n",
+          /* context length */ 1024 /* The value here doesn't matter */,
         ).trim()}
       </code>
       <p>Image Prompt</p>
