@@ -45,7 +45,7 @@ Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic taggin
 :::warning
 
 - The quality of the tags you'll get will depend on the quality of the model you choose.
-- Running local models is a recent addition and not as battle tested as using OpenAI, so proceed with care (and potentially expect a bunch of inference failures).
+- You might want to tune the `INFERENCE_CONTEXT_LENGTH` as the default is quite small. The larger the value, the better the quality of the tags, but the more expensive the inference will be (money-wise on OpenAI and resource-wise on ollama).
   :::
 
 | Name                      | Required | Default     | Description                                                                                                                                                                                                                                                                                                                                                                           |
