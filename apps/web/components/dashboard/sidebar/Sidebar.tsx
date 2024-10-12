@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
-import { Archive, Github, Home, Search, Tag } from "lucide-react";
+import { Archive, Home, Search, Tag } from "lucide-react";
 
 import serverConfig from "@hoarder/shared/config";
 
@@ -67,7 +67,7 @@ export default async function Sidebar() {
       <Separator />
       <AllLists initialData={lists} />
       <div className="mt-auto flex items-center border-t pt-2">
-        <Github size={18} /> Hoarder
+        Hoarder v{serverConfig.serverVersion}
       </div>
     </aside>
   );
