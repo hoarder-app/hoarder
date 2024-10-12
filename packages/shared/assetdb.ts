@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { Glob } from "glob";
 import { z } from "zod";
 
 import serverConfig from "./config";
@@ -120,6 +121,25 @@ export async function readAsset({
   return { asset, metadata };
 }
 
+export async function readAssetMetadata({
+  userId,
+  assetId,
+}: {
+  userId: string;
+  assetId: string;
+}) {
+  const assetDir = getAssetDir(userId, assetId);
+
+  const metadataStr = await fs.promises.readFile(
+    path.join(assetDir, "metadata.json"),
+    {
+      encoding: "utf8",
+    },
+  );
+
+  return zAssetMetadataSchema.parse(JSON.parse(metadataStr));
+}
+
 export async function getAssetSize({
   userId,
   assetId,
@@ -153,4 +173,26 @@ export async function deleteUserAssets({ userId }: { userId: string }) {
     return;
   }
   await fs.promises.rm(userDir, { recursive: true });
+}
+
+export async function* getAllAssets() {
+  const g = new Glob(`/**/**/asset.bin`, {
+    maxDepth: 3,
+    root: ROOT_PATH,
+    cwd: ROOT_PATH,
+    absolute: false,
+  });
+  for await (const file of g) {
+    const [userId, assetId] = file.split("/").slice(0, 2);
+    const [size, metadata] = await Promise.all([
+      getAssetSize({ userId, assetId }),
+      readAssetMetadata({ userId, assetId }),
+    ]);
+    yield {
+      userId,
+      assetId,
+      ...metadata,
+      size,
+    };
+  }
 }

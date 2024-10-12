@@ -65,6 +65,22 @@ export const SearchIndexingQueue = new SqliteQueue<ZSearchIndexingRequest>(
   },
 );
 
+// Tidy Assets Worker
+export const zTidyAssetsRequestSchema = z.object({
+  cleanDanglingAssets: z.boolean().optional().default(false),
+  syncAssetMetadata: z.boolean().optional().default(false),
+});
+export type ZTidyAssetsRequest = z.infer<typeof zTidyAssetsRequestSchema>;
+export const TidyAssetsQueue = new SqliteQueue<ZTidyAssetsRequest>(
+  "tidy_assets_queue",
+  queueDB,
+  {
+    defaultJobArgs: {
+      numRetries: 1,
+    },
+  },
+);
+
 export async function triggerSearchReindex(bookmarkId: string) {
   await SearchIndexingQueue.enqueue({
     bookmarkId,

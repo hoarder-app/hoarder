@@ -1,11 +1,12 @@
-import { count, eq } from "drizzle-orm";
+import { count, eq, sum } from "drizzle-orm";
 import { z } from "zod";
 
-import { bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
+import { assets, bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
   SearchIndexingQueue,
+  TidyAssetsQueue,
   triggerSearchReindex,
 } from "@hoarder/shared/queues";
 
@@ -30,6 +31,9 @@ export const adminAppRouter = router({
         indexingStats: z.object({
           queued: z.number(),
         }),
+        tidyAssetsStats: z.object({
+          queued: z.number(),
+        }),
       }),
     )
     .query(async ({ ctx }) => {
@@ -49,6 +53,9 @@ export const adminAppRouter = router({
         queuedInferences,
         [{ value: pendingInference }],
         [{ value: failedInference }],
+
+        // Tidy Assets
+        queuedTidyAssets,
       ] = await Promise.all([
         ctx.db.select({ value: count() }).from(users),
         ctx.db.select({ value: count() }).from(bookmarks),
@@ -77,6 +84,9 @@ export const adminAppRouter = router({
           .select({ value: count() })
           .from(bookmarks)
           .where(eq(bookmarks.taggingStatus, "failure")),
+
+        // Tidy Assets
+        TidyAssetsQueue.stats(),
       ]);
 
       return {
@@ -94,6 +104,9 @@ export const adminAppRouter = router({
         },
         indexingStats: {
           queued: queuedIndexing.pending + queuedIndexing.pending_retry,
+        },
+        tidyAssetsStats: {
+          queued: queuedTidyAssets.pending + queuedTidyAssets.pending_retry,
         },
       };
     }),
@@ -143,4 +156,52 @@ export const adminAppRouter = router({
       bookmarkIds.map((b) => OpenAIQueue.enqueue({ bookmarkId: b.id })),
     );
   }),
+  tidyAssets: adminProcedure.mutation(async () => {
+    await TidyAssetsQueue.enqueue({
+      cleanDanglingAssets: true,
+      syncAssetMetadata: true,
+    });
+  }),
+  userStats: adminProcedure
+    .output(
+      z.record(
+        z.string(),
+        z.object({
+          numBookmarks: z.number(),
+          assetSizes: z.number(),
+        }),
+      ),
+    )
+    .query(async ({ ctx }) => {
+      const [userIds, bookmarkStats, assetStats] = await Promise.all([
+        ctx.db.select({ id: users.id }).from(users),
+        ctx.db
+          .select({ id: bookmarks.userId, value: count() })
+          .from(bookmarks)
+          .groupBy(bookmarks.userId),
+        ctx.db
+          .select({ id: assets.userId, value: sum(assets.size) })
+          .from(assets)
+          .groupBy(assets.userId),
+      ]);
+
+      const results: Record<
+        string,
+        { numBookmarks: number; assetSizes: number }
+      > = {};
+      for (const user of userIds) {
+        results[user.id] = {
+          numBookmarks: 0,
+          assetSizes: 0,
+        };
+      }
+      for (const stat of bookmarkStats) {
+        results[stat.id].numBookmarks = stat.value;
+      }
+      for (const stat of assetStats) {
+        results[stat.id].assetSizes = parseInt(stat.value ?? "0");
+      }
+
+      return results;
+    }),
 });

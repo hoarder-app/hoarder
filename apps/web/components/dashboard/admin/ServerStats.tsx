@@ -122,6 +122,12 @@ export default function ServerStats() {
               <TableCell>{serverStats.inferenceStats.pending}</TableCell>
               <TableCell>{serverStats.inferenceStats.failed}</TableCell>
             </TableRow>
+            <TableRow>
+              <TableCell>Tidy Assets Jobs</TableCell>
+              <TableCell>{serverStats.tidyAssetsStats.queued}</TableCell>
+              <TableCell>-</TableCell>
+              <TableCell>-</TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </div>
