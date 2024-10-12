@@ -3,6 +3,7 @@ import * as bcrypt from "bcryptjs";
 
 import { db } from "@hoarder/db";
 import { apiKeys } from "@hoarder/db/schema";
+import serverConfig from "@hoarder/shared/config";
 
 // API Keys
 
@@ -79,6 +80,9 @@ export async function hashPassword(password: string) {
 }
 
 export async function validatePassword(email: string, password: string) {
+  if (serverConfig.auth.disablePasswordAuth) {
+    throw new Error("Password authentication is currently disabled");
+  }
   const user = await db.query.users.findFirst({
     where: (u, { eq }) => eq(u.email, email),
   });

@@ -31,9 +31,9 @@ export const usersAppRouter = router({
     .mutation(async ({ input, ctx }) => {
       if (
         serverConfig.auth.disableSignups ||
-        serverConfig.auth.disablePasswordSignups
+        serverConfig.auth.disablePasswordAuth
       ) {
-        const errorMessage = serverConfig.auth.disablePasswordSignups
+        const errorMessage = serverConfig.auth.disablePasswordAuth
           ? "Local Signups are disabled in the server config. Use OAuth instead!"
           : "Signups are disabled in server config";
         throw new TRPCError({

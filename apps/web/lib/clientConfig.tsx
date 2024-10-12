@@ -6,7 +6,7 @@ export const ClientConfigCtx = createContext<ClientConfig>({
   demoMode: undefined,
   auth: {
     disableSignups: false,
-    disablePasswordSignups: false,
+    disablePasswordAuth: false,
   },
   inference: {
     inferredTagLang: "english",
