@@ -1,5 +1,5 @@
 ################# Base Builder ##############
-FROM node:21-alpine AS base
+FROM node:22-alpine AS base
 
 WORKDIR /app
 ENV PNPM_HOME="/pnpm"
@@ -31,7 +31,7 @@ RUN (cd apps/cli && pnpm build)
 
 ################# The All-in-one builder ##############
 
-FROM node:21-alpine AS aio_builder
+FROM node:22-alpine AS aio_builder
 LABEL org.opencontainers.image.source="https://github.com/hoarder-app/hoarder"
 WORKDIR /app
 
@@ -125,7 +125,7 @@ RUN rm /etc/s6-overlay/s6-rc.d/svc-workers/dependencies.d/init-db-migration \
 
 ################# The cli ##############
 
-FROM node:21-alpine AS cli
+FROM node:22-alpine AS cli
 LABEL org.opencontainers.image.source="https://github.com/hoarder-app/hoarder"
 WORKDIR /app
 

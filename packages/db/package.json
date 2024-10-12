@@ -13,7 +13,7 @@
     "@auth/core": "^0.27.0",
     "@hoarder/shared": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.2",
-    "better-sqlite3": "^9.4.3",
+    "better-sqlite3": "^11.3.0",
     "dotenv": "^16.4.1",
     "drizzle-orm": "^0.33.0",
     "tsx": "^4.7.1"
@@ -23,7 +23,7 @@
     "@hoarder/prettier-config": "workspace:^0.1.0",
     "@hoarder/tsconfig": "workspace:^0.1.0",
     "@tsconfig/node21": "^21.0.1",
-    "@types/better-sqlite3": "^7.6.9",
+    "@types/better-sqlite3": "^7.6.11",
     "drizzle-kit": "^0.24.02"
   },
   "eslintConfig": {

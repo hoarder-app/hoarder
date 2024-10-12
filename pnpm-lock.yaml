@@ -542,8 +542,8 @@ importers:
         specifier: 11.0.0-next-beta.308
         version: 11.0.0-next-beta.308
       better-sqlite3:
-        specifier: ^9.4.3
-        version: 9.4.3
+        specifier: ^11.3.0
+        version: 11.3.0
       cheerio:
         specifier: ^1.0.0
         version: 1.0.0
@@ -558,7 +558,7 @@ importers:
         version: 1.11.10
       drizzle-orm:
         specifier: ^0.33.0
-        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0)
+        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.2.0)
       fastest-levenshtein:
         specifier: ^1.0.16
         version: 1.0.16
@@ -700,7 +700,7 @@ importers:
         version: 16.4.5
       drizzle-orm:
         specifier: ^0.33.0
-        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0)
+        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.2.0)
       execa:
         specifier: ^9.1.0
         version: 9.1.0
@@ -836,14 +836,14 @@ importers:
         specifier: ^2.2.2
         version: 2.2.2
       better-sqlite3:
-        specifier: ^9.4.3
-        version: 9.4.3
+        specifier: ^11.3.0
+        version: 11.3.0
       dotenv:
         specifier: ^16.4.1
         version: 16.4.5
       drizzle-orm:
         specifier: ^0.33.0
-        version: 0.33.0(@types/better-sqlite3@7.6.9)(better-sqlite3@9.4.3)
+        version: 0.33.0(@types/better-sqlite3@7.6.11)(better-sqlite3@11.3.0)
       tsx:
         specifier: ^4.7.1
         version: 4.7.1
@@ -861,8 +861,8 @@ importers:
         specifier: ^21.0.1
         version: 21.0.1
       '@types/better-sqlite3':
-        specifier: ^7.6.9
-        version: 7.6.9
+        specifier: ^7.6.11
+        version: 7.6.11
       drizzle-kit:
         specifier: ^0.24.02
         version: 0.24.2
@@ -873,11 +873,11 @@ importers:
         specifier: ^0.4.1
         version: 0.4.1
       better-sqlite3:
-        specifier: ^9.4.3
-        version: 9.4.3
+        specifier: ^11.3.0
+        version: 11.3.0
       drizzle-orm:
         specifier: ^0.33.0
-        version: 0.33.0(@types/better-sqlite3@7.6.9)(better-sqlite3@9.4.3)
+        version: 0.33.0(@types/better-sqlite3@7.6.11)(better-sqlite3@11.3.0)
       zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -892,8 +892,8 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/better-sqlite3':
-        specifier: ^7.6.9
-        version: 7.6.9
+        specifier: ^7.6.11
+        version: 7.6.11
       drizzle-kit:
         specifier: ^0.20.14
         version: 0.20.14
@@ -982,7 +982,7 @@ importers:
         version: 2.4.3
       drizzle-orm:
         specifier: ^0.33.0
-        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0)
+        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.2.0)
       superjson:
         specifier: ^2.2.1
         version: 2.2.1
@@ -4219,8 +4219,8 @@ packages:
   '@types/bcryptjs@2.4.6':
     resolution: {integrity: sha512-9xlo6R2qDs5uixm0bcIqCeMCE6HiQsIyel9KQySStiyqNl2tnj2mP3DX1Nf56MD6KMenNNlBBsy3LJ7gUEQPXQ==}
 
-  '@types/better-sqlite3@7.6.9':
-    resolution: {integrity: sha512-FvktcujPDj9XKMJQWFcl2vVl7OdRIqsSRX9b0acWwTmwLK9CF2eqo/FRcmMLNpugKoX/avA6pb7TorDLmpgTnQ==}
+  '@types/better-sqlite3@7.6.11':
+    resolution: {integrity: sha512-i8KcD3PgGtGBLl3+mMYA8PdKkButvPyARxA7IQAd6qeslht13qxb1zzO8dRCtE7U3IoJS782zDBAeoKiM695kg==}
 
   '@types/body-parser@1.19.5':
     resolution: {integrity: sha512-fB3Zu92ucau0iQ0JMCFQE7b/dv8Ot07NI3KaZIkIUNXq82k4eBAqUaneXfleGY9JWskeS9y+u0nXMyspcuQrCg==}
@@ -5098,8 +5098,8 @@ packages:
     resolution: {integrity: sha512-aVNobHnJqLiUelTaHat9DZ1qM2w0C0Eym4LPI/3JxOnSokGVdsl1T1kN7TFvsEAD8G47A6VKQ0TVHqbBnYMJlQ==}
     engines: {node: '>=12.0.0'}
 
-  better-sqlite3@9.4.3:
-    resolution: {integrity: sha512-ud0bTmD9O3uWJGuXDltyj3R47Nz0OHX8iqPOT5PMspGqlu/qQFn+5S2eFBUCrySpavTjFXbi4EgrfVvPAHlImw==}
+  better-sqlite3@11.3.0:
+    resolution: {integrity: sha512-iHt9j8NPYF3oKCNOO5ZI4JwThjt3Z6J6XrcwG85VNMVzv1ByqrHWv5VILEbCMFWDsoHhXvQ7oC8vgRXFAKgl9w==}
 
   big-integer@1.6.52:
     resolution: {integrity: sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==}
@@ -18303,7 +18303,7 @@ snapshots:
   '@types/bcryptjs@2.4.6':
     dev: true
 
-  '@types/better-sqlite3@7.6.9':
+  '@types/better-sqlite3@7.6.11':
     dependencies:
       '@types/node': 20.11.20
 
@@ -19586,7 +19586,7 @@ snapshots:
       open: 8.4.2
     dev: false
 
-  better-sqlite3@9.4.3:
+  better-sqlite3@11.3.0:
     dependencies:
       bindings: 1.5.0
       prebuild-install: 7.1.1
@@ -20975,16 +20975,16 @@ snapshots:
       - supports-color
     dev: true
 
-  drizzle-orm@0.33.0(@types/better-sqlite3@7.6.9)(better-sqlite3@9.4.3):
+  drizzle-orm@0.33.0(@types/better-sqlite3@7.6.11)(better-sqlite3@11.3.0):
     dependencies:
-      '@types/better-sqlite3': 7.6.9
-      better-sqlite3: 9.4.3
+      '@types/better-sqlite3': 7.6.11
+      better-sqlite3: 11.3.0
     dev: false
 
-  drizzle-orm@0.33.0(@types/react@18.2.58)(better-sqlite3@9.4.3)(react@18.2.0):
+  drizzle-orm@0.33.0(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.2.0):
     dependencies:
       '@types/react': 18.2.58
-      better-sqlite3: 9.4.3
+      better-sqlite3: 11.3.0
       react: 18.2.0
     dev: false
 
