@@ -1,3 +1,3 @@
-export function getAssetUrl(assetId: string) {
-  return `/api/assets/${assetId}`;
+export function getAssetUrl(assetId: string, preview?: boolean) {
+  return `/api/assets/${assetId}${preview ? "?preview" : ""}`;
 }
