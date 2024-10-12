@@ -63,7 +63,6 @@ Learn more about the costs of using openai [here](/openai).
     - Make sure that you `ollama pull`-ed the models that you want to use.
     - You might want to tune the `INFERENCE_CONTEXT_LENGTH` as the default is quite small. The larger the value, the better the quality of the tags, but the more expensive the inference will be.
 
-
 </details>
 
 ### 5. Start the service
@@ -76,12 +75,17 @@ docker compose up -d
 
 Then visit `http://localhost:3000` and you should be greeted with the Sign In page.
 
-### [Optional] 6. Setup quick sharing extensions
+### [Optional] 6. Enable optional features
+
+Check the [configuration docs](/configuration) for extra features to enable such as full page archival, full page screenshots, inference languages, etc.
+
+### [Optional] 7. Setup quick sharing extensions
 
 Go to the [quick sharing page](/quick-sharing) to install the mobile apps and the browser extensions. Those will help you hoard things faster!
 
 ## Updating
 
 Updating hoarder will depend on what you used for the `HOARDER_VERSION` env variable.
+
 - If you pinned the app to a specific version, bump the version and re-run `docker compose up -d`. This should pull the new version for you.
 - If you used `HOARDER_VERSION=release`, you'll need to force docker to pull the latest version by running `docker compose up --pull always -d`.
