@@ -67,16 +67,16 @@ const byUsageSorter = (a: ZGetTagResponse, b: ZGetTagResponse) => {
 const byNameSorter = (a: ZGetTagResponse, b: ZGetTagResponse) =>
   a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
 
-interface Tag {
-  id: string;
-  name: string;
-}
-
 export default function AllTagsView({
   initialData,
 }: {
   initialData: ZGetTagResponse[];
 }) {
+  interface Tag {
+    id: string;
+    name: string;
+  }
+
   const [draggingEnabled, setDraggingEnabled] = React.useState(false);
   const [sortByName, setSortByName] = React.useState(false);
 
@@ -121,14 +121,6 @@ export default function AllTagsView({
               onOpenDialog={handleOpenDialog}
             />
           ))}
-
-          {selectedTag && (
-            <DeleteTagConfirmationDialog
-              tag={selectedTag}
-              open={isDialogOpen}
-              setOpen={setIsDialogOpen}
-            />
-          )}
         </div>
       );
     } else {
@@ -138,6 +130,18 @@ export default function AllTagsView({
   };
   return (
     <>
+      {selectedTag && (
+        <DeleteTagConfirmationDialog
+          tag={selectedTag}
+          open={isDialogOpen}
+          setOpen={(o) => {
+            if (!o) {
+              setSelectedTag(null);
+            }
+            setIsDialogOpen(o);
+          }}
+        />
+      )}
       <div className="flex justify-end gap-x-2">
         <Toggle
           variant="outline"

@@ -53,6 +53,6 @@ export default function DeleteTagConfirmationDialog({
           Delete
         </ActionButton>
       )}
-    ></ActionConfirmingDialog>
+    />
   );
 }

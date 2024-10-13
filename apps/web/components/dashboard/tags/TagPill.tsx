@@ -85,7 +85,7 @@ export function TagPill({
         {name} <Separator orientation="vertical" /> {count}
       </Link>
 
-      {isHovered && (
+      {isHovered && !isDraggable && (
         <Button
           size="none"
           variant="secondary"
