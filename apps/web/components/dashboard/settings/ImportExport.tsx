@@ -64,14 +64,20 @@ export function ImportExportRow() {
       listId: string;
     }) => {
       const bookmark = toImport.bookmark;
-      if (bookmark.url === undefined) {
-        throw new Error("URL is undefined");
+      if (bookmark.content === undefined) {
+        throw new Error("Content is undefined");
       }
-      new URL(bookmark.url);
-      const created = await createBookmark({
-        type: BookmarkTypes.LINK,
-        url: bookmark.url,
-      });
+      const created = await createBookmark(
+        bookmark.content.type === BookmarkTypes.LINK
+          ? {
+              type: BookmarkTypes.LINK,
+              url: bookmark.content.url,
+            }
+          : {
+              type: BookmarkTypes.TEXT,
+              text: bookmark.content.text,
+            },
+      );
 
       await Promise.all([
         // Update title and createdAt if they're set
