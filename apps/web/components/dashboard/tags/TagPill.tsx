@@ -9,18 +9,18 @@ import Draggable from "react-draggable";
 
 import { useMergeTag } from "@hoarder/shared-react/hooks/tags";
 
-import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";
-
 export function TagPill({
   id,
   name,
   count,
   isDraggable,
+  onOpenDialog,
 }: {
   id: string;
   name: string;
   count: number;
   isDraggable: boolean;
+  onOpenDialog: (tag: { id: string; name: string }) => void;
 }) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -86,15 +86,14 @@ export function TagPill({
       </Link>
 
       {isHovered && (
-        <DeleteTagConfirmationDialog tag={{ name, id }}>
-          <Button
-            size="none"
-            variant="secondary"
-            className="-translate-1/2 absolute -right-1 -top-1 hidden rounded-full group-hover:block"
-          >
-            <X className="size-3" />
-          </Button>
-        </DeleteTagConfirmationDialog>
+        <Button
+          size="none"
+          variant="secondary"
+          className="-translate-1/2 absolute -right-1 -top-1 hidden rounded-full group-hover:block"
+          onClick={() => onOpenDialog({ id, name })}
+        >
+          <X className="size-3" />
+        </Button>
       )}
     </div>
   );
