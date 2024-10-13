@@ -101,7 +101,16 @@ export default function AdminActions() {
         <ActionButton
           variant="destructive"
           loading={isInferencePending}
-          onClick={() => reRunInferenceOnAllBookmarks()}
+          onClick={() =>
+            reRunInferenceOnAllBookmarks({ taggingStatus: "failure" })
+          }
+        >
+          Regenerate AI Tags for Failed Bookmarks Only
+        </ActionButton>
+        <ActionButton
+          variant="destructive"
+          loading={isInferencePending}
+          onClick={() => reRunInferenceOnAllBookmarks({ taggingStatus: "all" })}
         >
           Regenerate AI Tags for All Bookmarks
         </ActionButton>

@@ -145,17 +145,26 @@ export const adminAppRouter = router({
 
     await Promise.all(bookmarkIds.map((b) => triggerSearchReindex(b.id)));
   }),
-  reRunInferenceOnAllBookmarks: adminProcedure.mutation(async ({ ctx }) => {
-    const bookmarkIds = await ctx.db.query.bookmarks.findMany({
-      columns: {
-        id: true,
-      },
-    });
+  reRunInferenceOnAllBookmarks: adminProcedure
+    .input(
+      z.object({
+        taggingStatus: z.enum(["success", "failure", "all"]),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const bookmarkIds = await ctx.db.query.bookmarks.findMany({
+        columns: {
+          id: true,
+        },
+        ...(input.taggingStatus === "all"
+          ? {}
+          : { where: eq(bookmarks.taggingStatus, input.taggingStatus) }),
+      });
 
-    await Promise.all(
-      bookmarkIds.map((b) => OpenAIQueue.enqueue({ bookmarkId: b.id })),
-    );
-  }),
+      await Promise.all(
+        bookmarkIds.map((b) => OpenAIQueue.enqueue({ bookmarkId: b.id })),
+      );
+    }),
   tidyAssets: adminProcedure.mutation(async () => {
     await TidyAssetsQueue.enqueue({
       cleanDanglingAssets: true,
