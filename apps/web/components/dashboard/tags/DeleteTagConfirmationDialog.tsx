@@ -7,12 +7,10 @@ import { useDeleteTag } from "@hoarder/shared-react/hooks/tags";
 
 export default function DeleteTagConfirmationDialog({
   tag,
-  children,
   open,
   setOpen,
 }: {
   tag: { id: string; name: string };
-  children?: React.ReactNode;
   open?: boolean;
   setOpen?: (v: boolean) => void;
 }) {
@@ -55,8 +53,6 @@ export default function DeleteTagConfirmationDialog({
           Delete
         </ActionButton>
       )}
-    >
-      {children}
-    </ActionConfirmingDialog>
+    />
   );
 }

@@ -19,6 +19,7 @@ import { ArrowDownAZ, Combine } from "lucide-react";
 import type { ZGetTagResponse } from "@hoarder/shared/types/tags";
 import { useDeleteUnusedTags } from "@hoarder/shared-react/hooks/tags";
 
+import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";
 import { TagPill } from "./TagPill";
 
 function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
@@ -71,8 +72,21 @@ export default function AllTagsView({
 }: {
   initialData: ZGetTagResponse[];
 }) {
+  interface Tag {
+    id: string;
+    name: string;
+  }
+
   const [draggingEnabled, setDraggingEnabled] = React.useState(false);
   const [sortByName, setSortByName] = React.useState(false);
+
+  const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+  const [selectedTag, setSelectedTag] = React.useState<Tag | null>(null);
+
+  const handleOpenDialog = (tag: Tag) => {
+    setSelectedTag(tag);
+    setIsDialogOpen(true);
+  };
 
   function toggleSortByName(): void {
     setSortByName(!sortByName);
@@ -104,6 +118,7 @@ export default function AllTagsView({
               name={t.name}
               count={t.count}
               isDraggable={draggingEnabled}
+              onOpenDialog={handleOpenDialog}
             />
           ))}
         </div>
@@ -115,6 +130,18 @@ export default function AllTagsView({
   };
   return (
     <>
+      {selectedTag && (
+        <DeleteTagConfirmationDialog
+          tag={selectedTag}
+          open={isDialogOpen}
+          setOpen={(o) => {
+            if (!o) {
+              setSelectedTag(null);
+            }
+            setIsDialogOpen(o);
+          }}
+        />
+      )}
       <div className="flex justify-end gap-x-2">
         <Toggle
           variant="outline"
