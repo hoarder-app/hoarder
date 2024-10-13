@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/use-toast";
 import {
   ParsedBookmark,
+  parseHoarderBookmarkFile,
   parseNetscapeBookmarkFile,
   parsePocketBookmarkFile,
 } from "@/lib/importBookmarkParser";
@@ -66,10 +67,10 @@ export function ImportExportRow() {
       if (bookmark.url === undefined) {
         throw new Error("URL is undefined");
       }
-      const url = new URL(bookmark.url);
+      new URL(bookmark.url);
       const created = await createBookmark({
         type: BookmarkTypes.LINK,
-        url: url.toString(),
+        url: bookmark.url,
       });
 
       await Promise.all([
@@ -81,6 +82,7 @@ export function ImportExportRow() {
               createdAt: bookmark.addDate
                 ? new Date(bookmark.addDate * 1000)
                 : undefined,
+              note: bookmark.notes,
             }).catch(() => {
               /* empty */
             })
@@ -120,12 +122,14 @@ export function ImportExportRow() {
       source,
     }: {
       file: File;
-      source: "html" | "pocket";
+      source: "html" | "pocket" | "hoarder";
     }) => {
       if (source === "html") {
         return await parseNetscapeBookmarkFile(file);
       } else if (source === "pocket") {
         return await parsePocketBookmarkFile(file);
+      } else if (source === "hoarder") {
+        return await parseHoarderBookmarkFile(file);
       } else {
         throw new Error("Unknown source");
       }
@@ -212,6 +216,18 @@ export function ImportExportRow() {
         >
           <Upload />
           <p>Import Bookmarks from Pocket export</p>
+        </FilePickerButton>
+        <FilePickerButton
+          loading={false}
+          accept=".json"
+          multiple={false}
+          className="flex items-center gap-2"
+          onFileSelect={(file) =>
+            runUploadBookmarkFile({ file, source: "hoarder" })
+          }
+        >
+          <Upload />
+          <p>Import Bookmarks from Hoarder export</p>
         </FilePickerButton>
         <ExportButton />
       </div>

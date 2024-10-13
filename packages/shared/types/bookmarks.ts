@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { zBookmarkTagSchema } from "./tags";
 
-const MAX_TITLE_LENGTH = 100;
+const MAX_TITLE_LENGTH = 250;
 
 export const enum BookmarkTypes {
   LINK = "link",
