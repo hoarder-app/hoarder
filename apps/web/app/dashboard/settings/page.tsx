@@ -16,7 +16,7 @@ export default async function Settings() {
       orientation="horizontal"
       className="flex flex-col gap-1"
     >
-      <TabsList className="flex justify-start">
+      <TabsList className="flex justify-start overflow-x-auto overflow-y-hidden">
         <TabsTrigger className="flex items-center gap-2 p-3" value="info">
           <User className="size-4" />
           User Info
