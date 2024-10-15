@@ -11,6 +11,7 @@ import {
 } from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
+import FixedRatioImage from "./FixedRatioImage";
 import FooterLinkURL from "./FooterLinkURL";
 
 function LinkTitle({ bookmark }: { bookmark: ZBookmarkTypeLink }) {
@@ -48,7 +49,11 @@ function LinkImage({
   if (isBookmarkStillCrawling(bookmark)) {
     img = imgComponent("/blur.avif", false);
   } else if (imageDetails) {
-    img = imgComponent(imageDetails.url, !imageDetails.localAsset);
+    img = FixedRatioImage({
+      src: imageDetails.url,
+      unoptimized: !imageDetails.localAsset,
+      className: className,
+    });
   } else {
     // No image found
     // A dummy white pixel for when there's no image.
