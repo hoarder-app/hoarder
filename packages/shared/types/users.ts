@@ -24,3 +24,8 @@ export const zChangePasswordSchema = z
     message: "Passwords don't match",
     path: ["newPasswordConfirm"],
   });
+
+export const zChangeEmailAddressSchema = z.object({
+  newEmailAddress: z.string().email(),
+  currentPassword: z.string().min(8).max(PASSWORD_MAX_LENGTH),
+});

@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, isNotNull, not } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -7,7 +7,10 @@ import { SqliteError } from "@hoarder/db";
 import { users } from "@hoarder/db/schema";
 import { deleteUserAssets } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
-import { zSignUpSchema } from "@hoarder/shared/types/users";
+import {
+  zChangeEmailAddressSchema,
+  zSignUpSchema,
+} from "@hoarder/shared/types/users";
 
 import { hashPassword, validatePassword } from "../auth";
 import {
@@ -123,6 +126,53 @@ export const usersAppRouter = router({
         })
         .where(eq(users.id, ctx.user.id));
     }),
+  changeEmailAddress: authedProcedure
+    .input(zChangeEmailAddressSchema)
+    .mutation(async ({ input, ctx }) => {
+      invariant(ctx.user.email, "A user always has an email specified");
+
+      // verify that the user is actually a local user by checking if it has a password
+      const [{ count: usersWithPassword }] = await ctx.db
+        .select({ count: count() })
+        .from(users)
+        .where(and(eq(users.id, ctx.user.id), isNotNull(users.password)));
+      if (usersWithPassword < 1) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Updating the email address is not allowed for OAuth users.",
+        });
+      }
+      // verify that no other user has this email address yet
+      const [{ count: usersWithEmailAddress }] = await ctx.db
+        .select({ count: count() })
+        .from(users)
+        .where(
+          and(
+            not(eq(users.id, ctx.user.id)),
+            eq(users.email, input.newEmailAddress),
+          ),
+        );
+      if (usersWithEmailAddress != 0) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message:
+            "Updating the email address is not allowed because it is already in use.",
+        });
+      }
+      let user;
+      try {
+        user = await validatePassword(ctx.user.email, input.currentPassword);
+      } catch (e) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+      invariant(user.id, ctx.user.id);
+      await ctx.db
+        .update(users)
+        .set({
+          email: input.newEmailAddress,
+        })
+        .where(eq(users.id, ctx.user.id));
+    }),
   delete: adminProcedure
     .input(
       z.object({
@@ -142,6 +192,7 @@ export const usersAppRouter = router({
         id: z.string(),
         name: z.string().nullish(),
         email: z.string().nullish(),
+        localUser: z.boolean(),
       }),
     )
     .query(async ({ ctx }) => {
@@ -154,6 +205,11 @@ export const usersAppRouter = router({
       if (!userDb) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
-      return { id: ctx.user.id, name: ctx.user.name, email: ctx.user.email };
+      return {
+        id: ctx.user.id,
+        name: ctx.user.name,
+        email: ctx.user.email,
+        localUser: !!userDb.password,
+      };
     }),
 });
