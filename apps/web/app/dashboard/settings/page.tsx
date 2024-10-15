@@ -1,12 +1,15 @@
 import AISettings from "@/components/dashboard/settings/AISettings";
 import ApiKeySettings from "@/components/dashboard/settings/ApiKeySettings";
+import { ChangeEmailAddress } from "@/components/dashboard/settings/ChangeEmailAddress";
 import { ChangePassword } from "@/components/dashboard/settings/ChangePassword";
 import ImportExport from "@/components/dashboard/settings/ImportExport";
 import UserDetails from "@/components/dashboard/settings/UserDetails";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { api } from "@/server/api/client";
 import { Download, KeyRound, Sparkle, User } from "lucide-react";
 
 export default async function Settings() {
+  const whoami = await api.users.whoami();
   return (
     <Tabs
       defaultValue="info"
@@ -38,7 +41,18 @@ export default async function Settings() {
         <TabsContent value="info">
           <div className="rounded-md border bg-background p-4">
             <UserDetails />
-            <ChangePassword />
+            {whoami.localUser && (
+              <>
+                <ChangeEmailAddress />
+                <ChangePassword />
+              </>
+            )}
+            {!whoami.localUser && (
+              <div className="flex flex-col sm:flex-row">
+                Changing Email address and password is not possible for OAuth
+                Users
+              </div>
+            )}
           </div>
         </TabsContent>
         <TabsContent value="ai">
