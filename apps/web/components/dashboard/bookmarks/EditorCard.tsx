@@ -31,6 +31,7 @@ function useFocusOnKeyPress(inputRef: React.RefObject<HTMLTextAreaElement>) {
       }
       if ((e.metaKey || e.ctrlKey) && e.code === "KeyE") {
         inputRef.current.focus();
+        e.preventDefault();
       }
     }
 
