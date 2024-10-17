@@ -21,5 +21,25 @@
   ],
   "start_url": "/",
   "display": "standalone",
-  "orientation": "portrait"
+  "orientation": "portrait",
+  "share_target": {
+    "method": "POST",
+    "action": "/api/bookmarks/create",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "image",
+          "accept": ["image/*"]
+        },
+        {
+          "name": "file",
+          "accept": ["application/pdf"]
+        }
+      ]
+    }
+  }
 }
