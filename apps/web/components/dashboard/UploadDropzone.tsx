@@ -32,9 +32,13 @@ export function useUploadAsset() {
 
   const { mutateAsync: runUploadAsset } = useUpload({
     onSuccess: async (resp) => {
-      const assetType =
-        resp.contentType === "application/pdf" ? "pdf" : "image";
-      await createBookmark({ ...resp, type: BookmarkTypes.ASSET, assetType });
+      await Promise.all(
+        resp.map(async (r) => {
+          const assetType =
+            r.contentType === "application/pdf" ? "pdf" : "image";
+          await createBookmark({ ...r, type: BookmarkTypes.ASSET, assetType });
+        }),
+      );
     },
     onError: (err, req) => {
       toast({

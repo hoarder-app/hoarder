@@ -143,11 +143,13 @@ export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
                   onFileSelect={(file) =>
                     uploadAsset(file, {
                       onSuccess: (resp) => {
-                        replaceAsset({
-                          bookmarkId: bookmark.id,
-                          oldAssetId: asset.id,
-                          newAssetId: resp.assetId,
-                        });
+                        resp.forEach((r) =>
+                          replaceAsset({
+                            bookmarkId: bookmark.id,
+                            oldAssetId: asset.id,
+                            newAssetId: r.assetId,
+                          }),
+                        );
                       },
                     })
                   }
@@ -196,13 +198,15 @@ export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
               onFileSelect={(file) =>
                 uploadAsset(file, {
                   onSuccess: (resp) => {
-                    attachAsset({
-                      bookmarkId: bookmark.id,
-                      asset: {
-                        id: resp.assetId,
-                        assetType: "bannerImage",
-                      },
-                    });
+                    resp.forEach((r) =>
+                      attachAsset({
+                        bookmarkId: bookmark.id,
+                        asset: {
+                          id: r.assetId,
+                          assetType: "bannerImage",
+                        },
+                      }),
+                    );
                   },
                 })
               }
