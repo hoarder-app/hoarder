@@ -3,11 +3,8 @@ import { TRPCError } from "@trpc/server";
 
 import type { ZUploadResponse } from "@hoarder/shared/types/uploads";
 import { assets, AssetTypes } from "@hoarder/db/schema";
-import {
-  newAssetId,
-  saveAsset,
-  SUPPORTED_UPLOAD_ASSET_TYPES,
-} from "@hoarder/shared/assetdb";
+import { newAssetId, saveAsset } from "@hoarder/shared/assetdb";
+import { SUPPORTED_UPLOAD_ASSET_TYPES } from "@hoarder/shared/assetTypes";
 import serverConfig from "@hoarder/shared/config";
 
 const MAX_UPLOAD_SIZE_BYTES = serverConfig.maxAssetSizeMb * 1024 * 1024;
