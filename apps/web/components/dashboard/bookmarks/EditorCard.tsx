@@ -15,13 +15,14 @@ import {
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn, getOS } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { FilePlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
-import { useUploadAsset } from "../UploadDropzone";
+import { useFileUploader, useUploadAsset } from "../UploadDropzone";
 
 function useFocusOnKeyPress(inputRef: React.RefObject<HTMLTextAreaElement>) {
   useEffect(() => {
@@ -167,6 +168,16 @@ export default function EditorCard({ className }: { className?: string }) {
     }
   };
 
+  const uploadFile = useRef<HTMLInputElement>(null);
+
+  const { numUploading, setNumUploading, numUploaded, uploadAssets } =
+    useFileUploader();
+
+  const handleFileUpload = (acceptedFiles: File[]) => {
+    uploadAssets(acceptedFiles);
+    setNumUploading(acceptedFiles.length);
+  };
+
   const OS = getOS();
 
   return (
@@ -219,13 +230,48 @@ export default function EditorCard({ className }: { className?: string }) {
             />
           </FormControl>
         </FormItem>
-        <ActionButton loading={isPending} type="submit" variant="default">
-          {form.formState.dirtyFields.text
-            ? demoMode
-              ? "Submissions are disabled"
-              : `Save (${OS === "macos" ? "⌘" : "Ctrl"} + Enter)`
-            : "Save"}
-        </ActionButton>
+        <div className="flex gap-1">
+          <ActionButton
+            loading={isPending}
+            type="submit"
+            variant="default"
+            className="flex-1"
+          >
+            {form.formState.dirtyFields.text
+              ? demoMode
+                ? "Submissions are disabled"
+                : `Save (${OS === "macos" ? "⌘" : "Ctrl"} + Enter)`
+              : "Save"}
+          </ActionButton>
+
+          <div className="relative">
+            {numUploading > 0 && (
+              <span className="absolute -right-2 -top-3 inline-flex items-center rounded-full bg-blue-200 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                {numUploaded} / {numUploading}
+              </span>
+            )}
+
+            <input
+              type="file"
+              ref={uploadFile}
+              accept={["image/*", "application/pdf"].join(",")}
+              multiple
+              hidden
+              onChange={(e) => {
+                if (e.target.files) {
+                  handleFileUpload(Array.from(e.target.files));
+                }
+              }}
+            ></input>
+            <ActionButton
+              loading={isPending}
+              variant="default"
+              onClick={() => uploadFile.current?.click()}
+            >
+              <FilePlus width={16} />
+            </ActionButton>
+          </div>
+        </div>
 
         {multiUrlImportState && (
           <MultipleChoiceDialog
