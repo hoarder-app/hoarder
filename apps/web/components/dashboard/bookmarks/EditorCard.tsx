@@ -20,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
+import { SUPPORTED_UPLOAD_ASSET_TYPES } from "@hoarder/shared/assetTypes";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import { useFileUploader, useUploadAsset } from "../UploadDropzone";
@@ -254,7 +255,7 @@ export default function EditorCard({ className }: { className?: string }) {
             <input
               type="file"
               ref={uploadFile}
-              accept={["image/*", "application/pdf"].join(",")}
+              accept={Array.from(SUPPORTED_UPLOAD_ASSET_TYPES).join(",")}
               multiple
               hidden
               onChange={(e) => {
