@@ -1,4 +1,6 @@
+import { TRPCError } from "@trpc/server";
 import { count, eq, sum } from "drizzle-orm";
+import invariant from "tiny-invariant";
 import { z } from "zod";
 
 import { assets, bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
@@ -9,8 +11,15 @@ import {
   TidyAssetsQueue,
   triggerSearchReindex,
 } from "@hoarder/shared/queues";
+import {
+  changeRoleSchema,
+  resetPasswordSchema,
+  zAdminCreateUserSchema,
+} from "@hoarder/shared/types/users";
 
+import { hashPassword, validatePassword } from "../auth";
 import { adminProcedure, router } from "../index";
+import { createUser } from "./users";
 
 export const adminAppRouter = router({
   stats: adminProcedure
@@ -212,5 +221,100 @@ export const adminAppRouter = router({
       }
 
       return results;
+    }),
+  createUser: adminProcedure
+    .input(zAdminCreateUserSchema)
+    .output(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        email: z.string(),
+        role: z.enum(["user", "admin"]).nullable(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      invariant(ctx.user.email, "A user always has an email specified");
+      try {
+        await validatePassword(ctx.user.email, input.adminPassword);
+      } catch (e) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      return createUser(input, ctx, input.role);
+    }),
+  changeRole: adminProcedure
+    .input(changeRoleSchema)
+    .mutation(async ({ input, ctx }) => {
+      invariant(ctx.user.email, "A user always has an email specified");
+      try {
+        await validatePassword(ctx.user.email, input.adminPassword);
+      } catch (e) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      try {
+        const result = await ctx.db
+          .update(users)
+          .set({ role: input.role })
+          .where(eq(users.id, input.userId))
+          .returning({
+            id: users.id,
+            name: users.name,
+            email: users.email,
+            role: users.role,
+          });
+
+        if (!result.length) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found",
+          });
+        }
+
+        return result;
+      } catch (e) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
+    }),
+  resetPassword: adminProcedure
+    .input(resetPasswordSchema)
+    .mutation(async ({ input, ctx }) => {
+      invariant(ctx.user.email, "A user always has an email specified");
+      try {
+        await validatePassword(ctx.user.email, input.adminPassword);
+      } catch (e) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
+
+      try {
+        const hashedPassword = await hashPassword(input.newPassword);
+        const result = await ctx.db
+          .update(users)
+          .set({ password: hashedPassword })
+          .where(eq(users.id, input.userId))
+          .returning({
+            id: users.id,
+            name: users.name,
+            email: users.email,
+            role: users.role,
+          });
+
+        if (!result.length) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "User not found",
+          });
+        }
+
+        return result;
+      } catch (e) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Something went wrong",
+        });
+      }
     }),
 });
