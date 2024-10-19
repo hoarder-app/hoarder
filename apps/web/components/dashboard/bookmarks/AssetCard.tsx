@@ -24,7 +24,7 @@ function AssetImage({
         <Link href={`/dashboard/preview/${bookmark.id}`}>
           <FixedRatioImage
             src={getAssetUrl(bookmarkedAsset.assetId)}
-            unoptimized={true}
+            unoptimized={false}
             className="max-h-screen w-full rounded-t-lg object-cover"
             alt="asset"
           />
