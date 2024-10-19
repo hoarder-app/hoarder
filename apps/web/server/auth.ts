@@ -19,8 +19,7 @@ import {
   verificationTokens,
 } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
-import { authFailureLogger } from "@hoarder/shared/logger";
-import { validatePassword } from "@hoarder/trpc/auth";
+import { logAuthenticationError, validatePassword } from "@hoarder/trpc/auth";
 
 type UserRole = "admin" | "user";
 
@@ -76,16 +75,6 @@ function getIp(req: NextApiRequest): string | null {
   return requestIp.getClientIp(req);
 }
 
-function logAuthenticationError(
-  user: string,
-  message: string,
-  req: NextApiRequest,
-): void {
-  authFailureLogger.error(
-    `Authentication error. User: "${user}", Message: "${message}", IP-Address: "${getIp(req)}"`,
-  );
-}
-
 const providers: Provider[] = [
   CredentialsProvider({
     // The name to display on the sign in form (e.g. "Sign in with...")
@@ -98,7 +87,11 @@ const providers: Provider[] = [
       const request = req as NextApiRequest;
 
       if (!credentials) {
-        logAuthenticationError("<unknown>", "Credentials missing", request);
+        logAuthenticationError(
+          "<unknown>",
+          "Credentials missing",
+          getIp(request),
+        );
         return null;
       }
 
@@ -109,7 +102,11 @@ const providers: Provider[] = [
         );
       } catch (e) {
         const error = e as Error;
-        logAuthenticationError(credentials?.email, error.message, request);
+        logAuthenticationError(
+          credentials?.email,
+          error.message,
+          getIp(request),
+        );
         return null;
       }
     },

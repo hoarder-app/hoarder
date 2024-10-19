@@ -5,7 +5,12 @@ import { z } from "zod";
 import { apiKeys } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
 
-import { authenticateApiKey, generateApiKey, validatePassword } from "../auth";
+import {
+  authenticateApiKey,
+  generateApiKey,
+  logAuthenticationError,
+  validatePassword,
+} from "../auth";
 import { authedProcedure, publicProcedure, router } from "../index";
 
 const zApiKeySchema = z.object({
@@ -85,6 +90,8 @@ export const apiKeysAppRouter = router({
       try {
         user = await validatePassword(input.email, input.password);
       } catch (e) {
+        const error = e as Error;
+        logAuthenticationError(input.email, error.message, "<unknown>");
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       return await generateApiKey(input.keyName, user.id);
@@ -93,9 +100,15 @@ export const apiKeysAppRouter = router({
     .input(z.object({ apiKey: z.string() }))
     .output(z.object({ success: z.boolean() }))
     .mutation(async ({ input }) => {
-      await authenticateApiKey(input.apiKey); // Throws if the key is invalid
-      return {
-        success: true,
-      };
+      try {
+        await authenticateApiKey(input.apiKey); // Throws if the key is invalid
+        return {
+          success: true,
+        };
+      } catch (e) {
+        const error = e as Error;
+        logAuthenticationError("<unknown>", error.message, "<unknown>");
+        throw e;
+      }
     }),
 });

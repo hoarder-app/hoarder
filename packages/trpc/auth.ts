@@ -4,6 +4,7 @@ import * as bcrypt from "bcryptjs";
 import { db } from "@hoarder/db";
 import { apiKeys } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
+import { authFailureLogger } from "@hoarder/shared/logger";
 
 // API Keys
 
@@ -101,4 +102,14 @@ export async function validatePassword(email: string, password: string) {
   }
 
   return user;
+}
+
+export function logAuthenticationError(
+  user: string,
+  message: string,
+  ip: string | null,
+): void {
+  authFailureLogger.error(
+    `Authentication error. User: "${user}", Message: "${message}", IP-Address: "${ip}"`,
+  );
 }
