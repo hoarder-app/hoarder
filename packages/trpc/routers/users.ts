@@ -16,9 +16,57 @@ import { hashPassword, validatePassword } from "../auth";
 import {
   adminProcedure,
   authedProcedure,
+  Context,
   publicProcedure,
   router,
 } from "../index";
+
+export async function createUser(
+  input: z.infer<typeof zSignUpSchema>,
+  ctx: Context,
+  role?: "user" | "admin",
+) {
+  return ctx.db.transaction(async (trx) => {
+    let userRole = role;
+    if (!userRole) {
+      const [{ count: userCount }] = await trx
+        .select({ count: count() })
+        .from(users);
+      userRole = userCount == 0 ? "admin" : "user";
+    }
+
+    try {
+      const result = await trx
+        .insert(users)
+        .values({
+          name: input.name,
+          email: input.email,
+          password: await hashPassword(input.password),
+          role: userRole,
+        })
+        .returning({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          role: users.role,
+        });
+      return result[0];
+    } catch (e) {
+      if (e instanceof SqliteError) {
+        if (e.code == "SQLITE_CONSTRAINT_UNIQUE") {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Email is already taken",
+          });
+        }
+      }
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Something went wrong",
+      });
+    }
+  });
+}
 
 export const usersAppRouter = router({
   create: publicProcedure
@@ -44,40 +92,7 @@ export const usersAppRouter = router({
           message: errorMessage,
         });
       }
-      // TODO: This is racy, but that's probably fine.
-      const [{ count: userCount }] = await ctx.db
-        .select({ count: count() })
-        .from(users);
-      try {
-        const result = await ctx.db
-          .insert(users)
-          .values({
-            name: input.name,
-            email: input.email,
-            password: await hashPassword(input.password),
-            role: userCount == 0 ? "admin" : "user",
-          })
-          .returning({
-            id: users.id,
-            name: users.name,
-            email: users.email,
-            role: users.role,
-          });
-        return result[0];
-      } catch (e) {
-        if (e instanceof SqliteError) {
-          if (e.code == "SQLITE_CONSTRAINT_UNIQUE") {
-            throw new TRPCError({
-              code: "BAD_REQUEST",
-              message: "Email is already taken",
-            });
-          }
-        }
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong",
-        });
-      }
+      return createUser(input, ctx);
     }),
   list: adminProcedure
     .output(
@@ -88,20 +103,28 @@ export const usersAppRouter = router({
             name: z.string(),
             email: z.string(),
             role: z.enum(["user", "admin"]).nullable(),
+            localUser: z.boolean(),
           }),
         ),
       }),
     )
     .query(async ({ ctx }) => {
-      const users = await ctx.db.query.users.findMany({
-        columns: {
-          id: true,
-          name: true,
-          email: true,
-          role: true,
-        },
-      });
-      return { users };
+      const dbUsers = await ctx.db
+        .select({
+          id: users.id,
+          name: users.name,
+          email: users.email,
+          role: users.role,
+          password: users.password,
+        })
+        .from(users);
+
+      return {
+        users: dbUsers.map(({ password, ...user }) => ({
+          ...user,
+          localUser: password !== null,
+        })),
+      };
     }),
   changePassword: authedProcedure
     .input(
