@@ -43,7 +43,7 @@ class OpenAIInferenceClient implements InferenceClient {
 
   async inferFromText(prompt: string): Promise<InferenceResponse> {
     const chatCompletion = await this.openAI.chat.completions.create({
-      messages: [{ role: "user", content: prompt }],
+      messages: [{ role: "system", content: prompt }],
       model: serverConfig.inference.textModel,
       response_format: { type: "json_object" },
     });

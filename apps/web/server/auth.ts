@@ -1,4 +1,5 @@
 import type { Adapter } from "next-auth/adapters";
+import { NextApiRequest } from "next";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { and, count, eq } from "drizzle-orm";
 import NextAuth, {
@@ -8,6 +9,7 @@ import NextAuth, {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Provider } from "next-auth/providers/index";
+import requestIp from "request-ip";
 
 import { db } from "@hoarder/db";
 import {
@@ -17,6 +19,7 @@ import {
   verificationTokens,
 } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
+import { authFailureLogger } from "@hoarder/shared/logger";
 import { validatePassword } from "@hoarder/trpc/auth";
 
 type UserRole = "admin" | "user";
@@ -69,6 +72,20 @@ async function isAdmin(email: string): Promise<boolean> {
   return res?.role == "admin";
 }
 
+function getIp(req: NextApiRequest): string | null {
+  return requestIp.getClientIp(req);
+}
+
+function logAuthenticationError(
+  user: string,
+  message: string,
+  req: NextApiRequest,
+): void {
+  authFailureLogger.error(
+    `Authentication error. User: "${user}", Message: "${message}", IP-Address: "${getIp(req)}"`,
+  );
+}
+
 const providers: Provider[] = [
   CredentialsProvider({
     // The name to display on the sign in form (e.g. "Sign in with...")
@@ -77,8 +94,11 @@ const providers: Provider[] = [
       email: { label: "Email", type: "email", placeholder: "Email" },
       password: { label: "Password", type: "password" },
     },
-    async authorize(credentials) {
+    async authorize(credentials, req) {
+      const request = req as NextApiRequest;
+
       if (!credentials) {
+        logAuthenticationError("<unknown>", "Credentials missing", request);
         return null;
       }
 
@@ -88,6 +108,8 @@ const providers: Provider[] = [
           credentials?.password,
         );
       } catch (e) {
+        const error = e as Error;
+        logAuthenticationError(credentials?.email, error.message, request);
         return null;
       }
     },
