@@ -78,7 +78,7 @@ export const apiKeysAppRouter = router({
       }),
     )
     .output(zApiKeySchema)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       let user;
       // Special handling as otherwise the extension would show "username or password is wrong"
       if (serverConfig.auth.disablePasswordAuth) {
@@ -91,7 +91,7 @@ export const apiKeysAppRouter = router({
         user = await validatePassword(input.email, input.password);
       } catch (e) {
         const error = e as Error;
-        logAuthenticationError(input.email, error.message, "<unknown>");
+        logAuthenticationError(input.email, error.message, ctx.req.ip);
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       return await generateApiKey(input.keyName, user.id);
@@ -99,7 +99,7 @@ export const apiKeysAppRouter = router({
   validate: publicProcedure
     .input(z.object({ apiKey: z.string() }))
     .output(z.object({ success: z.boolean() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         await authenticateApiKey(input.apiKey); // Throws if the key is invalid
         return {
@@ -107,7 +107,7 @@ export const apiKeysAppRouter = router({
         };
       } catch (e) {
         const error = e as Error;
-        logAuthenticationError("<unknown>", error.message, "<unknown>");
+        logAuthenticationError("<unknown>", error.message, ctx.req.ip);
         throw e;
       }
     }),

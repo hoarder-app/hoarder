@@ -37,6 +37,9 @@ export function getApiCaller(db: TestDB, userId?: string, email?: string) {
         }
       : null,
     db,
+    req: {
+      ip: null,
+    },
   });
 }
 
