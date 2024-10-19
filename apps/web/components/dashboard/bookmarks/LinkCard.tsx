@@ -53,6 +53,7 @@ function LinkImage({
       src: imageDetails.url,
       unoptimized: !imageDetails.localAsset,
       className: className,
+      alt: "card banner",
     });
   } else {
     // No image found

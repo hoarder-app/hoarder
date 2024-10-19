@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 
 import type { ZBookmarkTypeAsset } from "@hoarder/shared/types/bookmarks";
@@ -8,6 +7,7 @@ import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
 import { getSourceUrl } from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
+import FixedRatioImage from "./FixedRatioImage";
 import FooterLinkURL from "./FooterLinkURL";
 
 function AssetImage({
@@ -22,11 +22,11 @@ function AssetImage({
     case "image": {
       return (
         <Link href={`/dashboard/preview/${bookmark.id}`}>
-          <Image
-            alt="asset"
+          <FixedRatioImage
             src={getAssetUrl(bookmarkedAsset.assetId)}
-            fill={true}
-            className={className}
+            unoptimized={true}
+            className="max-h-screen w-full rounded-t-lg object-cover"
+            alt="asset"
           />
         </Link>
       );
