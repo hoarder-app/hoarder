@@ -155,7 +155,7 @@ function GridView({
   layout,
   fitHeight = false,
 }: Props & { layout: BookmarksLayoutTypes }) {
-  const img = image("grid", "w-full rounded-t-lg");
+  const img = image("grid", "w-full object-cover max-h-screen rounded-t-lg");
 
   return (
     <div
