@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { and, count, eq, sql } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -106,32 +106,22 @@ export const usersAppRouter = router({
       }),
     )
     .query(async ({ ctx }) => {
-      let dbUsers = await ctx.db
+      const dbUsers = await ctx.db
         .select({
           id: users.id,
           name: users.name,
           email: users.email,
           role: users.role,
-          localUser: sql<boolean>`CASE WHEN
-                                 ${users.password}
-                                 IS
-                                 NOT
-                                 NULL
-                                 THEN
-                                 true
-                                 ELSE
-                                 false
-                                 END`.as("localUser"),
+          password: users.password,
         })
         .from(users);
 
-      // Ensure the type of localUser is boolean
-      dbUsers = dbUsers.map((user) => ({
-        ...user,
-        localUser: Boolean(user.localUser),
-      }));
-
-      return { users: dbUsers };
+      return {
+        users: dbUsers.map(({ password, ...user }) => ({
+          ...user,
+          localUser: password !== null,
+        })),
+      };
     }),
   changePassword: authedProcedure
     .input(

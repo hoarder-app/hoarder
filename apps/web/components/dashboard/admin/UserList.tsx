@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ActionButton } from "@/components/ui/action-button";
+import { ActionButtonWithTooltip } from "@/components/ui/action-button";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/spinner";
 import {
   Table,
@@ -30,9 +30,8 @@ function toHumanReadableSize(size: number) {
 export default function UsersSection() {
   const { data: session } = useSession();
   const invalidateUserList = api.useUtils().users.list.invalidate;
-  const { data: users, refetch: refetchUsers } = api.users.list.useQuery();
-  const { data: userStats, refetch: refetchUserStats } =
-    api.admin.userStats.useQuery();
+  const { data: users } = api.users.list.useQuery();
+  const { data: userStats } = api.admin.userStats.useQuery();
   const { mutate: deleteUser, isPending: isDeletionPending } =
     api.users.delete.useMutation({
       onSuccess: () => {
@@ -49,35 +48,6 @@ export default function UsersSection() {
       },
     });
 
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isResetPasswordDialogOpen, setIsResetPasswordDialogOpen] =
-    useState(false);
-  const [isChangeRoleDialogOpen, setIsChangeRoleDialogOpen] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [selectedUserRole, setSelectedUserRole] = useState<
-    "user" | "admin" | null
-  >(null);
-
-  const refreshUserList = () => {
-    invalidateUserList();
-    refetchUsers();
-    refetchUserStats();
-  };
-
-  const handleOpenResetPasswordDialog = (userId: string) => {
-    setSelectedUserId(userId);
-    setIsResetPasswordDialogOpen(true);
-  };
-
-  const handleOpenChangeRoleDialog = (
-    userId: string,
-    role: "user" | "admin",
-  ) => {
-    setSelectedUserId(userId);
-    setSelectedUserRole(role);
-    setIsChangeRoleDialogOpen(true);
-  };
-
   if (!users || !userStats) {
     return <LoadingSpinner />;
   }
@@ -86,13 +56,11 @@ export default function UsersSection() {
     <>
       <div className="mb-2 flex items-center justify-between text-xl font-medium">
         <span>Users List</span>
-        <ActionButton
-          variant="outline"
-          onClick={() => setIsDialogOpen(true)}
-          loading={isDeletionPending}
-        >
-          <UserPlus size={16} />
-        </ActionButton>
+        <AddUserDialog>
+          <ButtonWithTooltip tooltip="Create User" variant="outline">
+            <UserPlus size={16} />
+          </ButtonWithTooltip>
+        </AddUserDialog>
       </div>
 
       <Table>
@@ -120,54 +88,39 @@ export default function UsersSection() {
               <TableCell className="py-1 capitalize">
                 {u.localUser ? <Check /> : <X />}
               </TableCell>
-              <TableCell className="py-1">
-                <ActionButton
+              <TableCell className="flex gap-1 py-1">
+                <ActionButtonWithTooltip
+                  tooltip="Delete user"
                   variant="outline"
                   onClick={() => deleteUser({ userId: u.id })}
                   loading={isDeletionPending}
                   disabled={session!.user.id == u.id}
                 >
                   <Trash size={16} color="red" />
-                </ActionButton>
-                <ActionButton
-                  variant="outline"
-                  onClick={() => handleOpenResetPasswordDialog(u.id)}
-                  loading={isDeletionPending}
-                  disabled={session!.user.id == u.id || !u.localUser}
-                >
-                  <KeyRound size={16} color="red" />
-                </ActionButton>
-                <ActionButton
-                  variant="outline"
-                  onClick={() => handleOpenChangeRoleDialog(u.id, u.role!)}
-                  loading={isDeletionPending}
-                  disabled={session!.user.id == u.id || !u.localUser}
-                >
-                  <Pencil size={16} color="red" />
-                </ActionButton>
+                </ActionButtonWithTooltip>
+                <ResetPasswordDialog userId={u.id}>
+                  <ButtonWithTooltip
+                    tooltip="Reset password"
+                    variant="outline"
+                    disabled={session!.user.id == u.id || !u.localUser}
+                  >
+                    <KeyRound size={16} color="red" />
+                  </ButtonWithTooltip>
+                </ResetPasswordDialog>
+                <ChangeRoleDialog userId={u.id} currentRole={u.role!}>
+                  <ButtonWithTooltip
+                    tooltip="Change role"
+                    variant="outline"
+                    disabled={session!.user.id == u.id}
+                  >
+                    <Pencil size={16} color="red" />
+                  </ButtonWithTooltip>
+                </ChangeRoleDialog>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-
-      <AddUserDialog
-        isOpen={isDialogOpen}
-        onOpenChange={setIsDialogOpen}
-        onUserAdded={refreshUserList}
-      />
-      <ResetPasswordDialog
-        isOpen={isResetPasswordDialogOpen}
-        onOpenChange={setIsResetPasswordDialogOpen}
-        userId={selectedUserId!}
-      />
-      <ChangeRoleDialog
-        isOpen={isChangeRoleDialogOpen}
-        onOpenChange={setIsChangeRoleDialogOpen}
-        userId={selectedUserId!}
-        currentRole={selectedUserRole!}
-        onRoleChanged={refreshUserList}
-      />
     </>
   );
 }

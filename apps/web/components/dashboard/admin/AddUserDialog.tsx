@@ -8,6 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -18,28 +19,31 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
-import { api } from "@/lib/trpc"; // Adjust the import path as needed
+import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TRPCClientError } from "@trpc/client";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { zAdminCreateUserSchema } from "@hoarder/shared/types/users";
+import { zAdminCreateUserSchema } from "@hoarder/shared/types/admin";
 
 type AdminCreateUserSchema = z.infer<typeof zAdminCreateUserSchema>;
 
-interface AddUserDialogProps {
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
-  onUserAdded: () => void;
-}
-
 export default function AddUserDialog({
-  isOpen,
-  onOpenChange,
-  onUserAdded,
-}: AddUserDialogProps) {
+  children,
+}: {
+  children?: React.ReactNode;
+}) {
+  const apiUtils = api.useUtils();
+  const [isOpen, onOpenChange] = useState(false);
   const form = useForm<AdminCreateUserSchema>({
     resolver: zodResolver(zAdminCreateUserSchema),
     defaultValues: {
@@ -48,24 +52,18 @@ export default function AddUserDialog({
       password: "",
       confirmPassword: "",
       role: "user",
-      adminPassword: "",
     },
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const createUserMutation = api.admin.createUser.useMutation();
-
-  const handleCreateUser: SubmitHandler<AdminCreateUserSchema> = async (
-    data,
-  ) => {
-    setIsLoading(true);
-    try {
-      await createUserMutation.mutateAsync(data);
+  const { mutate, isPending } = api.admin.createUser.useMutation({
+    onSuccess: () => {
       toast({
         description: "User created successfully",
       });
       onOpenChange(false);
-      onUserAdded();
-    } catch (error) {
+      apiUtils.users.list.invalidate();
+      apiUtils.admin.userStats.invalidate();
+    },
+    onError: (error) => {
       if (error instanceof TRPCClientError) {
         toast({
           variant: "destructive",
@@ -77,10 +75,8 @@ export default function AddUserDialog({
           description: "Failed to create user",
         });
       }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+  });
 
   useEffect(() => {
     if (!isOpen) {
@@ -90,12 +86,13 @@ export default function AddUserDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Add User</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleCreateUser)}>
+          <form onSubmit={form.handleSubmit((val) => mutate(val))}>
             <div className="flex w-full flex-col space-y-2">
               <FormField
                 control={form.control}
@@ -176,36 +173,23 @@ export default function AddUserDialog({
                   <FormItem>
                     <FormLabel>Role</FormLabel>
                     <FormControl>
-                      <select {...field} className="w-full rounded border p-2">
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                      </select>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <hr className="my-4" />
-              <div className="mt-8">
-                <FormField
-                  control={form.control}
-                  name="adminPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Admin Password</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="password"
-                          placeholder="Admin Password"
-                          {...field}
-                          className="w-full rounded border p-2"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
               <DialogFooter className="sm:justify-end">
                 <DialogClose asChild>
                   <Button type="button" variant="secondary">
@@ -214,8 +198,8 @@ export default function AddUserDialog({
                 </DialogClose>
                 <ActionButton
                   type="submit"
-                  loading={isLoading}
-                  disabled={isLoading}
+                  loading={isPending}
+                  disabled={isPending}
                 >
                   Create
                 </ActionButton>

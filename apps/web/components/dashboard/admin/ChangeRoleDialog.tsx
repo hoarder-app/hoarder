@@ -8,6 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -17,55 +18,53 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
-import { api } from "@/lib/trpc"; // Adjust the import path as needed
+import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TRPCClientError } from "@trpc/client";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { changeRoleSchema } from "@hoarder/shared/types/users";
+import { changeRoleSchema } from "@hoarder/shared/types/admin";
 
 type ChangeRoleSchema = z.infer<typeof changeRoleSchema>;
 
 interface ChangeRoleDialogProps {
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
   userId: string;
   currentRole: "user" | "admin";
-  onRoleChanged: () => void;
+  children?: React.ReactNode;
 }
 
 export default function ChangeRoleDialog({
-  isOpen,
-  onOpenChange,
   userId,
   currentRole,
-  onRoleChanged,
+  children,
 }: ChangeRoleDialogProps) {
-  console.log(currentRole);
+  const apiUtils = api.useUtils();
+  const [isOpen, onOpenChange] = useState(false);
   const form = useForm<ChangeRoleSchema>({
     resolver: zodResolver(changeRoleSchema),
     defaultValues: {
-      userId: "",
+      userId,
       role: currentRole,
-      adminPassword: "",
     },
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const changeRoleMutation = api.admin.changeRole.useMutation();
-
-  const handleChangeRole: SubmitHandler<ChangeRoleSchema> = async (data) => {
-    setIsLoading(true);
-    try {
-      await changeRoleMutation.mutateAsync({ ...data, userId });
+  const { mutate, isPending } = api.admin.changeRole.useMutation({
+    onSuccess: () => {
       toast({
         description: "Role changed successfully",
       });
+      apiUtils.users.list.invalidate();
       onOpenChange(false);
-      onRoleChanged();
-    } catch (error) {
+    },
+    onError: (error) => {
       if (error instanceof TRPCClientError) {
         toast({
           variant: "destructive",
@@ -77,29 +76,25 @@ export default function ChangeRoleDialog({
           description: "Failed to change role",
         });
       }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+  });
 
   useEffect(() => {
     if (isOpen) {
-      form.reset({
-        userId,
-        role: currentRole,
-        adminPassword: "",
-      });
+      form.reset();
     }
-  }, [isOpen, form, userId, currentRole]);
+  }, [isOpen, form]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
+        <DialogTrigger asChild></DialogTrigger>
         <DialogHeader>
           <DialogTitle>Change Role</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleChangeRole)}>
+          <form onSubmit={form.handleSubmit((val) => mutate(val))}>
             <div className="flex w-full flex-col space-y-2">
               <FormField
                 control={form.control}
@@ -108,10 +103,18 @@ export default function ChangeRoleDialog({
                   <FormItem>
                     <FormLabel>Role</FormLabel>
                     <FormControl>
-                      <select {...field} className="w-full rounded border p-2">
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                      </select>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -119,19 +122,12 @@ export default function ChangeRoleDialog({
               />
               <FormField
                 control={form.control}
-                name="adminPassword"
+                name="userId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Admin Password</FormLabel>
                     <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Admin Password"
-                        {...field}
-                        className="w-full rounded border p-2"
-                      />
+                      <input type="hidden" {...field} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -143,8 +139,8 @@ export default function ChangeRoleDialog({
                 </DialogClose>
                 <ActionButton
                   type="submit"
-                  loading={isLoading}
-                  disabled={isLoading}
+                  loading={isPending}
+                  disabled={isPending}
                 >
                   Change
                 </ActionButton>

@@ -8,6 +8,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -22,47 +23,39 @@ import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc"; // Adjust the import path as needed
 import { zodResolver } from "@hookform/resolvers/zod";
 import { TRPCClientError } from "@trpc/client";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { resetPasswordSchema } from "@hoarder/shared/types/users";
+import { resetPasswordSchema } from "@hoarder/shared/types/admin";
 
 interface ResetPasswordDialogProps {
-  isOpen: boolean;
-  onOpenChange: (isOpen: boolean) => void;
   userId: string;
+  children?: React.ReactNode;
 }
 
 type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPasswordDialog({
-  isOpen,
-  onOpenChange,
+  children,
   userId,
 }: ResetPasswordDialogProps) {
+  const [isOpen, onOpenChange] = useState(false);
   const form = useForm<ResetPasswordSchema>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      userId: "",
+      userId,
       newPassword: "",
       newPasswordConfirm: "",
-      adminPassword: "",
     },
   });
-  const [isLoading, setIsLoading] = useState(false);
-  const resetPasswordMutation = api.admin.resetPassword.useMutation();
-
-  const handleResetPassword: SubmitHandler<ResetPasswordSchema> = async (
-    data,
-  ) => {
-    setIsLoading(true);
-    try {
-      await resetPasswordMutation.mutateAsync({ ...data, userId });
+  const { mutate, isPending } = api.admin.resetPassword.useMutation({
+    onSuccess: () => {
       toast({
         description: "Password reset successfully",
       });
       onOpenChange(false);
-    } catch (error) {
+    },
+    onError: (error) => {
       if (error instanceof TRPCClientError) {
         toast({
           variant: "destructive",
@@ -74,30 +67,24 @@ export default function ResetPasswordDialog({
           description: "Failed to reset password",
         });
       }
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    },
+  });
 
   useEffect(() => {
     if (isOpen) {
-      form.reset({
-        userId,
-        newPassword: "",
-        newPasswordConfirm: "",
-        adminPassword: "",
-      });
+      form.reset();
     }
-  }, [isOpen, form, userId]);
+  }, [isOpen, form]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Reset Password</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleResetPassword)}>
+          <form onSubmit={form.handleSubmit((val) => mutate(val))}>
             <div className="flex w-full flex-col space-y-2">
               <FormField
                 control={form.control}
@@ -135,24 +122,6 @@ export default function ResetPasswordDialog({
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="adminPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Admin Password</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="password"
-                        placeholder="Admin Password"
-                        {...field}
-                        className="w-full rounded border p-2"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
               <DialogFooter className="sm:justify-end">
                 <DialogClose asChild>
                   <Button type="button" variant="secondary">
@@ -161,8 +130,8 @@ export default function ResetPasswordDialog({
                 </DialogClose>
                 <ActionButton
                   type="submit"
-                  loading={isLoading}
-                  disabled={isLoading}
+                  loading={isPending}
+                  disabled={isPending}
                 >
                   Reset
                 </ActionButton>

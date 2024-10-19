@@ -1,6 +1,5 @@
 import { TRPCError } from "@trpc/server";
 import { count, eq, sum } from "drizzle-orm";
-import invariant from "tiny-invariant";
 import { z } from "zod";
 
 import { assets, bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
@@ -15,9 +14,9 @@ import {
   changeRoleSchema,
   resetPasswordSchema,
   zAdminCreateUserSchema,
-} from "@hoarder/shared/types/users";
+} from "@hoarder/shared/types/admin";
 
-import { hashPassword, validatePassword } from "../auth";
+import { hashPassword } from "../auth";
 import { adminProcedure, router } from "../index";
 import { createUser } from "./users";
 
@@ -233,87 +232,48 @@ export const adminAppRouter = router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      invariant(ctx.user.email, "A user always has an email specified");
-      try {
-        await validatePassword(ctx.user.email, input.adminPassword);
-      } catch (e) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
-
       return createUser(input, ctx, input.role);
     }),
   changeRole: adminProcedure
     .input(changeRoleSchema)
     .mutation(async ({ input, ctx }) => {
-      invariant(ctx.user.email, "A user always has an email specified");
-      try {
-        await validatePassword(ctx.user.email, input.adminPassword);
-      } catch (e) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
-
-      try {
-        const result = await ctx.db
-          .update(users)
-          .set({ role: input.role })
-          .where(eq(users.id, input.userId))
-          .returning({
-            id: users.id,
-            name: users.name,
-            email: users.email,
-            role: users.role,
-          });
-
-        if (!result.length) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "User not found",
-          });
-        }
-
-        return result;
-      } catch (e) {
+      if (ctx.user.id == input.userId) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong",
+          code: "BAD_REQUEST",
+          message: "Cannot change own role",
+        });
+      }
+      const result = await ctx.db
+        .update(users)
+        .set({ role: input.role })
+        .where(eq(users.id, input.userId));
+
+      if (!result.changes) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
         });
       }
     }),
   resetPassword: adminProcedure
     .input(resetPasswordSchema)
     .mutation(async ({ input, ctx }) => {
-      invariant(ctx.user.email, "A user always has an email specified");
-      try {
-        await validatePassword(ctx.user.email, input.adminPassword);
-      } catch (e) {
-        throw new TRPCError({ code: "UNAUTHORIZED" });
-      }
-
-      try {
-        const hashedPassword = await hashPassword(input.newPassword);
-        const result = await ctx.db
-          .update(users)
-          .set({ password: hashedPassword })
-          .where(eq(users.id, input.userId))
-          .returning({
-            id: users.id,
-            name: users.name,
-            email: users.email,
-            role: users.role,
-          });
-
-        if (!result.length) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "User not found",
-          });
-        }
-
-        return result;
-      } catch (e) {
+      if (ctx.user.id == input.userId) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Something went wrong",
+          code: "BAD_REQUEST",
+          message: "Cannot reset own password",
+        });
+      }
+      const hashedPassword = await hashPassword(input.newPassword);
+      const result = await ctx.db
+        .update(users)
+        .set({ password: hashedPassword })
+        .where(eq(users.id, input.userId));
+
+      if (result.changes == 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
         });
       }
     }),
