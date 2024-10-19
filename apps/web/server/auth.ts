@@ -1,5 +1,4 @@
 import type { Adapter } from "next-auth/adapters";
-import { NextApiRequest } from "next";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { and, count, eq } from "drizzle-orm";
 import NextAuth, {
@@ -71,10 +70,6 @@ async function isAdmin(email: string): Promise<boolean> {
   return res?.role == "admin";
 }
 
-function getIp(req: NextApiRequest): string | null {
-  return requestIp.getClientIp(req);
-}
-
 const providers: Provider[] = [
   CredentialsProvider({
     // The name to display on the sign in form (e.g. "Sign in with...")
@@ -84,14 +79,7 @@ const providers: Provider[] = [
       password: { label: "Password", type: "password" },
     },
     async authorize(credentials, req) {
-      const request = req as NextApiRequest;
-
       if (!credentials) {
-        logAuthenticationError(
-          "<unknown>",
-          "Credentials missing",
-          getIp(request),
-        );
         return null;
       }
 
@@ -105,7 +93,7 @@ const providers: Provider[] = [
         logAuthenticationError(
           credentials?.email,
           error.message,
-          getIp(request),
+          requestIp.getClientIp({ headers: req.headers }),
         );
         return null;
       }
