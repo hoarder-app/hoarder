@@ -3,7 +3,6 @@ import {
   OpenApiGeneratorV3,
   OpenAPIRegistry,
 } from "@asteasolutions/zod-to-openapi";
-import * as yaml from "yaml";
 
 import { registry as bookmarksRegistry } from "./lib/bookmarks";
 import { registry as commonRegistry } from "./lib/common";
@@ -32,13 +31,9 @@ function getOpenApiDocumentation() {
 }
 
 function writeDocumentation() {
-  // OpenAPI JSON
   const docs = getOpenApiDocumentation();
-
-  // YAML equivalent
-  const fileContent = yaml.stringify(docs);
-
-  fs.writeFileSync(`./openapi-spec.yml`, fileContent, {
+  const fileContent = JSON.stringify(docs, null, 2);
+  fs.writeFileSync(`./hoarder-openapi-spec.json`, fileContent, {
     encoding: "utf-8",
   });
 }

@@ -7,7 +7,6 @@
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.2.0",
     "@hoarder/shared": "workspace:^0.1.0",
-    "yaml": "^2.6.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
