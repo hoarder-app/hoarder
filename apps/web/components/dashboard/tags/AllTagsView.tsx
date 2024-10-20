@@ -59,10 +59,10 @@ function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
 
 const byUsageSorter = (a: ZGetTagResponse, b: ZGetTagResponse) => {
   // Sort by name if the usage is the same to get a stable result
-  if (b.count == a.count) {
+  if (b.numBookmarks == a.numBookmarks) {
     return byNameSorter(a, b);
   }
-  return b.count - a.count;
+  return b.numBookmarks - a.numBookmarks;
 };
 const byNameSorter = (a: ZGetTagResponse, b: ZGetTagResponse) =>
   a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
@@ -102,9 +102,13 @@ export default function AllTagsView({
   // Sort tags by usage desc
   const allTags = data.tags.sort(sortByName ? byNameSorter : byUsageSorter);
 
-  const humanTags = allTags.filter((t) => (t.countAttachedBy.human ?? 0) > 0);
-  const aiTags = allTags.filter((t) => (t.countAttachedBy.ai ?? 0) > 0);
-  const emptyTags = allTags.filter((t) => t.count === 0);
+  const humanTags = allTags.filter(
+    (t) => (t.numBookmarksByAttachedType.human ?? 0) > 0,
+  );
+  const aiTags = allTags.filter(
+    (t) => (t.numBookmarksByAttachedType.ai ?? 0) > 0,
+  );
+  const emptyTags = allTags.filter((t) => t.numBookmarks === 0);
 
   const tagsToPill = (tags: typeof allTags) => {
     let tagPill;
@@ -116,7 +120,7 @@ export default function AllTagsView({
               key={t.id}
               id={t.id}
               name={t.name}
-              count={t.count}
+              count={t.numBookmarks}
               isDraggable={draggingEnabled}
               onOpenDialog={handleOpenDialog}
             />
