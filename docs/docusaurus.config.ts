@@ -1,6 +1,7 @@
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
+import type * as OpenApiPlugin from "docusaurus-preset-openapi";
 
 const config: Config = {
   title: 'Hoarder Docs',
@@ -15,8 +16,8 @@ const config: Config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'MohamedBassem', // Usually your GitHub org/user name.
-  projectName: 'hoarder-app', // Usually your repo name.
+  organizationName: 'hoarder-app', // Usually your GitHub org/user name.
+  projectName: 'hoarder', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -31,19 +32,23 @@ const config: Config = {
 
   presets: [
     [
-      'classic',
-      {
+      'docusaurus-preset-openapi',
+      ({
         docs: {
           sidebarPath: './sidebars.ts',
           editUrl:
             'https://github.com/hoarder-app/hoarder/tree/main/docs/',
           routeBasePath: "/",
         },
+        api: {
+          path: "../packages/open-api/hoarder-openapi-spec.json",
+          routeBasePath: '/api',
+        },
         blog: false,
         theme: {
           customCss: './src/css/custom.css',
         },
-      } satisfies Preset.Options,
+      }) satisfies OpenApiPlugin.Options,
     ],
   ],
 
@@ -60,6 +65,11 @@ const config: Config = {
       items: [
         {
           type: 'docsVersionDropdown',
+          position: 'right',
+        },
+        {
+          to: '/api',
+          label: 'API',
           position: 'right',
         },
         {

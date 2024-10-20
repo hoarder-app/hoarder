@@ -1,0 +1,1297 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Hoarder API",
+    "description": "The API for the Hoarder app"
+  },
+  "servers": [
+    {
+      "url": "v1"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "BookmarkId": {
+        "type": "string",
+        "example": "ieidlxygmwj87oxz5hxttoc8"
+      },
+      "ListId": {
+        "type": "string",
+        "example": "ieidlxygmwj87oxz5hxttoc8"
+      },
+      "TagId": {
+        "type": "string",
+        "example": "ieidlxygmwj87oxz5hxttoc8"
+      },
+      "Bookmark": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 250
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "favourited": {
+            "type": "boolean"
+          },
+          "taggingStatus": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "success",
+              "failure",
+              "pending"
+            ]
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "attachedBy": {
+                  "type": "string",
+                  "enum": [
+                    "ai",
+                    "human"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "attachedBy"
+              ]
+            }
+          },
+          "content": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "link"
+                    ]
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "title": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "imageUrl": {
+                    "type": "string",
+                    "nullable": true,
+                    "format": "uri"
+                  },
+                  "imageAssetId": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "screenshotAssetId": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "fullPageArchiveAssetId": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "favicon": {
+                    "type": "string",
+                    "nullable": true,
+                    "format": "uri"
+                  },
+                  "htmlContent": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "crawledAt": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "type",
+                  "url"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "text"
+                    ]
+                  },
+                  "text": {
+                    "type": "string"
+                  },
+                  "sourceUrl": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "type",
+                  "text"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "asset"
+                    ]
+                  },
+                  "assetType": {
+                    "type": "string",
+                    "enum": [
+                      "image",
+                      "pdf"
+                    ]
+                  },
+                  "assetId": {
+                    "type": "string"
+                  },
+                  "fileName": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "sourceUrl": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "type",
+                  "assetType",
+                  "assetId"
+                ]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "unknown"
+                    ]
+                  }
+                },
+                "required": [
+                  "type"
+                ]
+              }
+            ]
+          },
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "assetType": {
+                  "type": "string",
+                  "enum": [
+                    "screenshot",
+                    "bannerImage",
+                    "fullPageArchive",
+                    "bookmarkAsset",
+                    "unknown"
+                  ]
+                }
+              },
+              "required": [
+                "id",
+                "assetType"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "createdAt",
+          "archived",
+          "favourited",
+          "taggingStatus",
+          "tags",
+          "content",
+          "assets"
+        ]
+      },
+      "PaginatedBookmarks": {
+        "type": "object",
+        "properties": {
+          "bookmarks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Bookmark"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "bookmarks",
+          "nextCursor"
+        ]
+      },
+      "Cursor": {
+        "type": "string"
+      },
+      "List": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "icon",
+          "parentId"
+        ]
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "numBookmarks": {
+            "type": "number"
+          },
+          "numBookmarksByAttachedType": {
+            "type": "object",
+            "properties": {
+              "ai": {
+                "type": "number"
+              },
+              "human": {
+                "type": "number"
+              }
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "numBookmarks",
+          "numBookmarksByAttachedType"
+        ]
+      }
+    },
+    "parameters": {
+      "BookmarkId": {
+        "schema": {
+          "$ref": "#/components/schemas/BookmarkId"
+        },
+        "required": true,
+        "name": "bookmarkId",
+        "in": "path"
+      },
+      "ListId": {
+        "schema": {
+          "$ref": "#/components/schemas/ListId"
+        },
+        "required": true,
+        "name": "listId",
+        "in": "path"
+      },
+      "TagId": {
+        "schema": {
+          "$ref": "#/components/schemas/TagId"
+        },
+        "required": true,
+        "name": "tagId",
+        "in": "path"
+      }
+    }
+  },
+  "paths": {
+    "/bookmarks": {
+      "get": {
+        "description": "Get all bookmarks",
+        "summary": "Get all bookmarks",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "required": false,
+            "name": "archived",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "boolean"
+            },
+            "required": false,
+            "name": "favourited",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/Cursor"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with all bookmarks data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedBookmarks"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new bookmark",
+        "summary": "Create a new bookmark",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "The bookmark to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "link"
+                        ]
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "title": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "description": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "imageUrl": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri"
+                      },
+                      "imageAssetId": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "screenshotAssetId": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "fullPageArchiveAssetId": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "favicon": {
+                        "type": "string",
+                        "nullable": true,
+                        "format": "uri"
+                      },
+                      "htmlContent": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "crawledAt": {
+                        "type": "string",
+                        "nullable": true
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "url"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "text"
+                        ]
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "sourceUrl": {
+                        "type": "string",
+                        "nullable": true
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "text"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "asset"
+                        ]
+                      },
+                      "assetType": {
+                        "type": "string",
+                        "enum": [
+                          "image",
+                          "pdf"
+                        ]
+                      },
+                      "assetId": {
+                        "type": "string"
+                      },
+                      "fileName": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "sourceUrl": {
+                        "type": "string",
+                        "nullable": true
+                      }
+                    },
+                    "required": [
+                      "type",
+                      "assetType",
+                      "assetId"
+                    ]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "unknown"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created bookmark",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bookmark"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookmarks/{bookmarkId}": {
+      "get": {
+        "description": "Get bookmark by its id",
+        "summary": "Get a single bookmark",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with bookmark data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Bookmark"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete bookmark by its id",
+        "summary": "Delete a bookmark",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content - the bookmark was deleted"
+          }
+        }
+      },
+      "patch": {
+        "description": "Update bookmark by its id",
+        "summary": "Update a bookmark",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          }
+        ],
+        "requestBody": {
+          "description": "The data to update. Only the fields you want to update need to be provided.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "archived": {
+                    "type": "boolean"
+                  },
+                  "favourited": {
+                    "type": "boolean"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string",
+                    "nullable": true,
+                    "maxLength": 250
+                  },
+                  "createdAt": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated bookmark",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 250
+                    },
+                    "archived": {
+                      "type": "boolean"
+                    },
+                    "favourited": {
+                      "type": "boolean"
+                    },
+                    "taggingStatus": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "success",
+                        "failure",
+                        "pending"
+                      ]
+                    },
+                    "note": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "archived",
+                    "favourited",
+                    "taggingStatus"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookmarks/{bookmarkId}/tags": {
+      "post": {
+        "description": "Attach tags to a bookmark",
+        "summary": "Attach tags to a bookmark",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          }
+        ],
+        "requestBody": {
+          "description": "The tags to attach.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "tagId": {
+                          "type": "string"
+                        },
+                        "tagName": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "tags"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The list of attached tag ids",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "attached": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TagId"
+                      }
+                    }
+                  },
+                  "required": [
+                    "attached"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Detach tags from a bookmark",
+        "summary": "Detach tags from a bookmark",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          }
+        ],
+        "requestBody": {
+          "description": "The tags to detach.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "tags": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "tagId": {
+                          "type": "string"
+                        },
+                        "tagName": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "tags"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The list of detached tag ids",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "detached": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TagId"
+                      }
+                    }
+                  },
+                  "required": [
+                    "detached"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lists": {
+      "get": {
+        "description": "Get all lists",
+        "summary": "Get all lists",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with all lists data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "lists": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/List"
+                      }
+                    }
+                  },
+                  "required": [
+                    "lists"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new list",
+        "summary": "Create a new list",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "The list to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                  },
+                  "icon": {
+                    "type": "string"
+                  },
+                  "parentId": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "name",
+                  "icon"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/List"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lists/{listId}": {
+      "get": {
+        "description": "Get list by its id",
+        "summary": "Get a single list",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ListId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with list data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/List"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete list by its id",
+        "summary": "Delete a list",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ListId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content - the bookmark was deleted"
+          }
+        }
+      }
+    },
+    "/list/{listId}": {
+      "patch": {
+        "description": "Update list by its id",
+        "summary": "Update a list",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ListId"
+          }
+        ],
+        "requestBody": {
+          "description": "The data to update. Only the fields you want to update need to be provided.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 40
+                  },
+                  "icon": {
+                    "type": "string"
+                  },
+                  "parentId": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/List"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lists/{listId}/bookmarks": {
+      "get": {
+        "description": "Get the bookmarks in a list",
+        "summary": "Get a bookmarks in a list",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ListId"
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/Cursor"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with list data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedBookmarks"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/lists/{listId}/bookmarks/{bookmarkId}": {
+      "put": {
+        "description": "Add the bookmarks to a list",
+        "summary": "Add a bookmark to a list",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ListId"
+          },
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content - the bookmark was added"
+          }
+        }
+      },
+      "delete": {
+        "description": "Remove the bookmarks from a list",
+        "summary": "Remove a bookmark from a list",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ListId"
+          },
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content - the bookmark was added"
+          }
+        }
+      }
+    },
+    "/tags": {
+      "get": {
+        "description": "Get all tags",
+        "summary": "Get all tags",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with all tags data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "tags": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Tag"
+                      }
+                    }
+                  },
+                  "required": [
+                    "tags"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tags/{tagId}": {
+      "get": {
+        "description": "Get tag by its id",
+        "summary": "Get a single tag",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TagId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with list data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete tag by its id",
+        "summary": "Delete a tag",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TagId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content - the bookmark was deleted"
+          }
+        }
+      },
+      "patch": {
+        "description": "Update tag by its id",
+        "summary": "Update a tag",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TagId"
+          }
+        ],
+        "requestBody": {
+          "description": "The data to update. Only the fields you want to update need to be provided.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated tag",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tags/{tagId}/bookmarks": {
+      "get": {
+        "description": "Get the bookmarks with the tag",
+        "summary": "Get a bookmarks with the tag",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TagId"
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/Cursor"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with list data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedBookmarks"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
