@@ -5,20 +5,14 @@ import { z } from "zod";
 
 import { SqliteError } from "@hoarder/db";
 import { bookmarkLists, bookmarksInLists } from "@hoarder/db/schema";
-import { zBookmarkListSchema } from "@hoarder/shared/types/lists";
+import {
+  zBookmarkListSchema,
+  zNewBookmarkListSchema,
+} from "@hoarder/shared/types/lists";
 
 import type { Context } from "../index";
 import { authedProcedure, router } from "../index";
 import { ensureBookmarkOwnership } from "./bookmarks";
-
-const zNewBookmarkListSchema = z.object({
-  name: z
-    .string()
-    .min(1, "List name can't be empty")
-    .max(40, "List name is at most 40 chars"),
-  icon: z.string(),
-  parentId: z.string().nullish(),
-});
 
 export const ensureListOwnership = experimental_trpcMiddleware<{
   ctx: Context;
