@@ -56,3 +56,5 @@ export const createContext = async (
 const createCaller = createCallerFactory(appRouter);
 
 export const api = createCaller(createContext);
+
+export const createTrcpClientFromCtx = createCaller;
