@@ -23,7 +23,7 @@ import {
 
 import type { InferenceClient } from "./inference";
 import { InferenceClientFactory } from "./inference";
-import { readPDFText } from "./utils";
+import { readImageText, readPDFText } from "./utils";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
@@ -152,6 +152,26 @@ async function inferTagsFromImage(
       `[inference][${jobId}] AssetId ${bookmark.asset.assetId} for bookmark ${bookmark.id} not found`,
     );
   }
+
+  let imageText = null;
+  try {
+    imageText = await readImageText(asset);
+  } catch (e) {
+    logger.error(`[inference][${jobId}] Failed to read image text: ${e}`);
+  }
+
+  if (imageText) {
+    logger.info(
+      `[inference][${jobId}] Extracted ${imageText.length} characters from image.`,
+    );
+    await db
+      .update(bookmarkAssets)
+      .set({
+        content: imageText,
+      })
+      .where(eq(bookmarkAssets.id, bookmark.id));
+  }
+
   const base64 = asset.toString("base64");
   return inferenceClient.inferFromImage(
     buildImagePrompt(

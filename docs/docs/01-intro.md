@@ -16,6 +16,7 @@ Hoarder is an open source "Bookmark Everything" app that uses AI for automatical
 - 📋 Sort your bookmarks into lists.
 - 🔎 Full text search of all the content stored.
 - ✨ AI-based (aka chatgpt) automatic tagging. With supports for local models using ollama!
+- 🎆 OCR for extracting text from images.
 - 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje) and [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/hoarder/) for quick bookmarking.
 - 📱 An [iOS app](https://apps.apple.com/us/app/hoarder-app/id6479258022), and an [Android app](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
 - 🗄️ Full page archival (using [monolith](https://github.com/Y2Z/monolith)) to protect against link rot.
