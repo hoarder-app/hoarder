@@ -36,6 +36,7 @@ import {
   zBookmarkSchema,
   zGetBookmarksRequestSchema,
   zGetBookmarksResponseSchema,
+  zManipulatedTagSchema,
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "@hoarder/shared/types/bookmarks";
@@ -732,30 +733,8 @@ export const bookmarksAppRouter = router({
     .input(
       z.object({
         bookmarkId: z.string(),
-        attach: z.array(
-          z
-            .object({
-              // At least one of the two must be set
-              tagId: z.string().optional(), // If the tag already exists and we know its id we should pass it
-              tagName: z.string().optional(),
-            })
-            .refine((val) => !!val.tagId || !!val.tagName, {
-              message: "You must provide either a tagId or a tagName",
-              path: ["tagId", "tagName"],
-            }),
-        ),
-        detach: z.array(
-          z
-            .object({
-              // At least one of the two must be set
-              tagId: z.string().optional(),
-              tagName: z.string().optional(), // Also allow removing by tagName, to make CLI usage easier
-            })
-            .refine((val) => !!val.tagId || !!val.tagName, {
-              message: "You must provide either a tagId or a tagName",
-              path: ["tagId", "tagName"],
-            }),
-        ),
+        attach: z.array(zManipulatedTagSchema),
+        detach: z.array(zManipulatedTagSchema),
       }),
     )
     .output(

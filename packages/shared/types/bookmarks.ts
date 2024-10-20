@@ -157,3 +157,15 @@ export const zUpdateBookmarksRequestSchema = z.object({
 export type ZUpdateBookmarksRequest = z.infer<
   typeof zUpdateBookmarksRequestSchema
 >;
+
+// The schema that's used to for attachig/detaching tags
+export const zManipulatedTagSchema = z
+  .object({
+    // At least one of the two must be set
+    tagId: z.string().optional(), // If the tag already exists and we know its id we should pass it
+    tagName: z.string().optional(),
+  })
+  .refine((val) => !!val.tagId || !!val.tagName, {
+    message: "You must provide either a tagId or a tagName",
+    path: ["tagId", "tagName"],
+  });
