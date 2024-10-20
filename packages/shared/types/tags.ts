@@ -16,3 +16,8 @@ export const zGetTagResponseSchema = z.object({
   countAttachedBy: z.record(zAttachedByEnumSchema, z.number()),
 });
 export type ZGetTagResponse = z.infer<typeof zGetTagResponseSchema>;
+
+export const zUpdateTagRequestSchema = z.object({
+  tagId: z.string(),
+  name: z.string().optional(),
+});
