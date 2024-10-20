@@ -876,6 +876,34 @@ importers:
         specifier: ^0.24.02
         version: 0.24.2
 
+  packages/open-api:
+    dependencies:
+      '@asteasolutions/zod-to-openapi':
+        specifier: ^7.2.0
+        version: 7.2.0(zod@3.22.4)
+      '@hoarder/shared':
+        specifier: workspace:^0.1.0
+        version: link:../shared
+      yaml:
+        specifier: ^2.6.0
+        version: 2.6.0
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+    devDependencies:
+      '@hoarder/eslint-config':
+        specifier: workspace:^0.2.0
+        version: link:../../tooling/eslint
+      '@hoarder/prettier-config':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/prettier
+      '@hoarder/tsconfig':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/typescript
+      tsx:
+        specifier: ^4.7.1
+        version: 4.7.1
+
   packages/queue:
     dependencies:
       async-mutex:
@@ -1215,6 +1243,11 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       ajv: '>=8'
+
+  '@asteasolutions/zod-to-openapi@7.2.0':
+    resolution: {integrity: sha512-Va+Fq1QzKkSgmiYINSp3cASFhMsbdRH/kmCk2feijhC+yNjGoC056CRqihrVFhR8MY8HOZHdlYm2Ns2lmszCiw==}
+    peerDependencies:
+      zod: ^3.20.2
 
   '@auth/core@0.27.0':
     resolution: {integrity: sha512-3bydnRJIM/Al6mkYmb53MsC+6G8ojw3lLPzwgVnX4dCo6N2lrib6Wq6r0vxZIhuHGjLObqqtUfpeaEj5aeTHFg==}
@@ -9508,6 +9541,9 @@ packages:
       zod:
         optional: true
 
+  openapi3-ts@4.4.0:
+    resolution: {integrity: sha512-9asTNB9IkKEzWMcHmVZE7Ts3kC9G7AFHfs8i7caD8HbI76gEjdkId4z/AkP83xdZsH7PLAnnbl47qZkXuxpArw==}
+
   opener@1.5.2:
     resolution: {integrity: sha512-ur5UIdyw5Y7yEj9wLzhqXiy6GZ3Mwx0yGI+5sMn2r0N0v3cKJvUmFH5yPP+WXh9e0xfyzyJX95D8l088DNFj7A==}
     hasBin: true
@@ -12667,8 +12703,8 @@ packages:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
 
-  yaml@2.4.0:
-    resolution: {integrity: sha512-j9iR8g+/t0lArF4V6NE/QCfT+CO7iLqrXAHZbJdo+LfjqP1vR8Fg5bSiaq6Q2lOD1AUEVrEVIgABvBFYojJVYQ==}
+  yaml@2.6.0:
+    resolution: {integrity: sha512-a6ae//JvKDEra2kdi1qzCyrJW/WZCgFi8ydDV+eXExl95t+5R+ijnqHJbz9tmMh8FUjx3iv2fCQ4dclAQlO2UQ==}
     engines: {node: '>= 14'}
     hasBin: true
 
@@ -12852,6 +12888,12 @@ snapshots:
       json-schema: 0.4.0
       jsonpointer: 5.0.1
       leven: 3.1.0
+    dev: false
+
+  '@asteasolutions/zod-to-openapi@7.2.0(zod@3.22.4)':
+    dependencies:
+      openapi3-ts: 4.4.0
+      zod: 3.22.4
     dev: false
 
   '@auth/core@0.27.0':
@@ -17291,7 +17333,7 @@ snapshots:
       semver: 7.6.0
       strip-ansi: 5.2.0
       wcwidth: 1.0.1
-      yaml: 2.4.0
+      yaml: 2.6.0
     transitivePeerDependencies:
       - encoding
     dev: false
@@ -25814,6 +25856,11 @@ snapshots:
       - encoding
     dev: false
 
+  openapi3-ts@4.4.0:
+    dependencies:
+      yaml: 2.6.0
+    dev: false
+
   opener@1.5.2:
     dev: false
 
@@ -26258,7 +26305,7 @@ snapshots:
     dependencies:
       lilconfig: 3.1.1
       postcss: 8.4.35
-      yaml: 2.4.0
+      yaml: 2.6.0
 
   postcss-loader@7.3.4(postcss@8.4.35)(typescript@5.3.3)(webpack@5.90.3):
     dependencies:
@@ -29957,7 +30004,7 @@ snapshots:
   yaml@1.10.2:
     dev: false
 
-  yaml@2.4.0: {}
+  yaml@2.6.0: {}
 
   yargs-parser@18.1.3:
     dependencies:
