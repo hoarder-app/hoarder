@@ -80,7 +80,9 @@ export const tagsAppRouter = router({
         throw new TRPCError({ code: "NOT_FOUND" });
       }
 
-      const countAttachedBy = res.reduce<Record<ZAttachedByEnum, number>>(
+      const numBookmarksByAttachedType = res.reduce<
+        Record<ZAttachedByEnum, number>
+      >(
         (acc, curr) => {
           if (curr.attachedBy) {
             acc[curr.attachedBy]++;
@@ -93,8 +95,11 @@ export const tagsAppRouter = router({
       return {
         id: res[0].id,
         name: res[0].name,
-        count: Object.values(countAttachedBy).reduce((s, a) => s + a, 0),
-        countAttachedBy,
+        numBookmarks: Object.values(numBookmarksByAttachedType).reduce(
+          (s, a) => s + a,
+          0,
+        ),
+        numBookmarksByAttachedType,
       };
     }),
   delete: authedProcedure
@@ -343,8 +348,8 @@ export const tagsAppRouter = router({
 
       const resp = tags.map(({ tagsOnBookmarks, ...rest }) => ({
         ...rest,
-        count: tagsOnBookmarks.length,
-        countAttachedBy: tagsOnBookmarks.reduce<
+        numBookmarks: tagsOnBookmarks.length,
+        numBookmarksByAttachedType: tagsOnBookmarks.reduce<
           Record<ZAttachedByEnum, number>
         >(
           (acc, curr) => {

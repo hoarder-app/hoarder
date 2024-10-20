@@ -21,14 +21,14 @@ tagsCmd
 
     try {
       const tags = (await api.tags.list.query()).tags;
-      tags.sort((a, b) => b.count - a.count);
+      tags.sort((a, b) => b.numBookmarks - a.numBookmarks);
       if (getGlobalOptions().json) {
         printObject(tags);
       } else {
         const data: string[][] = [["Id", "Name", "Num bookmarks"]];
 
         tags.forEach((tag) => {
-          data.push([tag.id, tag.name, tag.count.toString()]);
+          data.push([tag.id, tag.name, tag.numBookmarks.toString()]);
         });
         console.log(
           table(data, {
