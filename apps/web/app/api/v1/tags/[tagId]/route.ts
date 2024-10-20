@@ -31,3 +31,19 @@ export const GET = (
       };
     },
   });
+
+export const DELETE = (
+  req: NextRequest,
+  { params }: { params: { tagId: string } },
+) =>
+  buildHandler({
+    req,
+    handler: async ({ api }) => {
+      await api.tags.delete({
+        tagId: params.tagId,
+      });
+      return {
+        status: 204,
+      };
+    },
+  });

@@ -16,3 +16,17 @@ export const GET = (
       return { status: 200, resp: bookmark };
     },
   });
+
+export const DELETE = (
+  req: NextRequest,
+  { params }: { params: { bookmarkId: string } },
+) =>
+  buildHandler({
+    req,
+    handler: async ({ api }) => {
+      await api.bookmarks.deleteBookmark({
+        bookmarkId: params.bookmarkId,
+      });
+      return { status: 204 };
+    },
+  });
