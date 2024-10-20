@@ -19,7 +19,7 @@ export default async function Header() {
           <HoarderLogo height={20} gap="8px" />
         </Link>
       </div>
-      <div className="flex w-full gap-2">
+      <div className="flex flex-1 gap-2">
         <SearchInput className="min-w-40 bg-muted" />
         <GlobalActions />
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
-import { ActionButton } from "@/components/ui/action-button";
+import { ActionButtonWithTooltip } from "@/components/ui/action-button";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/spinner";
 import {
   Table,
@@ -12,8 +13,12 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-import { Trash } from "lucide-react";
+import { Check, KeyRound, Pencil, Trash, UserPlus, X } from "lucide-react";
 import { useSession } from "next-auth/react";
+
+import AddUserDialog from "./AddUserDialog";
+import ChangeRoleDialog from "./ChangeRoleDialog";
+import ResetPasswordDialog from "./ResetPasswordDialog";
 
 function toHumanReadableSize(size: number) {
   const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
@@ -49,7 +54,14 @@ export default function UsersSection() {
 
   return (
     <>
-      <div className="mb-2 text-xl font-medium">Users List</div>
+      <div className="mb-2 flex items-center justify-between text-xl font-medium">
+        <span>Users List</span>
+        <AddUserDialog>
+          <ButtonWithTooltip tooltip="Create User" variant="outline">
+            <UserPlus size={16} />
+          </ButtonWithTooltip>
+        </AddUserDialog>
+      </div>
 
       <Table>
         <TableHeader className="bg-gray-200">
@@ -58,7 +70,8 @@ export default function UsersSection() {
           <TableHead>Num Bookmarks</TableHead>
           <TableHead>Asset Sizes</TableHead>
           <TableHead>Role</TableHead>
-          <TableHead>Action</TableHead>
+          <TableHead>Local User</TableHead>
+          <TableHead>Actions</TableHead>
         </TableHeader>
         <TableBody>
           {users.users.map((u) => (
@@ -72,15 +85,37 @@ export default function UsersSection() {
                 {toHumanReadableSize(userStats[u.id].assetSizes)}
               </TableCell>
               <TableCell className="py-1 capitalize">{u.role}</TableCell>
-              <TableCell className="py-1">
-                <ActionButton
+              <TableCell className="py-1 capitalize">
+                {u.localUser ? <Check /> : <X />}
+              </TableCell>
+              <TableCell className="flex gap-1 py-1">
+                <ActionButtonWithTooltip
+                  tooltip="Delete user"
                   variant="outline"
                   onClick={() => deleteUser({ userId: u.id })}
                   loading={isDeletionPending}
                   disabled={session!.user.id == u.id}
                 >
                   <Trash size={16} color="red" />
-                </ActionButton>
+                </ActionButtonWithTooltip>
+                <ResetPasswordDialog userId={u.id}>
+                  <ButtonWithTooltip
+                    tooltip="Reset password"
+                    variant="outline"
+                    disabled={session!.user.id == u.id || !u.localUser}
+                  >
+                    <KeyRound size={16} color="red" />
+                  </ButtonWithTooltip>
+                </ResetPasswordDialog>
+                <ChangeRoleDialog userId={u.id} currentRole={u.role!}>
+                  <ButtonWithTooltip
+                    tooltip="Change role"
+                    variant="outline"
+                    disabled={session!.user.id == u.id}
+                  >
+                    <Pencil size={16} color="red" />
+                  </ButtonWithTooltip>
+                </ChangeRoleDialog>
               </TableCell>
             </TableRow>
           ))}

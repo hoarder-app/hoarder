@@ -7,7 +7,9 @@ import { zExportSchema } from "./exportBookmarks";
 
 export interface ParsedBookmark {
   title: string;
-  url?: string;
+  content?:
+    | { type: BookmarkTypes.LINK; url: string }
+    | { type: BookmarkTypes.TEXT; text: string };
   tags: string[];
   addDate?: number;
   notes?: string;
@@ -36,9 +38,10 @@ export async function parseNetscapeBookmarkFile(
       } catch (e) {
         /* empty */
       }
+      const url = $a.attr("href");
       return {
         title: $a.text(),
-        url: $a.attr("href"),
+        content: url ? { type: BookmarkTypes.LINK as const, url } : undefined,
         tags,
         addDate: typeof addDate === "undefined" ? undefined : parseInt(addDate),
       };
@@ -64,9 +67,10 @@ export async function parsePocketBookmarkFile(
       } catch (e) {
         /* empty */
       }
+      const url = $a.attr("href");
       return {
         title: $a.text(),
-        url: $a.attr("href"),
+        content: url ? { type: BookmarkTypes.LINK as const, url } : undefined,
         tags,
         addDate: typeof addDate === "undefined" ? undefined : parseInt(addDate),
       };
@@ -86,14 +90,25 @@ export async function parseHoarderBookmarkFile(
     );
   }
 
-  return parsed.data.bookmarks.map((bookmark) => ({
-    title: bookmark.title ?? "",
-    url:
-      bookmark.content?.type == BookmarkTypes.LINK
-        ? bookmark.content.url
-        : undefined,
-    tags: bookmark.tags,
-    addDate: bookmark.createdAt,
-    notes: bookmark.note ?? undefined,
-  }));
+  return parsed.data.bookmarks.map((bookmark) => {
+    let content = undefined;
+    if (bookmark.content?.type == BookmarkTypes.LINK) {
+      content = {
+        type: BookmarkTypes.LINK as const,
+        url: bookmark.content.url,
+      };
+    } else if (bookmark.content?.type == BookmarkTypes.TEXT) {
+      content = {
+        type: BookmarkTypes.TEXT as const,
+        text: bookmark.content.text,
+      };
+    }
+    return {
+      title: bookmark.title ?? "",
+      content,
+      tags: bookmark.tags,
+      addDate: bookmark.createdAt,
+      notes: bookmark.note ?? undefined,
+    };
+  });
 }
