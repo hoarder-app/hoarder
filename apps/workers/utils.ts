@@ -1,4 +1,8 @@
+import os from "os";
 import PDFParser from "pdf2json";
+import { createWorker } from "tesseract.js";
+
+import serverConfig from "@hoarder/shared/config";
 
 export function withTimeout<T, Ret>(
   func: (param: T) => Promise<Ret>,
@@ -15,6 +19,24 @@ export function withTimeout<T, Ret>(
       ),
     ]);
   };
+}
+
+export async function readImageText(buffer: Buffer) {
+  if (serverConfig.ocr.langs.length == 1 && serverConfig.ocr.langs[0] == "") {
+    return null;
+  }
+  const worker = await createWorker(serverConfig.ocr.langs, undefined, {
+    cachePath: serverConfig.ocr.cacheDir ?? os.tmpdir(),
+  });
+  try {
+    const ret = await worker.recognize(buffer);
+    if (ret.data.confidence <= serverConfig.ocr.confidenceThreshold) {
+      return null;
+    }
+    return ret.data.text;
+  } finally {
+    await worker.terminate();
+  }
 }
 
 export async function readPDFText(buffer: Buffer): Promise<{
