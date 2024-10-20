@@ -119,7 +119,7 @@ export type ZNewBookmarkRequest = z.infer<typeof zNewBookmarkRequestSchema>;
 export const DEFAULT_NUM_BOOKMARKS_PER_PAGE = 20;
 export const MAX_NUM_BOOKMARKS_PER_PAGE = 100;
 
-const zCursorV2 = z.object({
+export const zCursorV2 = z.object({
   createdAt: z.date(),
   id: z.string(),
 });
