@@ -33,6 +33,7 @@ registry.registerPath({
   path: "/tags",
   description: "Get all tags",
   summary: "Get all tags",
+  tags: ["Tags"],
   security: [{ [BearerAuth.name]: [] }],
   request: {},
   responses: {
@@ -54,6 +55,7 @@ registry.registerPath({
   path: "/tags/{tagId}",
   description: "Get tag by its id",
   summary: "Get a single tag",
+  tags: ["Tags"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ tagId: TagIdSchema }),
@@ -75,6 +77,7 @@ registry.registerPath({
   path: "/tags/{tagId}",
   description: "Delete tag by its id",
   summary: "Delete a tag",
+  tags: ["Tags"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ tagId: TagIdSchema }),
@@ -91,6 +94,7 @@ registry.registerPath({
   path: "/tags/{tagId}",
   description: "Update tag by its id",
   summary: "Update a tag",
+  tags: ["Tags"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ tagId: TagIdSchema }),
@@ -121,6 +125,7 @@ registry.registerPath({
   path: "/tags/{tagId}/bookmarks",
   description: "Get the bookmarks with the tag",
   summary: "Get a bookmarks with the tag",
+  tags: ["Tags"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ tagId: TagIdSchema }),

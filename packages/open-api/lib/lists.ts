@@ -34,6 +34,7 @@ registry.registerPath({
   path: "/lists",
   description: "Get all lists",
   summary: "Get all lists",
+  tags: ["Lists"],
   security: [{ [BearerAuth.name]: [] }],
   request: {},
   responses: {
@@ -55,6 +56,7 @@ registry.registerPath({
   path: "/lists",
   description: "Create a new list",
   summary: "Create a new list",
+  tags: ["Lists"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     body: {
@@ -82,6 +84,7 @@ registry.registerPath({
   path: "/lists/{listId}",
   description: "Get list by its id",
   summary: "Get a single list",
+  tags: ["Lists"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ listId: ListIdSchema }),
@@ -103,6 +106,7 @@ registry.registerPath({
   path: "/lists/{listId}",
   description: "Delete list by its id",
   summary: "Delete a list",
+  tags: ["Lists"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ listId: ListIdSchema }),
@@ -119,6 +123,7 @@ registry.registerPath({
   path: "/list/{listId}",
   description: "Update list by its id",
   summary: "Update a list",
+  tags: ["Lists"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ listId: ListIdSchema }),
@@ -149,6 +154,7 @@ registry.registerPath({
   path: "/lists/{listId}/bookmarks",
   description: "Get the bookmarks in a list",
   summary: "Get a bookmarks in a list",
+  tags: ["Lists"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ listId: ListIdSchema }),
@@ -171,6 +177,7 @@ registry.registerPath({
   path: "/lists/{listId}/bookmarks/{bookmarkId}",
   description: "Add the bookmarks to a list",
   summary: "Add a bookmark to a list",
+  tags: ["Lists"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ listId: ListIdSchema, bookmarkId: BookmarkIdSchema }),
@@ -187,6 +194,7 @@ registry.registerPath({
   path: "/lists/{listId}/bookmarks/{bookmarkId}",
   description: "Remove the bookmarks from a list",
   summary: "Remove a bookmark from a list",
+  tags: ["Lists"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ listId: ListIdSchema, bookmarkId: BookmarkIdSchema }),
