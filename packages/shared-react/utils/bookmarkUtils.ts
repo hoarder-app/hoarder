@@ -8,12 +8,21 @@ import { getAssetUrl } from "./assetUtils";
 
 const MAX_LOADING_MSEC = 30 * 1000;
 
-export function getBookmarkLinkImageUrl(bookmark: ZBookmarkedLink) {
+export function getBookmarkLinkImageUrl(
+  bookmark: ZBookmarkedLink,
+  preview?: boolean,
+) {
   if (bookmark.imageAssetId) {
-    return { url: getAssetUrl(bookmark.imageAssetId), localAsset: true };
+    return {
+      url: getAssetUrl(bookmark.imageAssetId, preview),
+      localAsset: true,
+    };
   }
   if (bookmark.screenshotAssetId) {
-    return { url: getAssetUrl(bookmark.screenshotAssetId), localAsset: true };
+    return {
+      url: getAssetUrl(bookmark.screenshotAssetId, preview),
+      localAsset: true,
+    };
   }
   return bookmark.imageUrl
     ? { url: bookmark.imageUrl, localAsset: false }
