@@ -98,7 +98,24 @@ export async function buildHandler<
 
     let body: SchemaType<BodyT> | undefined = undefined;
     if (bodySchema) {
-      body = bodySchema.parse(await req.json()) as SchemaType<BodyT>;
+      if (req.headers.get("Content-Type") !== "application/json") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Content-Type must be application/json",
+        });
+      }
+
+      let bodyJson = undefined;
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        bodyJson = await req.json();
+      } catch (e) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: `Invalid JSON: ${(e as Error).message}`,
+        });
+      }
+      body = bodySchema.parse(bodyJson) as SchemaType<BodyT>;
     }
 
     const { status, resp } = await handler({
@@ -138,6 +155,10 @@ export async function buildHandler<
         },
       });
     } else {
+      const error = e as Error;
+      console.error(
+        `Unexpected error in: ${req.method} ${req.nextUrl.pathname}:\n${error.stack}`,
+      );
       return new Response(JSON.stringify({ code: "UnknownError" }), {
         status: 500,
         headers: {
