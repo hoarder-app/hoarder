@@ -7,7 +7,13 @@
   },
   "servers": [
     {
-      "url": "v1"
+      "url": "{address}/api/v1",
+      "variables": {
+        "address": {
+          "default": "https://try.hoarder.app",
+          "description": "The address of the hoarder server"
+        }
+      }
     }
   ],
   "components": {
@@ -368,6 +374,9 @@
       "get": {
         "description": "Get all bookmarks",
         "summary": "Get all bookmarks",
+        "tags": [
+          "Bookmarks"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -423,6 +432,9 @@
       "post": {
         "description": "Create a new bookmark",
         "summary": "Create a new bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -584,6 +596,9 @@
       "get": {
         "description": "Get bookmark by its id",
         "summary": "Get a single bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -610,6 +625,9 @@
       "delete": {
         "description": "Delete bookmark by its id",
         "summary": "Delete a bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -629,6 +647,9 @@
       "patch": {
         "description": "Update bookmark by its id",
         "summary": "Update a bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -725,6 +746,9 @@
       "post": {
         "description": "Attach tags to a bookmark",
         "summary": "Attach tags to a bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -791,6 +815,9 @@
       "delete": {
         "description": "Detach tags from a bookmark",
         "summary": "Detach tags from a bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -859,6 +886,9 @@
       "get": {
         "description": "Get all lists",
         "summary": "Get all lists",
+        "tags": [
+          "Lists"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -891,6 +921,9 @@
       "post": {
         "description": "Create a new list",
         "summary": "Create a new list",
+        "tags": [
+          "Lists"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -942,6 +975,9 @@
       "get": {
         "description": "Get list by its id",
         "summary": "Get a single list",
+        "tags": [
+          "Lists"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -968,6 +1004,9 @@
       "delete": {
         "description": "Delete list by its id",
         "summary": "Delete a list",
+        "tags": [
+          "Lists"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -989,6 +1028,9 @@
       "patch": {
         "description": "Update list by its id",
         "summary": "Update a list",
+        "tags": [
+          "Lists"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1041,6 +1083,9 @@
       "get": {
         "description": "Get the bookmarks in a list",
         "summary": "Get a bookmarks in a list",
+        "tags": [
+          "Lists"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1085,6 +1130,9 @@
       "put": {
         "description": "Add the bookmarks to a list",
         "summary": "Add a bookmark to a list",
+        "tags": [
+          "Lists"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1107,6 +1155,9 @@
       "delete": {
         "description": "Remove the bookmarks from a list",
         "summary": "Remove a bookmark from a list",
+        "tags": [
+          "Lists"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1131,6 +1182,9 @@
       "get": {
         "description": "Get all tags",
         "summary": "Get all tags",
+        "tags": [
+          "Tags"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1165,6 +1219,9 @@
       "get": {
         "description": "Get tag by its id",
         "summary": "Get a single tag",
+        "tags": [
+          "Tags"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1191,6 +1248,9 @@
       "delete": {
         "description": "Delete tag by its id",
         "summary": "Delete a tag",
+        "tags": [
+          "Tags"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1210,6 +1270,9 @@
       "patch": {
         "description": "Update tag by its id",
         "summary": "Update a tag",
+        "tags": [
+          "Tags"
+        ],
         "security": [
           {
             "bearerAuth": []
@@ -1253,6 +1316,9 @@
       "get": {
         "description": "Get the bookmarks with the tag",
         "summary": "Get a bookmarks with the tag",
+        "tags": [
+          "Tags"
+        ],
         "security": [
           {
             "bearerAuth": []

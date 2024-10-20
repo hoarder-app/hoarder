@@ -38,6 +38,7 @@ registry.registerPath({
   path: "/bookmarks",
   description: "Get all bookmarks",
   summary: "Get all bookmarks",
+  tags: ["Bookmarks"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     query: z
@@ -64,6 +65,7 @@ registry.registerPath({
   path: "/bookmarks",
   description: "Create a new bookmark",
   summary: "Create a new bookmark",
+  tags: ["Bookmarks"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     body: {
@@ -91,6 +93,7 @@ registry.registerPath({
   path: "/bookmarks/{bookmarkId}",
   description: "Get bookmark by its id",
   summary: "Get a single bookmark",
+  tags: ["Bookmarks"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ bookmarkId: BookmarkIdSchema }),
@@ -112,6 +115,7 @@ registry.registerPath({
   path: "/bookmarks/{bookmarkId}",
   description: "Delete bookmark by its id",
   summary: "Delete a bookmark",
+  tags: ["Bookmarks"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ bookmarkId: BookmarkIdSchema }),
@@ -128,6 +132,7 @@ registry.registerPath({
   path: "/bookmarks/{bookmarkId}",
   description: "Update bookmark by its id",
   summary: "Update a bookmark",
+  tags: ["Bookmarks"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ bookmarkId: BookmarkIdSchema }),
@@ -158,6 +163,7 @@ registry.registerPath({
   path: "/bookmarks/{bookmarkId}/tags",
   description: "Attach tags to a bookmark",
   summary: "Attach tags to a bookmark",
+  tags: ["Bookmarks"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ bookmarkId: BookmarkIdSchema }),
@@ -187,6 +193,7 @@ registry.registerPath({
   path: "/bookmarks/{bookmarkId}/tags",
   description: "Detach tags from a bookmark",
   summary: "Detach tags from a bookmark",
+  tags: ["Bookmarks"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ bookmarkId: BookmarkIdSchema }),

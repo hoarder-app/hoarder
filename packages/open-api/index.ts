@@ -26,7 +26,17 @@ function getOpenApiDocumentation() {
       title: "Hoarder API",
       description: "The API for the Hoarder app",
     },
-    servers: [{ url: "v1" }],
+    servers: [
+      {
+        url: "{address}/api/v1",
+        variables: {
+          address: {
+            default: "https://try.hoarder.app",
+            description: "The address of the hoarder server",
+          },
+        },
+      },
+    ],
   });
 }
 
