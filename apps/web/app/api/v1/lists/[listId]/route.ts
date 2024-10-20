@@ -31,3 +31,19 @@ export const GET = (
       };
     },
   });
+
+export const DELETE = (
+  req: NextRequest,
+  { params }: { params: { listId: string } },
+) =>
+  buildHandler({
+    req,
+    handler: async ({ api }) => {
+      await api.lists.delete({
+        listId: params.listId,
+      });
+      return {
+        status: 204,
+      };
+    },
+  });

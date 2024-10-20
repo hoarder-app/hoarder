@@ -81,7 +81,7 @@ export async function buildHandler<
   bodySchema,
 }: {
   req: NextRequest;
-  handler: (req: InputT) => Promise<{ status: number; resp: object }>;
+  handler: (req: InputT) => Promise<{ status: number; resp?: object }>;
   searchParamsSchema?: SearchParamsT | undefined;
   bodySchema?: BodyT | undefined;
 }) {
@@ -108,7 +108,7 @@ export async function buildHandler<
       body,
     } as InputT);
 
-    return new Response(JSON.stringify(resp), {
+    return new Response(resp ? JSON.stringify(resp) : null, {
       status,
       headers: {
         "Content-Type": "application/json",
