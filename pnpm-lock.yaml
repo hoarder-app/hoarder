@@ -405,6 +405,9 @@ importers:
       react-native-svg:
         specifier: ^15.1.0
         version: 15.6.0(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)
+      react-native-webview:
+        specifier: ^13.12.3
+        version: 13.12.3(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)
       tailwind-merge:
         specifier: ^2.2.1
         version: 2.2.1
@@ -2066,17 +2069,21 @@ packages:
 
   '@cliqz/adblocker-content@1.26.16':
     resolution: {integrity: sha512-N1pKg1gxfpnz47w2Sjs2sg3fxFZb113ClUhitgAFSVXeIhZ+S+bCaQtvwtP0mJT+SDfUx2NsPiLwZoPjVRI3wQ==}
+    deprecated: This project has been renamed to @ghostery/adblocker-content. Install using @ghostery/adblocker-content instead
 
   '@cliqz/adblocker-extended-selectors@1.26.16':
     resolution: {integrity: sha512-ePXS3aD1R+0XfCnOj0L2ms0NA5AxKHfFLfw92cZ87IPY8ZEZK/sWwQCv5wawbwBmXksr0YkMfFVCiH/IQgUNBQ==}
+    deprecated: This project has been renamed to @ghostery/adblocker-extended-selectors. Install using @ghostery/adblocker-extended-selectors instead
 
   '@cliqz/adblocker-puppeteer@1.23.8':
     resolution: {integrity: sha512-Ca1/DBqQXsOpKTFVAHX6OpLTSEupXmUkUWHj6iXhLLleC7RPISN5B0b801VDmaGRqoC5zKRxn0vYbIfpgCWVug==}
+    deprecated: This project has been renamed to @ghostery/adblocker-puppeteer. Install using @ghostery/adblocker-puppeteer instead
     peerDependencies:
       puppeteer: '>5'
 
   '@cliqz/adblocker@1.26.16':
     resolution: {integrity: sha512-NQ5WdNeiWiggDhhT/IXbsjKgH44nA9k5GlW00gUWRUpfKHCCInyDJYjM5pbHqxhgC3LkMVmXmU5vIsMUZ4RxFQ==}
+    deprecated: This project has been renamed to @ghostery/adblocker. Install using @ghostery/adblocker instead
 
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
@@ -10920,6 +10927,12 @@ packages:
     peerDependencies:
       react: ^18.0.0
       react-dom: ^18.0.0
+
+  react-native-webview@13.12.3:
+    resolution: {integrity: sha512-Y1I5YyDYyE7NC96RHLhd2nxh7ymLYOYLTefgx5ixxw2OToQK0ow3OJ+o77QcI1Tuevj5PCxwqC/14ceS/7yPJQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
 
   react-native@0.73.4:
     resolution: {integrity: sha512-VtS+Yr6OOTIuJGDECIYWzNU8QpJjASQYvMtfa/Hvm/2/h5GdB6W9H9TOmh13x07Lj4AOhNMx3XSsz6TdrO4jIg==}
@@ -27986,6 +27999,14 @@ snapshots:
       styleq: 0.1.3
     transitivePeerDependencies:
       - encoding
+    dev: false
+
+  react-native-webview@13.12.3(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0):
+    dependencies:
+      escape-string-regexp: 4.0.0
+      invariant: 2.2.4
+      react: 18.2.0
+      react-native: 0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0)
     dev: false
 
   react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0):
