@@ -15,6 +15,9 @@ runs:
       run: pnpm add -g turbo
 
     - shell: bash
+      run: corepack enable
+
+    - shell: bash
       run: pnpm install
       env:
         PUPPETEER_SKIP_DOWNLOAD: "true"

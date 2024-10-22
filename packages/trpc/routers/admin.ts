@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { count, eq, sum } from "drizzle-orm";
 import { z } from "zod";
 
@@ -9,8 +10,15 @@ import {
   TidyAssetsQueue,
   triggerSearchReindex,
 } from "@hoarder/shared/queues";
+import {
+  changeRoleSchema,
+  resetPasswordSchema,
+  zAdminCreateUserSchema,
+} from "@hoarder/shared/types/admin";
 
+import { hashPassword } from "../auth";
 import { adminProcedure, router } from "../index";
+import { createUser } from "./users";
 
 export const adminAppRouter = router({
   stats: adminProcedure
@@ -212,5 +220,61 @@ export const adminAppRouter = router({
       }
 
       return results;
+    }),
+  createUser: adminProcedure
+    .input(zAdminCreateUserSchema)
+    .output(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        email: z.string(),
+        role: z.enum(["user", "admin"]).nullable(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      return createUser(input, ctx, input.role);
+    }),
+  changeRole: adminProcedure
+    .input(changeRoleSchema)
+    .mutation(async ({ input, ctx }) => {
+      if (ctx.user.id == input.userId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot change own role",
+        });
+      }
+      const result = await ctx.db
+        .update(users)
+        .set({ role: input.role })
+        .where(eq(users.id, input.userId));
+
+      if (!result.changes) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+    }),
+  resetPassword: adminProcedure
+    .input(resetPasswordSchema)
+    .mutation(async ({ input, ctx }) => {
+      if (ctx.user.id == input.userId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot reset own password",
+        });
+      }
+      const hashedPassword = await hashPassword(input.newPassword);
+      const result = await ctx.db
+        .update(users)
+        .set({ password: hashedPassword })
+        .where(eq(users.id, input.userId));
+
+      if (result.changes == 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
     }),
 });

@@ -26,7 +26,7 @@ When setting up OAuth, the allowed redirect URLs configured at the provider shou
 :::
 
 | Name                                        | Required | Default                | Description                                                                                                                                                         |
-| ------------------------------------------- | -------- | ---------------------- |---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ------------------------------------------- | -------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | DISABLE_SIGNUPS                             | No       | false                  | If enabled, no new signups will be allowed and the signup button will be disabled in the UI                                                                         |
 | DISABLE_PASSWORD_AUTH                       | No       | false                  | If enabled, only signups and logins using OAuth are allowed and the signup button and login form for local accounts will be disabled in the UI                      |
 | OAUTH_WELLKNOWN_URL                         | No       | Not set                | The "wellknown Url" for openid-configuration as provided by the OAuth provider                                                                                      |
@@ -74,3 +74,13 @@ Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic taggin
 | CRAWLER_FULL_PAGE_ARCHIVE     | No       | false   | Whether to store a full local copy of the page or not. Disabled by default, as it can lead to much higher disk usage. If disabled, only the readable text of the page is archived.                                                                                                                                                                                                 |
 | CRAWLER_JOB_TIMEOUT_SEC       | No       | 60      | How long to wait for the crawler job to finish before timing out. If you have a slow internet connection or a low powered device, you might want to bump this up a bit                                                                                                                                                                                                             |
 | CRAWLER_NAVIGATE_TIMEOUT_SEC  | No       | 30      | How long to spend navigating to the page (along with its redirects). Increase this if you have a slow internet connection                                                                                                                                                                                                                                                          |
+
+## OCR Configs
+
+Hoarder uses [tesseract.js](https://github.com/naptha/tesseract.js) to extract text from images.
+
+| Name                     | Required | Default   | Description                                                                                                                                                                                                                               |
+| ------------------------ | -------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OCR_CACHE_DIR            | No       | $TEMP_DIR | The dir where tesseract will download its models. By default, those models are not persisted and stored in the OS' temp dir.                                                                                                              |
+| OCR_LANGS                | No       | eng       | Comma separated list of the language codes that you want tesseract to support. You can find the language codes [here](https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html). Set to empty string to disable OCR. |
+| OCR_CONFIDENCE_THRESHOLD | No       | 50        | A number between 0 and 100 indicating the minimum acceptable confidence from tessaract. If tessaract's confidence is lower than this value, extracted text won't be stored.                                                               |

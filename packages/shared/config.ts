@@ -25,6 +25,12 @@ const allEnv = z.object({
   INFERENCE_TEXT_MODEL: z.string().default("gpt-4o-mini"),
   INFERENCE_IMAGE_MODEL: z.string().default("gpt-4o-mini"),
   INFERENCE_CONTEXT_LENGTH: z.coerce.number().default(2048),
+  OCR_CACHE_DIR: z.string().optional(),
+  OCR_LANGS: z
+    .string()
+    .default("eng")
+    .transform((val) => val.split(",")),
+  OCR_CONFIDENCE_THRESHOLD: z.coerce.number().default(50),
   CRAWLER_HEADLESS_BROWSER: stringBool("true"),
   BROWSER_WEB_URL: z.string().url().optional(),
   BROWSER_WEBSOCKET_URL: z.string().url().optional(),
@@ -89,6 +95,11 @@ const serverConfigSchema = allEnv.transform((val) => {
       storeScreenshot: val.CRAWLER_STORE_SCREENSHOT,
       fullPageScreenshot: val.CRAWLER_FULL_PAGE_SCREENSHOT,
       fullPageArchive: val.CRAWLER_FULL_PAGE_ARCHIVE,
+    },
+    ocr: {
+      langs: val.OCR_LANGS,
+      cacheDir: val.OCR_CACHE_DIR,
+      confidenceThreshold: val.OCR_CONFIDENCE_THRESHOLD,
     },
     meilisearch: val.MEILI_ADDR
       ? {

@@ -1,9 +1,5 @@
-import React, { useState } from "react";
-import { Keyboard, Pressable, Text } from "react-native";
-import ImageView from "react-native-image-viewing";
-import * as WebBrowser from "expo-web-browser";
-import { useAssetUrl } from "@/lib/hooks";
-import { cn } from "@/lib/utils";
+import React from "react";
+import { Keyboard, Text } from "react-native";
 import {
   BottomSheetBackdrop,
   BottomSheetModal,
@@ -12,23 +8,14 @@ import {
   BottomSheetView,
   TouchableWithoutFeedback,
 } from "@gorhom/bottom-sheet";
-import { ExternalLink } from "lucide-react-native";
 
-import {
-  useUpdateBookmark,
-  useUpdateBookmarkText,
-} from "@hoarder/shared-react/hooks/bookmarks";
+import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
 import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
 import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
-import { TailwindResolver } from "../TailwindResolver";
-import { buttonVariants } from "../ui/Button";
 import { Input } from "../ui/Input";
 import PageTitle from "../ui/PageTitle";
 import { Skeleton } from "../ui/Skeleton";
-import { useToast } from "../ui/Toast";
-import BookmarkAssetImage from "./BookmarkAssetImage";
-import BookmarkTextMarkdown from "./BookmarkTextMarkdown";
 import TagPill from "./TagPill";
 
 function TagList({ bookmark }: { bookmark: ZBookmark }) {
@@ -79,126 +66,6 @@ function NotesEditor({ bookmark }: { bookmark: ZBookmark }) {
   );
 }
 
-function BookmarkLinkView({ bookmark }: { bookmark: ZBookmark }) {
-  const [imageZoom, setImageZoom] = useState(false);
-  if (bookmark.content.type !== BookmarkTypes.LINK) {
-    throw new Error("Wrong content type rendered");
-  }
-  const url = new URL(bookmark.content.url);
-
-  const imageAssetId =
-    bookmark.content.imageAssetId ?? bookmark.content.screenshotAssetId ?? "";
-  const assetSource = useAssetUrl(imageAssetId);
-  return (
-    <BottomSheetView className="flex gap-2">
-      <Pressable
-        className={cn(
-          buttonVariants({ variant: "default" }),
-          "flex w-fit flex-row items-center gap-2",
-        )}
-        onPress={() => WebBrowser.openBrowserAsync(url.toString())}
-      >
-        <Text className="text-background">{url.host}</Text>
-        <TailwindResolver
-          className="color-background"
-          comp={(styles) => (
-            <ExternalLink size={20} color={styles?.color?.toString()} />
-          )}
-        />
-      </Pressable>
-      <ImageView
-        visible={imageZoom}
-        imageIndex={0}
-        onRequestClose={() => setImageZoom(false)}
-        doubleTapToZoomEnabled={true}
-        images={[assetSource]}
-      />
-
-      <Pressable onPress={() => setImageZoom(true)}>
-        <BookmarkAssetImage
-          assetId={imageAssetId}
-          className="h-56 min-h-56 w-full object-cover"
-        />
-      </Pressable>
-    </BottomSheetView>
-  );
-}
-
-function BookmarkTextView({ bookmark }: { bookmark: ZBookmark }) {
-  if (bookmark.content.type !== BookmarkTypes.TEXT) {
-    throw new Error("Wrong content type rendered");
-  }
-  const { toast } = useToast();
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [content, setContent] = useState(bookmark.content.text);
-
-  const { mutate, isPending } = useUpdateBookmarkText({
-    onError: () => {
-      toast({
-        message: "Something went wrong",
-        variant: "destructive",
-      });
-    },
-    onSuccess: () => {
-      setIsEditing(false);
-    },
-  });
-
-  return (
-    <BottomSheetView>
-      {isEditing ? (
-        <Input
-          loading={isPending}
-          editable={!isPending}
-          onBlur={() =>
-            mutate({
-              bookmarkId: bookmark.id,
-              text: content,
-            })
-          }
-          value={content}
-          onChangeText={setContent}
-          multiline
-          autoFocus
-        />
-      ) : (
-        <Pressable onPress={() => setIsEditing(true)}>
-          <BottomSheetView className="rounded-xl border border-accent p-2">
-            <BookmarkTextMarkdown text={content} />
-          </BottomSheetView>
-        </Pressable>
-      )}
-    </BottomSheetView>
-  );
-}
-
-function BookmarkAssetView({ bookmark }: { bookmark: ZBookmark }) {
-  const [imageZoom, setImageZoom] = useState(false);
-  if (bookmark.content.type !== BookmarkTypes.ASSET) {
-    throw new Error("Wrong content type rendered");
-  }
-  const assetSource = useAssetUrl(bookmark.content.assetId);
-  return (
-    <BottomSheetView className="flex gap-2">
-      <ImageView
-        visible={imageZoom}
-        imageIndex={0}
-        onRequestClose={() => setImageZoom(false)}
-        doubleTapToZoomEnabled={true}
-        images={[assetSource]}
-      />
-
-      <Pressable onPress={() => setImageZoom(true)}>
-        <BookmarkAssetImage
-          assetId={bookmark.content.assetId}
-          className="h-56 min-h-56 w-full object-cover"
-        />
-      </Pressable>
-    </BottomSheetView>
-  );
-}
-
 const ViewBookmarkModal = React.forwardRef<
   BottomSheetModal,
   Omit<
@@ -208,20 +75,16 @@ const ViewBookmarkModal = React.forwardRef<
     bookmark: ZBookmark;
   }
 >(({ bookmark, ...props }, ref) => {
-  let comp;
   let title = null;
   switch (bookmark.content.type) {
     case BookmarkTypes.LINK:
       title = bookmark.title ?? bookmark.content.title;
-      comp = <BookmarkLinkView bookmark={bookmark} />;
       break;
     case BookmarkTypes.TEXT:
       title = bookmark.title;
-      comp = <BookmarkTextView bookmark={bookmark} />;
       break;
     case BookmarkTypes.ASSET:
       title = bookmark.title ?? bookmark.content.fileName;
-      comp = <BookmarkAssetView bookmark={bookmark} />;
       break;
   }
   return (
@@ -241,7 +104,6 @@ const ViewBookmarkModal = React.forwardRef<
           <BottomSheetView className="flex flex-1">
             <PageTitle title={title ?? "Untitled"} className="line-clamp-2" />
             <BottomSheetView className="gap-4 px-4">
-              {comp}
               <TagList bookmark={bookmark} />
               <NotesEditor bookmark={bookmark} />
             </BottomSheetView>
