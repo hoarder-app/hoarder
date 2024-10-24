@@ -60,4 +60,13 @@ In dev mode, opening and closing the plugin menu should reload the code.
 
 ## Docker Dev Env
 
-If the manual setup is too much hassle for you. You can use a docker based dev environment by running `docker compose -f docker/docker-compose.dev.yml up` in the root of the repo. This setup wasn't super reliable for me though.
+If the manual setup is too much hassle for you, you can use a docker based dev environment instead by following the instructions:
+
+- Clone the repo and navigate to the root of the repo.
+- Run `cp /docker/.env.sample /docker/.env`
+- Make the necessary changes to the .env file (setting the DOCKER_DATA_DIR, NEXTAUTH_SECRET, and MEILI_MASTER_KEY)
+- Run `docker compose -f docker/docker-compose.dev.yml up --build` in the root of the repo.
+
+### Notes
+- The inital set up takes a while, do not be concerned for very long build times.
+- The application is ready to work when the web-1 container says "Ready" on the next.js block
