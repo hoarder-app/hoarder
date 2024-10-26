@@ -1,8 +1,8 @@
 import { Ollama } from "ollama";
 import OpenAI from "openai";
 
-import serverConfig from "@hoarder/shared/config";
-import logger from "@hoarder/shared/logger";
+import serverConfig from "./config";
+import logger from "./logger";
 
 export interface InferenceResponse {
   response: string;
