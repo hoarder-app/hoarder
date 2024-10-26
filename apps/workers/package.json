@@ -26,8 +26,6 @@
     "metascraper-title": "^5.45.22",
     "metascraper-twitter": "^5.45.6",
     "metascraper-url": "^5.45.22",
-    "ollama": "^0.5.9",
-    "openai": "^4.67.1",
     "pdf2json": "^3.0.5",
     "pdfjs-dist": "^4.0.379",
     "puppeteer": "^22.0.0",

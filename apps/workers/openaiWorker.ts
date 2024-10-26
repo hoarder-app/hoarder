@@ -1,6 +1,7 @@
 import { and, Column, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 
+import type { InferenceClient } from "@hoarder/shared/inference";
 import type { ZOpenAIRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
 import {
@@ -13,6 +14,7 @@ import {
 import { DequeuedJob, Runner } from "@hoarder/queue";
 import { readAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
+import { InferenceClientFactory } from "@hoarder/shared/inference";
 import logger from "@hoarder/shared/logger";
 import { buildImagePrompt, buildTextPrompt } from "@hoarder/shared/prompts";
 import {
@@ -21,8 +23,6 @@ import {
   zOpenAIRequestSchema,
 } from "@hoarder/shared/queues";
 
-import type { InferenceClient } from "./inference";
-import { InferenceClientFactory } from "./inference";
 import { readImageText, readPDFText } from "./utils";
 
 const openAIResponseSchema = z.object({
