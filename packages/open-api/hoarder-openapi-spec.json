@@ -70,6 +70,10 @@
             "type": "string",
             "nullable": true
           },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
           "tags": {
             "type": "array",
             "items": {
@@ -673,6 +677,10 @@
                   "favourited": {
                     "type": "boolean"
                   },
+                  "summary": {
+                    "type": "string",
+                    "nullable": true
+                  },
                   "note": {
                     "type": "string"
                   },
@@ -724,6 +732,10 @@
                       ]
                     },
                     "note": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "summary": {
                       "type": "string",
                       "nullable": true
                     }
