@@ -994,7 +994,7 @@ export const bookmarksAppRouter = router({
         });
       }
       const bookmark = await ctx.db.query.bookmarkLinks.findFirst({
-        where: and(eq(bookmarks.id, input.bookmarkId)),
+        where: eq(bookmarkLinks.id, input.bookmarkId),
       });
 
       if (!bookmark) {
@@ -1032,6 +1032,7 @@ Content: ${bookmark.content ?? ""}
           summary: summary.response,
         })
         .where(eq(bookmarks.id, input.bookmarkId));
+      await triggerSearchReindex(input.bookmarkId);
 
       return {
         bookmarkId: input.bookmarkId,

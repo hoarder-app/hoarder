@@ -95,6 +95,7 @@ async function runIndex(
           : undefined),
         ...(bookmark.text ? { content: bookmark.text.text } : undefined),
         note: bookmark.note,
+        summary: bookmark.summary,
         title: bookmark.title,
         createdAt: bookmark.createdAt.toISOString(),
         tags: bookmark.tagsOnBookmarks.map((t) => t.tag.name),
