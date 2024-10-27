@@ -96,6 +96,21 @@ export function useUpdateBookmarkText(
   });
 }
 
+export function useSummarizeBookmark(
+  ...opts: Parameters<typeof api.bookmarks.summarizeBookmark.useMutation>
+) {
+  const apiUtils = api.useUtils();
+  return api.bookmarks.summarizeBookmark.useMutation({
+    ...opts[0],
+    onSuccess: (res, req, meta) => {
+      apiUtils.bookmarks.getBookmarks.invalidate();
+      apiUtils.bookmarks.searchBookmarks.invalidate();
+      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
+      return opts[0]?.onSuccess?.(res, req, meta);
+    },
+  });
+}
+
 export function useRecrawlBookmark(
   ...opts: Parameters<typeof api.bookmarks.recrawlBookmark.useMutation>
 ) {

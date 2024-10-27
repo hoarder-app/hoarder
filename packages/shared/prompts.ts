@@ -50,3 +50,17 @@ You must respond in JSON with the key "tags" and the value is an array of string
   const truncatedContent = truncateContent(content, contextLength - promptSize);
   return constructPrompt(truncatedContent);
 }
+
+export function buildSummaryPrompt(
+  lang: string,
+  content: string,
+  contextLength: number,
+) {
+  const constructPrompt = (c: string) => `
+    Summarize the following content in a 3-4 sentences in ${lang}:
+    ${c}`;
+
+  const promptSize = calculateNumTokens(constructPrompt(""));
+  const truncatedContent = truncateContent(content, contextLength - promptSize);
+  return constructPrompt(truncatedContent);
+}

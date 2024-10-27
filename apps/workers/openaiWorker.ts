@@ -180,6 +180,7 @@ async function inferTagsFromImage(
     ),
     metadata.contentType,
     base64,
+    { json: true },
   );
 }
 
@@ -235,14 +236,16 @@ async function inferTagsFromPDF(
     `Content: ${pdfParse.text}`,
     serverConfig.inference.contextLength,
   );
-  return inferenceClient.inferFromText(prompt);
+  return inferenceClient.inferFromText(prompt, { json: true });
 }
 
 async function inferTagsFromText(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
   inferenceClient: InferenceClient,
 ) {
-  return await inferenceClient.inferFromText(await buildPrompt(bookmark));
+  return await inferenceClient.inferFromText(await buildPrompt(bookmark), {
+    json: true,
+  });
 }
 
 async function inferTags(
@@ -290,7 +293,7 @@ async function inferTags(
 
     return tags;
   } catch (e) {
-    const responseSneak = response.response.substr(0, 20);
+    const responseSneak = response.response.substring(0, 20);
     throw new Error(
       `[inference][${jobId}] The model ignored our prompt and didn't respond with the expected JSON: ${JSON.stringify(e)}. Here's a sneak peak from the response: ${responseSneak}`,
     );
