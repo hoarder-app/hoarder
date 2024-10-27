@@ -20,7 +20,11 @@ function useFocusSearchOnKeyPress(
         const length = inputRef.current.value.length;
         inputRef.current.setSelectionRange(length, length);
       }
-      if (e.code === "Escape") {
+      if (
+        e.code === "Escape" &&
+        e.target == inputRef.current &&
+        inputRef.current.value !== ""
+      ) {
         e.preventDefault();
         inputRef.current.blur();
         inputRef.current.value = "";
