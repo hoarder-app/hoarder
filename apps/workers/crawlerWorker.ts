@@ -9,6 +9,7 @@ import { eq } from "drizzle-orm";
 import { execa } from "execa";
 import { isShuttingDown } from "exit";
 import { JSDOM } from "jsdom";
+import { DequeuedJob, Runner } from "liteque";
 import metascraper from "metascraper";
 import metascraperAmazon from "metascraper-amazon";
 import metascraperDescription from "metascraper-description";
@@ -32,7 +33,6 @@ import {
   bookmarkLinks,
   bookmarks,
 } from "@hoarder/db/schema";
-import { DequeuedJob, Runner } from "@hoarder/queue";
 import {
   ASSET_TYPES,
   deleteAsset,

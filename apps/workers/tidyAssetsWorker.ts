@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
+import { DequeuedJob, Runner } from "liteque";
 
 import { db } from "@hoarder/db";
 import { assets } from "@hoarder/db/schema";
-import { DequeuedJob, Runner } from "@hoarder/queue";
 import { deleteAsset, getAllAssets } from "@hoarder/shared/assetdb";
 import logger from "@hoarder/shared/logger";
 import {
