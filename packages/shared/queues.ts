@@ -1,7 +1,6 @@
 import path from "node:path";
+import { buildDBClient, migrateDB, SqliteQueue } from "liteque";
 import { z } from "zod";
-
-import { buildDBClient, migrateDB, SqliteQueue } from "@hoarder/queue";
 
 import serverConfig from "./config";
 

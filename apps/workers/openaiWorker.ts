@@ -1,4 +1,5 @@
 import { and, Column, eq, inArray, sql } from "drizzle-orm";
+import { DequeuedJob, Runner } from "liteque";
 import { z } from "zod";
 
 import type { InferenceClient } from "@hoarder/shared/inference";
@@ -11,7 +12,6 @@ import {
   customPrompts,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
-import { DequeuedJob, Runner } from "@hoarder/queue";
 import { readAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import { InferenceClientFactory } from "@hoarder/shared/inference";
