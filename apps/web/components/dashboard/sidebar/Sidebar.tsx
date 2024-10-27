@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import SidebarItem from "@/components/shared/sidebar/SidebarItem";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
@@ -7,7 +8,6 @@ import { Archive, Home, Search, Tag } from "lucide-react";
 import serverConfig from "@hoarder/shared/config";
 
 import AllLists from "./AllLists";
-import SidebarItem from "./SidebarItem";
 
 export default async function Sidebar() {
   const session = await getServerAuthSession();
