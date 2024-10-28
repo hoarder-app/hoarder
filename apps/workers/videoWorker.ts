@@ -1,8 +1,8 @@
 import fs from "fs";
 import * as os from "os";
 import path from "path";
+import { execa } from "execa";
 import { DequeuedJob, Runner } from "liteque";
-import YTDlpWrap from "yt-dlp-wrap";
 
 import { db } from "@hoarder/db";
 import { AssetTypes } from "@hoarder/db/schema";
@@ -19,29 +19,11 @@ import { VideoWorkerQueue, ZVideoRequest } from "@hoarder/shared/queues";
 import { withTimeout } from "./utils";
 import { getBookmarkDetails, updateAsset } from "./workerUtils";
 
-const YT_DLP_BINARY = path.join(
-  serverConfig.dataDir,
-  process.platform === "win32" ? "yt-dlp.exe" : "yt-dlp",
-);
 const TMP_FOLDER = path.join(os.tmpdir(), "video_downloads");
 
 export class VideoWorker {
-  static async build() {
-    if (!serverConfig.crawler.downloadVideo) {
-      logger.info(
-        "Video download is disabled in the config. Not starting video download worker ...",
-      );
-      return;
-    }
+  static build() {
     logger.info("Starting video worker ...");
-
-    const ytDlpAvailable = await prepareYTDLP();
-    if (!ytDlpAvailable) {
-      logger.error(
-        `[VideoCrawler] Unable to download yt-dlp. Video download will not be available!`,
-      );
-      return;
-    }
 
     return new Runner<ZVideoRequest>(
       VideoWorkerQueue,
@@ -71,40 +53,6 @@ export class VideoWorker {
         concurrency: 1,
       },
     );
-  }
-}
-
-async function getYTDLPVersion() {
-  try {
-    const ytDlpWrap1 = new YTDlpWrap(YT_DLP_BINARY);
-    const version = await ytDlpWrap1.getVersion();
-    logger.info(`[VideoCrawler] yt-dlp version available: ${version}`);
-    return version;
-  } catch (e) {
-    logger.warn(
-      `[VideoCrawler] Failed to determine yt-dlp version. It probably does not exist: ${e}`,
-    );
-  }
-}
-
-async function prepareYTDLP(): Promise<boolean> {
-  const version = await getYTDLPVersion();
-  if (version) {
-    return true;
-  }
-
-  logger.info(
-    `[VideoCrawler] Trying to download the latest version of yt-dlp to "${YT_DLP_BINARY}".`,
-  );
-  try {
-    await YTDlpWrap.downloadFromGithub(YT_DLP_BINARY);
-    await getYTDLPVersion();
-    return true;
-  } catch (e) {
-    logger.error(
-      `[VideoCrawler] Failed to download the latest version of yt-dlp: ${e}`,
-    );
-    return false;
   }
 }
 
@@ -144,12 +92,12 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
 
   const ytDlpArguments = prepareYtDlpArguments(url, assetPath);
 
-  const ytDlpWrap = new YTDlpWrap(YT_DLP_BINARY);
   try {
     logger.info(
       `[VideoCrawler][${jobId}] Attempting to download a file from "${url}" to "${assetPath}" using the following arguments: "${ytDlpArguments}"`,
     );
-    await ytDlpWrap.execPromise(ytDlpArguments);
+
+    await execa`yt-dlp ${ytDlpArguments}`;
     assetPath = await findAssetFile(jobId, videoAssetId);
   } catch (e) {
     logger.error(

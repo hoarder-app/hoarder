@@ -776,9 +776,6 @@ importers:
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
-      yt-dlp-wrap:
-        specifier: ^2.3.12
-        version: 2.3.12
       zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -12968,9 +12965,6 @@ packages:
   yoctocolors@2.0.2:
     resolution: {integrity: sha512-Ct97huExsu7cWeEjmrXlofevF8CvzUglJ4iGUet5B8xn1oumtAZBpHU4GzYuoE6PVqcZ5hghtBrSlhwHuR1Jmw==}
     engines: {node: '>=18'}
-
-  yt-dlp-wrap@2.3.12:
-    resolution: {integrity: sha512-P8fJ+6M1YjukyJENCTviNLiZ8mokxprR54ho3DsSKPWDcac489OjRiStGEARJr6un6ETS6goTn4CWl/b/rM3aA==}
 
   zlibjs@0.3.1:
     resolution: {integrity: sha512-+J9RrgTKOmlxFSDHo0pI1xM6BLVUv+o0ZT9ANtCxGkjIVCCUdx9alUF8Gm+dGLKbkkkidWIHFDZHDMpfITt4+w==}
@@ -30741,9 +30735,6 @@ snapshots:
   yocto-queue@1.0.0: {}
 
   yoctocolors@2.0.2:
-    dev: false
-
-  yt-dlp-wrap@2.3.12:
     dev: false
 
   zlibjs@0.3.1:
