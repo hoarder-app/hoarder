@@ -99,7 +99,14 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
     );
 
     await execa`yt-dlp ${ytDlpArguments}`;
-    assetPath = await findAssetFile(jobId, videoAssetId);
+    const downloadPath = await findAssetFile(videoAssetId);
+    if (!downloadPath) {
+      logger.info(
+        "[VideoCrawler][${jobId}] yt-dlp didn't download anything. Skipping ...",
+      );
+      return;
+    }
+    assetPath = downloadPath;
   } catch (e) {
     const err = e as Error;
     if (err.message.includes("ERROR: Unsupported URL:")) {
@@ -108,8 +115,9 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
       );
       return;
     }
+    console.log(JSON.stringify(err));
     logger.error(
-      `[VideoCrawler][${jobId}] Failed to download a file from "${url}" to "${assetPath}": ${e}`,
+      `[VideoCrawler][${jobId}] Failed to download a file from "${url}" to "${assetPath}"`,
     );
     await deleteLeftOverAssetFile(jobId, videoAssetId);
     return;
@@ -157,9 +165,12 @@ async function deleteLeftOverAssetFile(
 ): Promise<void> {
   let assetFile;
   try {
-    assetFile = await findAssetFile(jobId, assetId);
+    assetFile = await findAssetFile(assetId);
   } catch {
     // ignore exception, no asset file was found
+    return;
+  }
+  if (!assetFile) {
     return;
   }
   logger.info(
@@ -177,18 +188,15 @@ async function deleteLeftOverAssetFile(
 /**
  * yt-dlp automatically adds a file ending to the passed in filename --> we have to search it again in the folder
  *
- * @param jobId id of the job
  * @param assetId the id of the asset to search
  * @returns the path to the downloaded asset
  */
-async function findAssetFile(jobId: string, assetId: string): Promise<string> {
+async function findAssetFile(assetId: string): Promise<string | null> {
   const files = await fs.promises.readdir(TMP_FOLDER);
   for (const file of files) {
     if (file.startsWith(assetId)) {
       return path.join(TMP_FOLDER, file);
     }
   }
-  throw Error(
-    `[VideoCrawler][${jobId}] Unable to find file with assetId ${assetId}`,
-  );
+  return null;
 }
