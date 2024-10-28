@@ -66,6 +66,7 @@ function prepareYtDlpArguments(url: string, assetPath: string) {
     );
   }
   ytDlpArguments.push("-o", assetPath);
+  ytDlpArguments.push("--no-playlist");
   return ytDlpArguments;
 }
 
@@ -100,6 +101,13 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
     await execa`yt-dlp ${ytDlpArguments}`;
     assetPath = await findAssetFile(jobId, videoAssetId);
   } catch (e) {
+    const err = e as Error;
+    if (err.message.includes("ERROR: Unsupported URL:")) {
+      logger.info(
+        `[VideoCrawler][${jobId}] Skipping video download from "${url}", because it's not one of the supported yt-dlp URLs`,
+      );
+      return;
+    }
     logger.error(
       `[VideoCrawler][${jobId}] Failed to download a file from "${url}" to "${assetPath}": ${e}`,
     );
