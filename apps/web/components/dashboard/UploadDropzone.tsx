@@ -81,11 +81,7 @@ function useUploadAssets({
   };
 }
 
-export default function UploadDropzone({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function useFileUploader() {
   const [numUploading, setNumUploading] = useState(0);
   const [numUploaded, setNumUploaded] = useState(0);
   const uploadAssets = useUploadAssets({
@@ -101,6 +97,23 @@ export default function UploadDropzone({
       return;
     },
   });
+
+  return {
+    numUploading,
+    setNumUploading,
+    numUploaded,
+    setNumUploaded,
+    uploadAssets,
+  };
+}
+
+export default function UploadDropzone({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { numUploading, setNumUploading, numUploaded, uploadAssets } =
+    useFileUploader();
 
   const [isDragging, setDragging] = useState(false);
   const onDrop = (acceptedFiles: File[]) => {
