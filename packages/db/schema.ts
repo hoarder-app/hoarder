@@ -165,6 +165,7 @@ export const enum AssetTypes {
   LINK_BANNER_IMAGE = "linkBannerImage",
   LINK_SCREENSHOT = "linkScreenshot",
   LINK_FULL_PAGE_ARCHIVE = "linkFullPageArchive",
+  LINK_VIDEO = "linkVideo",
   BOOKMARK_ASSET = "bookmarkAsset",
   UNKNOWN = "unknown",
 }
@@ -179,6 +180,7 @@ export const assets = sqliteTable(
         AssetTypes.LINK_BANNER_IMAGE,
         AssetTypes.LINK_SCREENSHOT,
         AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+        AssetTypes.LINK_VIDEO,
         AssetTypes.BOOKMARK_ASSET,
         AssetTypes.UNKNOWN,
       ],

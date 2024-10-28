@@ -10,30 +10,39 @@ import { CrawlerWorker } from "./crawlerWorker";
 import { shutdownPromise } from "./exit";
 import { OpenAiWorker } from "./openaiWorker";
 import { SearchIndexingWorker } from "./searchWorker";
+import { VideoWorker } from "./videoWorker";
 
 async function main() {
   logger.info(`Workers version: ${serverConfig.serverVersion ?? "not set"}`);
   runQueueDBMigrations();
 
-  const [crawler, openai, search, tidyAssets] = [
+  const [crawler, openai, search, tidyAssets, video] = [
     await CrawlerWorker.build(),
     OpenAiWorker.build(),
     SearchIndexingWorker.build(),
     TidyAssetsWorker.build(),
+    VideoWorker.build(),
   ];
 
   await Promise.any([
-    Promise.all([crawler.run(), openai.run(), search.run(), tidyAssets.run()]),
+    Promise.all([
+      crawler.run(),
+      openai.run(),
+      search.run(),
+      tidyAssets.run(),
+      video.run(),
+    ]),
     shutdownPromise,
   ]);
   logger.info(
-    "Shutting down crawler, openai, tidyAssets and search workers ...",
+    "Shutting down crawler, openai, tidyAssets, video and search workers ...",
   );
 
   crawler.stop();
   openai.stop();
   search.stop();
   tidyAssets.stop();
+  video.stop();
 }
 
 main();

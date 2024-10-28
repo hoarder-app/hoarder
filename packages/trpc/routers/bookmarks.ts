@@ -215,6 +215,8 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
         imageAssetId: assets.find(
           (a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE,
         )?.id,
+        videoAssetId: assets.find((a) => a.assetType == AssetTypes.LINK_VIDEO)
+          ?.id,
         ...link,
       };
       break;
@@ -697,6 +699,9 @@ export const bookmarksAppRouter = router({
               }
               if (row.assets.assetType == AssetTypes.LINK_BANNER_IMAGE) {
                 content.imageAssetId = row.assets.id;
+              }
+              if (row.assets.assetType == AssetTypes.LINK_VIDEO) {
+                content.videoAssetId = row.assets.id;
               }
               acc[bookmarkId].content = content;
             }
