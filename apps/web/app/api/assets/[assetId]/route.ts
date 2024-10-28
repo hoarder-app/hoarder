@@ -33,6 +33,7 @@ export async function GET(
     const start = parseInt(parts[0], 10);
     const end = parts[1] ? parseInt(parts[1], 10) : asset.length - 1;
 
+    // TODO: Don't read the whole asset into memory in the first place
     const chunk = asset.subarray(start, end + 1);
     return new Response(chunk, {
       status: 206, // Partial Content

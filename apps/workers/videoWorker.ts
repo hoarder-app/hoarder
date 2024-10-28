@@ -1,4 +1,5 @@
 import fs from "fs";
+import * as os from "os";
 import path from "path";
 import { DequeuedJob, Runner } from "liteque";
 import YTDlpWrap from "yt-dlp-wrap";
@@ -22,10 +23,16 @@ const YT_DLP_BINARY = path.join(
   serverConfig.dataDir,
   process.platform === "win32" ? "yt-dlp.exe" : "yt-dlp",
 );
-const TMP_FOLDER = path.join(serverConfig.dataDir, "tmp");
+const TMP_FOLDER = path.join(os.tmpdir(), "video_downloads");
 
 export class VideoWorker {
   static async build() {
+    if (!serverConfig.crawler.downloadVideo) {
+      logger.info(
+        "Video download is disabled in the config. Not starting video download worker ...",
+      );
+      return;
+    }
     logger.info("Starting video worker ...");
 
     const ytDlpAvailable = await prepareYTDLP();
@@ -40,7 +47,7 @@ export class VideoWorker {
       VideoWorkerQueue,
       {
         run: withTimeout(
-          runCrawler,
+          runWorker,
           /* timeoutSec */ serverConfig.crawler.downloadVideoTimeout,
         ),
         onComplete: async (job) => {
@@ -74,7 +81,7 @@ async function getYTDLPVersion() {
     logger.info(`[VideoCrawler] yt-dlp version available: ${version}`);
     return version;
   } catch (e) {
-    logger.error(
+    logger.warn(
       `[VideoCrawler] Failed to determine yt-dlp version. It probably does not exist: ${e}`,
     );
   }
@@ -95,7 +102,7 @@ async function prepareYTDLP(): Promise<boolean> {
     return true;
   } catch (e) {
     logger.error(
-      `[VideoCrawler] Failed to download the latest version of yt-dlp`,
+      `[VideoCrawler] Failed to download the latest version of yt-dlp: ${e}`,
     );
     return false;
   }
@@ -114,7 +121,7 @@ function prepareYtDlpArguments(url: string, assetPath: string) {
   return ytDlpArguments;
 }
 
-async function runCrawler(job: DequeuedJob<ZVideoRequest>) {
+async function runWorker(job: DequeuedJob<ZVideoRequest>) {
   const jobId = job.id ?? "unknown";
   const { bookmarkId } = job.data;
 
@@ -140,7 +147,7 @@ async function runCrawler(job: DequeuedJob<ZVideoRequest>) {
   const ytDlpWrap = new YTDlpWrap(YT_DLP_BINARY);
   try {
     logger.info(
-      `[VideoCrawler][${jobId}] Attempting to download a file from "${url}" to "${assetPath}" using the following arguments:"${ytDlpArguments}"`,
+      `[VideoCrawler][${jobId}] Attempting to download a file from "${url}" to "${assetPath}" using the following arguments: "${ytDlpArguments}"`,
     );
     await ytDlpWrap.execPromise(ytDlpArguments);
     assetPath = await findAssetFile(jobId, videoAssetId);
@@ -172,7 +179,6 @@ async function runCrawler(job: DequeuedJob<ZVideoRequest>) {
         assetType: AssetTypes.LINK_VIDEO,
         contentType: ASSET_TYPES.VIDEO_MP4,
         size: await getAssetSize({ userId, assetId: videoAssetId }),
-        fileName: path.basename(assetPath),
       },
       txn,
     );

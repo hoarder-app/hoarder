@@ -13,7 +13,6 @@ export async function updateAsset(
   if (oldAssetId) {
     await txn.delete(assets).where(eq(assets.id, oldAssetId));
   }
-  console.log("adding new asset: " + JSON.stringify(newAsset));
 
   await txn.insert(assets).values(newAsset);
 }

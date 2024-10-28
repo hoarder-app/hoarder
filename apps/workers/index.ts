@@ -21,7 +21,7 @@ async function main() {
     OpenAiWorker.build(),
     SearchIndexingWorker.build(),
     TidyAssetsWorker.build(),
-    await VideoWorker.build(),
+    VideoWorker.build(),
   ];
 
   await Promise.any([
@@ -30,18 +30,19 @@ async function main() {
       openai.run(),
       search.run(),
       tidyAssets.run(),
-      video?.run(),
+      video.run(),
     ]),
     shutdownPromise,
   ]);
   logger.info(
-    "Shutting down crawler, openai, tidyAssets and search workers ...",
+    "Shutting down crawler, openai, tidyAssets, video and search workers ...",
   );
 
   crawler.stop();
   openai.stop();
   search.stop();
   tidyAssets.stop();
+  video.stop();
 }
 
 main();
