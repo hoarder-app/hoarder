@@ -186,7 +186,7 @@ bookmarkCmd
   .command("update")
   .description("update a bookmark")
   .option("--title <title>", "if set, the bookmark's title will be updated")
-  .option("--note <note>", "if set, the bookmark's note will be updated")
+  .option("--note <note>", "if set, the bookmark's note will be updated (not to be used with --stdin)")
   .option("--stdin", "if set, the bookmark's note will be updated by stdin (not to be used with --note)")
   .option("--archive", "if set, the bookmark will be archived")
   .option("--no-archive", "if set, the bookmark will be unarchived")
@@ -197,6 +197,13 @@ bookmarkCmd
     const api = getAPIClient();
 
     if (opts.stdin) {
+      if (opts.note) {
+          printError(
+              `"--stdin" and "--note" cannot be used together`
+          )
+          return
+      }
+
       opts.note = fs.readFileSync(0, "utf-8");
     }
 
