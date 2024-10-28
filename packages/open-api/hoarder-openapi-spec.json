@@ -140,6 +140,10 @@
                     "type": "string",
                     "nullable": true
                   },
+                  "videoAssetId": {
+                    "type": "string",
+                    "nullable": true
+                  },
                   "favicon": {
                     "type": "string",
                     "nullable": true,
@@ -245,6 +249,7 @@
                     "screenshot",
                     "bannerImage",
                     "fullPageArchive",
+                    "video",
                     "bookmarkAsset",
                     "unknown"
                   ]
@@ -485,6 +490,10 @@
                         "nullable": true
                       },
                       "fullPageArchiveAssetId": {
+                        "type": "string",
+                        "nullable": true
+                      },
+                      "videoAssetId": {
                         "type": "string",
                         "nullable": true
                       },

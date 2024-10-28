@@ -67,7 +67,7 @@ COPY --chmod=755 ./docker/root/etc/s6-overlay /etc/s6-overlay
 ######################
 # Install runtime deps
 ######################
-RUN apk add --no-cache monolith
+RUN apk add --no-cache monolith yt-dlp
 
 ######################
 # Prepare the web app
