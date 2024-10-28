@@ -1,16 +1,13 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import HoarderLogo from "@/components/HoarderIcon";
+import SidebarItem from "@/components/shared/sidebar/SidebarItem";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
-import { Home, Search, Settings, Shield, Tag } from "lucide-react";
+import { Archive, Home, Search, Tag } from "lucide-react";
 
 import serverConfig from "@hoarder/shared/config";
 
 import AllLists from "./AllLists";
-import SidebarItem from "./SidebarItem";
-import SidebarProfileOptions from "./SidebarProfileOptions";
 
 export default async function Sidebar() {
   const session = await getServerAuthSession();
@@ -30,17 +27,6 @@ export default async function Sidebar() {
       ]
     : [];
 
-  const adminItem =
-    session.user.role == "admin"
-      ? [
-          {
-            name: "Admin",
-            icon: <Shield size={18} />,
-            path: "/dashboard/admin",
-          },
-        ]
-      : [];
-
   const menu: {
     name: string;
     icon: JSX.Element;
@@ -58,19 +44,14 @@ export default async function Sidebar() {
       path: "/dashboard/tags",
     },
     {
-      name: "Settings",
-      icon: <Settings size={18} />,
-      path: "/dashboard/settings",
+      name: "Archive",
+      icon: <Archive size={18} />,
+      path: "/dashboard/archive",
     },
-    ...adminItem,
   ];
 
   return (
-    <aside className="flex h-screen w-60 flex-col gap-5 border-r p-4">
-      <Link href={"/dashboard/bookmarks"}>
-        <HoarderLogo height={20} gap="8px" />
-      </Link>
-      <Separator />
+    <aside className="flex h-[calc(100vh-64px)] w-60 flex-col gap-5 border-r p-4 ">
       <div>
         <ul className="space-y-2 text-sm font-medium">
           {menu.map((item) => (
@@ -85,9 +66,8 @@ export default async function Sidebar() {
       </div>
       <Separator />
       <AllLists initialData={lists} />
-      <div className="mt-auto flex justify-between justify-self-end">
-        <div className="my-auto"> {session.user.name} </div>
-        <SidebarProfileOptions />
+      <div className="mt-auto flex items-center border-t pt-2 text-sm text-gray-400">
+        Hoarder v{serverConfig.serverVersion}
       </div>
     </aside>
   );

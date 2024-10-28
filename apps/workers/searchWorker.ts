@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
+import { DequeuedJob, Runner } from "liteque";
 
 import type { ZSearchIndexingRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
 import { bookmarks } from "@hoarder/db/schema";
-import { DequeuedJob, Runner } from "@hoarder/queue";
 import logger from "@hoarder/shared/logger";
 import {
   SearchIndexingQueue,
@@ -95,6 +95,7 @@ async function runIndex(
           : undefined),
         ...(bookmark.text ? { content: bookmark.text.text } : undefined),
         note: bookmark.note,
+        summary: bookmark.summary,
         title: bookmark.title,
         createdAt: bookmark.createdAt.toISOString(),
         tags: bookmark.tagsOnBookmarks.map((t) => t.tag.name),

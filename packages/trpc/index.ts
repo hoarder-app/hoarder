@@ -15,11 +15,17 @@ interface User {
 export interface Context {
   user: User | null;
   db: typeof db;
+  req: {
+    ip: string | null;
+  };
 }
 
 export interface AuthedContext {
   user: User;
   db: typeof db;
+  req: {
+    ip: string | null;
+  };
 }
 
 // Avoid exporting the entire t-object

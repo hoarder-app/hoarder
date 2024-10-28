@@ -1,7 +1,6 @@
 import path from "node:path";
+import { buildDBClient, migrateDB, SqliteQueue } from "liteque";
 import { z } from "zod";
-
-import { buildDBClient, migrateDB, SqliteQueue } from "@hoarder/queue";
 
 import serverConfig from "./config";
 
@@ -61,6 +60,22 @@ export const SearchIndexingQueue = new SqliteQueue<ZSearchIndexingRequest>(
   {
     defaultJobArgs: {
       numRetries: 5,
+    },
+  },
+);
+
+// Tidy Assets Worker
+export const zTidyAssetsRequestSchema = z.object({
+  cleanDanglingAssets: z.boolean().optional().default(false),
+  syncAssetMetadata: z.boolean().optional().default(false),
+});
+export type ZTidyAssetsRequest = z.infer<typeof zTidyAssetsRequestSchema>;
+export const TidyAssetsQueue = new SqliteQueue<ZTidyAssetsRequest>(
+  "tidy_assets_queue",
+  queueDB,
+  {
+    defaultJobArgs: {
+      numRetries: 1,
     },
   },
 );

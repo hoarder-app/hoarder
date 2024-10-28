@@ -1,6 +1,8 @@
 import { and, Column, eq, inArray, sql } from "drizzle-orm";
+import { DequeuedJob, Runner } from "liteque";
 import { z } from "zod";
 
+import type { InferenceClient } from "@hoarder/shared/inference";
 import type { ZOpenAIRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
 import {
@@ -10,9 +12,9 @@ import {
   customPrompts,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
-import { DequeuedJob, Runner } from "@hoarder/queue";
 import { readAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
+import { InferenceClientFactory } from "@hoarder/shared/inference";
 import logger from "@hoarder/shared/logger";
 import { buildImagePrompt, buildTextPrompt } from "@hoarder/shared/prompts";
 import {
@@ -21,9 +23,7 @@ import {
   zOpenAIRequestSchema,
 } from "@hoarder/shared/queues";
 
-import type { InferenceClient } from "./inference";
-import { InferenceClientFactory } from "./inference";
-import { readPDFText, truncateContent } from "./utils";
+import { readImageText, readPDFText } from "./utils";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
@@ -102,10 +102,7 @@ async function buildPrompt(
       );
     }
 
-    let content = bookmark.link.content;
-    if (content) {
-      content = truncateContent(content);
-    }
+    const content = bookmark.link.content;
     return buildTextPrompt(
       serverConfig.inference.inferredTagLang,
       prompts,
@@ -113,16 +110,16 @@ async function buildPrompt(
 Title: ${bookmark.link.title ?? ""}
 Description: ${bookmark.link.description ?? ""}
 Content: ${content ?? ""}`,
+      serverConfig.inference.contextLength,
     );
   }
 
   if (bookmark.text) {
-    const content = truncateContent(bookmark.text.text ?? "");
-    // TODO: Ensure that the content doesn't exceed the context length of openai
     return buildTextPrompt(
       serverConfig.inference.inferredTagLang,
       prompts,
-      content,
+      bookmark.text.text ?? "",
+      serverConfig.inference.contextLength,
     );
   }
 
@@ -155,6 +152,26 @@ async function inferTagsFromImage(
       `[inference][${jobId}] AssetId ${bookmark.asset.assetId} for bookmark ${bookmark.id} not found`,
     );
   }
+
+  let imageText = null;
+  try {
+    imageText = await readImageText(asset);
+  } catch (e) {
+    logger.error(`[inference][${jobId}] Failed to read image text: ${e}`);
+  }
+
+  if (imageText) {
+    logger.info(
+      `[inference][${jobId}] Extracted ${imageText.length} characters from image.`,
+    );
+    await db
+      .update(bookmarkAssets)
+      .set({
+        content: imageText,
+      })
+      .where(eq(bookmarkAssets.id, bookmark.id));
+  }
+
   const base64 = asset.toString("base64");
   return inferenceClient.inferFromImage(
     buildImagePrompt(
@@ -163,6 +180,7 @@ async function inferTagsFromImage(
     ),
     metadata.contentType,
     base64,
+    { json: true },
   );
 }
 
@@ -215,16 +233,19 @@ async function inferTagsFromPDF(
   const prompt = buildTextPrompt(
     serverConfig.inference.inferredTagLang,
     await fetchCustomPrompts(bookmark.userId, "text"),
-    `Content: ${truncateContent(pdfParse.text)}`,
+    `Content: ${pdfParse.text}`,
+    serverConfig.inference.contextLength,
   );
-  return inferenceClient.inferFromText(prompt);
+  return inferenceClient.inferFromText(prompt, { json: true });
 }
 
 async function inferTagsFromText(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
   inferenceClient: InferenceClient,
 ) {
-  return await inferenceClient.inferFromText(await buildPrompt(bookmark));
+  return await inferenceClient.inferFromText(await buildPrompt(bookmark), {
+    json: true,
+  });
 }
 
 async function inferTags(
@@ -272,7 +293,7 @@ async function inferTags(
 
     return tags;
   } catch (e) {
-    const responseSneak = response.response.substr(0, 20);
+    const responseSneak = response.response.substring(0, 20);
     throw new Error(
       `[inference][${jobId}] The model ignored our prompt and didn't respond with the expected JSON: ${JSON.stringify(e)}. Here's a sneak peak from the response: ${responseSneak}`,
     );

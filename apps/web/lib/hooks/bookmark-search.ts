@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 
@@ -13,6 +13,7 @@ export function useDoBookmarkSearch() {
   const router = useRouter();
   const { searchQuery } = useSearchQuery();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | undefined>();
+  const pathname = usePathname();
 
   useEffect(() => {
     return () => {
@@ -42,6 +43,7 @@ export function useDoBookmarkSearch() {
     doSearch,
     debounceSearch,
     searchQuery,
+    isInSearchPage: pathname.startsWith("/dashboard/search"),
   };
 }
 

@@ -6,6 +6,7 @@ import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import { Input } from "@/components/ui/Input";
 import useAppSettings from "@/lib/settings";
 import { cn } from "@/lib/utils";
+import { z } from "zod";
 
 export default function TestConnection() {
   const { settings, isLoading } = useAppSettings();
@@ -43,15 +44,31 @@ export default function TestConnection() {
           appendText("Got the following response:");
           appendText(request.responseText);
           setStatus("error");
+          return;
         }
-        if (request.status === 200) {
+        try {
+          const schema = z.object({
+            status: z.string(),
+          });
+          const data = schema.parse(JSON.parse(request.responseText));
+          if (data.status !== "ok") {
+            appendText(`Server is not healthy: ${data.status}`);
+            setStatus("error");
+            return;
+          }
           appendText("ALL GOOD");
           setStatus("success");
+        } catch (e) {
+          appendText(`Failed to parse response as JSON: ${e}`);
+          appendText("Got the following response:");
+          appendText(request.responseText);
+          setStatus("error");
+          return;
         }
       };
 
       appendText("Using address: " + settings.address);
-      request.open("GET", `${settings.address}`);
+      request.open("GET", `${settings.address}/api/health`);
       request.send();
     }
     runTest();

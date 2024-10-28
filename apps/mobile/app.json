@@ -3,7 +3,7 @@
     "name": "Hoarder App",
     "slug": "hoarder",
     "scheme": "hoarder",
-    "version": "1.6.3",
+    "version": "1.6.5",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -30,7 +30,7 @@
           "NSAllowsLocalNetworking": true
         }
       },
-      "buildNumber": "12"
+      "buildNumber": "14"
     },
     "android": {
       "adaptiveIcon": {
@@ -48,7 +48,7 @@
         }
       },
       "package": "app.hoarder.hoardermobile",
-      "versionCode": 12
+      "versionCode": 14
     },
     "plugins": [
       "expo-router",

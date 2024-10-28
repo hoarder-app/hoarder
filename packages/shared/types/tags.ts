@@ -12,7 +12,12 @@ export type ZBookmarkTags = z.infer<typeof zBookmarkTagSchema>;
 export const zGetTagResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
-  count: z.number(),
-  countAttachedBy: z.record(zAttachedByEnumSchema, z.number()),
+  numBookmarks: z.number(),
+  numBookmarksByAttachedType: z.record(zAttachedByEnumSchema, z.number()),
 });
 export type ZGetTagResponse = z.infer<typeof zGetTagResponseSchema>;
+
+export const zUpdateTagRequestSchema = z.object({
+  tagId: z.string(),
+  name: z.string().optional(),
+});

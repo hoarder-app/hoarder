@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import {
   ActionButton,
   ActionButtonWithTooltip,
@@ -47,10 +48,16 @@ export default function BulkBookmarksAction() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [manageListsModal, setManageListsModalOpen] = useState(false);
   const [bulkTagModal, setBulkTagModalOpen] = useState(false);
+  const pathname = usePathname();
+  const [currentPathname, setCurrentPathname] = useState("");
 
+  // Reset bulk edit state when the route changes
   useEffect(() => {
-    setIsBulkEditEnabled(false); // turn off toggle + clear selected bookmarks on mount
-  }, []);
+    if (pathname !== currentPathname) {
+      setCurrentPathname(pathname);
+      setIsBulkEditEnabled(false);
+    }
+  }, [pathname, currentPathname]);
 
   const onError = () => {
     toast({

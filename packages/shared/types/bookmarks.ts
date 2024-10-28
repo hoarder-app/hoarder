@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { zBookmarkTagSchema } from "./tags";
 
-const MAX_TITLE_LENGTH = 100;
+const MAX_TITLE_LENGTH = 250;
 
 export const enum BookmarkTypes {
   LINK = "link",
@@ -74,6 +74,7 @@ export const zBareBookmarkSchema = z.object({
   favourited: z.boolean(),
   taggingStatus: z.enum(["success", "failure", "pending"]).nullable(),
   note: z.string().nullish(),
+  summary: z.string().nullish(),
 });
 
 export const zBookmarkSchema = zBareBookmarkSchema.merge(
@@ -121,7 +122,7 @@ export type ZNewBookmarkRequest = z.infer<typeof zNewBookmarkRequestSchema>;
 export const DEFAULT_NUM_BOOKMARKS_PER_PAGE = 20;
 export const MAX_NUM_BOOKMARKS_PER_PAGE = 100;
 
-const zCursorV2 = z.object({
+export const zCursorV2 = z.object({
   createdAt: z.date(),
   id: z.string(),
 });
@@ -152,6 +153,7 @@ export const zUpdateBookmarksRequestSchema = z.object({
   bookmarkId: z.string(),
   archived: z.boolean().optional(),
   favourited: z.boolean().optional(),
+  summary: z.string().nullish(),
   note: z.string().optional(),
   title: z.string().max(MAX_TITLE_LENGTH).nullish(),
   createdAt: z.date().optional(),
@@ -159,3 +161,15 @@ export const zUpdateBookmarksRequestSchema = z.object({
 export type ZUpdateBookmarksRequest = z.infer<
   typeof zUpdateBookmarksRequestSchema
 >;
+
+// The schema that's used to for attachig/detaching tags
+export const zManipulatedTagSchema = z
+  .object({
+    // At least one of the two must be set
+    tagId: z.string().optional(), // If the tag already exists and we know its id we should pass it
+    tagName: z.string().optional(),
+  })
+  .refine((val) => !!val.tagId || !!val.tagName, {
+    message: "You must provide either a tagId or a tagName",
+    path: ["tagId", "tagName"],
+  });

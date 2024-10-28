@@ -1,35 +1,8 @@
+import { toExportFormat, zExportSchema } from "@/lib/exportBookmarks";
 import { api, createContextFromRequest } from "@/server/api/client";
+import { z } from "zod";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
-import {
-  BookmarkTypes,
-  MAX_NUM_BOOKMARKS_PER_PAGE,
-} from "@hoarder/shared/types/bookmarks";
-
-function toExportFormat(bookmark: ZBookmark) {
-  return {
-    createdAt: bookmark.createdAt.toISOString(),
-    title:
-      bookmark.title ??
-      (bookmark.content.type === BookmarkTypes.LINK
-        ? bookmark.content.title
-        : null),
-    tags: bookmark.tags.map((t) => t.name),
-    type: bookmark.content.type,
-    content: {
-      type: bookmark.content.type,
-      url:
-        bookmark.content.type === BookmarkTypes.LINK
-          ? bookmark.content.url
-          : undefined,
-      text:
-        bookmark.content.type === BookmarkTypes.TEXT
-          ? bookmark.content.text
-          : undefined,
-    },
-    note: bookmark.note,
-  };
-}
+import { MAX_NUM_BOOKMARKS_PER_PAGE } from "@hoarder/shared/types/bookmarks";
 
 export const dynamic = "force-dynamic";
 export async function GET(request: Request) {
@@ -53,17 +26,15 @@ export async function GET(request: Request) {
     results = [...results, ...resp.bookmarks.map(toExportFormat)];
   }
 
-  return new Response(
-    JSON.stringify({
-      // Exclude asset types for now
-      bookmarks: results.filter((b) => b.type !== BookmarkTypes.ASSET),
-    }),
-    {
-      status: 200,
-      headers: {
-        "Content-type": "application/json",
-        "Content-disposition": `attachment; filename="hoarder-export-${new Date().toISOString()}.json"`,
-      },
+  const exportData: z.infer<typeof zExportSchema> = {
+    bookmarks: results.filter((b) => b.content !== null),
+  };
+
+  return new Response(JSON.stringify(exportData), {
+    status: 200,
+    headers: {
+      "Content-type": "application/json",
+      "Content-disposition": `attachment; filename="hoarder-export-${new Date().toISOString()}.json"`,
     },
-  );
+  });
 }

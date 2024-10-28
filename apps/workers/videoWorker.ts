@@ -1,10 +1,10 @@
 import fs from "fs";
 import path from "path";
+import { DequeuedJob, Runner } from "liteque";
 import YTDlpWrap from "yt-dlp-wrap";
 
 import { db } from "@hoarder/db";
 import { AssetTypes } from "@hoarder/db/schema";
-import { DequeuedJob, Runner } from "@hoarder/queue";
 import {
   ASSET_TYPES,
   getAssetSize,

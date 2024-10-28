@@ -118,6 +118,7 @@ export const bookmarks = sqliteTable(
     taggingStatus: text("taggingStatus", {
       enum: ["pending", "failure", "success"],
     }).default("pending"),
+    summary: text("summary"),
     note: text("note"),
     type: text("type", {
       enum: [BookmarkTypes.LINK, BookmarkTypes.TEXT, BookmarkTypes.ASSET],

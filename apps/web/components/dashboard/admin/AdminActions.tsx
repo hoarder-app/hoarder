@@ -52,6 +52,21 @@ export default function AdminActions() {
     },
   });
 
+  const { mutateAsync: tidyAssets, isPending: isTidyAssetsPending } =
+    api.admin.tidyAssets.useMutation({
+      onSuccess: () => {
+        toast({
+          description: "Tidy assets request has been enqueued!",
+        });
+      },
+      onError: (e) => {
+        toast({
+          variant: "destructive",
+          description: e.message,
+        });
+      },
+    });
+
   return (
     <div>
       <div className="mb-2 mt-8 text-xl font-medium">Actions</div>
@@ -86,7 +101,16 @@ export default function AdminActions() {
         <ActionButton
           variant="destructive"
           loading={isInferencePending}
-          onClick={() => reRunInferenceOnAllBookmarks()}
+          onClick={() =>
+            reRunInferenceOnAllBookmarks({ taggingStatus: "failure" })
+          }
+        >
+          Regenerate AI Tags for Failed Bookmarks Only
+        </ActionButton>
+        <ActionButton
+          variant="destructive"
+          loading={isInferencePending}
+          onClick={() => reRunInferenceOnAllBookmarks({ taggingStatus: "all" })}
         >
           Regenerate AI Tags for All Bookmarks
         </ActionButton>
@@ -96,6 +120,13 @@ export default function AdminActions() {
           onClick={() => reindexBookmarks()}
         >
           Reindex All Bookmarks
+        </ActionButton>
+        <ActionButton
+          variant="destructive"
+          loading={isTidyAssetsPending}
+          onClick={() => tidyAssets()}
+        >
+          Compact Assets
         </ActionButton>
       </div>
     </div>

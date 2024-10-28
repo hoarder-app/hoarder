@@ -24,6 +24,7 @@ import {
 } from "@hoarder/shared-react/utils/bookmarkUtils";
 import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
+import SummarizeBookmarkArea from "../bookmarks/SummarizeBookmarkArea";
 import ActionBar from "./ActionBar";
 import { AssetContentSection } from "./AssetContentSection";
 import AttachmentBox from "./AttachmentBox";
@@ -137,6 +138,7 @@ export default function BookmarkPreview({
         </div>
 
         <CreationTime createdAt={bookmark.createdAt} />
+        <SummarizeBookmarkArea bookmark={bookmark} />
         <div className="flex items-center gap-4">
           <p className="text-sm text-gray-400">Tags</p>
           <BookmarkTagsEditor bookmark={bookmark} />

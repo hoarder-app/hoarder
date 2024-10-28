@@ -10,7 +10,7 @@ const stringBool = (defaultValue: string) =>
 const allEnv = z.object({
   API_URL: z.string().url().default("http://localhost:3000"),
   DISABLE_SIGNUPS: stringBool("false"),
-  DISABLE_PASSWORD_SIGNUPS: stringBool("false"),
+  DISABLE_PASSWORD_AUTH: stringBool("false"),
   OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING: stringBool("false"),
   OAUTH_WELLKNOWN_URL: z.string().url().optional(),
   OAUTH_CLIENT_SECRET: z.string().optional(),
@@ -24,6 +24,13 @@ const allEnv = z.object({
   INFERENCE_JOB_TIMEOUT_SEC: z.coerce.number().default(30),
   INFERENCE_TEXT_MODEL: z.string().default("gpt-4o-mini"),
   INFERENCE_IMAGE_MODEL: z.string().default("gpt-4o-mini"),
+  INFERENCE_CONTEXT_LENGTH: z.coerce.number().default(2048),
+  OCR_CACHE_DIR: z.string().optional(),
+  OCR_LANGS: z
+    .string()
+    .default("eng")
+    .transform((val) => val.split(",")),
+  OCR_CONFIDENCE_THRESHOLD: z.coerce.number().default(50),
   CRAWLER_HEADLESS_BROWSER: stringBool("true"),
   BROWSER_WEB_URL: z.string().url().optional(),
   BROWSER_WEBSOCKET_URL: z.string().url().optional(),
@@ -50,6 +57,9 @@ const allEnv = z.object({
   // Build only flag
   SERVER_VERSION: z.string().optional(),
   DISABLE_NEW_RELEASE_CHECK: stringBool("false"),
+
+  // A flag to detect if the user is running in the old separete containers setup
+  USING_LEGACY_SEPARETE_CONTAINERS: stringBool("false"),
 });
 
 const serverConfigSchema = allEnv.transform((val) => {
@@ -57,7 +67,7 @@ const serverConfigSchema = allEnv.transform((val) => {
     apiUrl: val.API_URL,
     auth: {
       disableSignups: val.DISABLE_SIGNUPS,
-      disablePasswordSignups: val.DISABLE_PASSWORD_SIGNUPS,
+      disablePasswordAuth: val.DISABLE_PASSWORD_AUTH,
       oauth: {
         allowDangerousEmailAccountLinking:
           val.OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING,
@@ -77,6 +87,7 @@ const serverConfigSchema = allEnv.transform((val) => {
       textModel: val.INFERENCE_TEXT_MODEL,
       imageModel: val.INFERENCE_IMAGE_MODEL,
       inferredTagLang: val.INFERENCE_LANG,
+      contextLength: val.INFERENCE_CONTEXT_LENGTH,
     },
     crawler: {
       numWorkers: val.CRAWLER_NUM_WORKERS,
@@ -93,6 +104,11 @@ const serverConfigSchema = allEnv.transform((val) => {
       downloadVideo: val.CRAWLER_VIDEO_DOWNLOAD,
       maxVideoDownloadSize: val.CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE,
       downloadVideoTimeout: val.CRAWLER_VIDEO_DOWNLOAD_TIMEOUT_SEC,
+    },
+    ocr: {
+      langs: val.OCR_LANGS,
+      cacheDir: val.OCR_CACHE_DIR,
+      confidenceThreshold: val.OCR_CONFIDENCE_THRESHOLD,
     },
     meilisearch: val.MEILI_ADDR
       ? {
@@ -111,6 +127,7 @@ const serverConfigSchema = allEnv.transform((val) => {
     maxAssetSizeMb: val.MAX_ASSET_SIZE_MB,
     serverVersion: val.SERVER_VERSION,
     disableNewReleaseCheck: val.DISABLE_NEW_RELEASE_CHECK,
+    usingLegacySeparateContainers: val.USING_LEGACY_SEPARETE_CONTAINERS,
   };
 });
 
@@ -120,7 +137,7 @@ export const clientConfig = {
   demoMode: serverConfig.demoMode,
   auth: {
     disableSignups: serverConfig.auth.disableSignups,
-    disablePasswordSignups: serverConfig.auth.disablePasswordSignups,
+    disablePasswordAuth: serverConfig.auth.disablePasswordAuth,
   },
   inference: {
     inferredTagLang: serverConfig.inference.inferredTagLang,

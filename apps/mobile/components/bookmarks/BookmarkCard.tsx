@@ -9,6 +9,7 @@ import {
   View,
 } from "react-native";
 import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
@@ -34,7 +35,6 @@ import BookmarkAssetImage from "./BookmarkAssetImage";
 import BookmarkTextMarkdown from "./BookmarkTextMarkdown";
 import ListPickerModal from "./ListPickerModal";
 import TagPill from "./TagPill";
-import ViewBookmarkModal from "./ViewBookmarkModal";
 
 function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
@@ -341,7 +341,7 @@ export default function BookmarkCard({
     },
   );
 
-  const viewBookmarkModal = useRef<BottomSheetModal>(null);
+  const router = useRouter();
 
   let comp;
   switch (bookmark.content.type) {
@@ -349,7 +349,9 @@ export default function BookmarkCard({
       comp = (
         <LinkCard
           bookmark={bookmark}
-          onOpenBookmark={() => viewBookmarkModal.current?.present()}
+          onOpenBookmark={() =>
+            router.push(`/dashboard/bookmarks/${bookmark.id}`)
+          }
         />
       );
       break;
@@ -357,7 +359,9 @@ export default function BookmarkCard({
       comp = (
         <TextCard
           bookmark={bookmark}
-          onOpenBookmark={() => viewBookmarkModal.current?.present()}
+          onOpenBookmark={() =>
+            router.push(`/dashboard/bookmarks/${bookmark.id}`)
+          }
         />
       );
       break;
@@ -365,7 +369,9 @@ export default function BookmarkCard({
       comp = (
         <AssetCard
           bookmark={bookmark}
-          onOpenBookmark={() => viewBookmarkModal.current?.present()}
+          onOpenBookmark={() =>
+            router.push(`/dashboard/bookmarks/${bookmark.id}`)
+          }
         />
       );
       break;
@@ -373,11 +379,6 @@ export default function BookmarkCard({
 
   return (
     <View className="overflow-hidden rounded-xl border-b border-accent bg-background">
-      <ViewBookmarkModal
-        bookmark={bookmark}
-        ref={viewBookmarkModal}
-        snapPoints={["95%"]}
-      />
       {comp}
     </View>
   );

@@ -1,5 +1,5 @@
 ################# Base Builder ##############
-FROM node:21-alpine AS base
+FROM node:22-alpine AS base
 
 WORKDIR /app
 ENV PNPM_HOME="/pnpm"
@@ -31,7 +31,7 @@ RUN (cd apps/cli && pnpm build)
 
 ################# The All-in-one builder ##############
 
-FROM node:21-alpine AS aio_builder
+FROM node:22-alpine AS aio_builder
 LABEL org.opencontainers.image.source="https://github.com/hoarder-app/hoarder"
 WORKDIR /app
 
@@ -111,6 +111,7 @@ FROM aio_builder AS web
 
 RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/init-db-migration \
     /etc/s6-overlay/s6-rc.d/user/contents.d/svc-web
+ENV USING_LEGACY_SEPARETE_CONTAINERS=true
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
 
@@ -122,10 +123,11 @@ FROM aio_builder AS workers
 # is done for them.
 RUN rm /etc/s6-overlay/s6-rc.d/svc-workers/dependencies.d/init-db-migration \
     && touch /etc/s6-overlay/s6-rc.d/user/contents.d/svc-workers
+ENV USING_LEGACY_SEPARETE_CONTAINERS=true
 
 ################# The cli ##############
 
-FROM node:21-alpine AS cli
+FROM node:22-alpine AS cli
 LABEL org.opencontainers.image.source="https://github.com/hoarder-app/hoarder"
 WORKDIR /app
 

@@ -21,6 +21,9 @@ import {
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
 import { deleteAsset } from "@hoarder/shared/assetdb";
+import serverConfig from "@hoarder/shared/config";
+import { InferenceClientFactory } from "@hoarder/shared/inference";
+import { buildSummaryPrompt } from "@hoarder/shared/prompts";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
@@ -36,6 +39,7 @@ import {
   zBookmarkSchema,
   zGetBookmarksRequestSchema,
   zGetBookmarksResponseSchema,
+  zManipulatedTagSchema,
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "@hoarder/shared/types/bookmarks";
@@ -394,6 +398,7 @@ export const bookmarksAppRouter = router({
           archived: input.archived,
           favourited: input.favourited,
           note: input.note,
+          summary: input.summary,
           createdAt: input.createdAt,
         })
         .where(
@@ -734,30 +739,8 @@ export const bookmarksAppRouter = router({
     .input(
       z.object({
         bookmarkId: z.string(),
-        attach: z.array(
-          z
-            .object({
-              // At least one of the two must be set
-              tagId: z.string().optional(), // If the tag already exists and we know its id we should pass it
-              tagName: z.string().optional(),
-            })
-            .refine((val) => !!val.tagId || !!val.tagName, {
-              message: "You must provide either a tagId or a tagName",
-              path: ["tagId", "tagName"],
-            }),
-        ),
-        detach: z.array(
-          z
-            .object({
-              // At least one of the two must be set
-              tagId: z.string().optional(),
-              tagName: z.string().optional(), // Also allow removing by tagName, to make CLI usage easier
-            })
-            .refine((val) => !!val.tagId || !!val.tagName, {
-              message: "You must provide either a tagId or a tagName",
-              path: ["tagId", "tagName"],
-            }),
-        ),
+        attach: z.array(zManipulatedTagSchema),
+        detach: z.array(zManipulatedTagSchema),
       }),
     )
     .output(
@@ -991,5 +974,71 @@ export const bookmarksAppRouter = router({
       await deleteAsset({ userId: ctx.user.id, assetId: input.assetId }).catch(
         () => ({}),
       );
+    }),
+  summarizeBookmark: authedProcedure
+    .input(
+      z.object({
+        bookmarkId: z.string(),
+      }),
+    )
+    .output(
+      z.object({
+        summary: z.string(),
+      }),
+    )
+    .use(ensureBookmarkOwnership)
+    .mutation(async ({ input, ctx }) => {
+      const inferenceClient = InferenceClientFactory.build();
+      if (!inferenceClient) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No inference client configured",
+        });
+      }
+      const bookmark = await ctx.db.query.bookmarkLinks.findFirst({
+        where: eq(bookmarkLinks.id, input.bookmarkId),
+      });
+
+      if (!bookmark) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Bookmark not found or not a link",
+        });
+      }
+
+      const bookmarkDetails = `
+Title: ${bookmark.title ?? ""}
+Description: ${bookmark.description ?? ""}
+Content: ${bookmark.content ?? ""}
+`;
+
+      const summaryPrompt = buildSummaryPrompt(
+        serverConfig.inference.inferredTagLang,
+        bookmarkDetails,
+        serverConfig.inference.contextLength,
+      );
+
+      const summary = await inferenceClient.inferFromText(summaryPrompt, {
+        json: false,
+      });
+
+      if (!summary.response) {
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to summarize bookmark",
+        });
+      }
+      await ctx.db
+        .update(bookmarks)
+        .set({
+          summary: summary.response,
+        })
+        .where(eq(bookmarks.id, input.bookmarkId));
+      await triggerSearchReindex(input.bookmarkId);
+
+      return {
+        bookmarkId: input.bookmarkId,
+        summary: summary.response,
+      };
     }),
 });

@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import SidebarItem from "@/components/shared/sidebar/SidebarItem";
 import { Button } from "@/components/ui/button";
 import { CollapsibleTriggerTriangle } from "@/components/ui/collapsible";
 import { MoreHorizontal, Plus } from "lucide-react";
@@ -13,7 +14,6 @@ import { ZBookmarkListTreeNode } from "@hoarder/shared/utils/listUtils";
 import { CollapsibleBookmarkLists } from "../lists/CollapsibleBookmarkLists";
 import { EditListModal } from "../lists/EditListModal";
 import { ListOptions } from "../lists/ListOptions";
-import SidebarItem from "./SidebarItem";
 
 export default function AllLists({
   initialData,
@@ -45,12 +45,6 @@ export default function AllLists({
         logo={<span className="text-lg">⭐️</span>}
         name="Favourites"
         path={`/dashboard/favourites`}
-        linkClassName="py-0.5"
-      />
-      <SidebarItem
-        logo={<span className="text-lg">🗄️</span>}
-        name="Archive"
-        path={`/dashboard/archive`}
         linkClassName="py-0.5"
       />
 
