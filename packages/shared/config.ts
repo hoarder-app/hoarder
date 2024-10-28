@@ -59,7 +59,7 @@ const allEnv = z.object({
   DISABLE_NEW_RELEASE_CHECK: stringBool("false"),
 
   // A flag to detect if the user is running in the old separete containers setup
-  USING_LEGACY_SEPARETE_CONTAINERS: stringBool("false"),
+  USING_LEGACY_SEPARATE_CONTAINERS: stringBool("false"),
 });
 
 const serverConfigSchema = allEnv.transform((val) => {
@@ -127,7 +127,7 @@ const serverConfigSchema = allEnv.transform((val) => {
     maxAssetSizeMb: val.MAX_ASSET_SIZE_MB,
     serverVersion: val.SERVER_VERSION,
     disableNewReleaseCheck: val.DISABLE_NEW_RELEASE_CHECK,
-    usingLegacySeparateContainers: val.USING_LEGACY_SEPARETE_CONTAINERS,
+    usingLegacySeparateContainers: val.USING_LEGACY_SEPARATE_CONTAINERS,
   };
 });
 
