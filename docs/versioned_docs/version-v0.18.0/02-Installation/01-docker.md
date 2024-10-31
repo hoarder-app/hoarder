@@ -9,6 +9,11 @@
 
 Create a new directory to host the compose file and env variables.
 
+```
+mkdir hoarder
+cd hoarder
+```
+
 ### 2. Download the compose file
 
 Download the docker compose file provided [here](https://github.com/hoarder-app/hoarder/blob/main/docker/docker-compose.yml).
