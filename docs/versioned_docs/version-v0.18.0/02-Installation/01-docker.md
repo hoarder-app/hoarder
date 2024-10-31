@@ -88,6 +88,10 @@ Check the [configuration docs](/configuration) for extra features to enable such
 
 Go to the [quick sharing page](/quick-sharing) to install the mobile apps and the browser extensions. Those will help you hoard things faster!
 
+### Note on GCP VM
+
+If you are running this on a GCP VM, you will get an HTTP address to access the app. Make sure to configure the `NEXTAUTH_URL` variable in the `.env` file to point to this address.
+
 ## Updating
 
 Updating hoarder will depend on what you used for the `HOARDER_VERSION` env variable.
