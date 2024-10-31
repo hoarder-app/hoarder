@@ -89,3 +89,31 @@ Updating hoarder will depend on what you used for the `HOARDER_VERSION` env vari
 
 - If you pinned the app to a specific version, bump the version and re-run `docker compose up -d`. This should pull the new version for you.
 - If you used `HOARDER_VERSION=release`, you'll need to force docker to pull the latest version by running `docker compose up --pull always -d`.
+
+### Single Bash Command
+
+To automate the entire process, you can use the following single bash command. This command will create the necessary directory, download the compose file, create the `.env` file, and start the service.
+
+```
+#!/bin/bash
+set -e
+
+# Create directory
+mkdir -p hoarder && cd hoarder
+
+# Download docker-compose.yml
+wget https://raw.githubusercontent.com/hoarder-app/hoarder/main/docker/docker-compose.yml
+
+# Create .env file
+cat <<EOF > .env
+HOARDER_VERSION=release
+NEXTAUTH_SECRET=$(openssl rand -base64 36)
+MEILI_MASTER_KEY=$(openssl rand -base64 36)
+NEXTAUTH_URL=http://localhost:3000
+EOF
+
+# Start the service
+docker compose up -d
+```
+
+This script will automate the entire setup process. Just copy and paste it into your terminal and run it.

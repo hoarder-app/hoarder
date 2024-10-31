@@ -42,6 +42,7 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 - [Screenshots](https://docs.hoarder.app/screenshots)
 - [Security Considerations](https://docs.hoarder.app/security-considerations)
 - [Development](https://docs.hoarder.app/Development/setup)
+- [Self-Hosting Instructions](https://docs.hoarder.app/Installation/docker)
 
 ## Demo
 
