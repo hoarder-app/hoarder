@@ -55,6 +55,41 @@ password: demodemo
 
 The demo is seeded with some content, but it's in read-only mode to prevent abuse.
 
+## Self-Hosting with Docker Compose
+
+To self-host the Hoarder app, follow these steps:
+
+1. **Create a new directory** 📁: Create a new directory to host the compose file and environment variables.
+2. **Download the compose file** 📥: Download the Docker Compose file provided here or use the command:
+    ```bash
+    wget https://raw.githubusercontent.com/hoarder-app/hoarder/main/docker/docker-compose.yml
+    ```
+3. **Populate the environment variables** 📝: Create a `.env` file in the directory and add the following minimal environment variables:
+    ```bash
+    HOARDER_VERSION=release
+    NEXTAUTH_SECRET=super_random_string
+    MEILI_MASTER_KEY=another_random_string
+    NEXTAUTH_URL=http://localhost:3000
+    ```
+    You can use `openssl rand -base64 36` to generate the random strings. Change the `NEXTAUTH_URL` variable to point to your server address.
+4. **Setup OpenAI (optional)** 🤖: To enable automatic tagging, configure OpenAI by adding the API key to the `.env` file:
+    ```bash
+    OPENAI_API_KEY=<key>
+    ```
+5. **Start the service** 🚀: Run the following command to start the service:
+    ```bash
+    docker compose up -d
+    ```
+6. **Access the service** 🌐: Visit `http://localhost:3000` to access the Hoarder app.
+
+Here is the single bash command that captures all the steps:
+
+```bash
+eof
+mkdir hoarder-app && cd hoarder-app && wget https://raw.githubusercontent.com/hoarder-app/hoarder/main/docker/docker-compose.yml && echo -e "HOARDER_VERSION=release\nNEXTAUTH_SECRET=$(openssl rand -base64 36)\nMEILI_MASTER_KEY=$(openssl rand -base64 36)\nNEXTAUTH_URL=http://localhost:3000" > .env && docker compose up -d
+eof
+```
+
 ## Stack
 
 - [NextJS](https://nextjs.org/) for the web app. Using app router.
