@@ -15,6 +15,7 @@ import BookmarkTextMarkdown from "@/components/bookmarks/BookmarkTextMarkdown";
 import ListPickerModal from "@/components/bookmarks/ListPickerModal";
 import ViewBookmarkModal from "@/components/bookmarks/ViewBookmarkModal";
 import FullPageError from "@/components/FullPageError";
+import { TailwindResolver } from "@/components/TailwindResolver";
 import { Button } from "@/components/ui/Button";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
@@ -72,31 +73,54 @@ function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
         },
       ],
     );
+
   const actions = [
     {
       id: "lists",
-      icon: <ClipboardList />,
+      icon: (
+        <TailwindResolver
+          className="text-foreground"
+          comp={(styles) => <ClipboardList color={styles?.color?.toString()} />}
+        />
+      ),
       shouldRender: true,
       onClick: () => manageListsSheetRef.current?.present(),
       disabled: false,
     },
     {
       id: "open",
-      icon: <ArrowUpFromLine />,
+      icon: (
+        <TailwindResolver
+          className="text-foreground"
+          comp={(styles) => (
+            <ArrowUpFromLine color={styles?.color?.toString()} />
+          )}
+        />
+      ),
       shouldRender: true,
       onClick: () => viewBookmarkModal.current?.present(),
       disabled: false,
     },
     {
       id: "delete",
-      icon: <Trash2 />,
+      icon: (
+        <TailwindResolver
+          className="text-foreground"
+          comp={(styles) => <Trash2 color={styles?.color?.toString()} />}
+        />
+      ),
       shouldRender: true,
       onClick: deleteBookmarkAlert,
       disabled: isDeletionPending,
     },
     {
       id: "browser",
-      icon: <Globe />,
+      icon: (
+        <TailwindResolver
+          className="text-foreground"
+          comp={(styles) => <Globe color={styles?.color?.toString()} />}
+        />
+      ),
       shouldRender: bookmark.content.type == BookmarkTypes.LINK,
       onClick: () =>
         bookmark.content.type == BookmarkTypes.LINK &&
@@ -276,7 +300,7 @@ export default function ListView() {
       break;
   }
   return (
-    <CustomSafeAreaView>
+    <CustomSafeAreaView edges={["bottom"]}>
       <Stack.Screen
         options={{
           headerTitle: title ?? "",
