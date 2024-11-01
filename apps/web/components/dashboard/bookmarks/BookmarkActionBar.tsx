@@ -2,10 +2,10 @@ import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-import { Maximize2 } from "lucide-react";
+import { Archive, Maximize2, Video } from "lucide-react";
 
 import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
-import { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import BookmarkOptions from "./BookmarkOptions";
 import { FavouritedActionIcon } from "./icons";
@@ -34,6 +34,14 @@ export default function BookmarkActionBar({
 
   return (
     <div className="flex text-gray-500">
+      {bookmark.content.type === BookmarkTypes.LINK &&
+        bookmark.content.fullPageArchiveAssetId && (
+          <Archive className="m-1 size-8 rounded p-1" />
+        )}
+      {bookmark.content.type === BookmarkTypes.LINK &&
+        bookmark.content.videoAssetId && (
+          <Video className="m-1 size-8 rounded p-1" />
+        )}
       <Button
         variant="ghost"
         size="icon"
