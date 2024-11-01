@@ -36,7 +36,7 @@ import { useBookmarkGridContext } from "@hoarder/shared-react/hooks/bookmark-gri
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
-import { ArchivedActionIcon, FavouritedActionIcon } from "./icons";
+import { ArchivedActionIcon } from "./icons";
 import { useManageListsModal } from "./ManageListsModal";
 import { useTagModel } from "./TagModal";
 
@@ -132,21 +132,6 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               <span>Edit</span>
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem
-            disabled={demoMode}
-            onClick={() =>
-              updateBookmarkMutator.mutate({
-                bookmarkId: linkId,
-                favourited: !bookmark.favourited,
-              })
-            }
-          >
-            <FavouritedActionIcon
-              className="mr-2 size-4"
-              favourited={bookmark.favourited}
-            />
-            <span>{bookmark.favourited ? "Un-favourite" : "Favourite"}</span>
-          </DropdownMenuItem>
           <DropdownMenuItem
             disabled={demoMode}
             onClick={() =>
