@@ -198,7 +198,75 @@ async function fetchCustomPrompts(
     },
   });
 
+  if (containsTagsPlaceholder(prompts)) {
+    return replaceTagsPlaceholders(prompts, userId);
+  }
+
   return prompts.map((p) => p.text);
+}
+
+async function replaceTagsPlaceholders(
+  prompts: { text: string }[],
+  userId: string,
+): Promise<string[]> {
+  const tags = await loadTagsForUser(userId);
+  const tagsString = `[${tags.map((tag) => tag.name).join(",")}]`;
+  const aiTagsString = `[${tags
+    .filter((tag) => tag.aiCount > 0)
+    .map((tag) => tag.name)
+    .join(",")}]`;
+  const userTagsString = `[${tags
+    .filter((tag) => tag.humanCount > 0)
+    .map((tag) => tag.name)
+    .join(",")}]`;
+
+  return prompts.map((p) =>
+    p.text
+      .replaceAll("$tags", tagsString)
+      .replaceAll("$aiTags", aiTagsString)
+      .replaceAll("$userTags", userTagsString),
+  );
+}
+
+async function loadTagsForUser(userId: string) {
+  const tagsWithCounts = await db.query.bookmarkTags.findMany({
+    where: eq(bookmarkTags.userId, userId),
+    columns: {
+      name: true,
+    },
+    with: {
+      tagsOnBookmarks: {
+        columns: {
+          attachedBy: true,
+        },
+      },
+    },
+  });
+
+  return tagsWithCounts.map((tag) => {
+    const aiCount = tag.tagsOnBookmarks.filter(
+      (tob) => tob.attachedBy === "ai",
+    ).length;
+    const humanCount = tag.tagsOnBookmarks.filter(
+      (tob) => tob.attachedBy === "human",
+    ).length;
+    return {
+      name: tag.name,
+      aiCount,
+      humanCount,
+    };
+  });
+}
+
+function containsTagsPlaceholder(prompts: { text: string }[]): boolean {
+  return (
+    prompts.filter(
+      (p) =>
+        p.text.includes("$tags") ||
+        p.text.includes("$aiTags") ||
+        p.text.includes("$userTags"),
+    ).length > 0
+  );
 }
 
 async function inferTagsFromPDF(
