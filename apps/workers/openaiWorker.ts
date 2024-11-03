@@ -31,7 +31,7 @@ const openAIResponseSchema = z.object({
 
 function tagNormalizer(col: Column) {
   function normalizeTag(tag: string) {
-    return tag.toLowerCase().replace(/[ -_]/g, "");
+    return tag.toLowerCase().replace(/[ \-_]/g, "");
   }
 
   return {
