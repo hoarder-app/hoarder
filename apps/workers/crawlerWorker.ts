@@ -411,7 +411,7 @@ async function archiveWebpage(
 
   await execa({
     input: html,
-  })`monolith  - -Ije -t 5 -b ${url} -o ${assetPath}`;
+  })("monolith", ["-", "-Ije", "-t", "5", "-b", url, "-o", assetPath]);
 
   const contentType = "text/html";
 
