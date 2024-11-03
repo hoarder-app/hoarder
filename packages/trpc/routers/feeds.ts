@@ -82,6 +82,26 @@ export const feedsAppRouter = router({
       }
       return feed[0];
     }),
+  get: authedProcedure
+    .input(
+      z.object({
+        feedId: z.string(),
+      }),
+    )
+    .output(zFeedSchema)
+    .use(ensureFeedOwnership)
+    .query(async ({ ctx, input }) => {
+      const feed = await ctx.db.query.rssFeedsTable.findFirst({
+        where: and(
+          eq(rssFeedsTable.userId, ctx.user.id),
+          eq(rssFeedsTable.id, input.feedId),
+        ),
+      });
+      if (!feed) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      return feed;
+    }),
   list: authedProcedure
     .output(z.object({ feeds: z.array(zFeedSchema) }))
     .query(async ({ ctx }) => {

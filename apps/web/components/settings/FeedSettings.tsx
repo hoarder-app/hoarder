@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import { ActionButton } from "@/components/ui/action-button";
 import {
   Form,
@@ -14,6 +15,7 @@ import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   ArrowDownToLine,
@@ -35,7 +37,7 @@ import {
 } from "@hoarder/shared/types/feeds";
 
 import ActionConfirmingDialog from "../ui/action-confirming-dialog";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import {
   Dialog,
   DialogClose,
@@ -302,7 +304,14 @@ export function FeedRow({ feed }: { feed: ZFeed }) {
 
   return (
     <TableRow>
-      <TableCell>{feed.name}</TableCell>
+      <TableCell>
+        <Link
+          href={`/dashboard/feeds/${feed.id}`}
+          className={cn(buttonVariants({ variant: "link" }))}
+        >
+          {feed.name}
+        </Link>
+      </TableCell>
       <TableCell>{feed.url}</TableCell>
       <TableCell>{feed.lastFetchedAt?.toLocaleString()}</TableCell>
       <TableCell>

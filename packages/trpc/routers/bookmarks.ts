@@ -18,6 +18,7 @@ import {
   bookmarksInLists,
   bookmarkTags,
   bookmarkTexts,
+  rssFeedImportsTable,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
 import { deleteAsset } from "@hoarder/shared/assetdb";
@@ -587,6 +588,19 @@ export const bookmarksAppRouter = router({
                         and(
                           eq(tagsOnBookmarks.bookmarkId, bookmarks.id),
                           eq(tagsOnBookmarks.tagId, input.tagId),
+                        ),
+                      ),
+                  )
+                : undefined,
+              input.rssFeedId !== undefined
+                ? exists(
+                    ctx.db
+                      .select()
+                      .from(rssFeedImportsTable)
+                      .where(
+                        and(
+                          eq(rssFeedImportsTable.bookmarkId, bookmarks.id),
+                          eq(rssFeedImportsTable.rssFeedId, input.rssFeedId),
                         ),
                       ),
                   )
