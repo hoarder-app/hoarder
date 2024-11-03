@@ -1,5 +1,6 @@
 // Copied from https://gist.github.com/devster31/4e8c6548fd16ffb75c02e6f24e27f9b9
 import * as cheerio from "cheerio";
+import { parse } from "csv-parse/sync";
 
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
@@ -54,28 +55,24 @@ export async function parsePocketBookmarkFile(
 ): Promise<ParsedBookmark[]> {
   const textContent = await file.text();
 
-  const $ = cheerio.load(textContent);
+  const records = parse(textContent, {
+    columns: true,
+    skip_empty_lines: true,
+  }) as {
+    title: string;
+    url: string;
+    time_added: string;
+    tags: string;
+  }[];
 
-  return $("a")
-    .map(function (_index, a) {
-      const $a = $(a);
-      const addDate = $a.attr("time_added");
-      let tags: string[] = [];
-      const tagsStr = $a.attr("tags");
-      try {
-        tags = tagsStr && tagsStr.length > 0 ? tagsStr.split(",") : [];
-      } catch (e) {
-        /* empty */
-      }
-      const url = $a.attr("href");
-      return {
-        title: $a.text(),
-        content: url ? { type: BookmarkTypes.LINK as const, url } : undefined,
-        tags,
-        addDate: typeof addDate === "undefined" ? undefined : parseInt(addDate),
-      };
-    })
-    .get();
+  return records.map((record) => {
+    return {
+      title: record.title,
+      content: { type: BookmarkTypes.LINK as const, url: record.url },
+      tags: record.tags.length > 0 ? record.tags.split("|") : [],
+      addDate: parseInt(record.time_added),
+    };
+  });
 }
 
 export async function parseHoarderBookmarkFile(

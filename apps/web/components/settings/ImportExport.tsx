@@ -213,7 +213,7 @@ export function ImportExportRow() {
 
         <FilePickerButton
           loading={false}
-          accept=".html"
+          accept=".csv"
           multiple={false}
           className="flex items-center gap-2"
           onFileSelect={(file) =>
