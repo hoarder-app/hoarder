@@ -1,6 +1,7 @@
 // Copied from https://gist.github.com/devster31/4e8c6548fd16ffb75c02e6f24e27f9b9
 import * as cheerio from "cheerio";
 import { parse } from "csv-parse/sync";
+import { z } from "zod";
 
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
@@ -106,6 +107,36 @@ export async function parseHoarderBookmarkFile(
       tags: bookmark.tags,
       addDate: bookmark.createdAt,
       notes: bookmark.note ?? undefined,
+    };
+  });
+}
+
+export async function parseOmnivoreBookmarkFile(
+  file: File,
+): Promise<ParsedBookmark[]> {
+  const textContent = await file.text();
+  const zOmnivoreExportSchema = z.array(
+    z.object({
+      title: z.string(),
+      url: z.string(),
+      labels: z.array(z.string()),
+      savedAt: z.coerce.date(),
+    }),
+  );
+
+  const parsed = zOmnivoreExportSchema.safeParse(JSON.parse(textContent));
+  if (!parsed.success) {
+    throw new Error(
+      `The uploaded JSON file contains an invalid omnivore bookmark file: ${parsed.error.toString()}`,
+    );
+  }
+
+  return parsed.data.map((bookmark) => {
+    return {
+      title: bookmark.title ?? "",
+      content: { type: BookmarkTypes.LINK as const, url: bookmark.url },
+      tags: bookmark.labels,
+      addDate: bookmark.savedAt.getTime() / 1000,
     };
   });
 }

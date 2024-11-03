@@ -11,6 +11,7 @@ import {
   ParsedBookmark,
   parseHoarderBookmarkFile,
   parseNetscapeBookmarkFile,
+  parseOmnivoreBookmarkFile,
   parsePocketBookmarkFile,
 } from "@/lib/importBookmarkParser";
 import { cn } from "@/lib/utils";
@@ -128,7 +129,7 @@ export function ImportExportRow() {
       source,
     }: {
       file: File;
-      source: "html" | "pocket" | "hoarder";
+      source: "html" | "pocket" | "omnivore" | "hoarder";
     }) => {
       if (source === "html") {
         return await parseNetscapeBookmarkFile(file);
@@ -136,6 +137,8 @@ export function ImportExportRow() {
         return await parsePocketBookmarkFile(file);
       } else if (source === "hoarder") {
         return await parseHoarderBookmarkFile(file);
+      } else if (source === "omnivore") {
+        return await parseOmnivoreBookmarkFile(file);
       } else {
         throw new Error("Unknown source");
       }
@@ -222,6 +225,18 @@ export function ImportExportRow() {
         >
           <Upload />
           <p>Import Bookmarks from Pocket export</p>
+        </FilePickerButton>
+        <FilePickerButton
+          loading={false}
+          accept=".json"
+          multiple={false}
+          className="flex items-center gap-2"
+          onFileSelect={(file) =>
+            runUploadBookmarkFile({ file, source: "omnivore" })
+          }
+        >
+          <Upload />
+          <p>Import Bookmarks from Omnivore export</p>
         </FilePickerButton>
         <FilePickerButton
           loading={false}
