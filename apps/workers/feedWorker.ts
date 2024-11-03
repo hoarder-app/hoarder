@@ -1,5 +1,6 @@
 import { and, eq, inArray } from "drizzle-orm";
 import { DequeuedJob, Runner } from "liteque";
+import cron from "node-cron";
 import Parser from "rss-parser";
 import { buildImpersonatingTRPCClient } from "trpc";
 
@@ -9,6 +10,35 @@ import { rssFeedImportsTable, rssFeedsTable } from "@hoarder/db/schema";
 import logger from "@hoarder/shared/logger";
 import { FeedQueue } from "@hoarder/shared/queues";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+
+export const FeedRefreshingWorker = cron.schedule(
+  "0 * * * *",
+  () => {
+    logger.info("[feed] Scheduling feed refreshing jobs ...");
+    db.query.rssFeedsTable
+      .findMany({
+        columns: {
+          id: true,
+        },
+      })
+      .then((feeds) => {
+        for (const feed of feeds) {
+          FeedQueue.enqueue(
+            {
+              feedId: feed.id,
+            },
+            {
+              idempotencyKey: feed.id,
+            },
+          );
+        }
+      });
+  },
+  {
+    runOnInit: false,
+    scheduled: false,
+  },
+);
 
 export class FeedWorker {
   static build() {

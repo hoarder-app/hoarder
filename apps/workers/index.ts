@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { FeedWorker } from "feedWorker";
+import { FeedRefreshingWorker, FeedWorker } from "feedWorker";
 import { TidyAssetsWorker } from "tidyAssetsWorker";
 
 import serverConfig from "@hoarder/shared/config";
@@ -25,6 +25,7 @@ async function main() {
     VideoWorker.build(),
     FeedWorker.build(),
   ];
+  FeedRefreshingWorker.start();
 
   await Promise.any([
     Promise.all([
@@ -41,6 +42,7 @@ async function main() {
     "Shutting down crawler, openai, tidyAssets, video, feed and search workers ...",
   );
 
+  FeedRefreshingWorker.stop();
   crawler.stop();
   openai.stop();
   search.stop();
