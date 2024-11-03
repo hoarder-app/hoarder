@@ -689,6 +689,9 @@ importers:
       '@hoarder/shared':
         specifier: workspace:^0.1.0
         version: link:../../packages/shared
+      '@hoarder/trpc':
+        specifier: workspace:^0.1.0
+        version: link:../../packages/trpc
       '@hoarder/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
@@ -767,6 +770,9 @@ importers:
       puppeteer-extra-plugin-stealth:
         specifier: ^2.11.2
         version: 2.11.2(puppeteer-extra@3.3.6(puppeteer@22.3.0(typescript@5.3.3)))
+      rss-parser:
+        specifier: ^3.13.0
+        version: 3.13.0
       tesseract.js:
         specifier: ^5.1.1
         version: 5.1.1
@@ -11217,6 +11223,9 @@ packages:
   rrweb-cssom@0.7.1:
     resolution: {integrity: sha512-TrEMa7JGdVm0UThDJSx7ddw5nVm3UJS9o9CCIZ72B1vSyEZoziDqBYP3XIoi/12lKrJR8rE3jeFHMok2F/Mnsg==}
 
+  rss-parser@3.13.0:
+    resolution: {integrity: sha512-7jWUBV5yGN3rqMMj7CZufl/291QAhvrrGpDNE4k/02ZchL0npisiYYqULF71jCEKoIiHvK/Q2e6IkDwPziT7+w==}
+
   rtl-detect@1.1.2:
     resolution: {integrity: sha512-PGMBq03+TTG/p/cRB7HCLKJ1MgDIi07+QU1faSjiYRfmY5UsAttV9Hs08jDAHVwcOwmVLcSJkpwyfXszVjWfIQ==}
 
@@ -12884,6 +12893,10 @@ packages:
 
   xml2js@0.4.23:
     resolution: {integrity: sha512-ySPiMjM0+pLDftHgXY4By0uswI3SPKLDw/i3UXbnO8M/p28zqexCUoPmQFrYD+/1BzhGJSs2i1ERWKJAtiLrug==}
+    engines: {node: '>=4.0.0'}
+
+  xml2js@0.5.0:
+    resolution: {integrity: sha512-drPFnkQJik/O+uPKpqSgr22mpuFHqKdbS835iAQrUC73L2F5WkboIRd63ai/2Yg6I1jzifPFKH2NTK+cfglkIA==}
     engines: {node: '>=4.0.0'}
 
   xml2js@0.6.0:
@@ -28422,6 +28435,12 @@ snapshots:
   rrweb-cssom@0.7.1:
     dev: false
 
+  rss-parser@3.13.0:
+    dependencies:
+      entities: 2.0.3
+      xml2js: 0.5.0
+    dev: false
+
   rtl-detect@1.1.2:
     dev: false
 
@@ -30643,6 +30662,12 @@ snapshots:
     dev: false
 
   xml2js@0.4.23:
+    dependencies:
+      sax: 1.3.0
+      xmlbuilder: 11.0.1
+    dev: false
+
+  xml2js@0.5.0:
     dependencies:
       sax: 1.3.0
       xmlbuilder: 11.0.1

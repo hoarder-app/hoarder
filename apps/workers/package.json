@@ -6,6 +6,7 @@
   "dependencies": {
     "@hoarder/db": "workspace:^0.1.0",
     "@hoarder/shared": "workspace:^0.1.0",
+    "@hoarder/trpc": "workspace:^0.1.0",
     "@hoarder/tsconfig": "workspace:^0.1.0",
     "@mozilla/readability": "^0.5.0",
     "@tsconfig/node21": "^21.0.1",
@@ -32,6 +33,7 @@
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-adblocker": "^2.13.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "rss-parser": "^3.13.0",
     "tesseract.js": "^5.1.1",
     "tsx": "^4.7.1",
     "typescript": "^5.3.3",

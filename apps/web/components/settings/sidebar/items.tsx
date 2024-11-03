@@ -1,5 +1,12 @@
 import React from "react";
-import { ArrowLeft, Download, KeyRound, Sparkles, User } from "lucide-react";
+import {
+  ArrowLeft,
+  Download,
+  KeyRound,
+  Rss,
+  Sparkles,
+  User,
+} from "lucide-react";
 
 export const settingsSidebarItems: {
   name: string;
@@ -20,6 +27,11 @@ export const settingsSidebarItems: {
     name: "AI Settings",
     icon: <Sparkles size={18} />,
     path: "/settings/ai",
+  },
+  {
+    name: "RSS Subscriptions",
+    icon: <Rss size={18} />,
+    path: "/settings/feeds",
   },
   {
     name: "Import / Export",

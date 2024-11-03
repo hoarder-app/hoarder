@@ -1,5 +1,6 @@
 import "dotenv/config";
 
+import { FeedWorker } from "feedWorker";
 import { TidyAssetsWorker } from "tidyAssetsWorker";
 
 import serverConfig from "@hoarder/shared/config";
@@ -16,12 +17,13 @@ async function main() {
   logger.info(`Workers version: ${serverConfig.serverVersion ?? "not set"}`);
   runQueueDBMigrations();
 
-  const [crawler, openai, search, tidyAssets, video] = [
+  const [crawler, openai, search, tidyAssets, video, feed] = [
     await CrawlerWorker.build(),
     OpenAiWorker.build(),
     SearchIndexingWorker.build(),
     TidyAssetsWorker.build(),
     VideoWorker.build(),
+    FeedWorker.build(),
   ];
 
   await Promise.any([
@@ -31,11 +33,12 @@ async function main() {
       search.run(),
       tidyAssets.run(),
       video.run(),
+      feed.run(),
     ]),
     shutdownPromise,
   ]);
   logger.info(
-    "Shutting down crawler, openai, tidyAssets, video and search workers ...",
+    "Shutting down crawler, openai, tidyAssets, video, feed and search workers ...",
   );
 
   crawler.stop();
@@ -43,6 +46,7 @@ async function main() {
   search.stop();
   tidyAssets.stop();
   video.stop();
+  feed.stop();
 }
 
 main();

@@ -116,3 +116,20 @@ export async function triggerVideoWorker(bookmarkId: string, url: string) {
     url,
   });
 }
+
+// Feed Worker
+export const zFeedRequestSchema = z.object({
+  feedId: z.string(),
+});
+export type ZFeedRequestSchema = z.infer<typeof zFeedRequestSchema>;
+
+export const FeedQueue = new SqliteQueue<ZFeedRequestSchema>(
+  "feed_queue",
+  queueDB,
+  {
+    defaultJobArgs: {
+      // One retry is enough for the feed queue given that it's periodic
+      numRetries: 1,
+    },
+  },
+);
