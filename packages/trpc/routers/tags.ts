@@ -335,31 +335,44 @@ export const tagsAppRouter = router({
       }),
     )
     .query(async ({ ctx }) => {
+      // Fetch all tags for the user
       const tags = await ctx.db.query.bookmarkTags.findMany({
         where: eq(bookmarkTags.userId, ctx.user.id),
-        with: {
-          tagsOnBookmarks: {
-            columns: {
-              attachedBy: true,
-            },
-          },
+      });
+
+      // Fetch all the tags on bookmarks and who attached it
+      const tagIds = tags.map((tag) => tag.id);
+      const attachedTags = await ctx.db.query.tagsOnBookmarks.findMany({
+        where: inArray(tagsOnBookmarks.tagId, tagIds),
+        columns: {
+          tagId: true,
+          attachedBy: true,
         },
       });
 
-      const resp = tags.map(({ tagsOnBookmarks, ...rest }) => ({
-        ...rest,
-        numBookmarks: tagsOnBookmarks.length,
-        numBookmarksByAttachedType: tagsOnBookmarks.reduce<
-          Record<ZAttachedByEnum, number>
-        >(
-          (acc, curr) => {
-            if (curr.attachedBy) {
-              acc[curr.attachedBy]++;
-            }
-            return acc;
-          },
-          { ai: 0, human: 0 },
-        ),
+      const countsByTag = attachedTags.reduce(
+        (
+          acc: Record<string, Record<ZAttachedByEnum, number>>,
+          { tagId, attachedBy },
+        ) => {
+          if (!acc[tagId]) {
+            acc[tagId] = { ai: 0, human: 0 };
+          }
+          if (attachedBy) {
+            acc[tagId][attachedBy]++;
+          }
+          return acc;
+        },
+        {},
+      );
+
+      // Combine the results
+      const resp = tags.map((tag) => ({
+        ...tag,
+        numBookmarks: countsByTag[tag.id]
+          ? countsByTag[tag.id].ai + countsByTag[tag.id].human
+          : 0,
+        numBookmarksByAttachedType: countsByTag[tag.id] || { ai: 0, human: 0 },
       }));
 
       return { tags: resp };
