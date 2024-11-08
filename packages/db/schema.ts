@@ -264,7 +264,7 @@ export const tagsOnBookmarks = sqliteTable(
   },
   (tb) => ({
     pk: primaryKey({ columns: [tb.bookmarkId, tb.tagId] }),
-    tagIdIdx: index("tagsOnBookmarks_tagId_idx").on(tb.bookmarkId),
+    tagIdIdx: index("tagsOnBookmarks_tagId_idx").on(tb.tagId),
     bookmarkIdIdx: index("tagsOnBookmarks_bookmarkId_idx").on(tb.bookmarkId),
   }),
 );
