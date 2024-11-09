@@ -68,16 +68,18 @@ export class OpenAiWorker {
       {
         run: runOpenAI,
         onComplete: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.info(`[inference][${jobId}] Completed successfully`);
-          await attemptMarkTaggingStatus(job?.data, "success");
+          await attemptMarkTaggingStatus(job.data, "success");
         },
         onError: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.error(
             `[inference][${jobId}] inference job failed: ${job.error}\n${job.error.stack}`,
           );
-          await attemptMarkTaggingStatus(job?.data, "failure");
+          if (job.numRetriesLeft == 0) {
+            await attemptMarkTaggingStatus(job?.data, "failure");
+          }
         },
       },
       {
@@ -387,7 +389,7 @@ async function connectTags(
 }
 
 async function runOpenAI(job: DequeuedJob<ZOpenAIRequest>) {
-  const jobId = job.id ?? "unknown";
+  const jobId = job.id;
 
   const inferenceClient = InferenceClientFactory.build();
   if (!inferenceClient) {

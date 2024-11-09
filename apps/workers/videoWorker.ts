@@ -14,7 +14,11 @@ import {
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
-import { VideoWorkerQueue, ZVideoRequest } from "@hoarder/shared/queues";
+import {
+  VideoWorkerQueue,
+  ZVideoRequest,
+  zvideoRequestSchema,
+} from "@hoarder/shared/queues";
 
 import { withTimeout } from "./utils";
 import { getBookmarkDetails, updateAsset } from "./workerUtils";
@@ -33,14 +37,14 @@ export class VideoWorker {
           /* timeoutSec */ serverConfig.crawler.downloadVideoTimeout,
         ),
         onComplete: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.info(
             `[VideoCrawler][${jobId}] Video Download Completed successfully`,
           );
           return Promise.resolve();
         },
         onError: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.error(
             `[VideoCrawler][${jobId}] Video Download job failed: ${job.error}`,
           );
@@ -51,6 +55,7 @@ export class VideoWorker {
         pollIntervalMs: 1000,
         timeoutSecs: serverConfig.crawler.downloadVideoTimeout,
         concurrency: 1,
+        validator: zvideoRequestSchema,
       },
     );
   }
@@ -71,7 +76,7 @@ function prepareYtDlpArguments(url: string, assetPath: string) {
 }
 
 async function runWorker(job: DequeuedJob<ZVideoRequest>) {
-  const jobId = job.id ?? "unknown";
+  const jobId = job.id;
   const { bookmarkId } = job.data;
 
   const {

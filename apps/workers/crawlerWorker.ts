@@ -166,20 +166,20 @@ export class CrawlerWorker {
           /* timeoutSec */ serverConfig.crawler.jobTimeoutSec,
         ),
         onComplete: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.info(`[Crawler][${jobId}] Completed successfully`);
-          const bookmarkId = job?.data.bookmarkId;
+          const bookmarkId = job.data.bookmarkId;
           if (bookmarkId) {
             await changeBookmarkStatus(bookmarkId, "success");
           }
         },
         onError: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.error(
             `[Crawler][${jobId}] Crawling job failed: ${job.error}\n${job.error.stack}`,
           );
           const bookmarkId = job.data?.bookmarkId;
-          if (bookmarkId) {
+          if (bookmarkId && job.numRetriesLeft == 0) {
             await changeBookmarkStatus(bookmarkId, "failure");
           }
         },

@@ -19,12 +19,12 @@ export class SearchIndexingWorker {
       {
         run: runSearchIndexing,
         onComplete: (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.info(`[search][${jobId}] Completed successfully`);
           return Promise.resolve();
         },
         onError: (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.error(
             `[search][${jobId}] search job failed: ${job.error}\n${job.error.stack}`,
           );
@@ -117,7 +117,7 @@ async function runDelete(
 }
 
 async function runSearchIndexing(job: DequeuedJob<ZSearchIndexingRequest>) {
-  const jobId = job.id ?? "unknown";
+  const jobId = job.id;
 
   const request = zSearchIndexingRequestSchema.safeParse(job.data);
   if (!request.success) {
