@@ -22,6 +22,7 @@ import {
   CheckCircle,
   CircleDashed,
   Edit,
+  FlaskConical,
   Plus,
   Save,
   Trash2,
@@ -55,6 +56,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export function FeedsEditorDialog() {
   const [open, setOpen] = React.useState(false);
@@ -373,7 +375,15 @@ export default function FeedSettings() {
       <div className="rounded-md border bg-background p-4">
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
-            <div className="mb-2 text-lg font-medium">RSS Subscriptions</div>
+            <span className="flex items-center gap-2 text-lg font-medium">
+              RSS Subscriptions
+              <Tooltip>
+                <TooltipTrigger className="text-muted-foreground">
+                  <FlaskConical size={15} />
+                </TooltipTrigger>
+                <TooltipContent side="bottom">Experimental</TooltipContent>
+              </Tooltip>
+            </span>
             <FeedsEditorDialog />
           </div>
           {isLoading && <FullPageSpinner />}
