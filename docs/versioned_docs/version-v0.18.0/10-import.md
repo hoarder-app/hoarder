@@ -36,19 +36,6 @@ If you can get your bookmarks in a text file with one link per line, you can use
 cat all_links.txt | xargs -I{} hoarder --api-key <key> --server-addr <addr> bookmarks add --link {}
 ```
 
-alternatively if you get the error (xargs: command line cannot be assembled, too long), this means your URL is to long. Following bash script can be used to import a file that contains the URLs
-
-```
-#!/bin/bash
-
-api_key="<key>"
-server_addr="<addr>"
-
-while IFS= read -r url; do
-    hoarder --api-key "$api_key" --server-addr "$server_addr" bookmarks add --link "$url"
-done < all_links.txt
-```
-
 ## Exporting Bookmarks from Chrome
 
 - Open Chrome and go to `chrome://bookmarks`
