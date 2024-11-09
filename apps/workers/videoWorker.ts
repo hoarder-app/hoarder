@@ -115,7 +115,11 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
     assetPath = downloadPath;
   } catch (e) {
     const err = e as Error;
-    if (err.message.includes("ERROR: Unsupported URL:")) {
+    if (
+      err.message.includes(
+        "ERROR: Unsupported URL:" || err.message.includes("No media found"),
+      )
+    ) {
       logger.info(
         `[VideoCrawler][${jobId}] Skipping video download from "${url}", because it's not one of the supported yt-dlp URLs`,
       );
