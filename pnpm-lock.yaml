@@ -726,8 +726,8 @@ importers:
         specifier: ^24.0.0
         version: 24.0.0
       liteque:
-        specifier: ^0.2.0
-        version: 0.2.0(better-sqlite3@11.3.0)
+        specifier: ^0.3.0
+        version: 0.3.0(better-sqlite3@11.3.0)
       metascraper:
         specifier: ^5.45.24
         version: 5.45.24
@@ -928,8 +928,8 @@ importers:
         specifier: ^11.0.0
         version: 11.0.0
       liteque:
-        specifier: ^0.2.0
-        version: 0.2.0(better-sqlite3@11.3.0)
+        specifier: ^0.3.0
+        version: 0.3.0(better-sqlite3@11.3.0)
       meilisearch:
         specifier: ^0.37.0
         version: 0.37.0
@@ -8556,8 +8556,8 @@ packages:
     resolution: {integrity: sha512-wUayTU8MS827Dam6MxgD72Ui+KOSF+u/eIqpatOtjnvgJ0+mnDq33uC2M7J0tPK+upe/DpUAuK4JUU89iBoNKQ==}
     engines: {node: '>=4'}
 
-  liteque@0.2.0:
-    resolution: {integrity: sha512-OgRTJmGq5pyIhMOk7QhiEGuRP1Cu9hvdbs+kSwrx7RY0V0Up0vuoMM062V0HJdk+qmJKY2P4JXHYGYOSMCAEnw==}
+  liteque@0.3.0:
+    resolution: {integrity: sha512-cyfkoGpXt+MpKrc8yQbakeup9IIWeTBvh93llNmBB+G+i0ZrCei2XXZxNyenJtADf8KZlzKHX6fkmFb1/MahBA==}
     peerDependencies:
       better-sqlite3: '>=7'
 
@@ -24545,7 +24545,7 @@ snapshots:
   liquid-json@0.3.1:
     dev: false
 
-  liteque@0.2.0(better-sqlite3@11.3.0):
+  liteque@0.3.0(better-sqlite3@11.3.0):
     dependencies:
       async-mutex: 0.4.1
       better-sqlite3: 11.3.0

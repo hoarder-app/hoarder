@@ -27,6 +27,7 @@ export const LinkCrawlerQueue = new SqliteQueue<ZCrawlLinkRequest>(
     defaultJobArgs: {
       numRetries: 5,
     },
+    keepFailedJobs: false,
   },
 );
 
@@ -43,6 +44,7 @@ export const OpenAIQueue = new SqliteQueue<ZOpenAIRequest>(
     defaultJobArgs: {
       numRetries: 3,
     },
+    keepFailedJobs: false,
   },
 );
 
@@ -61,6 +63,7 @@ export const SearchIndexingQueue = new SqliteQueue<ZSearchIndexingRequest>(
     defaultJobArgs: {
       numRetries: 5,
     },
+    keepFailedJobs: false,
   },
 );
 
@@ -77,6 +80,7 @@ export const TidyAssetsQueue = new SqliteQueue<ZTidyAssetsRequest>(
     defaultJobArgs: {
       numRetries: 1,
     },
+    keepFailedJobs: false,
   },
 );
 
@@ -107,6 +111,7 @@ export const VideoWorkerQueue = new SqliteQueue<ZVideoRequest>(
     defaultJobArgs: {
       numRetries: 5,
     },
+    keepFailedJobs: false,
   },
 );
 
@@ -131,5 +136,6 @@ export const FeedQueue = new SqliteQueue<ZFeedRequestSchema>(
       // One retry is enough for the feed queue given that it's periodic
       numRetries: 1,
     },
+    keepFailedJobs: false,
   },
 );
