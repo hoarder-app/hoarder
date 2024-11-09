@@ -89,14 +89,26 @@ async function run(req: DequeuedJob<ZFeedRequestSchema>) {
       `[feed][${jobId}] Feed with id ${req.data.feedId} not found`,
     );
   }
+  logger.info(
+    `[feed][${jobId}] Starting fetching feed "${feed.name}" (${feed.id}) ...`,
+  );
 
   const response = await fetch(feed.url, {
     signal: AbortSignal.timeout(5000),
+    headers: {
+      UserAgent: "Hoarder / rss-parser",
+      Accept: "application/rss+xml",
+    },
   });
-  const contentType = response.headers.get("content-type");
-  if (!contentType || !contentType.includes("application/xml")) {
+  if (response.status !== 200) {
     throw new Error(
-      `[feed][${jobId}] Feed with id ${req.data.feedId} is not a valid RSS feed`,
+      `[feed][${jobId}] Feed "${feed.name}" (${feed.id}) returned a non-success status: ${response.status}.`,
+    );
+  }
+  const contentType = response.headers.get("content-type");
+  if (!contentType || !contentType.includes("xml")) {
+    throw new Error(
+      `[feed][${jobId}] Feed "${feed.name}" (${feed.id}) is not a valid RSS feed`,
     );
   }
   const xmlData = await response.text();
@@ -105,7 +117,11 @@ async function run(req: DequeuedJob<ZFeedRequestSchema>) {
     `[feed][${jobId}] Successfully fetched feed "${feed.name}" (${feed.id}) ...`,
   );
 
-  const parser = new Parser();
+  const parser = new Parser({
+    customFields: {
+      item: ["id"],
+    },
+  });
   const feedData = await parser.parseString(xmlData);
 
   logger.info(
@@ -116,6 +132,11 @@ async function run(req: DequeuedJob<ZFeedRequestSchema>) {
     logger.info(`[feed][${jobId}] No entries found.`);
     return;
   }
+
+  // For feeds that don't have guids, use the link as the id
+  feedData.items.forEach((item) => {
+    item.guid = item.guid ?? `${item.id}` ?? item.link;
+  });
 
   const exitingEntries = await db.query.rssFeedImportsTable.findMany({
     where: and(
@@ -131,7 +152,9 @@ async function run(req: DequeuedJob<ZFeedRequestSchema>) {
 
   const newEntries = feedData.items.filter(
     (item) =>
-      !exitingEntries.some((entry) => entry.entryId === item.guid) && item.link,
+      !exitingEntries.some((entry) => entry.entryId === item.guid) &&
+      item.link &&
+      item.guid,
   );
 
   if (newEntries.length === 0) {
