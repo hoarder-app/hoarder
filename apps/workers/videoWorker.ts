@@ -11,6 +11,7 @@ import {
   getAssetSize,
   newAssetId,
   saveAssetFromFile,
+  silentDeleteAsset,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
@@ -152,6 +153,7 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
       txn,
     );
   });
+  await silentDeleteAsset(userId, oldVideoAssetId);
 
   logger.info(
     `[VideoCrawler][${jobId}] Finished downloading video from "${url}" and adding it to the database`,
