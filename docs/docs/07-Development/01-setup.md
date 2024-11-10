@@ -17,7 +17,7 @@
 
 #### Meilisearch
 
-Meilisearch is the provider for the full text search. You can get it running with `docker run -p 7700:7700 getmeili/meilisearch:v1.6`.
+Meilisearch is the provider for the full text search. You can get it running with `docker run -p 7700:7700 getmeili/meilisearch:v1.11.1`.
 
 Mount persistent volume if you want to keep index data across restarts. You can trigger a re-index for the entire items collection in the admin panel in the web app.
 
