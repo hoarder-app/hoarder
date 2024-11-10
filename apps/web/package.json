@@ -12,8 +12,7 @@
     "lint": "next lint",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "i18next-resources-for-ts": "i18next-resources-for-ts interface -i ./app/i18n/locales/en -o ./@types/resources.d.ts"
+    "format": "prettier --check . --ignore-path ../../.gitignore"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.4.2",
