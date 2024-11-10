@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/app/i18n/client";
 import { buttonVariants } from "@/components/ui/button";
 import FilePickerButton from "@/components/ui/file-picker-button";
 import { Progress } from "@/components/ui/progress";
@@ -31,6 +32,7 @@ import {
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 export function ExportButton() {
+  const { t } = useTranslation();
   return (
     <Link
       href="/api/bookmarks/export"
@@ -40,12 +42,13 @@ export function ExportButton() {
       )}
     >
       <Download />
-      <p>Export Links and Notes</p>
+      <p>{t("settings.import.export_links_and_notes")}</p>
     </Link>
   );
 }
 
 export function ImportExportRow() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const [importProgress, setImportProgress] = useState<{
@@ -145,7 +148,7 @@ export function ImportExportRow() {
     },
     onSuccess: async (resp) => {
       const importList = await createList({
-        name: `Imported Bookmarks`,
+        name: t("settings.import.imported_bookmarks"),
         icon: "⬆️",
       });
       setImportProgress({ done: 0, total: resp.length });
@@ -211,7 +214,7 @@ export function ImportExportRow() {
           }
         >
           <Upload />
-          <p>Import Bookmarks from HTML file</p>
+          <p>{t("settings.import.import_bookmarks_from_html_file")}</p>
         </FilePickerButton>
 
         <FilePickerButton
@@ -224,7 +227,7 @@ export function ImportExportRow() {
           }
         >
           <Upload />
-          <p>Import Bookmarks from Pocket export</p>
+          <p>{t("settings.import.import_bookmarks_from_pocket_export")}</p>
         </FilePickerButton>
         <FilePickerButton
           loading={false}
@@ -236,7 +239,7 @@ export function ImportExportRow() {
           }
         >
           <Upload />
-          <p>Import Bookmarks from Omnivore export</p>
+          <p>{t("settings.import.import_bookmarks_from_omnivore_export")}</p>
         </FilePickerButton>
         <FilePickerButton
           loading={false}
@@ -248,7 +251,7 @@ export function ImportExportRow() {
           }
         >
           <Upload />
-          <p>Import Bookmarks from Hoarder export</p>
+          <p>{t("settings.import.import_bookmarks_from_hoarder_export")}</p>
         </FilePickerButton>
         <ExportButton />
       </div>
@@ -269,9 +272,12 @@ export function ImportExportRow() {
 }
 
 export default function ImportExport() {
+  const { t } = useTranslation();
   return (
     <div className="flex w-full flex-col gap-2">
-      <p className="mb-4 text-lg font-medium">Import / Export Bookmarks</p>
+      <p className="mb-4 text-lg font-medium">
+        {t("settings.import.import_export_bookmarks")}
+      </p>
       <ImportExportRow />
     </div>
   );

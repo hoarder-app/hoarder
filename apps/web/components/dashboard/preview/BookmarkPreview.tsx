@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslation } from "@/app/i18n/client";
 import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTagsEditor";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Separator } from "@/components/ui/separator";
@@ -75,6 +76,7 @@ export default function BookmarkPreview({
   bookmarkId: string;
   initialData?: ZBookmark;
 }) {
+  const { t } = useTranslation();
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {
       bookmarkId,
@@ -130,7 +132,7 @@ export default function BookmarkPreview({
               href={sourceUrl}
               className="flex items-center gap-2 text-gray-400"
             >
-              <span>View Original</span>
+              <span>{t("preview.view_original")}</span>
               <ExternalLink />
             </Link>
           )}
@@ -140,11 +142,11 @@ export default function BookmarkPreview({
         <CreationTime createdAt={bookmark.createdAt} />
         <SummarizeBookmarkArea bookmark={bookmark} />
         <div className="flex items-center gap-4">
-          <p className="text-sm text-gray-400">Tags</p>
+          <p className="text-sm text-gray-400">{t("common.tags")}</p>
           <BookmarkTagsEditor bookmark={bookmark} />
         </div>
         <div className="flex gap-4">
-          <p className="pt-2 text-sm text-gray-400">Note</p>
+          <p className="pt-2 text-sm text-gray-400">{t("common.note")}</p>
           <NoteEditor bookmark={bookmark} />
         </div>
         <AttachmentBox bookmark={bookmark} />

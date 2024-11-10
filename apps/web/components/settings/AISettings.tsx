@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "@/app/i18n/client";
 import { ActionButton } from "@/components/ui/action-button";
 import {
   Form,
@@ -34,6 +35,7 @@ import {
 } from "@hoarder/shared/types/prompts";
 
 export function PromptEditor() {
+  const { t } = useTranslation();
   const apiUtils = api.useUtils();
 
   const form = useForm<z.infer<typeof zNewPromptSchema>>({
@@ -117,7 +119,7 @@ export function PromptEditor() {
           className="items-center"
         >
           <Plus className="mr-2 size-4" />
-          Add
+          {t("actions.add")}
         </ActionButton>
       </form>
     </Form>
@@ -125,6 +127,7 @@ export function PromptEditor() {
 }
 
 export function PromptRow({ prompt }: { prompt: ZPrompt }) {
+  const { t } = useTranslation();
   const apiUtils = api.useUtils();
   const { mutateAsync: updatePrompt, isPending: isUpdating } =
     api.prompts.update.useMutation({
@@ -169,11 +172,7 @@ export function PromptRow({ prompt }: { prompt: ZPrompt }) {
             return (
               <FormItem className="hidden">
                 <FormControl>
-                  <Input
-                    placeholder="Add a custom prompt"
-                    type="hidden"
-                    {...field}
-                  />
+                  <Input type="hidden" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -234,7 +233,7 @@ export function PromptRow({ prompt }: { prompt: ZPrompt }) {
           className="items-center"
         >
           <Save className="mr-2 size-4" />
-          Save
+          {t("actions.save")}
         </ActionButton>
         <ActionButton
           loading={isDeleting}
@@ -244,7 +243,7 @@ export function PromptRow({ prompt }: { prompt: ZPrompt }) {
           type="button"
         >
           <Trash2 className="mr-2 size-4" />
-          Delete
+          {t("actions.delete")}
         </ActionButton>
       </form>
     </Form>
@@ -252,15 +251,16 @@ export function PromptRow({ prompt }: { prompt: ZPrompt }) {
 }
 
 export function TaggingRules() {
+  const { t } = useTranslation();
   const { data: prompts, isLoading } = api.prompts.list.useQuery();
 
   return (
     <div className="mt-2 flex flex-col gap-2">
-      <div className="w-full text-xl font-medium sm:w-1/3">Tagging Rules</div>
+      <div className="w-full text-xl font-medium sm:w-1/3">
+        {t("settings.ai.tagging_rules")}
+      </div>
       <p className="mb-1 text-xs italic text-muted-foreground">
-        Prompts that you add here will be included as rules to the model during
-        tag generation. You can view the final prompts in the prompt preview
-        section.
+        {t("settings.ai.tagging_rule_description")}
       </p>
       {isLoading && <FullPageSpinner />}
       {prompts && prompts.length == 0 && (
@@ -276,14 +276,15 @@ export function TaggingRules() {
 }
 
 export function PromptDemo() {
+  const { t } = useTranslation();
   const { data: prompts } = api.prompts.list.useQuery();
   const clientConfig = useClientConfig();
   return (
     <div className="flex flex-col gap-2">
       <div className="mb-4 w-full text-xl font-medium sm:w-1/3">
-        Prompt Preview
+        {t("settings.ai.prompt_preview")}
       </div>
-      <p>Text Prompt</p>
+      <p>{t("settings.ai.text_prompt")}</p>
       <code className="whitespace-pre-wrap rounded-md bg-muted p-3 text-sm text-muted-foreground">
         {buildTextPrompt(
           clientConfig.inference.inferredTagLang,
@@ -294,7 +295,7 @@ export function PromptDemo() {
           /* context length */ 1024 /* The value here doesn't matter */,
         ).trim()}
       </code>
-      <p>Image Prompt</p>
+      <p>{t("settings.ai.images_prompt")}</p>
       <code className="whitespace-pre-wrap rounded-md bg-muted p-3 text-sm text-muted-foreground">
         {buildImagePrompt(
           clientConfig.inference.inferredTagLang,
@@ -308,12 +309,13 @@ export function PromptDemo() {
 }
 
 export default function AISettings() {
+  const { t } = useTranslation();
   return (
     <>
       <div className="rounded-md border bg-background p-4">
         <div className="mb-2 flex flex-col gap-3">
           <div className="w-full text-2xl font-medium sm:w-1/3">
-            AI Settings
+            {t("settings.ai.ai_settings")}
           </div>
           <TaggingRules />
         </div>

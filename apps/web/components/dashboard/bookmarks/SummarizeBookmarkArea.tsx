@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "@/app/i18n/client";
 import { ActionButton } from "@/components/ui/action-button";
 import LoadingSpinner from "@/components/ui/spinner";
 import { toast } from "@/components/ui/use-toast";
@@ -99,6 +100,7 @@ export default function SummarizeBookmarkArea({
 }: {
   bookmark: ZBookmark;
 }) {
+  const { t } = useTranslation();
   const { mutate, isPending } = useSummarizeBookmark({
     onError: () => {
       toast({
@@ -132,7 +134,7 @@ export default function SummarizeBookmarkArea({
             </div>
           )}
           <span className="relative z-10 flex items-center gap-1.5">
-            Summarize with AI
+            {t("actions.summarize_with_ai")}
             <Sparkles className="size-4" />
           </span>
         </ActionButton>

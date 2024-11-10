@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "@/app/i18n/client";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -41,6 +42,7 @@ import { useManageListsModal } from "./ManageListsModal";
 import { useTagModel } from "./TagModal";
 
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const linkId = bookmark.id;
 
@@ -145,7 +147,11 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               className="mr-2 size-4"
               favourited={bookmark.favourited}
             />
-            <span>{bookmark.favourited ? "Un-favourite" : "Favourite"}</span>
+            <span>
+              {bookmark.favourited
+                ? t("actions.unfavorite")
+                : t("actions.favorite")}
+            </span>
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled={demoMode}
@@ -160,7 +166,11 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               className="mr-2 size-4"
               archived={bookmark.archived}
             />
-            <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
+            <span>
+              {bookmark.archived
+                ? t("actions.unarchive")
+                : t("actions.archive")}
+            </span>
           </DropdownMenuItem>
 
           {bookmark.content.type === BookmarkTypes.LINK && (
@@ -173,7 +183,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               }}
             >
               <FileDown className="mr-2 size-4" />
-              <span>Download Full Page Archive</span>
+              <span>{t("actions.download_full_page_archive")}</span>
             </DropdownMenuItem>
           )}
 
@@ -189,17 +199,17 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               }}
             >
               <Link className="mr-2 size-4" />
-              <span>Copy Link</span>
+              <span>{t("actions.copy_link")}</span>
             </DropdownMenuItem>
           )}
           <DropdownMenuItem onClick={() => setTagModalIsOpen(true)}>
             <Tags className="mr-2 size-4" />
-            <span>Edit Tags</span>
+            <span>{t("actions.edit_tags")}</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setManageListsModalOpen(true)}>
             <List className="mr-2 size-4" />
-            <span>Manage Lists</span>
+            <span>{t("actions.manage_lists")}</span>
           </DropdownMenuItem>
 
           {listId && (
@@ -213,7 +223,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               }
             >
               <ListX className="mr-2 size-4" />
-              <span>Remove from List</span>
+              <span>{t("actions.remove_from_list")}</span>
             </DropdownMenuItem>
           )}
 
@@ -225,7 +235,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               }
             >
               <RotateCw className="mr-2 size-4" />
-              <span>Refresh</span>
+              <span>{t("actions.refresh")}</span>
             </DropdownMenuItem>
           )}
           <DropdownMenuItem
@@ -236,7 +246,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             }
           >
             <Trash2 className="mr-2 size-4" />
-            <span>Delete</span>
+            <span>{t("actions.delete")}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

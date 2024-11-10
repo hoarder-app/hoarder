@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "@/app/i18n/client";
 import { ActionButtonWithTooltip } from "@/components/ui/action-button";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import {
@@ -95,6 +96,7 @@ function ViewMode({
   viewClassName,
   untitledClassName,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <Tooltip delayDuration={500}>
       <div className="flex max-w-full items-center gap-3">
@@ -107,7 +109,7 @@ function ViewMode({
         </TooltipTrigger>
         <ButtonWithTooltip
           delayDuration={500}
-          tooltip="Edit title"
+          tooltip={t("actions.edit_title")}
           size="none"
           variant="ghost"
           className="align-middle text-gray-400"

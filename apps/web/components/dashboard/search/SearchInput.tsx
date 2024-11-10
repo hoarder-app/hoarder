@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useImperativeHandle, useRef } from "react";
+import { useTranslation } from "@/app/i18n/client";
 import { Input } from "@/components/ui/input";
 import { useDoBookmarkSearch } from "@/lib/hooks/bookmark-search";
 
@@ -45,6 +46,7 @@ const SearchInput = React.forwardRef<
   HTMLInputElement,
   React.HTMLAttributes<HTMLInputElement> & { loading?: boolean }
 >(({ className, ...props }, ref) => {
+  const { t } = useTranslation();
   const { debounceSearch, searchQuery, isInSearchPage } = useDoBookmarkSearch();
 
   const [value, setValue] = React.useState(searchQuery);
@@ -69,7 +71,7 @@ const SearchInput = React.forwardRef<
       ref={inputRef}
       value={value}
       onChange={onChange}
-      placeholder="Search"
+      placeholder={t("common.search")}
       className={className}
       {...props}
     />

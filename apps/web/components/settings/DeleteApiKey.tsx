@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslation } from "@/app/i18n/client";
 import { ActionButton } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ export default function DeleteApiKey({
   name: string;
   id: string;
 }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const mutator = api.apiKeys.revoke.useMutation({
     onSuccess: () => {
@@ -43,7 +45,7 @@ export default function DeleteApiKey({
             mutator.mutate({ id }, { onSuccess: () => setDialogOpen(false) })
           }
         >
-          Delete
+          {t("actions.delete")}
         </ActionButton>
       )}
     >

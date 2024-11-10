@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { useTranslation } from "@/app/i18n";
 import SidebarItem from "@/components/shared/sidebar/SidebarItem";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
@@ -10,6 +11,7 @@ import serverConfig from "@hoarder/shared/config";
 import AllLists from "./AllLists";
 
 export default async function Sidebar() {
+  const { t } = await useTranslation();
   const session = await getServerAuthSession();
   if (!session) {
     redirect("/");
@@ -20,7 +22,7 @@ export default async function Sidebar() {
   const searchItem = serverConfig.meilisearch
     ? [
         {
-          name: "Search",
+          name: t("common.search"),
           icon: <Search size={18} />,
           path: "/dashboard/search",
         },
@@ -33,18 +35,18 @@ export default async function Sidebar() {
     path: string;
   }[] = [
     {
-      name: "Home",
+      name: t("common.home"),
       icon: <Home size={18} />,
       path: "/dashboard/bookmarks",
     },
     ...searchItem,
     {
-      name: "Tags",
+      name: t("common.tags"),
       icon: <Tag size={18} />,
       path: "/dashboard/tags",
     },
     {
-      name: "Archive",
+      name: t("common.archive"),
       icon: <Archive size={18} />,
       path: "/dashboard/archive",
     },

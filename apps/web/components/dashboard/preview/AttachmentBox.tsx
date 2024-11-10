@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslation } from "@/app/i18n/client";
 import { ActionButton } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { Button } from "@/components/ui/button";
@@ -41,6 +42,7 @@ import {
 } from "@hoarder/trpc/lib/attachments";
 
 export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
+  const { t } = useTranslation();
   const typeToIcon: Record<ZAssetType, React.ReactNode> = {
     screenshot: <Camera className="size-4" />,
     fullPageArchive: <Archive className="size-4" />,
@@ -109,7 +111,7 @@ export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
   return (
     <Collapsible>
       <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 text-sm text-gray-400">
-        Attachments
+        {t("common.attachments")}
         <ChevronsDownUp className="size-4" />
       </CollapsibleTrigger>
       <CollapsibleContent className="flex flex-col gap-1 py-2 text-sm">

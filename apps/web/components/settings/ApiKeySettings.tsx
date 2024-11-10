@@ -1,3 +1,4 @@
+import { useTranslation } from "@/app/i18n";
 import {
   Table,
   TableBody,
@@ -12,21 +13,24 @@ import AddApiKey from "./AddApiKey";
 import DeleteApiKey from "./DeleteApiKey";
 
 export default async function ApiKeys() {
+  const { t } = await useTranslation();
   const keys = await api.apiKeys.list();
   return (
     <div>
       <div className="flex items-center justify-between">
-        <div className="mb-2 text-lg font-medium">API Keys</div>
+        <div className="mb-2 text-lg font-medium">
+          {t("settings.api_keys.api_keys")}
+        </div>
         <AddApiKey />
       </div>
       <div className="mt-2">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Key</TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead>Action</TableHead>
+              <TableHead>{t("common.name")}</TableHead>
+              <TableHead>{t("common.key")}</TableHead>
+              <TableHead>{t("common.created_at")}</TableHead>
+              <TableHead>{t("common.action")}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

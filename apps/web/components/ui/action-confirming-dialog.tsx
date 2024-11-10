@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "@/app/i18n/client";
 import {
   Dialog,
   DialogClose,
@@ -26,6 +27,7 @@ export default function ActionConfirmingDialog({
   actionButton: (setDialogOpen: (open: boolean) => void) => React.ReactNode;
   children?: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   const [customIsOpen, setCustomIsOpen] = useState(false);
   const [isDialogOpen, setDialogOpen] = [
     userIsOpen ?? customIsOpen,
@@ -42,7 +44,7 @@ export default function ActionConfirmingDialog({
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
             <Button type="button" variant="secondary">
-              Close
+              {t("actions.close")}
             </Button>
           </DialogClose>
           {actionButton(setDialogOpen)}

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { useTranslation } from "@/app/i18n/client";
 import { useToggleTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,26 +17,28 @@ import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 
 function DarkModeToggle() {
+  const { t } = useTranslation();
   const { theme } = useTheme();
 
   if (theme == "dark") {
     return (
       <>
         <Sun className="mr-2 size-4" />
-        <span>Light Mode</span>
+        <span>{t("options.light_mode")}</span>
       </>
     );
   } else {
     return (
       <>
         <Moon className="mr-2 size-4" />
-        <span>Dark Mode</span>
+        <span>{t("options.dark_mode")}</span>
       </>
     );
   }
 }
 
 export default function SidebarProfileOptions() {
+  const { t } = useTranslation();
   const toggleTheme = useToggleTheme();
   const { data: session } = useSession();
   if (!session) return redirect("/");
@@ -64,14 +67,14 @@ export default function SidebarProfileOptions() {
         <DropdownMenuItem asChild>
           <Link href="/settings">
             <Settings className="mr-2 size-4" />
-            User Settings
+            {t("settings.user_settings")}
           </Link>
         </DropdownMenuItem>
         {session.user.role == "admin" && (
           <DropdownMenuItem asChild>
             <Link href="/dashboard/admin">
               <Shield className="mr-2 size-4" />
-              Admin Settings
+              {t("admin.admin_settings")}
             </Link>
           </DropdownMenuItem>
         )}
@@ -94,7 +97,7 @@ export default function SidebarProfileOptions() {
           }
         >
           <LogOut className="mr-2 size-4" />
-          <span>Sign Out</span>
+          <span>{t("actions.sign_out")}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

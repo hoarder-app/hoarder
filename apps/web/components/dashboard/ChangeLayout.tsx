@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslation } from "@/app/i18n/client";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,11 +17,12 @@ import {
   LayoutGrid,
   LayoutList,
   List,
+  LucideIcon,
 } from "lucide-react";
 
-type LayoutType = "masonry" | "grid" | "list";
+type LayoutType = "masonry" | "grid" | "list" | "compact";
 
-const iconMap = {
+const iconMap: Record<LayoutType, LucideIcon> = {
   masonry: LayoutDashboard,
   grid: LayoutGrid,
   list: LayoutList,
@@ -28,13 +30,14 @@ const iconMap = {
 };
 
 export default function ChangeLayout() {
+  const { t } = useTranslation();
   const layout = useBookmarkLayout();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <ButtonWithTooltip
-          tooltip="Change layout"
+          tooltip={t("actions.change_layout")}
           delayDuration={100}
           variant="ghost"
         >
@@ -42,7 +45,7 @@ export default function ChangeLayout() {
         </ButtonWithTooltip>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
-        {Object.keys(iconMap).map((key) => (
+        {(Object.keys(iconMap) as LayoutType[]).map((key) => (
           <DropdownMenuItem
             key={key}
             className="cursor-pointer justify-between"
@@ -50,7 +53,7 @@ export default function ChangeLayout() {
           >
             <div className="flex items-center gap-2">
               {React.createElement(iconMap[key as LayoutType], { size: 18 })}
-              <span className="capitalize">{key}</span>
+              <span>{t(`layouts.${key}`)}</span>
             </div>
             {layout == key && <Check className="ml-2 size-4" />}
           </DropdownMenuItem>
