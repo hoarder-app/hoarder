@@ -2,11 +2,19 @@
 
 import { cookies } from "next/headers";
 
-import type { BookmarksLayoutTypes } from "./types";
+import type { BookmarksLayoutTypes, UserLocalSettings } from "./types";
 import {
+  defaultUserLocalSettings,
   parseUserLocalSettings,
   USER_LOCAL_SETTINGS_COOKIE_NAME,
 } from "./types";
+
+export async function getUserLocalSettings(): Promise<UserLocalSettings> {
+  const userSettings = cookies().get(USER_LOCAL_SETTINGS_COOKIE_NAME);
+  return (
+    parseUserLocalSettings(userSettings?.value) ?? defaultUserLocalSettings()
+  );
+}
 
 export async function updateBookmarksLayout(layout: BookmarksLayoutTypes) {
   const userSettings = cookies().get(USER_LOCAL_SETTINGS_COOKIE_NAME);

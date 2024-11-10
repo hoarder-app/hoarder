@@ -12,7 +12,8 @@
     "lint": "next lint",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --check . --ignore-path ../../.gitignore"
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "i18next-resources-for-ts": "i18next-resources-for-ts interface -i ./app/i18n/locales/en -o ./@types/resources.d.ts"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.4.2",
@@ -51,9 +52,12 @@
     "dayjs": "^1.11.10",
     "drizzle-orm": "^0.33.0",
     "fastest-levenshtein": "^1.0.16",
+    "i18next": "^23.16.5",
+    "i18next-resources-to-backend": "^1.2.1",
     "lucide-react": "^0.330.0",
     "next": "14.2.13",
     "next-auth": "^4.24.5",
+    "next-i18next": "^15.3.1",
     "next-pwa": "^5.6.0",
     "next-themes": "^0.3.0",
     "prettier": "^3.2.5",
@@ -62,6 +66,7 @@
     "react-draggable": "^4.4.6",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.50.1",
+    "react-i18next": "^15.1.1",
     "react-intersection-observer": "^9.13.1",
     "react-markdown": "^9.0.1",
     "react-masonry-css": "^1.0.16",
