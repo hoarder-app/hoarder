@@ -6,6 +6,7 @@ import "@hoarder/tailwind-config/globals.css";
 import type { Viewport } from "next";
 import React from "react";
 import { cookies } from "next/headers";
+import ErrorToast from "@/components/dashboard/ErrorToast";
 import { Toaster } from "@/components/ui/toaster";
 import Providers from "@/lib/providers";
 import {
@@ -67,6 +68,7 @@ export default async function RootLayout({
           <ReactQueryDevtools initialIsOpen={false} />
         </Providers>
         <Toaster />
+        <ErrorToast />
       </body>
     </html>
   );

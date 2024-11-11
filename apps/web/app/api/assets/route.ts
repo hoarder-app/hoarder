@@ -25,53 +25,68 @@ export async function POST(request: Request) {
     });
   }
   const formData = await request.formData();
-  const data = formData.get("file") ?? formData.get("image");
-  let buffer;
-  let contentType;
-  if (data instanceof File) {
-    contentType = data.type;
-    if (!SUPPORTED_UPLOAD_ASSET_TYPES.has(contentType)) {
-      return Response.json(
-        { error: "Unsupported asset type" },
-        { status: 400 },
-      );
-    }
-    if (data.size > MAX_UPLOAD_SIZE_BYTES) {
-      return Response.json({ error: "Asset is too big" }, { status: 413 });
-    }
-    buffer = Buffer.from(await data.arrayBuffer());
-  } else {
-    return Response.json({ error: "Bad request" }, { status: 400 });
-  }
 
-  const fileName = data.name;
-  const [assetDb] = await ctx.db
-    .insert(assets)
-    .values({
-      id: newAssetId(),
-      // Initially, uploads are uploaded for unknown purpose
-      // And without an attached bookmark.
-      assetType: AssetTypes.UNKNOWN,
-      bookmarkId: null,
-      userId: ctx.user.id,
+  const userId = ctx.user.id;
+  const files = [...formData.getAll("file"), ...formData.getAll("image")];
+
+  const promises = files.map(async (data) => {
+    let buffer;
+    let contentType;
+    if (data instanceof File) {
+      contentType = data.type;
+      if (!SUPPORTED_UPLOAD_ASSET_TYPES.has(contentType)) {
+        throw Response.json(
+          { error: "Unsupported asset type" },
+          { status: 400 },
+        );
+      }
+      if (data.size > MAX_UPLOAD_SIZE_BYTES) {
+        throw Response.json({ error: "Asset is too big" }, { status: 413 });
+      }
+      buffer = Buffer.from(await data.arrayBuffer());
+    } else {
+      throw Response.json({ error: "Bad request" }, { status: 400 });
+    }
+
+    const fileName = data.name;
+    const [assetDb] = await ctx.db
+      .insert(assets)
+      .values({
+        id: newAssetId(),
+        // Initially, uploads are uploaded for unknown purpose
+        // And without an attached bookmark.
+        assetType: AssetTypes.UNKNOWN,
+        bookmarkId: null,
+        userId,
+        contentType,
+        size: data.size,
+        fileName,
+      })
+      .returning();
+    const assetId = assetDb.id;
+
+    await saveAsset({
+      userId,
+      assetId,
+      metadata: { contentType, fileName },
+      asset: buffer,
+    });
+
+    return {
+      assetId,
       contentType,
-      size: data.size,
+      size: buffer.byteLength,
       fileName,
-    })
-    .returning();
-  const assetId = assetDb.id;
-
-  await saveAsset({
-    userId: ctx.user.id,
-    assetId,
-    metadata: { contentType, fileName },
-    asset: buffer,
+    } satisfies ZUploadResponse[number];
   });
 
-  return Response.json({
-    assetId,
-    contentType,
-    size: buffer.byteLength,
-    fileName,
-  } satisfies ZUploadResponse);
+  try {
+    return Response.json(await Promise.all(promises));
+  } catch (error) {
+    if (error instanceof Response) {
+      return error;
+    }
+
+    throw error;
+  }
 }

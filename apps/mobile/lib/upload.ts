@@ -56,10 +56,11 @@ export function useUploadAsset(
       return zUploadResponseSchema.parse(await resp.json());
     },
     onSuccess: (resp) => {
-      const assetId = resp.assetId;
-      const assetType =
-        resp.contentType === "application/pdf" ? "pdf" : "image";
-      createBookmark({ type: BookmarkTypes.ASSET, assetId, assetType });
+      resp.forEach((r) => {
+        const assetId = r.assetId;
+        const assetType = r.contentType === "application/pdf" ? "pdf" : "image";
+        createBookmark({ type: BookmarkTypes.ASSET, assetId, assetType });
+      });
     },
     onError: (e) => {
       if (options.onError) {
