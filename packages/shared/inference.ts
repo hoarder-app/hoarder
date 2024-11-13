@@ -3,6 +3,7 @@ import OpenAI from "openai";
 
 import serverConfig from "./config";
 import logger from "./logger";
+import { customFetch } from "./customFetch";
 
 export interface InferenceResponse {
   response: string;
@@ -153,6 +154,7 @@ class OllamaInferenceClient implements InferenceClient {
   constructor() {
     this.ollama = new Ollama({
       host: serverConfig.inference.ollamaBaseUrl,
+      fetch: customFetch, // Use the custom fetch with configurable timeout
     });
   }
 
