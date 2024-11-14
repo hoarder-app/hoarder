@@ -37,6 +37,8 @@ services:
     volumes:
       - data:/data
       - ..:/app
+    env_file:
+      - .env
     working_dir: /app
     environment:
       MEILI_ADDR: http://meilisearch:7700
@@ -52,6 +54,8 @@ services:
   prep:
     build:
       dockerfile: Dockerfile.dev
+    env_file:
+      - .env
     working_dir: /app
     environment:
       DATA_DIR: /data
