@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useTranslation } from "@/app/i18n/client";
 import {
   Dialog,
   DialogClose,
@@ -9,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useTranslation } from "@/lib/i18n/client";
 
 import { Button } from "./button";
 

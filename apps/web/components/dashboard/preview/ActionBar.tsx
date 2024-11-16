@@ -1,5 +1,4 @@
 import { useRouter } from "next/navigation";
-import { useTranslation } from "@/app/i18n/client";
 import { ActionButton } from "@/components/ui/action-button";
 import {
   Tooltip,
@@ -7,6 +6,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { Trash2 } from "lucide-react";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { useTranslation } from "@/app/i18n/client";
 import { ActionButton } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { Button } from "@/components/ui/button";
@@ -11,6 +10,7 @@ import {
 import FilePickerButton from "@/components/ui/file-picker-button";
 import { toast } from "@/components/ui/use-toast";
 import useUpload from "@/lib/hooks/upload-file";
+import { useTranslation } from "@/lib/i18n/client";
 import {
   Archive,
   Camera,

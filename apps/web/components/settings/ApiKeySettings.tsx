@@ -1,4 +1,3 @@
-import { useTranslation } from "@/app/i18n";
 import {
   Table,
   TableBody,
@@ -7,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useTranslation } from "@/lib/i18n/server";
 import { api } from "@/server/api/client";
 
 import AddApiKey from "./AddApiKey";

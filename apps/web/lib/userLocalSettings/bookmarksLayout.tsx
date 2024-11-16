@@ -2,7 +2,7 @@
 
 import type { z } from "zod";
 import { createContext, useContext } from "react";
-import { fallbackLng } from "@/app/i18n/settings";
+import { fallbackLng } from "@/lib/i18n/settings";
 
 import type { BookmarksLayoutTypes, zUserLocalSettings } from "./types";
 
@@ -24,7 +24,7 @@ export function useBookmarkLayout() {
   return settings.bookmarkGridLayout;
 }
 
-export function useLang() {
+export function useInterfaceLang() {
   const settings = useUserLocalSettings();
   return settings.lang;
 }

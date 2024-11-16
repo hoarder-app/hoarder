@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useTranslation } from "@/app/i18n/client";
 import { ActionButtonWithTooltip } from "@/components/ui/action-button";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import {
@@ -8,6 +7,7 @@ import {
   TooltipPortal,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTranslation } from "@/lib/i18n/client";
 import { Check, Pencil, X } from "lucide-react";
 
 interface Props {

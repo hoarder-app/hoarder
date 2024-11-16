@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useEffect, useImperativeHandle, useRef } from "react";
-import { useTranslation } from "@/app/i18n/client";
 import { Input } from "@/components/ui/input";
 import { useDoBookmarkSearch } from "@/lib/hooks/bookmark-search";
+import { useTranslation } from "@/lib/i18n/client";
 
 function useFocusSearchOnKeyPress(
   inputRef: React.RefObject<HTMLInputElement>,

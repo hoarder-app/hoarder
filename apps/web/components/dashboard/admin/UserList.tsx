@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslation } from "@/app/i18n/client";
 import { ActionButtonWithTooltip } from "@/components/ui/action-button";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/spinner";
@@ -13,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { Check, KeyRound, Pencil, Trash, UserPlus, X } from "lucide-react";
 import { useSession } from "next-auth/react";

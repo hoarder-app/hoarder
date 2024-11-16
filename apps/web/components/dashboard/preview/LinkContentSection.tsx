@@ -1,6 +1,5 @@
 import { useState } from "react";
 import Image from "next/image";
-import { useTranslation } from "@/app/i18n/client";
 import {
   Select,
   SelectContent,
@@ -9,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "@/lib/i18n/client";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 import {

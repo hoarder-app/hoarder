@@ -1,8 +1,8 @@
 import React from "react";
-import { useTranslation } from "@/app/i18n/client";
 import { ActionButton } from "@/components/ui/action-button";
 import LoadingSpinner from "@/components/ui/spinner";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 import { ChevronUp, RefreshCw, Sparkles, Trash2 } from "lucide-react";
 

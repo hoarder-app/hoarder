@@ -1,6 +1,6 @@
-import { useTranslation } from "@/app/i18n";
 import AllTagsView from "@/components/dashboard/tags/AllTagsView";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "@/lib/i18n/server";
 import { api } from "@/server/api/client";
 
 export default async function TagsPage() {

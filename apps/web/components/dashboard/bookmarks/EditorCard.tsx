@@ -1,6 +1,5 @@
 import type { SubmitErrorHandler, SubmitHandler } from "react-hook-form";
 import React, { useEffect, useImperativeHandle, useRef } from "react";
-import { useTranslation } from "@/app/i18n/client";
 import { ActionButton } from "@/components/ui/action-button";
 import { Form, FormControl, FormItem } from "@/components/ui/form";
 import InfoTooltip from "@/components/ui/info-tooltip";
@@ -10,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import BookmarkAlreadyExistsToast from "@/components/utils/BookmarkAlreadyExistsToast";
 import { useClientConfig } from "@/lib/clientConfig";
+import { useTranslation } from "@/lib/i18n/client";
 import {
   useBookmarkLayout,
   useBookmarkLayoutSwitch,

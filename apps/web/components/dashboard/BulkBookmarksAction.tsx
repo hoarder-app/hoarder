@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useTranslation } from "@/app/i18n/client";
 import {
   ActionButton,
   ActionButtonWithTooltip,
@@ -10,6 +9,7 @@ import {
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { useToast } from "@/components/ui/use-toast";
 import useBulkActionsStore from "@/lib/bulkActions";
+import { useTranslation } from "@/lib/i18n/client";
 import {
   CheckCheck,
   FileDown,

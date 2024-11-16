@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslation } from "@/app/i18n/client";
 import { EditListModal } from "@/components/dashboard/lists/EditListModal";
 import { Button } from "@/components/ui/button";
 import { CollapsibleTriggerChevron } from "@/components/ui/collapsible";
+import { useTranslation } from "@/lib/i18n/client";
 import { MoreHorizontal, Plus } from "lucide-react";
 
 import type { ZBookmarkList } from "@hoarder/shared/types/lists";

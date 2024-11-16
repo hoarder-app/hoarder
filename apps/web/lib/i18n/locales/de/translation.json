@@ -1,0 +1,139 @@
+{
+  "common": {
+    "url": "URL",
+    "name": "Name",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "action": "Aktion",
+    "actions": "Aktionen",
+    "created_at": "Erstellt am",
+    "key": "Schlüssel",
+    "role": "Rolle",
+    "roles": {
+      "user": "Benutzer",
+      "admin": "Administrator"
+    },
+    "something_went_wrong": "Etwas ist schiefgelaufen"
+  },
+  "sidebar": {
+    "home": "Startseite",
+    "search": "Suche",
+    "tags": "Schlagworte",
+    "archive": "Archiv"
+  },
+  "layouts": {
+    "masonry": "Kacheln",
+    "grid": "Raster",
+    "list": "Liste",
+    "compact": "Kompakt"
+  },
+  "actions": {
+    "change_layout": "Layout ändern",
+    "archive": "Archivieren",
+    "unarchive": "Aus Archiv entfernen",
+    "favorite": "Favorisieren",
+    "unfavorite": "Aus Favoriten entfernen",
+    "delete": "Löschen",
+    "refresh": "Aktualisieren",
+    "download_full_page_archive": "Vollständige Seite archivieren",
+    "edit_tags": "Schlagworte bearbeiten",
+    "add_to_list": "Zur Liste hinzufügen",
+    "select_all": "Alle auswählen",
+    "unselect_all": "Alle abwählen",
+    "copy_link": "Link kopieren",
+    "close_bulk_edit": "Massenbearbeitung schließen",
+    "bulk_edit": "Massenbearbeitung",
+    "manage_lists": "Listen verwalten",
+    "save": "Speichern",
+    "add": "Hinzufügen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "search": "Suchen",
+    "fetch_now": "Jetzt abrufen",
+    "summarize_with_ai": "Mit KI zusammenfassen",
+    "view_original": "Original anzeigen",
+    "edit_title": "Titel bearbeiten",
+    "sign_out": "Abmelden",
+    "close": "Schließen"
+  },
+  "settings": {
+    "user_settings": "Benutzereinstellungen",
+    "info": {
+      "basic_details": "Grundangaben",
+      "change_password": "Passwort ändern",
+      "current_password": "Aktuelles Passwort",
+      "new_password": "Neues Passwort",
+      "confirm_new_password": "Neues Passwort bestätigen"
+    },
+    "ai": {
+      "ai_settings": "KI-Einstellungen",
+      "tagging_rules": "Tagging-Regeln",
+      "tagging_rule_description": "Eingaben, die Sie hier hinzufügen, werden während der Tag-Generierung als Regeln für das Modell verwendet. Sie können die finalen Eingaben im Vorschaubereich sehen.",
+      "prompt_preview": "Eingabevorschau",
+      "text_prompt": "Text-Eingabe",
+      "images_prompt": "Bild-Eingabe"
+    },
+    "feeds": {
+      "rss_subscriptions": "RSS-Abonnements",
+      "add_a_subscription": "Abonnement hinzufügen"
+    },
+    "import": {
+      "import_export_bookmarks": "Lesezeichen importieren / exportieren",
+      "import_bookmarks_from_html_file": "Lesezeichen aus HTML-Datei importieren",
+      "import_bookmarks_from_pocket_export": "Lesezeichen aus Pocket-Export importieren",
+      "import_bookmarks_from_omnivore_export": "Lesezeichen aus Omnivore-Export importieren",
+      "import_bookmarks_from_hoarder_export": "Lesezeichen aus Hoarder-Export importieren",
+      "imported_bookmarks": "Importierte Lesezeichen"
+    },
+    "api_keys": {
+      "api_keys": "API-Schlüssel",
+      "new_api_key": "Neuer API-Schlüssel",
+      "new_api_key_desc": "Geben Sie Ihrem API-Schlüssel einen eindeutigen Namen",
+      "key_success": "Schlüssel wurde erfolgreich erstellt",
+      "key_success_please_copy": "Bitte kopieren Sie den Schlüssel und bewahren Sie ihn sicher auf. Sobald Sie den Dialog schließen, können Sie nicht mehr darauf zugreifen."
+    }
+  },
+  "admin": {
+    "admin_settings": "Administrator-Einstellungen",
+    "server_stats": {
+      "server_stats": "Server-Statistiken",
+      "total_users": "Gesamtanzahl Benutzer",
+      "total_bookmarks": "Gesamtanzahl Lesezeichen",
+      "server_version": "Server-Version"
+    },
+    "background_jobs": {
+      "background_jobs": "Hintergrundaufgaben",
+      "crawler_jobs": "Crawler-Aufgaben",
+      "indexing_jobs": "Indexierungs-Aufgaben",
+      "inference_jobs": "Inferenz-Aufgaben",
+      "tidy_assets_jobs": "Aufräum-Aufgaben",
+      "queued": "In Warteschlange",
+      "pending": "Ausstehend",
+      "failed": "Fehlgeschlagen"
+    },
+    "actions": {
+      "recrawl_failed_links_only": "Nur fehlgeschlagene Links neu crawlen",
+      "recrawl_all_links": "Alle Links neu crawlen",
+      "without_inference": "Ohne Inferenz",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "KI-Tags nur für fehlgeschlagene Lesezeichen neu generieren",
+      "regenerate_ai_tags_for_all_bookmarks": "KI-Tags für alle Lesezeichen neu generieren",
+      "reindex_all_bookmarks": "Alle Lesezeichen neu indexieren",
+      "compact_assets": "Assets komprimieren"
+    },
+    "users_list": {
+      "users_list": "Benutzerliste",
+      "create_user": "Benutzer erstellen",
+      "change_role": "Rolle ändern",
+      "reset_password": "Passwort zurücksetzen",
+      "delete_user": "Benutzer löschen",
+      "num_bookmarks": "Anzahl Lesezeichen",
+      "asset_sizes": "Asset-Größen",
+      "local_user": "Lokaler Benutzer",
+      "confirm_password": "Passwort bestätigen"
+    }
+  },
+  "options": {
+    "dark_mode": "Dunkelmodus",
+    "light_mode": "Hellmodus"
+  }
+}

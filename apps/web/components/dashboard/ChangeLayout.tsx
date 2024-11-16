@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { useTranslation } from "@/app/i18n/client";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,6 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "@/lib/i18n/client";
 import { useBookmarkLayout } from "@/lib/userLocalSettings/bookmarksLayout";
 import { updateBookmarksLayout } from "@/lib/userLocalSettings/userLocalSettings";
 import {

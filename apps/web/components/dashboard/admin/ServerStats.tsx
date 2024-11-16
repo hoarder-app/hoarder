@@ -1,6 +1,5 @@
 "use client";
 
-import { useTranslation } from "@/app/i18n/client";
 import LoadingSpinner from "@/components/ui/spinner";
 import {
   Table,
@@ -11,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useClientConfig } from "@/lib/clientConfig";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 

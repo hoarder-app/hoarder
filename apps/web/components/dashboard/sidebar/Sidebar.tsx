@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
-import { useTranslation } from "@/app/i18n";
 import SidebarItem from "@/components/shared/sidebar/SidebarItem";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "@/lib/i18n/server";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
 import { Archive, Home, Search, Tag } from "lucide-react";

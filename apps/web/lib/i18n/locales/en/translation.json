@@ -59,13 +59,17 @@
     "close": "Close"
   },
   "settings": {
+    "back_to_app": "Back To App",
     "user_settings": "User Settings",
     "info": {
+      "user_info": "User Info",
       "basic_details": "Basic Details",
       "change_password": "Change Password",
       "current_password": "Current Password",
       "new_password": "New Password",
-      "confirm_new_password": "Confirm New Password"
+      "confirm_new_password": "Confirm New Password",
+      "options": "Options",
+      "interface_lang": "Interface Language"
     },
     "ai": {
       "ai_settings": "AI Settings",
@@ -80,6 +84,7 @@
       "add_a_subscription": "Add a Subscription"
     },
     "import": {
+      "import_export": "Import / Export",
       "import_export_bookmarks": "Import / Export Bookmarks",
       "import_bookmarks_from_html_file": "Import Bookmarks from HTML file",
       "import_bookmarks_from_pocket_export": "Import Bookmarks from Pocket export",
