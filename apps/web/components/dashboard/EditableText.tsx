@@ -27,6 +27,7 @@ function EditMode({
   originalText,
   setEditable,
 }: Props) {
+  const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -64,7 +65,7 @@ function EditMode({
         }}
       />
       <ActionButtonWithTooltip
-        tooltip="Save"
+        tooltip={t("actions.save")}
         delayDuration={500}
         size="none"
         variant="ghost"
@@ -75,7 +76,7 @@ function EditMode({
         <Check className="size-4" />
       </ActionButtonWithTooltip>
       <ButtonWithTooltip
-        tooltip="Cancel"
+        tooltip={t("actions.cancel")}
         delayDuration={500}
         size="none"
         variant="ghost"

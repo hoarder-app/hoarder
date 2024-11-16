@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useTranslation } from "@/lib/i18n/client";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
@@ -22,17 +23,18 @@ export default function TagModal({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Tags</DialogTitle>
+          <DialogTitle>{t("actions.edit_tags")}</DialogTitle>
         </DialogHeader>
         <BookmarkTagsEditor bookmark={bookmark} />
         <DialogFooter className="sm:justify-end">
           <DialogClose asChild>
             <Button type="button" variant="secondary">
-              Close
+              {t("actions.close")}
             </Button>
           </DialogClose>
         </DialogFooter>

@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import LoadingSpinner from "@/components/ui/spinner";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Archive, X } from "lucide-react";
@@ -42,6 +43,7 @@ export default function ManageListsModal({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
+  const { t } = useTranslation();
   const formSchema = z.object({
     listId: z.string({
       required_error: "Please select a list",
@@ -73,7 +75,7 @@ export default function ManageListsModal({
     useAddBookmarkToList({
       onSuccess: () => {
         toast({
-          description: "List has been updated!",
+          description: t("toasts.lists.updated"),
         });
         form.resetField("listId");
       },
@@ -86,7 +88,7 @@ export default function ManageListsModal({
         } else {
           toast({
             variant: "destructive",
-            title: "Something went wrong",
+            title: t("common.something_went_wrong"),
           });
         }
       },
@@ -96,7 +98,7 @@ export default function ManageListsModal({
     useRemoveBookmarkFromList({
       onSuccess: () => {
         toast({
-          description: "List has been updated!",
+          description: t("toasts.lists.updated"),
         });
         form.resetField("listId");
       },
@@ -109,7 +111,7 @@ export default function ManageListsModal({
         } else {
           toast({
             variant: "destructive",
-            title: "Something went wrong",
+            title: t("common.something_went_wrong"),
           });
         }
       },
@@ -188,7 +190,7 @@ export default function ManageListsModal({
             <DialogFooter className="sm:justify-end">
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
-                  Close
+                  {t("actions.close")}
                 </Button>
               </DialogClose>
               <ArchiveBookmarkButton
@@ -196,14 +198,14 @@ export default function ManageListsModal({
                 bookmarkId={bookmarkId}
                 onDone={() => setOpen(false)}
               >
-                <Archive className="mr-2 size-4" /> Archive
+                <Archive className="mr-2 size-4" /> {t("actions.archive")}
               </ArchiveBookmarkButton>
               <ActionButton
                 type="submit"
                 loading={isAddingToListPending}
                 disabled={isAddingToListPending}
               >
-                Add
+                {t("actions.add")}
               </ActionButton>
             </DialogFooter>
           </form>

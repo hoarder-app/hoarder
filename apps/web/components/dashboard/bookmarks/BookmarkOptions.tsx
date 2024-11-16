@@ -60,14 +60,13 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const onError = () => {
     toast({
       variant: "destructive",
-      title: "Something went wrong",
-      description: "There was a problem with your request.",
+      title: t("common.something_went_wrong"),
     });
   };
   const deleteBookmarkMutator = useDeleteBookmark({
     onSuccess: () => {
       toast({
-        description: "The bookmark has been deleted!",
+        description: t("toasts.bookmarks.deleted"),
       });
     },
     onError,
@@ -76,7 +75,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const updateBookmarkMutator = useUpdateBookmark({
     onSuccess: () => {
       toast({
-        description: "The bookmark has been updated!",
+        description: t("toasts.bookmarks.updated"),
       });
     },
     onError,
@@ -85,7 +84,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const crawlBookmarkMutator = useRecrawlBookmark({
     onSuccess: () => {
       toast({
-        description: "Re-fetch has been enqueued!",
+        description: t("toasts.bookmarks.refetch"),
       });
     },
     onError,
@@ -94,7 +93,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const fullPageArchiveBookmarkMutator = useRecrawlBookmark({
     onSuccess: () => {
       toast({
-        description: "Full Page Archive creation has been triggered",
+        description: t("toasts.bookmarks.full_page_archive"),
       });
     },
     onError,
@@ -103,7 +102,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const removeFromListMutator = useRemoveBookmarkFromList({
     onSuccess: () => {
       toast({
-        description: "The bookmark has been deleted from the list",
+        description: t("toasts.bookmarks.delete_from_list"),
       });
     },
     onError,
@@ -194,7 +193,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
                   (bookmark.content as ZBookmarkedLink).url,
                 );
                 toast({
-                  description: "Link was added to your clipboard!",
+                  description: t("toasts.bookmarks.clipboard_copied"),
                 });
               }}
             >

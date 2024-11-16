@@ -21,6 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { distance } from "fastest-levenshtein";
@@ -56,6 +57,7 @@ const useSuggestions = () => {
 };
 
 function ApplyAllButton({ suggestions }: { suggestions: Suggestion[] }) {
+  const { t } = useTranslation();
   const [applying, setApplying] = useState(false);
   const { mutateAsync } = useMergeTag({
     onError: (e) => {
@@ -91,7 +93,7 @@ function ApplyAllButton({ suggestions }: { suggestions: Suggestion[] }) {
 
   return (
     <ActionConfirmingDialog
-      title="Merge all suggestions?"
+      title={t("cleanups.duplicate_tags.merge_all_suggestions")}
       description={`Are you sure you want to apply all ${suggestions.length} suggestions?`}
       actionButton={(setDialogOpen) => (
         <ActionButton
@@ -100,13 +102,13 @@ function ApplyAllButton({ suggestions }: { suggestions: Suggestion[] }) {
           onClick={() => applyAll(setDialogOpen)}
         >
           <Check className="mr-2 size-4" />
-          Apply All
+          {t("actions.apply_all")}
         </ActionButton>
       )}
     >
       <Button variant="destructive">
         <Check className="mr-2 size-4" />
-        Apply All
+        {t("actions.apply_all")}
       </Button>
     </ActionConfirmingDialog>
   );
@@ -121,6 +123,7 @@ function SuggestionRow({
   updateMergeInto: (suggestion: Suggestion, newMergeIntoId: string) => void;
   deleteSuggestion: (suggestion: Suggestion) => void;
 }) {
+  const { t } = useTranslation();
   const { mutate, isPending } = useMergeTag({
     onSuccess: () => {
       toast({
@@ -180,7 +183,7 @@ function SuggestionRow({
           }
         >
           <Combine className="mr-2 size-4" />
-          Merge
+          {t("actions.merge")}
         </ActionButton>
 
         <Button
@@ -188,7 +191,7 @@ function SuggestionRow({
           onClick={() => deleteSuggestion(suggestion)}
         >
           <X className="mr-2 size-4" />
-          Ignore
+          {t("actions.ignore")}
         </Button>
       </TableCell>
     </TableRow>
