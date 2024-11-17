@@ -22,7 +22,6 @@ import { Download, Upload } from "lucide-react";
 
 import {
   useCreateBookmarkWithPostHook,
-  useUpdateBookmark,
   useUpdateBookmarkTags,
 } from "@hoarder/shared-react/hooks/bookmarks";
 import {
@@ -57,7 +56,6 @@ export function ImportExportRow() {
   } | null>(null);
 
   const { mutateAsync: createBookmark } = useCreateBookmarkWithPostHook();
-  const { mutateAsync: updateBookmark } = useUpdateBookmark();
   const { mutateAsync: createList } = useCreateBookmarkList();
   const { mutateAsync: addToList } = useAddBookmarkToList();
   const { mutateAsync: updateTags } = useUpdateBookmarkTags();
@@ -71,8 +69,13 @@ export function ImportExportRow() {
       if (bookmark.content === undefined) {
         throw new Error("Content is undefined");
       }
-      const created = await createBookmark(
-        bookmark.content.type === BookmarkTypes.LINK
+      const created = await createBookmark({
+        title: bookmark.title,
+        createdAt: bookmark.addDate
+          ? new Date(bookmark.addDate * 1000)
+          : undefined,
+        note: bookmark.notes,
+        ...(bookmark.content.type === BookmarkTypes.LINK
           ? {
               type: BookmarkTypes.LINK,
               url: bookmark.content.url,
@@ -80,24 +83,10 @@ export function ImportExportRow() {
           : {
               type: BookmarkTypes.TEXT,
               text: bookmark.content.text,
-            },
-      );
+            }),
+      });
 
       await Promise.all([
-        // Update title and createdAt if they're set
-        bookmark.title.length > 0 || bookmark.addDate
-          ? updateBookmark({
-              bookmarkId: created.id,
-              title: bookmark.title,
-              createdAt: bookmark.addDate
-                ? new Date(bookmark.addDate * 1000)
-                : undefined,
-              note: bookmark.notes,
-            }).catch(() => {
-              /* empty */
-            })
-          : undefined,
-
         // Add to import list
         addToList({
           bookmarkId: created.id,

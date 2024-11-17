@@ -271,9 +271,6 @@ export const bookmarksAppRouter = router({
           return { ...alreadyExists, alreadyExists: true };
         }
       }
-      if (input.type == BookmarkTypes.UNKNOWN) {
-        throw new TRPCError({ code: "BAD_REQUEST" });
-      }
       const bookmark = await ctx.db.transaction(async (tx) => {
         const bookmark = (
           await tx
@@ -281,6 +278,12 @@ export const bookmarksAppRouter = router({
             .values({
               userId: ctx.user.id,
               type: input.type,
+              title: input.title,
+              archived: input.archived,
+              favourited: input.favourited,
+              note: input.note,
+              summary: input.summary,
+              createdAt: input.createdAt,
             })
             .returning()
         )[0];
