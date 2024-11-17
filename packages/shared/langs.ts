@@ -1,6 +1,6 @@
 export const langNameMappings: Record<string, string> = {
   en: "English",
-  de: "Deutsch",
+  // de: "Deutsch",
 };
 
 export const supportedLangs = Object.keys(langNameMappings);
