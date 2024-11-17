@@ -14,6 +14,7 @@ import {
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -59,6 +60,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 
 export function FeedsEditorDialog() {
+  const { t } = useTranslation();
   const [open, setOpen] = React.useState(false);
   const apiUtils = api.useUtils();
 
@@ -92,7 +94,7 @@ export function FeedsEditorDialog() {
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 size-4" />
-          Add a Subscription
+          {t("settings.feeds.add_a_subscription")}
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -164,6 +166,7 @@ export function FeedsEditorDialog() {
 }
 
 export function EditFeedDialog({ feed }: { feed: ZFeed }) {
+  const { t } = useTranslation();
   const apiUtils = api.useUtils();
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
@@ -198,7 +201,7 @@ export function EditFeedDialog({ feed }: { feed: ZFeed }) {
       <DialogTrigger asChild>
         <Button variant="secondary">
           <Edit className="mr-2 size-4" />
-          Edit
+          {t("actions.edit")}
         </Button>
       </DialogTrigger>
       <DialogContent>
@@ -233,7 +236,7 @@ export function EditFeedDialog({ feed }: { feed: ZFeed }) {
               render={({ field }) => {
                 return (
                   <FormItem className="flex-1">
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t("common.name")}</FormLabel>
                     <FormControl>
                       <Input placeholder="Feed name" type="text" {...field} />
                     </FormControl>
@@ -248,7 +251,7 @@ export function EditFeedDialog({ feed }: { feed: ZFeed }) {
               render={({ field }) => {
                 return (
                   <FormItem className="flex-1">
-                    <FormLabel>URL</FormLabel>
+                    <FormLabel>{t("common.url")}</FormLabel>
                     <FormControl>
                       <Input placeholder="Feed url" type="text" {...field} />
                     </FormControl>
@@ -262,7 +265,7 @@ export function EditFeedDialog({ feed }: { feed: ZFeed }) {
         <DialogFooter>
           <DialogClose asChild>
             <Button type="button" variant="secondary">
-              Close
+              {t("actions.close")}
             </Button>
           </DialogClose>
           <ActionButton
@@ -274,7 +277,7 @@ export function EditFeedDialog({ feed }: { feed: ZFeed }) {
             className="items-center"
           >
             <Save className="mr-2 size-4" />
-            Save
+            {t("actions.save")}
           </ActionButton>
         </DialogFooter>
       </DialogContent>
@@ -283,6 +286,7 @@ export function EditFeedDialog({ feed }: { feed: ZFeed }) {
 }
 
 export function FeedRow({ feed }: { feed: ZFeed }) {
+  const { t } = useTranslation();
   const apiUtils = api.useUtils();
   const { mutate: deleteFeed, isPending: isDeleting } =
     api.feeds.delete.useMutation({
@@ -340,7 +344,7 @@ export function FeedRow({ feed }: { feed: ZFeed }) {
           onClick={() => fetchNow({ feedId: feed.id })}
         >
           <ArrowDownToLine className="mr-2 size-4" />
-          Fetch Now
+          {t("actions.fetch_now")}
         </ActionButton>
         <ActionConfirmingDialog
           title={`Delete Feed "${feed.name}"?`}
@@ -354,13 +358,13 @@ export function FeedRow({ feed }: { feed: ZFeed }) {
               type="button"
             >
               <Trash2 className="mr-2 size-4" />
-              Delete
+              {t("actions.delete")}
             </ActionButton>
           )}
         >
           <Button variant="destructive" disabled={isDeleting}>
             <Trash2 className="mr-2 size-4" />
-            Delete
+            {t("actions.delete")}
           </Button>
         </ActionConfirmingDialog>
       </TableCell>
@@ -369,6 +373,7 @@ export function FeedRow({ feed }: { feed: ZFeed }) {
 }
 
 export default function FeedSettings() {
+  const { t } = useTranslation();
   const { data: feeds, isLoading } = api.feeds.list.useQuery();
   return (
     <>
@@ -376,12 +381,14 @@ export default function FeedSettings() {
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-2 text-lg font-medium">
-              RSS Subscriptions
+              {t("settings.feeds.rss_subscriptions")}
               <Tooltip>
                 <TooltipTrigger className="text-muted-foreground">
                   <FlaskConical size={15} />
                 </TooltipTrigger>
-                <TooltipContent side="bottom">Experimental</TooltipContent>
+                <TooltipContent side="bottom">
+                  {t("common.experimental")}
+                </TooltipContent>
               </Tooltip>
             </span>
             <FeedsEditorDialog />
@@ -396,11 +403,11 @@ export default function FeedSettings() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>URL</TableHead>
+                  <TableHead>{t("common.name")}</TableHead>
+                  <TableHead>{t("common.url")}</TableHead>
                   <TableHead>Last Fetch</TableHead>
                   <TableHead>Last Status</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableHead>{t("common.actions")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

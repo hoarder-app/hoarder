@@ -7,6 +7,7 @@ import {
   TooltipPortal,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useTranslation } from "@/lib/i18n/client";
 import { Check, Pencil, X } from "lucide-react";
 
 interface Props {
@@ -26,6 +27,7 @@ function EditMode({
   originalText,
   setEditable,
 }: Props) {
+  const { t } = useTranslation();
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,7 +65,7 @@ function EditMode({
         }}
       />
       <ActionButtonWithTooltip
-        tooltip="Save"
+        tooltip={t("actions.save")}
         delayDuration={500}
         size="none"
         variant="ghost"
@@ -74,7 +76,7 @@ function EditMode({
         <Check className="size-4" />
       </ActionButtonWithTooltip>
       <ButtonWithTooltip
-        tooltip="Cancel"
+        tooltip={t("actions.cancel")}
         delayDuration={500}
         size="none"
         variant="ghost"
@@ -95,6 +97,7 @@ function ViewMode({
   viewClassName,
   untitledClassName,
 }: Props) {
+  const { t } = useTranslation();
   return (
     <Tooltip delayDuration={500}>
       <div className="flex max-w-full items-center gap-3">
@@ -107,7 +110,7 @@ function ViewMode({
         </TooltipTrigger>
         <ButtonWithTooltip
           delayDuration={500}
-          tooltip="Edit title"
+          tooltip={t("actions.edit_title")}
           size="none"
           variant="ghost"
           className="align-middle text-gray-400"

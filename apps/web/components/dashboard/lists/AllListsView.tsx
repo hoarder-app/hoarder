@@ -4,6 +4,7 @@ import Link from "next/link";
 import { EditListModal } from "@/components/dashboard/lists/EditListModal";
 import { Button } from "@/components/ui/button";
 import { CollapsibleTriggerChevron } from "@/components/ui/collapsible";
+import { useTranslation } from "@/lib/i18n/client";
 import { MoreHorizontal, Plus } from "lucide-react";
 
 import type { ZBookmarkList } from "@hoarder/shared/types/lists";
@@ -62,23 +63,24 @@ export default function AllListsView({
 }: {
   initialData: ZBookmarkList[];
 }) {
+  const { t } = useTranslation();
   return (
     <ul>
       <EditListModal>
         <Button className="mb-2 flex h-full w-full items-center">
           <Plus />
-          <span>New List</span>
+          <span>{t("lists.new_list")}</span>
         </Button>
       </EditListModal>
       <ListItem
         collapsible={false}
-        name="Favourites"
+        name={t("lists.favourites")}
         icon="⭐️"
         path={`/dashboard/favourites`}
       />
       <ListItem
         collapsible={false}
-        name="Archive"
+        name={t("common.archive")}
         icon="🗄️"
         path={`/dashboard/archive`}
       />

@@ -1,0 +1,206 @@
+{
+  "common": {
+    "url": "URL",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "action": "Action",
+    "actions": "Actions",
+    "created_at": "Created At",
+    "key": "Key",
+    "role": "Role",
+    "roles": {
+      "user": "User",
+      "admin": "Admin"
+    },
+    "something_went_wrong": "Something went wrong",
+    "experimental": "Experimental",
+    "search": "Search",
+    "tags": "Tags",
+    "note": "Note",
+    "attachments": "Attachments",
+    "screenshot": "Screenshot",
+    "video": "Video",
+    "archive": "Archive",
+    "home": "Home"
+  },
+  "layouts": {
+    "masonry": "Masonry",
+    "grid": "Grid",
+    "list": "List",
+    "compact": "Compact"
+  },
+  "actions": {
+    "change_layout": "Change Layout",
+    "archive": "Archive",
+    "unarchive": "Un-archive",
+    "favorite": "Favorite",
+    "unfavorite": "Unfavorite",
+    "delete": "Delete",
+    "refresh": "Refresh",
+    "download_full_page_archive": "Download Full Page Archive",
+    "edit_tags": "Edit Tags",
+    "add_to_list": "Add to List",
+    "select_all": "Select All",
+    "unselect_all": "Unselect All",
+    "copy_link": "Copy Link",
+    "close_bulk_edit": "Close Bulk Edit",
+    "bulk_edit": "Bulk Edit",
+    "manage_lists": "Manage Lists",
+    "remove_from_list": "Remove from List",
+    "save": "Save",
+    "add": "Add",
+    "edit": "Edit",
+    "create": "Create",
+    "fetch_now": "Fetch Now",
+    "summarize_with_ai": "Summarize with AI",
+    "edit_title": "Edit Title",
+    "sign_out": "Sign Out",
+    "close": "Close",
+    "merge": "Merge",
+    "cancel": "Cancel",
+    "apply_all": "Apply All",
+    "ignore": "Ignore"
+  },
+  "settings": {
+    "back_to_app": "Back To App",
+    "user_settings": "User Settings",
+    "info": {
+      "user_info": "User Info",
+      "basic_details": "Basic Details",
+      "change_password": "Change Password",
+      "current_password": "Current Password",
+      "new_password": "New Password",
+      "confirm_new_password": "Confirm New Password",
+      "options": "Options",
+      "interface_lang": "Interface Language"
+    },
+    "ai": {
+      "ai_settings": "AI Settings",
+      "tagging_rules": "Tagging Rules",
+      "tagging_rule_description": "Prompts that you add here will be included as rules to the model during tag generation. You can view the final prompts in the prompt preview section.",
+      "prompt_preview": "Prompt Preview",
+      "text_prompt": "Text Prompt",
+      "images_prompt": "Image Prompt"
+    },
+    "feeds": {
+      "rss_subscriptions": "RSS Subscriptions",
+      "add_a_subscription": "Add a Subscription"
+    },
+    "import": {
+      "import_export": "Import / Export",
+      "import_export_bookmarks": "Import / Export Bookmarks",
+      "import_bookmarks_from_html_file": "Import Bookmarks from HTML file",
+      "import_bookmarks_from_pocket_export": "Import Bookmarks from Pocket export",
+      "import_bookmarks_from_omnivore_export": "Import Bookmarks from Omnivore export",
+      "import_bookmarks_from_hoarder_export": "Import Bookmarks from Hoarder export",
+      "export_links_and_notes": "Export Links and Notes",
+      "imported_bookmarks": "Imported Bookmarks"
+    },
+    "api_keys": {
+      "api_keys": "API Keys",
+      "new_api_key": "New API Key",
+      "new_api_key_desc": "Give your API key a unique name",
+      "key_success": "Key was successfully created",
+      "key_success_please_copy": "Please copy the key and store it somewhere safe. Once you close the dialog, you won't be able to access it again."
+    }
+  },
+  "admin": {
+    "admin_settings": "Admin Settings",
+    "server_stats": {
+      "server_stats": "Server Stats",
+      "total_users": "Total Users",
+      "total_bookmarks": "Total Bookmarks",
+      "server_version": "Server Version"
+    },
+    "background_jobs": {
+      "background_jobs": "Background Jobs",
+      "crawler_jobs": "Crawler Jobs",
+      "indexing_jobs": "Indexing Jobs",
+      "inference_jobs": "Inference Jobs",
+      "tidy_assets_jobs": "Tidy Assets Jobs",
+      "job": "Job",
+      "queued": "Queued",
+      "pending": "Pending",
+      "failed": "Failed"
+    },
+    "actions": {
+      "recrawl_failed_links_only": "Recrawl Failed Links Only",
+      "recrawl_all_links": "Recrawl All Links",
+      "without_inference": "Without Inference",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Regenerate AI Tags for Failed Bookmarks Only",
+      "regenerate_ai_tags_for_all_bookmarks": "Regenerate AI Tags for All Bookmarks",
+      "reindex_all_bookmarks": "Reindex All Bookmarks",
+      "compact_assets": "Compact Assets"
+    },
+    "users_list": {
+      "users_list": "Users List",
+      "create_user": "Create User",
+      "change_role": "Change Role",
+      "reset_password": "Reset Password",
+      "delete_user": "Delete User",
+      "num_bookmarks": "Num Bookmarks",
+      "asset_sizes": "Asset Sizes",
+      "local_user": "Local User",
+      "confirm_password": "Confirm Password"
+    }
+  },
+  "options": {
+    "dark_mode": "Dark Mode",
+    "light_mode": "Light Mode"
+  },
+  "lists": {
+    "all_lists": "All Lists",
+    "favourites": "Favourites",
+    "new_list": "New List",
+    "new_nested_list": "New Nested List"
+  },
+  "tags": {
+    "all_tags": "All Tags",
+    "your_tags": "Your Tags",
+    "your_tags_info": "Tags that were attached at least once by you",
+    "ai_tags": "AI Tags",
+    "ai_tags_info": "Tags that were only attached automatically (by AI)",
+    "unused_tags": "Unused Tags",
+    "unused_tags_info": "Tags that are not attached to any bookmarks",
+    "delete_all_unused_tags": "Delete All Unused Tags",
+    "drag_and_drop_merging": "Drag & Drop Merging",
+    "drag_and_drop_merging_info": "Drag and drop tags on each other to merge them",
+    "sort_by_name": "Sort by Name"
+  },
+  "preview": {
+    "view_original": "View Original",
+    "cached_content": "Cached Content"
+  },
+  "editor": {
+    "quickly_focus": "You can quickly focus on this field by pressing ⌘ + E",
+    "multiple_urls_dialog_title": "Importing URLs as separate Bookmarks?",
+    "multiple_urls_dialog_desc": "The input contains multiple URLs on separate lines. Do you want to import them as separate bookmarks?",
+    "import_as_text": "Import as Text Bookmark",
+    "import_as_separate_bookmarks": "Import as separate Bookmarks",
+    "placeholder": "Paste a link or an image, write a note or drag and drop an image in here ...",
+    "new_item": "NEW ITEM",
+    "disabled_submissions": "Submissions are disabled"
+  },
+  "toasts": {
+    "bookmarks": {
+      "updated": "The bookmark has been updated!",
+      "deleted": "The bookmark has been deleted!",
+      "refetch": "Re-fetch has been enqueued!",
+      "full_page_archive": "Full Page Archive creation has been triggered",
+      "delete_from_list": "The bookmark has been deleted from the list",
+      "clipboard_copied": "Link has been added to your clipboard!"
+    },
+    "lists": {
+      "created": "List has been created!",
+      "updated": "List has been updated!"
+    }
+  },
+  "cleanups": {
+    "cleanups": "Cleanups",
+    "duplicate_tags": {
+      "title": "Duplicate Tags",
+      "merge_all_suggestions": "Merge all suggestions?"
+    }
+  }
+}
