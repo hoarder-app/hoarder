@@ -112,8 +112,7 @@
                     ]
                   },
                   "url": {
-                    "type": "string",
-                    "format": "uri"
+                    "type": "string"
                   },
                   "title": {
                     "type": "string",
@@ -125,8 +124,7 @@
                   },
                   "imageUrl": {
                     "type": "string",
-                    "nullable": true,
-                    "format": "uri"
+                    "nullable": true
                   },
                   "imageAssetId": {
                     "type": "string",
@@ -146,8 +144,7 @@
                   },
                   "favicon": {
                     "type": "string",
-                    "nullable": true,
-                    "format": "uri"
+                    "nullable": true
                   },
                   "htmlContent": {
                     "type": "string",

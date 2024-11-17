@@ -28,15 +28,15 @@ export const zAssetSchema = z.object({
 
 export const zBookmarkedLinkSchema = z.object({
   type: z.literal(BookmarkTypes.LINK),
-  url: z.string().url(),
+  url: z.string(),
   title: z.string().nullish(),
   description: z.string().nullish(),
-  imageUrl: z.string().url().nullish(),
+  imageUrl: z.string().nullish(),
   imageAssetId: z.string().nullish(),
   screenshotAssetId: z.string().nullish(),
   fullPageArchiveAssetId: z.string().nullish(),
   videoAssetId: z.string().nullish(),
-  favicon: z.string().url().nullish(),
+  favicon: z.string().nullish(),
   htmlContent: z.string().nullish(),
   crawledAt: z.date().nullish(),
 });
