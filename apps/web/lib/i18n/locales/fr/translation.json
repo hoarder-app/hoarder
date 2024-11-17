@@ -1,0 +1,206 @@
+{
+  "common": {
+    "url": "URL",
+    "name": "Nom",
+    "email": "Email",
+    "password": "Mot de passe",
+    "action": "Action",
+    "actions": "Actions",
+    "created_at": "Créé le",
+    "key": "Clé",
+    "role": "Rôle",
+    "roles": {
+      "user": "Utilisateur",
+      "admin": "Administrateur"
+    },
+    "something_went_wrong": "Quelque chose a mal tourné",
+    "experimental": "Expérimental",
+    "search": "Recherche",
+    "tags": "Tags",
+    "note": "Note",
+    "attachments": "Pièces jointes",
+    "screenshot": "Capture d'écran",
+    "video": "Vidéo",
+    "archive": "Archive",
+    "home": "Accueil"
+  },
+  "layouts": {
+    "masonry": "Mosaïque",
+    "grid": "Grille",
+    "list": "Liste",
+    "compact": "Compact"
+  },
+  "actions": {
+    "change_layout": "Changer la disposition",
+    "archive": "Archiver",
+    "unarchive": "Désarchiver",
+    "favorite": "Favori",
+    "unfavorite": "Retirer des favoris",
+    "delete": "Supprimer",
+    "refresh": "Rafraîchir",
+    "download_full_page_archive": "Télécharger l'archive de la page complète",
+    "edit_tags": "Modifier les tags",
+    "add_to_list": "Ajouter à la liste",
+    "select_all": "Tout sélectionner",
+    "unselect_all": "Tout désélectionner",
+    "copy_link": "Copier le lien",
+    "close_bulk_edit": "Fermer la modification en masse",
+    "bulk_edit": "Modification en masse",
+    "manage_lists": "Gérer les listes",
+    "remove_from_list": "Retirer de la liste",
+    "save": "Enregistrer",
+    "add": "Ajouter",
+    "edit": "Modifier",
+    "create": "Créer",
+    "fetch_now": "Récupérer maintenant",
+    "summarize_with_ai": "Résumer avec l'IA",
+    "edit_title": "Modifier le titre",
+    "sign_out": "Déconnexion",
+    "close": "Fermer",
+    "merge": "Fusionner",
+    "cancel": "Annuler",
+    "apply_all": "Tout appliquer",
+    "ignore": "Ignorer"
+  },
+  "settings": {
+    "back_to_app": "Retour à l'application",
+    "user_settings": "Paramètres utilisateur",
+    "info": {
+      "user_info": "Infos utilisateur",
+      "basic_details": "Détails de base",
+      "change_password": "Changer le mot de passe",
+      "current_password": "Mot de passe actuel",
+      "new_password": "Nouveau mot de passe",
+      "confirm_new_password": "Confirmer le nouveau mot de passe",
+      "options": "Options",
+      "interface_lang": "Langue de l'interface"
+    },
+    "ai": {
+      "ai_settings": "Paramètres de l'IA",
+      "tagging_rules": "Règles de marquage",
+      "tagging_rule_description": "Les invites que vous ajoutez ici seront incluses comme règles pour le modèle lors de la génération des tags. Vous pouvez voir les invites finales dans la section de prévisualisation des invites.",
+      "prompt_preview": "Aperçu de l'invite",
+      "text_prompt": "Invite de texte",
+      "images_prompt": "Invite d'image"
+    },
+    "feeds": {
+      "rss_subscriptions": "Abonnements RSS",
+      "add_a_subscription": "Ajouter un abonnement"
+    },
+    "import": {
+      "import_export": "Importer / Exporter",
+      "import_export_bookmarks": "Importer / Exporter des favoris",
+      "import_bookmarks_from_html_file": "Importer des favoris depuis un fichier HTML",
+      "import_bookmarks_from_pocket_export": "Importer des favoris depuis une exportation Pocket",
+      "import_bookmarks_from_omnivore_export": "Importer des favoris depuis une exportation Omnivore",
+      "import_bookmarks_from_hoarder_export": "Importer des favoris depuis une exportation Hoarder",
+      "export_links_and_notes": "Exporter les liens et les notes",
+      "imported_bookmarks": "Favoris importés"
+    },
+    "api_keys": {
+      "api_keys": "Clés API",
+      "new_api_key": "Nouvelle clé API",
+      "new_api_key_desc": "Donnez un nom unique à votre clé API",
+      "key_success": "La clé a été créée avec succès",
+      "key_success_please_copy": "Veuillez copier la clé et la stocker dans un endroit sûr. Une fois que vous fermerez la fenêtre de dialogue, vous ne pourrez plus y accéder."
+    }
+  },
+  "admin": {
+    "admin_settings": "Paramètres de l'administrateur",
+    "server_stats": {
+      "server_stats": "Statistiques du serveur",
+      "total_users": "Nombre total d'utilisateurs",
+      "total_bookmarks": "Nombre total de favoris",
+      "server_version": "Version du serveur"
+    },
+    "background_jobs": {
+      "background_jobs": "Tâches en arrière-plan",
+      "crawler_jobs": "Tâches de crawl",
+      "indexing_jobs": "Tâches d'indexation",
+      "inference_jobs": "Tâches d'inférence",
+      "tidy_assets_jobs": "Tâches de rangement des assets",
+      "job": "Tâche",
+      "queued": "En file d'attente",
+      "pending": "En attente",
+      "failed": "Échoué"
+    },
+    "actions": {
+      "recrawl_failed_links_only": "Recrawler uniquement les liens échoués",
+      "recrawl_all_links": "Recrawler tous les liens",
+      "without_inference": "Sans inférence",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Régénérer les tags AI uniquement pour les favoris échoués",
+      "regenerate_ai_tags_for_all_bookmarks": "Régénérer les tags AI pour tous les favoris",
+      "reindex_all_bookmarks": "Réindexer tous les favoris",
+      "compact_assets": "Compacter les assets"
+    },
+    "users_list": {
+      "users_list": "Liste des utilisateurs",
+      "create_user": "Créer un utilisateur",
+      "change_role": "Changer le rôle",
+      "reset_password": "Réinitialiser le mot de passe",
+      "delete_user": "Supprimer l'utilisateur",
+      "num_bookmarks": "Nombre de favoris",
+      "asset_sizes": "Tailles des assets",
+      "local_user": "Utilisateur local",
+      "confirm_password": "Confirmer le mot de passe"
+    }
+  },
+  "options": {
+    "dark_mode": "Mode sombre",
+    "light_mode": "Mode clair"
+  },
+  "lists": {
+    "all_lists": "Toutes les listes",
+    "favourites": "Favoris",
+    "new_list": "Nouvelle liste",
+    "new_nested_list": "Nouvelle liste imbriquée"
+  },
+  "tags": {
+    "all_tags": "Tous les tags",
+    "your_tags": "Vos tags",
+    "your_tags_info": "Tags attachés au moins une fois par vous",
+    "ai_tags": "Tags AI",
+    "ai_tags_info": "Tags attachés automatiquement (par AI)",
+    "unused_tags": "Tags inutilisés",
+    "unused_tags_info": "Tags non attachés à des favoris",
+    "delete_all_unused_tags": "Supprimer tous les tags inutilisés",
+    "drag_and_drop_merging": "Fusion par glisser-déposer",
+    "drag_and_drop_merging_info": "Glisser-déposer les tags les uns sur les autres pour les fusionner",
+    "sort_by_name": "Trier par nom"
+  },
+  "preview": {
+    "view_original": "Voir l'original",
+    "cached_content": "Contenu en cache"
+  },
+  "editor": {
+    "quickly_focus": "Vous pouvez rapidement vous concentrer sur ce champ en appuyant sur ⌘ + E",
+    "multiple_urls_dialog_title": "Importer les URLs comme favoris séparés ?",
+    "multiple_urls_dialog_desc": "L'entrée contient plusieurs URLs sur des lignes séparées. Voulez-vous les importer comme favoris séparés ?",
+    "import_as_text": "Importer comme favori de texte",
+    "import_as_separate_bookmarks": "Importer comme favoris séparés",
+    "placeholder": "Collez un lien ou une image, écrivez une note ou glissez-déposez une image ici ...",
+    "new_item": "NOUVEL ÉLÉMENT",
+    "disabled_submissions": "Les soumissions sont désactivées"
+  },
+  "toasts": {
+    "bookmarks": {
+      "updated": "Le favori a été mis à jour !",
+      "deleted": "Le favori a été supprimé !",
+      "refetch": "Re-fetch a été mis en file d'attente !",
+      "full_page_archive": "La création de l'archive de la page complète a été déclenchée",
+      "delete_from_list": "Le favori a été supprimé de la liste",
+      "clipboard_copied": "Le lien a été ajouté à votre presse-papiers !"
+    },
+    "lists": {
+      "created": "La liste a été créée !",
+      "updated": "La liste a été mise à jour !"
+    }
+  },
+  "cleanups": {
+    "cleanups": "Nettoyages",
+    "duplicate_tags": {
+      "title": "Tags en double",
+      "merge_all_suggestions": "Fusionner toutes les suggestions ?"
+    }
+  }
+}

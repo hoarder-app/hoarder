@@ -82,7 +82,7 @@ export default function SidebarProfileOptions() {
         <DropdownMenuItem asChild>
           <Link href="/dashboard/cleanups">
             <Paintbrush className="mr-2 size-4" />
-            Cleanups
+            {t("cleanups.cleanups")}
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem onClick={toggleTheme}>
