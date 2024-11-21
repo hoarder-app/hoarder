@@ -1,7 +1,10 @@
 import assert from "assert";
 import * as dns from "dns";
+import { promises as fs } from "fs";
 import * as path from "node:path";
+import * as os from "os";
 import type { Browser } from "puppeteer";
+import { PuppeteerBlocker } from "@ghostery/adblocker-puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
 import DOMPurify from "dompurify";
@@ -19,8 +22,8 @@ import metascraperReadability from "metascraper-readability";
 import metascraperTitle from "metascraper-title";
 import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
+import fetch from "node-fetch";
 import puppeteer from "puppeteer-extra";
-import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
 import { getBookmarkDetails, updateAsset } from "workerUtils";
@@ -67,6 +70,7 @@ const metascraperParser = metascraper([
 ]);
 
 let globalBrowser: Browser | undefined;
+let globalBlocker: PuppeteerBlocker | undefined;
 // Guards the interactions with the browser instance.
 // This is needed given that most of the browser APIs are async.
 const browserMutex = new Mutex();
@@ -144,11 +148,20 @@ async function launchBrowser() {
 export class CrawlerWorker {
   static async build() {
     puppeteer.use(StealthPlugin());
-    puppeteer.use(
-      AdblockerPlugin({
-        blockTrackersAndAnnoyances: true,
-      }),
-    );
+    if (serverConfig.crawler.enableAdblocker) {
+      try {
+        logger.info("[crawler] Loading adblocker ...");
+        globalBlocker = await PuppeteerBlocker.fromPrebuiltFull(fetch, {
+          path: path.join(os.tmpdir(), "hoarder_adblocker.bin"),
+          read: fs.readFile,
+          write: fs.writeFile,
+        });
+      } catch (e) {
+        logger.error(
+          `[crawler] Failed to load adblocker. Will not be blocking ads: ${e}`,
+        );
+      }
+    }
     if (!serverConfig.crawler.browserConnectOnDemand) {
       await launchBrowser();
     } else {
@@ -238,6 +251,9 @@ async function crawlPage(jobId: string, url: string) {
 
   try {
     const page = await context.newPage();
+    if (globalBlocker) {
+      await globalBlocker.enableBlockingInPage(page);
+    }
     await page.setUserAgent(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     );
