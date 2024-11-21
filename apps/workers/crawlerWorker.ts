@@ -115,7 +115,7 @@ async function launchBrowser() {
       globalBrowser = await startBrowserInstance();
     } catch (e) {
       logger.error(
-        "[Crawler] Failed to connect to the browser instance, will retry in 5 secs",
+        `[Crawler] Failed to connect to the browser instance, will retry in 5 secs: ${(e as Error).stack}`,
       );
       if (isShuttingDown) {
         logger.info("[Crawler] We're shutting down so won't retry.");
