@@ -1,5 +1,5 @@
 import { getServerAuthSession } from "@/server/auth";
-import epub, { Chapter } from "@epubkit/epub-gen-memory";
+import epub, { Chapter } from "@kamtschatka/epub-gen-memory";
 import { and, eq, inArray } from "drizzle-orm";
 
 import { db } from "@hoarder/db";
@@ -50,9 +50,17 @@ export async function GET(request: Request) {
   });
 
   const title = getTitle(chapters);
+  // If there is only 1 bookmark, we can skip the table of contents
+  const tocInTOC = chapters.length > 1;
 
   const generatedEpub = await epub(
-    { title, ignoreFailedDownloads: true },
+    {
+      title,
+      ignoreFailedDownloads: true,
+      tocInTOC,
+      version: 3,
+      urlValidator,
+    },
     chapters,
   );
 
@@ -63,6 +71,14 @@ export async function GET(request: Request) {
       "Content-Disposition": `attachment; filename=${createFilename()}`,
     },
   });
+}
+
+function urlValidator(url: string): boolean {
+  const urlParsed = new URL(url);
+  if (urlParsed.protocol != "http:" && urlParsed.protocol != "https:") {
+    return true;
+  }
+  return ["localhost", "127.0.0.1", "0.0.0.0"].includes(urlParsed.hostname);
 }
 
 function createFilename(): string {

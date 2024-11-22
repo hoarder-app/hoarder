@@ -12,6 +12,7 @@ import useBulkActionsStore from "@/lib/bulkActions";
 import { useTranslation } from "@/lib/i18n/client";
 import {
   CheckCheck,
+  Download,
   FileDown,
   Hash,
   Link,
@@ -221,6 +222,18 @@ export default function BulkBookmarksAction() {
       icon: <FileDown size={18} />,
       action: () => recrawlBookmarks(true),
       isPending: recrawlBookmarkMutator.isPending,
+      hidden: !isBulkEditEnabled,
+    },
+    {
+      name: t("actions.download_epub"),
+      icon: (
+        <a
+          href={`/api/epub?${selectedBookmarks.map((bookmark) => "assetId=" + bookmark.id).join("&")}`}
+        >
+          <Download size={18} />
+        </a>
+      ),
+      isPending: false,
       hidden: !isBulkEditEnabled,
     },
     {
