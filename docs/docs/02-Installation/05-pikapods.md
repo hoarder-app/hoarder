@@ -25,4 +25,4 @@ There are a few settings to configure in the dialog:
 
 After hitting _Add pod_ it will take about a minute for the app to fully start. After this you can visit
 the pod's URL and add an initial user under _Sign Up_. After this you may want to disable further sign-ups
-by setting the pod's `DISABLE_SIGNUPS` _Env Var_ to `false`.
+by setting the pod's `DISABLE_SIGNUPS` _Env Var_ to `true`.
