@@ -277,18 +277,31 @@ async function crawlPage(jobId: string, url: string) {
 
     logger.info(`[Crawler][${jobId}] Finished waiting for the page to load.`);
 
-    const [htmlContent, screenshot] = await Promise.all([
-      page.content(),
-      page.screenshot({
-        // If you change this, you need to change the asset type in the store function.
-        type: "png",
-        encoding: "binary",
-        fullPage: serverConfig.crawler.fullPageScreenshot,
-      }),
-    ]);
-    logger.info(
-      `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
-    );
+    const htmlContent = await page.content();
+    logger.info(`[Crawler][${jobId}] Successfully fetched the page content.`);
+
+    let screenshot: Buffer | undefined = undefined;
+    if (serverConfig.crawler.storeScreenshot) {
+      screenshot = await Promise.race<Buffer | undefined>([
+        page
+          .screenshot({
+            // If you change this, you need to change the asset type in the store function.
+            type: "png",
+            encoding: "binary",
+            fullPage: serverConfig.crawler.fullPageScreenshot,
+          })
+          .catch(() => undefined),
+        new Promise((f) => setTimeout(f, 5000)),
+      ]);
+      if (!screenshot) {
+        logger.warn(`[Crawler][${jobId}] Failed to capture the screenshot.`);
+      } else {
+        logger.info(
+          `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
+        );
+      }
+    }
+
     return {
       htmlContent,
       screenshot,
@@ -336,13 +349,19 @@ function extractReadableContent(
 }
 
 async function storeScreenshot(
-  screenshot: Buffer,
+  screenshot: Buffer | undefined,
   userId: string,
   jobId: string,
 ) {
   if (!serverConfig.crawler.storeScreenshot) {
     logger.info(
       `[Crawler][${jobId}] Skipping storing the screenshot as per the config.`,
+    );
+    return null;
+  }
+  if (!screenshot) {
+    logger.info(
+      `[Crawler][${jobId}] Skipping storing the screenshot as it's empty.`,
     );
     return null;
   }
