@@ -102,6 +102,15 @@ export default function Dashboard() {
         }}
       />
       <Stack.Screen
+        name="search"
+        options={{
+          headerTitle: "",
+          headerBackTitle: "",
+          headerTransparent: true,
+          headerShown: false,
+        }}
+      />
+      <Stack.Screen
         name="settings/theme"
         options={{
           title: "Theme",

@@ -1,15 +1,16 @@
-import { Platform, View } from "react-native";
+import { Platform, Pressable, Text, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
+import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import PageTitle from "@/components/ui/PageTitle";
 import { useToast } from "@/components/ui/Toast";
 import useAppSettings from "@/lib/settings";
 import { useUploadAsset } from "@/lib/upload";
 import { MenuView } from "@react-native-menu/menu";
-import { Plus } from "lucide-react-native";
+import { Plus, Search } from "lucide-react-native";
 
 function HeaderRight({
   openNewBookmarkModal,
@@ -78,13 +79,27 @@ export default function Home() {
       <UpdatingBookmarkList
         query={{ archived: false }}
         header={
-          <View className="flex flex-row justify-between">
-            <PageTitle title="Home" />
-            <HeaderRight
-              openNewBookmarkModal={() =>
-                router.push("/dashboard/bookmarks/new")
-              }
-            />
+          <View className="flex flex-col gap-1">
+            <View className="flex flex-row justify-between">
+              <PageTitle title="Home" className="pb-2" />
+              <HeaderRight
+                openNewBookmarkModal={() =>
+                  router.push("/dashboard/bookmarks/new")
+                }
+              />
+            </View>
+            <Pressable
+              className="flex flex-row items-center gap-1 rounded-lg border border-input bg-background px-4 py-2.5"
+              onPress={() => router.push("/dashboard/search")}
+            >
+              <TailwindResolver
+                className="text-muted-foreground"
+                comp={(styles) => (
+                  <Search size={16} color={styles?.color?.toString()} />
+                )}
+              />
+              <Text className="text-muted-foreground">Search</Text>
+            </Pressable>
           </View>
         }
       />

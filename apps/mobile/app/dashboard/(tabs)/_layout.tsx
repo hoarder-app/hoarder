@@ -1,7 +1,7 @@
 import React from "react";
 import { Tabs } from "expo-router";
 import { StyledTabs } from "@/components/navigation/tabs";
-import { ClipboardList, Home, Search, Settings } from "lucide-react-native";
+import { ClipboardList, Home, Settings } from "lucide-react-native";
 
 export default function TabLayout() {
   return (
@@ -17,13 +17,6 @@ export default function TabLayout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color }) => <Home color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="search"
-        options={{
-          title: "Search",
-          tabBarIcon: ({ color }) => <Search color={color} />,
         }}
       />
       <Tabs.Screen
