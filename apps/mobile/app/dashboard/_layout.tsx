@@ -58,6 +58,15 @@ export default function Dashboard() {
         }}
       />
       <Stack.Screen
+        name="bookmarks/new"
+        options={{
+          headerTitle: "",
+          headerBackTitle: "Back",
+          headerTransparent: true,
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
         name="bookmarks/[slug]/manage_lists"
         options={{
           headerTitle: "",
