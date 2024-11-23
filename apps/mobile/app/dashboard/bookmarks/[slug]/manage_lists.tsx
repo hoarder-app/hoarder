@@ -3,7 +3,6 @@ import { FlatList, Pressable, Text, View } from "react-native";
 import Checkbox from "expo-checkbox";
 import { useLocalSearchParams } from "expo-router";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
-import PageTitle from "@/components/ui/PageTitle";
 import { useToast } from "@/components/ui/Toast";
 
 import {
@@ -71,7 +70,6 @@ const ListPickerPage = () => {
   return (
     <CustomSafeAreaView>
       <FlatList
-        ListHeaderComponent={<PageTitle title="Manage Lists" />}
         className="h-full"
         contentContainerStyle={{
           gap: 5,

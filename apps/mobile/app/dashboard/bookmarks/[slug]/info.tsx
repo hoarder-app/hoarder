@@ -1,12 +1,11 @@
 import React from "react";
 import { Text, View } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import TagPill from "@/components/bookmarks/TagPill";
 import FullPageError from "@/components/FullPageError";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
-import PageTitle from "@/components/ui/PageTitle";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { api } from "@/lib/trpc";
 
@@ -97,8 +96,13 @@ const ViewBookmarkPage = () => {
   }
   return (
     <CustomSafeAreaView>
-      <View className="h-screen w-full">
-        <PageTitle title={title ?? "Untitled"} className="line-clamp-2" />
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerTitle: title ?? "Untitled",
+        }}
+      />
+      <View className="w-full p-4">
         <View className="gap-4 px-4">
           <TagList bookmark={bookmark} />
           <NotesEditor bookmark={bookmark} />

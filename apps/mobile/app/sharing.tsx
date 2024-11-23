@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useShareIntentContext } from "expo-share-intent";
 import { Button } from "@/components/ui/Button";
@@ -107,6 +107,9 @@ export default function Sharing() {
               }
             }}
           />
+          <Pressable onPress={() => router.replace("dashboard")}>
+            <Text className="text-muted-foreground">Dismiss</Text>
+          </Pressable>
         </View>
       );
       break;

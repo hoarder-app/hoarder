@@ -60,7 +60,7 @@ export default function Dashboard() {
       <Stack.Screen
         name="bookmarks/new"
         options={{
-          headerTitle: "",
+          headerTitle: "New Bookmark",
           headerBackTitle: "Back",
           headerTransparent: true,
           presentation: "modal",
@@ -69,7 +69,7 @@ export default function Dashboard() {
       <Stack.Screen
         name="bookmarks/[slug]/manage_lists"
         options={{
-          headerTitle: "",
+          headerTitle: "Manage Lists",
           headerBackTitle: "Back",
           headerTransparent: true,
           presentation: "modal",
@@ -78,7 +78,6 @@ export default function Dashboard() {
       <Stack.Screen
         name="bookmarks/[slug]/info"
         options={{
-          headerTitle: "",
           headerBackTitle: "Back",
           headerTransparent: true,
           presentation: "modal",
@@ -87,7 +86,7 @@ export default function Dashboard() {
       <Stack.Screen
         name="lists/new"
         options={{
-          headerTitle: "",
+          headerTitle: "New List",
           headerBackTitle: "Back",
           headerTransparent: true,
           presentation: "modal",

@@ -4,7 +4,6 @@ import { router } from "expo-router";
 import { Button } from "@/components/ui/Button";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import { Input } from "@/components/ui/Input";
-import PageTitle from "@/components/ui/PageTitle";
 import { useToast } from "@/components/ui/Toast";
 
 import { useCreateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
@@ -56,8 +55,7 @@ const NoteEditorPage = () => {
 
   return (
     <CustomSafeAreaView>
-      <PageTitle title="New Bookmark" />
-      <View className="gap-2 p-4">
+      <View className="gap-2 px-4">
         {error && (
           <Text className="w-full text-center text-red-500">{error}</Text>
         )}
