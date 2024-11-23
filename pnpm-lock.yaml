@@ -701,6 +701,9 @@ importers:
 
   apps/workers:
     dependencies:
+      '@ghostery/adblocker-puppeteer':
+        specifier: ^2.1.1
+        version: 2.1.1(puppeteer@22.3.0(typescript@5.3.3))
       '@hoarder/db':
         specifier: workspace:^0.1.0
         version: link:../../packages/db
@@ -773,6 +776,9 @@ importers:
       node-cron:
         specifier: ^3.0.3
         version: 3.0.3
+      node-fetch:
+        specifier: ^3.3.2
+        version: 3.3.2
       pdf2json:
         specifier: ^3.0.5
         version: 3.0.5
@@ -785,9 +791,6 @@ importers:
       puppeteer-extra:
         specifier: ^3.3.6
         version: 3.3.6(puppeteer@22.3.0(typescript@5.3.3))
-      puppeteer-extra-plugin-adblocker:
-        specifier: ^2.13.6
-        version: 2.13.6(puppeteer-extra@3.3.6(puppeteer@22.3.0(typescript@5.3.3)))(puppeteer@22.3.0(typescript@5.3.3))
       puppeteer-extra-plugin-stealth:
         specifier: ^2.11.2
         version: 2.11.2(puppeteer-extra@3.3.6(puppeteer@22.3.0(typescript@5.3.3)))
@@ -2067,24 +2070,6 @@ packages:
     resolution: {integrity: sha512-+j7a5c253RfKh8iABBhywc8NSfP5LURe7Uh4qpsh6jc+aLJguvmIUBdjSdEMQv2bENrCR5MfRdjGo7vzS/ob7w==}
     engines: {node: '>=6.9.0'}
 
-  '@cliqz/adblocker-content@1.26.16':
-    resolution: {integrity: sha512-N1pKg1gxfpnz47w2Sjs2sg3fxFZb113ClUhitgAFSVXeIhZ+S+bCaQtvwtP0mJT+SDfUx2NsPiLwZoPjVRI3wQ==}
-    deprecated: This project has been renamed to @ghostery/adblocker-content. Install using @ghostery/adblocker-content instead
-
-  '@cliqz/adblocker-extended-selectors@1.26.16':
-    resolution: {integrity: sha512-ePXS3aD1R+0XfCnOj0L2ms0NA5AxKHfFLfw92cZ87IPY8ZEZK/sWwQCv5wawbwBmXksr0YkMfFVCiH/IQgUNBQ==}
-    deprecated: This project has been renamed to @ghostery/adblocker-extended-selectors. Install using @ghostery/adblocker-extended-selectors instead
-
-  '@cliqz/adblocker-puppeteer@1.23.8':
-    resolution: {integrity: sha512-Ca1/DBqQXsOpKTFVAHX6OpLTSEupXmUkUWHj6iXhLLleC7RPISN5B0b801VDmaGRqoC5zKRxn0vYbIfpgCWVug==}
-    deprecated: This project has been renamed to @ghostery/adblocker-puppeteer. Install using @ghostery/adblocker-puppeteer instead
-    peerDependencies:
-      puppeteer: '>5'
-
-  '@cliqz/adblocker@1.26.16':
-    resolution: {integrity: sha512-NQ5WdNeiWiggDhhT/IXbsjKgH44nA9k5GlW00gUWRUpfKHCCInyDJYjM5pbHqxhgC3LkMVmXmU5vIsMUZ4RxFQ==}
-    deprecated: This project has been renamed to @ghostery/adblocker. Install using @ghostery/adblocker instead
-
   '@colors/colors@1.5.0':
     resolution: {integrity: sha512-ooWCrlZP11i8GImSjTHYHLkvFDP48nS4+204nGb1RiX/WXYHmJA2III9/e2DWVabCESdW7hBAEzHRqUn9OUVvQ==}
     engines: {node: '>=0.1.90'}
@@ -2762,6 +2747,20 @@ packages:
 
   '@gar/promisify@1.1.3':
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
+
+  '@ghostery/adblocker-content@2.1.1':
+    resolution: {integrity: sha512-1DKHmPnlQleXapaL36xZOwwZmpdbjMP/IcWdTTzyriyCDIFlSwBDT1DJ3xg0TK61ahZMEwz1MnTGM6X99z/5rQ==}
+
+  '@ghostery/adblocker-extended-selectors@2.1.1':
+    resolution: {integrity: sha512-jEHjU2CarS2MtRYfm/6iTKMS1DVzepuwXSMKg1zTyHl+u4ZKvKNYFK7plD0nUlL5a8akyRkYwLheXnKsW3nChQ==}
+
+  '@ghostery/adblocker-puppeteer@2.1.1':
+    resolution: {integrity: sha512-BOM3y/7zIZsykuEWt/hUIMt2QlUVmG320jdJIRRCxdYXI2Y80tyO0mo1X6cpXgThOy8oni5WtwF0H+YemjQzgw==}
+    peerDependencies:
+      puppeteer: '>5'
+
+  '@ghostery/adblocker@2.1.1':
+    resolution: {integrity: sha512-FL4yWrpNTCmtbAfeLotUoo94ZyNqHdZpZRo4Qlk0guPzDGcOtW4/c84UzS9D/Z9Z4H3nWSCrW0q38pjwAbDykA==}
 
   '@gorhom/bottom-sheet@4.6.3':
     resolution: {integrity: sha512-fSuSfbtoKsjmSeyz+tG2C0GtcEL7PS63iEXI23c9M+HeCT1IFK6ffmIa2pqyqB43L1jtkR+BWkpZwqXnN4H8xA==}
@@ -3835,8 +3834,8 @@ packages:
   '@remix-run/web-stream@1.1.0':
     resolution: {integrity: sha512-KRJtwrjRV5Bb+pM7zxcTJkhIqWWSy+MYsIxHK+0m5atcznsf15YwUBWHWulZerV2+vvHH1Lp1DD7pw6qKW8SgA==}
 
-  '@remusao/guess-url-type@1.2.1':
-    resolution: {integrity: sha512-rbOqre2jW8STjheOsOaQHLgYBaBZ9Owbdt8NO7WvNZftJlaG3y/K9oOkl8ZUpuFBisIhmBuMEW6c+YrQl5inRA==}
+  '@remusao/guess-url-type@1.3.0':
+    resolution: {integrity: sha512-SNSJGxH5ckvxb3EUHj4DqlAm/bxNxNv2kx/AESZva/9VfcBokwKNS+C4D1lQdWIDM1R3d3UG+xmVzlkNG8CPTQ==}
 
   '@remusao/small@1.2.1':
     resolution: {integrity: sha512-7MjoGt0TJMVw1GPKgWq6SJPws1SLsUXQRa43Umht+nkyw2jnpy3WpiLNqGdwo5rHr5Wp9B2W/Pm5RQp656UJdw==}
@@ -4298,9 +4297,6 @@ packages:
 
   '@types/filewriter@0.0.33':
     resolution: {integrity: sha512-xFU8ZXTw4gd358lb2jw25nxY9QAgqn2+bKKjKOYfNCzN4DKCFetK7sPtrlpg66Ywe3vWY9FNxprZawAh9wfJ3g==}
-
-  '@types/firefox-webext-browser@120.0.1':
-    resolution: {integrity: sha512-IR+NpPC+/o9TSTelcvT/w3fXTanX3LrpVxC5EQrlQyTjyWOKFz8O2mCJQ9VuejBz4NtovCGGKacXQ/VyY63L0A==}
 
   '@types/glob@7.2.0':
     resolution: {integrity: sha512-ZUxbzKl0IfJILTS6t7ip5fQQM/J3TJYubDm3nMbgubNNYS62eXeUpoLUC8/7fJNiFYHTrGPQn7hspDUzIHX3UA==}
@@ -5944,6 +5940,10 @@ packages:
     resolution: {integrity: sha512-WboRycPNsVw3B3TL559F7kuBUM4d8CgMEvk6xEJlOp7OBPjt6G7z8WMWlD2rOFZLk6OYfFIUGsCOWzcQH9K2og==}
     engines: {node: '>= 6'}
 
+  data-uri-to-buffer@4.0.1:
+    resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
+    engines: {node: '>= 12'}
+
   data-uri-to-buffer@5.0.1:
     resolution: {integrity: sha512-a9l6T1qqDogvvnw0nKlfZzqsyikEBZBClF39V3TFoKhDtGBqHu2HkuomJc02j5zft8zrUaXEuoicLeW54RkzPg==}
     engines: {node: '>= 14'}
@@ -7024,6 +7024,10 @@ packages:
     resolution: {integrity: sha512-u5/sxGfiMfZNtJ3OvQpXcvotFpYkL0n9u9mM2vkui2nGo8b4wvDkJ8gAkYqbA8QpGyFCv3RK0Z+Iv+9veCS9bQ==}
     engines: {node: '>=0.4.0'}
 
+  fetch-blob@3.2.0:
+    resolution: {integrity: sha512-7yAQpD2UMJzLi1Dqv7qFYnPbaPx7ZfFK6PiIxQ4PfkGPyNyl2Ugx+a/umUonmKqjhM4DnfbMvdX6otXq83soQQ==}
+    engines: {node: ^12.20 || >= 14.13}
+
   fetch-retry@4.1.1:
     resolution: {integrity: sha512-e6eB7zN6UBSwGVwrbWVH+gdLnkW9WwHhmq2YDK1Sh30pzx1onRVGBvogTlUeWxwTa+L86NYdo4hFkh7O8ZjSnA==}
 
@@ -7201,6 +7205,10 @@ packages:
   formdata-node@4.4.1:
     resolution: {integrity: sha512-0iirZp3uVDjVGt9p49aTaqjk84TrglENEDuqfdlZQ1roC9CWlPk6Avf8EEnZNcAqPonwkG35x4n3ww/1THYAeQ==}
     engines: {node: '>= 12.20'}
+
+  formdata-polyfill@4.0.10:
+    resolution: {integrity: sha512-buewHzMvYL29jdeQTVILecSaZKnt/RJWjoZCF5OW60Z67/GmSLBkOFM7qh1PI3zFNtJbaZL5eQu1vLfazOwj4g==}
+    engines: {node: '>=12.20.0'}
 
   formidable@2.1.2:
     resolution: {integrity: sha512-CM3GuJ57US06mlpQ47YcunuUZ9jpm8Vx+P2CGt2j7HpgkKZO/DJYQ0Bobim8G6PFQmK5lOqOOdUXboU+h73A4g==}
@@ -9489,6 +9497,10 @@ packages:
       encoding:
         optional: true
 
+  node-fetch@3.3.2:
+    resolution: {integrity: sha512-dRB78srN/l6gqWulah9SrxeYnxeddIG30+GOqK/9OlLVyLg3HPnr6SqOWTWOXKRwC2eGYCkZ59NNuSgvSrpgOA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+
   node-forge@1.3.1:
     resolution: {integrity: sha512-dPEtOeMvF9VMcYV/1Wb8CPoVAXtp6MKMlcbAt4ddqmGqUJ6fQZFXkNZNkNlfevtNkGtaSoXf/vNNNSvgrdXwtA==}
     engines: {node: '>= 6.13.0'}
@@ -10554,21 +10566,6 @@ packages:
   puppeteer-core@22.3.0:
     resolution: {integrity: sha512-Ho5Vdpdro05ZyCx/l5Hkc5vHiibKTaY37fIAD9NF9Gi/vDxkVTeX40U/mFnEmeoxyuYALvWCJfi7JTT82R6Tuw==}
     engines: {node: '>=18'}
-
-  puppeteer-extra-plugin-adblocker@2.13.6:
-    resolution: {integrity: sha512-AftgnUZ1rg2RPe9RpX6rkYAxEohwp3iFeGIyjsAuTaIiw4VLZqOb1LSY8/S60vAxpeat60fbCajxoUetmLy4Dw==}
-    engines: {node: '>=8'}
-    peerDependencies:
-      puppeteer: '*'
-      puppeteer-core: '*'
-      puppeteer-extra: '*'
-    peerDependenciesMeta:
-      puppeteer:
-        optional: true
-      puppeteer-core:
-        optional: true
-      puppeteer-extra:
-        optional: true
 
   puppeteer-extra-plugin-stealth@2.11.2:
     resolution: {integrity: sha512-bUemM5XmTj9i2ZerBzsk2AN5is0wHMNE6K0hXBzBXOzP5m5G3Wl0RHhiqKeHToe/uIH8AoZiGhc1tCkLZQPKTQ==}
@@ -12072,17 +12069,8 @@ packages:
     resolution: {integrity: sha512-rWsBfFCWKrjM/o2Q1TTUeYQv6tHSd/umUutDjVs6taTuEgRDIreVYIBgWRWW4ot7jp6n0UVUuxhTLWBtUmPu/w==}
     hasBin: true
 
-  tldts-core@5.7.112:
-    resolution: {integrity: sha512-mutrEUgG2sp0e/MIAnv9TbSLR0IPbvmAImpzqul5O/HJ2XM1/I1sajchQ/fbj0fPdA31IiuWde8EUhfwyldY1Q==}
-
-  tldts-core@6.1.11:
-    resolution: {integrity: sha512-ZFcT+/fdEc5VRndQIJtArNBHsaq4udRoeE4E6cwLzGaH0dq7Ng2L7cAoea6riM2uhNFD09EDa1bN8lrfrOBCLg==}
-
   tldts-core@6.1.51:
     resolution: {integrity: sha512-bu9oCYYWC1iRjx+3UnAjqCsfrWNZV1ghNQf49b3w5xE8J/tNShHTzp5syWJfwGH+pxUgTTLUnzHnfuydW7wmbg==}
-
-  tldts-experimental@5.7.112:
-    resolution: {integrity: sha512-Nq5qWN4OiLziAOOOEoSME7cZI4Hz8Srt+9q6cl8mZ5EAhCfmeE6l7K5XjuIKN+pySuGUvthE5aPiD185YU1/lg==}
 
   tldts-experimental@6.1.11:
     resolution: {integrity: sha512-4Ij/BzPUYS33PcAo9cprPm8qmKNBeYw2U7WsBAMtseqbQvCIyDsnXlOWy/SKmldalPdMPsL2CLjt27+KlWBH7g==}
@@ -15139,34 +15127,6 @@ snapshots:
       '@babel/helper-validator-identifier': 7.22.20
       to-fast-properties: 2.0.0
 
-  '@cliqz/adblocker-content@1.26.16':
-    dependencies:
-      '@cliqz/adblocker-extended-selectors': 1.26.16
-    dev: false
-
-  '@cliqz/adblocker-extended-selectors@1.26.16':
-    dev: false
-
-  '@cliqz/adblocker-puppeteer@1.23.8(puppeteer@22.3.0(typescript@5.3.3))':
-    dependencies:
-      '@cliqz/adblocker': 1.26.16
-      '@cliqz/adblocker-content': 1.26.16
-      puppeteer: 22.3.0(typescript@5.3.3)
-      tldts-experimental: 5.7.112
-    dev: false
-
-  '@cliqz/adblocker@1.26.16':
-    dependencies:
-      '@cliqz/adblocker-content': 1.26.16
-      '@cliqz/adblocker-extended-selectors': 1.26.16
-      '@remusao/guess-url-type': 1.2.1
-      '@remusao/small': 1.2.1
-      '@remusao/smaz': 1.9.1
-      '@types/chrome': 0.0.260
-      '@types/firefox-webext-browser': 120.0.1
-      tldts-experimental: 6.1.11
-    dev: false
-
   '@colors/colors@1.5.0':
     dev: false
     optional: true
@@ -16615,6 +16575,32 @@ snapshots:
     dev: false
 
   '@gar/promisify@1.1.3':
+    dev: false
+
+  '@ghostery/adblocker-content@2.1.1':
+    dependencies:
+      '@ghostery/adblocker-extended-selectors': 2.1.1
+    dev: false
+
+  '@ghostery/adblocker-extended-selectors@2.1.1':
+    dev: false
+
+  '@ghostery/adblocker-puppeteer@2.1.1(puppeteer@22.3.0(typescript@5.3.3))':
+    dependencies:
+      '@ghostery/adblocker': 2.1.1
+      '@ghostery/adblocker-content': 2.1.1
+      puppeteer: 22.3.0(typescript@5.3.3)
+      tldts-experimental: 6.1.11
+    dev: false
+
+  '@ghostery/adblocker@2.1.1':
+    dependencies:
+      '@ghostery/adblocker-content': 2.1.1
+      '@ghostery/adblocker-extended-selectors': 2.1.1
+      '@remusao/guess-url-type': 1.3.0
+      '@remusao/small': 1.2.1
+      '@remusao/smaz': 1.9.1
+      tldts-experimental: 6.1.11
     dev: false
 
   '@gorhom/bottom-sheet@4.6.3(@types/react@18.2.58)(react-native-gesture-handler@2.14.1(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native-reanimated@3.8.0(@babel/core@7.23.9)(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)':
@@ -18201,7 +18187,7 @@ snapshots:
       web-streams-polyfill: 3.3.3
     dev: false
 
-  '@remusao/guess-url-type@1.2.1':
+  '@remusao/guess-url-type@1.3.0':
     dev: false
 
   '@remusao/small@1.2.1':
@@ -18658,6 +18644,7 @@ snapshots:
     dependencies:
       '@types/filesystem': 0.0.35
       '@types/har-format': 1.2.15
+    dev: true
 
   '@types/connect-history-api-fallback@1.5.4':
     dependencies:
@@ -18733,11 +18720,10 @@ snapshots:
   '@types/filesystem@0.0.35':
     dependencies:
       '@types/filewriter': 0.0.33
+    dev: true
 
-  '@types/filewriter@0.0.33': {}
-
-  '@types/firefox-webext-browser@120.0.1':
-    dev: false
+  '@types/filewriter@0.0.33':
+    dev: true
 
   '@types/glob@7.2.0':
     dependencies:
@@ -18751,7 +18737,8 @@ snapshots:
   '@types/hammerjs@2.0.45':
     dev: false
 
-  '@types/har-format@1.2.15': {}
+  '@types/har-format@1.2.15':
+    dev: true
 
   '@types/hast@2.3.10':
     dependencies:
@@ -21039,6 +21026,9 @@ snapshots:
   data-uri-to-buffer@3.0.1:
     dev: false
 
+  data-uri-to-buffer@4.0.1:
+    dev: false
+
   data-uri-to-buffer@5.0.1:
     dev: false
 
@@ -22630,6 +22620,12 @@ snapshots:
       xml-js: 1.6.11
     dev: false
 
+  fetch-blob@3.2.0:
+    dependencies:
+      node-domexception: 1.0.0
+      web-streams-polyfill: 3.3.3
+    dev: false
+
   fetch-retry@4.1.1:
     dev: false
 
@@ -22846,6 +22842,11 @@ snapshots:
     dependencies:
       node-domexception: 1.0.0
       web-streams-polyfill: 4.0.0-beta.3
+    dev: false
+
+  formdata-polyfill@4.0.10:
+    dependencies:
+      fetch-blob: 3.2.0
     dev: false
 
   formidable@2.1.2:
@@ -26190,6 +26191,13 @@ snapshots:
       whatwg-url: 5.0.0
     dev: false
 
+  node-fetch@3.3.2:
+    dependencies:
+      data-uri-to-buffer: 4.0.1
+      fetch-blob: 3.2.0
+      formdata-polyfill: 4.0.10
+    dev: false
+
   node-forge@1.3.1:
     dev: false
 
@@ -27451,20 +27459,6 @@ snapshots:
       - encoding
       - supports-color
       - utf-8-validate
-    dev: false
-
-  puppeteer-extra-plugin-adblocker@2.13.6(puppeteer-extra@3.3.6(puppeteer@22.3.0(typescript@5.3.3)))(puppeteer@22.3.0(typescript@5.3.3)):
-    dependencies:
-      '@cliqz/adblocker-puppeteer': 1.23.8(puppeteer@22.3.0(typescript@5.3.3))
-      debug: 4.3.4
-      node-fetch: 2.7.0
-      puppeteer: 22.3.0(typescript@5.3.3)
-      puppeteer-extra: 3.3.6(puppeteer@22.3.0(typescript@5.3.3))
-      puppeteer-extra-plugin: 3.2.3(puppeteer-extra@3.3.6(puppeteer@22.3.0(typescript@5.3.3)))
-    transitivePeerDependencies:
-      - encoding
-      - playwright-extra
-      - supports-color
     dev: false
 
   puppeteer-extra-plugin-stealth@2.11.2(puppeteer-extra@3.3.6(puppeteer@22.3.0(typescript@5.3.3))):
@@ -29638,23 +29632,12 @@ snapshots:
   tlds@1.250.0:
     dev: false
 
-  tldts-core@5.7.112:
-    dev: false
-
-  tldts-core@6.1.11:
-    dev: false
-
   tldts-core@6.1.51:
-    dev: false
-
-  tldts-experimental@5.7.112:
-    dependencies:
-      tldts-core: 5.7.112
     dev: false
 
   tldts-experimental@6.1.11:
     dependencies:
-      tldts-core: 6.1.11
+      tldts-core: 6.1.51
     dev: false
 
   tldts@6.1.51:
