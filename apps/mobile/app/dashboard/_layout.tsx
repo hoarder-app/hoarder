@@ -76,6 +76,15 @@ export default function Dashboard() {
         }}
       />
       <Stack.Screen
+        name="lists/new"
+        options={{
+          headerTitle: "",
+          headerBackTitle: "Back",
+          headerTransparent: true,
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
         name="archive"
         options={{
           headerTitle: "",
