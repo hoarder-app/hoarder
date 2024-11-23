@@ -1,15 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, Pressable, Text, View } from "react-native";
 import * as Haptics from "expo-haptics";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import FullPageError from "@/components/FullPageError";
-import NewListModal from "@/components/lists/NewListModal";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { ChevronRight, Plus } from "lucide-react-native";
 
 import { useBookmarkLists } from "@hoarder/shared-react/hooks/lists";
@@ -72,7 +70,6 @@ export default function Lists() {
     {},
   );
   const apiUtils = api.useUtils();
-  const newListModal = useRef<BottomSheetModal>(null);
 
   useEffect(() => {
     setRefreshing(isPending);
@@ -117,14 +114,13 @@ export default function Lists() {
 
   return (
     <CustomSafeAreaView>
-      <NewListModal ref={newListModal} snapPoints={["90%"]} />
       <FlatList
         className="h-full"
         ListHeaderComponent={
           <View className="flex flex-row justify-between">
             <PageTitle title="Lists" />
             <HeaderRight
-              openNewListModal={() => newListModal.current?.present()}
+              openNewListModal={() => router.push("/dashboard/lists/new")}
             />
           </View>
         }

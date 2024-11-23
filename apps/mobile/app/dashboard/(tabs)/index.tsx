@@ -1,9 +1,7 @@
-import { useRef } from "react";
 import { Platform, Pressable, Text, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
-import NoteEditorModal from "@/components/bookmarks/NewBookmarkModal";
 import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
@@ -11,7 +9,6 @@ import PageTitle from "@/components/ui/PageTitle";
 import { useToast } from "@/components/ui/Toast";
 import useAppSettings from "@/lib/settings";
 import { useUploadAsset } from "@/lib/upload";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { MenuView } from "@react-native-menu/menu";
 import { Plus, Search } from "lucide-react-native";
 
@@ -77,11 +74,8 @@ function HeaderRight({
 }
 
 export default function Home() {
-  const newBookmarkModal = useRef<BottomSheetModal>(null);
-
   return (
     <CustomSafeAreaView>
-      <NoteEditorModal ref={newBookmarkModal} snapPoints={["90%", "60%"]} />
       <UpdatingBookmarkList
         query={{ archived: false }}
         header={
@@ -89,7 +83,9 @@ export default function Home() {
             <View className="flex flex-row justify-between">
               <PageTitle title="Home" className="pb-2" />
               <HeaderRight
-                openNewBookmarkModal={() => newBookmarkModal.current?.present()}
+                openNewBookmarkModal={() =>
+                  router.push("/dashboard/bookmarks/new")
+                }
               />
             </View>
             <Pressable

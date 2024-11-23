@@ -13,7 +13,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@gorhom/bottom-sheet": "^4.6.3",
     "@hoarder/shared": "workspace:^0.1.0",
     "@hoarder/shared-react": "workspace:^0.1.0",
     "@hoarder/trpc": "workspace:^0.1.0",
