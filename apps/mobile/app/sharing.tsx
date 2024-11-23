@@ -1,13 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useShareIntentContext } from "expo-share-intent";
-import ListPickerModal from "@/components/bookmarks/ListPickerModal";
 import { Button } from "@/components/ui/Button";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
 import { useUploadAsset } from "@/lib/upload";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { z } from "zod";
 
 import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
@@ -84,7 +82,6 @@ export default function Sharing() {
   const [mode, setMode] = useState<Mode>({ type: "idle" });
 
   let autoCloseTimeoutId: NodeJS.Timeout | null = null;
-  const addToListSheetRef = useRef<BottomSheetModal>(null);
 
   let comp;
   switch (mode.type) {
@@ -96,19 +93,15 @@ export default function Sharing() {
     case "success": {
       comp = (
         <View className="items-center gap-4">
-          <ListPickerModal
-            ref={addToListSheetRef}
-            snapPoints={["90%"]}
-            bookmarkId={mode.bookmarkId}
-            onDismiss={() => router.replace("dashboard")}
-          />
           <Text className="text-4xl text-foreground">
             {mode.type === "alreadyExists" ? "Already Hoarded!" : "Hoarded!"}
           </Text>
           <Button
             label="Add to List"
             onPress={() => {
-              addToListSheetRef.current?.present();
+              router.push(
+                `/dashboard/bookmarks/${mode.bookmarkId}/manage_lists`,
+              );
               if (autoCloseTimeoutId) {
                 clearTimeout(autoCloseTimeoutId);
               }

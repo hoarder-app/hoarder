@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -9,10 +8,9 @@ import {
   View,
 } from "react-native";
 import * as Haptics from "expo-haptics";
-import { useRouter } from "expo-router";
+import { router, useRouter } from "expo-router";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { MenuView } from "@react-native-menu/menu";
 import { Ellipsis, Star } from "lucide-react-native";
 
@@ -33,7 +31,6 @@ import { Skeleton } from "../ui/Skeleton";
 import { useToast } from "../ui/Toast";
 import BookmarkAssetImage from "./BookmarkAssetImage";
 import BookmarkTextMarkdown from "./BookmarkTextMarkdown";
-import ListPickerModal from "./ListPickerModal";
 import TagPill from "./TagPill";
 
 function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
@@ -73,8 +70,6 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
       onError,
     });
 
-  const manageListsSheetRef = useRef<BottomSheetModal>(null);
-
   return (
     <View className="flex flex-row gap-4">
       {(isArchivePending || isDeletionPending) && <ActivityIndicator />}
@@ -94,12 +89,6 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         )}
       </Pressable>
 
-      <ListPickerModal
-        ref={manageListsSheetRef}
-        snapPoints={["50%", "90%"]}
-        bookmarkId={bookmark.id}
-      />
-
       <MenuView
         onPressAction={({ nativeEvent }) => {
           Haptics.selectionAsync();
@@ -113,7 +102,7 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
               archived: !bookmark.archived,
             });
           } else if (nativeEvent.event === "manage_list") {
-            manageListsSheetRef?.current?.present();
+            router.push(`/dashboard/bookmarks/${bookmark.id}/manage_lists`);
           }
         }}
         actions={[

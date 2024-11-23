@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -12,7 +12,6 @@ import WebView from "react-native-webview";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import BookmarkAssetImage from "@/components/bookmarks/BookmarkAssetImage";
 import BookmarkTextMarkdown from "@/components/bookmarks/BookmarkTextMarkdown";
-import ListPickerModal from "@/components/bookmarks/ListPickerModal";
 import FullPageError from "@/components/FullPageError";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import { Button } from "@/components/ui/Button";
@@ -22,7 +21,6 @@ import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useAssetUrl } from "@/lib/hooks";
 import { api } from "@/lib/trpc";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { ClipboardList, Globe, Info, Trash2 } from "lucide-react-native";
 
 import {
@@ -34,7 +32,6 @@ import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const router = useRouter();
-  const manageListsSheetRef = useRef<BottomSheetModal>(null);
   const { mutate: deleteBookmark, isPending: isDeletionPending } =
     useDeleteBookmark({
       onSuccess: () => {
@@ -77,7 +74,8 @@ function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
         />
       ),
       shouldRender: true,
-      onClick: () => manageListsSheetRef.current?.present(),
+      onClick: () =>
+        router.push(`/dashboard/bookmarks/${bookmark.id}/manage_lists`),
       disabled: false,
     },
     {
@@ -121,11 +119,6 @@ function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
   ];
   return (
     <View>
-      <ListPickerModal
-        ref={manageListsSheetRef}
-        snapPoints={["50%", "90%"]}
-        bookmarkId={bookmark.id}
-      />
       <View className="flex flex-row items-center justify-between px-10 pb-2 pt-4">
         {actions.map(
           (a) =>
