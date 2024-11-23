@@ -291,9 +291,6 @@ importers:
 
   apps/mobile:
     dependencies:
-      '@gorhom/bottom-sheet':
-        specifier: ^4.6.3
-        version: 4.6.3(@types/react@18.2.58)(react-native-gesture-handler@2.14.1(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native-reanimated@3.8.0(@babel/core@7.23.9)(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)
       '@hoarder/shared':
         specifier: workspace:^0.1.0
         version: link:../../packages/shared
@@ -2761,27 +2758,6 @@ packages:
 
   '@ghostery/adblocker@2.1.1':
     resolution: {integrity: sha512-FL4yWrpNTCmtbAfeLotUoo94ZyNqHdZpZRo4Qlk0guPzDGcOtW4/c84UzS9D/Z9Z4H3nWSCrW0q38pjwAbDykA==}
-
-  '@gorhom/bottom-sheet@4.6.3':
-    resolution: {integrity: sha512-fSuSfbtoKsjmSeyz+tG2C0GtcEL7PS63iEXI23c9M+HeCT1IFK6ffmIa2pqyqB43L1jtkR+BWkpZwqXnN4H8xA==}
-    peerDependencies:
-      '@types/react': '*'
-      '@types/react-native': '*'
-      react: '*'
-      react-native: '*'
-      react-native-gesture-handler: '>=1.10.1'
-      react-native-reanimated: '>=2.2.0'
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-      '@types/react-native':
-        optional: true
-
-  '@gorhom/portal@1.0.14':
-    resolution: {integrity: sha512-MXyL4xvCjmgaORr/rtryDNFy3kU4qUbKlwtQqqsygd0xX3mhKjOLn6mQK8wfu0RkoE0pBE0nAasRoHua+/QZ7A==}
-    peerDependencies:
-      react: '*'
-      react-native: '*'
 
   '@graphql-typed-document-node/core@3.2.0':
     resolution: {integrity: sha512-mB9oAsNCm9aM3/SOv4YtBMqZbYj10R7dkq8byBqxGY/ncFwhf2oQzMV+LCRlWoDSEBJ3COiR1yeDvMtsoOsuFQ==}
@@ -16601,24 +16577,6 @@ snapshots:
       '@remusao/small': 1.2.1
       '@remusao/smaz': 1.9.1
       tldts-experimental: 6.1.11
-    dev: false
-
-  '@gorhom/bottom-sheet@4.6.3(@types/react@18.2.58)(react-native-gesture-handler@2.14.1(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native-reanimated@3.8.0(@babel/core@7.23.9)(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0))(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      '@gorhom/portal': 1.0.14(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)
-      '@types/react': 18.2.58
-      invariant: 2.2.4
-      react: 18.2.0
-      react-native: 0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0)
-      react-native-gesture-handler: 2.14.1(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)
-      react-native-reanimated: 3.8.0(@babel/core@7.23.9)(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)
-    dev: false
-
-  '@gorhom/portal@1.0.14(react-native@0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0))(react@18.2.0)':
-    dependencies:
-      nanoid: 3.3.7
-      react: 18.2.0
-      react-native: 0.73.4(@babel/core@7.23.9)(@babel/preset-env@7.24.0(@babel/core@7.23.9))(react@18.2.0)
     dev: false
 
   '@graphql-typed-document-node/core@3.2.0(graphql@15.8.0)':
