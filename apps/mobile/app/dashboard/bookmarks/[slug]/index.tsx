@@ -21,7 +21,7 @@ import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useAssetUrl } from "@/lib/hooks";
 import { api } from "@/lib/trpc";
-import { ClipboardList, Globe, Info, Trash2 } from "lucide-react-native";
+import { ClipboardList, Globe, Info, Tag, Trash2 } from "lucide-react-native";
 
 import {
   useDeleteBookmark,
@@ -76,6 +76,19 @@ function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
       shouldRender: true,
       onClick: () =>
         router.push(`/dashboard/bookmarks/${bookmark.id}/manage_lists`),
+      disabled: false,
+    },
+    {
+      id: "tags",
+      icon: (
+        <TailwindResolver
+          className="text-foreground"
+          comp={(styles) => <Tag color={styles?.color?.toString()} />}
+        />
+      ),
+      shouldRender: true,
+      onClick: () =>
+        router.push(`/dashboard/bookmarks/${bookmark.id}/manage_tags`),
       disabled: false,
     },
     {

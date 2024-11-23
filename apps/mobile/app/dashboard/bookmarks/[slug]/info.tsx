@@ -31,10 +31,22 @@ function TagList({ bookmark }: { bookmark: ZBookmark }) {
           <Skeleton className="h-4 w-full" />
         </>
       ) : bookmark.tags.length > 0 ? (
-        <View className="flex flex-row flex-wrap gap-2 rounded-lg bg-background p-4">
-          {bookmark.tags.map((t) => (
-            <TagPill key={t.id} tag={t} />
-          ))}
+        <View className="flex flex-col gap-2">
+          <View className="flex flex-row flex-wrap gap-2 rounded-lg bg-background p-4">
+            {bookmark.tags.map((t) => (
+              <TagPill key={t.id} tag={t} />
+            ))}
+          </View>
+
+          <Pressable
+            onPress={() =>
+              router.push(`/dashboard/bookmarks/${bookmark.id}/manage_tags`)
+            }
+            className="flex w-full flex-row justify-between gap-3 rounded-lg bg-white px-4 py-2 dark:bg-accent"
+          >
+            <Text className="text-lg text-accent-foreground">Manage Tags</Text>
+            <ChevronRight color="rgb(0, 122, 255)" />
+          </Pressable>
         </View>
       ) : (
         <Text className="text-foreground">No tags</Text>

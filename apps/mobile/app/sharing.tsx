@@ -96,17 +96,30 @@ export default function Sharing() {
           <Text className="text-4xl text-foreground">
             {mode.type === "alreadyExists" ? "Already Hoarded!" : "Hoarded!"}
           </Text>
-          <Button
-            label="Add to List"
-            onPress={() => {
-              router.push(
-                `/dashboard/bookmarks/${mode.bookmarkId}/manage_lists`,
-              );
-              if (autoCloseTimeoutId) {
-                clearTimeout(autoCloseTimeoutId);
-              }
-            }}
-          />
+          <View className="flex flex-row gap-2">
+            <Button
+              label="Add to List"
+              onPress={() => {
+                router.push(
+                  `/dashboard/bookmarks/${mode.bookmarkId}/manage_lists`,
+                );
+                if (autoCloseTimeoutId) {
+                  clearTimeout(autoCloseTimeoutId);
+                }
+              }}
+            />
+            <Button
+              label="Manage Tags"
+              onPress={() => {
+                router.push(
+                  `/dashboard/bookmarks/${mode.bookmarkId}/manage_tags`,
+                );
+                if (autoCloseTimeoutId) {
+                  clearTimeout(autoCloseTimeoutId);
+                }
+              }}
+            />
+          </View>
           <Pressable onPress={() => router.replace("dashboard")}>
             <Text className="text-muted-foreground">Dismiss</Text>
           </Pressable>

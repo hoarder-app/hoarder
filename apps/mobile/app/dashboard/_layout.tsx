@@ -67,6 +67,15 @@ export default function Dashboard() {
         }}
       />
       <Stack.Screen
+        name="bookmarks/[slug]/manage_tags"
+        options={{
+          headerTitle: "Manage Tags",
+          headerBackTitle: "Back",
+          headerTransparent: true,
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
         name="bookmarks/[slug]/manage_lists"
         options={{
           headerTitle: "Manage Lists",

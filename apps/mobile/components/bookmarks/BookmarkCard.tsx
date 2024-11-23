@@ -103,6 +103,8 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             });
           } else if (nativeEvent.event === "manage_list") {
             router.push(`/dashboard/bookmarks/${bookmark.id}/manage_lists`);
+          } else if (nativeEvent.event === "manage_tags") {
+            router.push(`/dashboard/bookmarks/${bookmark.id}/manage_tags`);
           }
         }}
         actions={[
@@ -128,6 +130,13 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             title: "Manage Lists",
             image: Platform.select({
               ios: "list",
+            }),
+          },
+          {
+            id: "manage_tags",
+            title: "Manage Tags",
+            image: Platform.select({
+              ios: "tag",
             }),
           },
         ]}
