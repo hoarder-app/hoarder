@@ -23,6 +23,7 @@
     "@hoarder/shared-react": "workspace:^0.1.0",
     "@hoarder/trpc": "workspace:^0.1.0",
     "@hookform/resolvers": "^3.3.4",
+    "@kamtschatka/epub-gen-memory": "^1.0.0",
     "@radix-ui/react-collapsible": "^1.0.3",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
