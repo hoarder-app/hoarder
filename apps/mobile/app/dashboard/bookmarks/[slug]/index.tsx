@@ -13,7 +13,6 @@ import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import BookmarkAssetImage from "@/components/bookmarks/BookmarkAssetImage";
 import BookmarkTextMarkdown from "@/components/bookmarks/BookmarkTextMarkdown";
 import ListPickerModal from "@/components/bookmarks/ListPickerModal";
-import ViewBookmarkModal from "@/components/bookmarks/ViewBookmarkModal";
 import FullPageError from "@/components/FullPageError";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import { Button } from "@/components/ui/Button";
@@ -24,12 +23,7 @@ import { useToast } from "@/components/ui/Toast";
 import { useAssetUrl } from "@/lib/hooks";
 import { api } from "@/lib/trpc";
 import { BottomSheetModal } from "@gorhom/bottom-sheet";
-import {
-  ArrowUpFromLine,
-  ClipboardList,
-  Globe,
-  Trash2,
-} from "lucide-react-native";
+import { ClipboardList, Globe, Info, Trash2 } from "lucide-react-native";
 
 import {
   useDeleteBookmark,
@@ -40,7 +34,6 @@ import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const router = useRouter();
-  const viewBookmarkModal = useRef<BottomSheetModal>(null);
   const manageListsSheetRef = useRef<BottomSheetModal>(null);
   const { mutate: deleteBookmark, isPending: isDeletionPending } =
     useDeleteBookmark({
@@ -92,13 +85,11 @@ function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
       icon: (
         <TailwindResolver
           className="text-foreground"
-          comp={(styles) => (
-            <ArrowUpFromLine color={styles?.color?.toString()} />
-          )}
+          comp={(styles) => <Info color={styles?.color?.toString()} />}
         />
       ),
       shouldRender: true,
-      onClick: () => viewBookmarkModal.current?.present(),
+      onClick: () => router.push(`/dashboard/bookmarks/${bookmark.id}/info`),
       disabled: false,
     },
     {
@@ -130,11 +121,6 @@ function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
   ];
   return (
     <View>
-      <ViewBookmarkModal
-        bookmark={bookmark}
-        ref={viewBookmarkModal}
-        snapPoints={["95%"]}
-      />
       <ListPickerModal
         ref={manageListsSheetRef}
         snapPoints={["50%", "90%"]}
