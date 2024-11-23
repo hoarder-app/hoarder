@@ -107,6 +107,8 @@ export default function Dashboard() {
           headerBackTitle: "",
           headerTransparent: true,
           headerShown: false,
+          animation: "fade_from_bottom",
+          animationDuration: 100,
         }}
       />
       <Stack.Screen
