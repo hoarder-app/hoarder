@@ -1,33 +1,48 @@
 import React from "react";
-import { ArrowLeft, Download, KeyRound, Sparkles, User } from "lucide-react";
+import { TFunction } from "i18next";
+import {
+  ArrowLeft,
+  Download,
+  KeyRound,
+  Rss,
+  Sparkles,
+  User,
+} from "lucide-react";
 
-export const settingsSidebarItems: {
+export const settingsSidebarItems = (
+  t: TFunction,
+): {
   name: string;
   icon: JSX.Element;
   path: string;
-}[] = [
+}[] => [
   {
-    name: "Back To App",
+    name: t("settings.back_to_app"),
     icon: <ArrowLeft size={18} />,
     path: "/dashboard/bookmarks",
   },
   {
-    name: "User Info",
+    name: t("settings.info.user_info"),
     icon: <User size={18} />,
     path: "/settings/info",
   },
   {
-    name: "AI Settings",
+    name: t("settings.ai.ai_settings"),
     icon: <Sparkles size={18} />,
     path: "/settings/ai",
   },
   {
-    name: "Import / Export",
+    name: t("settings.feeds.rss_subscriptions"),
+    icon: <Rss size={18} />,
+    path: "/settings/feeds",
+  },
+  {
+    name: t("settings.import.import_export"),
     icon: <Download size={18} />,
     path: "/settings/import",
   },
   {
-    name: "API Keys",
+    name: t("settings.api_keys.api_keys"),
     icon: <KeyRound size={18} />,
     path: "/settings/api-keys",
   },

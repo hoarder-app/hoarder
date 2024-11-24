@@ -6,6 +6,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { Trash2 } from "lucide-react";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
@@ -17,6 +18,7 @@ import {
 import { ArchivedActionIcon, FavouritedActionIcon } from "../bookmarks/icons";
 
 export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const onError = () => {
     toast({
@@ -72,7 +74,9 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
           </ActionButton>
         </TooltipTrigger>
         <TooltipContent side="bottom">
-          {bookmark.favourited ? "Un-favourite" : "Favourite"}
+          {bookmark.favourited
+            ? t("actions.unfavorite")
+            : t("actions.favorite")}
         </TooltipContent>
       </Tooltip>
       <Tooltip delayDuration={0}>
@@ -92,7 +96,7 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
           </ActionButton>
         </TooltipTrigger>
         <TooltipContent side="bottom">
-          {bookmark.archived ? "Un-archive" : "Archive"}
+          {bookmark.archived ? t("actions.unarchive") : t("actions.archive")}
         </TooltipContent>
       </Tooltip>
       <Tooltip delayDuration={0}>
@@ -108,7 +112,7 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             <Trash2 />
           </ActionButton>
         </TooltipTrigger>
-        <TooltipContent side="bottom">Delete</TooltipContent>
+        <TooltipContent side="bottom">{t("actions.delete")}</TooltipContent>
       </Tooltip>
     </div>
   );

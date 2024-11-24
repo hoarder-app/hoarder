@@ -91,7 +91,7 @@ COPY --from=base --chown=node:node /app/apps/web/.next/static ./apps/web/.next/s
 # Prepare the workers app
 ######################
 COPY --from=base /prod/workers /app/apps/workers
-RUN corepack enable
+RUN corepack enable && corepack pack
 
 ENTRYPOINT ["/init"]
 

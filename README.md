@@ -8,6 +8,9 @@
     <a href="https://discord.gg/NrgeYywsFh">
         <img alt="Discord" src="https://img.shields.io/discord/1223681308962721802?label=chat%20on%20discord" />
     </a>
+    <a href="https://hosted.weblate.org/engage/hoarder/">
+        <img src="https://hosted.weblate.org/widget/hoarder/hoarder/svg-badge.svg" alt="Translation status" />
+    </a>
 </div>
 
 # <img height="50px" src="./screenshots/logo.png" />
@@ -26,7 +29,9 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 - 🎆 OCR for extracting text from images.
 - 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje) and [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/hoarder/) for quick bookmarking.
 - 📱 An [iOS app](https://apps.apple.com/us/app/hoarder-app/id6479258022), and an [Android app](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
-- 🗄️ Full page archival (using [monolith](https://github.com/Y2Z/monolith)) to protect against link rot.
+- 📰 Auto hoarding from RSS feeds.
+- 🌐 REST API.
+- 🗄️ Full page archival (using [monolith](https://github.com/Y2Z/monolith)) to protect against link rot. Auto video archiving using [youtube-dl](https://github.com/marado/youtube-dl).
 - ☑️ Bulk actions support.
 - 🔐 SSO support.
 - 🌙 Dark mode support.
@@ -81,6 +86,10 @@ I'm a systems engineer in my day job (and have been for the past 7 years). I did
     - [Omnivore](https://omnivore.app/): Omnivore is pretty cool open source read-it-later app. Unfortunately, it's heavily dependent on google cloud infra which makes self-hosting it quite hard. They published a [blog post](https://docs.omnivore.app/self-hosting/self-hosting.html) on how to run a minimal omnivore but it was lacking a lot of stuff. Self-hosting doesn't really seem to be a high priority for them, and that's something I care about, so I decided to build an alternative.
     - [Wallabag](https://wallabag.it): Wallabag is a well-established open source read-it-later app written in php and I think it's the common recommendation on reddit for such apps. To be honest, I didn't give it a real shot, and the UI just felt a bit dated for my liking. Honestly, it's probably much more stable and feature complete than this app, but where's the fun in that?
     - [Shiori](https://github.com/go-shiori/shiori): Shiori is meant to be an open source pocket clone written in Go. It ticks all the marks but doesn't have my super sophisticated AI-based tagging. (JK, I only found about it after I decided to build my own app, so here we are 🤷).
+
+## Translations
+
+Hoarder uses Weblate for managing translations. If you want to help translate Hoarder, you can do so [here](https://hosted.weblate.org/engage/hoarder/).
 
 ## Support
 

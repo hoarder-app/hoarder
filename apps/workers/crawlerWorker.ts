@@ -1,7 +1,10 @@
 import assert from "assert";
 import * as dns from "dns";
+import { promises as fs } from "fs";
 import * as path from "node:path";
+import * as os from "os";
 import type { Browser } from "puppeteer";
+import { PuppeteerBlocker } from "@ghostery/adblocker-puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
 import DOMPurify from "dompurify";
@@ -19,8 +22,8 @@ import metascraperReadability from "metascraper-readability";
 import metascraperTitle from "metascraper-title";
 import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
+import fetch from "node-fetch";
 import puppeteer from "puppeteer-extra";
-import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
 import { getBookmarkDetails, updateAsset } from "workerUtils";
@@ -67,6 +70,7 @@ const metascraperParser = metascraper([
 ]);
 
 let globalBrowser: Browser | undefined;
+let globalBlocker: PuppeteerBlocker | undefined;
 // Guards the interactions with the browser instance.
 // This is needed given that most of the browser APIs are async.
 const browserMutex = new Mutex();
@@ -115,7 +119,7 @@ async function launchBrowser() {
       globalBrowser = await startBrowserInstance();
     } catch (e) {
       logger.error(
-        "[Crawler] Failed to connect to the browser instance, will retry in 5 secs",
+        `[Crawler] Failed to connect to the browser instance, will retry in 5 secs: ${(e as Error).stack}`,
       );
       if (isShuttingDown) {
         logger.info("[Crawler] We're shutting down so won't retry.");
@@ -144,11 +148,20 @@ async function launchBrowser() {
 export class CrawlerWorker {
   static async build() {
     puppeteer.use(StealthPlugin());
-    puppeteer.use(
-      AdblockerPlugin({
-        blockTrackersAndAnnoyances: true,
-      }),
-    );
+    if (serverConfig.crawler.enableAdblocker) {
+      try {
+        logger.info("[crawler] Loading adblocker ...");
+        globalBlocker = await PuppeteerBlocker.fromPrebuiltFull(fetch, {
+          path: path.join(os.tmpdir(), "hoarder_adblocker.bin"),
+          read: fs.readFile,
+          write: fs.writeFile,
+        });
+      } catch (e) {
+        logger.error(
+          `[crawler] Failed to load adblocker. Will not be blocking ads: ${e}`,
+        );
+      }
+    }
     if (!serverConfig.crawler.browserConnectOnDemand) {
       await launchBrowser();
     } else {
@@ -166,20 +179,20 @@ export class CrawlerWorker {
           /* timeoutSec */ serverConfig.crawler.jobTimeoutSec,
         ),
         onComplete: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.info(`[Crawler][${jobId}] Completed successfully`);
-          const bookmarkId = job?.data.bookmarkId;
+          const bookmarkId = job.data.bookmarkId;
           if (bookmarkId) {
             await changeBookmarkStatus(bookmarkId, "success");
           }
         },
         onError: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.error(
             `[Crawler][${jobId}] Crawling job failed: ${job.error}\n${job.error.stack}`,
           );
           const bookmarkId = job.data?.bookmarkId;
-          if (bookmarkId) {
+          if (bookmarkId && job.numRetriesLeft == 0) {
             await changeBookmarkStatus(bookmarkId, "failure");
           }
         },
@@ -238,6 +251,9 @@ async function crawlPage(jobId: string, url: string) {
 
   try {
     const page = await context.newPage();
+    if (globalBlocker) {
+      await globalBlocker.enableBlockingInPage(page);
+    }
     await page.setUserAgent(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     );
@@ -261,18 +277,31 @@ async function crawlPage(jobId: string, url: string) {
 
     logger.info(`[Crawler][${jobId}] Finished waiting for the page to load.`);
 
-    const [htmlContent, screenshot] = await Promise.all([
-      page.content(),
-      page.screenshot({
-        // If you change this, you need to change the asset type in the store function.
-        type: "png",
-        encoding: "binary",
-        fullPage: serverConfig.crawler.fullPageScreenshot,
-      }),
-    ]);
-    logger.info(
-      `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
-    );
+    const htmlContent = await page.content();
+    logger.info(`[Crawler][${jobId}] Successfully fetched the page content.`);
+
+    let screenshot: Buffer | undefined = undefined;
+    if (serverConfig.crawler.storeScreenshot) {
+      screenshot = await Promise.race<Buffer | undefined>([
+        page
+          .screenshot({
+            // If you change this, you need to change the asset type in the store function.
+            type: "png",
+            encoding: "binary",
+            fullPage: serverConfig.crawler.fullPageScreenshot,
+          })
+          .catch(() => undefined),
+        new Promise((f) => setTimeout(f, 5000)),
+      ]);
+      if (!screenshot) {
+        logger.warn(`[Crawler][${jobId}] Failed to capture the screenshot.`);
+      } else {
+        logger.info(
+          `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
+        );
+      }
+    }
+
     return {
       htmlContent,
       screenshot,
@@ -320,13 +349,19 @@ function extractReadableContent(
 }
 
 async function storeScreenshot(
-  screenshot: Buffer,
+  screenshot: Buffer | undefined,
   userId: string,
   jobId: string,
 ) {
   if (!serverConfig.crawler.storeScreenshot) {
     logger.info(
       `[Crawler][${jobId}] Skipping storing the screenshot as per the config.`,
+    );
+    return null;
+  }
+  if (!screenshot) {
+    logger.info(
+      `[Crawler][${jobId}] Skipping storing the screenshot as it's empty.`,
     );
     return null;
   }
@@ -411,7 +446,7 @@ async function archiveWebpage(
 
   await execa({
     input: html,
-  })`monolith  - -Ije -t 5 -b ${url} -o ${assetPath}`;
+  })("monolith", ["-", "-Ije", "-t", "5", "-b", url, "-o", assetPath]);
 
   const contentType = "text/html";
 

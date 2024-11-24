@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useTranslation } from "@/lib/i18n/client";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 import {
@@ -79,6 +80,7 @@ export default function LinkContentSection({
 }: {
   bookmark: ZBookmark;
 }) {
+  const { t } = useTranslation();
   const [section, setSection] = useState<string>("cached");
 
   if (bookmark.content.type != BookmarkTypes.LINK) {
@@ -104,21 +106,23 @@ export default function LinkContentSection({
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectItem value="cached">Cached Content</SelectItem>
+            <SelectItem value="cached">
+              {t("preview.cached_content")}
+            </SelectItem>
             <SelectItem
               value="screenshot"
               disabled={!bookmark.content.screenshotAssetId}
             >
-              Screenshot
+              {t("common.screenshot")}
             </SelectItem>
             <SelectItem
               value="archive"
               disabled={!bookmark.content.fullPageArchiveAssetId}
             >
-              Archive
+              {t("common.archive")}
             </SelectItem>
             <SelectItem value="video" disabled={!bookmark.content.videoAssetId}>
-              Video
+              {t("common.video")}
             </SelectItem>
           </SelectGroup>
         </SelectContent>

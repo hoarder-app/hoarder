@@ -264,7 +264,7 @@ export const tagsOnBookmarks = sqliteTable(
   },
   (tb) => ({
     pk: primaryKey({ columns: [tb.bookmarkId, tb.tagId] }),
-    tagIdIdx: index("tagsOnBookmarks_tagId_idx").on(tb.bookmarkId),
+    tagIdIdx: index("tagsOnBookmarks_tagId_idx").on(tb.tagId),
     bookmarkIdIdx: index("tagsOnBookmarks_bookmarkId_idx").on(tb.bookmarkId),
   }),
 );
@@ -331,6 +331,52 @@ export const customPrompts = sqliteTable(
   },
   (bl) => ({
     userIdIdx: index("customPrompts_userId_idx").on(bl.userId),
+  }),
+);
+
+export const rssFeedsTable = sqliteTable(
+  "rssFeeds",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    name: text("name").notNull(),
+    url: text("url").notNull(),
+    createdAt: createdAtField(),
+    lastFetchedAt: integer("lastFetchedAt", { mode: "timestamp" }),
+    lastFetchedStatus: text("lastFetchedStatus", {
+      enum: ["pending", "failure", "success"],
+    }).default("pending"),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (bl) => ({
+    userIdIdx: index("rssFeeds_userId_idx").on(bl.userId),
+  }),
+);
+
+export const rssFeedImportsTable = sqliteTable(
+  "rssFeedImports",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    createdAt: createdAtField(),
+    entryId: text("entryId").notNull(),
+    rssFeedId: text("rssFeedId")
+      .notNull()
+      .references(() => rssFeedsTable.id, { onDelete: "cascade" }),
+    bookmarkId: text("bookmarkId").references(() => bookmarks.id, {
+      onDelete: "set null",
+    }),
+  },
+  (bl) => ({
+    feedIdIdx: index("rssFeedImports_feedIdIdx_idx").on(bl.rssFeedId),
+    entryIdIdx: index("rssFeedImports_entryIdIdx_idx").on(bl.entryId),
+    feedIdEntryIdUnique: unique().on(bl.rssFeedId, bl.entryId),
   }),
 );
 

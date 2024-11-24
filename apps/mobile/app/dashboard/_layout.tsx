@@ -50,11 +50,74 @@ export default function Dashboard() {
         }}
       />
       <Stack.Screen
+        name="bookmarks/[slug]/index"
+        options={{
+          headerTitle: "",
+          headerBackTitle: "Back",
+          headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="bookmarks/new"
+        options={{
+          headerTitle: "New Bookmark",
+          headerBackTitle: "Back",
+          headerTransparent: true,
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
+        name="bookmarks/[slug]/manage_tags"
+        options={{
+          headerTitle: "Manage Tags",
+          headerBackTitle: "Back",
+          headerTransparent: true,
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
+        name="bookmarks/[slug]/manage_lists"
+        options={{
+          headerTitle: "Manage Lists",
+          headerBackTitle: "Back",
+          headerTransparent: true,
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
+        name="bookmarks/[slug]/info"
+        options={{
+          headerBackTitle: "Back",
+          headerTransparent: true,
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
+        name="lists/new"
+        options={{
+          headerTitle: "New List",
+          headerBackTitle: "Back",
+          headerTransparent: true,
+          presentation: "modal",
+        }}
+      />
+      <Stack.Screen
         name="archive"
         options={{
           headerTitle: "",
           headerBackTitle: "Back",
           headerTransparent: true,
+        }}
+      />
+      <Stack.Screen
+        name="search"
+        options={{
+          headerTitle: "",
+          headerBackTitle: "",
+          headerTransparent: true,
+          headerShown: false,
+          animation: "fade_from_bottom",
+          animationDuration: 100,
         }}
       />
       <Stack.Screen

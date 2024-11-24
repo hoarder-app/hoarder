@@ -27,17 +27,18 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 function ApiKeySuccess({ apiKey }: { apiKey: string }) {
+  const { t } = useTranslation();
   return (
     <div>
       <div className="py-4">
-        Note: please copy the key and store it somewhere safe. Once you close
-        the dialog, you won&apos;t be able to access it again.
+        {t("settings.api_keys.key_success_please_copy")}
       </div>
       <div className="flex space-x-2 pt-2">
         <Input value={apiKey} readOnly />
@@ -52,6 +53,7 @@ function ApiKeySuccess({ apiKey }: { apiKey: string }) {
 }
 
 function AddApiKeyForm({ onSuccess }: { onSuccess: (key: string) => void }) {
+  const { t } = useTranslation();
   const formSchema = z.object({
     name: z.string(),
   });
@@ -62,7 +64,10 @@ function AddApiKeyForm({ onSuccess }: { onSuccess: (key: string) => void }) {
       router.refresh();
     },
     onError: () => {
-      toast({ description: "Something went wrong", variant: "destructive" });
+      toast({
+        description: t("common.something_went_wrong"),
+        variant: "destructive",
+      });
     },
   });
 
@@ -95,12 +100,16 @@ function AddApiKeyForm({ onSuccess }: { onSuccess: (key: string) => void }) {
           render={({ field }) => {
             return (
               <FormItem className="flex-1">
-                <FormLabel>Name</FormLabel>
+                <FormLabel>{t("common.name")}</FormLabel>
                 <FormControl>
-                  <Input type="text" placeholder="Name" {...field} />
+                  <Input
+                    type="text"
+                    placeholder={t("common.name")}
+                    {...field}
+                  />
                 </FormControl>
                 <FormDescription>
-                  Give your API key a unique name
+                  {t("settings.api_keys.new_api_key_desc")}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -112,7 +121,7 @@ function AddApiKeyForm({ onSuccess }: { onSuccess: (key: string) => void }) {
           type="submit"
           loading={mutator.isPending}
         >
-          Create
+          {t("actions.create")}
         </ActionButton>
       </form>
     </Form>
@@ -120,17 +129,20 @@ function AddApiKeyForm({ onSuccess }: { onSuccess: (key: string) => void }) {
 }
 
 export default function AddApiKey() {
+  const { t } = useTranslation();
   const [key, setKey] = useState<string | undefined>(undefined);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button>New API Key</Button>
+        <Button>{t("settings.api_keys.new_api_key")}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            {key ? "Key was successfully created" : "Create API key"}
+            {key
+              ? t("settings.api_keys.key_success")
+              : t("settings.api_keys.new_api_key")}
           </DialogTitle>
           <DialogDescription>
             {key ? (
@@ -147,7 +159,7 @@ export default function AddApiKey() {
               variant="outline"
               onClick={() => setKey(undefined)}
             >
-              Close
+              {t("actions.close")}
             </Button>
           </DialogClose>
         </DialogFooter>

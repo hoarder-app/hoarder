@@ -18,6 +18,7 @@ import {
   bookmarksInLists,
   bookmarkTags,
   bookmarkTexts,
+  rssFeedImportsTable,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
 import { deleteAsset } from "@hoarder/shared/assetdb";
@@ -270,9 +271,6 @@ export const bookmarksAppRouter = router({
           return { ...alreadyExists, alreadyExists: true };
         }
       }
-      if (input.type == BookmarkTypes.UNKNOWN) {
-        throw new TRPCError({ code: "BAD_REQUEST" });
-      }
       const bookmark = await ctx.db.transaction(async (tx) => {
         const bookmark = (
           await tx
@@ -280,6 +278,12 @@ export const bookmarksAppRouter = router({
             .values({
               userId: ctx.user.id,
               type: input.type,
+              title: input.title,
+              archived: input.archived,
+              favourited: input.favourited,
+              note: input.note,
+              summary: input.summary,
+              createdAt: input.createdAt,
             })
             .returning()
         )[0];
@@ -587,6 +591,19 @@ export const bookmarksAppRouter = router({
                         and(
                           eq(tagsOnBookmarks.bookmarkId, bookmarks.id),
                           eq(tagsOnBookmarks.tagId, input.tagId),
+                        ),
+                      ),
+                  )
+                : undefined,
+              input.rssFeedId !== undefined
+                ? exists(
+                    ctx.db
+                      .select()
+                      .from(rssFeedImportsTable)
+                      .where(
+                        and(
+                          eq(rssFeedImportsTable.bookmarkId, bookmarks.id),
+                          eq(rssFeedImportsTable.rssFeedId, input.rssFeedId),
                         ),
                       ),
                   )

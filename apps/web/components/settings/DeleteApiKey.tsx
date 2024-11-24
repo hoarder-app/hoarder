@@ -5,6 +5,7 @@ import { ActionButton } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { Trash } from "lucide-react";
 
@@ -15,6 +16,7 @@ export default function DeleteApiKey({
   name: string;
   id: string;
 }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const mutator = api.apiKeys.revoke.useMutation({
     onSuccess: () => {
@@ -43,7 +45,7 @@ export default function DeleteApiKey({
             mutator.mutate({ id }, { onSuccess: () => setDialogOpen(false) })
           }
         >
-          Delete
+          {t("actions.delete")}
         </ActionButton>
       )}
     >

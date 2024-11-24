@@ -12,7 +12,6 @@ import { StyledStack } from "@/components/navigation/stack";
 import { Providers } from "@/lib/providers";
 import useAppSettings from "@/lib/settings";
 import { cn } from "@/lib/utils";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { useColorScheme } from "nativewind";
 
 export default function RootLayout() {
@@ -34,49 +33,47 @@ export default function RootLayout() {
   }, [settings.theme]);
 
   return (
-    <ShareIntentProvider>
-      <Providers>
-        <GestureHandlerRootView style={{ flex: 1 }}>
-          <BottomSheetModalProvider>
-            <View
-              className={cn(
-                "w-full flex-1 bg-gray-100 text-foreground dark:bg-background",
-                colorScheme == "dark" ? "dark" : "light",
-              )}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ShareIntentProvider>
+        <Providers>
+          <View
+            className={cn(
+              "w-full flex-1 bg-gray-100 text-foreground dark:bg-background",
+              colorScheme == "dark" ? "dark" : "light",
+            )}
+          >
+            <StyledStack
+              contentClassName="bg-gray-100 dark:bg-background"
+              screenOptions={{
+                headerShown: false,
+                headerTransparent: true,
+              }}
             >
-              <StyledStack
-                contentClassName="bg-gray-100 dark:bg-background"
-                screenOptions={{
-                  headerShown: false,
-                  headerTransparent: true,
+              <Stack.Screen name="index" />
+              <Stack.Screen
+                name="signin"
+                options={{
+                  headerShown: true,
+                  headerBackVisible: true,
+                  headerBackTitle: "Back",
+                  title: "",
                 }}
-              >
-                <Stack.Screen name="index" />
-                <Stack.Screen
-                  name="signin"
-                  options={{
-                    headerShown: true,
-                    headerBackVisible: true,
-                    headerBackTitle: "Back",
-                    title: "",
-                  }}
-                />
-                <Stack.Screen name="server-address" />
-                <Stack.Screen name="sharing" />
-                <Stack.Screen
-                  name="test-connection"
-                  options={{
-                    title: "Test Connection",
-                    headerShown: true,
-                    presentation: "modal",
-                  }}
-                />
-              </StyledStack>
-              <StatusBar style="auto" />
-            </View>
-          </BottomSheetModalProvider>
-        </GestureHandlerRootView>
-      </Providers>
-    </ShareIntentProvider>
+              />
+              <Stack.Screen name="server-address" />
+              <Stack.Screen name="sharing" />
+              <Stack.Screen
+                name="test-connection"
+                options={{
+                  title: "Test Connection",
+                  headerShown: true,
+                  presentation: "modal",
+                }}
+              />
+            </StyledStack>
+            <StatusBar style="auto" />
+          </View>
+        </Providers>
+      </ShareIntentProvider>
+    </GestureHandlerRootView>
   );
 }

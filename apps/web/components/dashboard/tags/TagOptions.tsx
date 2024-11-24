@@ -7,6 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useTranslation } from "@/lib/i18n/client";
 import { Combine, Trash2 } from "lucide-react";
 
 import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";
@@ -19,6 +20,7 @@ export function TagOptions({
   tag: { id: string; name: string };
   children?: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   const [deleteTagDialogOpen, setDeleteTagDialogOpen] = useState(false);
   const [mergeTagDialogOpen, setMergeTagDialogOpen] = useState(false);
 
@@ -41,7 +43,7 @@ export function TagOptions({
           onClick={() => setMergeTagDialogOpen(true)}
         >
           <Combine className="size-4" />
-          <span>Merge</span>
+          <span>{t("actions.merge")}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem
@@ -49,7 +51,7 @@ export function TagOptions({
           onClick={() => setDeleteTagDialogOpen(true)}
         >
           <Trash2 className="size-4" />
-          <span>Delete</span>
+          <span>{t("actions.delete")}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

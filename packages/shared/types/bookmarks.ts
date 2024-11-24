@@ -28,15 +28,15 @@ export const zAssetSchema = z.object({
 
 export const zBookmarkedLinkSchema = z.object({
   type: z.literal(BookmarkTypes.LINK),
-  url: z.string().url(),
+  url: z.string(),
   title: z.string().nullish(),
   description: z.string().nullish(),
-  imageUrl: z.string().url().nullish(),
+  imageUrl: z.string().nullish(),
   imageAssetId: z.string().nullish(),
   screenshotAssetId: z.string().nullish(),
   fullPageArchiveAssetId: z.string().nullish(),
   videoAssetId: z.string().nullish(),
-  favicon: z.string().url().nullish(),
+  favicon: z.string().nullish(),
   htmlContent: z.string().nullish(),
   crawledAt: z.date().nullish(),
 });
@@ -114,7 +114,32 @@ const zBookmarkTypeAssetSchema = zBareBookmarkSchema.merge(
 export type ZBookmarkTypeAsset = z.infer<typeof zBookmarkTypeAssetSchema>;
 
 // POST /v1/bookmarks
-export const zNewBookmarkRequestSchema = zBookmarkContentSchema;
+export const zNewBookmarkRequestSchema = z
+  .object({
+    title: z.string().max(MAX_TITLE_LENGTH).nullish(),
+    archived: z.boolean().optional(),
+    favourited: z.boolean().optional(),
+    note: z.string().optional(),
+    summary: z.string().optional(),
+    createdAt: z.date().optional(),
+  })
+  .and(
+    z.discriminatedUnion("type", [
+      z.object({ type: z.literal(BookmarkTypes.LINK), url: z.string().url() }),
+      z.object({
+        type: z.literal(BookmarkTypes.TEXT),
+        text: z.string(),
+        sourceUrl: z.string().optional(),
+      }),
+      z.object({
+        type: z.literal(BookmarkTypes.ASSET),
+        assetType: z.enum(["image", "pdf"]),
+        assetId: z.string(),
+        fileName: z.string().optional(),
+        sourceUrl: z.string().optional(),
+      }),
+    ]),
+  );
 export type ZNewBookmarkRequest = z.infer<typeof zNewBookmarkRequestSchema>;
 
 // GET /v1/bookmarks
@@ -133,6 +158,7 @@ export const zGetBookmarksRequestSchema = z.object({
   favourited: z.boolean().optional(),
   tagId: z.string().optional(),
   listId: z.string().optional(),
+  rssFeedId: z.string().optional(),
   limit: z.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),
   cursor: zCursorV2.nullish(),
   // TODO: This was done for backward comptability. At this point, all clients should be settings this to true.

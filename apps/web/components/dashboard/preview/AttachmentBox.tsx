@@ -10,6 +10,7 @@ import {
 import FilePickerButton from "@/components/ui/file-picker-button";
 import { toast } from "@/components/ui/use-toast";
 import useUpload from "@/lib/hooks/upload-file";
+import { useTranslation } from "@/lib/i18n/client";
 import {
   Archive,
   Camera,
@@ -41,6 +42,7 @@ import {
 } from "@hoarder/trpc/lib/attachments";
 
 export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
+  const { t } = useTranslation();
   const typeToIcon: Record<ZAssetType, React.ReactNode> = {
     screenshot: <Camera className="size-4" />,
     fullPageArchive: <Archive className="size-4" />,
@@ -109,7 +111,7 @@ export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
   return (
     <Collapsible>
       <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 text-sm text-gray-400">
-        Attachments
+        {t("common.attachments")}
         <ChevronsDownUp className="size-4" />
       </CollapsibleTrigger>
       <CollapsibleContent className="flex flex-col gap-1 py-2 text-sm">

@@ -13,6 +13,7 @@ import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { ArrowDownAZ, Combine } from "lucide-react";
 
@@ -23,6 +24,7 @@ import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";
 import { TagPill } from "./TagPill";
 
 function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
+  const { t } = useTranslation();
   const { mutate, isPending } = useDeleteUnusedTags({
     onSuccess: () => {
       toast({
@@ -38,7 +40,7 @@ function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
   });
   return (
     <ActionConfirmingDialog
-      title="Delete all unused tags?"
+      title={t("tags.delete_all_unused_tags")}
       description={`Are you sure you want to delete the ${numUnusedTags} unused tags?`}
       actionButton={() => (
         <ActionButton
@@ -51,7 +53,7 @@ function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
       )}
     >
       <Button variant="destructive" disabled={numUnusedTags == 0}>
-        Delete All Unused Tags
+        {t("tags.delete_all_unused_tags")}
       </Button>
     </ActionConfirmingDialog>
   );
@@ -72,6 +74,7 @@ export default function AllTagsView({
 }: {
   initialData: ZGetTagResponse[];
 }) {
+  const { t } = useTranslation();
   interface Tag {
     id: string;
     name: string;
@@ -154,9 +157,9 @@ export default function AllTagsView({
           onPressedChange={toggleDraggingEnabled}
         >
           <Combine className="mr-2 size-4" />
-          Drag & Drop Merging
+          {t("tags.drag_and_drop_merging")}
           <InfoTooltip size={15} className="my-auto ml-2" variant="explain">
-            <p>Drag and drop tags on each other to merge them</p>
+            <p>{t("tags.drag_and_drop_merging_info")}</p>
           </InfoTooltip>
         </Toggle>
         <Toggle
@@ -165,29 +168,29 @@ export default function AllTagsView({
           pressed={sortByName}
           onPressedChange={toggleSortByName}
         >
-          <ArrowDownAZ className="mr-2 size-4" /> Sort by Name
+          <ArrowDownAZ className="mr-2 size-4" /> {t("tags.sort_by_name")}
         </Toggle>
       </div>
       <span className="flex items-center gap-2">
-        <p className="text-lg">Your Tags</p>
+        <p className="text-lg">{t("tags.your_tags")}</p>
         <InfoTooltip size={15} className="my-auto" variant="explain">
-          <p>Tags that were attached at least once by you</p>
+          <p>{t("tags.your_tags_info")}</p>
         </InfoTooltip>
       </span>
       {tagsToPill(humanTags)}
       <Separator />
       <span className="flex items-center gap-2">
-        <p className="text-lg">AI Tags</p>
+        <p className="text-lg">{t("tags.ai_tags")}</p>
         <InfoTooltip size={15} className="my-auto" variant="explain">
-          <p>Tags that were only attached automatically (by AI)</p>
+          <p>{t("tags.ai_tags_info")}</p>
         </InfoTooltip>
       </span>
       {tagsToPill(aiTags)}
       <Separator />
       <span className="flex items-center gap-2">
-        <p className="text-lg">Unused Tags</p>
+        <p className="text-lg">{t("tags.unused_tags")}</p>
         <InfoTooltip size={15} className="my-auto" variant="explain">
-          <p>Tags that are not attached to any bookmarks</p>
+          <p>{t("tags.unused_tags_info")}</p>
         </InfoTooltip>
       </span>
       <Collapsible>

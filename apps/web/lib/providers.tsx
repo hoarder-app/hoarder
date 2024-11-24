@@ -14,6 +14,7 @@ import superjson from "superjson";
 import type { ClientConfig } from "@hoarder/shared/config";
 
 import { ClientConfigCtx } from "./clientConfig";
+import CustomI18nextProvider from "./i18n/provider";
 import { api } from "./trpc";
 
 function makeQueryClient() {
@@ -81,14 +82,18 @@ export default function Providers({
         <SessionProvider session={session}>
           <api.Provider client={trpcClient} queryClient={queryClient}>
             <QueryClientProvider client={queryClient}>
-              <ThemeProvider
-                attribute="class"
-                defaultTheme="system"
-                enableSystem
-                disableTransitionOnChange
-              >
-                <TooltipProvider delayDuration={0}>{children}</TooltipProvider>
-              </ThemeProvider>
+              <CustomI18nextProvider lang={userLocalSettings.lang}>
+                <ThemeProvider
+                  attribute="class"
+                  defaultTheme="system"
+                  enableSystem
+                  disableTransitionOnChange
+                >
+                  <TooltipProvider delayDuration={0}>
+                    {children}
+                  </TooltipProvider>
+                </ThemeProvider>
+              </CustomI18nextProvider>
             </QueryClientProvider>
           </api.Provider>
         </SessionProvider>

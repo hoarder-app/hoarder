@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import SidebarItem from "@/components/shared/sidebar/SidebarItem";
 import { Button } from "@/components/ui/button";
 import { CollapsibleTriggerTriangle } from "@/components/ui/collapsible";
+import { useTranslation } from "@/lib/i18n/client";
 import { MoreHorizontal, Plus } from "lucide-react";
 
 import type { ZBookmarkList } from "@hoarder/shared/types/lists";
@@ -20,6 +21,7 @@ export default function AllLists({
 }: {
   initialData: { lists: ZBookmarkList[] };
 }) {
+  const { t } = useTranslation();
   const pathName = usePathname();
   const isNodeOpen = useCallback(
     (node: ZBookmarkListTreeNode) => pathName.includes(node.item.id),
@@ -37,13 +39,13 @@ export default function AllLists({
       </li>
       <SidebarItem
         logo={<span className="text-lg">📋</span>}
-        name="All Lists"
+        name={t("lists.all_lists")}
         path={`/dashboard/lists`}
         linkClassName="py-0.5"
       />
       <SidebarItem
         logo={<span className="text-lg">⭐️</span>}
-        name="Favourites"
+        name={t("lists.favourites")}
         path={`/dashboard/favourites`}
         linkClassName="py-0.5"
       />
