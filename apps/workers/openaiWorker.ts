@@ -215,15 +215,15 @@ async function replaceTagsPlaceholders(
 ): Promise<string[]> {
   const api = await buildImpersonatingTRPCClient(userId);
   const tags = (await api.tags.list()).tags;
-  const tagsString = `[${tags.map((tag) => tag.name).join(",")}]`;
+  const tagsString = `[${tags.map((tag) => tag.name).join(", ")}]`;
   const aiTagsString = `[${tags
     .filter((tag) => tag.numBookmarksByAttachedType.human ?? 0 == 0)
     .map((tag) => tag.name)
-    .join(",")}]`;
+    .join(", ")}]`;
   const userTagsString = `[${tags
     .filter((tag) => tag.numBookmarksByAttachedType.human ?? 0 > 0)
     .map((tag) => tag.name)
-    .join(",")}]`;
+    .join(", ")}]`;
 
   return prompts.map((p) =>
     p
