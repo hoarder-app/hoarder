@@ -120,8 +120,8 @@ importers:
         version: 3.22.4
     devDependencies:
       '@crxjs/vite-plugin':
-        specifier: 2.0.0-beta.25
-        version: 2.0.0-beta.25
+        specifier: 2.0.0-beta.28
+        version: 2.0.0-beta.28
       '@hoarder/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
@@ -2293,8 +2293,8 @@ packages:
     peerDependencies:
       commander: ~12.0.0
 
-  '@crxjs/vite-plugin@2.0.0-beta.25':
-    resolution: {integrity: sha512-g5ytTNiFpFCi+T0trSDJLohVz5PufLBLh6OGljyGTHkQCKiApuEgZ1bAjgPXluMDhMUvbPfZT10LYl5ROefXog==}
+  '@crxjs/vite-plugin@2.0.0-beta.28':
+    resolution: {integrity: sha512-JUoB1431PvruQqVpxvJ5j6qh0NNx5sXafAXo+VltORtJQrS6wprI5QK4k6PLKV+WacsFuPLveM2ydBCEopU49w==}
 
   '@dabh/diagnostics@2.0.3':
     resolution: {integrity: sha512-hrlQOIi7hAfzsMqlGSFyVucrx38O+j6wiGOf//H2ecvIEqYN4ADBSS2iLMh5UFyDunCNniUIPk/q3riFv45xRA==}
@@ -3157,6 +3157,9 @@ packages:
 
   '@jridgewell/sourcemap-codec@1.4.15':
     resolution: {integrity: sha512-eF2rxCRulEKXHTRiDrDy6erMYWqNw4LPdQ8UQA4huuxaQsVeRPFl2oM8oDGxMFhJUWZf9McpLtJasDDZb/Bpeg==}
+
+  '@jridgewell/sourcemap-codec@1.5.0':
+    resolution: {integrity: sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ==}
 
   '@jridgewell/trace-mapping@0.3.23':
     resolution: {integrity: sha512-9/4foRoUKp8s96tSkh8DlAAc5A0Ty8vLXld+l9gjKKY6ckwI8G15f0hskGmuLZu78ZlGa1vtsfOa+lnB4vG6Jg==}
@@ -5847,10 +5850,6 @@ packages:
   connect-history-api-fallback@2.0.0:
     resolution: {integrity: sha512-U73+6lQFmfiNPrYbXqr6kZ1i1wiRqXnp2nhMsINseWXO8lDau0LGEffJ8kQi4EjLZympVgRdvqjAgiZ1tgzDDA==}
     engines: {node: '>=0.8'}
-
-  connect-injector@0.4.4:
-    resolution: {integrity: sha512-hdBG8nXop42y2gWCqOV8y1O3uVk4cIU+SoxLCPyCUKRImyPiScoNiSulpHjoktRU1BdI0UzoUdxUa87thrcmHw==}
-    engines: {node: '>= 0.8.0'}
 
   connect@3.7.0:
     resolution: {integrity: sha512-ZqRXc+tZukToSNmh5C2iWMSoV3X1YUcPbqEM4DkEG5tNQXrQUZCNVGGv3IuicnkMtPfGf3Xtp8WCXs295iQ1pQ==}
@@ -8857,9 +8856,8 @@ packages:
   magic-string@0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}
 
-  magic-string@0.26.7:
-    resolution: {integrity: sha512-hX9XH3ziStPoPhJxLq1syWuZMxbDvGNbVchfrdCtanC7D13888bMFow61x8axrx+GfHLtVeAx2kxL7tTGRl+Ow==}
-    engines: {node: '>=12'}
+  magic-string@0.30.13:
+    resolution: {integrity: sha512-8rYBO+MsWkgjDSOvLomYnzhdwEG51olQ4zL5KXnNJWV5MNmrb4rTZdrtkhxjnD/QyZUqR/Z/XDsUs/4ej2nx0g==}
 
   magic-string@0.30.7:
     resolution: {integrity: sha512-8vBuFF/I/+OSLRmdf2wwFCJCz+nSn0m6DPvGH1fS/KiQoSaR+sETbov0eIk9KhEKy8CYqIkIAnbohxT/4H0kuA==}
@@ -10688,14 +10686,6 @@ packages:
     deprecated: < 22.8.2 is no longer supported
     hasBin: true
 
-  q@1.5.1:
-    resolution: {integrity: sha512-kV/CThkXo6xyFEZUugw/+pIOywXcDbFYgSct5cT3gqlbkBE1SJdwy6UQoZvodiWF/ckQLZyDE/Bu1M6gVu5lVw==}
-    engines: {node: '>=0.6.0', teleport: '>=0.2.0'}
-    deprecated: |-
-      You or someone you depend on is using Q, the JavaScript Promise library that gave JavaScript developers strong feelings about promises. They can almost certainly migrate to the native JavaScript promise now. Thank you literally everyone for joining me in this bet against the odds. Be excellent to each other.
-
-      (For a CapTP with native promises, see @endo/eventual-send and @endo/captp)
-
   qrcode-terminal@0.11.0:
     resolution: {integrity: sha512-Uu7ii+FQy4Qf82G4xu7ShHhjhGahEpCWc3x8UavY3CTcWV+ufmmCtwkr7ZKsX42jdL0kr1B5FKUeqJvAn51jzQ==}
     hasBin: true
@@ -11344,13 +11334,13 @@ packages:
     peerDependencies:
       rollup: ^2.0.0
 
-  rollup@2.78.1:
-    resolution: {integrity: sha512-VeeCgtGi4P+o9hIg+xz4qQpRl6R401LWEXBmxYKOV4zlF82lyhgh2hTZnheFUbANE8l2A41F458iwj2vEYaXJg==}
+  rollup@2.79.1:
+    resolution: {integrity: sha512-uKxbd0IhMZOhjAiD5oAFp7BqvkA4Dv47qpOCtaNvng4HBwdbWtdOh8f5nZNuk2rp51PMGk3bzfWu5oayNEuYnw==}
     engines: {node: '>=10.0.0'}
     hasBin: true
 
-  rollup@2.79.1:
-    resolution: {integrity: sha512-uKxbd0IhMZOhjAiD5oAFp7BqvkA4Dv47qpOCtaNvng4HBwdbWtdOh8f5nZNuk2rp51PMGk3bzfWu5oayNEuYnw==}
+  rollup@2.79.2:
+    resolution: {integrity: sha512-fS6iqSPZDs3dr/y7Od6y5nha8dW1YnbgtsyotCVvoFGKbERG++CVRFv1meyGDE1SNItQA8BrnCw7ScdAhRJ3XQ==}
     engines: {node: '>=10.0.0'}
     hasBin: true
 
@@ -11762,10 +11752,6 @@ packages:
 
   std-env@3.7.0:
     resolution: {integrity: sha512-JPbdCEQLj1w5GilpiHAx3qJvFndqybBysA3qUOnznweH4QbNYUsW/ea8QzSrnh0vNsezMMw5bcVool8lM0gwzg==}
-
-  stream-buffers@0.2.6:
-    resolution: {integrity: sha512-ZRpmWyuCdg0TtNKk8bEqvm13oQvXMmzXDsfD4cBgcx5LouborvU5pm3JMkdTP3HcszyUI08AM1dHMXA5r2g6Sg==}
-    engines: {node: '>= 0.3.0'}
 
   stream-buffers@2.2.0:
     resolution: {integrity: sha512-uyQK/mx5QjHun80FLJTfaWE7JtwfRMKBLkMne6udYOmvH0CawotVa7TfgYHzAnpphn4+TweIx1QKMnRIbipmUg==}
@@ -12297,9 +12283,6 @@ packages:
 
   ua-parser-js@1.0.37:
     resolution: {integrity: sha512-bhTyI94tZofjo+Dn8SN6Zv8nBDvyXTymAdM3LDI/0IboIUwTu1rEhW7v2TfiVsoYWgkQ4kOVqnI8APUFbIQIFQ==}
-
-  uberproto@1.2.0:
-    resolution: {integrity: sha512-pGtPAQmLwh+R9w81WVHzui1FfedpQWQpiaIIfPCwhtsBez4q6DYbJFfyXPVHPUTNFnedAvNEnkoFiLuhXIR94w==}
 
   uc.micro@1.0.6:
     resolution: {integrity: sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==}
@@ -14683,23 +14666,22 @@ snapshots:
       commander: 12.0.0
     dev: true
 
-  '@crxjs/vite-plugin@2.0.0-beta.25':
+  '@crxjs/vite-plugin@2.0.0-beta.28':
     dependencies:
       '@rollup/pluginutils': 4.2.1
       '@webcomponents/custom-elements': 1.6.0
       acorn-walk: 8.3.2
-      cheerio: 1.0.0-rc.12
-      connect-injector: 0.4.4
+      cheerio: 1.0.0
       convert-source-map: 1.9.0
-      debug: 4.3.4
+      debug: 4.3.7
       es-module-lexer: 0.10.5
       fast-glob: 3.3.2
       fs-extra: 10.1.0
       jsesc: 3.0.2
-      magic-string: 0.26.7
-      picocolors: 1.0.0
+      magic-string: 0.30.13
+      picocolors: 1.1.1
       react-refresh: 0.13.0
-      rollup: 2.78.1
+      rollup: 2.79.2
       rxjs: 7.5.7
     transitivePeerDependencies:
       - supports-color
@@ -16307,6 +16289,9 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.25
 
   '@jridgewell/sourcemap-codec@1.4.15': {}
+
+  '@jridgewell/sourcemap-codec@1.5.0':
+    dev: true
 
   '@jridgewell/trace-mapping@0.3.23':
     dependencies:
@@ -19565,7 +19550,6 @@ snapshots:
       parse5-parser-stream: 7.1.2
       undici: 6.19.8
       whatwg-mimetype: 4.0.0
-    dev: false
 
   cheerio@1.0.0-rc.12:
     dependencies:
@@ -19576,6 +19560,7 @@ snapshots:
       htmlparser2: 8.0.2
       parse5: 7.1.2
       parse5-htmlparser2-tree-adapter: 7.0.0
+    dev: false
 
   chokidar@3.6.0:
     dependencies:
@@ -19886,16 +19871,6 @@ snapshots:
 
   connect-history-api-fallback@2.0.0:
     dev: false
-
-  connect-injector@0.4.4:
-    dependencies:
-      debug: 2.6.9
-      q: 1.5.1
-      stream-buffers: 0.2.6
-      uberproto: 1.2.0
-    transitivePeerDependencies:
-      - supports-color
-    dev: true
 
   connect@3.7.0:
     dependencies:
@@ -20255,6 +20230,7 @@ snapshots:
   debug@2.6.9:
     dependencies:
       ms: 2.0.0
+    dev: false
 
   debug@3.2.7:
     dependencies:
@@ -20749,7 +20725,6 @@ snapshots:
     dependencies:
       iconv-lite: 0.6.3
       whatwg-encoding: 3.1.1
-    dev: false
 
   encoding@0.1.13:
     dependencies:
@@ -22705,6 +22680,7 @@ snapshots:
       domhandler: 5.0.3
       domutils: 3.1.0
       entities: 4.5.0
+    dev: false
 
   htmlparser2@9.1.0:
     dependencies:
@@ -22712,7 +22688,6 @@ snapshots:
       domhandler: 5.0.3
       domutils: 3.1.0
       entities: 4.5.0
-    dev: false
 
   http-cache-semantics@4.1.1:
     dev: false
@@ -22855,7 +22830,6 @@ snapshots:
   iconv-lite@0.6.3:
     dependencies:
       safer-buffer: 2.1.2
-    dev: false
 
   icss-utils@5.1.0(postcss@8.4.47):
     dependencies:
@@ -23924,9 +23898,9 @@ snapshots:
       sourcemap-codec: 1.4.8
     dev: false
 
-  magic-string@0.26.7:
+  magic-string@0.30.13:
     dependencies:
-      sourcemap-codec: 1.4.8
+      '@jridgewell/sourcemap-codec': 1.5.0
     dev: true
 
   magic-string@0.30.7:
@@ -25067,7 +25041,8 @@ snapshots:
   mrmime@2.0.0:
     dev: false
 
-  ms@2.0.0: {}
+  ms@2.0.0:
+    dev: false
 
   ms@2.1.2: {}
 
@@ -25758,7 +25733,6 @@ snapshots:
   parse5-parser-stream@7.1.2:
     dependencies:
       parse5: 7.1.2
-    dev: false
 
   parse5@7.1.2:
     dependencies:
@@ -26568,9 +26542,6 @@ snapshots:
       - typescript
       - utf-8-validate
     dev: false
-
-  q@1.5.1:
-    dev: true
 
   qrcode-terminal@0.11.0:
     dev: false
@@ -27593,15 +27564,15 @@ snapshots:
       terser: 5.28.1
     dev: false
 
-  rollup@2.78.1:
-    optionalDependencies:
-      fsevents: 2.3.3
-    dev: true
-
   rollup@2.79.1:
     optionalDependencies:
       fsevents: 2.3.3
     dev: false
+
+  rollup@2.79.2:
+    optionalDependencies:
+      fsevents: 2.3.3
+    dev: true
 
   rollup@4.12.0:
     dependencies:
@@ -27680,8 +27651,7 @@ snapshots:
   safe-stable-stringify@2.4.3:
     dev: false
 
-  safer-buffer@2.1.2:
-    dev: false
+  safer-buffer@2.1.2: {}
 
   sanitize-html@1.20.1:
     dependencies:
@@ -28109,7 +28079,8 @@ snapshots:
       whatwg-url: 7.1.0
     dev: false
 
-  sourcemap-codec@1.4.8: {}
+  sourcemap-codec@1.4.8:
+    dev: false
 
   space-separated-tokens@1.1.5:
     dev: false
@@ -28196,9 +28167,6 @@ snapshots:
     dev: false
 
   std-env@3.7.0: {}
-
-  stream-buffers@0.2.6:
-    dev: true
 
   stream-buffers@2.2.0:
     dev: false
@@ -28868,9 +28836,6 @@ snapshots:
   ua-parser-js@1.0.37:
     dev: false
 
-  uberproto@1.2.0:
-    dev: true
-
   uc.micro@1.0.6:
     dev: false
 
@@ -28892,8 +28857,7 @@ snapshots:
 
   undici-types@5.26.5: {}
 
-  undici@6.19.8:
-    dev: false
+  undici@6.19.8: {}
 
   unicode-canonical-property-names-ecmascript@2.0.0:
     dev: false
@@ -29445,13 +29409,11 @@ snapshots:
   whatwg-encoding@3.1.1:
     dependencies:
       iconv-lite: 0.6.3
-    dev: false
 
   whatwg-fetch@3.6.20:
     dev: false
 
-  whatwg-mimetype@4.0.0:
-    dev: false
+  whatwg-mimetype@4.0.0: {}
 
   whatwg-url-without-unicode@8.0.0-3:
     dependencies:
