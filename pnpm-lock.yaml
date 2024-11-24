@@ -849,6 +849,9 @@ importers:
       react-dom:
         specifier: ^18.3.1
         version: 18.3.1(react@18.3.1)
+      url:
+        specifier: ^0.11.4
+        version: 0.11.4
     devDependencies:
       '@docusaurus/module-type-aliases':
         specifier: 3.5.2
@@ -10705,6 +10708,10 @@ packages:
     resolution: {integrity: sha512-trVZiI6RMOkO476zLGaBIzszOdFPnCCXHPG9kn0yuS1uz6xdVxPfZdB3vUig9pxPFDM9BRAgz/YUIVQ1/vuiUg==}
     engines: {node: '>=0.6'}
 
+  qs@6.13.1:
+    resolution: {integrity: sha512-EJPeIn0CYrGu+hli1xilKAPXODtJ12T0sP63Ijx2/khC2JtuaN3JyNIpvmnkmaEtha9ocbG4A4cMcr+TvqvwQg==}
+    engines: {node: '>=0.6'}
+
   query-string@7.1.3:
     resolution: {integrity: sha512-hh2WYhq4fi8+b+/2Kg9CEge4fDPvHS534aOOvOZeQ3+Vf2mCFsaFBYj0i+iXcAq6I9Vzp5fjMFBlONvayDC1qg==}
     engines: {node: '>=6'}
@@ -12437,6 +12444,10 @@ packages:
     peerDependenciesMeta:
       re2:
         optional: true
+
+  url@0.11.4:
+    resolution: {integrity: sha512-oCwdVC7mTuWiPyjLUz/COz5TLk6wgp0RCsN+wHZ2Ekneac9w8uuV0njcbbie2ME+Vs+d6duwmYuR3HgQXs1fOg==}
+    engines: {node: '>= 0.4'}
 
   urlpattern-polyfill@10.0.0:
     resolution: {integrity: sha512-H/A06tKD7sS1O1X2SshBVeA5FLycRpjqiBeqGKmBwBDBy28EnRjORxTNe269KSSr5un5qyWi1iL61wLxpd+ZOg==}
@@ -26574,6 +26585,11 @@ snapshots:
       side-channel: 1.0.6
     dev: false
 
+  qs@6.13.1:
+    dependencies:
+      side-channel: 1.0.6
+    dev: false
+
   query-string@7.1.3:
     dependencies:
       decode-uri-component: 0.2.2
@@ -29037,6 +29053,12 @@ snapshots:
       ip-regex: 4.3.0
       re2: 1.21.4
       tlds: 1.250.0
+    dev: false
+
+  url@0.11.4:
+    dependencies:
+      punycode: 1.4.1
+      qs: 6.13.1
     dev: false
 
   urlpattern-polyfill@10.0.0:
