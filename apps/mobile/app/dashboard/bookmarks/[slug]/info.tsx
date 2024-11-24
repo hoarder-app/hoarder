@@ -1,6 +1,8 @@
 import React from "react";
 import {
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -184,16 +186,21 @@ const ViewBookmarkPage = () => {
           ),
         }}
       />
-      <ScrollView className="h-screen w-full p-4">
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View className="gap-4 px-2">
-            <TitleEditor bookmarkId={bookmark.id} title={title ?? ""} />
-            <TagList bookmark={bookmark} />
-            <ManageLists bookmark={bookmark} />
-            <NotesEditor bookmark={bookmark} />
-          </View>
-        </TouchableWithoutFeedback>
-      </ScrollView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="pb-2"
+      >
+        <ScrollView className="h-screen w-full p-4">
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View className="gap-4 px-2">
+              <TitleEditor bookmarkId={bookmark.id} title={title ?? ""} />
+              <TagList bookmark={bookmark} />
+              <ManageLists bookmark={bookmark} />
+              <NotesEditor bookmark={bookmark} />
+            </View>
+          </TouchableWithoutFeedback>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </CustomSafeAreaView>
   );
 };
