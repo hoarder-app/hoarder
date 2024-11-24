@@ -78,6 +78,7 @@ const ListPickerPage = () => {
       <View className="px-3">
         <SectionList
           className="h-full"
+          keyboardShouldPersistTaps="handled"
           ListHeaderComponent={
             <Input
               placeholder="Search Tags ..."
