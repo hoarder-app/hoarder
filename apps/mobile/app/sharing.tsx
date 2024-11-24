@@ -52,7 +52,7 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
       }
     } else if (!isPending && shareIntent?.files) {
       uploadAsset({
-        type: shareIntent.files[0].type,
+        type: shareIntent.files[0].mimeType,
         name: shareIntent.files[0].fileName ?? "",
         uri: shareIntent.files[0].path,
       });
