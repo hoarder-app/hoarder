@@ -2,11 +2,11 @@ import React from "react";
 import {
   Keyboard,
   Pressable,
+  ScrollView,
   Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import TagPill from "@/components/bookmarks/TagPill";
 import FullPageError from "@/components/FullPageError";

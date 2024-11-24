@@ -33,9 +33,9 @@ export default function RootLayout() {
   }, [settings.theme]);
 
   return (
-    <ShareIntentProvider>
-      <Providers>
-        <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ShareIntentProvider>
+        <Providers>
           <View
             className={cn(
               "w-full flex-1 bg-gray-100 text-foreground dark:bg-background",
@@ -72,8 +72,8 @@ export default function RootLayout() {
             </StyledStack>
             <StatusBar style="auto" />
           </View>
-        </GestureHandlerRootView>
-      </Providers>
-    </ShareIntentProvider>
+        </Providers>
+      </ShareIntentProvider>
+    </GestureHandlerRootView>
   );
 }
