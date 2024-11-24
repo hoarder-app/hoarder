@@ -6,10 +6,12 @@ import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
-import { Check } from "lucide-react-native";
+import { Check, Plus } from "lucide-react-native";
 
 import { useUpdateBookmarkTags } from "@hoarder/shared-react/hooks/bookmarks";
 import { api } from "@hoarder/shared-react/trpc";
+
+const NEW_TAG_ID = "new-tag";
 
 const ListPickerPage = () => {
   const { slug: bookmarkId } = useLocalSearchParams();
@@ -27,27 +29,54 @@ const ListPickerPage = () => {
       showProgress: false,
     });
   };
-  const { data: allTags, isPending: isAllTagsPending } =
-    api.tags.list.useQuery();
+
+  const { data: allTags, isPending: isAllTagsPending } = api.tags.list.useQuery(
+    undefined,
+    {
+      select: React.useCallback(
+        (data: { tags: { id: string; name: string }[] }) => {
+          return data.tags
+            .map((t) => ({
+              id: t.id,
+              name: t.name,
+              lowered: t.name.toLowerCase(),
+            }))
+            .sort((a, b) => a.lowered.localeCompare(b.lowered));
+        },
+        [],
+      ),
+    },
+  );
   const { data: existingTags } = api.bookmarks.getBookmark.useQuery(
     {
       bookmarkId,
     },
     {
-      select: (data) => data.tags.map((t) => ({ id: t.id, name: t.name })),
+      select: React.useCallback(
+        (data: { tags: { id: string; name: string }[] }) =>
+          data.tags.map((t) => ({
+            id: t.id,
+            name: t.name,
+            lowered: t.name.toLowerCase(),
+          })),
+        [],
+      ),
     },
   );
 
   const [optimisticTags, setOptimisticTags] = React.useState(
     existingTags ?? [],
   );
+  React.useEffect(() => {
+    setOptimisticTags(existingTags ?? []);
+  }, [existingTags]);
 
   const { mutate: updateTags } = useUpdateBookmarkTags({
     onMutate: (req) => {
       req.attach.forEach((t) =>
         setOptimisticTags((prev) => [
           ...prev,
-          { id: t.tagId!, name: t.tagName! },
+          { id: t.tagId!, name: t.tagName!, lowered: t.tagName!.toLowerCase() },
         ]),
       );
       req.detach.forEach((t) =>
@@ -62,12 +91,36 @@ const ListPickerPage = () => {
   }, [optimisticTags]);
 
   const filteredTags = useMemo(() => {
-    return allTags?.tags.filter(
+    const loweredSearch = search.toLowerCase();
+    let filteredAllTags = allTags?.filter(
       (t) =>
-        t.name.toLowerCase().startsWith(search.toLowerCase()) &&
+        t.lowered.startsWith(loweredSearch) &&
         !optimisticExistingTagIds.has(t.id),
     );
-  }, [search, allTags, optimisticExistingTagIds]);
+    let addCreateTag = false;
+    if (allTags && search) {
+      const exactMatchExists =
+        allTags.some((t) => t.lowered == loweredSearch) ||
+        optimisticTags.some((t) => t.lowered == loweredSearch);
+      addCreateTag = !exactMatchExists;
+    }
+    if (filteredAllTags && addCreateTag) {
+      filteredAllTags = [
+        {
+          id: NEW_TAG_ID,
+          name: search,
+          lowered: loweredSearch,
+        },
+        ...filteredAllTags,
+      ];
+    }
+
+    const filteredOptimisticTags = optimisticTags.filter((t) =>
+      t.lowered.startsWith(loweredSearch),
+    );
+
+    return { filteredAllTags, filteredOptimisticTags };
+  }, [search, allTags, optimisticTags, optimisticExistingTagIds]);
 
   if (isAllTagsPending) {
     return <FullPageSpinner />;
@@ -94,11 +147,11 @@ const ListPickerPage = () => {
           sections={[
             {
               title: "Existing Tags",
-              data: optimisticTags ?? [],
+              data: filteredTags.filteredOptimisticTags ?? [],
             },
             {
               title: "All Tags",
-              data: filteredTags ?? [],
+              data: filteredTags.filteredAllTags ?? [],
             },
           ]}
           renderItem={(t) => (
@@ -109,11 +162,23 @@ const ListPickerPage = () => {
                   bookmarkId,
                   detach:
                     t.section.title == "Existing Tags"
-                      ? [{ tagId: t.item.id, tagName: t.item.name }]
+                      ? [
+                          {
+                            tagId:
+                              t.item.id == NEW_TAG_ID ? undefined : t.item.id,
+                            tagName: t.item.name,
+                          },
+                        ]
                       : [],
                   attach:
                     t.section.title == "All Tags"
-                      ? [{ tagId: t.item.id, tagName: t.item.name }]
+                      ? [
+                          {
+                            tagId:
+                              t.item.id == NEW_TAG_ID ? undefined : t.item.id,
+                            tagName: t.item.name,
+                          },
+                        ]
                       : [],
                 })
               }
@@ -125,8 +190,16 @@ const ListPickerPage = () => {
                     comp={(s) => <Check color={s?.color} />}
                   />
                 )}
+                {t.section.title == "All Tags" && t.item.id == NEW_TAG_ID && (
+                  <TailwindResolver
+                    className="text-accent-foreground"
+                    comp={(s) => <Plus color={s?.color} />}
+                  />
+                )}
                 <Text className="text-center text-lg text-accent-foreground">
-                  {t.item.name}
+                  {t.item.id == NEW_TAG_ID
+                    ? `Create new tag '${t.item.name}'`
+                    : t.item.name}
                 </Text>
               </View>
             </Pressable>
