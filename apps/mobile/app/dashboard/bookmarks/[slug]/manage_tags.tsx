@@ -8,7 +8,10 @@ import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { Check, Plus } from "lucide-react-native";
 
-import { useUpdateBookmarkTags } from "@hoarder/shared-react/hooks/bookmarks";
+import {
+  useAutoRefreshingBookmarkQuery,
+  useUpdateBookmarkTags,
+} from "@hoarder/shared-react/hooks/bookmarks";
 import { api } from "@hoarder/shared-react/trpc";
 
 const NEW_TAG_ID = "new-tag";
@@ -47,28 +50,21 @@ const ListPickerPage = () => {
       ),
     },
   );
-  const { data: existingTags } = api.bookmarks.getBookmark.useQuery(
-    {
-      bookmarkId,
-    },
-    {
-      select: React.useCallback(
-        (data: { tags: { id: string; name: string }[] }) =>
-          data.tags.map((t) => ({
-            id: t.id,
-            name: t.name,
-            lowered: t.name.toLowerCase(),
-          })),
-        [],
-      ),
-    },
-  );
+  const { data: existingTags } = useAutoRefreshingBookmarkQuery({
+    bookmarkId,
+  });
 
-  const [optimisticTags, setOptimisticTags] = React.useState(
-    existingTags ?? [],
-  );
+  const [optimisticTags, setOptimisticTags] = React.useState<
+    { id: string; name: string; lowered: string }[]
+  >([]);
   React.useEffect(() => {
-    setOptimisticTags(existingTags ?? []);
+    setOptimisticTags(
+      existingTags?.tags.map((t) => ({
+        id: t.id,
+        name: t.name,
+        lowered: t.name.toLowerCase(),
+      })) ?? [],
+    );
   }, [existingTags]);
 
   const { mutate: updateTags } = useUpdateBookmarkTags({
