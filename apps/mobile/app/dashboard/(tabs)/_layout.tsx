@@ -6,8 +6,8 @@ import { ClipboardList, Home, Settings } from "lucide-react-native";
 export default function TabLayout() {
   return (
     <StyledTabs
-      tabBarClassName="bg-gray-100 dark:bg-background pt-3"
-      sceneContainerClassName="bg-gray-100 dark:bg-background"
+      tabBarClassName="bg-gray-100 dark:bg-background"
+      sceneClassName="bg-gray-100 dark:bg-background"
       screenOptions={{
         headerShown: false,
       }}

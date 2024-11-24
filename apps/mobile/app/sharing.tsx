@@ -52,7 +52,7 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
       }
     } else if (!isPending && shareIntent?.files) {
       uploadAsset({
-        type: shareIntent.files[0].type,
+        type: shareIntent.files[0].mimeType,
         name: shareIntent.files[0].fileName ?? "",
         uri: shareIntent.files[0].path,
       });
@@ -96,30 +96,15 @@ export default function Sharing() {
           <Text className="text-4xl text-foreground">
             {mode.type === "alreadyExists" ? "Already Hoarded!" : "Hoarded!"}
           </Text>
-          <View className="flex flex-row gap-2">
-            <Button
-              label="Add to List"
-              onPress={() => {
-                router.push(
-                  `/dashboard/bookmarks/${mode.bookmarkId}/manage_lists`,
-                );
-                if (autoCloseTimeoutId) {
-                  clearTimeout(autoCloseTimeoutId);
-                }
-              }}
-            />
-            <Button
-              label="Manage Tags"
-              onPress={() => {
-                router.push(
-                  `/dashboard/bookmarks/${mode.bookmarkId}/manage_tags`,
-                );
-                if (autoCloseTimeoutId) {
-                  clearTimeout(autoCloseTimeoutId);
-                }
-              }}
-            />
-          </View>
+          <Button
+            label="Manage"
+            onPress={() => {
+              router.replace(`/dashboard/bookmarks/${mode.bookmarkId}/info`);
+              if (autoCloseTimeoutId) {
+                clearTimeout(autoCloseTimeoutId);
+              }
+            }}
+          />
           <Pressable onPress={() => router.replace("dashboard")}>
             <Text className="text-muted-foreground">Dismiss</Text>
           </Pressable>

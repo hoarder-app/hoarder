@@ -2,11 +2,11 @@ import React from "react";
 import {
   Keyboard,
   Pressable,
+  ScrollView,
   Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import TagPill from "@/components/bookmarks/TagPill";
 import FullPageError from "@/components/FullPageError";
@@ -14,10 +14,12 @@ import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { api } from "@/lib/trpc";
 import { ChevronRight } from "lucide-react-native";
 
-import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
+import {
+  useAutoRefreshingBookmarkQuery,
+  useUpdateBookmark,
+} from "@hoarder/shared-react/hooks/bookmarks";
 import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
 import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
@@ -25,32 +27,31 @@ function TagList({ bookmark }: { bookmark: ZBookmark }) {
   return (
     <View className="flex gap-4">
       <Text className="text-lg text-foreground">Tags</Text>
-      {isBookmarkStillTagging(bookmark) ? (
-        <>
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-full" />
-        </>
-      ) : bookmark.tags.length > 0 ? (
-        <View className="flex flex-col gap-2">
+      <View className="flex gap-2">
+        {isBookmarkStillTagging(bookmark) ? (
+          <View className="flex gap-4 pb-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-full" />
+          </View>
+        ) : bookmark.tags.length > 0 ? (
           <View className="flex flex-row flex-wrap gap-2 rounded-lg bg-background p-4">
             {bookmark.tags.map((t) => (
               <TagPill key={t.id} tag={t} />
             ))}
           </View>
-
-          <Pressable
-            onPress={() =>
-              router.push(`/dashboard/bookmarks/${bookmark.id}/manage_tags`)
-            }
-            className="flex w-full flex-row justify-between gap-3 rounded-lg bg-white px-4 py-2 dark:bg-accent"
-          >
-            <Text className="text-lg text-accent-foreground">Manage Tags</Text>
-            <ChevronRight color="rgb(0, 122, 255)" />
-          </Pressable>
-        </View>
-      ) : (
-        <Text className="text-foreground">No tags</Text>
-      )}
+        ) : (
+          <Text className="text-foreground">No tags</Text>
+        )}
+        <Pressable
+          onPress={() =>
+            router.push(`/dashboard/bookmarks/${bookmark.id}/manage_tags`)
+          }
+          className="flex w-full flex-row justify-between gap-3 rounded-lg bg-white px-4 py-2 dark:bg-accent"
+        >
+          <Text className="text-lg text-accent-foreground">Manage Tags</Text>
+          <ChevronRight color="rgb(0, 122, 255)" />
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -133,11 +134,12 @@ const ViewBookmarkPage = () => {
   if (typeof slug !== "string") {
     throw new Error("Unexpected param type");
   }
+
   const {
     data: bookmark,
     isPending,
     refetch,
-  } = api.bookmarks.getBookmark.useQuery({ bookmarkId: slug });
+  } = useAutoRefreshingBookmarkQuery({ bookmarkId: slug });
 
   if (isPending) {
     return <FullPageSpinner />;
@@ -167,6 +169,19 @@ const ViewBookmarkPage = () => {
         options={{
           headerShown: true,
           headerTitle: title ?? "Untitled",
+          headerRight: () => (
+            <Pressable
+              onPress={() => {
+                if (router.canGoBack()) {
+                  router.back();
+                } else {
+                  router.replace("dashboard");
+                }
+              }}
+            >
+              <Text className="text-foreground">Done</Text>
+            </Pressable>
+          ),
         }}
       />
       <ScrollView className="h-screen w-full p-4">
