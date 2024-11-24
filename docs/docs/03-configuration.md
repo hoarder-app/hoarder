@@ -60,6 +60,11 @@ Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic taggin
 | INFERENCE_LANG            | No       | english     | The language in which the tags will be generated.                                                                                                                                                                                                                                                                                                                                     |
 | INFERENCE_JOB_TIMEOUT_SEC | No       | 30          | How long to wait for the inference job to finish before timing out. If you're running ollama without powerful GPUs, you might want to increase the timeout a bit.                                                                                                                                                                                                                     |
 
+:::info
+- You can append additional instructions to the prompt used for automatic tagging, in the `AI Settings` (in the `User Settings` screen)
+- You can use the placeholders `$tags`, `$aiTags`, `$userTags` in the prompt. These placeholders will be replaced with all tags, ai generated tags or human created tags when automatic tagging is performed (e.g. `[hoarder, computer, ai]`)
+:::
+
 ## Crawler Configs
 
 | Name                               | Required | Default | Description                                                                                                                                                                                                                                                                                                                                                                        |
