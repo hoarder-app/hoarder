@@ -1,5 +1,6 @@
 import { and, Column, eq, inArray, sql } from "drizzle-orm";
 import { DequeuedJob, Runner } from "liteque";
+import { buildImpersonatingTRPCClient } from "trpc";
 import { z } from "zod";
 
 import type { InferenceClient } from "@hoarder/shared/inference";
@@ -200,64 +201,36 @@ async function fetchCustomPrompts(
     },
   });
 
+  let promptTexts = prompts.map((p) => p.text);
   if (containsTagsPlaceholder(prompts)) {
-    return replaceTagsPlaceholders(prompts, userId);
+    promptTexts = await replaceTagsPlaceholders(promptTexts, userId);
   }
 
-  return prompts.map((p) => p.text);
+  return promptTexts;
 }
 
 async function replaceTagsPlaceholders(
-  prompts: { text: string }[],
+  prompts: string[],
   userId: string,
 ): Promise<string[]> {
-  const tags = await loadTagsForUser(userId);
+  const api = await buildImpersonatingTRPCClient(userId);
+  const tags = (await api.tags.list()).tags;
   const tagsString = `[${tags.map((tag) => tag.name).join(",")}]`;
   const aiTagsString = `[${tags
-    .filter((tag) => tag.aiCount > 0)
+    .filter((tag) => tag.numBookmarksByAttachedType.human ?? 0 == 0)
     .map((tag) => tag.name)
     .join(",")}]`;
   const userTagsString = `[${tags
-    .filter((tag) => tag.humanCount > 0)
+    .filter((tag) => tag.numBookmarksByAttachedType.human ?? 0 > 0)
     .map((tag) => tag.name)
     .join(",")}]`;
 
   return prompts.map((p) =>
-    p.text
+    p
       .replaceAll("$tags", tagsString)
       .replaceAll("$aiTags", aiTagsString)
       .replaceAll("$userTags", userTagsString),
   );
-}
-
-async function loadTagsForUser(userId: string) {
-  const tagsWithCounts = await db.query.bookmarkTags.findMany({
-    where: eq(bookmarkTags.userId, userId),
-    columns: {
-      name: true,
-    },
-    with: {
-      tagsOnBookmarks: {
-        columns: {
-          attachedBy: true,
-        },
-      },
-    },
-  });
-
-  return tagsWithCounts.map((tag) => {
-    const aiCount = tag.tagsOnBookmarks.filter(
-      (tob) => tob.attachedBy === "ai",
-    ).length;
-    const humanCount = tag.tagsOnBookmarks.filter(
-      (tob) => tob.attachedBy === "human",
-    ).length;
-    return {
-      name: tag.name,
-      aiCount,
-      humanCount,
-    };
-  });
 }
 
 function containsTagsPlaceholder(prompts: { text: string }[]): boolean {
