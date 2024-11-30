@@ -1,4 +1,3 @@
-import assert from "assert";
 import * as dns from "dns";
 import { promises as fs } from "fs";
 import * as path from "node:path";
@@ -104,11 +103,8 @@ async function startBrowserInstance() {
       defaultViewport,
     });
   } else {
-    logger.info(`Launching a new browser instance`);
-    return puppeteer.launch({
-      headless: serverConfig.crawler.headlessBrowser,
-      defaultViewport,
-    });
+    logger.info(`Running in browserless mode`);
+    return undefined;
   }
 }
 
@@ -130,7 +126,7 @@ async function launchBrowser() {
       }, 5000);
       return;
     }
-    globalBrowser.on("disconnected", () => {
+    globalBrowser?.on("disconnected", () => {
       if (isShuttingDown) {
         logger.info(
           "[Crawler] The puppeteer browser got disconnected. But we're shutting down so won't restart it.",
@@ -238,15 +234,43 @@ function validateUrl(url: string) {
   }
 }
 
-async function crawlPage(jobId: string, url: string) {
-  let browser: Browser;
+async function browserlessCrawlPage(jobId: string, url: string) {
+  logger.info(
+    `[Crawler][${jobId}] Running in browserless mode. Will do a plain http request to "${url}". Screenshots will be disabled.`,
+  );
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(5000),
+  });
+  if (!response.ok) {
+    throw new Error(`Failed to crawl page: ${response.status}`);
+  }
+  logger.info(
+    `[Crawler][${jobId}] Successfully fetched the content of "${url}". Status: ${response.status}, Size: ${response.size}`,
+  );
+  return {
+    htmlContent: await response.text(),
+    screenshot: undefined,
+    url: response.url,
+  };
+}
+
+async function crawlPage(
+  jobId: string,
+  url: string,
+): Promise<{
+  htmlContent: string;
+  screenshot: Buffer | undefined;
+  url: string;
+}> {
+  let browser: Browser | undefined;
   if (serverConfig.crawler.browserConnectOnDemand) {
     browser = await startBrowserInstance();
   } else {
-    assert(globalBrowser);
     browser = globalBrowser;
   }
-  assert(browser);
+  if (!browser) {
+    return browserlessCrawlPage(jobId, url);
+  }
   const context = await browser.createBrowserContext();
 
   try {
