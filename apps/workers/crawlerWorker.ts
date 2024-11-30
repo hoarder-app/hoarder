@@ -241,14 +241,12 @@ async function browserlessCrawlPage(jobId: string, url: string) {
   const response = await fetch(url, {
     signal: AbortSignal.timeout(5000),
   });
-  if (!response.ok) {
-    throw new Error(`Failed to crawl page: ${response.status}`);
-  }
   logger.info(
     `[Crawler][${jobId}] Successfully fetched the content of "${url}". Status: ${response.status}, Size: ${response.size}`,
   );
   return {
     htmlContent: await response.text(),
+    statusCode: response.status,
     screenshot: undefined,
     url: response.url,
   };
@@ -260,6 +258,7 @@ async function crawlPage(
 ): Promise<{
   htmlContent: string;
   screenshot: Buffer | undefined;
+  statusCode: number;
   url: string;
 }> {
   let browser: Browser | undefined;
@@ -282,7 +281,7 @@ async function crawlPage(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     );
 
-    await page.goto(url, {
+    const response = await page.goto(url, {
       timeout: serverConfig.crawler.navigateTimeoutSec * 1000,
     });
     logger.info(
@@ -328,6 +327,7 @@ async function crawlPage(
 
     return {
       htmlContent,
+      statusCode: response?.status() ?? 0,
       screenshot,
       url: page.url(),
     };
@@ -583,6 +583,7 @@ async function crawlAndParseUrl(
   const {
     htmlContent,
     screenshot,
+    statusCode,
     url: browserUrl,
   } = await crawlPage(jobId, url);
 
@@ -618,6 +619,7 @@ async function crawlAndParseUrl(
         content: readableContent?.textContent,
         htmlContent: readableContent?.content,
         crawledAt: new Date(),
+        crawlStatusCode: statusCode,
       })
       .where(eq(bookmarkLinks.id, bookmarkId));
 

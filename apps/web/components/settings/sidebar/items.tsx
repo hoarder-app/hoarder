@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   Download,
   KeyRound,
+  Link,
   Rss,
   Sparkles,
   User,
@@ -45,5 +46,10 @@ export const settingsSidebarItems = (
     name: t("settings.api_keys.api_keys"),
     icon: <KeyRound size={18} />,
     path: "/settings/api-keys",
+  },
+  {
+    name: t("settings.broken_links.broken_links"),
+    icon: <Link size={18} />,
+    path: "/settings/broken-links",
   },
 ];

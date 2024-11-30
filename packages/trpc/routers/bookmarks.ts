@@ -1,5 +1,5 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, desc, eq, exists, inArray, lt, lte, or } from "drizzle-orm";
+import { and, desc, eq, exists, gt, inArray, lt, lte, or } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -487,7 +487,14 @@ export const bookmarksAppRouter = router({
       }),
     )
     .use(ensureBookmarkOwnership)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await ctx.db
+        .update(bookmarkLinks)
+        .set({
+          crawlStatus: "pending",
+          crawlStatusCode: null,
+        })
+        .where(eq(bookmarkLinks.id, input.bookmarkId));
       await LinkCrawlerQueue.enqueue({
         bookmarkId: input.bookmarkId,
         archiveFullPage: input.archiveFullPage,
@@ -994,6 +1001,54 @@ export const bookmarksAppRouter = router({
       await deleteAsset({ userId: ctx.user.id, assetId: input.assetId }).catch(
         () => ({}),
       );
+    }),
+  getBrokenLinks: authedProcedure
+    .output(
+      z.object({
+        bookmarks: z.array(
+          z.object({
+            id: z.string(),
+            url: z.string(),
+            statusCode: z.number().nullable(),
+            isCrawlingFailure: z.boolean(),
+            crawledAt: z.date().nullable(),
+            createdAt: z.date().nullable(),
+          }),
+        ),
+      }),
+    )
+    .query(async ({ ctx }) => {
+      const brokenLinkBookmarks = await ctx.db
+        .select({
+          id: bookmarkLinks.id,
+          url: bookmarkLinks.url,
+          crawlStatusCode: bookmarkLinks.crawlStatusCode,
+          crawlingStatus: bookmarkLinks.crawlStatus,
+          crawledAt: bookmarkLinks.crawledAt,
+          createdAt: bookmarks.createdAt,
+        })
+        .from(bookmarkLinks)
+        .leftJoin(bookmarks, eq(bookmarks.id, bookmarkLinks.id))
+        .where(
+          and(
+            eq(bookmarks.userId, ctx.user.id),
+            or(
+              eq(bookmarkLinks.crawlStatus, "failure"),
+              lt(bookmarkLinks.crawlStatusCode, 200),
+              gt(bookmarkLinks.crawlStatusCode, 299),
+            ),
+          ),
+        );
+      return {
+        bookmarks: brokenLinkBookmarks.map((b) => ({
+          id: b.id,
+          url: b.url,
+          statusCode: b.crawlStatusCode,
+          isCrawlingFailure: b.crawlingStatus === "failure",
+          crawledAt: b.crawledAt,
+          createdAt: b.createdAt,
+        })),
+      };
     }),
   summarizeBookmark: authedProcedure
     .input(

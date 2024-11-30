@@ -38,6 +38,7 @@
     "unfavorite": "Unfavorite",
     "delete": "Delete",
     "refresh": "Refresh",
+    "recrawl": "Recrawl",
     "download_full_page_archive": "Download Full Page Archive",
     "edit_tags": "Edit Tags",
     "add_to_list": "Add to List",
@@ -103,6 +104,12 @@
       "new_api_key_desc": "Give your API key a unique name",
       "key_success": "Key was successfully created",
       "key_success_please_copy": "Please copy the key and store it somewhere safe. Once you close the dialog, you won't be able to access it again."
+    },
+    "broken_links": {
+      "broken_links": "Broken Links",
+      "last_crawled_at": "Last Crawled At",
+      "crawling_status": "Crawling Status",
+      "crawling_failed": "Crawling Failed"
     }
   },
   "admin": {
