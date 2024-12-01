@@ -22,28 +22,28 @@ function install {
     sudo \
     unzip \
     gnupg \
-    ca-certificates &>/dev/null
+    ca-certificates
   if [[ "$OS" == "noble" ]]; then
-    apt-get install -y software-properties-common &>/dev/null
-    add-apt-repository ppa:xtradeb/apps -y &>/dev/null
-    apt-get install --no-install-recommends -y ungoogled-chromium yt-dlp &>/dev/null
+    apt-get install -y software-properties-common
+    add-apt-repository ppa:xtradeb/apps -y
+    apt-get install --no-install-recommends -y ungoogled-chromium yt-dlp
     ln -s /usr/bin/ungoogled-chromium /usr/bin/chromium
   else
-    apt-get install --no-install-recommends -y chromium &>/dev/null
+    apt-get install --no-install-recommends -y chromium
     wget -q https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux -O /usr/bin/yt-dlp && chmod +x /usr/bin/yt-dlp
   fi
 
   wget -q https://github.com/Y2Z/monolith/releases/latest/download/monolith-gnu-linux-x86_64 -O /usr/bin/monolith && chmod +x /usr/bin/monolith
   wget -q https://github.com/meilisearch/meilisearch/releases/latest/download/meilisearch.deb && \
-    DEBIAN_FRONTEND=noninteractive dpkg -i meilisearch.deb &>/dev/null && rm meilisearch.deb
+    DEBIAN_FRONTEND=noninteractive dpkg -i meilisearch.deb  && rm meilisearch.deb
   echo "Installed Dependencies" && sleep 1
 
   echo "Installing Node.js..."
   mkdir -p /etc/apt/keyrings
   curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
   echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" >/etc/apt/sources.list.d/nodesource.list
-  apt-get update &>/dev/null
-  apt-get install -y nodejs &>/dev/null 
+  apt-get update
+  apt-get install -y nodejs
   echo "Installed Node.js" && sleep 1
 
   echo "Installing Hoarder..."
@@ -60,16 +60,15 @@ function install {
   export NEXT_TELEMETRY_DISABLED=1
   export PUPPETEER_SKIP_DOWNLOAD="true"
   export CI="true"
-  pnpm i --frozen-lockfile &>/dev/null
-  pnpm exec next build --experimental-build-mode compile &>/dev/null
-  mv .next/standalone/apps/web/server.js .
+  pnpm i --frozen-lockfile
+  pnpm exec next build --experimental-build-mode compile
   cd ${INSTALL_DIR}/apps/workers
-  pnpm i --frozen-lockfile &>/dev/null
+  pnpm i --frozen-lockfile
   cd ${INSTALL_DIR}/apps/cli
-  pnpm i --frozen-lockfile &>/dev/null
-  pnpm build &>/dev/null
+  pnpm i --frozen-lockfile
+  pnpm build
   cd ${INSTALL_DIR}/packages/db
-  pnpm migrate &>/dev/null
+  pnpm migrate
   echo "Installed Hoarder" && sleep 1
 
   echo "Creating configuration files..."
@@ -87,6 +86,7 @@ EOF
 
   HOARDER_SECRET="$(openssl rand -base64 36 | cut -c1-24)"
   cat <<EOF >${ENV_FILE}
+NODE_ENV=production
 SERVER_VERSION=${RELEASE}
 NEXTAUTH_SECRET="${HOARDER_SECRET}"
 NEXTAUTH_URL="http://localhost:3000"
@@ -94,21 +94,22 @@ DATA_DIR=${DATA_DIR}
 MEILI_ADDR="http://127.0.0.1:7700"
 MEILI_MASTER_KEY="${MASTER_KEY}"
 BROWSER_WEB_URL="http://127.0.0.1:9222"
-CRAWLER_VIDEO_DOWNLOAD=true
-#CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE=
-#OLLAMA_BASE_URL=
-#INFERENCE_TEXT_MODEL=
-#INFERENCE_IMAGE_MODEL=
+# CRAWLER_VIDEO_DOWNLOAD=true
+# CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE=
+# OPENAI_API_KEY=
+# OLLAMA_BASE_URL=
+# INFERENCE_TEXT_MODEL=
+# INFERENCE_IMAGE_MODEL=
 EOF
   chmod 600 $ENV_FILE
   echo ${RELEASE} > ${INSTALL_DIR}/version.txt
   echo "Configuration complete" && sleep 1
 
   echo "Creating users and modifying permissions..."
-  useradd -U -s /usr/sbin/nologin -r -m -d ${M_DATA_DIR} meilisearch
-  useradd -U -s /usr/sbin/nologin -r -M -d ${INSTALL_DIR} hoarder
-  chown meilisearch:meilisearch ${M_CONFIG_FILE}
-  chown -R hoarder:hoarder ${INSTALL_DIR} ${CONFIG_DIR} ${DATA_DIR}
+  useradd -U -s /usr/sbin/nologin -r -m -d "${M_DATA_DIR}" meilisearch
+  useradd -U -s /usr/sbin/nologin -r -M -d "${INSTALL_DIR}" hoarder
+  chown meilisearch:meilisearch "${M_CONFIG_FILE}"
+  chown -R hoarder:hoarder "${INSTALL_DIR}" "${CONFIG_DIR}" "${DATA_DIR}"
   echo "Users created, permissions modified" && sleep 1
 
   echo "Creating service files..."
@@ -220,8 +221,8 @@ EOF
 
   echo "Cleaning up" && sleep 1
   rm /tmp/v${RELEASE}.zip
-  apt -y autoremove &>/dev/null
-  apt -y autoclean &>/dev/null
+  apt -y autoremove
+  apt -y autoclean
   echo "Cleaned" && sleep 1
 
   echo "OK, Hoarder should be accessible on port 3000 of this device's IP address!" && sleep 4
@@ -245,12 +246,12 @@ function update {
     wget -q "https://github.com/hoarder-app/hoarder/archive/refs/tags/v${RELEASE}.zip"
     unzip -q v${RELEASE}.zip
     mv hoarder-${RELEASE} ${INSTALL_DIR}
-    cd ${INSTALL_DIR}/apps/web && pnpm i --frozen-lockfile &>/dev/null
-    pnpm exec next build --experimental-build-mode compile &>/dev/null
-    cd ${INSTALL_DIR}/apps/workers && pnpm i --frozen-lockfile &>/dev/null
-    cd ${INSTALL_DIR}/apps/cli && pnpm i --frozen-lockfile &>/dev/null
-    pnpm build &>/dev/null
-    cd ${INSTALL_DIR}/packages/db && pnpm migrate &>/dev/null
+    cd ${INSTALL_DIR}/apps/web && pnpm i --frozen-lockfile
+    pnpm exec next build --experimental-build-mode compile
+    cd ${INSTALL_DIR}/apps/workers && pnpm i --frozen-lockfile
+    cd ${INSTALL_DIR}/apps/cli && pnpm i --frozen-lockfile
+    pnpm build
+    cd ${INSTALL_DIR}/packages/db && pnpm migrate
     echo "${RELEASE}" >${INSTALL_DIR}/version.txt
     chown -R hoarder:hoarder ${INSTALL_DIR} ${DATA_DIR}
     echo "Updated Hoarder to v${RELEASE}" && sleep 1
@@ -263,7 +264,7 @@ function update {
   fi
   exit 0
 }
-  
+
 [ "$(id -u)" -ne 0 ] && echo "This script requires root privileges. Please run with sudo or as the root user." && exit 1
 if [[ "$1" == "install" ]]; then
     install
