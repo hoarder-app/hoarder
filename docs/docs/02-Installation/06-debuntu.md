@@ -19,23 +19,17 @@ The script functions as an update script in addition to an installer. See **[Upd
 wget https://raw.githubusercontent.com/hoarder-app/hoarder/main/hoarder-linux.sh
 ```
 
-### 2. Make the script executable
-
-    ```shell
-    chmod +x ./hoarder-linux.sh
-    ```
-
-### 3. Run the script
+### 2. Run the script
 
 > This script must be run as `root`, or as a user with `sudo` privileges.
 
     If this is a fresh install, then run the installer by using the following command:
 
     ```shell
-    ./hoarder-linux.sh install
+    bash hoarder-linux.sh install
     ```
 
-### 4. Create an account/sign in!
+### 3. Create an account/sign in!
 
     Then visit `http://localhost:3000` and you should be greated with the Sign In page.
 
@@ -46,7 +40,7 @@ wget https://raw.githubusercontent.com/hoarder-app/hoarder/main/hoarder-linux.sh
     If Hoarder has previously been installed using this script, then run the updater like so:
 
     ```shell
-    ./hoarder-linux.sh update
+     bash hoarder-linux.sh update
     ```
 
 ## Services and Ports
