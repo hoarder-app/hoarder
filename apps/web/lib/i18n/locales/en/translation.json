@@ -180,7 +180,20 @@
     "import_as_separate_bookmarks": "Import as separate Bookmarks",
     "placeholder": "Paste a link or an image, write a note or drag and drop an image in here ...",
     "new_item": "NEW ITEM",
-    "disabled_submissions": "Submissions are disabled"
+    "disabled_submissions": "Submissions are disabled",
+    "text_toolbar": {
+      "undo": "Undo",
+      "redo": "Redo",
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strikethrough": "Strikethrough",
+      "code": "Code",
+      "highlight": "Highlight",
+      "align_left": "Left Align",
+      "align_center": "Center Align",
+      "align_right": "Right Align"
+    }
   },
   "toasts": {
     "bookmarks": {

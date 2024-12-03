@@ -1,61 +1,62 @@
-import React from "react";
-import CopyBtn from "@/components/ui/copy-button";
-import { cn } from "@/lib/utils";
-import Markdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { dracula } from "react-syntax-highlighter/dist/cjs/styles/prism";
-import remarkBreaks from "remark-breaks";
-import remarkGfm from "remark-gfm";
+import React, { useState } from "react";
+import { ActionButton } from "@/components/ui/action-button";
+import MarkdownEditor from "@/components/ui/markdown/markdown-editor";
+import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 
-function PreWithCopyBtn({ className, ...props }: React.ComponentProps<"pre">) {
-  const ref = React.useRef<HTMLPreElement>(null);
-  return (
-    <span className="group relative">
-      <CopyBtn
-        className="absolute right-1 top-1 m-1 hidden text-white group-hover:block"
-        getStringToCopy={() => {
-          return ref.current?.textContent ?? "";
-        }}
-      />
-      <pre ref={ref} className={cn(className, "")} {...props} />
-    </span>
-  );
-}
+import type { ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
+import { useUpdateBookmarkText } from "@hoarder/shared-react/hooks/bookmarks";
 
 export function MarkdownComponent({
-  children: markdown,
+  children: bookmark,
+  readOnly = true,
 }: {
-  children: string;
+  children: ZBookmarkTypeText;
+  readOnly?: boolean;
 }) {
+  const { t } = useTranslation();
+
+  const [noteText, setNoteText] = useState(bookmark.content.text);
+
+  const { mutate: updateBookmarkMutator, isPending } = useUpdateBookmarkText({
+    onSuccess: () => {
+      toast({
+        description: "Note updated!",
+      });
+    },
+    onError: () => {
+      toast({ description: "Something went wrong", variant: "destructive" });
+    },
+  });
+
+  const onSave = () => {
+    updateBookmarkMutator({
+      bookmarkId: bookmark.id,
+      text: noteText,
+    });
+  };
   return (
-    <Markdown
-      remarkPlugins={[remarkGfm, remarkBreaks]}
-      className="prose dark:prose-invert"
-      components={{
-        pre({ ...props }) {
-          return <PreWithCopyBtn {...props} />;
-        },
-        code({ className, children, ...props }) {
-          const match = /language-(\w+)/.exec(className ?? "");
-          return match ? (
-            // @ts-expect-error -- Refs are not compatible for some reason
-            <SyntaxHighlighter
-              PreTag="div"
-              language={match[1]}
-              {...props}
-              style={dracula}
-            >
-              {String(children).replace(/\n$/, "")}
-            </SyntaxHighlighter>
-          ) : (
-            <code className={className} {...props}>
-              {children}
-            </code>
-          );
-        },
-      }}
-    >
-      {markdown}
-    </Markdown>
+    <>
+      <MarkdownEditor
+        readonly={readOnly}
+        onChangeMarkdown={(value: string) => {
+          setNoteText(value);
+        }}
+      >
+        {bookmark.content.text}
+      </MarkdownEditor>
+      {!readOnly && (
+        <div className="absolute bottom-2 right-2">
+          <ActionButton
+            type="button"
+            loading={isPending}
+            onClick={onSave}
+            disabled={isPending}
+          >
+            {t("actions.save")}
+          </ActionButton>
+        </div>
+      )}
+    </>
   );
 }
