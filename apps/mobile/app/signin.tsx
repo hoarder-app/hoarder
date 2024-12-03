@@ -121,7 +121,7 @@ export default function Signin() {
                   placeholder="Email"
                   keyboardType="email-address"
                   autoCapitalize="none"
-                  value={usernameFormData.email}
+                  value={usernameFormData.email.trim()}
                   onChangeText={(e) =>
                     setUserNameFormData((s) => ({ ...s, email: e }))
                   }
