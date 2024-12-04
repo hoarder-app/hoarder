@@ -37,12 +37,14 @@ function LinkImage({
       unoptimized={unoptimized}
       className={className}
       alt="card banner"
-      fill={true}
+      fill
+      // below 640px only 1 bookmark, until 768px 1 bookmark + sidebar, until 1024px 2 bookmarks + sidebar, after that 3 bookmarks + sidebar
+      sizes="(max-width: 640px) 100vw, (max-width: 768px) 60vw, (max-width: 1024px) 40vw, 25vw"
       src={url}
     />
   );
 
-  const imageDetails = getBookmarkLinkImageUrl(link);
+  const imageDetails = getBookmarkLinkImageUrl(link, true);
 
   let img: React.ReactNode;
   if (isBookmarkStillCrawling(bookmark)) {
