@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo, useCallback, useMemo } from "react";
 import ToolbarPlugin from "@/components/ui/markdown/plugins/toolbar-plugin";
 import { UpdateMarkdownPlugin } from "@/components/ui/markdown/plugins/update-markdown-editor-plugin";
 import { MarkdownEditorTheme } from "@/components/ui/markdown/theme/theme";
@@ -44,61 +44,71 @@ interface MarkdownEditorProps {
   readonly?: boolean;
 }
 
-const MarkdownEditor = ({
-  children: initialMarkdown,
-  onChangeMarkdown,
-  readonly = false,
-}: MarkdownEditorProps) => {
-  const initialConfig: InitialConfigType = {
-    namespace: "editor",
-    onError,
-    editable: !readonly,
-    theme: MarkdownEditorTheme,
-    nodes: EDITOR_NODES,
-    editorState: () =>
-      $convertFromMarkdownString(initialMarkdown, TRANSFORMERS),
-  };
+const MarkdownEditor = memo(
+  ({
+    children: initialMarkdown,
+    onChangeMarkdown,
+    readonly = false,
+  }: MarkdownEditorProps) => {
+    const initialConfig: InitialConfigType = useMemo(
+      () => ({
+        namespace: "editor",
+        onError,
+        editable: !readonly,
+        theme: MarkdownEditorTheme,
+        nodes: EDITOR_NODES,
+        editorState: () =>
+          $convertFromMarkdownString(initialMarkdown, TRANSFORMERS),
+      }),
+      [readonly, initialMarkdown],
+    );
 
-  return (
-    <LexicalComposer initialConfig={initialConfig}>
-      {readonly ? (
-        <PlainTextPlugin
-          contentEditable={
-            <ContentEditable className="h-full w-full content-center" />
-          }
-          ErrorBoundary={LexicalErrorBoundary}
-        ></PlainTextPlugin>
-      ) : (
-        <>
-          <div className="flex h-full flex-col justify-stretch">
-            <ToolbarPlugin></ToolbarPlugin>
-            <RichTextPlugin
-              contentEditable={
-                <ContentEditable className="h-full overflow-auto" />
-              }
-              ErrorBoundary={LexicalErrorBoundary}
-            />
-          </div>
-        </>
-      )}
-      {!readonly && (
-        <>
-          <HistoryPlugin />
-          <AutoFocusPlugin />
-          <TabIndentationPlugin />
-          <OnChangePlugin
-            onChange={(editorState: EditorState) => {
-              editorState.read(() => {
-                const markdownString = $convertToMarkdownString();
-                if (onChangeMarkdown) onChangeMarkdown(markdownString);
-              });
-            }}
-          />
-        </>
-      )}
-      <UpdateMarkdownPlugin markdown={initialMarkdown} />
-    </LexicalComposer>
-  );
-};
+    const handleOnChange = useCallback(
+      (editorState: EditorState) => {
+        editorState.read(() => {
+          const markdownString = $convertToMarkdownString();
+          if (onChangeMarkdown) onChangeMarkdown(markdownString);
+        });
+      },
+      [onChangeMarkdown],
+    );
+
+    return (
+      <LexicalComposer initialConfig={initialConfig}>
+        {readonly ? (
+          <PlainTextPlugin
+            contentEditable={
+              <ContentEditable className="h-full w-full content-center" />
+            }
+            ErrorBoundary={LexicalErrorBoundary}
+          ></PlainTextPlugin>
+        ) : (
+          <>
+            <div className="flex h-full flex-col justify-stretch">
+              <ToolbarPlugin></ToolbarPlugin>
+              <RichTextPlugin
+                contentEditable={
+                  <ContentEditable className="h-full overflow-auto" />
+                }
+                ErrorBoundary={LexicalErrorBoundary}
+              />
+            </div>
+          </>
+        )}
+        {!readonly && (
+          <>
+            <HistoryPlugin />
+            <AutoFocusPlugin />
+            <TabIndentationPlugin />
+            <OnChangePlugin onChange={handleOnChange} />
+          </>
+        )}
+        <UpdateMarkdownPlugin markdown={initialMarkdown} />
+      </LexicalComposer>
+    );
+  },
+);
+// needed for linter because of memo
+MarkdownEditor.displayName = "MarkdownEditor";
 
 export default MarkdownEditor;

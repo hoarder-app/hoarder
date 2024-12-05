@@ -37,12 +37,7 @@ export function MarkdownComponent({
   };
   return (
     <>
-      <MarkdownEditor
-        readonly={readOnly}
-        onChangeMarkdown={(value: string) => {
-          setNoteText(value);
-        }}
-      >
+      <MarkdownEditor readonly={readOnly} onChangeMarkdown={setNoteText}>
         {bookmark.content.text}
       </MarkdownEditor>
       {!readOnly && (
