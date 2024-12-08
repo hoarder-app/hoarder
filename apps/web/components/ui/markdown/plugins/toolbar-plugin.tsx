@@ -18,7 +18,6 @@ import {
   Italic,
   LucideIcon,
   Strikethrough,
-  Underline,
 } from "lucide-react";
 
 const LowPriority = 1;
@@ -30,14 +29,12 @@ export default function ToolbarPlugin() {
   const [editorToolbarState, setEditorToolbarState] = useState<{
     isBold: boolean;
     isItalic: boolean;
-    isUnderline: boolean;
     isStrikethrough: boolean;
     isHighlight: boolean;
     isCode: boolean;
   }>({
     isBold: false,
     isItalic: false,
-    isUnderline: false,
     isStrikethrough: false,
     isHighlight: false,
     isCode: false,
@@ -49,7 +46,6 @@ export default function ToolbarPlugin() {
       setEditorToolbarState({
         isBold: selection.hasFormat("bold"),
         isItalic: selection.hasFormat("italic"),
-        isUnderline: selection.hasFormat("underline"),
         isStrikethrough: selection.hasFormat("strikethrough"),
         isHighlight: selection.hasFormat("highlight"),
         isCode: selection.hasFormat("code"),
@@ -95,13 +91,6 @@ export default function ToolbarPlugin() {
       icon: Italic,
       isActive: editorToolbarState.isItalic,
       label: t("editor.text_toolbar.italic"),
-    },
-    {
-      command: FORMAT_TEXT_COMMAND,
-      format: "underline",
-      icon: Underline,
-      isActive: editorToolbarState.isUnderline,
-      label: t("editor.text_toolbar.underline"),
     },
     {
       command: FORMAT_TEXT_COMMAND,
