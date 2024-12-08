@@ -1,15 +1,11 @@
-import React, { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo } from "react";
 import ToolbarPlugin from "@/components/ui/markdown/plugins/toolbar-plugin";
 import { UpdateMarkdownPlugin } from "@/components/ui/markdown/plugins/update-markdown-editor-plugin";
 import { MarkdownEditorTheme } from "@/components/ui/markdown/theme/theme";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
-import {
-  $convertFromMarkdownString,
-  $convertToMarkdownString,
-  TRANSFORMERS,
-} from "@lexical/markdown";
+import { $convertToMarkdownString, TRANSFORMERS } from "@lexical/markdown";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import {
   InitialConfigType,
@@ -18,6 +14,8 @@ import {
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
+import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
+import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
 import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
@@ -36,6 +34,7 @@ const EDITOR_NODES = [
   QuoteNode,
   LinkNode,
   CodeNode,
+  HorizontalRuleNode,
 ];
 
 interface MarkdownEditorProps {
@@ -57,10 +56,8 @@ const MarkdownEditor = memo(
         editable: !readonly,
         theme: MarkdownEditorTheme,
         nodes: EDITOR_NODES,
-        editorState: () =>
-          $convertFromMarkdownString(initialMarkdown, TRANSFORMERS),
       }),
-      [readonly, initialMarkdown],
+      [readonly],
     );
 
     const handleOnChange = useCallback(
@@ -88,7 +85,7 @@ const MarkdownEditor = memo(
               <ToolbarPlugin></ToolbarPlugin>
               <RichTextPlugin
                 contentEditable={
-                  <ContentEditable className="h-full overflow-auto" />
+                  <ContentEditable className="overflow-autop h-full p-2" />
                 }
                 ErrorBoundary={LexicalErrorBoundary}
               />
@@ -100,6 +97,7 @@ const MarkdownEditor = memo(
             <HistoryPlugin />
             <AutoFocusPlugin />
             <TabIndentationPlugin />
+            <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
             <OnChangePlugin onChange={handleOnChange} />
           </>
         )}
