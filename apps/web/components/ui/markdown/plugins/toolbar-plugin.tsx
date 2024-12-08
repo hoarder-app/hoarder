@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n/client";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
@@ -26,19 +26,34 @@ const LowPriority = 1;
 export default function ToolbarPlugin() {
   const { t } = useTranslation();
   const [editor] = useLexicalComposerContext();
-  const toolbarRef = useRef(null);
-  const [isBold, setIsBold] = useState(false);
-  const [isItalic, setIsItalic] = useState(false);
-  const [isUnderline, setIsUnderline] = useState(false);
-  const [isStrikethrough, setIsStrikethrough] = useState(false);
+
+  const [editorToolbarState, setEditorToolbarState] = useState<{
+    isBold: boolean;
+    isItalic: boolean;
+    isUnderline: boolean;
+    isStrikethrough: boolean;
+    isHighlight: boolean;
+    isCode: boolean;
+  }>({
+    isBold: false,
+    isItalic: false,
+    isUnderline: false,
+    isStrikethrough: false,
+    isHighlight: false,
+    isCode: false,
+  });
 
   const $updateToolbar = useCallback(() => {
     const selection = $getSelection();
     if ($isRangeSelection(selection)) {
-      setIsBold(selection.hasFormat("bold"));
-      setIsItalic(selection.hasFormat("italic"));
-      setIsUnderline(selection.hasFormat("underline"));
-      setIsStrikethrough(selection.hasFormat("strikethrough"));
+      setEditorToolbarState({
+        isBold: selection.hasFormat("bold"),
+        isItalic: selection.hasFormat("italic"),
+        isUnderline: selection.hasFormat("underline"),
+        isStrikethrough: selection.hasFormat("strikethrough"),
+        isHighlight: selection.hasFormat("highlight"),
+        isCode: selection.hasFormat("code"),
+      });
     }
   }, []);
 
@@ -71,46 +86,48 @@ export default function ToolbarPlugin() {
       command: FORMAT_TEXT_COMMAND,
       format: "bold",
       icon: Bold,
-      isActive: isBold,
+      isActive: editorToolbarState.isBold,
       label: t("editor.text_toolbar.bold"),
     },
     {
       command: FORMAT_TEXT_COMMAND,
       format: "italic",
       icon: Italic,
-      isActive: isItalic,
+      isActive: editorToolbarState.isItalic,
       label: t("editor.text_toolbar.italic"),
     },
     {
       command: FORMAT_TEXT_COMMAND,
       format: "underline",
       icon: Underline,
-      isActive: isUnderline,
+      isActive: editorToolbarState.isUnderline,
       label: t("editor.text_toolbar.underline"),
     },
     {
       command: FORMAT_TEXT_COMMAND,
       format: "strikethrough",
       icon: Strikethrough,
-      isActive: isStrikethrough,
+      isActive: editorToolbarState.isStrikethrough,
       label: t("editor.text_toolbar.strikethrough"),
     },
     {
       command: FORMAT_TEXT_COMMAND,
       format: "code",
       icon: Code,
+      isActive: editorToolbarState.isCode,
       label: t("editor.text_toolbar.code"),
     },
     {
       command: FORMAT_TEXT_COMMAND,
       format: "highlight",
       icon: Highlighter,
+      isActive: editorToolbarState.isHighlight,
       label: t("editor.text_toolbar.highlight"),
     },
   ];
 
   return (
-    <div className="mb-1 flex rounded-t-lg p-1" ref={toolbarRef}>
+    <div className="mb-1 flex rounded-t-lg p-1">
       {formatButtons.map(({ command, format, icon: Icon, isActive, label }) => (
         <Button
           key={format}
