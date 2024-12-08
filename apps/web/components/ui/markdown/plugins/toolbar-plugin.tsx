@@ -9,8 +9,6 @@ import {
   $isRangeSelection,
   CAN_REDO_COMMAND,
   CAN_UNDO_COMMAND,
-  ElementFormatType,
-  FORMAT_ELEMENT_COMMAND,
   FORMAT_TEXT_COMMAND,
   LexicalCommand,
   REDO_COMMAND,
@@ -19,9 +17,6 @@ import {
   UNDO_COMMAND,
 } from "lexical";
 import {
-  AlignCenter,
-  AlignLeft,
-  AlignRight,
   Bold,
   Code,
   Highlighter,
@@ -139,32 +134,6 @@ export default function ToolbarPlugin() {
     },
   ];
 
-  const alignButtons: {
-    command: LexicalCommand<ElementFormatType>;
-    format: ElementFormatType;
-    icon: LucideIcon;
-    label: string;
-  }[] = [
-    {
-      command: FORMAT_ELEMENT_COMMAND,
-      format: "left",
-      icon: AlignLeft,
-      label: t("editor.text_toolbar.align_left"),
-    },
-    {
-      command: FORMAT_ELEMENT_COMMAND,
-      format: "center",
-      icon: AlignCenter,
-      label: t("editor.text_toolbar.align_center"),
-    },
-    {
-      command: FORMAT_ELEMENT_COMMAND,
-      format: "right",
-      icon: AlignRight,
-      label: t("editor.text_toolbar.align_right"),
-    },
-  ];
-
   return (
     <div className="mb-1 flex rounded-t-lg p-1" ref={toolbarRef}>
       <Button
@@ -198,20 +167,6 @@ export default function ToolbarPlugin() {
             editor.dispatchCommand(command, format);
           }}
           variant={isActive ? "default" : "ghost"}
-          aria-label={label}
-        >
-          <Icon className="h-4 w-4" />
-        </Button>
-      ))}
-      <Separator orientation={"vertical"} />
-      {alignButtons.map(({ command, format, icon: Icon, label }) => (
-        <Button
-          key={format}
-          size={"sm"}
-          onClick={() => {
-            editor.dispatchCommand(command, format);
-          }}
-          variant={"ghost"}
           aria-label={label}
         >
           <Icon className="h-4 w-4" />
