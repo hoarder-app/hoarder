@@ -1,20 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "@/lib/i18n/client";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { mergeRegister } from "@lexical/utils";
 import {
   $getSelection,
   $isRangeSelection,
-  CAN_REDO_COMMAND,
-  CAN_UNDO_COMMAND,
   FORMAT_TEXT_COMMAND,
   LexicalCommand,
-  REDO_COMMAND,
   SELECTION_CHANGE_COMMAND,
   TextFormatType,
-  UNDO_COMMAND,
 } from "lexical";
 import {
   Bold,
@@ -22,10 +17,8 @@ import {
   Highlighter,
   Italic,
   LucideIcon,
-  Redo,
   Strikethrough,
   Underline,
-  Undo,
 } from "lucide-react";
 
 const LowPriority = 1;
@@ -34,8 +27,6 @@ export default function ToolbarPlugin() {
   const { t } = useTranslation();
   const [editor] = useLexicalComposerContext();
   const toolbarRef = useRef(null);
-  const [canUndo, setCanUndo] = useState(false);
-  const [canRedo, setCanRedo] = useState(false);
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
   const [isUnderline, setIsUnderline] = useState(false);
@@ -62,22 +53,6 @@ export default function ToolbarPlugin() {
         SELECTION_CHANGE_COMMAND,
         (_payload, _newEditor) => {
           $updateToolbar();
-          return false;
-        },
-        LowPriority,
-      ),
-      editor.registerCommand(
-        CAN_UNDO_COMMAND,
-        (payload) => {
-          setCanUndo(payload);
-          return false;
-        },
-        LowPriority,
-      ),
-      editor.registerCommand(
-        CAN_REDO_COMMAND,
-        (payload) => {
-          setCanRedo(payload);
           return false;
         },
         LowPriority,
@@ -136,29 +111,6 @@ export default function ToolbarPlugin() {
 
   return (
     <div className="mb-1 flex rounded-t-lg p-1" ref={toolbarRef}>
-      <Button
-        size={"sm"}
-        disabled={!canUndo}
-        onClick={() => {
-          editor.dispatchCommand(UNDO_COMMAND, undefined);
-        }}
-        variant={"ghost"}
-        aria-label={t("editor.text_toolbar.undo")}
-      >
-        <Undo className="h-4" />
-      </Button>
-      <Button
-        size={"sm"}
-        disabled={!canRedo}
-        onClick={() => {
-          editor.dispatchCommand(REDO_COMMAND, undefined);
-        }}
-        variant={"ghost"}
-        aria-label={t("editor.text_toolbar.redo")}
-      >
-        <Redo className="h-4" />
-      </Button>
-      <Separator orientation={"vertical"} />
       {formatButtons.map(({ command, format, icon: Icon, isActive, label }) => (
         <Button
           key={format}
