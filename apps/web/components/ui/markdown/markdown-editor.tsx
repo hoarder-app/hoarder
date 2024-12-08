@@ -1,11 +1,14 @@
 import { memo, useCallback, useMemo } from "react";
 import ToolbarPlugin from "@/components/ui/markdown/plugins/toolbar-plugin";
-import { UpdateMarkdownPlugin } from "@/components/ui/markdown/plugins/update-markdown-editor-plugin";
 import { MarkdownEditorTheme } from "@/components/ui/markdown/theme/theme";
 import { CodeNode } from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
-import { $convertToMarkdownString, TRANSFORMERS } from "@lexical/markdown";
+import {
+  $convertFromMarkdownString,
+  $convertToMarkdownString,
+  TRANSFORMERS,
+} from "@lexical/markdown";
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
 import {
   InitialConfigType,
@@ -56,8 +59,11 @@ const MarkdownEditor = memo(
         editable: !readonly,
         theme: MarkdownEditorTheme,
         nodes: EDITOR_NODES,
+        editorState: () => {
+          $convertFromMarkdownString(initialMarkdown, TRANSFORMERS);
+        },
       }),
-      [readonly],
+      [readonly, initialMarkdown],
     );
 
     const handleOnChange = useCallback(
@@ -101,7 +107,6 @@ const MarkdownEditor = memo(
             <OnChangePlugin onChange={handleOnChange} />
           </>
         )}
-        <UpdateMarkdownPlugin markdown={initialMarkdown} />
       </LexicalComposer>
     );
   },
