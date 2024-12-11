@@ -192,7 +192,42 @@
       "highlight": "Highlight",
       "align_left": "Left Align",
       "align_center": "Center Align",
-      "align_right": "Right Align"
+      "align_right": "Right Align",
+      "markdown_shortcuts": {
+        "label": "Markdown shortcuts",
+        "heading": {
+          "label": "Heading",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "bold": {
+          "label": "Bold",
+          "example": "**text** or CTRL+b"
+        },
+        "italic": {
+          "label": "Italic",
+          "example": "*Italic* or _Italic_ or CTRL+i"
+        },
+        "blockquote": {
+          "label": "Blockquote",
+          "example": "> Blockquote"
+        },
+        "ordered_list": {
+          "label": "Ordered List",
+          "example": "1. List item"
+        },
+        "unordered_list": {
+          "label": "Unordered List",
+          "example": "- List item"
+        },
+        "inline_code": {
+          "label": "Inline Code",
+          "example": "`Code`"
+        },
+        "block_code": {
+          "label": "Block Code",
+          "example": "``` + space"
+        }
+      }
     }
   },
   "toasts": {

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import MarkdownEditor from "@/components/ui/markdown/markdown-editor";
+import { MarkdownReadonly } from "@/components/ui/markdown/markdown-readonly";
 import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
 
@@ -37,9 +38,14 @@ export function MarkdownComponent({
   };
   return (
     <>
-      <MarkdownEditor readonly={readOnly} onChangeMarkdown={setNoteText}>
-        {bookmark.content.text}
-      </MarkdownEditor>
+      {readOnly ? (
+        <MarkdownReadonly>{bookmark.content.text}</MarkdownReadonly>
+      ) : (
+        <MarkdownEditor readonly={readOnly} onChangeMarkdown={setNoteText}>
+          {bookmark.content.text}
+        </MarkdownEditor>
+      )}
+
       {!readOnly && (
         <div className="absolute bottom-2 right-2">
           <ActionButton

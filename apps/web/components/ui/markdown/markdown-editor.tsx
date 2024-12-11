@@ -1,7 +1,10 @@
-import { memo, useCallback, useMemo } from "react";
+import { memo, useMemo, useState } from "react";
 import ToolbarPlugin from "@/components/ui/markdown/plugins/toolbar-plugin";
-import { MarkdownEditorTheme } from "@/components/ui/markdown/theme/theme";
-import { CodeNode } from "@lexical/code";
+import {
+  CodeHighlightNode,
+  CodeNode,
+  registerCodeHighlighting,
+} from "@lexical/code";
 import { LinkNode } from "@lexical/link";
 import { ListItemNode, ListNode } from "@lexical/list";
 import {
@@ -18,13 +21,13 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
+import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
-import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
-import { EditorState } from "lexical";
+import { $getRoot, EditorState, LexicalEditor } from "lexical";
 
 function onError(error: Error) {
   console.error(error);
@@ -38,6 +41,7 @@ const EDITOR_NODES = [
   LinkNode,
   CodeNode,
   HorizontalRuleNode,
+  CodeHighlightNode,
 ];
 
 interface MarkdownEditorProps {
@@ -47,66 +51,58 @@ interface MarkdownEditorProps {
 }
 
 const MarkdownEditor = memo(
-  ({
-    children: initialMarkdown,
-    onChangeMarkdown,
-    readonly = false,
-  }: MarkdownEditorProps) => {
+  ({ children: initialMarkdown, onChangeMarkdown }: MarkdownEditorProps) => {
+    const [isRawMarkdownMode, setIsRawMarkdownMode] = useState(false);
+
     const initialConfig: InitialConfigType = useMemo(
       () => ({
         namespace: "editor",
         onError,
-        editable: !readonly,
-        theme: MarkdownEditorTheme,
         nodes: EDITOR_NODES,
-        editorState: () => {
+        editorState: (editor: LexicalEditor) => {
+          registerCodeHighlighting(editor);
           $convertFromMarkdownString(initialMarkdown, TRANSFORMERS);
         },
       }),
-      [readonly, initialMarkdown],
+      [initialMarkdown],
     );
 
-    const handleOnChange = useCallback(
-      (editorState: EditorState) => {
-        editorState.read(() => {
-          const markdownString = $convertToMarkdownString();
-          if (onChangeMarkdown) onChangeMarkdown(markdownString);
-        });
-      },
-      [onChangeMarkdown],
-    );
+    const handleOnChange = (editorState: EditorState) => {
+      editorState.read(() => {
+        let markdownString;
+        if (isRawMarkdownMode) {
+          // if raw markdown, the first child is a codeBlock
+          markdownString = $getRoot()?.getFirstChild()?.getTextContent() ?? "";
+        } else {
+          markdownString = $convertToMarkdownString(TRANSFORMERS);
+        }
+        if (onChangeMarkdown) {
+          onChangeMarkdown(markdownString);
+        }
+      });
+    };
 
     return (
       <LexicalComposer initialConfig={initialConfig}>
-        {readonly ? (
-          <PlainTextPlugin
+        <div className="flex h-full flex-col justify-stretch">
+          <ToolbarPlugin
+            isRawMarkdownMode={isRawMarkdownMode}
+            setIsRawMarkdownMode={setIsRawMarkdownMode}
+          ></ToolbarPlugin>
+          <RichTextPlugin
             contentEditable={
-              <ContentEditable className="h-full w-full content-center" />
+              <ContentEditable className="prose h-full w-full min-w-full overflow-auto p-2 dark:prose-invert prose-p:m-0" />
             }
             ErrorBoundary={LexicalErrorBoundary}
-          ></PlainTextPlugin>
-        ) : (
-          <>
-            <div className="flex h-full flex-col justify-stretch">
-              <ToolbarPlugin></ToolbarPlugin>
-              <RichTextPlugin
-                contentEditable={
-                  <ContentEditable className="overflow-autop h-full p-2" />
-                }
-                ErrorBoundary={LexicalErrorBoundary}
-              />
-            </div>
-          </>
-        )}
-        {!readonly && (
-          <>
-            <HistoryPlugin />
-            <AutoFocusPlugin />
-            <TabIndentationPlugin />
-            <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-            <OnChangePlugin onChange={handleOnChange} />
-          </>
-        )}
+          />
+        </div>
+
+        <HistoryPlugin />
+        <AutoFocusPlugin />
+        <TabIndentationPlugin />
+        <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+        <OnChangePlugin onChange={handleOnChange} />
+        <ListPlugin />
       </LexicalComposer>
     );
   },
