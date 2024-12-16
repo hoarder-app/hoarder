@@ -1,5 +1,5 @@
 import type { AppStateStatus } from "react-native";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { AppState, Platform } from "react-native";
 import { useNavigation, useRouter } from "expo-router";
 import { Stack } from "expo-router/stack";
@@ -18,7 +18,7 @@ export default function Dashboard() {
 
   const navigation = useNavigation();
   // Hide the header on the parent screen
-  useEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
     });

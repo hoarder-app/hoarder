@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useLayoutEffect } from "react";
 import { Tabs, useNavigation } from "expo-router";
 import { StyledTabs } from "@/components/navigation/tabs";
 import { ClipboardList, Home, Settings } from "lucide-react-native";
@@ -6,7 +6,7 @@ import { ClipboardList, Home, Settings } from "lucide-react-native";
 export default function TabLayout() {
   const navigation = useNavigation();
   // Hide the header on the parent screen
-  useEffect(() => {
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerShown: false,
     });
