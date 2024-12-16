@@ -1,10 +1,9 @@
 import React, { useMemo } from "react";
 import { Pressable, SectionList, Text, View } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
-import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { Check, Plus } from "lucide-react-native";
 
@@ -124,84 +123,85 @@ const ListPickerPage = () => {
 
   return (
     <CustomSafeAreaView>
-      <View className="px-3">
-        <SectionList
-          className="h-full"
-          keyboardShouldPersistTaps="handled"
-          ListHeaderComponent={
-            <Input
-              placeholder="Search Tags ..."
-              autoCapitalize="none"
-              onChangeText={setSearch}
-            />
-          }
-          keyExtractor={(t) => t.id}
-          contentContainerStyle={{
-            gap: 5,
-          }}
-          SectionSeparatorComponent={() => <View className="h-1" />}
-          sections={[
-            {
-              title: "Existing Tags",
-              data: filteredTags.filteredOptimisticTags ?? [],
-            },
-            {
-              title: "All Tags",
-              data: filteredTags.filteredAllTags ?? [],
-            },
-          ]}
-          renderItem={(t) => (
-            <Pressable
-              key={t.item.id}
-              onPress={() =>
-                updateTags({
-                  bookmarkId,
-                  detach:
-                    t.section.title == "Existing Tags"
-                      ? [
-                          {
-                            tagId:
-                              t.item.id == NEW_TAG_ID ? undefined : t.item.id,
-                            tagName: t.item.name,
-                          },
-                        ]
-                      : [],
-                  attach:
-                    t.section.title == "All Tags"
-                      ? [
-                          {
-                            tagId:
-                              t.item.id == NEW_TAG_ID ? undefined : t.item.id,
-                            tagName: t.item.name,
-                          },
-                        ]
-                      : [],
-                })
-              }
-            >
-              <View className="mx-2 flex flex-row items-center gap-2 rounded-xl border border-input bg-white px-4 py-2 dark:bg-accent">
-                {t.section.title == "Existing Tags" && (
-                  <TailwindResolver
-                    className="text-accent-foreground"
-                    comp={(s) => <Check color={s?.color} />}
-                  />
-                )}
-                {t.section.title == "All Tags" && t.item.id == NEW_TAG_ID && (
-                  <TailwindResolver
-                    className="text-accent-foreground"
-                    comp={(s) => <Plus color={s?.color} />}
-                  />
-                )}
-                <Text className="text-center text-lg text-accent-foreground">
-                  {t.item.id == NEW_TAG_ID
-                    ? `Create new tag '${t.item.name}'`
-                    : t.item.name}
-                </Text>
-              </View>
-            </Pressable>
-          )}
-        />
-      </View>
+      <Stack.Screen
+        options={{
+          headerSearchBarOptions: {
+            placeholder: "Search Tags",
+            onChangeText: (event) => setSearch(event.nativeEvent.text),
+            autoCapitalize: "none",
+          },
+        }}
+      />
+      <SectionList
+        className="h-full px-3"
+        keyboardShouldPersistTaps="handled"
+        contentInsetAdjustmentBehavior="automatic"
+        keyExtractor={(t) => t.id}
+        contentContainerStyle={{
+          gap: 5,
+        }}
+        SectionSeparatorComponent={() => <View className="h-1" />}
+        sections={[
+          {
+            title: "Existing Tags",
+            data: filteredTags.filteredOptimisticTags ?? [],
+          },
+          {
+            title: "All Tags",
+            data: filteredTags.filteredAllTags ?? [],
+          },
+        ]}
+        renderItem={(t) => (
+          <Pressable
+            key={t.item.id}
+            onPress={() =>
+              updateTags({
+                bookmarkId,
+                detach:
+                  t.section.title == "Existing Tags"
+                    ? [
+                        {
+                          tagId:
+                            t.item.id == NEW_TAG_ID ? undefined : t.item.id,
+                          tagName: t.item.name,
+                        },
+                      ]
+                    : [],
+                attach:
+                  t.section.title == "All Tags"
+                    ? [
+                        {
+                          tagId:
+                            t.item.id == NEW_TAG_ID ? undefined : t.item.id,
+                          tagName: t.item.name,
+                        },
+                      ]
+                    : [],
+              })
+            }
+          >
+            <View className="mx-2 flex flex-row items-center gap-2 rounded-xl border border-input bg-white px-4 py-2 dark:bg-accent">
+              {t.section.title == "Existing Tags" && (
+                <TailwindResolver
+                  className="text-accent-foreground"
+                  comp={(s) => <Check color={s?.color} />}
+                />
+              )}
+              {t.section.title == "All Tags" && t.item.id == NEW_TAG_ID && (
+                <TailwindResolver
+                  className="text-accent-foreground"
+                  comp={(s) => <Plus color={s?.color} />}
+                />
+              )}
+              <Text className="text-center text-lg text-accent-foreground">
+                {t.item.id == NEW_TAG_ID
+                  ? `Create new tag '${t.item.name}'`
+                  : t.item.name}
+              </Text>
+            </View>
+          </Pressable>
+        )}
+      />
     </CustomSafeAreaView>
   );
 };
