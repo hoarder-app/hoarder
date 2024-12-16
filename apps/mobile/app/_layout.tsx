@@ -2,7 +2,6 @@ import "@/globals.css";
 import "expo-dev-client";
 
 import { useEffect } from "react";
-import { View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useRouter } from "expo-router";
 import { Stack } from "expo-router/stack";
@@ -36,42 +35,38 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ShareIntentProvider>
         <Providers>
-          <View
-            className={cn(
+          <StyledStack
+            contentClassName={cn(
               "w-full flex-1 bg-gray-100 text-foreground dark:bg-background",
               colorScheme == "dark" ? "dark" : "light",
             )}
+            screenOptions={{
+              headerTitle: "",
+              headerTransparent: true,
+            }}
           >
-            <StyledStack
-              contentClassName="bg-gray-100 dark:bg-background"
-              screenOptions={{
-                headerShown: false,
-                headerTransparent: true,
+            <Stack.Screen name="index" />
+            <Stack.Screen
+              name="signin"
+              options={{
+                headerShown: true,
+                headerBackVisible: true,
+                headerBackTitle: "Back",
+                title: "",
               }}
-            >
-              <Stack.Screen name="index" />
-              <Stack.Screen
-                name="signin"
-                options={{
-                  headerShown: true,
-                  headerBackVisible: true,
-                  headerBackTitle: "Back",
-                  title: "",
-                }}
-              />
-              <Stack.Screen name="server-address" />
-              <Stack.Screen name="sharing" />
-              <Stack.Screen
-                name="test-connection"
-                options={{
-                  title: "Test Connection",
-                  headerShown: true,
-                  presentation: "modal",
-                }}
-              />
-            </StyledStack>
-            <StatusBar style="auto" />
-          </View>
+            />
+            <Stack.Screen name="server-address" />
+            <Stack.Screen name="sharing" />
+            <Stack.Screen
+              name="test-connection"
+              options={{
+                title: "Test Connection",
+                headerShown: true,
+                presentation: "modal",
+              }}
+            />
+          </StyledStack>
+          <StatusBar style="auto" />
         </Providers>
       </ShareIntentProvider>
     </GestureHandlerRootView>

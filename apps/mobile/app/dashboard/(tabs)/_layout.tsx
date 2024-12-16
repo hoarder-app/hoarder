@@ -1,9 +1,17 @@
-import React from "react";
-import { Tabs } from "expo-router";
+import React, { useEffect } from "react";
+import { Tabs, useNavigation } from "expo-router";
 import { StyledTabs } from "@/components/navigation/tabs";
 import { ClipboardList, Home, Settings } from "lucide-react-native";
 
 export default function TabLayout() {
+  const navigation = useNavigation();
+  // Hide the header on the parent screen
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, [navigation]);
+
   return (
     <StyledTabs
       tabBarClassName="bg-gray-100 dark:bg-background"

@@ -1,7 +1,7 @@
 import type { AppStateStatus } from "react-native";
 import { useEffect } from "react";
 import { AppState, Platform } from "react-native";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
 import { Stack } from "expo-router/stack";
 import { StyledStack } from "@/components/navigation/stack";
 import { useIsLoggedIn } from "@/lib/session";
@@ -15,6 +15,14 @@ function onAppStateChange(status: AppStateStatus) {
 
 export default function Dashboard() {
   const router = useRouter();
+
+  const navigation = useNavigation();
+  // Hide the header on the parent screen
+  useEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, [navigation]);
 
   const isLoggedIn = useIsLoggedIn();
   useEffect(() => {
@@ -32,7 +40,6 @@ export default function Dashboard() {
   return (
     <StyledStack
       contentClassName="bg-gray-100 dark:bg-background"
-      headerClassName="bg-gray-100 dark:bg-background text-foreground"
       screenOptions={{
         headerTransparent: true,
       }}
