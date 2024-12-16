@@ -123,7 +123,7 @@ export default function Signin() {
                   autoCapitalize="none"
                   value={usernameFormData.email}
                   onChangeText={(e) =>
-                    setUserNameFormData((s) => ({ ...s, email: e }))
+                    setUserNameFormData((s) => ({ ...s, email: e.trim() }))
                   }
                 />
               </View>

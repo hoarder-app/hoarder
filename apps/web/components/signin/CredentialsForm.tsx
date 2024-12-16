@@ -65,7 +65,7 @@ function SignIn() {
         onSubmit={form.handleSubmit(async (value) => {
           const resp = await signIn("credentials", {
             redirect: false,
-            email: value.email,
+            email: value.email.trim(),
             password: value.password,
           });
           if (!resp || !resp?.ok) {
@@ -146,7 +146,7 @@ function SignUp() {
           }
           const resp = await signIn("credentials", {
             redirect: false,
-            email: value.email,
+            email: value.email.trim(),
             password: value.password,
           });
           if (!resp || !resp.ok) {
