@@ -1,18 +1,18 @@
 import React from "react";
 import {
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   Pressable,
-  ScrollView,
   Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import Animated, {
+  useAnimatedKeyboard,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import TagPill from "@/components/bookmarks/TagPill";
 import FullPageError from "@/components/FullPageError";
-import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
 import { Skeleton } from "@/components/ui/Skeleton";
@@ -90,7 +90,7 @@ function TitleEditor({
       <Input
         editable={!isPending}
         multiline={true}
-        numberOfLines={3}
+        numberOfLines={1}
         loading={isPending}
         placeholder="Title"
         textAlignVertical="top"
@@ -137,6 +137,12 @@ const ViewBookmarkPage = () => {
     throw new Error("Unexpected param type");
   }
 
+  const keyboard = useAnimatedKeyboard();
+
+  const animatedStyles = useAnimatedStyle(() => ({
+    marginBottom: keyboard.height.value,
+  }));
+
   const {
     data: bookmark,
     isPending,
@@ -166,10 +172,11 @@ const ViewBookmarkPage = () => {
       break;
   }
   return (
-    <CustomSafeAreaView>
+    <View>
       <Stack.Screen
         options={{
           headerShown: true,
+          headerTransparent: false,
           headerTitle: title ?? "Untitled",
           headerRight: () => (
             <Pressable
@@ -186,22 +193,17 @@ const ViewBookmarkPage = () => {
           ),
         }}
       />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="pb-2"
-      >
-        <ScrollView className="h-screen w-full p-4">
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View className="gap-4 px-2">
-              <TitleEditor bookmarkId={bookmark.id} title={title ?? ""} />
-              <TagList bookmark={bookmark} />
-              <ManageLists bookmark={bookmark} />
-              <NotesEditor bookmark={bookmark} />
-            </View>
-          </TouchableWithoutFeedback>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </CustomSafeAreaView>
+      <Animated.ScrollView className="p-4" style={[animatedStyles]}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View className="h-screen gap-4 px-2">
+            <TitleEditor bookmarkId={bookmark.id} title={title ?? ""} />
+            <TagList bookmark={bookmark} />
+            <ManageLists bookmark={bookmark} />
+            <NotesEditor bookmark={bookmark} />
+          </View>
+        </TouchableWithoutFeedback>
+      </Animated.ScrollView>
+    </View>
   );
 };
 
