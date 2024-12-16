@@ -187,7 +187,55 @@
     "import_as_separate_bookmarks": "Import as separate Bookmarks",
     "placeholder": "Paste a link or an image, write a note or drag and drop an image in here ...",
     "new_item": "NEW ITEM",
-    "disabled_submissions": "Submissions are disabled"
+    "disabled_submissions": "Submissions are disabled",
+    "text_toolbar": {
+      "undo": "Undo",
+      "redo": "Redo",
+      "bold": "Bold",
+      "italic": "Italic",
+      "underline": "Underline",
+      "strikethrough": "Strikethrough",
+      "code": "Code",
+      "highlight": "Highlight",
+      "align_left": "Left Align",
+      "align_center": "Center Align",
+      "align_right": "Right Align",
+      "markdown_shortcuts": {
+        "label": "Markdown shortcuts",
+        "heading": {
+          "label": "Heading",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "bold": {
+          "label": "Bold",
+          "example": "**text** or CTRL+b"
+        },
+        "italic": {
+          "label": "Italic",
+          "example": "*Italic* or _Italic_ or CTRL+i"
+        },
+        "blockquote": {
+          "label": "Blockquote",
+          "example": "> Blockquote"
+        },
+        "ordered_list": {
+          "label": "Ordered List",
+          "example": "1. List item"
+        },
+        "unordered_list": {
+          "label": "Unordered List",
+          "example": "- List item"
+        },
+        "inline_code": {
+          "label": "Inline Code",
+          "example": "`Code`"
+        },
+        "block_code": {
+          "label": "Block Code",
+          "example": "``` + space"
+        }
+      }
+    }
   },
   "toasts": {
     "bookmarks": {

@@ -20,15 +20,14 @@ export default function TextCard({
   bookmark: ZBookmarkTypeText;
   className?: string;
 }) {
-  const bookmarkedText = bookmark.content;
-
   const banner = bookmark.assets.find((a) => a.assetType == "bannerImage");
-
   return (
     <>
       <BookmarkLayoutAdaptingCard
         title={bookmark.title}
-        content={<MarkdownComponent>{bookmarkedText.text}</MarkdownComponent>}
+        content={
+          <MarkdownComponent readOnly={true}>{bookmark}</MarkdownComponent>
+        }
         footer={
           getSourceUrl(bookmark) && (
             <FooterLinkURL url={getSourceUrl(bookmark)} />
