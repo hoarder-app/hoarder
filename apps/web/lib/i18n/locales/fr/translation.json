@@ -180,7 +180,20 @@
     "import_as_separate_bookmarks": "Importer comme favoris séparés",
     "placeholder": "Collez un lien ou une image, écrivez une note ou glissez-déposez une image ici ...",
     "new_item": "NOUVEL ÉLÉMENT",
-    "disabled_submissions": "Les soumissions sont désactivées"
+    "disabled_submissions": "Les soumissions sont désactivées",
+    "text_toolbar": {
+      "undo": "Annuler",
+      "redo": "Rétablir",
+      "bold": "Gras",
+      "italic": "Italique",
+      "underline": "Souligné",
+      "strikethrough": "Barré",
+      "code": "Code",
+      "highlight": "Surligner",
+      "align_left": "Aligner à gauche",
+      "align_center": "Aligner au centre",
+      "align_right": "Aligner à droite"
+    }
   },
   "toasts": {
     "bookmarks": {
