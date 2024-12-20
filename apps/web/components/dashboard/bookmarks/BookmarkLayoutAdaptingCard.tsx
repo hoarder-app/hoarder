@@ -117,8 +117,9 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
         />
       )}
       <div className={cn(
-        "absolute right-2 top-2 z-50 flex items-center gap-2 group-hover:visible",
+        "absolute right-2 top-2 z-50 flex items-center gap-2 group-hover:visible rounded-lg px-2 py-1",
         isSelected ? "visible" : "invisible",
+        theme === "dark" ? "bg-black/50 backdrop-blur-sm" : "bg-white/50 backdrop-blur-sm"
       )}>
         <button
           className={cn(
