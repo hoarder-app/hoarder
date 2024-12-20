@@ -33,19 +33,6 @@ export function BookmarkHoverActions({
     },
   });
 
-  const getIconColor = () => {
-    if (theme === "dark") {
-      return isSelected ? "black" : "white";
-    }
-    return isSelected ? "white" : "black";
-  };
-
-  const getIconBackgroundColor = () => {
-    if (theme === "dark") {
-      return isSelected ? "bg-white" : "bg-white bg-opacity-10";
-    }
-    return isSelected ? "bg-black" : "bg-white bg-opacity-40";
-  };
 
   return (
     <div className={cn(
@@ -85,15 +72,14 @@ export function BookmarkHoverActions({
           archived={bookmark.archived}
         />
       </button>
-      <button onClick={onSelectClick}>
-        <div
-          className={cn(
-            "flex h-4 w-4 items-center justify-center rounded-full border border-gray-600",
-            getIconBackgroundColor(),
-          )}
-        >
-          <Check size={12} color={getIconColor()} />
-        </div>
+      <button
+        className={cn(
+          "flex h-8 w-8 items-center justify-center rounded-lg hover:bg-accent",
+          isSelected && "bg-accent"
+        )}
+        onClick={onSelectClick}
+      >
+        <Check className="size-4" />
       </button>
     </div>
   );
