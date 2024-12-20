@@ -14,6 +14,21 @@ interface BookmarkHoverActionsProps {
   onSelectClick: (e: React.MouseEvent) => void;
 }
 
+function SelectCheckbox({ isSelected }: { isSelected: boolean }) {
+  return (
+    <div className="z-50 opacity-100">
+      <div
+        className={cn(
+          "flex size-4 items-center justify-center rounded-full border border-foreground",
+          isSelected ? "bg-foreground" : undefined,
+        )}
+      >
+        <Check size={12} className={isSelected ? "text-background" : undefined} />
+      </div>
+    </div>
+  );
+}
+
 export function BookmarkHoverActions({
   bookmark,
   isSelected,
@@ -55,7 +70,7 @@ export function BookmarkHoverActions({
         )}
         onClick={onSelectClick}
       >
-        <Check className="size-4" />
+        <SelectCheckbox isSelected={isSelected} />
       </button>
     </div>
   );
