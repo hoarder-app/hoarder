@@ -82,9 +82,6 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (!isBulkEditEnabled) {
-      setIsBulkEditEnabled(true);
-    }
     toggleBookmark(bookmark);
   };
 
