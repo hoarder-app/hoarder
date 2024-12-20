@@ -1,5 +1,6 @@
 import { memo, useMemo, useState } from "react";
 import ToolbarPlugin from "@/components/ui/markdown/plugins/toolbar-plugin";
+import { MarkdownEditorTheme } from "@/components/ui/markdown/theme";
 import {
   CodeHighlightNode,
   CodeNode,
@@ -47,7 +48,6 @@ const EDITOR_NODES = [
 interface MarkdownEditorProps {
   children: string;
   onChangeMarkdown?: (markdown: string) => void;
-  readonly?: boolean;
 }
 
 const MarkdownEditor = memo(
@@ -58,6 +58,7 @@ const MarkdownEditor = memo(
       () => ({
         namespace: "editor",
         onError,
+        theme: MarkdownEditorTheme,
         nodes: EDITOR_NODES,
         editorState: (editor: LexicalEditor) => {
           registerCodeHighlighting(editor);
@@ -88,7 +89,7 @@ const MarkdownEditor = memo(
           <ToolbarPlugin
             isRawMarkdownMode={isRawMarkdownMode}
             setIsRawMarkdownMode={setIsRawMarkdownMode}
-          ></ToolbarPlugin>
+          />
           <RichTextPlugin
             contentEditable={
               <ContentEditable className="prose h-full w-full min-w-full overflow-auto p-2 dark:prose-invert prose-p:m-0" />
@@ -96,7 +97,6 @@ const MarkdownEditor = memo(
             ErrorBoundary={LexicalErrorBoundary}
           />
         </div>
-
         <HistoryPlugin />
         <AutoFocusPlugin />
         <TabIndentationPlugin />

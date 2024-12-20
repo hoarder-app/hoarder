@@ -41,7 +41,7 @@ export function MarkdownComponent({
       {readOnly ? (
         <MarkdownReadonly>{bookmark.content.text}</MarkdownReadonly>
       ) : (
-        <MarkdownEditor readonly={readOnly} onChangeMarkdown={setNoteText}>
+        <MarkdownEditor onChangeMarkdown={setNoteText}>
           {bookmark.content.text}
         </MarkdownEditor>
       )}
