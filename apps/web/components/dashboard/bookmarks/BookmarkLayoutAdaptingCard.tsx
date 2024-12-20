@@ -54,7 +54,7 @@ function BottomRow({
 }
 
 function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
-  const { selectedBookmarks, isBulkEditEnabled } = useBulkActionsStore();
+  const { selectedBookmarks, isBulkEditEnabled, setIsBulkEditEnabled } = useBulkActionsStore();
   const toggleBookmark = useBulkActionsStore((state) => state.toggleBookmark);
   const [isSelected, setIsSelected] = useState(false);
   const { theme } = useTheme();
@@ -63,7 +63,13 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
     setIsSelected(selectedBookmarks.some((item) => item.id === bookmark.id));
   }, [selectedBookmarks]);
 
-  if (!isBulkEditEnabled) return null;
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!isBulkEditEnabled) {
+      setIsBulkEditEnabled(true);
+    }
+    toggleBookmark(bookmark);
+  };
 
   const getIconColor = () => {
     if (theme === "dark") {
@@ -82,13 +88,14 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
   return (
     <button
       className={cn(
-        "absolute left-0 top-0 z-50 h-full w-full bg-opacity-0",
+        "absolute left-0 top-0 z-50 h-full w-full bg-opacity-0 group-hover:visible",
+        isSelected ? "visible" : "invisible",
         {
           "bg-opacity-10": isSelected,
         },
         theme === "dark" ? "bg-white" : "bg-black",
       )}
-      onClick={() => toggleBookmark(bookmark)}
+      onClick={handleClick}
     >
       <div className="absolute right-2 top-2 z-50 opacity-100">
         <div
@@ -115,7 +122,7 @@ function ListView({
   return (
     <div
       className={cn(
-        "relative flex max-h-96 gap-4 overflow-hidden rounded-lg p-2 shadow-md",
+        "group relative flex max-h-96 gap-4 overflow-hidden rounded-lg p-2 shadow-md",
         className,
       )}
     >
@@ -160,7 +167,7 @@ function GridView({
   return (
     <div
       className={cn(
-        "relative flex flex-col overflow-hidden rounded-lg shadow-md",
+        "group relative flex flex-col overflow-hidden rounded-lg shadow-md",
         className,
         fitHeight && layout != "grid" ? "max-h-96" : "h-96",
       )}
@@ -193,7 +200,7 @@ function CompactView({ bookmark, title, footer, className }: Props) {
   return (
     <div
       className={cn(
-        "relative flex flex-col overflow-hidden rounded-lg shadow-md",
+        "group relative flex flex-col overflow-hidden rounded-lg shadow-md",
         className,
         "max-h-96",
       )}
