@@ -133,44 +133,6 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               <span>Edit</span>
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem
-            disabled={demoMode}
-            onClick={() =>
-              updateBookmarkMutator.mutate({
-                bookmarkId: linkId,
-                favourited: !bookmark.favourited,
-              })
-            }
-          >
-            <FavouritedActionIcon
-              className="mr-2 size-4"
-              favourited={bookmark.favourited}
-            />
-            <span>
-              {bookmark.favourited
-                ? t("actions.unfavorite")
-                : t("actions.favorite")}
-            </span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            disabled={demoMode}
-            onClick={() =>
-              updateBookmarkMutator.mutate({
-                bookmarkId: linkId,
-                archived: !bookmark.archived,
-              })
-            }
-          >
-            <ArchivedActionIcon
-              className="mr-2 size-4"
-              archived={bookmark.archived}
-            />
-            <span>
-              {bookmark.archived
-                ? t("actions.unarchive")
-                : t("actions.archive")}
-            </span>
-          </DropdownMenuItem>
 
           {bookmark.content.type === BookmarkTypes.LINK && (
             <DropdownMenuItem

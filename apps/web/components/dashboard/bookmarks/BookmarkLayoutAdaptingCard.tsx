@@ -7,9 +7,12 @@ import {
   bookmarkLayoutSwitch,
   useBookmarkLayout,
 } from "@/lib/userLocalSettings/bookmarksLayout";
+import { ArchivedActionIcon, FavouritedActionIcon } from "./icons";
 import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import { Check, Image as ImageIcon, NotebookPen } from "lucide-react";
+import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
+import { useToast } from "@/components/ui/use-toast";
 import { useTheme } from "next-themes";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
@@ -54,7 +57,21 @@ function BottomRow({
 }
 
 function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
+  const { toast } = useToast();
   const { selectedBookmarks, isBulkEditEnabled, setIsBulkEditEnabled } = useBulkActionsStore();
+  const updateBookmarkMutator = useUpdateBookmark({
+    onSuccess: () => {
+      toast({
+        description: "Bookmark updated successfully",
+      });
+    },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong",
+      });
+    },
+  });
   const toggleBookmark = useBulkActionsStore((state) => state.toggleBookmark);
   const [isSelected, setIsSelected] = useState(false);
   const { theme } = useTheme();
@@ -99,22 +116,55 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
           onClick={handleClick}
         />
       )}
-      <button
-        className={cn(
-          "absolute right-2 top-2 z-50 group-hover:visible",
-          isSelected ? "visible" : "invisible",
-        )}
-        onClick={handleClick}
-      >
-        <div
+      <div className={cn(
+        "absolute right-2 top-2 z-50 flex items-center gap-2 group-hover:visible",
+        isSelected ? "visible" : "invisible",
+      )}>
+        <button
           className={cn(
-            "flex h-4 w-4 items-center justify-center rounded-full border border-gray-600",
-            getIconBackgroundColor(),
+            "flex h-8 w-8 items-center justify-center rounded-lg hover:bg-accent",
           )}
+          onClick={() =>
+            updateBookmarkMutator.mutate({
+              bookmarkId: bookmark.id,
+              favourited: !bookmark.favourited,
+            })
+          }
         >
-          <Check size={12} color={getIconColor()} />
-        </div>
-      </button>
+          <FavouritedActionIcon
+            className="size-4"
+            favourited={bookmark.favourited}
+          />
+        </button>
+        <button
+          className={cn(
+            "flex h-8 w-8 items-center justify-center rounded-lg hover:bg-accent",
+          )}
+          onClick={() =>
+            updateBookmarkMutator.mutate({
+              bookmarkId: bookmark.id,
+              archived: !bookmark.archived,
+            })
+          }
+        >
+          <ArchivedActionIcon
+            className="size-4"
+            archived={bookmark.archived}
+          />
+        </button>
+        <button
+          onClick={handleClick}
+        >
+          <div
+            className={cn(
+              "flex h-4 w-4 items-center justify-center rounded-full border border-gray-600",
+              getIconBackgroundColor(),
+            )}
+          >
+            <Check size={12} color={getIconColor()} />
+          </div>
+        </button>
+      </div>
     </>
   );
 }
