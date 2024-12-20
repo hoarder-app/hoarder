@@ -86,18 +86,26 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
   };
 
   return (
-    <button
-      className={cn(
-        "absolute left-0 top-0 z-50 h-full w-full bg-opacity-0 group-hover:visible",
-        isSelected ? "visible" : "invisible",
-        {
-          "bg-opacity-10": isSelected,
-        },
-        theme === "dark" ? "bg-white" : "bg-black",
+    <>
+      {isBulkEditEnabled && (
+        <button
+          className={cn(
+            "absolute left-0 top-0 z-40 h-full w-full bg-opacity-0",
+            {
+              "bg-opacity-10": isSelected,
+            },
+            theme === "dark" ? "bg-white" : "bg-black",
+          )}
+          onClick={handleClick}
+        />
       )}
-      onClick={handleClick}
-    >
-      <div className="absolute right-2 top-2 z-50 opacity-100">
+      <button
+        className={cn(
+          "absolute right-2 top-2 z-50 group-hover:visible",
+          isSelected ? "visible" : "invisible",
+        )}
+        onClick={handleClick}
+      >
         <div
           className={cn(
             "flex h-4 w-4 items-center justify-center rounded-full border border-gray-600",
@@ -106,8 +114,8 @@ function MultiBookmarkSelector({ bookmark }: { bookmark: ZBookmark }) {
         >
           <Check size={12} color={getIconColor()} />
         </div>
-      </div>
-    </button>
+      </button>
+    </>
   );
 }
 
