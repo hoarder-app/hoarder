@@ -30,7 +30,7 @@
           "NSAllowsLocalNetworking": true
         }
       },
-      "buildNumber": "19"
+      "buildNumber": "20"
     },
     "android": {
       "adaptiveIcon": {
@@ -48,7 +48,7 @@
         }
       },
       "package": "app.hoarder.hoardermobile",
-      "versionCode": 19
+      "versionCode": 20
     },
     "plugins": [
       "expo-router",
