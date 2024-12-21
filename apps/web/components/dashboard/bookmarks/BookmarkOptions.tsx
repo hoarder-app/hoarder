@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -16,6 +17,7 @@ import {
   List,
   ListX,
   MoreHorizontal,
+  Pencil,
   RotateCw,
   Tags,
   Trash2,
@@ -34,6 +36,7 @@ import { useRemoveBookmarkFromList } from "@hoarder/shared-react/hooks//lists";
 import { useBookmarkGridContext } from "@hoarder/shared-react/hooks/bookmark-grid-context";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
+import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
 import { ArchivedActionIcon, FavouritedActionIcon } from "./icons";
 import { useManageListsModal } from "./ManageListsModal";
 import { useTagModel } from "./TagModal";
@@ -49,6 +52,8 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
     useTagModel(bookmark);
   const { setOpen: setManageListsModalOpen, content: manageListsModal } =
     useManageListsModal(bookmark.id);
+
+  const [isTextEditorOpen, setTextEditorOpen] = useState(false);
 
   const { listId } = useBookmarkGridContext() ?? {};
 
@@ -107,6 +112,11 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
     <>
       {tagModal}
       {manageListsModal}
+      <BookmarkedTextEditor
+        bookmark={bookmark}
+        open={isTextEditorOpen}
+        setOpen={setTextEditorOpen}
+      />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -117,6 +127,12 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-fit">
+          {bookmark.content.type === BookmarkTypes.TEXT && (
+            <DropdownMenuItem onClick={() => setTextEditorOpen(true)}>
+              <Pencil className="mr-2 size-4" />
+              <span>Edit</span>
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem
             disabled={demoMode}
             onClick={() =>

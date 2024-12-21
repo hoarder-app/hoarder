@@ -37,7 +37,7 @@ export function MarkdownComponent({
     });
   };
   return (
-    <>
+    <div className="h-full overflow-hidden">
       {readOnly ? (
         <MarkdownReadonly>{bookmark.content.text}</MarkdownReadonly>
       ) : (
@@ -58,6 +58,6 @@ export function MarkdownComponent({
           </ActionButton>
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -28,9 +28,7 @@ export function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
           />
         </div>
       )}
-      <MarkdownComponent readOnly={false}>
-        {bookmark as ZBookmarkTypeText}
-      </MarkdownComponent>
+      <MarkdownComponent>{bookmark as ZBookmarkTypeText}</MarkdownComponent>
     </ScrollArea>
   );
 }
