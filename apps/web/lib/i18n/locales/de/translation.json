@@ -180,7 +180,20 @@
     "import_as_separate_bookmarks": "Als separate Lesezeichen importieren",
     "placeholder": "Fügen Sie einen Link oder ein Bild ein, schreiben Sie eine Notiz oder ziehen Sie ein Bild hierher ...",
     "new_item": "NEUER EINTRAG",
-    "disabled_submissions": "Einsendungen sind deaktiviert"
+    "disabled_submissions": "Einsendungen sind deaktiviert",
+    "text_toolbar": {
+      "undo": "Rückgängig",
+      "redo": "Wiederholen",
+      "bold": "Fett",
+      "italic": "Kursiv",
+      "underline": "Unterstrichen",
+      "strikethrough": "Durchgestrichen",
+      "code": "Code",
+      "highlight": "Hervorheben",
+      "align_left": "Linksbündig",
+      "align_center": "Zentriert",
+      "align_right": "Rechtsbündig"
+    }
   },
   "toasts": {
     "bookmarks": {

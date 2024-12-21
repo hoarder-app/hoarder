@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { MarkdownComponent } from "@/components/ui/markdown-component";
+import { BookmarkMarkdownComponent } from "@/components/dashboard/bookmarks/BookmarkMarkdownComponent";
 import { bookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 
@@ -20,15 +20,16 @@ export default function TextCard({
   bookmark: ZBookmarkTypeText;
   className?: string;
 }) {
-  const bookmarkedText = bookmark.content;
-
   const banner = bookmark.assets.find((a) => a.assetType == "bannerImage");
-
   return (
     <>
       <BookmarkLayoutAdaptingCard
         title={bookmark.title}
-        content={<MarkdownComponent>{bookmarkedText.text}</MarkdownComponent>}
+        content={
+          <BookmarkMarkdownComponent readOnly={true}>
+            {bookmark}
+          </BookmarkMarkdownComponent>
+        }
         footer={
           getSourceUrl(bookmark) && (
             <FooterLinkURL url={getSourceUrl(bookmark)} />
