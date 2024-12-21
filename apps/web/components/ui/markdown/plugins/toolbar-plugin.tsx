@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n/client";
-import { $createCodeNode, $isCodeNode } from "@lexical/code";
 import {
   $convertFromMarkdownString,
   $convertToMarkdownString,
@@ -10,6 +9,7 @@ import {
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { mergeRegister } from "@lexical/utils";
 import {
+  $createParagraphNode,
   $createTextNode,
   $getRoot,
   $getSelection,
@@ -22,7 +22,6 @@ import {
 import {
   Bold,
   Code,
-  Hash,
   Highlighter,
   Italic,
   LucideIcon,
@@ -32,6 +31,8 @@ import {
 
 import { ActionButton } from "../../action-button";
 import InfoTooltip from "../../info-tooltip";
+import { Label } from "../../label";
+import { Switch } from "../../switch";
 
 const LowPriority = 1;
 
@@ -222,23 +223,23 @@ export default function ToolbarPlugin({
 
   const handleRawMarkdownToggle = useCallback(() => {
     editor.update(() => {
+      console.log(isRawMarkdownMode);
       const root = $getRoot();
       const firstChild = root.getFirstChild();
-      if ($isCodeNode(firstChild) && firstChild.getLanguage() === "markdown") {
-        $convertFromMarkdownString(firstChild.getTextContent(), TRANSFORMERS);
+      if (isRawMarkdownMode) {
+        if (firstChild) {
+          $convertFromMarkdownString(firstChild.getTextContent(), TRANSFORMERS);
+        }
         setIsRawMarkdownMode(false);
       } else {
         const markdown = $convertToMarkdownString(TRANSFORMERS);
-        const codeNode = $createCodeNode("markdown");
-        codeNode.append($createTextNode(markdown));
-        root.clear().append(codeNode);
-        if (markdown.length === 0) {
-          codeNode.select();
-        }
+        const pNode = $createParagraphNode();
+        pNode.append($createTextNode(markdown));
+        root.clear().append(pNode);
         setIsRawMarkdownMode(true);
       }
     });
-  }, [editor]);
+  }, [editor, isRawMarkdownMode]);
 
   return (
     <div className="mb-1 flex items-center justify-between rounded-t-lg p-1">
@@ -261,15 +262,14 @@ export default function ToolbarPlugin({
         )}
       </div>
       <div className="flex items-center gap-2">
-        <Button
-          variant={isRawMarkdownMode ? "default" : "ghost"}
-          size={"sm"}
-          onClick={() => {
-            handleRawMarkdownToggle();
-          }}
-        >
-          <Hash className="h-4 w-4" />
-        </Button>
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="editor-raw-markdown"
+            onCheckedChange={handleRawMarkdownToggle}
+            checked={isRawMarkdownMode}
+          />
+          <Label htmlFor="editor-raw-markdown">Raw Markdown</Label>
+        </div>
         {onSave && (
           <ActionButton
             loading={isSaving}

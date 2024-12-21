@@ -25,6 +25,7 @@ import { HorizontalRuleNode } from "@lexical/react/LexicalHorizontalRuleNode";
 import { ListPlugin } from "@lexical/react/LexicalListPlugin";
 import { MarkdownShortcutPlugin } from "@lexical/react/LexicalMarkdownShortcutPlugin";
 import { OnChangePlugin } from "@lexical/react/LexicalOnChangePlugin";
+import { PlainTextPlugin } from "@lexical/react/LexicalPlainTextPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TabIndentationPlugin } from "@lexical/react/LexicalTabIndentationPlugin";
 import { HeadingNode, QuoteNode } from "@lexical/rich-text";
@@ -74,7 +75,6 @@ const MarkdownEditor = memo(
       editorState.read(() => {
         let markdownString;
         if (isRawMarkdownMode) {
-          // if raw markdown, the first child is a codeBlock
           markdownString = $getRoot()?.getFirstChild()?.getTextContent() ?? "";
         } else {
           markdownString = $convertToMarkdownString(TRANSFORMERS);
@@ -92,12 +92,21 @@ const MarkdownEditor = memo(
             onSave={onSave && (() => onSave(rawMarkdown))}
             isSaving={!!isSaving}
           />
-          <RichTextPlugin
-            contentEditable={
-              <ContentEditable className="prose h-full w-full min-w-full overflow-auto p-2 dark:prose-invert prose-p:m-0" />
-            }
-            ErrorBoundary={LexicalErrorBoundary}
-          />
+          {isRawMarkdownMode ? (
+            <PlainTextPlugin
+              contentEditable={
+                <ContentEditable className="h-full w-full min-w-full overflow-auto p-2" />
+              }
+              ErrorBoundary={LexicalErrorBoundary}
+            />
+          ) : (
+            <RichTextPlugin
+              contentEditable={
+                <ContentEditable className="prose h-full w-full min-w-full overflow-auto p-2 dark:prose-invert prose-p:m-0" />
+              }
+              ErrorBoundary={LexicalErrorBoundary}
+            />
+          )}
         </div>
         <HistoryPlugin />
         <AutoFocusPlugin />
