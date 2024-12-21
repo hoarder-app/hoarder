@@ -66,7 +66,7 @@
     "next-i18next": "^15.3.1",
     "next-pwa": "^5.6.0",
     "next-themes": "^0.3.0",
-    "prettier": "^3.2.5",
+    "prettier": "^3.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-draggable": "^4.4.6",

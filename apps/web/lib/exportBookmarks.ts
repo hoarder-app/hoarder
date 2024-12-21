@@ -51,7 +51,7 @@ export function toExportFormat(
     title:
       bookmark.title ??
       (bookmark.content.type === BookmarkTypes.LINK
-        ? bookmark.content.title ?? null
+        ? (bookmark.content.title ?? null)
         : null),
     tags: bookmark.tags.map((t) => t.name),
     content,
