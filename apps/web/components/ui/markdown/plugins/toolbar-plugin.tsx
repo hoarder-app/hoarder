@@ -26,9 +26,11 @@ import {
   Highlighter,
   Italic,
   LucideIcon,
+  Save,
   Strikethrough,
 } from "lucide-react";
 
+import { ActionButton } from "../../action-button";
 import InfoTooltip from "../../info-tooltip";
 
 const LowPriority = 1;
@@ -119,9 +121,13 @@ function MarkdownToolTip() {
 export default function ToolbarPlugin({
   isRawMarkdownMode = false,
   setIsRawMarkdownMode,
+  onSave,
+  isSaving,
 }: {
   isRawMarkdownMode: boolean;
   setIsRawMarkdownMode: (value: boolean) => void;
+  onSave?: () => void;
+  isSaving: boolean;
 }) {
   const { t } = useTranslation();
   const [editor] = useLexicalComposerContext();
@@ -254,7 +260,7 @@ export default function ToolbarPlugin({
           ),
         )}
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-2">
         <Button
           variant={isRawMarkdownMode ? "default" : "ghost"}
           size={"sm"}
@@ -264,6 +270,19 @@ export default function ToolbarPlugin({
         >
           <Hash className="h-4 w-4" />
         </Button>
+        {onSave && (
+          <ActionButton
+            loading={isSaving}
+            className="flex items-center gap-2"
+            size={"sm"}
+            onClick={() => {
+              onSave?.();
+            }}
+          >
+            <Save className="size-4" />
+            Save
+          </ActionButton>
+        )}
         <MarkdownToolTip />
       </div>
     </div>

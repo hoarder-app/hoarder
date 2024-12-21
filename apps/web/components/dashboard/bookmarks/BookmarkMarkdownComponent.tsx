@@ -1,9 +1,6 @@
-import React, { useState } from "react";
-import { ActionButton } from "@/components/ui/action-button";
 import MarkdownEditor from "@/components/ui/markdown/markdown-editor";
 import { MarkdownReadonly } from "@/components/ui/markdown/markdown-readonly";
 import { toast } from "@/components/ui/use-toast";
-import { useTranslation } from "@/lib/i18n/client";
 
 import type { ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
 import { useUpdateBookmarkText } from "@hoarder/shared-react/hooks/bookmarks";
@@ -15,10 +12,6 @@ export function BookmarkMarkdownComponent({
   children: ZBookmarkTypeText;
   readOnly?: boolean;
 }) {
-  const { t } = useTranslation();
-
-  const [noteText, setNoteText] = useState(bookmark.content.text);
-
   const { mutate: updateBookmarkMutator, isPending } = useUpdateBookmarkText({
     onSuccess: () => {
       toast({
@@ -30,10 +23,10 @@ export function BookmarkMarkdownComponent({
     },
   });
 
-  const onSave = () => {
+  const onSave = (text: string) => {
     updateBookmarkMutator({
       bookmarkId: bookmark.id,
-      text: noteText,
+      text,
     });
   };
   return (
@@ -41,22 +34,9 @@ export function BookmarkMarkdownComponent({
       {readOnly ? (
         <MarkdownReadonly>{bookmark.content.text}</MarkdownReadonly>
       ) : (
-        <MarkdownEditor onChangeMarkdown={setNoteText}>
+        <MarkdownEditor onSave={onSave} isSaving={isPending}>
           {bookmark.content.text}
         </MarkdownEditor>
-      )}
-
-      {!readOnly && (
-        <div className="absolute bottom-2 right-2">
-          <ActionButton
-            type="button"
-            loading={isPending}
-            onClick={onSave}
-            disabled={isPending}
-          >
-            {t("actions.save")}
-          </ActionButton>
-        </div>
       )}
     </div>
   );

@@ -47,12 +47,14 @@ const EDITOR_NODES = [
 
 interface MarkdownEditorProps {
   children: string;
-  onChangeMarkdown?: (markdown: string) => void;
+  onSave?: (markdown: string) => void;
+  isSaving?: boolean;
 }
 
 const MarkdownEditor = memo(
-  ({ children: initialMarkdown, onChangeMarkdown }: MarkdownEditorProps) => {
+  ({ children: initialMarkdown, onSave, isSaving }: MarkdownEditorProps) => {
     const [isRawMarkdownMode, setIsRawMarkdownMode] = useState(false);
+    const [rawMarkdown, setRawMarkdown] = useState(initialMarkdown);
 
     const initialConfig: InitialConfigType = useMemo(
       () => ({
@@ -77,9 +79,7 @@ const MarkdownEditor = memo(
         } else {
           markdownString = $convertToMarkdownString(TRANSFORMERS);
         }
-        if (onChangeMarkdown) {
-          onChangeMarkdown(markdownString);
-        }
+        setRawMarkdown(markdownString);
       });
     };
 
@@ -89,6 +89,8 @@ const MarkdownEditor = memo(
           <ToolbarPlugin
             isRawMarkdownMode={isRawMarkdownMode}
             setIsRawMarkdownMode={setIsRawMarkdownMode}
+            onSave={onSave && (() => onSave(rawMarkdown))}
+            isSaving={!!isSaving}
           />
           <RichTextPlugin
             contentEditable={
