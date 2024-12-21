@@ -16,11 +16,6 @@ export default async function InfoPage() {
           <ChangePassword />
         </>
       )}
-      {!whoami.localUser && (
-        <div className="flex flex-col sm:flex-row">
-          Changing Email address and password is not possible for OAuth Users
-        </div>
-      )}
       <UserOptions />
     </div>
   );
