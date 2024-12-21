@@ -33,6 +33,89 @@ import InfoTooltip from "../../info-tooltip";
 
 const LowPriority = 1;
 
+function MarkdownToolTip() {
+  const { t } = useTranslation();
+  return (
+    <InfoTooltip size={15}>
+      <table className="w-full table-auto text-left text-sm">
+        <thead>
+          <tr>
+            <th>{t("editor.text_toolbar.markdown_shortcuts.label")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="border-b">
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.heading.label")}
+            </td>
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.heading.example")}
+            </td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.bold.label")}
+            </td>
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.bold.example")}
+            </td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.italic.label")}
+            </td>
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.italic.example")}
+            </td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.blockquote.label")}
+            </td>
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.blockquote.example")}
+            </td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.ordered_list.label")}
+            </td>
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.ordered_list.example")}
+            </td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.unordered_list.label")}
+            </td>
+            <td className="py-2">
+              {t(
+                "editor.text_toolbar.markdown_shortcuts.unordered_list.example",
+              )}
+            </td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.inline_code.label")}
+            </td>
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.inline_code.example")}
+            </td>
+          </tr>
+          <tr className="border-b">
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.block_code.label")}
+            </td>
+            <td className="py-2">
+              {t("editor.text_toolbar.markdown_shortcuts.block_code.example")}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </InfoTooltip>
+  );
+}
+
 export default function ToolbarPlugin({
   isRawMarkdownMode = false,
   setIsRawMarkdownMode,
@@ -181,97 +264,7 @@ export default function ToolbarPlugin({
         >
           <Hash className="h-4 w-4" />
         </Button>
-        <InfoTooltip size={15}>
-          <table className="w-full table-auto text-left text-sm">
-            <thead>
-              <tr>
-                <th>{t("editor.text_toolbar.markdown_shortcuts.label")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b">
-                <td className="py-2">
-                  {t("editor.text_toolbar.markdown_shortcuts.heading.label")}
-                </td>
-                <td className="py-2">
-                  {t("editor.text_toolbar.markdown_shortcuts.heading.example")}
-                </td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-2">
-                  {t("editor.text_toolbar.markdown_shortcuts.bold.label")}
-                </td>
-                <td className="py-2">
-                  {t("editor.text_toolbar.markdown_shortcuts.bold.example")}
-                </td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-2">
-                  {t("editor.text_toolbar.markdown_shortcuts.italic.label")}
-                </td>
-                <td className="py-2">
-                  {t("editor.text_toolbar.markdown_shortcuts.italic.example")}
-                </td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-2">
-                  {t("editor.text_toolbar.markdown_shortcuts.blockquote.label")}
-                </td>
-                <td className="py-2">
-                  {t(
-                    "editor.text_toolbar.markdown_shortcuts.blockquote.example",
-                  )}
-                </td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-2">
-                  {t(
-                    "editor.text_toolbar.markdown_shortcuts.ordered_list.label",
-                  )}
-                </td>
-                <td className="py-2">
-                  {t(
-                    "editor.text_toolbar.markdown_shortcuts.ordered_list.example",
-                  )}
-                </td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-2">
-                  {t(
-                    "editor.text_toolbar.markdown_shortcuts.unordered_list.label",
-                  )}
-                </td>
-                <td className="py-2">
-                  {t(
-                    "editor.text_toolbar.markdown_shortcuts.unordered_list.example",
-                  )}
-                </td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-2">
-                  {t(
-                    "editor.text_toolbar.markdown_shortcuts.inline_code.label",
-                  )}
-                </td>
-                <td className="py-2">
-                  {t(
-                    "editor.text_toolbar.markdown_shortcuts.inline_code.example",
-                  )}
-                </td>
-              </tr>
-              <tr className="border-b">
-                <td className="py-2">
-                  {t("editor.text_toolbar.markdown_shortcuts.block_code.label")}
-                </td>
-                <td className="py-2">
-                  {t(
-                    "editor.text_toolbar.markdown_shortcuts.block_code.example",
-                  )}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </InfoTooltip>
+        <MarkdownToolTip />
       </div>
     </div>
   );
