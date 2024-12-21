@@ -16,6 +16,8 @@ import { LogOut, Moon, Paintbrush, Settings, Shield, Sun } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import { useTheme } from "next-themes";
 
+import { AdminNoticeBadge } from "../admin/AdminNotices";
+
 function DarkModeToggle() {
   const { t } = useTranslation();
   const { theme } = useTheme();
@@ -72,9 +74,12 @@ export default function SidebarProfileOptions() {
         </DropdownMenuItem>
         {session.user.role == "admin" && (
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/admin">
-              <Shield className="mr-2 size-4" />
-              {t("admin.admin_settings")}
+            <Link href="/dashboard/admin" className="flex justify-between">
+              <div className="items-cente flex gap-2">
+                <Shield className="size-4" />
+                {t("admin.admin_settings")}
+              </div>
+              <AdminNoticeBadge />
             </Link>
           </DropdownMenuItem>
         )}

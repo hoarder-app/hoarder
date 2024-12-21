@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import AdminActions from "@/components/dashboard/admin/AdminActions";
+import { AdminCard } from "@/components/dashboard/admin/AdminCard";
+import { AdminNotices } from "@/components/dashboard/admin/AdminNotices";
 import ServerStats from "@/components/dashboard/admin/ServerStats";
 import UserList from "@/components/dashboard/admin/UserList";
 import { getServerAuthSession } from "@/server/auth";
@@ -10,14 +12,15 @@ export default async function AdminPage() {
     redirect("/");
   }
   return (
-    <>
-      <div className="rounded-md border bg-background p-4">
+    <div className="flex flex-col gap-4">
+      <AdminNotices />
+      <AdminCard>
         <ServerStats />
         <AdminActions />
-      </div>
-      <div className="mt-4 rounded-md border bg-background p-4">
+      </AdminCard>
+      <AdminCard>
         <UserList />
-      </div>
-    </>
+      </AdminCard>
+    </div>
   );
 }

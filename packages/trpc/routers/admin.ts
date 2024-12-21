@@ -3,6 +3,7 @@ import { count, eq, sum } from "drizzle-orm";
 import { z } from "zod";
 
 import { assets, bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
+import serverConfig from "@hoarder/shared/config";
 import {
   LinkCrawlerQueue,
   OpenAIQueue,
@@ -276,5 +277,16 @@ export const adminAppRouter = router({
           message: "User not found",
         });
       }
+    }),
+  getAdminNoticies: adminProcedure
+    .output(
+      z.object({
+        legacyContainersNotice: z.boolean(),
+      }),
+    )
+    .query(() => {
+      return {
+        legacyContainersNotice: serverConfig.usingLegacySeparateContainers,
+      };
     }),
 });
