@@ -1,10 +1,10 @@
+import { BookmarkMarkdownComponent } from "@/components/dashboard/bookmarks/BookmarkMarkdownComponent";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { MarkdownComponent } from "@/components/ui/markdown-component";
 
 import { ZBookmark, ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
 
@@ -28,9 +28,9 @@ export function BookmarkedTextEditor({
           </DialogTitle>
         </DialogHeader>
         <div className="h-[80vh]">
-          <MarkdownComponent readOnly={false}>
+          <BookmarkMarkdownComponent readOnly={false}>
             {bookmark as ZBookmarkTypeText}
-          </MarkdownComponent>
+          </BookmarkMarkdownComponent>
         </div>
       </DialogContent>
     </Dialog>

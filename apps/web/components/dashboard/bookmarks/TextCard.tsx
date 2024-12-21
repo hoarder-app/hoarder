@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { MarkdownComponent } from "@/components/ui/markdown-component";
+import { BookmarkMarkdownComponent } from "@/components/dashboard/bookmarks/BookmarkMarkdownComponent";
 import { bookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +26,9 @@ export default function TextCard({
       <BookmarkLayoutAdaptingCard
         title={bookmark.title}
         content={
-          <MarkdownComponent readOnly={true}>{bookmark}</MarkdownComponent>
+          <BookmarkMarkdownComponent readOnly={true}>
+            {bookmark}
+          </BookmarkMarkdownComponent>
         }
         footer={
           getSourceUrl(bookmark) && (

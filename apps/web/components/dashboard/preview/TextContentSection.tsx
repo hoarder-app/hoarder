@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { MarkdownComponent } from "@/components/ui/markdown-component";
+import { BookmarkMarkdownComponent } from "@/components/dashboard/bookmarks/BookmarkMarkdownComponent";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 import type { ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
@@ -28,7 +28,9 @@ export function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
           />
         </div>
       )}
-      <MarkdownComponent>{bookmark as ZBookmarkTypeText}</MarkdownComponent>
+      <BookmarkMarkdownComponent>
+        {bookmark as ZBookmarkTypeText}
+      </BookmarkMarkdownComponent>
     </ScrollArea>
   );
 }

@@ -8,7 +8,7 @@ import { useTranslation } from "@/lib/i18n/client";
 import type { ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
 import { useUpdateBookmarkText } from "@hoarder/shared-react/hooks/bookmarks";
 
-export function MarkdownComponent({
+export function BookmarkMarkdownComponent({
   children: bookmark,
   readOnly = true,
 }: {
