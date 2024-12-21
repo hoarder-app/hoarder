@@ -1,5 +1,6 @@
 import { and, Column, eq, inArray, sql } from "drizzle-orm";
 import { DequeuedJob, Runner } from "liteque";
+import { buildImpersonatingTRPCClient } from "trpc";
 import { z } from "zod";
 
 import type { InferenceClient } from "@hoarder/shared/inference";
@@ -31,7 +32,7 @@ const openAIResponseSchema = z.object({
 
 function tagNormalizer(col: Column) {
   function normalizeTag(tag: string) {
-    return tag.toLowerCase().replace(/[ -_]/g, "");
+    return tag.toLowerCase().replace(/[ \-_]/g, "");
   }
 
   return {
@@ -68,16 +69,18 @@ export class OpenAiWorker {
       {
         run: runOpenAI,
         onComplete: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.info(`[inference][${jobId}] Completed successfully`);
-          await attemptMarkTaggingStatus(job?.data, "success");
+          await attemptMarkTaggingStatus(job.data, "success");
         },
         onError: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.error(
             `[inference][${jobId}] inference job failed: ${job.error}\n${job.error.stack}`,
           );
-          await attemptMarkTaggingStatus(job?.data, "failure");
+          if (job.numRetriesLeft == 0) {
+            await attemptMarkTaggingStatus(job?.data, "failure");
+          }
         },
       },
       {
@@ -198,7 +201,47 @@ async function fetchCustomPrompts(
     },
   });
 
-  return prompts.map((p) => p.text);
+  let promptTexts = prompts.map((p) => p.text);
+  if (containsTagsPlaceholder(prompts)) {
+    promptTexts = await replaceTagsPlaceholders(promptTexts, userId);
+  }
+
+  return promptTexts;
+}
+
+async function replaceTagsPlaceholders(
+  prompts: string[],
+  userId: string,
+): Promise<string[]> {
+  const api = await buildImpersonatingTRPCClient(userId);
+  const tags = (await api.tags.list()).tags;
+  const tagsString = `[${tags.map((tag) => tag.name).join(", ")}]`;
+  const aiTagsString = `[${tags
+    .filter((tag) => tag.numBookmarksByAttachedType.human ?? 0 == 0)
+    .map((tag) => tag.name)
+    .join(", ")}]`;
+  const userTagsString = `[${tags
+    .filter((tag) => tag.numBookmarksByAttachedType.human ?? 0 > 0)
+    .map((tag) => tag.name)
+    .join(", ")}]`;
+
+  return prompts.map((p) =>
+    p
+      .replaceAll("$tags", tagsString)
+      .replaceAll("$aiTags", aiTagsString)
+      .replaceAll("$userTags", userTagsString),
+  );
+}
+
+function containsTagsPlaceholder(prompts: { text: string }[]): boolean {
+  return (
+    prompts.filter(
+      (p) =>
+        p.text.includes("$tags") ||
+        p.text.includes("$aiTags") ||
+        p.text.includes("$userTags"),
+    ).length > 0
+  );
 }
 
 async function inferTagsFromPDF(
@@ -387,7 +430,7 @@ async function connectTags(
 }
 
 async function runOpenAI(job: DequeuedJob<ZOpenAIRequest>) {
-  const jobId = job.id ?? "unknown";
+  const jobId = job.id;
 
   const inferenceClient = InferenceClientFactory.build();
   if (!inferenceClient) {

@@ -146,7 +146,7 @@ class OllamaInferenceClient implements InferenceClient {
         }
       }
     } catch (e) {
-      // There seem to be some bug in ollama where you can get some successfull response, but still throw an error.
+      // There seem to be some bug in ollama where you can get some successful response, but still throw an error.
       // Using stream + accumulating the response so far is a workaround.
       // https://github.com/ollama/ollama-js/issues/72
       totalTokens = NaN;

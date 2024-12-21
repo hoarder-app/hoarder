@@ -11,10 +11,15 @@ import {
   getAssetSize,
   newAssetId,
   saveAssetFromFile,
+  silentDeleteAsset,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
-import { VideoWorkerQueue, ZVideoRequest } from "@hoarder/shared/queues";
+import {
+  VideoWorkerQueue,
+  ZVideoRequest,
+  zvideoRequestSchema,
+} from "@hoarder/shared/queues";
 
 import { withTimeout } from "./utils";
 import { getBookmarkDetails, updateAsset } from "./workerUtils";
@@ -33,14 +38,14 @@ export class VideoWorker {
           /* timeoutSec */ serverConfig.crawler.downloadVideoTimeout,
         ),
         onComplete: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.info(
             `[VideoCrawler][${jobId}] Video Download Completed successfully`,
           );
           return Promise.resolve();
         },
         onError: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.error(
             `[VideoCrawler][${jobId}] Video Download job failed: ${job.error}`,
           );
@@ -51,6 +56,7 @@ export class VideoWorker {
         pollIntervalMs: 1000,
         timeoutSecs: serverConfig.crawler.downloadVideoTimeout,
         concurrency: 1,
+        validator: zvideoRequestSchema,
       },
     );
   }
@@ -71,7 +77,7 @@ function prepareYtDlpArguments(url: string, assetPath: string) {
 }
 
 async function runWorker(job: DequeuedJob<ZVideoRequest>) {
-  const jobId = job.id ?? "unknown";
+  const jobId = job.id;
   const { bookmarkId } = job.data;
 
   const {
@@ -98,7 +104,7 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
       `[VideoCrawler][${jobId}] Attempting to download a file from "${url}" to "${assetPath}" using the following arguments: "${ytDlpArguments}"`,
     );
 
-    await execa`yt-dlp ${ytDlpArguments}`;
+    await execa("yt-dlp", ytDlpArguments);
     const downloadPath = await findAssetFile(videoAssetId);
     if (!downloadPath) {
       logger.info(
@@ -109,7 +115,11 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
     assetPath = downloadPath;
   } catch (e) {
     const err = e as Error;
-    if (err.message.includes("ERROR: Unsupported URL:")) {
+    if (
+      err.message.includes(
+        "ERROR: Unsupported URL:" || err.message.includes("No media found"),
+      )
+    ) {
       logger.info(
         `[VideoCrawler][${jobId}] Skipping video download from "${url}", because it's not one of the supported yt-dlp URLs`,
       );
@@ -147,6 +157,7 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
       txn,
     );
   });
+  await silentDeleteAsset(userId, oldVideoAssetId);
 
   logger.info(
     `[VideoCrawler][${jobId}] Finished downloading video from "${url}" and adding it to the database`,

@@ -7,10 +7,12 @@ import { buttonVariants } from "@/components/ui/button";
 import FilePickerButton from "@/components/ui/file-picker-button";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import {
   ParsedBookmark,
   parseHoarderBookmarkFile,
   parseNetscapeBookmarkFile,
+  parseOmnivoreBookmarkFile,
   parsePocketBookmarkFile,
 } from "@/lib/importBookmarkParser";
 import { cn } from "@/lib/utils";
@@ -20,7 +22,6 @@ import { Download, Upload } from "lucide-react";
 
 import {
   useCreateBookmarkWithPostHook,
-  useUpdateBookmark,
   useUpdateBookmarkTags,
 } from "@hoarder/shared-react/hooks/bookmarks";
 import {
@@ -30,6 +31,7 @@ import {
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 export function ExportButton() {
+  const { t } = useTranslation();
   return (
     <Link
       href="/api/bookmarks/export"
@@ -39,12 +41,13 @@ export function ExportButton() {
       )}
     >
       <Download />
-      <p>Export Links and Notes</p>
+      <p>{t("settings.import.export_links_and_notes")}</p>
     </Link>
   );
 }
 
 export function ImportExportRow() {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const [importProgress, setImportProgress] = useState<{
@@ -53,7 +56,6 @@ export function ImportExportRow() {
   } | null>(null);
 
   const { mutateAsync: createBookmark } = useCreateBookmarkWithPostHook();
-  const { mutateAsync: updateBookmark } = useUpdateBookmark();
   const { mutateAsync: createList } = useCreateBookmarkList();
   const { mutateAsync: addToList } = useAddBookmarkToList();
   const { mutateAsync: updateTags } = useUpdateBookmarkTags();
@@ -67,8 +69,13 @@ export function ImportExportRow() {
       if (bookmark.content === undefined) {
         throw new Error("Content is undefined");
       }
-      const created = await createBookmark(
-        bookmark.content.type === BookmarkTypes.LINK
+      const created = await createBookmark({
+        title: bookmark.title,
+        createdAt: bookmark.addDate
+          ? new Date(bookmark.addDate * 1000)
+          : undefined,
+        note: bookmark.notes,
+        ...(bookmark.content.type === BookmarkTypes.LINK
           ? {
               type: BookmarkTypes.LINK,
               url: bookmark.content.url,
@@ -76,24 +83,10 @@ export function ImportExportRow() {
           : {
               type: BookmarkTypes.TEXT,
               text: bookmark.content.text,
-            },
-      );
+            }),
+      });
 
       await Promise.all([
-        // Update title and createdAt if they're set
-        bookmark.title.length > 0 || bookmark.addDate
-          ? updateBookmark({
-              bookmarkId: created.id,
-              title: bookmark.title,
-              createdAt: bookmark.addDate
-                ? new Date(bookmark.addDate * 1000)
-                : undefined,
-              note: bookmark.notes,
-            }).catch(() => {
-              /* empty */
-            })
-          : undefined,
-
         // Add to import list
         addToList({
           bookmarkId: created.id,
@@ -128,7 +121,7 @@ export function ImportExportRow() {
       source,
     }: {
       file: File;
-      source: "html" | "pocket" | "hoarder";
+      source: "html" | "pocket" | "omnivore" | "hoarder";
     }) => {
       if (source === "html") {
         return await parseNetscapeBookmarkFile(file);
@@ -136,13 +129,15 @@ export function ImportExportRow() {
         return await parsePocketBookmarkFile(file);
       } else if (source === "hoarder") {
         return await parseHoarderBookmarkFile(file);
+      } else if (source === "omnivore") {
+        return await parseOmnivoreBookmarkFile(file);
       } else {
         throw new Error("Unknown source");
       }
     },
     onSuccess: async (resp) => {
       const importList = await createList({
-        name: `Imported Bookmarks`,
+        name: t("settings.import.imported_bookmarks"),
         icon: "⬆️",
       });
       setImportProgress({ done: 0, total: resp.length });
@@ -208,12 +203,12 @@ export function ImportExportRow() {
           }
         >
           <Upload />
-          <p>Import Bookmarks from HTML file</p>
+          <p>{t("settings.import.import_bookmarks_from_html_file")}</p>
         </FilePickerButton>
 
         <FilePickerButton
           loading={false}
-          accept=".html"
+          accept=".csv"
           multiple={false}
           className="flex items-center gap-2"
           onFileSelect={(file) =>
@@ -221,7 +216,19 @@ export function ImportExportRow() {
           }
         >
           <Upload />
-          <p>Import Bookmarks from Pocket export</p>
+          <p>{t("settings.import.import_bookmarks_from_pocket_export")}</p>
+        </FilePickerButton>
+        <FilePickerButton
+          loading={false}
+          accept=".json"
+          multiple={false}
+          className="flex items-center gap-2"
+          onFileSelect={(file) =>
+            runUploadBookmarkFile({ file, source: "omnivore" })
+          }
+        >
+          <Upload />
+          <p>{t("settings.import.import_bookmarks_from_omnivore_export")}</p>
         </FilePickerButton>
         <FilePickerButton
           loading={false}
@@ -233,7 +240,7 @@ export function ImportExportRow() {
           }
         >
           <Upload />
-          <p>Import Bookmarks from Hoarder export</p>
+          <p>{t("settings.import.import_bookmarks_from_hoarder_export")}</p>
         </FilePickerButton>
         <ExportButton />
       </div>
@@ -254,9 +261,12 @@ export function ImportExportRow() {
 }
 
 export default function ImportExport() {
+  const { t } = useTranslation();
   return (
     <div className="flex w-full flex-col gap-2">
-      <p className="mb-4 text-lg font-medium">Import / Export Bookmarks</p>
+      <p className="mb-4 text-lg font-medium">
+        {t("settings.import.import_export_bookmarks")}
+      </p>
       <ImportExportRow />
     </div>
   );

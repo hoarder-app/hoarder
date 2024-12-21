@@ -16,15 +16,11 @@
     "@hoarder/tsconfig": "workspace:^0.1.0"
   },
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*",
-    "react-native-web": "*"
+    "react": "^18.3.1",
+    "react-native": "^0.76.3"
   },
   "peerDependenciesMeta": {
     "react-native": {
-      "optional": true
-    },
-    "react-native-web": {
       "optional": true
     }
   },

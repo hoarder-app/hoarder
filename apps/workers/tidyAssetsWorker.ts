@@ -19,12 +19,12 @@ export class TidyAssetsWorker {
       {
         run: runTidyAssets,
         onComplete: (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.info(`[tidyAssets][${jobId}] Completed successfully`);
           return Promise.resolve();
         },
         onError: (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.error(
             `[tidyAssets][${jobId}] tidy assets job failed: ${job.error}\n${job.error.stack}`,
           );
@@ -86,7 +86,7 @@ async function handleAsset(
 }
 
 async function runTidyAssets(job: DequeuedJob<ZTidyAssetsRequest>) {
-  const jobId = job.id ?? "unknown";
+  const jobId = job.id;
 
   const request = zTidyAssetsRequestSchema.safeParse(job.data);
   if (!request.success) {

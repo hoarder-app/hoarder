@@ -26,6 +26,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,6 +55,7 @@ export function EditListModal({
   parent?: ZBookmarkList;
   children?: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   const router = useRouter();
   if (
     (userOpen !== undefined && !userSetOpen) ||
@@ -91,7 +93,7 @@ export function EditListModal({
   const { mutate: createList, isPending: isCreating } = useCreateBookmarkList({
     onSuccess: (resp) => {
       toast({
-        description: "List has been created!",
+        description: t("toasts.lists.created"),
       });
       setOpen(false);
       router.push(`/dashboard/lists/${resp.id}`);
@@ -115,7 +117,7 @@ export function EditListModal({
       } else {
         toast({
           variant: "destructive",
-          title: "Something went wrong",
+          title: t("common.something_went_wrong"),
         });
       }
     },
@@ -124,7 +126,7 @@ export function EditListModal({
   const { mutate: editList, isPending: isEditing } = useEditBookmarkList({
     onSuccess: () => {
       toast({
-        description: "List has been updated!",
+        description: t("toasts.lists.updated"),
       });
       setOpen(false);
       form.reset();
@@ -147,7 +149,7 @@ export function EditListModal({
       } else {
         toast({
           variant: "destructive",
-          title: "Something went wrong",
+          title: t("common.something_went_wrong"),
         });
       }
     },
@@ -259,7 +261,7 @@ export function EditListModal({
             <DialogFooter className="sm:justify-end">
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
-                  Close
+                  {t("actions.close")}
                 </Button>
               </DialogClose>
               <ActionButton
@@ -267,7 +269,7 @@ export function EditListModal({
                 onClick={onSubmit}
                 loading={isPending}
               >
-                {list ? "Save" : "Create"}
+                {list ? t("actions.save") : t("actions.create")}
               </ActionButton>
             </DialogFooter>
           </form>

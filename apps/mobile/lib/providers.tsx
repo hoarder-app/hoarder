@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { ToastProvider } from "@/components/ui/Toast";
 
@@ -20,10 +19,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <SafeAreaProvider>
-      <TRPCProvider settings={settings}>
-        <ToastProvider>{children}</ToastProvider>
-      </TRPCProvider>
-    </SafeAreaProvider>
+    <TRPCProvider settings={settings}>
+      <ToastProvider>{children}</ToastProvider>
+    </TRPCProvider>
   );
 }

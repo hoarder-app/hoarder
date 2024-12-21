@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { Check, KeyRound, Pencil, Trash, UserPlus, X } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -28,6 +29,7 @@ function toHumanReadableSize(size: number) {
 }
 
 export default function UsersSection() {
+  const { t } = useTranslation();
   const { data: session } = useSession();
   const invalidateUserList = api.useUtils().users.list.invalidate;
   const { data: users } = api.users.list.useQuery();
@@ -55,7 +57,7 @@ export default function UsersSection() {
   return (
     <>
       <div className="mb-2 flex items-center justify-between text-xl font-medium">
-        <span>Users List</span>
+        <span>{t("admin.users_list.users_list")}</span>
         <AddUserDialog>
           <ButtonWithTooltip tooltip="Create User" variant="outline">
             <UserPlus size={16} />
@@ -65,13 +67,13 @@ export default function UsersSection() {
 
       <Table>
         <TableHeader className="bg-gray-200">
-          <TableHead>Name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Num Bookmarks</TableHead>
-          <TableHead>Asset Sizes</TableHead>
-          <TableHead>Role</TableHead>
-          <TableHead>Local User</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead>{t("common.name")}</TableHead>
+          <TableHead>{t("common.email")}</TableHead>
+          <TableHead>{t("admin.users_list.num_bookmarks")}</TableHead>
+          <TableHead>{t("admin.users_list.asset_sizes")}</TableHead>
+          <TableHead>{t("common.role")}</TableHead>
+          <TableHead>{t("admin.users_list.local_user")}</TableHead>
+          <TableHead>{t("common.actions")}</TableHead>
         </TableHeader>
         <TableBody>
           {users.users.map((u) => (
@@ -84,13 +86,15 @@ export default function UsersSection() {
               <TableCell className="py-1">
                 {toHumanReadableSize(userStats[u.id].assetSizes)}
               </TableCell>
-              <TableCell className="py-1 capitalize">{u.role}</TableCell>
-              <TableCell className="py-1 capitalize">
+              <TableCell className="py-1">
+                {u.role && t(`common.roles.${u.role}`)}
+              </TableCell>
+              <TableCell className="py-1">
                 {u.localUser ? <Check /> : <X />}
               </TableCell>
               <TableCell className="flex gap-1 py-1">
                 <ActionButtonWithTooltip
-                  tooltip="Delete user"
+                  tooltip={t("admin.users_list.delete_user")}
                   variant="outline"
                   onClick={() => deleteUser({ userId: u.id })}
                   loading={isDeletionPending}
@@ -100,7 +104,7 @@ export default function UsersSection() {
                 </ActionButtonWithTooltip>
                 <ResetPasswordDialog userId={u.id}>
                   <ButtonWithTooltip
-                    tooltip="Reset password"
+                    tooltip={t("admin.users_list.reset_password")}
                     variant="outline"
                     disabled={session!.user.id == u.id || !u.localUser}
                   >
@@ -109,7 +113,7 @@ export default function UsersSection() {
                 </ResetPasswordDialog>
                 <ChangeRoleDialog userId={u.id} currentRole={u.role!}>
                   <ButtonWithTooltip
-                    tooltip="Change role"
+                    tooltip={t("admin.users_list.change_role")}
                     variant="outline"
                     disabled={session!.user.id == u.id}
                   >

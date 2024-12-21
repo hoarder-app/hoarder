@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -19,6 +20,7 @@ import { useForm } from "react-hook-form";
 import { zChangePasswordSchema } from "@hoarder/shared/types/users";
 
 export function ChangePassword() {
+  const { t } = useTranslation();
   const form = useForm<z.infer<typeof zChangePasswordSchema>>({
     resolver: zodResolver(zChangePasswordSchema),
     defaultValues: {
@@ -55,7 +57,7 @@ export function ChangePassword() {
   return (
     <div className="flex flex-col sm:flex-row">
       <div className="mb-4 w-full text-lg font-medium sm:w-1/3">
-        Change Password
+        {t("settings.info.change_password")}
       </div>
       <Form {...form}>
         <form
@@ -68,11 +70,11 @@ export function ChangePassword() {
             render={({ field }) => {
               return (
                 <FormItem className="flex-1">
-                  <FormLabel>Current Password</FormLabel>
+                  <FormLabel>{t("settings.info.current_password")}</FormLabel>
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="Current Password"
+                      placeholder={t("settings.info.current_password")}
                       {...field}
                     />
                   </FormControl>
@@ -87,11 +89,11 @@ export function ChangePassword() {
             render={({ field }) => {
               return (
                 <FormItem className="flex-1">
-                  <FormLabel>New Password</FormLabel>
+                  <FormLabel>{t("settings.info.new_password")}</FormLabel>
                   <FormControl>
                     <Input
                       type="password"
-                      placeholder="New Password"
+                      placeholder={t("settings.info.new_password")}
                       {...field}
                     />
                   </FormControl>
@@ -106,11 +108,13 @@ export function ChangePassword() {
             render={({ field }) => {
               return (
                 <FormItem className="flex-1">
-                  <FormLabel>Confirm New Password</FormLabel>
+                  <FormLabel>
+                    {t("settings.info.confirm_new_password")}
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="Password"
-                      placeholder="Confirm New Password"
+                      placeholder={t("settings.info.confirm_new_password")}
                       {...field}
                     />
                   </FormControl>
@@ -124,7 +128,7 @@ export function ChangePassword() {
             type="submit"
             loading={mutator.isPending}
           >
-            Change Password
+            {t("actions.save")}
           </ActionButton>
         </form>
       </Form>

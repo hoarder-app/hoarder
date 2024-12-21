@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { View } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import { router } from "expo-router";
 import BookmarkList from "@/components/bookmarks/BookmarkList";
 import FullPageError from "@/components/FullPageError";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
-import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
@@ -27,30 +27,29 @@ export default function Search() {
     return <FullPageError error={error.message} onRetry={() => refetch()} />;
   }
 
-  if (!data) {
-    return <FullPageSpinner />;
-  }
-
   return (
     <CustomSafeAreaView>
-      <BookmarkList
-        bookmarks={data.bookmarks}
-        header={
-          <View>
-            <PageTitle title="Search" />
-            <Input
-              placeholder="Search"
-              className="mx-1"
-              value={search}
-              onChangeText={setSearch}
-              autoFocus
-              autoCapitalize="none"
-            />
-          </View>
-        }
-        onRefresh={onRefresh}
-        isRefreshing={isPending}
-      />
+      <View className="flex flex-row items-center gap-3 p-3">
+        <Input
+          placeholder="Search"
+          className="flex-1"
+          value={search}
+          onChangeText={setSearch}
+          autoFocus
+          autoCapitalize="none"
+        />
+        <Pressable onPress={() => router.back()}>
+          <Text className="text-foreground">Cancel</Text>
+        </Pressable>
+      </View>
+      {!data && <FullPageSpinner />}
+      {data && (
+        <BookmarkList
+          bookmarks={data.bookmarks}
+          onRefresh={onRefresh}
+          isRefreshing={isPending}
+        />
+      )}
     </CustomSafeAreaView>
   );
 }

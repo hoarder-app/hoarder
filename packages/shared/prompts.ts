@@ -57,7 +57,7 @@ export function buildSummaryPrompt(
   contextLength: number,
 ) {
   const constructPrompt = (c: string) => `
-    Summarize the following content in a 3-4 sentences in ${lang}:
+    Summarize the following content in 3-4 sentences in ${lang}, responding ONLY with the summary:
     ${c}`;
 
   const promptSize = calculateNumTokens(constructPrompt(""));
