@@ -15,9 +15,6 @@ export default function BookmarkActionBar({
 }) {
   return (
     <div className="flex text-gray-500">
-      {bookmark.favourited && (
-        <FavouritedActionIcon className="m-1 size-8 rounded p-1" favourited />
-      )}
       <Link
         href={`/dashboard/preview/${bookmark.id}`}
         className={cn(buttonVariants({ variant: "ghost" }), "px-2")}
