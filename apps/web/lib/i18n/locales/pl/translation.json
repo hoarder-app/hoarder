@@ -1,8 +1,261 @@
 {
     "common": {
         "url": "URL",
-        "email": "Email",
+        "email": "E-mail",
         "password": "Hasło",
-        "name": "Imię"
+        "name": "Nazwa",
+        "action": "Akcja",
+        "created_at": "Utworzono",
+        "actions": "Akcje",
+        "roles": {
+            "user": "Użytkownik",
+            "admin": "Administrator"
+        },
+        "key": "Klucz",
+        "role": "Rola",
+        "something_went_wrong": "Coś poszło nie tak",
+        "experimental": "Eksperymentalne",
+        "search": "Szukaj",
+        "tags": "Tagi",
+        "note": "Notatka",
+        "attachments": "Załączniki",
+        "screenshot": "Zrzut ekranu",
+        "video": "Wideo",
+        "archive": "Archiwum",
+        "home": "Strona główna"
+    },
+    "actions": {
+        "remove_from_list": "Usuń z listy",
+        "summarize_with_ai": "Streszcz z AI",
+        "close": "Zamknij",
+        "ignore": "Ignoruj",
+        "change_layout": "Zmień układ",
+        "archive": "Zarchiwizuj",
+        "unarchive": "Odarchiwizuj",
+        "favorite": "Dodaj do ulubionych",
+        "delete": "Usuń",
+        "refresh": "Odśwież",
+        "recrawl": "Ponowne skanowanie",
+        "download_full_page_archive": "Pobierz pełne archiwum strony",
+        "unfavorite": "Usuń z ulubionych",
+        "edit_tags": "Edytuj tagi",
+        "add_to_list": "Dodaj do listy",
+        "select_all": "Zaznacz wszystko",
+        "unselect_all": "Odznacz wszystko",
+        "copy_link": "Kopiuj link",
+        "close_bulk_edit": "Zamknij masową edycję",
+        "bulk_edit": "Masowa edycja",
+        "manage_lists": "Zarządzaj listami",
+        "save": "Zapisz",
+        "add": "Dodaj",
+        "edit": "Edytuj",
+        "create": "Utwórz",
+        "fetch_now": "Pobierz teraz",
+        "edit_title": "Edytuj tytuł",
+        "sign_out": "Wyloguj się",
+        "merge": "Scal",
+        "cancel": "Anuluj",
+        "apply_all": "Zastosuj wszystko"
+    },
+    "settings": {
+        "info": {
+            "confirm_new_password": "Potwierdź nowe hasło",
+            "user_info": "Informacje o użytkowniku",
+            "basic_details": "Podstawowe dane",
+            "change_password": "Zmień hasło",
+            "current_password": "Obecne hasło",
+            "new_password": "Nowe hasło",
+            "options": "Opcje",
+            "interface_lang": "Język interfejsu"
+        },
+        "import": {
+            "import_bookmarks_from_html_file": "Importuj zakładki z pliku HTML",
+            "import_bookmarks_from_pocket_export": "Importuj zakładki z eksportu Pocket",
+            "import_export": "Import / Eksport",
+            "import_export_bookmarks": "Import / Eksport zakładek",
+            "import_bookmarks_from_omnivore_export": "Importuj zakładki z eksportu Omnivore",
+            "import_bookmarks_from_hoarder_export": "Importuj zakładki z eksportu Hoarder",
+            "export_links_and_notes": "Eksportuj linki i notatki",
+            "imported_bookmarks": "Zaimportowane zakładki"
+        },
+        "back_to_app": "Powrót do aplikacji",
+        "user_settings": "Ustawienia użytkownika",
+        "ai": {
+            "ai_settings": "Ustawienia AI",
+            "tagging_rules": "Zasady tagowania",
+            "tagging_rule_description": "Wpisane tutaj podpowiedzi będą uwzględniane jako zasady podczas generowania tagów. Możesz zobaczyć ostateczne podpowiedzi w sekcji podglądu.",
+            "prompt_preview": "Podgląd podpowiedzi",
+            "text_prompt": "Podpowiedź tekstowa",
+            "images_prompt": "Podpowiedź obrazowa"
+        },
+        "feeds": {
+            "rss_subscriptions": "Subskrypcje RSS",
+            "add_a_subscription": "Dodaj subskrypcję"
+        },
+        "api_keys": {
+            "api_keys": "Klucze API",
+            "new_api_key": "Nowy klucz API",
+            "new_api_key_desc": "Nadaj swojemu kluczowi API unikalną nazwę",
+            "key_success": "Klucz został pomyślnie utworzony",
+            "key_success_please_copy": "Skopiuj klucz i przechowaj go w bezpiecznym miejscu. Po zamknięciu tego okna dialogowego nie będzie można go ponownie zobaczyć."
+        },
+        "broken_links": {
+            "broken_links": "Uszkodzone linki",
+            "last_crawled_at": "Ostatnie skanowanie",
+            "crawling_status": "Status skanowania",
+            "crawling_failed": "Skanowanie nieudane"
+        }
+    },
+    "admin": {
+        "users_list": {
+            "reset_password": "Resetuj hasło",
+            "num_bookmarks": "Liczba zakładek",
+            "asset_sizes": "Rozmiary zasobów",
+            "users_list": "Lista użytkowników",
+            "create_user": "Utwórz użytkownika",
+            "change_role": "Zmień rolę",
+            "delete_user": "Usuń użytkownika",
+            "local_user": "Lokalny użytkownik",
+            "confirm_password": "Potwierdź hasło"
+        },
+        "admin_settings": "Ustawienia administratora",
+        "server_stats": {
+            "server_stats": "Statystyki serwera",
+            "total_users": "Łączna liczba użytkowników",
+            "total_bookmarks": "Łączna liczba zakładek",
+            "server_version": "Wersja serwera"
+        },
+        "background_jobs": {
+            "background_jobs": "Zadania w tle",
+            "crawler_jobs": "Zadania skanowania",
+            "indexing_jobs": "Zadania indeksowania",
+            "inference_jobs": "Zadania wnioskowania",
+            "tidy_assets_jobs": "Zadania porządkowania zasobów",
+            "job": "Zadanie",
+            "queued": "W kolejce",
+            "pending": "Oczekujące",
+            "failed": "Nieudane"
+        },
+        "actions": {
+            "recrawl_failed_links_only": "Ponowne skanowanie tylko nieudanych linków",
+            "recrawl_all_links": "Ponowne skanowanie wszystkich linków",
+            "without_inference": "Bez wnioskowania",
+            "regenerate_ai_tags_for_failed_bookmarks_only": "Regeneruj tagi AI tylko dla nieudanych zakładek",
+            "regenerate_ai_tags_for_all_bookmarks": "Regeneruj tagi AI dla wszystkich zakładek",
+            "reindex_all_bookmarks": "Ponowne indeksowanie wszystkich zakładek",
+            "compact_assets": "Kompaktuj zasoby"
+        }
+    },
+    "tags": {
+        "delete_all_unused_tags": "Usuń wszystkie nieużywane tagi",
+        "all_tags": "Wszystkie tagi",
+        "your_tags": "Twoje tagi",
+        "your_tags_info": "Tagi, które były przynajmniej raz przez Ciebie użyte",
+        "ai_tags": "Tagi AI",
+        "drag_and_drop_merging": "Scalanie za pomocą przeciągania",
+        "ai_tags_info": "Tagi, które zostały dodane automatycznie (przez AI)",
+        "unused_tags": "Nieużywane tagi",
+        "unused_tags_info": "Tagi, które nie są przypisane do żadnych zakładek",
+        "drag_and_drop_merging_info": "Przeciągnij i upuść tagi na siebie, aby je scalić",
+        "sort_by_name": "Sortuj według nazwy"
+    },
+    "editor": {
+        "text_toolbar": {
+            "markdown_shortcuts": {
+                "italic": {
+                    "label": "Kursywa",
+                    "example": "*Kursywa* lub _Kursywa_ lub CTRL+i"
+                },
+                "unordered_list": {
+                    "example": "- Element listy",
+                    "label": "Lista nieuporządkowana"
+                },
+                "label": "Skróty Markdown",
+                "heading": {
+                    "label": "Nagłówek",
+                    "example": "# H1, ## H2, ### H3"
+                },
+                "bold": {
+                    "label": "Pogrubienie",
+                    "example": "**tekst** lub CTRL+b"
+                },
+                "blockquote": {
+                    "label": "Cytat",
+                    "example": "> Cytat"
+                },
+                "ordered_list": {
+                    "label": "Lista uporządkowana",
+                    "example": "1. Element listy"
+                },
+                "inline_code": {
+                    "label": "Kod w linii",
+                    "example": "`Kod`"
+                },
+                "block_code": {
+                    "label": "Kod blokowy",
+                    "example": "``` + spacja"
+                }
+            },
+            "undo": "Cofnij",
+            "redo": "Ponów",
+            "bold": "Pogrubienie",
+            "italic": "Kursywa",
+            "underline": "Podkreślenie",
+            "strikethrough": "Przekreślenie",
+            "code": "Kod",
+            "highlight": "Podświetlenie",
+            "align_left": "Wyrównaj do lewej",
+            "align_center": "Wyśrodkuj",
+            "align_right": "Wyrównaj do prawej"
+        },
+        "quickly_focus": "Możesz szybko skupić się na tym polu, naciskając ⌘ + E",
+        "multiple_urls_dialog_desc": "Wprowadzone dane zawierają wiele adresów URL w osobnych liniach. Czy chcesz zaimportować je jako oddzielne zakładki?",
+        "multiple_urls_dialog_title": "Importować URL jako oddzielne zakładki?",
+        "import_as_text": "Importuj jako zakładkę tekstową",
+        "import_as_separate_bookmarks": "Importuj jako oddzielne zakładki",
+        "new_item": "NOWY ELEMENT",
+        "disabled_submissions": "Dodawanie jest wyłączone",
+        "placeholder": "Wklej link lub obraz, napisz notatkę lub przeciągnij obraz tutaj..."
+    },
+    "cleanups": {
+        "duplicate_tags": {
+            "merge_all_suggestions": "Scal wszystkie sugestie?",
+            "title": "Zduplikowane tagi"
+        },
+        "cleanups": "Porządki"
+    },
+    "toasts": {
+        "lists": {
+            "created": "Lista została utworzona!",
+            "updated": "Lista została zaktualizowana!"
+        },
+        "bookmarks": {
+            "updated": "Zakładka została zaktualizowana!",
+            "deleted": "Zakładka została usunięta!",
+            "refetch": "Pobieranie ponownie zostało zaplanowane!",
+            "full_page_archive": "Tworzenie pełnego archiwum strony zostało rozpoczęte",
+            "delete_from_list": "Zakładka została usunięta z listy",
+            "clipboard_copied": "Link został skopiowany do schowka!"
+        }
+    },
+    "layouts": {
+        "masonry": "Mozaika",
+        "grid": "Siatka",
+        "list": "Lista",
+        "compact": "Kompaktowy"
+    },
+    "options": {
+        "dark_mode": "Tryb ciemny",
+        "light_mode": "Tryb jasny"
+    },
+    "lists": {
+        "all_lists": "Wszystkie listy",
+        "favourites": "Ulubione",
+        "new_list": "Nowa lista",
+        "new_nested_list": "Nowa zagnieżdżona lista"
+    },
+    "preview": {
+        "view_original": "Zobacz oryginał",
+        "cached_content": "Zbuforowana zawartość"
     }
 }
