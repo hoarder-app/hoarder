@@ -1,1 +1,8 @@
-{}
+{
+    "common": {
+        "url": "URL",
+        "email": "Email",
+        "password": "Hasło",
+        "name": "Imię"
+    }
+}
