@@ -1,5 +1,9 @@
 # PikaPods [Paid Hosting]
 
+:::info
+Note: PikaPods shares some of its revenue from hosting hoarder with the maintainer of this project.
+:::
+
 [PikaPods](https://www.pikapods.com/) offers managed paid hosting for many open source apps, including Hoarder.
 Server administration, updates, migrations and backups are all taken care of, which makes it well suited
 for less technical users. As of Nov 2024, running Hoarder there will cost you ~$3 per month.
