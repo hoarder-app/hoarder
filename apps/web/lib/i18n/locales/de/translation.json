@@ -60,7 +60,8 @@
     "merge": "Zusammenführen",
     "cancel": "Abbrechen",
     "apply_all": "Alle anwenden",
-    "ignore": "Ignorieren"
+    "ignore": "Ignorieren",
+    "recrawl": "Erneutes Crawlen"
   },
   "settings": {
     "back_to_app": "Zurück zur App",
@@ -103,6 +104,12 @@
       "new_api_key_desc": "Geben Sie Ihrem API-Schlüssel einen eindeutigen Namen",
       "key_success": "Schlüssel wurde erfolgreich erstellt",
       "key_success_please_copy": "Bitte kopieren Sie den Schlüssel und speichern Sie ihn an einem sicheren Ort. Sobald Sie das Dialogfeld schließen, können Sie nicht mehr darauf zugreifen."
+    },
+    "broken_links": {
+      "broken_links": "Defekter Link",
+      "last_crawled_at": "Zuletzt gecrawlt am",
+      "crawling_status": "Crawling-Status",
+      "crawling_failed": "Crawling fehlgeschlagen"
     }
   },
   "admin": {
@@ -180,20 +187,7 @@
     "import_as_separate_bookmarks": "Als separate Lesezeichen importieren",
     "placeholder": "Fügen Sie einen Link oder ein Bild ein, schreiben Sie eine Notiz oder ziehen Sie ein Bild hierher ...",
     "new_item": "NEUER EINTRAG",
-    "disabled_submissions": "Einsendungen sind deaktiviert",
-    "text_toolbar": {
-      "undo": "Rückgängig",
-      "redo": "Wiederholen",
-      "bold": "Fett",
-      "italic": "Kursiv",
-      "underline": "Unterstrichen",
-      "strikethrough": "Durchgestrichen",
-      "code": "Code",
-      "highlight": "Hervorheben",
-      "align_left": "Linksbündig",
-      "align_center": "Zentriert",
-      "align_right": "Rechtsbündig"
-    }
+    "disabled_submissions": "Einsendungen sind deaktiviert"
   },
   "toasts": {
     "bookmarks": {

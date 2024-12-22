@@ -1,0 +1,58 @@
+{
+  "common": {
+    "created_at": "Gemaakt op",
+    "archive": "Archiveer",
+    "url": "URL",
+    "name": "Naam",
+    "email": "Email",
+    "actions": "Acties",
+    "role": "Rol",
+    "roles": {
+      "user": "Gebruiker",
+      "admin": "Admin"
+    },
+    "something_went_wrong": "Er is iets fout gegaagn",
+    "experimental": "Experimenteel",
+    "search": "Zoeken",
+    "tags": "Tags",
+    "note": "Notitie",
+    "attachments": "Bijlagen",
+    "screenshot": "Schermopname",
+    "video": "Video",
+    "home": "Home",
+    "password": "Wachtwoord",
+    "action": "Actie",
+    "key": "Sleutel"
+  },
+  "layouts": {
+    "list": "Lijst",
+    "masonry": "Metselwerk",
+    "grid": "Rooster",
+    "compact": "Compact"
+  },
+  "actions": {
+    "close_bulk_edit": "Bulkbewerking sluiten",
+    "delete": "Wissen",
+    "change_layout": "Verander Layout",
+    "archive": "Archiveer",
+    "unarchive": "Verwijderen uit het archief",
+    "unfavorite": "Verwijder uit favoriet",
+    "refresh": "Verversen",
+    "download_full_page_archive": "Volledige pagina archief downloaden",
+    "edit_tags": "Labels bewerken",
+    "add_to_list": "Toevoegen aan lijst",
+    "select_all": "Selecteer alles",
+    "unselect_all": "Deselecteer alles",
+    "bulk_edit": "Bulkbewerking",
+    "remove_from_list": "Verwijderen uit lijst",
+    "add": "Toevoegen",
+    "edit": "Wijzigen",
+    "create": "Creëer",
+    "fetch_now": "Nu ophalen",
+    "summarize_with_ai": "Samenvatten met AI",
+    "manage_lists": "Lijsten beheren",
+    "favorite": "Favoriet",
+    "copy_link": "Kopieer link",
+    "save": "Bewaar"
+  }
+}

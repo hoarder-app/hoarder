@@ -1,0 +1,177 @@
+{
+  "common": {
+    "url": "URL",
+    "email": "Email",
+    "password": "Lösenord",
+    "created_at": "Skapad den",
+    "key": "Nyckel",
+    "action": "Åtgärd",
+    "actions": "Åtgärder",
+    "experimental": "Experimentell",
+    "attachments": "Bilagor",
+    "screenshot": "Skärmdump",
+    "roles": {
+      "admin": "Admin",
+      "user": "Användare"
+    },
+    "note": "Anteckning",
+    "video": "Video",
+    "archive": "Arkiv",
+    "name": "Namn",
+    "role": "Roll",
+    "something_went_wrong": "Något gick fel",
+    "search": "Sök",
+    "tags": "Taggar",
+    "home": "Hem"
+  },
+  "layouts": {
+    "grid": "Rutnät",
+    "compact": "Kompakt",
+    "list": "Lista"
+  },
+  "actions": {
+    "delete": "Radera",
+    "archive": "Arkivera",
+    "unarchive": "Avarkivera",
+    "add_to_list": "Lägg till i lista",
+    "download_full_page_archive": "Ladda ner fullsidesarkiv",
+    "select_all": "Markera allt",
+    "manage_lists": "Hantera listor",
+    "remove_from_list": "Ta bort från lista",
+    "unselect_all": "Avmarkera allt",
+    "add": "Lägg till",
+    "fetch_now": "Hämta nu",
+    "edit": "Ändra",
+    "sign_out": "Logga ut",
+    "close": "Stäng",
+    "edit_title": "Ändra titel",
+    "cancel": "Avbryt",
+    "ignore": "Ignorera",
+    "refresh": "Uppdatera",
+    "favorite": "Favorit",
+    "copy_link": "Kopiera länk",
+    "create": "Skapa",
+    "change_layout": "Andra layout",
+    "edit_tags": "Ändra taggar",
+    "summarize_with_ai": "Sammanfatta med AI",
+    "save": "Spara",
+    "merge": "Sammanfoga"
+  },
+  "settings": {
+    "back_to_app": "Tillbaka till app",
+    "info": {
+      "user_info": "Användarinfo",
+      "basic_details": "Grundläggande detaljer",
+      "interface_lang": "Gränsnittsspråk",
+      "current_password": "Nuvarande lösenord",
+      "confirm_new_password": "Bekräfta nytt lösenord",
+      "change_password": "Ändra lösenord",
+      "new_password": "Nytt lösenord"
+    },
+    "feeds": {
+      "rss_subscriptions": "RSS-prenumerationer",
+      "add_a_subscription": "Lägg till en prenumeration"
+    },
+    "ai": {
+      "images_prompt": "Bildprompt",
+      "text_prompt": "Textprompt",
+      "tagging_rules": "Taggningsregler",
+      "ai_settings": "AI-inställningar"
+    },
+    "import": {
+      "import_export": "Importera / exportera",
+      "import_export_bookmarks": "Exportera bokmärken",
+      "import_bookmarks_from_omnivore_export": "Importera bokmärken från Omnivore-export",
+      "imported_bookmarks": "Importerade bokmärken",
+      "import_bookmarks_from_hoarder_export": "Importera bokmärken från Hoarder-export",
+      "import_bookmarks_from_html_file": "Importera bokmärken från HTML-fil",
+      "import_bookmarks_from_pocket_export": "Importera bokmärken från Pocket-export",
+      "export_links_and_notes": "Exportera länkar och anteckningar"
+    },
+    "api_keys": {
+      "api_keys": "API-nycklar",
+      "new_api_key": "Ny API-nyckel",
+      "new_api_key_desc": "Ge din API-nyckel ett unikt namn",
+      "key_success_please_copy": "Kopiera nyckeln och lagra den på en saker plats. Efter att du stängt denna dialogruta kommer su inte att kunna nå den igen."
+    },
+    "user_settings": "Användarinställningar"
+  },
+  "admin": {
+    "server_stats": {
+      "server_stats": "Serverstatistik",
+      "server_version": "Serverversion"
+    },
+    "admin_settings": "Admin-inställningar",
+    "background_jobs": {
+      "background_jobs": "Bakgrundsjobb",
+      "job": "Jobb",
+      "pending": "Pågående",
+      "indexing_jobs": "Indexeringsjobb",
+      "inference_jobs": "Inferensjobb",
+      "queued": "Köade"
+    },
+    "actions": {
+      "reindex_all_bookmarks": "Återindexera alla bokmärken",
+      "without_inference": "Utan inferens"
+    },
+    "users_list": {
+      "reset_password": "Återställ lösenord",
+      "delete_user": "Radera användare",
+      "users_list": "Användarlista",
+      "local_user": "Lokal användare",
+      "confirm_password": "Bekräfta lösenord",
+      "create_user": "Skapa användare",
+      "change_role": "Ändra roll"
+    }
+  },
+  "options": {
+    "light_mode": "Ljust läge",
+    "dark_mode": "Mörkt läge"
+  },
+  "lists": {
+    "new_nested_list": "Ny nästlad lista",
+    "all_lists": "Alla listor",
+    "favourites": "Favoriter",
+    "new_list": "Ny lista"
+  },
+  "tags": {
+    "drag_and_drop_merging_info": "Dra och släpp taggar på varandra för att sammanfoga dem",
+    "delete_all_unused_tags": "Radera alla oanvända taggar",
+    "all_tags": "Alla taggar",
+    "unused_tags": "Oanvända taggar",
+    "sort_by_name": "Sortera efter namn",
+    "your_tags": "Dina taggar",
+    "ai_tags": "AI-taggar"
+  },
+  "editor": {
+    "import_as_separate_bookmarks": "Importera som separata bokmärken",
+    "import_as_text": "Importera som textbokmärke",
+    "placeholder": "Klistra in en länk eller bild, skriv en anteckning eller dra och släpp en bild här...",
+    "new_item": "NY POST",
+    "multiple_urls_dialog_title": "Importera URL:er som separata bokmärken?",
+    "multiple_urls_dialog_desc": "Inmatningen innehåller flera URL:er på separata rader. Vill du importera dem som separata bokmärken?"
+  },
+  "toasts": {
+    "bookmarks": {
+      "updated": "Bokmärket har uppdaters!",
+      "full_page_archive": "Skapande av fullsidesarkiv har startats",
+      "deleted": "Bokmärket har raderats!",
+      "delete_from_list": "Bokmärket har raderats från listan",
+      "clipboard_copied": "Länken har lags till i ditt urklipp!"
+    },
+    "lists": {
+      "created": "Listan har skapats!",
+      "updated": "Listan har uppdaterats!"
+    }
+  },
+  "cleanups": {
+    "duplicate_tags": {
+      "title": "Dublettaggar",
+      "merge_all_suggestions": "Slå ihop alla förslag?"
+    },
+    "cleanups": "Rensningar"
+  },
+  "preview": {
+    "view_original": "Visa orginal"
+  }
+}
