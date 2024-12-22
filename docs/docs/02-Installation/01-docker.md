@@ -9,9 +9,17 @@
 
 Create a new directory to host the compose file and env variables.
 
+This is where you’ll place the `docker-compose.yml` file from the next step and the environment variables.
+
+For example you could make a new directory called "hoarder-app" with the following command:
+```
+mkdir hoarder-app
+```
+
+
 ### 2. Download the compose file
 
-Download the docker compose file provided [here](https://github.com/hoarder-app/hoarder/blob/main/docker/docker-compose.yml).
+Download the docker compose file provided [here](https://github.com/hoarder-app/hoarder/blob/main/docker/docker-compose.yml) directly into your new directory.
 
 ```
 wget https://raw.githubusercontent.com/hoarder-app/hoarder/main/docker/docker-compose.yml
@@ -28,7 +36,7 @@ MEILI_MASTER_KEY=another_random_string
 NEXTAUTH_URL=http://localhost:3000
 ```
 
-You **should** change the random strings. You can use `openssl rand -base64 36` to generate the random strings. You should also change the `NEXTAUTH_URL` variable to point to your server address.
+You **should** change the random strings. You can use `openssl rand -base64 36` in a seperate terminal window to generate the random strings. You should also change the `NEXTAUTH_URL` variable to point to your server address.
 
 Using `HOARDER_VERSION=release` will pull the latest stable version. You might want to pin the version instead to control the upgrades (e.g. `HOARDER_VERSION=0.10.0`). Check the latest versions [here](https://github.com/hoarder-app/hoarder/pkgs/container/hoarder-web).
 
