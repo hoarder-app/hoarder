@@ -3,11 +3,13 @@ import { buildHandler } from "@/app/api/v1/utils/handler";
 
 export const dynamic = "force-dynamic";
 
-export const PUT = (
+export const PUT = async (
   req: NextRequest,
-  { params }: { params: { listId: string; bookmarkId: string } },
-) =>
-  buildHandler({
+  props: { params: Promise<{ listId: string; bookmarkId: string }> }
+) => {
+  const params = await props.params;
+
+  return buildHandler({
     req,
     handler: async ({ api }) => {
       // TODO: PUT is supposed to be idempotent, but we currently fail if the bookmark is already in the list.
@@ -18,12 +20,15 @@ export const PUT = (
       return { status: 204 };
     },
   });
+};
 
-export const DELETE = (
+export const DELETE = async (
   req: NextRequest,
-  { params }: { params: { listId: string; bookmarkId: string } },
-) =>
-  buildHandler({
+  props: { params: Promise<{ listId: string; bookmarkId: string }> }
+) => {
+  const params = await props.params;
+
+  return buildHandler({
     req,
     handler: async ({ api }) => {
       await api.lists.removeFromList({
@@ -33,3 +38,4 @@ export const DELETE = (
       return { status: 204 };
     },
   });
+};

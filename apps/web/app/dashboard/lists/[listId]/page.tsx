@@ -4,11 +4,12 @@ import ListHeader from "@/components/dashboard/lists/ListHeader";
 import { api } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
-export default async function ListPage({
-  params,
-}: {
-  params: { listId: string };
-}) {
+export default async function ListPage(
+  props: {
+    params: Promise<{ listId: string }>;
+  }
+) {
+  const params = await props.params;
   let list;
   try {
     list = await api.lists.get({ listId: params.listId });

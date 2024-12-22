@@ -31,7 +31,7 @@ export default async function Sidebar() {
 
   const menu: {
     name: string;
-    icon: JSX.Element;
+    icon: React.ReactNode;
     path: string;
   }[] = [
     {
