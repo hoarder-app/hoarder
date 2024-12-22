@@ -25,14 +25,22 @@ const useBulkActionsStore = create<BookmarkState>((set, get) => ({
     const isBookmarkAlreadySelected = selectedBookmarks.some(
       (b) => b.id === bookmark.id,
     );
+    
     if (isBookmarkAlreadySelected) {
+      const newSelectedBookmarks = selectedBookmarks.filter(
+        (b) => b.id !== bookmark.id,
+      );
+      // If this was the last selected bookmark, disable bulk edit mode
       set({
-        selectedBookmarks: selectedBookmarks.filter(
-          (b) => b.id !== bookmark.id,
-        ),
+        selectedBookmarks: newSelectedBookmarks,
+        isBulkEditEnabled: newSelectedBookmarks.length > 0
       });
     } else {
-      set({ selectedBookmarks: [...selectedBookmarks, bookmark] });
+      // If this is the first selected bookmark, enable bulk edit mode
+      set({ 
+        selectedBookmarks: [...selectedBookmarks, bookmark],
+        isBulkEditEnabled: true
+      });
     }
   },
 
