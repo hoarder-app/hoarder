@@ -17,10 +17,15 @@ export default function Search() {
 
   const onRefresh = api.useUtils().bookmarks.searchBookmarks.invalidate;
 
-  const { data, error, refetch, isPending } =
-    api.bookmarks.searchBookmarks.useQuery(
+  const { data, error, refetch, isPending, fetchNextPage, isFetchingNextPage } =
+    api.bookmarks.searchBookmarks.useInfiniteQuery(
       { text: query },
-      { placeholderData: keepPreviousData },
+      {
+        placeholderData: keepPreviousData,
+        gcTime: 0,
+        initialCursor: null,
+        getNextPageParam: (lastPage) => lastPage.nextCursor,
+      },
     );
 
   if (error) {
@@ -45,7 +50,9 @@ export default function Search() {
       {!data && <FullPageSpinner />}
       {data && (
         <BookmarkList
-          bookmarks={data.bookmarks}
+          bookmarks={data.pages.flatMap((p) => p.bookmarks)}
+          fetchNextPage={fetchNextPage}
+          isFetchingNextPage={isFetchingNextPage}
           onRefresh={onRefresh}
           isRefreshing={isPending}
         />

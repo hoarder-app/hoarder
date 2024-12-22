@@ -38,7 +38,7 @@ export default function UpdatableBookmarksGrid({
     <BookmarksGrid
       bookmarks={data!.pages.flatMap((b) => b.bookmarks)}
       hasNextPage={hasNextPage}
-      fetchNextPage={() => fetchNextPage()}
+      fetchNextPage={fetchNextPage}
       isFetchingNextPage={isFetchingNextPage}
       showEditorCard={showEditorCard}
     />

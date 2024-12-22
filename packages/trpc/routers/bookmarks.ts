@@ -515,9 +515,25 @@ export const bookmarksAppRouter = router({
     .input(
       z.object({
         text: z.string(),
+        cursor: z
+          .object({
+            offset: z.number(),
+            limit: z.number(),
+          })
+          .nullish(),
       }),
     )
-    .output(zGetBookmarksResponseSchema)
+    .output(
+      z.object({
+        bookmarks: z.array(zBookmarkSchema),
+        nextCursor: z
+          .object({
+            offset: z.number(),
+            limit: z.number(),
+          })
+          .nullable(),
+      }),
+    )
     .query(async ({ input, ctx }) => {
       const client = await getSearchIdxClient();
       if (!client) {
@@ -531,6 +547,12 @@ export const bookmarksAppRouter = router({
         showRankingScore: true,
         attributesToRetrieve: ["id"],
         sort: ["createdAt:desc"],
+        ...(input.cursor
+          ? {
+              offset: input.cursor.offset,
+              limit: input.cursor.limit,
+            }
+          : {}),
       });
 
       if (resp.hits.length == 0) {
@@ -562,7 +584,16 @@ export const bookmarksAppRouter = router({
       });
       results.sort((a, b) => idToRank[b.id] - idToRank[a.id]);
 
-      return { bookmarks: results.map(toZodSchema), nextCursor: null };
+      return {
+        bookmarks: results.map(toZodSchema),
+        nextCursor:
+          resp.hits.length + resp.offset >= resp.estimatedTotalHits
+            ? null
+            : {
+                offset: resp.hits.length + resp.offset,
+                limit: resp.limit,
+              },
+      };
     }),
   getBookmarks: authedProcedure
     .input(zGetBookmarksRequestSchema)

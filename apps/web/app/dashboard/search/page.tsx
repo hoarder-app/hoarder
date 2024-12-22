@@ -6,12 +6,18 @@ import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { useBookmarkSearch } from "@/lib/hooks/bookmark-search";
 
 function SearchComp() {
-  const { data } = useBookmarkSearch();
+  const { data, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useBookmarkSearch();
 
   return (
     <div className="flex flex-col gap-3">
       {data ? (
-        <BookmarksGrid bookmarks={data.bookmarks} />
+        <BookmarksGrid
+          hasNextPage={hasNextPage}
+          fetchNextPage={fetchNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          bookmarks={data.pages.flatMap((b) => b.bookmarks)}
+        />
       ) : (
         <FullPageSpinner />
       )}

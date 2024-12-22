@@ -50,16 +50,25 @@ export function useDoBookmarkSearch() {
 export function useBookmarkSearch() {
   const { searchQuery } = useSearchQuery();
 
-  const { data, isPending, isPlaceholderData, error } =
-    api.bookmarks.searchBookmarks.useQuery(
-      {
-        text: searchQuery,
-      },
-      {
-        placeholderData: keepPreviousData,
-        gcTime: 0,
-      },
-    );
+  const {
+    data,
+    isPending,
+    isPlaceholderData,
+    error,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = api.bookmarks.searchBookmarks.useInfiniteQuery(
+    {
+      text: searchQuery,
+    },
+    {
+      placeholderData: keepPreviousData,
+      gcTime: 0,
+      initialCursor: null,
+      getNextPageParam: (lastPage) => lastPage.nextCursor,
+    },
+  );
 
   if (error) {
     throw error;
@@ -71,5 +80,8 @@ export function useBookmarkSearch() {
     data,
     isPending,
     isPlaceholderData,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
   };
 }
