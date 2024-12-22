@@ -1,1 +1,82 @@
-{}
+{
+    "common": {
+        "tags": "Etiquetas",
+        "roles": {
+            "user": "Usuario",
+            "admin": "Admin"
+        },
+        "attachments": "Adjuntos",
+        "name": "Nombre",
+        "email": "Email",
+        "role": "Rol",
+        "url": "URL",
+        "action": "Acción",
+        "actions": "Acciones",
+        "created_at": "Creado a",
+        "something_went_wrong": "Algo ha ido mal",
+        "search": "Buscar",
+        "screenshot": "Captura de pantalla",
+        "video": "Vídeo",
+        "archive": "Archivo",
+        "home": "Inicio",
+        "password": "Contraseña",
+        "key": "Clave",
+        "experimental": "Experimental",
+        "note": "Nota"
+    },
+    "settings": {
+        "info": {
+            "change_password": "Cambiar contraseña",
+            "new_password": "Nueva contraseña",
+            "interface_lang": "Idioma de la interfaz",
+            "user_info": "Información del usuario",
+            "basic_details": "Detalles básicos",
+            "current_password": "Contraseña actual",
+            "confirm_new_password": "Confirmar nueva contraseña",
+            "options": "Ajustes"
+        },
+        "back_to_app": "Volver a la aplicación",
+        "ai": {
+            "ai_settings": "Ajustes de IA",
+            "tagging_rules": "Reglas de etiquetado",
+            "tagging_rule_description": "Los prompts que añadas aquí se incluirán como reglas durante la generación de etiquetas. Puedes comprobar el prompt final en la sección de previsualización.",
+            "prompt_preview": "Previsualización de prompt"
+        },
+        "user_settings": "Ajustes de usuario"
+    },
+    "actions": {
+        "unselect_all": "Deseleccionar todo",
+        "select_all": "Seleccionar todo",
+        "change_layout": "Cambiar diseño",
+        "unfavorite": "Descargar como favorito",
+        "delete": "Eliminar",
+        "refresh": "Actualizar",
+        "download_full_page_archive": "Descargar la página completa",
+        "edit_tags": "Editar las etiquetas",
+        "remove_from_list": "Eliminar de la lista",
+        "save": "Guardar",
+        "add": "Añadir",
+        "edit": "Editar",
+        "create": "Crear",
+        "fetch_now": "Actualizar ahora",
+        "summarize_with_ai": "Resumir con IA",
+        "edit_title": "Editar título",
+        "sign_out": "Cerrar sesión",
+        "close": "Cerrar",
+        "merge": "Unir",
+        "ignore": "Ignorar",
+        "archive": "Archivar",
+        "unarchive": "Desarchivar",
+        "favorite": "Marcar como favorito",
+        "add_to_list": "Añadir a la lista",
+        "copy_link": "Copiar enlace",
+        "cancel": "Cancelar",
+        "apply_all": "Aplicar todo"
+    },
+    "layouts": {
+        "compact": "Compacto",
+        "masonry": "Masonería",
+        "grid": "Rejilla",
+        "list": "Lista"
+    }
+}
