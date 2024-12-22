@@ -32,9 +32,8 @@ export function MarkdownReadonly({ children: markdown }: { children: string }) {
           return <PreWithCopyBtn {...props} />;
         },
         code({ className, children, ...props }) {
-          const match = /language-(\w+)/.exec(className ?? "");
+          const match = /language-(\w+)/.exec(className as string ?? "");
           return match ? (
-            // @ts-expect-error -- Refs are not compatible for some reason
             <SyntaxHighlighter
               PreTag="div"
               language={match[1]}
@@ -44,7 +43,7 @@ export function MarkdownReadonly({ children: markdown }: { children: string }) {
               {String(children).replace(/\n$/, "")}
             </SyntaxHighlighter>
           ) : (
-            <code className={className} {...props}>
+            <code className={className as string} {...props}>
               {children}
             </code>
           );

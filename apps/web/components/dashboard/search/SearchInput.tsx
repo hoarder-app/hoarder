@@ -6,7 +6,7 @@ import { useDoBookmarkSearch } from "@/lib/hooks/bookmark-search";
 import { useTranslation } from "@/lib/i18n/client";
 
 function useFocusSearchOnKeyPress(
-  inputRef: React.RefObject<HTMLInputElement>,
+  inputRef: React.RefObject<HTMLInputElement | null>,
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
 ) {
   useEffect(() => {
