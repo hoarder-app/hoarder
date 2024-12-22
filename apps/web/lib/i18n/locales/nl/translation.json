@@ -1,163 +1,163 @@
 {
-    "common": {
-        "created_at": "Gemaakt op",
-        "archive": "Archiveer",
-        "url": "URL",
-        "name": "Naam",
-        "email": "E-mail",
-        "actions": "Acties",
-        "role": "Rol",
-        "roles": {
-            "user": "Gebruiker",
-            "admin": "Admin"
-        },
-        "something_went_wrong": "Er is iets fout gegaan",
-        "experimental": "Experimenteel",
-        "search": "Zoeken",
-        "tags": "Labels",
-        "note": "Notitie",
-        "attachments": "Bijlagen",
-        "screenshot": "Schermopname",
-        "video": "Video",
-        "home": "Home",
-        "password": "Wachtwoord",
-        "action": "Actie",
-        "key": "Sleutel"
+  "common": {
+    "created_at": "Gemaakt op",
+    "archive": "Archiveer",
+    "url": "URL",
+    "name": "Naam",
+    "email": "E-mail",
+    "actions": "Acties",
+    "role": "Rol",
+    "roles": {
+      "user": "Gebruiker",
+      "admin": "Admin"
     },
-    "layouts": {
-        "list": "Lijst",
-        "masonry": "Metselwerk",
-        "grid": "Rooster",
-        "compact": "Compact"
+    "something_went_wrong": "Er is iets fout gegaan",
+    "experimental": "Experimenteel",
+    "search": "Zoeken",
+    "tags": "Labels",
+    "note": "Notitie",
+    "attachments": "Bijlagen",
+    "screenshot": "Schermopname",
+    "video": "Video",
+    "home": "Home",
+    "password": "Wachtwoord",
+    "action": "Actie",
+    "key": "Sleutel"
+  },
+  "layouts": {
+    "list": "Lijst",
+    "masonry": "Metselwerk",
+    "grid": "Rooster",
+    "compact": "Compact"
+  },
+  "actions": {
+    "close_bulk_edit": "Bulkbewerking sluiten",
+    "delete": "Verwijderen",
+    "change_layout": "Wijzig Layout",
+    "archive": "Archiveer",
+    "unarchive": "Verwijderen uit het archief",
+    "unfavorite": "Verwijder uit favorieten",
+    "refresh": "Vernieuwen",
+    "download_full_page_archive": "Download pagina archief",
+    "edit_tags": "Wijzig Labels",
+    "add_to_list": "Toevoegen aan lijst",
+    "select_all": "Selecteer alles",
+    "unselect_all": "Deselecteer alles",
+    "bulk_edit": "Bulkbewerking",
+    "remove_from_list": "Verwijderen uit lijst",
+    "add": "Toevoegen",
+    "edit": "Wijzigen",
+    "create": "Creëer",
+    "fetch_now": "Nu ophalen",
+    "summarize_with_ai": "Samenvatten met AI",
+    "manage_lists": "Lijsten beheren",
+    "favorite": "Favoriet",
+    "copy_link": "Kopieer link",
+    "save": "Bewaar",
+    "recrawl": "Opnieuw crawlen",
+    "apply_all": "Alles Toepassen",
+    "edit_title": "Wijzig Titel",
+    "sign_out": "Afmelden",
+    "close": "Sluiten",
+    "merge": "Samenvoegen",
+    "cancel": "Annuleer",
+    "ignore": "Negeren"
+  },
+  "settings": {
+    "ai": {
+      "ai_settings": "AI Instellingen",
+      "tagging_rules": "Labels Regels"
     },
-    "actions": {
-        "close_bulk_edit": "Bulkbewerking sluiten",
-        "delete": "Verwijderen",
-        "change_layout": "Wijzig Layout",
-        "archive": "Archiveer",
-        "unarchive": "Verwijderen uit het archief",
-        "unfavorite": "Verwijder uit favorieten",
-        "refresh": "Vernieuwen",
-        "download_full_page_archive": "Download pagina archief",
-        "edit_tags": "Wijzig Labels",
-        "add_to_list": "Toevoegen aan lijst",
-        "select_all": "Selecteer alles",
-        "unselect_all": "Deselecteer alles",
-        "bulk_edit": "Bulkbewerking",
-        "remove_from_list": "Verwijderen uit lijst",
-        "add": "Toevoegen",
-        "edit": "Wijzigen",
-        "create": "Creëer",
-        "fetch_now": "Nu ophalen",
-        "summarize_with_ai": "Samenvatten met AI",
-        "manage_lists": "Lijsten beheren",
-        "favorite": "Favoriet",
-        "copy_link": "Kopieer link",
-        "save": "Bewaar",
-        "recrawl": "Opnieuw crawlen",
-        "apply_all": "Alles Toepassen",
-        "edit_title": "Wijzig Titel",
-        "sign_out": "Afmelden",
-        "close": "Sluiten",
-        "merge": "Samenvoegen",
-        "cancel": "Annuleer",
-        "ignore": "Negeren"
+    "import": {
+      "import_export": "Importeren / Exporteren",
+      "imported_bookmarks": "Geïmporteerde Bladwijzers",
+      "import_export_bookmarks": "Importeer / Exporteer Bladwijzers",
+      "import_bookmarks_from_html_file": "Importeer Bladwijzers van HTML bestand",
+      "import_bookmarks_from_pocket_export": "Importeer Bladwijzers van Pocket export"
     },
-    "settings": {
-        "ai": {
-            "ai_settings": "AI Instellingen",
-            "tagging_rules": "Labels Regels"
-        },
-        "import": {
-            "import_export": "Importeren / Exporteren",
-            "imported_bookmarks": "Geïmporteerde Bladwijzers",
-            "import_export_bookmarks": "Importeer / Exporteer Bladwijzers",
-            "import_bookmarks_from_html_file": "Importeer Bladwijzers van HTML bestand",
-            "import_bookmarks_from_pocket_export": "Importeer Bladwijzers van Pocket export"
-        },
-        "broken_links": {
-            "broken_links": "Gebroken Links",
-            "last_crawled_at": "Laatste Crawl Op",
-            "crawling_status": "Crawl Status",
-            "crawling_failed": "Crawl Mislukt"
-        },
-        "api_keys": {
-            "key_success_please_copy": "Kopieer de sleutel en bewaar het op een veilige plaats. Wanneer je de dialoog sluit, zal je deze niet meer opnieuw kunnen raadplegen.",
-            "key_success": "Sleutel werd succesvol aangemaakt",
-            "api_keys": "API Sleutels",
-            "new_api_key": "Nieuwe API Sleutel",
-            "new_api_key_desc": "Geef je API sleutel een unieke naam"
-        },
-        "info": {
-            "user_info": "Gebruiker Info",
-            "basic_details": "Algemene Details",
-            "change_password": "Wijzig Wachtwoord",
-            "current_password": "Huidige Wachtwoord",
-            "new_password": "Nieuwe Wachtwoord",
-            "options": "Opties",
-            "confirm_new_password": "Confirmeer Nieuwe Wachtwoord",
-            "interface_lang": "Interface Taal"
-        },
-        "back_to_app": "Terug Naar App",
-        "user_settings": "Gebruikersinstellingen",
-        "feeds": {
-            "rss_subscriptions": "RSS Abonnementen",
-            "add_a_subscription": "Abonnement Toevoegen"
-        }
+    "broken_links": {
+      "broken_links": "Gebroken Links",
+      "last_crawled_at": "Laatste Crawl Op",
+      "crawling_status": "Crawl Status",
+      "crawling_failed": "Crawl Mislukt"
     },
-    "admin": {
-        "server_stats": {
-            "server_stats": "Server Statistieken",
-            "total_users": "Totaal Gebruikers",
-            "total_bookmarks": "Totaal Bladwijzers",
-            "server_version": "Server Versie"
-        },
-        "background_jobs": {
-            "failed": "Mislukt",
-            "crawler_jobs": "Crawl Taken",
-            "background_jobs": "Achtergrondtaken",
-            "indexing_jobs": "Indexeer Taken",
-            "inference_jobs": "Inferentie Taken"
-        },
-        "users_list": {
-            "users_list": "Gebruikerslijst",
-            "delete_user": "Verwijder Gebruiker",
-            "num_bookmarks": "Aantal Bladwijzers",
-            "local_user": "Lokale Gebruiker",
-            "reset_password": "Reset Wachtwoord",
-            "create_user": "Maak Gebruiker Aan",
-            "change_role": "Wijzig Rol"
-        },
-        "admin_settings": "Admin Instellingen"
+    "api_keys": {
+      "key_success_please_copy": "Kopieer de sleutel en bewaar het op een veilige plaats. Wanneer je de dialoog sluit, zal je deze niet meer opnieuw kunnen raadplegen.",
+      "key_success": "Sleutel werd succesvol aangemaakt",
+      "api_keys": "API Sleutels",
+      "new_api_key": "Nieuwe API Sleutel",
+      "new_api_key_desc": "Geef je API sleutel een unieke naam"
     },
-    "tags": {
-        "ai_tags": "AI Labels",
-        "sort_by_name": "Sorteer op naam",
-        "your_tags_info": "Labels die ten minste eenmaal toegekend zijn door jou",
-        "ai_tags_info": "Labels die automatisch toegekend zijn (door AI)",
-        "all_tags": "Alle Labels",
-        "your_tags": "Jouw Labels",
-        "drag_and_drop_merging": "Drag & Drop Samenvoegen",
-        "unused_tags": "Ongebruikte Labels",
-        "drag_and_drop_merging_info": "Sleep labels naar elkaar toe om ze samen te voegen",
-        "unused_tags_info": "Labels die niet toegekend zijn aan een bladwijzer",
-        "delete_all_unused_tags": "Verwijder Alle Ongebruikte Labels"
+    "info": {
+      "user_info": "Gebruiker Info",
+      "basic_details": "Algemene Details",
+      "change_password": "Wijzig Wachtwoord",
+      "current_password": "Huidige Wachtwoord",
+      "new_password": "Nieuwe Wachtwoord",
+      "options": "Opties",
+      "confirm_new_password": "Confirmeer Nieuwe Wachtwoord",
+      "interface_lang": "Interface Taal"
     },
-    "preview": {
-        "view_original": "Toon origineel"
-    },
-    "editor": {
-        "text_toolbar": {
-            "bold": "Vetgedrukt"
-        }
-    },
-    "options": {
-        "dark_mode": "Donkere Modus",
-        "light_mode": "Lichte Modus"
-    },
-    "lists": {
-        "all_lists": "Alle Lijsten",
-        "favourites": "Favorieten",
-        "new_list": "Nieuwe Lijst"
+    "back_to_app": "Terug Naar App",
+    "user_settings": "Gebruikersinstellingen",
+    "feeds": {
+      "rss_subscriptions": "RSS Abonnementen",
+      "add_a_subscription": "Abonnement Toevoegen"
     }
+  },
+  "admin": {
+    "server_stats": {
+      "server_stats": "Server Statistieken",
+      "total_users": "Totaal Gebruikers",
+      "total_bookmarks": "Totaal Bladwijzers",
+      "server_version": "Server Versie"
+    },
+    "background_jobs": {
+      "failed": "Mislukt",
+      "crawler_jobs": "Crawl Taken",
+      "background_jobs": "Achtergrondtaken",
+      "indexing_jobs": "Indexeer Taken",
+      "inference_jobs": "Inferentie Taken"
+    },
+    "users_list": {
+      "users_list": "Gebruikerslijst",
+      "delete_user": "Verwijder Gebruiker",
+      "num_bookmarks": "Aantal Bladwijzers",
+      "local_user": "Lokale Gebruiker",
+      "reset_password": "Reset Wachtwoord",
+      "create_user": "Maak Gebruiker Aan",
+      "change_role": "Wijzig Rol"
+    },
+    "admin_settings": "Admin Instellingen"
+  },
+  "tags": {
+    "ai_tags": "AI Labels",
+    "sort_by_name": "Sorteer op naam",
+    "your_tags_info": "Labels die ten minste eenmaal toegekend zijn door jou",
+    "ai_tags_info": "Labels die automatisch toegekend zijn (door AI)",
+    "all_tags": "Alle Labels",
+    "your_tags": "Jouw Labels",
+    "drag_and_drop_merging": "Drag & Drop Samenvoegen",
+    "unused_tags": "Ongebruikte Labels",
+    "drag_and_drop_merging_info": "Sleep labels naar elkaar toe om ze samen te voegen",
+    "unused_tags_info": "Labels die niet toegekend zijn aan een bladwijzer",
+    "delete_all_unused_tags": "Verwijder Alle Ongebruikte Labels"
+  },
+  "preview": {
+    "view_original": "Toon origineel"
+  },
+  "editor": {
+    "text_toolbar": {
+      "bold": "Vetgedrukt"
+    }
+  },
+  "options": {
+    "dark_mode": "Donkere Modus",
+    "light_mode": "Lichte Modus"
+  },
+  "lists": {
+    "all_lists": "Alle Lijsten",
+    "favourites": "Favorieten",
+    "new_list": "Nieuwe Lijst"
+  }
 }
