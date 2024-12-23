@@ -71,10 +71,10 @@ const lexer = buildLexer([
   [true, /^\s+/g, TokenType.Space],
 ]);
 
-const ONE_MATCHER = rule<TokenType, Matcher>();
+const MATCHER = rule<TokenType, Matcher>();
 const EXP = rule<TokenType, Matcher>();
 
-ONE_MATCHER.setPattern(
+MATCHER.setPattern(
   alt_sc(
     apply(
       alt(
@@ -160,14 +160,14 @@ ONE_MATCHER.setPattern(
 
 EXP.setPattern(
   lrec_sc(
-    ONE_MATCHER,
+    MATCHER,
     seq(
       alt(
         tok(TokenType.Space),
         kmid(tok(TokenType.Space), tok(TokenType.And), tok(TokenType.Space)),
         kmid(tok(TokenType.Space), tok(TokenType.Or), tok(TokenType.Space)),
       ),
-      ONE_MATCHER,
+      MATCHER,
     ),
     (toks, next) => {
       switch (next[0].kind) {
