@@ -45,7 +45,7 @@ const lexerRules: [RegExp, TokenType][] = [
   [/^\s+/, TokenType.Space],
 
   // This needs to be last as it matches a lot of stuff
-  [/^[^ ")(]+/, TokenType.Ident],
+  [/^[^ )(]+/, TokenType.Ident],
 ] as const;
 
 class LexerToken implements Token<TokenType> {
