@@ -991,6 +991,9 @@ importers:
       '@hoarder/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
+      vitest:
+        specifier: ^1.3.1
+        version: 1.3.1(@types/node@20.11.20)
 
   packages/shared-react:
     dependencies:
@@ -18911,7 +18914,7 @@ snapshots:
 
   '@vitest/snapshot@1.3.1':
     dependencies:
-      magic-string: 0.30.7
+      magic-string: 0.30.13
       pathe: 1.1.2
       pretty-format: 29.7.0
     dev: true
@@ -29637,7 +29640,7 @@ snapshots:
       cac: 6.7.14
       debug: 4.3.7
       pathe: 1.1.2
-      picocolors: 1.0.0
+      picocolors: 1.1.1
       vite: 5.1.4(@types/node@20.11.20)
     transitivePeerDependencies:
       - '@types/node'
