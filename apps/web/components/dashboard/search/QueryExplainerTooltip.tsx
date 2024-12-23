@@ -1,5 +1,5 @@
 import InfoTooltip from "@/components/ui/info-tooltip";
-import { Table, TableCell, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 
 import { TextAndMatcher } from "@hoarder/shared/searchQueryParser";
 import { Matcher } from "@hoarder/shared/types/search";
@@ -66,9 +66,11 @@ export default function QueryExplainerTooltip({
             <TableCell className="capitalize">{matcher.type}</TableCell>
             <TableCell>
               <Table>
-                {matcher.matchers.map((m, i) => (
-                  <MatcherComp key={i} matcher={m} />
-                ))}
+                <TableBody>
+                  {matcher.matchers.map((m, i) => (
+                    <MatcherComp key={i} matcher={m} />
+                  ))}
+                </TableBody>
               </Table>
             </TableCell>
           </TableRow>
@@ -79,15 +81,17 @@ export default function QueryExplainerTooltip({
   return (
     <InfoTooltip className={className}>
       <Table>
-        {parsedSearchQuery.text && (
-          <TableRow>
-            <TableCell>Text</TableCell>
-            <TableCell>{parsedSearchQuery.text}</TableCell>
-          </TableRow>
-        )}
-        {parsedSearchQuery.matcher && (
-          <MatcherComp matcher={parsedSearchQuery.matcher} />
-        )}
+        <TableBody>
+          {parsedSearchQuery.text && (
+            <TableRow>
+              <TableCell>Text</TableCell>
+              <TableCell>{parsedSearchQuery.text}</TableCell>
+            </TableRow>
+          )}
+          {parsedSearchQuery.matcher && (
+            <MatcherComp matcher={parsedSearchQuery.matcher} />
+          )}
+        </TableBody>
       </Table>
     </InfoTooltip>
   );
