@@ -1,17 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 
+import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
+
 function useSearchQuery() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("q") ?? "";
-  return { searchQuery };
+  const parsed = useMemo(() => parseSearchQuery(searchQuery), [searchQuery]);
+  return { searchQuery, parsedSearchQuery: parsed };
 }
 
 export function useDoBookmarkSearch() {
   const router = useRouter();
-  const { searchQuery } = useSearchQuery();
+  const { searchQuery, parsedSearchQuery } = useSearchQuery();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | undefined>();
   const pathname = usePathname();
 
@@ -43,12 +46,13 @@ export function useDoBookmarkSearch() {
     doSearch,
     debounceSearch,
     searchQuery,
+    parsedSearchQuery,
     isInSearchPage: pathname.startsWith("/dashboard/search"),
   };
 }
 
 export function useBookmarkSearch() {
-  const { searchQuery } = useSearchQuery();
+  const { parsedSearchQuery } = useSearchQuery();
 
   const {
     data,
@@ -60,7 +64,8 @@ export function useBookmarkSearch() {
     isFetchingNextPage,
   } = api.bookmarks.searchBookmarks.useInfiniteQuery(
     {
-      text: searchQuery,
+      text: parsedSearchQuery.text,
+      matcher: parsedSearchQuery.matcher,
     },
     {
       placeholderData: keepPreviousData,
@@ -75,7 +80,6 @@ export function useBookmarkSearch() {
   }
 
   return {
-    searchQuery,
     error,
     data,
     isPending,
