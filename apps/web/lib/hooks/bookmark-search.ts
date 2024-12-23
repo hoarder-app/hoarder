@@ -7,7 +7,7 @@ import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
 
 function useSearchQuery() {
   const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("q") ?? "";
+  const searchQuery = decodeURIComponent(searchParams.get("q") ?? "");
   const parsed = useMemo(() => parseSearchQuery(searchQuery), [searchQuery]);
   return { searchQuery, parsedSearchQuery: parsed };
 }
@@ -29,7 +29,7 @@ export function useDoBookmarkSearch() {
 
   const doSearch = (val: string) => {
     setTimeoutId(undefined);
-    router.replace(`/dashboard/search?q=${val}`);
+    router.replace(`/dashboard/search?q=${encodeURIComponent(val)}`);
   };
 
   const debounceSearch = (val: string) => {
