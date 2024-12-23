@@ -2,6 +2,7 @@ import {
   alt,
   alt_sc,
   apply,
+  errd,
   expectEOF,
   expectSingleResult,
   kmid,
@@ -32,85 +33,35 @@ enum TokenType {
   Hash = "HASH",
 }
 
-class TokenImpl implements Token<TokenType> {
-  constructor(
-    private readonly lexer: Lexer,
+// Rules are in order of priority
+const lexerRules: [RegExp, TokenType][] = [
+  [/^and/i, TokenType.And],
+  [/^or/i, TokenType.Or],
+
+  [/^#/, TokenType.Hash],
+  [/^(is|url|list|after|before):/, TokenType.Qualifier],
+
+  [/^"([^"]+)"/, TokenType.StringLiteral],
+
+  [/^\(/, TokenType.LParen],
+  [/^\)/, TokenType.RParen],
+  [/^\s+/, TokenType.Space],
+
+  // This needs to be last as it matches a lot of stuff
+  [/^[^ ")(]+/, TokenType.Ident],
+] as const;
+
+class LexerToken implements Token<TokenType> {
+  private constructor(
     private readonly input: string,
     public kind: TokenType,
     public text: string,
     public pos: TokenPosition,
   ) {}
 
-  matchRule(rest: string, pos: number, regex: RegExp): string | undefined {
-    const res = regex.exec(rest);
-    if (!res) {
-      return undefined;
-    }
-    return res[0];
-  }
-
-  public get next(): Token<TokenType> | undefined {
-    if (!this.input.length) {
-      return undefined;
-    }
-
-    for (const [regex, tokenType] of this.lexer.lexerRules) {
-      const match = this.matchRule(this.input, this.pos.index, regex);
-      if (!match) {
-        continue;
-      }
-      return new TokenImpl(
-        this.lexer,
-        this.input.slice(match.length),
-        tokenType,
-        match,
-        {
-          index: this.pos.index + match.length,
-          columnBegin: this.pos.index + 1,
-          columnEnd: this.pos.index + 1 + match.length,
-          // Our strings are always only one line
-          rowBegin: 1,
-          rowEnd: 1,
-        },
-      );
-    }
-    // No match
-    throw new Error(
-      `Failed to tokenize the token at position ${this.pos.index}: ${this.input[0]}`,
-    );
-  }
-}
-
-class Lexer {
-  // Rules are in order of priority
-  lexerRules: readonly [RegExp, TokenType][] = [
-    [/^and/i, TokenType.And],
-    [/^or/i, TokenType.Or],
-
-    [/^#/, TokenType.Hash],
-    [/^(is|url|list|after|before):/, TokenType.Qualifier],
-
-    [/^"([^"]+)"/, TokenType.StringLiteral],
-
-    [/^\(/, TokenType.LParen],
-    [/^\)/, TokenType.RParen],
-    [/^\s+/, TokenType.Space],
-
-    // This needs to be last as it matches a lot of stuff
-    [/^[^ ")(]+/, TokenType.Ident],
-  ] as const;
-  constructor() {
-    for (const [regex, _] of this.lexerRules) {
-      if (!regex.source.startsWith("^")) {
-        throw new Error("Regex must start with ^");
-      }
-    }
-  }
-
-  lex(query: string): Token<TokenType> | undefined {
-    const tok = new TokenImpl(
-      this,
-      query,
+  public static from(input: string): Token<TokenType> | undefined {
+    const tok = new LexerToken(
+      input,
       /* Doesn't matter */ TokenType.Ident,
       "",
       {
@@ -122,6 +73,32 @@ class Lexer {
       },
     );
     return tok.next;
+  }
+
+  public get next(): Token<TokenType> | undefined {
+    if (!this.input.length) {
+      return undefined;
+    }
+
+    for (const [regex, tokenType] of lexerRules) {
+      const matchRes = regex.exec(this.input);
+      if (!matchRes) {
+        continue;
+      }
+      const match = matchRes[0];
+      return new LexerToken(this.input.slice(match.length), tokenType, match, {
+        index: this.pos.index + match.length,
+        columnBegin: this.pos.index + 1,
+        columnEnd: this.pos.index + 1 + match.length,
+        // Our strings are always only one line
+        rowBegin: 1,
+        rowEnd: 1,
+      });
+    }
+    // No match
+    throw new Error(
+      `Failed to tokenize the token at position ${this.pos.index}: ${this.input[0]}`,
+    );
   }
 }
 
@@ -219,13 +196,8 @@ MATCHER.setPattern(
         }
       },
     ),
-    apply(seq(tok(TokenType.Ident), tok(TokenType.Space), MATCHER), (toks) => {
-      return {
-        text: [toks[0].text, toks[2].text].join(" ").trim(),
-        matcher: toks[2].matcher,
-      };
-    }),
-    apply(tok(TokenType.Ident), (toks) => {
+    // Ident or an incomlete qualifier
+    apply(alt(tok(TokenType.Ident), tok(TokenType.Qualifier)), (toks) => {
       return {
         text: toks.text,
         matcher: undefined,
@@ -252,22 +224,28 @@ EXP.setPattern(
         case TokenType.And:
           return {
             text: [toks.text, next[1].text].join(" ").trim(),
-            matcher: {
-              type: "and",
-              matchers: [toks.matcher, next[1].matcher].filter(
-                (a) => !!a,
-              ) as Matcher[],
-            },
+            matcher:
+              !!toks.matcher || !!next[1].matcher
+                ? {
+                    type: "and",
+                    matchers: [toks.matcher, next[1].matcher].filter(
+                      (a) => !!a,
+                    ) as Matcher[],
+                  }
+                : undefined,
           };
         case TokenType.Or:
           return {
             text: [toks.text, next[1].text].join(" ").trim(),
-            matcher: {
-              type: "or",
-              matchers: [toks.matcher, next[1].matcher].filter(
-                (a) => !!a,
-              ) as Matcher[],
-            },
+            matcher:
+              !!toks.matcher || !!next[1].matcher
+                ? {
+                    type: "or",
+                    matchers: [toks.matcher, next[1].matcher].filter(
+                      (a) => !!a,
+                    ) as Matcher[],
+                  }
+                : undefined,
           };
       }
     },
@@ -301,7 +279,7 @@ function flattenAndsAndOrs(matcher: Matcher): Matcher {
 
 export function _parseAndPrintTokens(query: string) {
   console.log(`PARSING: ${query}`);
-  let tok = new Lexer().lex(query);
+  let tok = LexerToken.from(query);
   do {
     console.log(tok?.kind, tok?.text);
     tok = tok?.next;
@@ -312,7 +290,7 @@ export function _parseAndPrintTokens(query: string) {
 export function parseSearchQuery(query: string): TextAndMatcher {
   // _parseAndPrintTokens(query); // Uncomment to debug tokenization
   const parsed = expectSingleResult(
-    expectEOF(EXP.parse(new Lexer().lex(query.trim()))),
+    expectEOF(EXP.parse(LexerToken.from(query.trim()))),
   );
   if (parsed.matcher) {
     parsed.matcher = flattenAndsAndOrs(parsed.matcher);

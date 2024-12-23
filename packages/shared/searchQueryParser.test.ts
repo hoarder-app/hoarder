@@ -187,6 +187,10 @@ describe("Search Query Parser", () => {
     });
   });
   test("pure text", () => {
+    expect(parseSearchQuery("hello")).toEqual({
+      text: "hello",
+      matcher: undefined,
+    });
     expect(parseSearchQuery("hello world")).toEqual({
       text: "hello world",
       matcher: undefined,
