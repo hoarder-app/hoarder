@@ -5,6 +5,7 @@ import { parseSearchQuery } from "./searchQueryParser";
 describe("Search Query Parser", () => {
   test("simple is queries", () => {
     expect(parseSearchQuery("is:archived")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "archived",
@@ -12,6 +13,7 @@ describe("Search Query Parser", () => {
       },
     });
     expect(parseSearchQuery("is:not_archived")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "archived",
@@ -19,6 +21,7 @@ describe("Search Query Parser", () => {
       },
     });
     expect(parseSearchQuery("is:fav")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "favourited",
@@ -26,6 +29,7 @@ describe("Search Query Parser", () => {
       },
     });
     expect(parseSearchQuery("is:not_fav")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "favourited",
@@ -36,6 +40,7 @@ describe("Search Query Parser", () => {
 
   test("simple string queries", () => {
     expect(parseSearchQuery("url:https://example.com")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "url",
@@ -43,6 +48,7 @@ describe("Search Query Parser", () => {
       },
     });
     expect(parseSearchQuery('url:"https://example.com"')).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "url",
@@ -50,6 +56,7 @@ describe("Search Query Parser", () => {
       },
     });
     expect(parseSearchQuery("#my-tag")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "tagName",
@@ -57,6 +64,7 @@ describe("Search Query Parser", () => {
       },
     });
     expect(parseSearchQuery('#"my tag"')).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "tagName",
@@ -64,6 +72,7 @@ describe("Search Query Parser", () => {
       },
     });
     expect(parseSearchQuery("list:my-list")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "listName",
@@ -71,6 +80,7 @@ describe("Search Query Parser", () => {
       },
     });
     expect(parseSearchQuery('list:"my list"')).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "listName",
@@ -80,6 +90,7 @@ describe("Search Query Parser", () => {
   });
   test("date queries", () => {
     expect(parseSearchQuery("after:2023-10-12")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "dateAfter",
@@ -87,6 +98,7 @@ describe("Search Query Parser", () => {
       },
     });
     expect(parseSearchQuery("before:2023-10-12")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "dateBefore",
@@ -97,6 +109,7 @@ describe("Search Query Parser", () => {
 
   test("complex queries", () => {
     expect(parseSearchQuery("is:fav is:archived")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "and",
@@ -114,6 +127,7 @@ describe("Search Query Parser", () => {
     });
 
     expect(parseSearchQuery("(is:fav is:archived) #my-tag")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "and",
@@ -135,6 +149,7 @@ describe("Search Query Parser", () => {
     });
 
     expect(parseSearchQuery("(is:fav is:archived) or (#my-tag)")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "or",
@@ -161,6 +176,7 @@ describe("Search Query Parser", () => {
     });
 
     expect(parseSearchQuery("(is:fav or is:archived) and #my-tag")).toEqual({
+      result: "full",
       text: "",
       matcher: {
         type: "and",
@@ -188,10 +204,12 @@ describe("Search Query Parser", () => {
   });
   test("pure text", () => {
     expect(parseSearchQuery("hello")).toEqual({
+      result: "full",
       text: "hello",
       matcher: undefined,
     });
     expect(parseSearchQuery("hello world")).toEqual({
+      result: "full",
       text: "hello world",
       matcher: undefined,
     });
@@ -203,6 +221,7 @@ describe("Search Query Parser", () => {
         "hello is:fav world is:archived mixed world #my-tag test",
       ),
     ).toEqual({
+      result: "full",
       text: "hello world mixed world test",
       matcher: {
         type: "and",
@@ -226,7 +245,27 @@ describe("Search Query Parser", () => {
 
   test("unknown qualifiers are emitted as pure text", () => {
     expect(parseSearchQuery("is:fav is:helloworld")).toEqual({
+      result: "full",
       text: "is:helloworld",
+      matcher: {
+        type: "favourited",
+        favourited: true,
+      },
+    });
+  });
+
+  test("partial results", () => {
+    expect(parseSearchQuery("(is:archived) or ")).toEqual({
+      result: "partial",
+      text: "or",
+      matcher: {
+        type: "archived",
+        archived: true,
+      },
+    });
+    expect(parseSearchQuery("is:fav is: ( random")).toEqual({
+      result: "partial",
+      text: "is: ( random",
       matcher: {
         type: "favourited",
         favourited: true,

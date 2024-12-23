@@ -2,9 +2,6 @@ import {
   alt,
   alt_sc,
   apply,
-  errd,
-  expectEOF,
-  expectSingleResult,
   kmid,
   kright,
   lrec_sc,
@@ -287,13 +284,52 @@ export function _parseAndPrintTokens(query: string) {
   console.log("DONE");
 }
 
-export function parseSearchQuery(query: string): TextAndMatcher {
+function consumeTokenStream(token: Token<TokenType>) {
+  let str = "";
+  let tok: Token<TokenType> | undefined = token;
+  do {
+    str += tok.text;
+    tok = tok.next;
+  } while (tok);
+  return str;
+}
+
+export function parseSearchQuery(
+  query: string,
+): TextAndMatcher & { result: "full" | "partial" | "invalid" } {
   // _parseAndPrintTokens(query); // Uncomment to debug tokenization
-  const parsed = expectSingleResult(
-    expectEOF(EXP.parse(LexerToken.from(query.trim()))),
-  );
-  if (parsed.matcher) {
-    parsed.matcher = flattenAndsAndOrs(parsed.matcher);
+  const parsed = EXP.parse(LexerToken.from(query.trim()));
+  if (!parsed.successful || parsed.candidates.length != 1) {
+    // If the query is not valid, return the whole query as pure text
+    return {
+      text: query,
+      result: "invalid",
+    };
   }
-  return parsed;
+
+  const parseCandidate = parsed.candidates[0];
+  if (parseCandidate.result.matcher) {
+    parseCandidate.result.matcher = flattenAndsAndOrs(
+      parseCandidate.result.matcher,
+    );
+  }
+  if (parseCandidate.nextToken) {
+    // Parser failed to consume the whole query. This usually happen
+    // when the user is still typing the query. Return the partial
+    // result and the remaining query as pure text
+    return {
+      text: (
+        parseCandidate.result.text +
+        consumeTokenStream(parseCandidate.nextToken)
+      ).trim(),
+      matcher: parseCandidate.result.matcher,
+      result: "partial",
+    };
+  }
+
+  return {
+    text: parseCandidate.result.text,
+    matcher: parseCandidate.result.matcher,
+    result: "full",
+  };
 }
