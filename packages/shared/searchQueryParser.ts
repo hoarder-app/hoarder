@@ -169,21 +169,37 @@ MATCHER.setPattern(
               matcher: { type: "listName", listName: toks[1] },
             };
           case "after:":
-            return {
-              text: "",
-              matcher: {
-                type: "dateAfter",
-                dateAfter: z.coerce.date().parse(toks[1]),
-              },
-            };
+            try {
+              return {
+                text: "",
+                matcher: {
+                  type: "dateAfter",
+                  dateAfter: z.coerce.date().parse(toks[1]),
+                },
+              };
+            } catch (e) {
+              return {
+                // If parsing the date fails, emit it as pure text
+                text: toks[0].text + toks[1],
+                matcher: undefined,
+              };
+            }
           case "before:":
-            return {
-              text: "",
-              matcher: {
-                type: "dateBefore",
-                dateBefore: z.coerce.date().parse(toks[1]),
-              },
-            };
+            try {
+              return {
+                text: "",
+                matcher: {
+                  type: "dateBefore",
+                  dateBefore: z.coerce.date().parse(toks[1]),
+                },
+              };
+            } catch (e) {
+              return {
+                // If parsing the date fails, emit it as pure text
+                text: toks[0].text + toks[1],
+                matcher: undefined,
+              };
+            }
           default:
             // If the token is not known, emit it as pure text
             return {

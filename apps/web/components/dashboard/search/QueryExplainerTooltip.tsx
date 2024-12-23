@@ -31,6 +31,20 @@ export default function QueryExplainerTooltip({
             <TableCell>{matcher.listName}</TableCell>
           </TableRow>
         );
+      case "dateAfter":
+        return (
+          <TableRow>
+            <TableCell>Created After</TableCell>
+            <TableCell>{matcher.dateAfter.toDateString()}</TableCell>
+          </TableRow>
+        );
+      case "dateBefore":
+        return (
+          <TableRow>
+            <TableCell>Created Before</TableCell>
+            <TableCell>{matcher.dateBefore.toDateString()}</TableCell>
+          </TableRow>
+        );
       case "favourited":
         return (
           <TableRow>
