@@ -44,6 +44,7 @@ import {
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "@hoarder/shared/types/bookmarks";
+import { zMatcherSchema } from "@hoarder/shared/types/search";
 
 import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";
@@ -53,6 +54,7 @@ import {
   mapDBAssetTypeToUserType,
   mapSchemaAssetTypeToDB,
 } from "../lib/attachments";
+import { getBookmarkIdsFromMatcher } from "../lib/search";
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: Context;
@@ -515,6 +517,7 @@ export const bookmarksAppRouter = router({
     .input(
       z.object({
         text: z.string(),
+        matcher: zMatcherSchema.optional(),
         cursor: z
           .object({
             offset: z.number(),
@@ -542,8 +545,19 @@ export const bookmarksAppRouter = router({
           message: "Search functionality is not configured",
         });
       }
+
+      let filter: string[];
+      if (input.matcher) {
+        const bookmarkIds = await getBookmarkIdsFromMatcher(ctx, input.matcher);
+        filter = [
+          `userId = '${ctx.user.id}' AND id IN [${bookmarkIds.join(",")}]`,
+        ];
+      } else {
+        filter = [`userId = '${ctx.user.id}'`];
+      }
+
       const resp = await client.search(input.text, {
-        filter: [`userId = '${ctx.user.id}'`],
+        filter,
         showRankingScore: true,
         attributesToRetrieve: ["id"],
         sort: ["createdAt:desc"],

@@ -4,6 +4,9 @@ import React, { useEffect, useImperativeHandle, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { useDoBookmarkSearch } from "@/lib/hooks/bookmark-search";
 import { useTranslation } from "@/lib/i18n/client";
+import { cn } from "@/lib/utils";
+
+import QueryExplainerTooltip from "./QueryExplainerTooltip";
 
 function useFocusSearchOnKeyPress(
   inputRef: React.RefObject<HTMLInputElement>,
@@ -47,7 +50,8 @@ const SearchInput = React.forwardRef<
   React.HTMLAttributes<HTMLInputElement> & { loading?: boolean }
 >(({ className, ...props }, ref) => {
   const { t } = useTranslation();
-  const { debounceSearch, searchQuery, isInSearchPage } = useDoBookmarkSearch();
+  const { debounceSearch, searchQuery, parsedSearchQuery, isInSearchPage } =
+    useDoBookmarkSearch();
 
   const [value, setValue] = React.useState(searchQuery);
 
@@ -67,14 +71,19 @@ const SearchInput = React.forwardRef<
   }, [isInSearchPage]);
 
   return (
-    <Input
-      ref={inputRef}
-      value={value}
-      onChange={onChange}
-      placeholder={t("common.search")}
-      className={className}
-      {...props}
-    />
+    <div className={cn("relative flex-1", className)}>
+      <QueryExplainerTooltip
+        className="-translate-1/2 absolute right-1.5 top-2 p-0.5"
+        parsedSearchQuery={parsedSearchQuery}
+      />
+      <Input
+        ref={inputRef}
+        value={value}
+        onChange={onChange}
+        placeholder={t("common.search")}
+        {...props}
+      />
+    </div>
   );
 });
 SearchInput.displayName = "SearchInput";
