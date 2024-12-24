@@ -4,11 +4,10 @@ import { adaptPagination, zPagination } from "@/app/api/v1/utils/pagination";
 
 export const dynamic = "force-dynamic";
 
-export const GET = (
-  req: NextRequest,
-  { params }: { params: { tagId: string } },
-) =>
-  buildHandler({
+export const GET = async (req: NextRequest, props: { params: Promise<{ tagId: string }> }) => {
+  const params = await props.params;
+
+  return buildHandler({
     req,
     searchParamsSchema: zPagination,
     handler: async ({ api, searchParams }) => {
@@ -23,3 +22,4 @@ export const GET = (
       };
     },
   });
+};

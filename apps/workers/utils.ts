@@ -44,14 +44,14 @@ export async function readPDFText(buffer: Buffer): Promise<{
   metadata: Record<string, string>;
 }> {
   return new Promise((resolve, reject) => {
-    // Need raw text flag represents as number (1), reference : https://github.com/modesty/pdf2json/issues/76#issuecomment-236569265
+    // @ts-expect-error Need raw text flag represents as number (1), reference : https://github.com/modesty/pdf2json/issues/76#issuecomment-236569265
     const pdfParser = new PDFParser(null, 1);
     pdfParser.on("pdfParser_dataError", reject);
     pdfParser.on("pdfParser_dataReady", (pdfData) => {
       resolve({
         // The type isn't set correctly, reference : https://github.com/modesty/pdf2json/issues/327
-        // eslint-disable-next-line
         text: (pdfParser as any).getRawTextContent(),
+        // @ts-expect-error Type incorrect
         metadata: pdfData.Meta,
       });
     });

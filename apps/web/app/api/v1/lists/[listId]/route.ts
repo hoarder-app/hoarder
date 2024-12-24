@@ -5,11 +5,10 @@ import { zNewBookmarkListSchema } from "@hoarder/shared/types/lists";
 
 export const dynamic = "force-dynamic";
 
-export const GET = (
-  req: NextRequest,
-  { params }: { params: { listId: string } },
-) =>
-  buildHandler({
+export const GET = async (req: NextRequest, props: { params: Promise<{ listId: string }> }) => {
+  const params = await props.params;
+
+  return buildHandler({
     req,
     handler: async ({ api }) => {
       const list = await api.lists.get({
@@ -21,12 +20,12 @@ export const GET = (
       };
     },
   });
+};
 
-export const PATCH = (
-  req: NextRequest,
-  { params }: { params: { listId: string } },
-) =>
-  buildHandler({
+export const PATCH = async (req: NextRequest, props: { params: Promise<{ listId: string }> }) => {
+  const params = await props.params;
+
+  return buildHandler({
     req,
     bodySchema: zNewBookmarkListSchema.partial(),
     handler: async ({ api, body }) => {
@@ -37,12 +36,12 @@ export const PATCH = (
       return { status: 200, resp: list };
     },
   });
+};
 
-export const DELETE = (
-  req: NextRequest,
-  { params }: { params: { listId: string } },
-) =>
-  buildHandler({
+export const DELETE = async (req: NextRequest, props: { params: Promise<{ listId: string }> }) => {
+  const params = await props.params;
+
+  return buildHandler({
     req,
     handler: async ({ api }) => {
       await api.lists.delete({
@@ -53,3 +52,4 @@ export const DELETE = (
       };
     },
   });
+};

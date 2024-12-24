@@ -14,7 +14,7 @@ export const settingsSidebarItems = (
   t: TFunction,
 ): {
   name: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
   path: string;
 }[] => [
   {

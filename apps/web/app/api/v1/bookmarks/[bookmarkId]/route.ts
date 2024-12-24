@@ -5,11 +5,10 @@ import { zUpdateBookmarksRequestSchema } from "@hoarder/shared/types/bookmarks";
 
 export const dynamic = "force-dynamic";
 
-export const GET = (
-  req: NextRequest,
-  { params }: { params: { bookmarkId: string } },
-) =>
-  buildHandler({
+export const GET = async (req: NextRequest, props: { params: Promise<{ bookmarkId: string }> }) => {
+  const params = await props.params;
+
+  return buildHandler({
     req,
     handler: async ({ api }) => {
       const bookmark = await api.bookmarks.getBookmark({
@@ -18,12 +17,12 @@ export const GET = (
       return { status: 200, resp: bookmark };
     },
   });
+};
 
-export const PATCH = (
-  req: NextRequest,
-  { params }: { params: { bookmarkId: string } },
-) =>
-  buildHandler({
+export const PATCH = async (req: NextRequest, props: { params: Promise<{ bookmarkId: string }> }) => {
+  const params = await props.params;
+
+  return buildHandler({
     req,
     bodySchema: zUpdateBookmarksRequestSchema.omit({ bookmarkId: true }),
     handler: async ({ api, body }) => {
@@ -34,12 +33,12 @@ export const PATCH = (
       return { status: 200, resp: bookmark };
     },
   });
+};
 
-export const DELETE = (
-  req: NextRequest,
-  { params }: { params: { bookmarkId: string } },
-) =>
-  buildHandler({
+export const DELETE = async (req: NextRequest, props: { params: Promise<{ bookmarkId: string }> }) => {
+  const params = await props.params;
+
+  return buildHandler({
     req,
     handler: async ({ api }) => {
       await api.bookmarks.deleteBookmark({
@@ -48,3 +47,4 @@ export const DELETE = (
       return { status: 204 };
     },
   });
+};

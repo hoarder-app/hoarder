@@ -5,10 +5,8 @@ import { assets } from "@hoarder/db/schema";
 import { readAsset } from "@hoarder/shared/assetdb";
 
 export const dynamic = "force-dynamic";
-export async function GET(
-  request: Request,
-  { params }: { params: { assetId: string } },
-) {
+export async function GET(request: Request, props: { params: Promise<{ assetId: string }> }) {
+  const params = await props.params;
   const ctx = await createContextFromRequest(request);
   if (!ctx.user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
