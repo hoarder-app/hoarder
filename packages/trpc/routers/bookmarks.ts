@@ -26,6 +26,7 @@ import serverConfig from "@hoarder/shared/config";
 import { InferenceClientFactory } from "@hoarder/shared/inference";
 import { buildSummaryPrompt } from "@hoarder/shared/prompts";
 import {
+  AssetPreprocessingQueue,
   LinkCrawlerQueue,
   OpenAIQueue,
   triggerSearchDeletion,
@@ -378,9 +379,14 @@ export const bookmarksAppRouter = router({
           });
           break;
         }
-        case BookmarkTypes.TEXT:
-        case BookmarkTypes.ASSET: {
+        case BookmarkTypes.TEXT: {
           await OpenAIQueue.enqueue({
+            bookmarkId: bookmark.id,
+          });
+          break;
+        }
+        case BookmarkTypes.ASSET: {
+          await AssetPreprocessingQueue.enqueue({
             bookmarkId: bookmark.id,
           });
           break;

@@ -7,7 +7,6 @@ import type { InferenceClient } from "@hoarder/shared/inference";
 import type { ZOpenAIRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
 import {
-  bookmarkAssets,
   bookmarks,
   bookmarkTags,
   customPrompts,
@@ -23,8 +22,6 @@ import {
   triggerSearchReindex,
   zOpenAIRequestSchema,
 } from "@hoarder/shared/queues";
-
-import { readImageText, readPDFText } from "./utils";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
@@ -156,25 +153,6 @@ async function inferTagsFromImage(
     );
   }
 
-  let imageText = null;
-  try {
-    imageText = await readImageText(asset);
-  } catch (e) {
-    logger.error(`[inference][${jobId}] Failed to read image text: ${e}`);
-  }
-
-  if (imageText) {
-    logger.info(
-      `[inference][${jobId}] Extracted ${imageText.length} characters from image.`,
-    );
-    await db
-      .update(bookmarkAssets)
-      .set({
-        content: imageText,
-      })
-      .where(eq(bookmarkAssets.id, bookmark.id));
-  }
-
   const base64 = asset.toString("base64");
   return inferenceClient.inferFromImage(
     buildImagePrompt(
@@ -245,38 +223,14 @@ function containsTagsPlaceholder(prompts: { text: string }[]): boolean {
 }
 
 async function inferTagsFromPDF(
-  jobId: string,
+  _jobId: string,
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
   inferenceClient: InferenceClient,
 ) {
-  const { asset } = await readAsset({
-    userId: bookmark.userId,
-    assetId: bookmark.asset.assetId,
-  });
-  if (!asset) {
-    throw new Error(
-      `[inference][${jobId}] AssetId ${bookmark.asset.assetId} for bookmark ${bookmark.id} not found`,
-    );
-  }
-  const pdfParse = await readPDFText(asset);
-  if (!pdfParse?.text) {
-    throw new Error(
-      `[inference][${jobId}] PDF text is empty. Please make sure that the PDF includes text and not just images.`,
-    );
-  }
-
-  await db
-    .update(bookmarkAssets)
-    .set({
-      content: pdfParse.text,
-      metadata: pdfParse.metadata ? JSON.stringify(pdfParse.metadata) : null,
-    })
-    .where(eq(bookmarkAssets.id, bookmark.id));
-
   const prompt = buildTextPrompt(
     serverConfig.inference.inferredTagLang,
     await fetchCustomPrompts(bookmark.userId, "text"),
-    `Content: ${pdfParse.text}`,
+    `Content: ${bookmark.asset.content}`,
     serverConfig.inference.contextLength,
   );
   return inferenceClient.inferFromText(prompt, { json: true });

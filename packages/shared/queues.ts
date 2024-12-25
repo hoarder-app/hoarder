@@ -139,3 +139,22 @@ export const FeedQueue = new SqliteQueue<ZFeedRequestSchema>(
     keepFailedJobs: false,
   },
 );
+
+// Preprocess Assets
+export const zAssetPreprocessingRequestSchema = z.object({
+  bookmarkId: z.string(),
+});
+export type AssetPreprocessingRequest = z.infer<
+  typeof zAssetPreprocessingRequestSchema
+>;
+export const AssetPreprocessingQueue =
+  new SqliteQueue<AssetPreprocessingRequest>(
+    "asset_preprocessing_queue",
+    queueDB,
+    {
+      defaultJobArgs: {
+        numRetries: 2,
+      },
+      keepFailedJobs: false,
+    },
+  );

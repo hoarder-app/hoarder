@@ -49,6 +49,7 @@ import {
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
 import {
+  AssetPreprocessingQueue,
   LinkCrawlerQueue,
   OpenAIQueue,
   triggerSearchReindex,
@@ -568,6 +569,9 @@ async function handleAsAssetBookmark(
       .where(eq(bookmarks.id, bookmarkId));
     await trx.delete(bookmarkLinks).where(eq(bookmarkLinks.id, bookmarkId));
   });
+  await AssetPreprocessingQueue.enqueue({
+    bookmarkId,
+  });
 }
 
 async function crawlAndParseUrl(
@@ -709,9 +713,6 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
   // Link bookmarks get transformed into asset bookmarks if they point to a supported asset instead of a webpage
   const isPdf = contentType === ASSET_TYPES.APPLICATION_PDF;
 
-  let archivalLogic: () => Promise<void> = () => {
-    return Promise.resolve();
-  };
   if (isPdf) {
     await handleAsAssetBookmark(url, "pdf", userId, jobId, bookmarkId);
   } else if (
@@ -721,7 +722,7 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
   ) {
     await handleAsAssetBookmark(url, "image", userId, jobId, bookmarkId);
   } else {
-    archivalLogic = await crawlAndParseUrl(
+    const archivalLogic = await crawlAndParseUrl(
       url,
       userId,
       jobId,
@@ -731,21 +732,21 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
       oldFullPageArchiveAssetId,
       archiveFullPage,
     );
+
+    // Enqueue openai job (if not set, assume it's true for backward compatibility)
+    if (job.data.runInference !== false) {
+      await OpenAIQueue.enqueue({
+        bookmarkId,
+      });
+    }
+
+    // Update the search index
+    await triggerSearchReindex(bookmarkId);
+
+    // Trigger a potential download of a video from the URL
+    await triggerVideoWorker(bookmarkId, url);
+
+    // Do the archival as a separate last step as it has the potential for failure
+    await archivalLogic();
   }
-
-  // Enqueue openai job (if not set, assume it's true for backward compatibility)
-  if (job.data.runInference !== false) {
-    await OpenAIQueue.enqueue({
-      bookmarkId,
-    });
-  }
-
-  // Update the search index
-  await triggerSearchReindex(bookmarkId);
-
-  // Trigger a potential download of a video from the URL
-  await triggerVideoWorker(bookmarkId, url);
-
-  // Do the archival as a separate last step as it has the potential for failure
-  await archivalLogic();
 }
