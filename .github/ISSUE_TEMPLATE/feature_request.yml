@@ -17,7 +17,7 @@ body:
         Explain the measurable benefits this feature would achieve for existing Hoarder users.
         These benefits should details outcomes in terms of what this request solves/achieves, and should not be specific to implementation.
         This helps us understand the core desired goal so that a variety of potential implementations could be explored.
-        This field is important. Lack if input here may lead to early issue closure.
+        This field is important. Lack of input here may lead to early issue closure.
     validations:
       required: true
   - type: textarea
