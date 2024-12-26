@@ -257,13 +257,6 @@ export default function BulkBookmarksAction() {
       alwaysEnable: true,
       hidden: !isBulkEditEnabled,
     },
-    {
-      name: t("actions.bulk_edit"),
-      icon: <Pencil size={18} />,
-      action: () => setIsBulkEditEnabled(true),
-      alwaysEnable: true,
-      hidden: isBulkEditEnabled,
-    },
   ];
 
   return (

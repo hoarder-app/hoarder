@@ -2,26 +2,25 @@ import React from "react";
 import { ActionButton, ActionButtonProps } from "@/components/ui/action-button";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
-
 import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
 
-interface ArchiveBookmarkButtonProps
+interface FavouriteBookmarkButtonProps
   extends Omit<ActionButtonProps, "loading" | "disabled"> {
   bookmarkId: string;
   onDone?: () => void;
 }
 
-const ArchiveBookmarkButton = React.forwardRef<
+const FavouriteBookmarkButton = React.forwardRef<
   HTMLButtonElement,
-  ArchiveBookmarkButtonProps
+  FavouriteBookmarkButtonProps
 >(({ bookmarkId, onDone, ...props }, ref) => {
   const { data } = api.bookmarks.getBookmark.useQuery({ bookmarkId });
 
-  const { mutate: updateBookmark, isPending: isArchivingBookmark } =
+  const { mutate: updateBookmark, isPending: isFavouritingBookmark } =
     useUpdateBookmark({
       onSuccess: () => {
         toast({
-          description: "Bookmark has been archived!",
+          description: "Bookmark has been updated!",
         });
         onDone?.();
       },
@@ -47,11 +46,11 @@ const ArchiveBookmarkButton = React.forwardRef<
   return (
     <ActionButton
       ref={ref}
-      loading={isArchivingBookmark}
+      loading={isFavouritingBookmark}
       onClick={() =>
         updateBookmark({
           bookmarkId,
-          archived: !data.archived,
+          favourited: !data.favourited,
         })
       }
       {...props}
@@ -59,5 +58,5 @@ const ArchiveBookmarkButton = React.forwardRef<
   );
 });
 
-ArchiveBookmarkButton.displayName = "ArchiveBookmarkButton";
-export default ArchiveBookmarkButton;
+FavouriteBookmarkButton.displayName = "FavouriteBookmarkButton";
+export default FavouriteBookmarkButton;
