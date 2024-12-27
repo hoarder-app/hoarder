@@ -6,6 +6,7 @@ import {
 
 import { registry as bookmarksRegistry } from "./lib/bookmarks";
 import { registry as commonRegistry } from "./lib/common";
+import { registry as highlightsRegistry } from "./lib/highlights";
 import { registry as listsRegistry } from "./lib/lists";
 import { registry as tagsRegistry } from "./lib/tags";
 
@@ -15,6 +16,7 @@ function getOpenApiDocumentation() {
     bookmarksRegistry,
     listsRegistry,
     tagsRegistry,
+    highlightsRegistry,
   ]);
 
   const generator = new OpenApiGeneratorV3(registry.definitions);

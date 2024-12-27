@@ -37,6 +37,10 @@
         "type": "string",
         "example": "ieidlxygmwj87oxz5hxttoc8"
       },
+      "HighlightId": {
+        "type": "string",
+        "example": "ieidlxygmwj87oxz5hxttoc8"
+      },
       "Bookmark": {
         "type": "object",
         "properties": {
@@ -397,6 +401,25 @@
           "numBookmarks",
           "numBookmarksByAttachedType"
         ]
+      },
+      "PaginatedHighlights": {
+        "type": "object",
+        "properties": {
+          "highlights": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Highlight"
+            }
+          },
+          "nextCursor": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "highlights",
+          "nextCursor"
+        ]
       }
     },
     "parameters": {
@@ -422,6 +445,14 @@
         },
         "required": true,
         "name": "tagId",
+        "in": "path"
+      },
+      "HighlightId": {
+        "schema": {
+          "$ref": "#/components/schemas/HighlightId"
+        },
+        "required": true,
+        "name": "highlightId",
         "in": "path"
       }
     }
@@ -1433,6 +1464,230 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PaginatedBookmarks"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/highlights": {
+      "get": {
+        "description": "Get all highlights",
+        "summary": "Get all highlights",
+        "tags": [
+          "Highlights"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "number"
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/Cursor"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with all highlights data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedHighlights"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new highlight",
+        "summary": "Create a new highlight",
+        "tags": [
+          "Highlights"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "The highlight to create",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "bookmarkId": {
+                    "type": "string"
+                  },
+                  "startOffset": {
+                    "type": "number"
+                  },
+                  "endOffset": {
+                    "type": "number"
+                  },
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "yellow",
+                      "red",
+                      "green",
+                      "blue"
+                    ],
+                    "default": "yellow"
+                  },
+                  "text": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "note": {
+                    "type": "string",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "bookmarkId",
+                  "startOffset",
+                  "endOffset",
+                  "text",
+                  "note"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created highlight",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Highlight"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/highlights/{highlightId}": {
+      "get": {
+        "description": "Get highlight by its id",
+        "summary": "Get a single highlight",
+        "tags": [
+          "Highlights"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/HighlightId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with highlight data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Highlight"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Delete highlight by its id",
+        "summary": "Delete a highlight",
+        "tags": [
+          "Highlights"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/HighlightId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The deleted highlight",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Highlight"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "description": "Update highlight by its id",
+        "summary": "Update a highlight",
+        "tags": [
+          "Highlights"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/HighlightId"
+          }
+        ],
+        "requestBody": {
+          "description": "The data to update. Only the fields you want to update need to be provided.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "color": {
+                    "type": "string",
+                    "enum": [
+                      "yellow",
+                      "red",
+                      "green",
+                      "blue"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated highlight",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Highlight"
                 }
               }
             }
