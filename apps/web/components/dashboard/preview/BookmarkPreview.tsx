@@ -30,6 +30,7 @@ import ActionBar from "./ActionBar";
 import { AssetContentSection } from "./AssetContentSection";
 import AttachmentBox from "./AttachmentBox";
 import { EditableTitle } from "./EditableTitle";
+import HighlightsBox from "./HighlightsBox";
 import LinkContentSection from "./LinkContentSection";
 import { NoteEditor } from "./NoteEditor";
 import { TextContentSection } from "./TextContentSection";
@@ -150,6 +151,7 @@ export default function BookmarkPreview({
           <NoteEditor bookmark={bookmark} />
         </div>
         <AttachmentBox bookmark={bookmark} />
+        <HighlightsBox bookmarkId={bookmark.id} />
         <ActionBar bookmark={bookmark} />
       </div>
     </div>

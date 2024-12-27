@@ -204,6 +204,37 @@ export const assets = sqliteTable(
   }),
 );
 
+export const highlights = sqliteTable(
+  "highlights",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    bookmarkId: text("bookmarkId")
+      .notNull()
+      .references(() => bookmarks.id, {
+        onDelete: "cascade",
+      }),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    startOffset: integer("startOffset").notNull(),
+    endOffset: integer("endOffset").notNull(),
+    color: text("color", {
+      enum: ["red", "green", "blue", "yellow"],
+    }).default("yellow").notNull(),
+    text: text("text"),
+    note: text("note"),
+    createdAt: createdAtField(),
+  },
+
+  (tb) => ({
+    bookmarkIdIdx: index("highlights_bookmarkId_idx").on(tb.bookmarkId),
+    userIdIdx: index("highlights_userId_idx").on(tb.userId),
+  }),
+);
+
 export const bookmarkTexts = sqliteTable("bookmarkTexts", {
   id: text("id")
     .notNull()
