@@ -1,9 +1,7 @@
 import { z } from "zod";
 
-import {
-  MAX_NUM_BOOKMARKS_PER_PAGE,
-  zCursorV2,
-} from "@hoarder/shared/types/bookmarks";
+import { MAX_NUM_BOOKMARKS_PER_PAGE } from "@hoarder/shared/types/bookmarks";
+import { zCursorV2 } from "@hoarder/shared/types/pagination";
 
 export const zPagination = z.object({
   limit: z.coerce.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),

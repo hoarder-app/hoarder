@@ -12,6 +12,7 @@ import {
 } from "@hoarder/shared/types/bookmarks";
 
 import { BearerAuth } from "./common";
+import { HighlightSchema } from "./highlights";
 import {
   BookmarkSchema,
   PaginatedBookmarksSchema,
@@ -212,6 +213,28 @@ registry.registerPath({
       content: {
         "application/json": {
           schema: z.object({ detached: z.array(TagIdSchema) }),
+        },
+      },
+    },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/bookmarks/{bookmarkId}/highlights",
+  description: "Get highlights of a bookmark",
+  summary: "Get highlights of a bookmark",
+  tags: ["Bookmarks"],
+  security: [{ [BearerAuth.name]: [] }],
+  request: {
+    params: z.object({ bookmarkId: BookmarkIdSchema }),
+  },
+  responses: {
+    200: {
+      description: "The list of highlights",
+      content: {
+        "application/json": {
+          schema: z.object({ highlights: z.array(HighlightSchema) }),
         },
       },
     },

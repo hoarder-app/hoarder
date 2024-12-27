@@ -1,13 +1,15 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, eq } from "drizzle-orm";
+import { and, eq, lt, lte, or } from "drizzle-orm";
 import { z } from "zod";
 
 import { highlights } from "@hoarder/db/schema";
 import {
+  DEFAULT_NUM_HIGHLIGHTS_PER_PAGE,
   zHighlightSchema,
   zNewHighlightSchema,
   zUpdateHighlightSchema,
 } from "@hoarder/shared/types/highlights";
+import { zCursorV2 } from "@hoarder/shared/types/pagination";
 
 import { authedProcedure, Context, router } from "../index";
 import { ensureBookmarkOwnership } from "./bookmarks";
@@ -76,6 +78,64 @@ export const highlightsAppRouter = router({
         ),
       });
       return { highlights: results };
+    }),
+  get: authedProcedure
+    .input(z.object({ highlightId: z.string() }))
+    .output(zHighlightSchema)
+    .use(ensureHighlightOwnership)
+    .query(async ({ input, ctx }) => {
+      const result = await ctx.db.query.highlights.findFirst({
+        where: and(
+          eq(highlights.id, input.highlightId),
+          eq(highlights.userId, ctx.user.id),
+        ),
+      });
+      if (!result) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+      return result;
+    }),
+  getAll: authedProcedure
+    .input(
+      z.object({
+        cursor: zCursorV2.nullish(),
+        limit: z.number().optional().default(DEFAULT_NUM_HIGHLIGHTS_PER_PAGE),
+      }),
+    )
+    .output(
+      z.object({
+        highlights: z.array(zHighlightSchema),
+        nextCursor: zCursorV2.nullable(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const results = await ctx.db.query.highlights.findMany({
+        where: and(
+          eq(highlights.userId, ctx.user.id),
+          input.cursor
+            ? or(
+                lt(highlights.createdAt, input.cursor.createdAt),
+                and(
+                  eq(highlights.createdAt, input.cursor.createdAt),
+                  lte(highlights.id, input.cursor.id),
+                ),
+              )
+            : undefined,
+        ),
+        limit: input.limit + 1,
+      });
+      let nextCursor: z.infer<typeof zCursorV2> | null = null;
+      if (results.length > input.limit) {
+        const nextItem = results.pop()!;
+        nextCursor = {
+          id: nextItem.id,
+          createdAt: nextItem.createdAt,
+        };
+      }
+      return {
+        highlights: results,
+        nextCursor,
+      };
     }),
   delete: authedProcedure
     .input(z.object({ highlightId: z.string() }))

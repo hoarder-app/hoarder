@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { zCursorV2 } from "./pagination";
 import { zBookmarkTagSchema } from "./tags";
 
 const MAX_TITLE_LENGTH = 250;
@@ -146,11 +147,6 @@ export type ZNewBookmarkRequest = z.infer<typeof zNewBookmarkRequestSchema>;
 
 export const DEFAULT_NUM_BOOKMARKS_PER_PAGE = 20;
 export const MAX_NUM_BOOKMARKS_PER_PAGE = 100;
-
-export const zCursorV2 = z.object({
-  createdAt: z.date(),
-  id: z.string(),
-});
 
 export const zGetBookmarksRequestSchema = z.object({
   ids: z.array(z.string()).optional(),

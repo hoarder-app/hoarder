@@ -292,6 +292,57 @@
       "Cursor": {
         "type": "string"
       },
+      "Highlight": {
+        "type": "object",
+        "properties": {
+          "bookmarkId": {
+            "type": "string"
+          },
+          "startOffset": {
+            "type": "number"
+          },
+          "endOffset": {
+            "type": "number"
+          },
+          "color": {
+            "type": "string",
+            "enum": [
+              "yellow",
+              "red",
+              "green",
+              "blue"
+            ],
+            "default": "yellow"
+          },
+          "text": {
+            "type": "string",
+            "nullable": true
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "bookmarkId",
+          "startOffset",
+          "endOffset",
+          "text",
+          "note",
+          "id",
+          "userId",
+          "createdAt"
+        ]
+      },
       "List": {
         "type": "object",
         "properties": {
@@ -862,6 +913,48 @@
                   },
                   "required": [
                     "detached"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookmarks/{bookmarkId}/highlights": {
+      "get": {
+        "description": "Get highlights of a bookmark",
+        "summary": "Get highlights of a bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The list of highlights",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "highlights": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Highlight"
+                      }
+                    }
+                  },
+                  "required": [
+                    "highlights"
                   ]
                 }
               }

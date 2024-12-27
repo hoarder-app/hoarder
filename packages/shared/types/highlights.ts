@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+export const DEFAULT_NUM_HIGHLIGHTS_PER_PAGE = 20;
+
 const zHighlightColorSchema = z.enum(["yellow", "red", "green", "blue"]);
 export type ZHighlightColor = z.infer<typeof zHighlightColorSchema>;
 export const SUPPORTED_HIGHLIGHT_COLORS = zHighlightColorSchema.options;
