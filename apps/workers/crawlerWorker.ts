@@ -1,7 +1,9 @@
-import assert from "assert";
 import * as dns from "dns";
+import { promises as fs } from "fs";
 import * as path from "node:path";
+import * as os from "os";
 import type { Browser } from "puppeteer";
+import { PuppeteerBlocker } from "@ghostery/adblocker-puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
 import DOMPurify from "dompurify";
@@ -9,6 +11,7 @@ import { eq } from "drizzle-orm";
 import { execa } from "execa";
 import { isShuttingDown } from "exit";
 import { JSDOM } from "jsdom";
+import { DequeuedJob, Runner } from "liteque";
 import metascraper from "metascraper";
 import metascraperAmazon from "metascraper-amazon";
 import metascraperDescription from "metascraper-description";
@@ -18,13 +21,14 @@ import metascraperReadability from "metascraper-readability";
 import metascraperTitle from "metascraper-title";
 import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
+import fetch from "node-fetch";
 import puppeteer from "puppeteer-extra";
-import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
+import { getBookmarkDetails, updateAsset } from "workerUtils";
 
 import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
-import { db, HoarderDBTransaction } from "@hoarder/db";
+import { db } from "@hoarder/db";
 import {
   assets,
   AssetTypes,
@@ -32,22 +36,24 @@ import {
   bookmarkLinks,
   bookmarks,
 } from "@hoarder/db/schema";
-import { DequeuedJob, Runner } from "@hoarder/queue";
 import {
   ASSET_TYPES,
-  deleteAsset,
+  getAssetSize,
   IMAGE_ASSET_TYPES,
   newAssetId,
   saveAsset,
   saveAssetFromFile,
+  silentDeleteAsset,
   SUPPORTED_UPLOAD_ASSET_TYPES,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
 import {
+  AssetPreprocessingQueue,
   LinkCrawlerQueue,
   OpenAIQueue,
   triggerSearchReindex,
+  triggerVideoWorker,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
@@ -64,6 +70,7 @@ const metascraperParser = metascraper([
 ]);
 
 let globalBrowser: Browser | undefined;
+let globalBlocker: PuppeteerBlocker | undefined;
 // Guards the interactions with the browser instance.
 // This is needed given that most of the browser APIs are async.
 const browserMutex = new Mutex();
@@ -97,11 +104,8 @@ async function startBrowserInstance() {
       defaultViewport,
     });
   } else {
-    logger.info(`Launching a new browser instance`);
-    return puppeteer.launch({
-      headless: serverConfig.crawler.headlessBrowser,
-      defaultViewport,
-    });
+    logger.info(`Running in browserless mode`);
+    return undefined;
   }
 }
 
@@ -112,7 +116,7 @@ async function launchBrowser() {
       globalBrowser = await startBrowserInstance();
     } catch (e) {
       logger.error(
-        "[Crawler] Failed to connect to the browser instance, will retry in 5 secs",
+        `[Crawler] Failed to connect to the browser instance, will retry in 5 secs: ${(e as Error).stack}`,
       );
       if (isShuttingDown) {
         logger.info("[Crawler] We're shutting down so won't retry.");
@@ -123,7 +127,7 @@ async function launchBrowser() {
       }, 5000);
       return;
     }
-    globalBrowser.on("disconnected", () => {
+    globalBrowser?.on("disconnected", () => {
       if (isShuttingDown) {
         logger.info(
           "[Crawler] The puppeteer browser got disconnected. But we're shutting down so won't restart it.",
@@ -141,11 +145,20 @@ async function launchBrowser() {
 export class CrawlerWorker {
   static async build() {
     puppeteer.use(StealthPlugin());
-    puppeteer.use(
-      AdblockerPlugin({
-        blockTrackersAndAnnoyances: true,
-      }),
-    );
+    if (serverConfig.crawler.enableAdblocker) {
+      try {
+        logger.info("[crawler] Loading adblocker ...");
+        globalBlocker = await PuppeteerBlocker.fromPrebuiltFull(fetch, {
+          path: path.join(os.tmpdir(), "hoarder_adblocker.bin"),
+          read: fs.readFile,
+          write: fs.writeFile,
+        });
+      } catch (e) {
+        logger.error(
+          `[crawler] Failed to load adblocker. Will not be blocking ads: ${e}`,
+        );
+      }
+    }
     if (!serverConfig.crawler.browserConnectOnDemand) {
       await launchBrowser();
     } else {
@@ -163,18 +176,20 @@ export class CrawlerWorker {
           /* timeoutSec */ serverConfig.crawler.jobTimeoutSec,
         ),
         onComplete: async (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.info(`[Crawler][${jobId}] Completed successfully`);
-          const bookmarkId = job?.data.bookmarkId;
+          const bookmarkId = job.data.bookmarkId;
           if (bookmarkId) {
             await changeBookmarkStatus(bookmarkId, "success");
           }
         },
         onError: async (job) => {
-          const jobId = job?.id ?? "unknown";
-          logger.error(`[Crawler][${jobId}] Crawling job failed: ${job.error}`);
+          const jobId = job.id;
+          logger.error(
+            `[Crawler][${jobId}] Crawling job failed: ${job.error}\n${job.error.stack}`,
+          );
           const bookmarkId = job.data?.bookmarkId;
-          if (bookmarkId) {
+          if (bookmarkId && job.numRetriesLeft == 0) {
             await changeBookmarkStatus(bookmarkId, "failure");
           }
         },
@@ -190,6 +205,8 @@ export class CrawlerWorker {
   }
 }
 
+type DBAssetType = typeof assets.$inferInsert;
+
 async function changeBookmarkStatus(
   bookmarkId: string,
   crawlStatus: "success" | "failure",
@@ -200,33 +217,6 @@ async function changeBookmarkStatus(
       crawlStatus,
     })
     .where(eq(bookmarkLinks.id, bookmarkId));
-}
-
-async function getBookmarkDetails(bookmarkId: string) {
-  const bookmark = await db.query.bookmarks.findFirst({
-    where: eq(bookmarks.id, bookmarkId),
-    with: {
-      link: true,
-      assets: true,
-    },
-  });
-
-  if (!bookmark || !bookmark.link) {
-    throw new Error("The bookmark either doesn't exist or not a link");
-  }
-  return {
-    url: bookmark.link.url,
-    userId: bookmark.userId,
-    screenshotAssetId: bookmark.assets.find(
-      (a) => a.assetType == AssetTypes.LINK_SCREENSHOT,
-    )?.id,
-    imageAssetId: bookmark.assets.find(
-      (a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE,
-    )?.id,
-    fullPageArchiveAssetId: bookmark.assets.find(
-      (a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE,
-    )?.id,
-  };
 }
 
 /**
@@ -245,24 +235,54 @@ function validateUrl(url: string) {
   }
 }
 
-async function crawlPage(jobId: string, url: string) {
-  let browser: Browser;
+async function browserlessCrawlPage(jobId: string, url: string) {
+  logger.info(
+    `[Crawler][${jobId}] Running in browserless mode. Will do a plain http request to "${url}". Screenshots will be disabled.`,
+  );
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(5000),
+  });
+  logger.info(
+    `[Crawler][${jobId}] Successfully fetched the content of "${url}". Status: ${response.status}, Size: ${response.size}`,
+  );
+  return {
+    htmlContent: await response.text(),
+    statusCode: response.status,
+    screenshot: undefined,
+    url: response.url,
+  };
+}
+
+async function crawlPage(
+  jobId: string,
+  url: string,
+): Promise<{
+  htmlContent: string;
+  screenshot: Buffer | undefined;
+  statusCode: number;
+  url: string;
+}> {
+  let browser: Browser | undefined;
   if (serverConfig.crawler.browserConnectOnDemand) {
     browser = await startBrowserInstance();
   } else {
-    assert(globalBrowser);
     browser = globalBrowser;
   }
-  assert(browser);
+  if (!browser) {
+    return browserlessCrawlPage(jobId, url);
+  }
   const context = await browser.createBrowserContext();
 
   try {
     const page = await context.newPage();
+    if (globalBlocker) {
+      await globalBlocker.enableBlockingInPage(page);
+    }
     await page.setUserAgent(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     );
 
-    await page.goto(url, {
+    const response = await page.goto(url, {
       timeout: serverConfig.crawler.navigateTimeoutSec * 1000,
     });
     logger.info(
@@ -281,20 +301,34 @@ async function crawlPage(jobId: string, url: string) {
 
     logger.info(`[Crawler][${jobId}] Finished waiting for the page to load.`);
 
-    const [htmlContent, screenshot] = await Promise.all([
-      page.content(),
-      page.screenshot({
-        // If you change this, you need to change the asset type in the store function.
-        type: "png",
-        encoding: "binary",
-        fullPage: serverConfig.crawler.fullPageScreenshot,
-      }),
-    ]);
-    logger.info(
-      `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
-    );
+    const htmlContent = await page.content();
+    logger.info(`[Crawler][${jobId}] Successfully fetched the page content.`);
+
+    let screenshot: Buffer | undefined = undefined;
+    if (serverConfig.crawler.storeScreenshot) {
+      screenshot = await Promise.race<Buffer | undefined>([
+        page
+          .screenshot({
+            // If you change this, you need to change the asset type in the store function.
+            type: "png",
+            encoding: "binary",
+            fullPage: serverConfig.crawler.fullPageScreenshot,
+          })
+          .catch(() => undefined),
+        new Promise((f) => setTimeout(f, 5000)),
+      ]);
+      if (!screenshot) {
+        logger.warn(`[Crawler][${jobId}] Failed to capture the screenshot.`);
+      } else {
+        logger.info(
+          `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
+        );
+      }
+    }
+
     return {
       htmlContent,
+      statusCode: response?.status() ?? 0,
       screenshot,
       url: page.url(),
     };
@@ -340,7 +374,7 @@ function extractReadableContent(
 }
 
 async function storeScreenshot(
-  screenshot: Buffer,
+  screenshot: Buffer | undefined,
   userId: string,
   jobId: string,
 ) {
@@ -350,17 +384,25 @@ async function storeScreenshot(
     );
     return null;
   }
+  if (!screenshot) {
+    logger.info(
+      `[Crawler][${jobId}] Skipping storing the screenshot as it's empty.`,
+    );
+    return null;
+  }
   const assetId = newAssetId();
+  const contentType = "image/png";
+  const fileName = "screenshot.png";
   await saveAsset({
     userId,
     assetId,
-    metadata: { contentType: "image/png", fileName: "screenshot.png" },
+    metadata: { contentType, fileName },
     asset: screenshot,
   });
   logger.info(
     `[Crawler][${jobId}] Stored the screenshot as assetId: ${assetId}`,
   );
-  return assetId;
+  return { assetId, contentType, fileName, size: screenshot.byteLength };
 }
 
 async function downloadAndStoreFile(
@@ -394,7 +436,7 @@ async function downloadAndStoreFile(
       `[Crawler][${jobId}] Downloaded ${fileType} as assetId: ${assetId}`,
     );
 
-    return assetId;
+    return { assetId, userId, contentType, size: buffer.byteLength };
   } catch (e) {
     logger.error(
       `[Crawler][${jobId}] Failed to download and store ${fileType}: ${e}`,
@@ -429,14 +471,16 @@ async function archiveWebpage(
 
   await execa({
     input: html,
-  })`monolith  - -Ije -t 5 -b ${url} -o ${assetPath}`;
+  })("monolith", ["-", "-Ije", "-t", "5", "-b", url, "-o", assetPath]);
+
+  const contentType = "text/html";
 
   await saveAssetFromFile({
     userId,
     assetId,
     assetPath,
     metadata: {
-      contentType: "text/html",
+      contentType,
     },
   });
 
@@ -444,7 +488,11 @@ async function archiveWebpage(
     `[Crawler][${jobId}] Done archiving the page as assetId: ${assetId}`,
   );
 
-  return assetId;
+  return {
+    assetId,
+    contentType,
+    size: await getAssetSize({ userId, assetId }),
+  };
 }
 
 async function getContentType(
@@ -487,17 +535,31 @@ async function handleAsAssetBookmark(
   jobId: string,
   bookmarkId: string,
 ) {
-  const assetId = await downloadAndStoreFile(url, userId, jobId, assetType);
-  if (!assetId) {
+  const downloaded = await downloadAndStoreFile(url, userId, jobId, assetType);
+  if (!downloaded) {
     return;
   }
+  const fileName = path.basename(new URL(url).pathname);
   await db.transaction(async (trx) => {
+    await updateAsset(
+      undefined,
+      {
+        id: downloaded.assetId,
+        bookmarkId,
+        userId,
+        assetType: AssetTypes.BOOKMARK_ASSET,
+        contentType: downloaded.contentType,
+        size: downloaded.size,
+        fileName,
+      },
+      trx,
+    );
     await trx.insert(bookmarkAssets).values({
       id: bookmarkId,
       assetType,
-      assetId,
+      assetId: downloaded.assetId,
       content: null,
-      fileName: path.basename(new URL(url).pathname),
+      fileName,
       sourceUrl: url,
     });
     // Switch the type of the bookmark from LINK to ASSET
@@ -506,6 +568,9 @@ async function handleAsAssetBookmark(
       .set({ type: BookmarkTypes.ASSET })
       .where(eq(bookmarks.id, bookmarkId));
     await trx.delete(bookmarkLinks).where(eq(bookmarkLinks.id, bookmarkId));
+  });
+  await AssetPreprocessingQueue.enqueue({
+    bookmarkId,
   });
 }
 
@@ -517,21 +582,33 @@ async function crawlAndParseUrl(
   oldScreenshotAssetId: string | undefined,
   oldImageAssetId: string | undefined,
   oldFullPageArchiveAssetId: string | undefined,
+  archiveFullPage: boolean,
 ) {
   const {
     htmlContent,
     screenshot,
+    statusCode,
     url: browserUrl,
   } = await crawlPage(jobId, url);
 
-  const [meta, readableContent, screenshotAssetId] = await Promise.all([
+  const [meta, readableContent, screenshotAssetInfo] = await Promise.all([
     extractMetadata(htmlContent, browserUrl, jobId),
     extractReadableContent(htmlContent, browserUrl, jobId),
     storeScreenshot(screenshot, userId, jobId),
   ]);
-  let imageAssetId: string | null = null;
+  let imageAssetInfo: DBAssetType | null = null;
   if (meta.image) {
-    imageAssetId = await downloadAndStoreImage(meta.image, userId, jobId);
+    const downloaded = await downloadAndStoreImage(meta.image, userId, jobId);
+    if (downloaded) {
+      imageAssetInfo = {
+        id: downloaded.assetId,
+        bookmarkId,
+        userId,
+        assetType: AssetTypes.LINK_BANNER_IMAGE,
+        contentType: downloaded.contentType,
+        size: downloaded.size,
+      };
+    }
   }
 
   // TODO(important): Restrict the size of content to store
@@ -546,57 +623,61 @@ async function crawlAndParseUrl(
         content: readableContent?.textContent,
         htmlContent: readableContent?.content,
         crawledAt: new Date(),
+        crawlStatusCode: statusCode,
       })
       .where(eq(bookmarkLinks.id, bookmarkId));
 
-    await updateAsset(
-      screenshotAssetId,
-      oldScreenshotAssetId,
-      bookmarkId,
-      AssetTypes.LINK_SCREENSHOT,
-      txn,
-    );
-    await updateAsset(
-      imageAssetId,
-      oldImageAssetId,
-      bookmarkId,
-      AssetTypes.LINK_BANNER_IMAGE,
-      txn,
-    );
+    if (screenshotAssetInfo) {
+      await updateAsset(
+        oldScreenshotAssetId,
+        {
+          id: screenshotAssetInfo.assetId,
+          bookmarkId,
+          userId,
+          assetType: AssetTypes.LINK_SCREENSHOT,
+          contentType: screenshotAssetInfo.contentType,
+          size: screenshotAssetInfo.size,
+          fileName: screenshotAssetInfo.fileName,
+        },
+        txn,
+      );
+    }
+    if (imageAssetInfo) {
+      await updateAsset(oldImageAssetId, imageAssetInfo, txn);
+    }
   });
 
   // Delete the old assets if any
   await Promise.all([
-    oldScreenshotAssetId
-      ? deleteAsset({ userId, assetId: oldScreenshotAssetId }).catch(() => ({}))
-      : {},
-    oldImageAssetId
-      ? deleteAsset({ userId, assetId: oldImageAssetId }).catch(() => ({}))
-      : {},
+    silentDeleteAsset(userId, oldScreenshotAssetId),
+    silentDeleteAsset(userId, oldImageAssetId),
   ]);
 
   return async () => {
-    if (serverConfig.crawler.fullPageArchive) {
-      const fullPageArchiveAssetId = await archiveWebpage(
-        htmlContent,
-        browserUrl,
-        userId,
-        jobId,
-      );
+    if (serverConfig.crawler.fullPageArchive || archiveFullPage) {
+      const {
+        assetId: fullPageArchiveAssetId,
+        size,
+        contentType,
+      } = await archiveWebpage(htmlContent, browserUrl, userId, jobId);
 
       await db.transaction(async (txn) => {
         await updateAsset(
-          fullPageArchiveAssetId,
           oldFullPageArchiveAssetId,
-          bookmarkId,
-          AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+          {
+            id: fullPageArchiveAssetId,
+            bookmarkId,
+            userId,
+            assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+            contentType,
+            size,
+            fileName: null,
+          },
           txn,
         );
       });
       if (oldFullPageArchiveAssetId) {
-        await deleteAsset({ userId, assetId: oldFullPageArchiveAssetId }).catch(
-          () => ({}),
-        );
+        silentDeleteAsset(userId, oldFullPageArchiveAssetId);
       }
     }
   };
@@ -613,7 +694,7 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
     return;
   }
 
-  const { bookmarkId } = request.data;
+  const { bookmarkId, archiveFullPage } = request.data;
   const {
     url,
     userId,
@@ -632,9 +713,6 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
   // Link bookmarks get transformed into asset bookmarks if they point to a supported asset instead of a webpage
   const isPdf = contentType === ASSET_TYPES.APPLICATION_PDF;
 
-  let archivalLogic: () => Promise<void> = () => {
-    return Promise.resolve();
-  };
   if (isPdf) {
     await handleAsAssetBookmark(url, "pdf", userId, jobId, bookmarkId);
   } else if (
@@ -644,7 +722,7 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
   ) {
     await handleAsAssetBookmark(url, "image", userId, jobId, bookmarkId);
   } else {
-    archivalLogic = await crawlAndParseUrl(
+    const archivalLogic = await crawlAndParseUrl(
       url,
       userId,
       jobId,
@@ -652,46 +730,23 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
       oldScreenshotAssetId,
       oldImageAssetId,
       oldFullPageArchiveAssetId,
+      archiveFullPage,
     );
-  }
 
-  // Enqueue openai job (if not set, assume it's true for backward compatibility)
-  if (job.data.runInference !== false) {
-    await OpenAIQueue.enqueue({
-      bookmarkId,
-    });
-  }
-
-  // Update the search index
-  await triggerSearchReindex(bookmarkId);
-
-  // Do the archival as a separate last step as it has the potential for failure
-  await archivalLogic();
-}
-
-/**
- * Removes the old asset and adds a new one instead
- * @param newAssetId the new assetId to add
- * @param oldAssetId the old assetId to remove (if it exists)
- * @param bookmarkId the id of the bookmark the asset belongs to
- * @param assetType the type of the asset
- * @param txn the transaction where this update should happen in
- */
-async function updateAsset(
-  newAssetId: string | null,
-  oldAssetId: string | undefined,
-  bookmarkId: string,
-  assetType: AssetTypes,
-  txn: HoarderDBTransaction,
-) {
-  if (newAssetId) {
-    if (oldAssetId) {
-      await txn.delete(assets).where(eq(assets.id, oldAssetId));
+    // Enqueue openai job (if not set, assume it's true for backward compatibility)
+    if (job.data.runInference !== false) {
+      await OpenAIQueue.enqueue({
+        bookmarkId,
+      });
     }
-    await txn.insert(assets).values({
-      id: newAssetId,
-      assetType,
-      bookmarkId,
-    });
+
+    // Update the search index
+    await triggerSearchReindex(bookmarkId);
+
+    // Trigger a potential download of a video from the URL
+    await triggerVideoWorker(bookmarkId, url);
+
+    // Do the archival as a separate last step as it has the potential for failure
+    await archivalLogic();
   }
 }

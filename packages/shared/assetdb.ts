@@ -1,5 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
+import { Glob } from "glob";
 import { z } from "zod";
 
 import serverConfig from "./config";
@@ -12,6 +13,7 @@ export const enum ASSET_TYPES {
   IMAGE_WEBP = "image/webp",
   APPLICATION_PDF = "application/pdf",
   TEXT_HTML = "text/html",
+  VIDEO_MP4 = "video/mp4",
 }
 
 export const IMAGE_ASSET_TYPES: Set<string> = new Set<string>([
@@ -30,6 +32,7 @@ export const SUPPORTED_UPLOAD_ASSET_TYPES: Set<string> = new Set<string>([
 export const SUPPORTED_ASSET_TYPES: Set<string> = new Set<string>([
   ...SUPPORTED_UPLOAD_ASSET_TYPES,
   ASSET_TYPES.TEXT_HTML,
+  ASSET_TYPES.VIDEO_MP4,
 ]);
 
 function getAssetDir(userId: string, assetId: string) {
@@ -120,6 +123,51 @@ export async function readAsset({
   return { asset, metadata };
 }
 
+export async function readAssetMetadata({
+  userId,
+  assetId,
+}: {
+  userId: string;
+  assetId: string;
+}) {
+  const assetDir = getAssetDir(userId, assetId);
+
+  const metadataStr = await fs.promises.readFile(
+    path.join(assetDir, "metadata.json"),
+    {
+      encoding: "utf8",
+    },
+  );
+
+  return zAssetMetadataSchema.parse(JSON.parse(metadataStr));
+}
+
+export async function getAssetSize({
+  userId,
+  assetId,
+}: {
+  userId: string;
+  assetId: string;
+}) {
+  const assetDir = getAssetDir(userId, assetId);
+  const stat = await fs.promises.stat(path.join(assetDir, "asset.bin"));
+  return stat.size;
+}
+
+/**
+ * Deletes the passed in asset if it exists and ignores any errors
+ * @param userId the id of the user the asset belongs to
+ * @param assetId the id of the asset to delete
+ */
+export async function silentDeleteAsset(
+  userId: string,
+  assetId: string | undefined,
+) {
+  if (assetId) {
+    await deleteAsset({ userId, assetId }).catch(() => ({}));
+  }
+}
+
 export async function deleteAsset({
   userId,
   assetId,
@@ -141,4 +189,26 @@ export async function deleteUserAssets({ userId }: { userId: string }) {
     return;
   }
   await fs.promises.rm(userDir, { recursive: true });
+}
+
+export async function* getAllAssets() {
+  const g = new Glob(`/**/**/asset.bin`, {
+    maxDepth: 3,
+    root: ROOT_PATH,
+    cwd: ROOT_PATH,
+    absolute: false,
+  });
+  for await (const file of g) {
+    const [userId, assetId] = file.split("/").slice(0, 2);
+    const [size, metadata] = await Promise.all([
+      getAssetSize({ userId, assetId }),
+      readAssetMetadata({ userId, assetId }),
+    ]);
+    yield {
+      userId,
+      assetId,
+      ...metadata,
+      size,
+    };
+  }
 }

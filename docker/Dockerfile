@@ -1,5 +1,5 @@
 ################# Base Builder ##############
-FROM node:21-alpine AS base
+FROM node:22-alpine AS base
 
 WORKDIR /app
 ENV PNPM_HOME="/pnpm"
@@ -21,7 +21,7 @@ RUN cd packages/db && \
 
 
 # Compile the web app
-RUN (cd apps/web && pnpm next experimental-compile)
+RUN (cd apps/web && pnpm exec next build --experimental-build-mode compile)
 
 # Build the worker code
 RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-linker=isolated --filter @hoarder/workers --prod /prod/workers
@@ -31,7 +31,8 @@ RUN (cd apps/cli && pnpm build)
 
 ################# The All-in-one builder ##############
 
-FROM node:21-alpine AS aio_builder
+FROM node:22-alpine AS aio_builder
+LABEL org.opencontainers.image.source="https://github.com/hoarder-app/hoarder"
 WORKDIR /app
 
 ARG SERVER_VERSION=nightly
@@ -66,7 +67,7 @@ COPY --chmod=755 ./docker/root/etc/s6-overlay /etc/s6-overlay
 ######################
 # Install runtime deps
 ######################
-RUN apk add --no-cache monolith
+RUN apk add --no-cache monolith yt-dlp
 
 ######################
 # Prepare the web app
@@ -90,7 +91,7 @@ COPY --from=base --chown=node:node /app/apps/web/.next/static ./apps/web/.next/s
 # Prepare the workers app
 ######################
 COPY --from=base /prod/workers /app/apps/workers
-RUN corepack enable
+RUN corepack enable && corepack pack
 
 ENTRYPOINT ["/init"]
 
@@ -102,12 +103,17 @@ RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/init-db-migration \
     /etc/s6-overlay/s6-rc.d/user/contents.d/svc-web \
     /etc/s6-overlay/s6-rc.d/user/contents.d/svc-workers
 
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
+
 ################# The web container ##############
 
 FROM aio_builder AS web
 
 RUN touch /etc/s6-overlay/s6-rc.d/user/contents.d/init-db-migration \
     /etc/s6-overlay/s6-rc.d/user/contents.d/svc-web
+ENV USING_LEGACY_SEPARATE_CONTAINERS=true
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 CMD wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1
 
 ################# The workers container ##############
 
@@ -117,10 +123,12 @@ FROM aio_builder AS workers
 # is done for them.
 RUN rm /etc/s6-overlay/s6-rc.d/svc-workers/dependencies.d/init-db-migration \
     && touch /etc/s6-overlay/s6-rc.d/user/contents.d/svc-workers
+ENV USING_LEGACY_SEPARATE_CONTAINERS=true
 
 ################# The cli ##############
 
-FROM node:21-alpine AS cli
+FROM node:22-alpine AS cli
+LABEL org.opencontainers.image.source="https://github.com/hoarder-app/hoarder"
 WORKDIR /app
 
 COPY --from=base /app/apps/cli/dist/index.mjs apps/cli/index.mjs

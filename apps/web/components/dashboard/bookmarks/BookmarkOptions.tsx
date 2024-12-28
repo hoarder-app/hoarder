@@ -10,7 +10,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
+import { useTranslation } from "@/lib/i18n/client";
 import {
+  FileDown,
   Link,
   List,
   ListX,
@@ -40,6 +42,7 @@ import { useManageListsModal } from "./ManageListsModal";
 import { useTagModel } from "./TagModal";
 
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const linkId = bookmark.id;
 
@@ -57,14 +60,13 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const onError = () => {
     toast({
       variant: "destructive",
-      title: "Something went wrong",
-      description: "There was a problem with your request.",
+      title: t("common.something_went_wrong"),
     });
   };
   const deleteBookmarkMutator = useDeleteBookmark({
     onSuccess: () => {
       toast({
-        description: "The bookmark has been deleted!",
+        description: t("toasts.bookmarks.deleted"),
       });
     },
     onError,
@@ -73,7 +75,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const updateBookmarkMutator = useUpdateBookmark({
     onSuccess: () => {
       toast({
-        description: "The bookmark has been updated!",
+        description: t("toasts.bookmarks.updated"),
       });
     },
     onError,
@@ -82,7 +84,16 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const crawlBookmarkMutator = useRecrawlBookmark({
     onSuccess: () => {
       toast({
-        description: "Re-fetch has been enqueued!",
+        description: t("toasts.bookmarks.refetch"),
+      });
+    },
+    onError,
+  });
+
+  const fullPageArchiveBookmarkMutator = useRecrawlBookmark({
+    onSuccess: () => {
+      toast({
+        description: t("toasts.bookmarks.full_page_archive"),
       });
     },
     onError,
@@ -91,7 +102,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const removeFromListMutator = useRemoveBookmarkFromList({
     onSuccess: () => {
       toast({
-        description: "The bookmark has been deleted from the list",
+        description: t("toasts.bookmarks.delete_from_list"),
       });
     },
     onError,
@@ -135,7 +146,11 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               className="mr-2 size-4"
               favourited={bookmark.favourited}
             />
-            <span>{bookmark.favourited ? "Un-favourite" : "Favourite"}</span>
+            <span>
+              {bookmark.favourited
+                ? t("actions.unfavorite")
+                : t("actions.favorite")}
+            </span>
           </DropdownMenuItem>
           <DropdownMenuItem
             disabled={demoMode}
@@ -150,8 +165,27 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               className="mr-2 size-4"
               archived={bookmark.archived}
             />
-            <span>{bookmark.archived ? "Un-archive" : "Archive"}</span>
+            <span>
+              {bookmark.archived
+                ? t("actions.unarchive")
+                : t("actions.archive")}
+            </span>
           </DropdownMenuItem>
+
+          {bookmark.content.type === BookmarkTypes.LINK && (
+            <DropdownMenuItem
+              onClick={() => {
+                fullPageArchiveBookmarkMutator.mutate({
+                  bookmarkId: bookmark.id,
+                  archiveFullPage: true,
+                });
+              }}
+            >
+              <FileDown className="mr-2 size-4" />
+              <span>{t("actions.download_full_page_archive")}</span>
+            </DropdownMenuItem>
+          )}
+
           {bookmark.content.type === BookmarkTypes.LINK && (
             <DropdownMenuItem
               onClick={() => {
@@ -159,22 +193,22 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
                   (bookmark.content as ZBookmarkedLink).url,
                 );
                 toast({
-                  description: "Link was added to your clipboard!",
+                  description: t("toasts.bookmarks.clipboard_copied"),
                 });
               }}
             >
               <Link className="mr-2 size-4" />
-              <span>Copy Link</span>
+              <span>{t("actions.copy_link")}</span>
             </DropdownMenuItem>
           )}
           <DropdownMenuItem onClick={() => setTagModalIsOpen(true)}>
             <Tags className="mr-2 size-4" />
-            <span>Edit Tags</span>
+            <span>{t("actions.edit_tags")}</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setManageListsModalOpen(true)}>
             <List className="mr-2 size-4" />
-            <span>Manage Lists</span>
+            <span>{t("actions.manage_lists")}</span>
           </DropdownMenuItem>
 
           {listId && (
@@ -188,7 +222,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               }
             >
               <ListX className="mr-2 size-4" />
-              <span>Remove from List</span>
+              <span>{t("actions.remove_from_list")}</span>
             </DropdownMenuItem>
           )}
 
@@ -200,7 +234,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               }
             >
               <RotateCw className="mr-2 size-4" />
-              <span>Refresh</span>
+              <span>{t("actions.refresh")}</span>
             </DropdownMenuItem>
           )}
           <DropdownMenuItem
@@ -211,7 +245,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             }
           >
             <Trash2 className="mr-2 size-4" />
-            <span>Delete</span>
+            <span>{t("actions.delete")}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

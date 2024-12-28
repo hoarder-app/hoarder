@@ -7,12 +7,15 @@ runs:
     - uses: pnpm/action-setup@v2
     - uses: actions/setup-node@v4
       with:
-        node-version: 21
+        node-version: 22
         cache: "pnpm"
         registry-url: https://registry.npmjs.org
 
     - shell: bash
       run: pnpm add -g turbo
+
+    - shell: bash
+      run: corepack enable
 
     - shell: bash
       run: pnpm install

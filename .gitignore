@@ -55,5 +55,7 @@ data
 .idea
 *.iml
 
-# VS-Code
+# Aider
 .vscode
+
+# VS-Code

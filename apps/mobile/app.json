@@ -3,7 +3,7 @@
     "name": "Hoarder App",
     "slug": "hoarder",
     "scheme": "hoarder",
-    "version": "1.6.2",
+    "version": "1.6.7",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -30,7 +30,7 @@
           "NSAllowsLocalNetworking": true
         }
       },
-      "buildNumber": "11"
+      "buildNumber": "20"
     },
     "android": {
       "adaptiveIcon": {
@@ -48,10 +48,11 @@
         }
       },
       "package": "app.hoarder.hoardermobile",
-      "versionCode": 11
+      "versionCode": 20
     },
     "plugins": [
       "./plugins/trust-local-certs.js",
+      "./plugins/camera-not-required.js",
       "expo-router",
       [
         "expo-share-intent",

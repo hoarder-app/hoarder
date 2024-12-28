@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTagsEditor";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
@@ -12,25 +11,27 @@ import {
   TooltipPortal,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import useRelativeTime from "@/lib/hooks/relative-time";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { CalendarDays, ExternalLink } from "lucide-react";
 
 import {
+  getSourceUrl,
   isBookmarkStillCrawling,
   isBookmarkStillLoading,
 } from "@hoarder/shared-react/utils/bookmarkUtils";
 import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
+import SummarizeBookmarkArea from "../bookmarks/SummarizeBookmarkArea";
 import ActionBar from "./ActionBar";
 import { AssetContentSection } from "./AssetContentSection";
+import AttachmentBox from "./AttachmentBox";
 import { EditableTitle } from "./EditableTitle";
+import HighlightsBox from "./HighlightsBox";
 import LinkContentSection from "./LinkContentSection";
 import { NoteEditor } from "./NoteEditor";
 import { TextContentSection } from "./TextContentSection";
-
-dayjs.extend(relativeTime);
 
 function ContentLoading() {
   return (
@@ -43,14 +44,7 @@ function ContentLoading() {
 }
 
 function CreationTime({ createdAt }: { createdAt: Date }) {
-  const [fromNow, setFromNow] = useState("");
-  const [localCreatedAt, setLocalCreatedAt] = useState("");
-
-  // This is to avoid hydration errors when server and clients are in different timezones
-  useEffect(() => {
-    setFromNow(dayjs(createdAt).fromNow());
-    setLocalCreatedAt(createdAt.toLocaleString());
-  }, [createdAt]);
+  const { fromNow, localCreatedAt } = useRelativeTime(createdAt);
   return (
     <Tooltip delayDuration={0}>
       <TooltipTrigger asChild>
@@ -65,16 +59,6 @@ function CreationTime({ createdAt }: { createdAt: Date }) {
   );
 }
 
-function getSourceUrl(bookmark: ZBookmark) {
-  if (bookmark.content.type === BookmarkTypes.LINK) {
-    return bookmark.content.url;
-  }
-  if (bookmark.content.type === BookmarkTypes.ASSET) {
-    return bookmark.content.sourceUrl;
-  }
-  return null;
-}
-
 export default function BookmarkPreview({
   bookmarkId,
   initialData,
@@ -82,6 +66,7 @@ export default function BookmarkPreview({
   bookmarkId: string;
   initialData?: ZBookmark;
 }) {
+  const { t } = useTranslation();
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {
       bookmarkId,
@@ -137,7 +122,7 @@ export default function BookmarkPreview({
               href={sourceUrl}
               className="flex items-center gap-2 text-gray-400"
             >
-              <span>View Original</span>
+              <span>{t("preview.view_original")}</span>
               <ExternalLink />
             </Link>
           )}
@@ -145,14 +130,17 @@ export default function BookmarkPreview({
         </div>
 
         <CreationTime createdAt={bookmark.createdAt} />
+        <SummarizeBookmarkArea bookmark={bookmark} />
         <div className="flex items-center gap-4">
-          <p className="text-sm text-gray-400">Tags</p>
+          <p className="text-sm text-gray-400">{t("common.tags")}</p>
           <BookmarkTagsEditor bookmark={bookmark} />
         </div>
         <div className="flex gap-4">
-          <p className="pt-2 text-sm text-gray-400">Note</p>
+          <p className="pt-2 text-sm text-gray-400">{t("common.note")}</p>
           <NoteEditor bookmark={bookmark} />
         </div>
+        <AttachmentBox bookmark={bookmark} />
+        <HighlightsBox bookmarkId={bookmark.id} />
         <ActionBar bookmark={bookmark} />
       </div>
     </div>

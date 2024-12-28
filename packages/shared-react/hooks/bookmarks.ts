@@ -96,6 +96,21 @@ export function useUpdateBookmarkText(
   });
 }
 
+export function useSummarizeBookmark(
+  ...opts: Parameters<typeof api.bookmarks.summarizeBookmark.useMutation>
+) {
+  const apiUtils = api.useUtils();
+  return api.bookmarks.summarizeBookmark.useMutation({
+    ...opts[0],
+    onSuccess: (res, req, meta) => {
+      apiUtils.bookmarks.getBookmarks.invalidate();
+      apiUtils.bookmarks.searchBookmarks.invalidate();
+      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
+      return opts[0]?.onSuccess?.(res, req, meta);
+    },
+  });
+}
+
 export function useRecrawlBookmark(
   ...opts: Parameters<typeof api.bookmarks.recrawlBookmark.useMutation>
 ) {
@@ -174,4 +189,49 @@ export function useBookmarkPostCreationHook() {
 
     return Promise.all(promises);
   };
+}
+
+export function useAttachBookmarkAsset(
+  ...opts: Parameters<typeof api.bookmarks.attachAsset.useMutation>
+) {
+  const apiUtils = api.useUtils();
+  return api.bookmarks.attachAsset.useMutation({
+    ...opts[0],
+    onSuccess: (res, req, meta) => {
+      apiUtils.bookmarks.getBookmarks.invalidate();
+      apiUtils.bookmarks.searchBookmarks.invalidate();
+      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
+      return opts[0]?.onSuccess?.(res, req, meta);
+    },
+  });
+}
+
+export function useReplaceBookmarkAsset(
+  ...opts: Parameters<typeof api.bookmarks.replaceAsset.useMutation>
+) {
+  const apiUtils = api.useUtils();
+  return api.bookmarks.replaceAsset.useMutation({
+    ...opts[0],
+    onSuccess: (res, req, meta) => {
+      apiUtils.bookmarks.getBookmarks.invalidate();
+      apiUtils.bookmarks.searchBookmarks.invalidate();
+      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
+      return opts[0]?.onSuccess?.(res, req, meta);
+    },
+  });
+}
+
+export function useDetachBookmarkAsset(
+  ...opts: Parameters<typeof api.bookmarks.detachAsset.useMutation>
+) {
+  const apiUtils = api.useUtils();
+  return api.bookmarks.detachAsset.useMutation({
+    ...opts[0],
+    onSuccess: (res, req, meta) => {
+      apiUtils.bookmarks.getBookmarks.invalidate();
+      apiUtils.bookmarks.searchBookmarks.invalidate();
+      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
+      return opts[0]?.onSuccess?.(res, req, meta);
+    },
+  });
 }

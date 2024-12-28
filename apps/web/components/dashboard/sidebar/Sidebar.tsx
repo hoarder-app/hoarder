@@ -1,18 +1,17 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import HoarderLogo from "@/components/HoarderIcon";
+import SidebarItem from "@/components/shared/sidebar/SidebarItem";
 import { Separator } from "@/components/ui/separator";
+import { useTranslation } from "@/lib/i18n/server";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
-import { Home, Search, Settings, Shield, Tag } from "lucide-react";
+import { Archive, Highlighter, Home, Search, Tag } from "lucide-react";
 
 import serverConfig from "@hoarder/shared/config";
 
 import AllLists from "./AllLists";
-import SidebarItem from "./SidebarItem";
-import SidebarProfileOptions from "./SidebarProfileOptions";
 
 export default async function Sidebar() {
+  const { t } = await useTranslation();
   const session = await getServerAuthSession();
   if (!session) {
     redirect("/");
@@ -23,23 +22,12 @@ export default async function Sidebar() {
   const searchItem = serverConfig.meilisearch
     ? [
         {
-          name: "Search",
+          name: t("common.search"),
           icon: <Search size={18} />,
           path: "/dashboard/search",
         },
       ]
     : [];
-
-  const adminItem =
-    session.user.role == "admin"
-      ? [
-          {
-            name: "Admin",
-            icon: <Shield size={18} />,
-            path: "/dashboard/admin",
-          },
-        ]
-      : [];
 
   const menu: {
     name: string;
@@ -47,30 +35,30 @@ export default async function Sidebar() {
     path: string;
   }[] = [
     {
-      name: "Home",
+      name: t("common.home"),
       icon: <Home size={18} />,
       path: "/dashboard/bookmarks",
     },
     ...searchItem,
     {
-      name: "Tags",
+      name: t("common.tags"),
       icon: <Tag size={18} />,
       path: "/dashboard/tags",
     },
     {
-      name: "Settings",
-      icon: <Settings size={18} />,
-      path: "/dashboard/settings",
+      name: t("common.highlights"),
+      icon: <Highlighter size={18} />,
+      path: "/dashboard/highlights",
     },
-    ...adminItem,
+    {
+      name: t("common.archive"),
+      icon: <Archive size={18} />,
+      path: "/dashboard/archive",
+    },
   ];
 
   return (
-    <aside className="flex h-screen w-60 flex-col gap-5 border-r p-4">
-      <Link href={"/dashboard/bookmarks"}>
-        <HoarderLogo height={20} gap="8px" />
-      </Link>
-      <Separator />
+    <aside className="flex h-[calc(100vh-64px)] w-60 flex-col gap-5 border-r p-4 ">
       <div>
         <ul className="space-y-2 text-sm font-medium">
           {menu.map((item) => (
@@ -85,9 +73,8 @@ export default async function Sidebar() {
       </div>
       <Separator />
       <AllLists initialData={lists} />
-      <div className="mt-auto flex justify-between justify-self-end">
-        <div className="my-auto"> {session.user.name} </div>
-        <SidebarProfileOptions />
+      <div className="mt-auto flex items-center border-t pt-2 text-sm text-gray-400">
+        Hoarder v{serverConfig.serverVersion}
       </div>
     </aside>
   );

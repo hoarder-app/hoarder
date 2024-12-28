@@ -1,0 +1,261 @@
+{
+  "common": {
+    "url": "URL",
+    "name": "名称",
+    "email": "电子邮件",
+    "password": "密码",
+    "action": "操作",
+    "actions": "操作",
+    "created_at": "创建于",
+    "key": "键",
+    "role": "角色",
+    "roles": {
+      "user": "用户",
+      "admin": "管理员"
+    },
+    "something_went_wrong": "出了些问题",
+    "experimental": "实验性",
+    "search": "搜索",
+    "tags": "标签",
+    "note": "笔记",
+    "attachments": "附件",
+    "screenshot": "截图",
+    "video": "视频",
+    "archive": "归档",
+    "home": "主页"
+  },
+  "layouts": {
+    "masonry": "砌体",
+    "grid": "网格",
+    "list": "列表",
+    "compact": "紧凑"
+  },
+  "actions": {
+    "change_layout": "更改布局",
+    "archive": "归档",
+    "unarchive": "取消归档",
+    "favorite": "收藏",
+    "unfavorite": "取消收藏",
+    "delete": "删除",
+    "refresh": "刷新",
+    "download_full_page_archive": "下载完整页面归档",
+    "edit_tags": "编辑标签",
+    "add_to_list": "添加到列表",
+    "select_all": "全选",
+    "unselect_all": "取消全选",
+    "copy_link": "复制链接",
+    "close_bulk_edit": "关闭批量编辑",
+    "bulk_edit": "批量编辑",
+    "manage_lists": "管理列表",
+    "remove_from_list": "从列表中移除",
+    "save": "保存",
+    "add": "添加",
+    "edit": "编辑",
+    "create": "创建",
+    "fetch_now": "立即获取",
+    "summarize_with_ai": "使用AI总结",
+    "edit_title": "编辑标题",
+    "sign_out": "登出",
+    "close": "关闭",
+    "merge": "合并",
+    "cancel": "取消",
+    "apply_all": "全部应用",
+    "ignore": "忽略",
+    "recrawl": "重新抓取"
+  },
+  "settings": {
+    "back_to_app": "返回应用",
+    "user_settings": "用户设置",
+    "info": {
+      "user_info": "用户信息",
+      "basic_details": "基本详情",
+      "change_password": "更改密码",
+      "current_password": "当前密码",
+      "new_password": "新密码",
+      "confirm_new_password": "确认新密码",
+      "options": "选项",
+      "interface_lang": "界面语言"
+    },
+    "ai": {
+      "ai_settings": "AI设置",
+      "tagging_rules": "标签规则",
+      "tagging_rule_description": "在此添加的提示将包含在模型生成标签的规则中。您可以在提示预览部分查看最终的提示。",
+      "prompt_preview": "提示预览",
+      "text_prompt": "文本提示",
+      "images_prompt": "图像提示"
+    },
+    "feeds": {
+      "rss_subscriptions": "RSS订阅",
+      "add_a_subscription": "添加订阅"
+    },
+    "import": {
+      "import_export": "导入/导出",
+      "import_export_bookmarks": "导入/导出书签",
+      "import_bookmarks_from_html_file": "从HTML文件导入书签",
+      "import_bookmarks_from_pocket_export": "从Pocket导出导入书签",
+      "import_bookmarks_from_omnivore_export": "从Omnivore导出导入书签",
+      "import_bookmarks_from_hoarder_export": "从Hoarder导出导入书签",
+      "export_links_and_notes": "导出链接和笔记",
+      "imported_bookmarks": "已导入书签"
+    },
+    "api_keys": {
+      "api_keys": "API密钥",
+      "new_api_key": "新API密钥",
+      "new_api_key_desc": "给您的API密钥一个唯一名称",
+      "key_success": "密钥创建成功",
+      "key_success_please_copy": "请复制密钥并妥善保存。一旦关闭对话框，您将无法再次访问它。"
+    },
+    "broken_links": {
+      "broken_links": "失效链接",
+      "last_crawled_at": "最后抓取时间",
+      "crawling_status": "抓取状态",
+      "crawling_failed": "抓取失败"
+    }
+  },
+  "admin": {
+    "admin_settings": "管理员设置",
+    "server_stats": {
+      "server_stats": "服务器统计",
+      "total_users": "总用户数",
+      "total_bookmarks": "总书签数",
+      "server_version": "服务器版本"
+    },
+    "background_jobs": {
+      "background_jobs": "后台任务",
+      "crawler_jobs": "爬虫任务",
+      "indexing_jobs": "索引任务",
+      "inference_jobs": "推理任务",
+      "tidy_assets_jobs": "整理资产任务",
+      "job": "任务",
+      "queued": "已排队",
+      "pending": "待处理",
+      "failed": "失败"
+    },
+    "actions": {
+      "recrawl_failed_links_only": "仅重新抓取失败链接",
+      "recrawl_all_links": "重新抓取所有链接",
+      "without_inference": "无推理",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "仅为失败书签重新生成AI标签",
+      "regenerate_ai_tags_for_all_bookmarks": "为所有书签重新生成AI标签",
+      "reindex_all_bookmarks": "重新索引所有书签",
+      "compact_assets": "压缩资产"
+    },
+    "users_list": {
+      "users_list": "用户列表",
+      "create_user": "创建用户",
+      "change_role": "更改角色",
+      "reset_password": "重置密码",
+      "delete_user": "删除用户",
+      "num_bookmarks": "书签数",
+      "asset_sizes": "资产大小",
+      "local_user": "本地用户",
+      "confirm_password": "确认密码"
+    }
+  },
+  "options": {
+    "dark_mode": "暗模式",
+    "light_mode": "亮模式"
+  },
+  "lists": {
+    "all_lists": "所有列表",
+    "favourites": "收藏",
+    "new_list": "新列表",
+    "new_nested_list": "新嵌套列表"
+  },
+  "tags": {
+    "all_tags": "所有标签",
+    "your_tags": "您的标签",
+    "your_tags_info": "至少一次由您附加的标签",
+    "ai_tags": "AI标签",
+    "ai_tags_info": "仅由AI自动附加的标签",
+    "unused_tags": "未使用标签",
+    "unused_tags_info": "未附加到任何书签的标签",
+    "delete_all_unused_tags": "删除所有未使用标签",
+    "drag_and_drop_merging": "拖放合并",
+    "drag_and_drop_merging_info": "拖放标签以相互合并",
+    "sort_by_name": "按名称排序"
+  },
+  "preview": {
+    "view_original": "查看原文",
+    "cached_content": "缓存内容"
+  },
+  "editor": {
+    "quickly_focus": "您可以按⌘ + E快速聚焦到此字段",
+    "multiple_urls_dialog_title": "将URL导入为单独的书签？",
+    "multiple_urls_dialog_desc": "输入包含多行上的多个URL。您要将它们作为单独的书签导入吗？",
+    "import_as_text": "作为文本书签导入",
+    "import_as_separate_bookmarks": "作为单独书签导入",
+    "placeholder": "粘贴链接或图像，写笔记或将图像拖放到此处...",
+    "new_item": "新项目",
+    "disabled_submissions": "提交已禁用",
+    "text_toolbar": {
+      "bold": "粗体",
+      "underline": "下划线",
+      "code": "代码",
+      "align_center": "居中对齐",
+      "align_right": "右对齐",
+      "markdown_shortcuts": {
+        "label": "Markdown快捷键",
+        "heading": {
+          "label": "标题",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "bold": {
+          "label": "粗体",
+          "example": "**text** 或 CTRL+b"
+        },
+        "italic": {
+          "label": "斜体",
+          "example": "*Italic* 或 _Italic_ 或 CTRL+i"
+        },
+        "blockquote": {
+          "label": "块引用",
+          "example": "> 块引用"
+        },
+        "ordered_list": {
+          "example": "1. 列表项",
+          "label": "有序列表"
+        },
+        "unordered_list": {
+          "label": "无序列表",
+          "example": "- 列表项"
+        },
+        "inline_code": {
+          "label": "内联代码",
+          "example": "`代码`"
+        },
+        "block_code": {
+          "label": "代码块",
+          "example": "``` + 空格"
+        }
+      },
+      "italic": "斜体",
+      "highlight": "高亮",
+      "strikethrough": "删除线",
+      "undo": "取消",
+      "redo": "重做",
+      "align_left": "左对齐"
+    }
+  },
+  "toasts": {
+    "bookmarks": {
+      "updated": "书签已更新！",
+      "deleted": "书签已删除！",
+      "refetch": "重新获取已排队！",
+      "full_page_archive": "已触发完整页面归档创建",
+      "delete_from_list": "书签已从列表中删除",
+      "clipboard_copied": "链接已添加到您的剪贴板！"
+    },
+    "lists": {
+      "created": "列表已创建！",
+      "updated": "列表已更新！"
+    }
+  },
+  "cleanups": {
+    "cleanups": "清理",
+    "duplicate_tags": {
+      "title": "重复标签",
+      "merge_all_suggestions": "合并所有建议？"
+    }
+  }
+}

@@ -8,6 +8,9 @@
     <a href="https://discord.gg/NrgeYywsFh">
         <img alt="Discord" src="https://img.shields.io/discord/1223681308962721802?label=chat%20on%20discord" />
     </a>
+    <a href="https://hosted.weblate.org/engage/hoarder/">
+        <img src="https://hosted.weblate.org/widget/hoarder/hoarder/svg-badge.svg" alt="Translation status" />
+    </a>
 </div>
 
 # <img height="50px" src="./screenshots/logo.png" />
@@ -23,20 +26,25 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 - 📋 Sort your bookmarks into lists.
 - 🔎 Full text search of all the content stored.
 - ✨ AI-based (aka chatgpt) automatic tagging. With supports for local models using ollama!
+- 🎆 OCR for extracting text from images.
 - 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje) and [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/hoarder/) for quick bookmarking.
 - 📱 An [iOS app](https://apps.apple.com/us/app/hoarder-app/id6479258022), and an [Android app](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
-- 🗄️ Full page archival (using [monolith](https://github.com/Y2Z/monolith)) to protect against link rot.
+- 📰 Auto hoarding from RSS feeds.
+- 🔌 REST API.
+- 🌐 Mutli-language support.
+- 🖍️ Mark and store highlights from your hoarded content.
+- 🗄️ Full page archival (using [monolith](https://github.com/Y2Z/monolith)) to protect against link rot. Auto video archiving using [youtube-dl](https://github.com/marado/youtube-dl).
 - ☑️ Bulk actions support.
 - 🔐 SSO support.
 - 🌙 Dark mode support.
 - 💾 Self-hosting first.
-- [Planned] Downloading the content for offline reading.
+- [Planned] Downloading the content for offline reading in the mobile app.
 
 **⚠️ This app is under heavy development and it's far from stable.**
 
 ## Documentation
 
-- [Installation](https://docs.hoarder.app/installation/docker)
+- [Installation](https://docs.hoarder.app/Installation/docker)
 - [Configuration](https://docs.hoarder.app/configuration)
 - [Screenshots](https://docs.hoarder.app/screenshots)
 - [Security Considerations](https://docs.hoarder.app/security-considerations)
@@ -81,6 +89,15 @@ I'm a systems engineer in my day job (and have been for the past 7 years). I did
     - [Wallabag](https://wallabag.it): Wallabag is a well-established open source read-it-later app written in php and I think it's the common recommendation on reddit for such apps. To be honest, I didn't give it a real shot, and the UI just felt a bit dated for my liking. Honestly, it's probably much more stable and feature complete than this app, but where's the fun in that?
     - [Shiori](https://github.com/go-shiori/shiori): Shiori is meant to be an open source pocket clone written in Go. It ticks all the marks but doesn't have my super sophisticated AI-based tagging. (JK, I only found about it after I decided to build my own app, so here we are 🤷).
 
+## Translations
+
+Hoarder uses Weblate for managing translations. If you want to help translate Hoarder, you can do so [here](https://hosted.weblate.org/engage/hoarder/).
+
+## Support
+
+If you're enjoying using Hoarder, drop a ⭐️ on the repo!
+
+<a href="https://www.buymeacoffee.com/mbassem" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 ## Star History
 

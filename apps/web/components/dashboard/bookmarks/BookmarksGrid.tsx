@@ -1,11 +1,13 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { ActionButton } from "@/components/ui/action-button";
+import useBulkActionsStore from "@/lib/bulkActions";
 import {
   bookmarkLayoutSwitch,
   useBookmarkLayout,
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import tailwindConfig from "@/tailwind.config";
 import { Slot } from "@radix-ui/react-slot";
+import { useInView } from "react-intersection-observer";
 import Masonry from "react-masonry-css";
 import resolveConfig from "tailwindcss/resolveConfig";
 
@@ -48,7 +50,22 @@ export default function BookmarksGrid({
   fetchNextPage?: () => void;
 }) {
   const layout = useBookmarkLayout();
+  const bulkActionsStore = useBulkActionsStore();
   const breakpointConfig = useMemo(() => getBreakpointConfig(), []);
+  const { ref: loadMoreRef, inView: loadMoreButtonInView } = useInView();
+
+  useEffect(() => {
+    bulkActionsStore.setVisibleBookmarks(bookmarks);
+    return () => {
+      bulkActionsStore.setVisibleBookmarks([]);
+    };
+  }, [bookmarks]);
+
+  useEffect(() => {
+    if (loadMoreButtonInView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [loadMoreButtonInView]);
 
   if (bookmarks.length == 0 && !showEditorCard) {
     return <p>No bookmarks</p>;
@@ -85,6 +102,7 @@ export default function BookmarksGrid({
       {hasNextPage && (
         <div className="flex justify-center">
           <ActionButton
+            ref={loadMoreRef}
             ignoreDemoMode={true}
             loading={isFetchingNextPage}
             onClick={() => fetchNextPage()}

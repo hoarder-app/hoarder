@@ -118,6 +118,7 @@ export const bookmarks = sqliteTable(
     taggingStatus: text("taggingStatus", {
       enum: ["pending", "failure", "success"],
     }).default("pending"),
+    summary: text("summary"),
     note: text("note"),
     type: text("type", {
       enum: [BookmarkTypes.LINK, BookmarkTypes.TEXT, BookmarkTypes.ASSET],
@@ -152,6 +153,7 @@ export const bookmarkLinks = sqliteTable(
     crawlStatus: text("crawlStatus", {
       enum: ["pending", "failure", "success"],
     }).default("pending"),
+    crawlStatusCode: integer("crawlStatusCode").default(200),
   },
   (bl) => {
     return {
@@ -164,6 +166,9 @@ export const enum AssetTypes {
   LINK_BANNER_IMAGE = "linkBannerImage",
   LINK_SCREENSHOT = "linkScreenshot",
   LINK_FULL_PAGE_ARCHIVE = "linkFullPageArchive",
+  LINK_VIDEO = "linkVideo",
+  BOOKMARK_ASSET = "bookmarkAsset",
+  UNKNOWN = "unknown",
 }
 
 export const assets = sqliteTable(
@@ -176,16 +181,57 @@ export const assets = sqliteTable(
         AssetTypes.LINK_BANNER_IMAGE,
         AssetTypes.LINK_SCREENSHOT,
         AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+        AssetTypes.LINK_VIDEO,
+        AssetTypes.BOOKMARK_ASSET,
+        AssetTypes.UNKNOWN,
       ],
     }).notNull(),
-    bookmarkId: text("bookmarkId")
+    size: integer("size").notNull().default(0),
+    contentType: text("contentType"),
+    fileName: text("fileName"),
+    bookmarkId: text("bookmarkId").references(() => bookmarks.id, {
+      onDelete: "cascade",
+    }),
+    userId: text("userId")
       .notNull()
-      .references(() => bookmarks.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" }),
   },
 
   (tb) => ({
     bookmarkIdIdx: index("assets_bookmarkId_idx").on(tb.bookmarkId),
     assetTypeIdx: index("assets_assetType_idx").on(tb.assetType),
+    userIdIdx: index("assets_userId_idx").on(tb.userId),
+  }),
+);
+
+export const highlights = sqliteTable(
+  "highlights",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    bookmarkId: text("bookmarkId")
+      .notNull()
+      .references(() => bookmarks.id, {
+        onDelete: "cascade",
+      }),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    startOffset: integer("startOffset").notNull(),
+    endOffset: integer("endOffset").notNull(),
+    color: text("color", {
+      enum: ["red", "green", "blue", "yellow"],
+    }).default("yellow").notNull(),
+    text: text("text"),
+    note: text("note"),
+    createdAt: createdAtField(),
+  },
+
+  (tb) => ({
+    bookmarkIdIdx: index("highlights_bookmarkId_idx").on(tb.bookmarkId),
+    userIdIdx: index("highlights_userId_idx").on(tb.userId),
   }),
 );
 
@@ -196,6 +242,7 @@ export const bookmarkTexts = sqliteTable("bookmarkTexts", {
     .$defaultFn(() => createId())
     .references(() => bookmarks.id, { onDelete: "cascade" }),
   text: text("text"),
+  sourceUrl: text("sourceUrl"),
 });
 
 export const bookmarkAssets = sqliteTable("bookmarkAssets", {
@@ -249,7 +296,7 @@ export const tagsOnBookmarks = sqliteTable(
   },
   (tb) => ({
     pk: primaryKey({ columns: [tb.bookmarkId, tb.tagId] }),
-    tagIdIdx: index("tagsOnBookmarks_tagId_idx").on(tb.bookmarkId),
+    tagIdIdx: index("tagsOnBookmarks_tagId_idx").on(tb.tagId),
     bookmarkIdIdx: index("tagsOnBookmarks_bookmarkId_idx").on(tb.bookmarkId),
   }),
 );
@@ -294,6 +341,74 @@ export const bookmarksInLists = sqliteTable(
     pk: primaryKey({ columns: [tb.bookmarkId, tb.listId] }),
     bookmarkIdIdx: index("bookmarksInLists_bookmarkId_idx").on(tb.bookmarkId),
     listIdIdx: index("bookmarksInLists_listId_idx").on(tb.listId),
+  }),
+);
+
+export const customPrompts = sqliteTable(
+  "customPrompts",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    text: text("text").notNull(),
+    enabled: integer("enabled", { mode: "boolean" }).notNull(),
+    appliesTo: text("attachedBy", {
+      enum: ["all", "text", "images"],
+    }).notNull(),
+    createdAt: createdAtField(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (bl) => ({
+    userIdIdx: index("customPrompts_userId_idx").on(bl.userId),
+  }),
+);
+
+export const rssFeedsTable = sqliteTable(
+  "rssFeeds",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    name: text("name").notNull(),
+    url: text("url").notNull(),
+    createdAt: createdAtField(),
+    lastFetchedAt: integer("lastFetchedAt", { mode: "timestamp" }),
+    lastFetchedStatus: text("lastFetchedStatus", {
+      enum: ["pending", "failure", "success"],
+    }).default("pending"),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (bl) => ({
+    userIdIdx: index("rssFeeds_userId_idx").on(bl.userId),
+  }),
+);
+
+export const rssFeedImportsTable = sqliteTable(
+  "rssFeedImports",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    createdAt: createdAtField(),
+    entryId: text("entryId").notNull(),
+    rssFeedId: text("rssFeedId")
+      .notNull()
+      .references(() => rssFeedsTable.id, { onDelete: "cascade" }),
+    bookmarkId: text("bookmarkId").references(() => bookmarks.id, {
+      onDelete: "set null",
+    }),
+  },
+  (bl) => ({
+    feedIdIdx: index("rssFeedImports_feedIdIdx_idx").on(bl.rssFeedId),
+    entryIdIdx: index("rssFeedImports_entryIdIdx_idx").on(bl.entryId),
+    feedIdEntryIdUnique: unique().on(bl.rssFeedId, bl.entryId),
   }),
 );
 

@@ -9,9 +9,17 @@
 
 Create a new directory to host the compose file and env variables.
 
+This is where you’ll place the `docker-compose.yml` file from the next step and the environment variables.
+
+For example you could make a new directory called "hoarder-app" with the following command:
+```
+mkdir hoarder-app
+```
+
+
 ### 2. Download the compose file
 
-Download the docker compose file provided [here](https://github.com/hoarder-app/hoarder/blob/main/docker/docker-compose.yml).
+Download the docker compose file provided [here](https://github.com/hoarder-app/hoarder/blob/main/docker/docker-compose.yml) directly into your new directory.
 
 ```
 wget https://raw.githubusercontent.com/hoarder-app/hoarder/main/docker/docker-compose.yml
@@ -28,7 +36,7 @@ MEILI_MASTER_KEY=another_random_string
 NEXTAUTH_URL=http://localhost:3000
 ```
 
-You **should** change the random strings. You can use `openssl rand -base64 36` to generate the random strings. You should also change the `NEXTAUTH_URL` variable to point to your server address.
+You **should** change the random strings. You can use `openssl rand -base64 36` in a seperate terminal window to generate the random strings. You should also change the `NEXTAUTH_URL` variable to point to your server address.
 
 Using `HOARDER_VERSION=release` will pull the latest stable version. You might want to pin the version instead to control the upgrades (e.g. `HOARDER_VERSION=0.10.0`). Check the latest versions [here](https://github.com/hoarder-app/hoarder/pkgs/container/hoarder-web).
 
@@ -52,16 +60,16 @@ OPENAI_API_KEY=<key>
 Learn more about the costs of using openai [here](/openai).
 
 <details>
-    <summary>[EXPERIMENTAL] If you want to use Ollama (https://ollama.com/) instead for local inference.</summary>
+    <summary>If you want to use Ollama (https://ollama.com/) instead for local inference.</summary>
 
-    **Note:** The quality of the tags you'll get will depend on the quality of the model you choose. Running local models is a recent addition and not as battle tested as using openai, so proceed with care (and potentially expect a bunch of inference failures).
+    **Note:** The quality of the tags you'll get will depend on the quality of the model you choose.
 
     - Make sure ollama is running.
     - Set the `OLLAMA_BASE_URL` env variable to the address of the ollama API.
-    - Set `INFERENCE_TEXT_MODEL` to the model you want to use for text inference in ollama (for example: `mistral`)
+    - Set `INFERENCE_TEXT_MODEL` to the model you want to use for text inference in ollama (for example: `llama3.1`)
     - Set `INFERENCE_IMAGE_MODEL` to the model you want to use for image inference in ollama (for example: `llava`)
     - Make sure that you `ollama pull`-ed the models that you want to use.
-
+    - You might want to tune the `INFERENCE_CONTEXT_LENGTH` as the default is quite small. The larger the value, the better the quality of the tags, but the more expensive the inference will be.
 
 </details>
 
@@ -73,14 +81,19 @@ Start the service by running:
 docker compose up -d
 ```
 
-Then visit `http://localhost:3000` and you should be greated with the Sign In page.
+Then visit `http://localhost:3000` and you should be greeted with the Sign In page.
 
-### [Optional] 6. Setup quick sharing extensions
+### [Optional] 6. Enable optional features
+
+Check the [configuration docs](/configuration) for extra features to enable such as full page archival, full page screenshots, inference languages, etc.
+
+### [Optional] 7. Setup quick sharing extensions
 
 Go to the [quick sharing page](/quick-sharing) to install the mobile apps and the browser extensions. Those will help you hoard things faster!
 
 ## Updating
 
 Updating hoarder will depend on what you used for the `HOARDER_VERSION` env variable.
+
 - If you pinned the app to a specific version, bump the version and re-run `docker compose up -d`. This should pull the new version for you.
 - If you used `HOARDER_VERSION=release`, you'll need to force docker to pull the latest version by running `docker compose up --pull always -d`.

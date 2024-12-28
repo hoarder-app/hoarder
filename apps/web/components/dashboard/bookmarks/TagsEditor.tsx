@@ -125,7 +125,7 @@ export function TagsEditor({
           padding: "0.5rem",
           maxHeight: "14rem",
           overflowY: "auto",
-          scrollbarWidth: "none",
+          scrollbarWidth: "thin",
         }),
         container: (styles) => ({
           ...styles,

@@ -3,8 +3,10 @@
 import { useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import SidebarItem from "@/components/shared/sidebar/SidebarItem";
 import { Button } from "@/components/ui/button";
 import { CollapsibleTriggerTriangle } from "@/components/ui/collapsible";
+import { useTranslation } from "@/lib/i18n/client";
 import { MoreHorizontal, Plus } from "lucide-react";
 
 import type { ZBookmarkList } from "@hoarder/shared/types/lists";
@@ -13,13 +15,13 @@ import { ZBookmarkListTreeNode } from "@hoarder/shared/utils/listUtils";
 import { CollapsibleBookmarkLists } from "../lists/CollapsibleBookmarkLists";
 import { EditListModal } from "../lists/EditListModal";
 import { ListOptions } from "../lists/ListOptions";
-import SidebarItem from "./SidebarItem";
 
 export default function AllLists({
   initialData,
 }: {
   initialData: { lists: ZBookmarkList[] };
 }) {
+  const { t } = useTranslation();
   const pathName = usePathname();
   const isNodeOpen = useCallback(
     (node: ZBookmarkListTreeNode) => pathName.includes(node.item.id),
@@ -37,21 +39,15 @@ export default function AllLists({
       </li>
       <SidebarItem
         logo={<span className="text-lg">📋</span>}
-        name="All Lists"
+        name={t("lists.all_lists")}
         path={`/dashboard/lists`}
-        className="py-0.5"
+        linkClassName="py-0.5"
       />
       <SidebarItem
         logo={<span className="text-lg">⭐️</span>}
-        name="Favourites"
+        name={t("lists.favourites")}
         path={`/dashboard/favourites`}
-        className="py-0.5"
-      />
-      <SidebarItem
-        logo={<span className="text-lg">🗄️</span>}
-        name="Archive"
-        path={`/dashboard/archive`}
-        className="py-0.5"
+        linkClassName="py-0.5"
       />
 
       {
@@ -86,7 +82,7 @@ export default function AllLists({
                   </Button>
                 </ListOptions>
               }
-              className="group py-0.5"
+              linkClassName="group py-0.5"
               style={{ marginLeft: `${level * 1}rem` }}
             />
           )}

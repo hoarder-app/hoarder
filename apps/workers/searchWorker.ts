@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
+import { DequeuedJob, Runner } from "liteque";
 
 import type { ZSearchIndexingRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
 import { bookmarks } from "@hoarder/db/schema";
-import { DequeuedJob, Runner } from "@hoarder/queue";
 import logger from "@hoarder/shared/logger";
 import {
   SearchIndexingQueue,
@@ -19,13 +19,15 @@ export class SearchIndexingWorker {
       {
         run: runSearchIndexing,
         onComplete: (job) => {
-          const jobId = job?.id ?? "unknown";
+          const jobId = job.id;
           logger.info(`[search][${jobId}] Completed successfully`);
           return Promise.resolve();
         },
         onError: (job) => {
-          const jobId = job?.id ?? "unknown";
-          logger.error(`[search][${jobId}] search job failed: ${job.error}`);
+          const jobId = job.id;
+          logger.error(
+            `[search][${jobId}] search job failed: ${job.error}\n${job.error.stack}`,
+          );
           return Promise.resolve();
         },
       },
@@ -93,6 +95,7 @@ async function runIndex(
           : undefined),
         ...(bookmark.text ? { content: bookmark.text.text } : undefined),
         note: bookmark.note,
+        summary: bookmark.summary,
         title: bookmark.title,
         createdAt: bookmark.createdAt.toISOString(),
         tags: bookmark.tagsOnBookmarks.map((t) => t.tag.name),
@@ -114,7 +117,7 @@ async function runDelete(
 }
 
 async function runSearchIndexing(job: DequeuedJob<ZSearchIndexingRequest>) {
-  const jobId = job.id ?? "unknown";
+  const jobId = job.id;
 
   const request = zSearchIndexingRequestSchema.safeParse(job.data);
   if (!request.success) {

@@ -35,6 +35,8 @@ function SignIn() {
   const [signinError, setSigninError] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
+  const clientConfig = useClientConfig();
+
   const oAuthError = searchParams.get("error");
   if (oAuthError && !signinError) {
     setSigninError(`${OAUTH_FAILED} ${oAuthError}`);
@@ -44,13 +46,26 @@ function SignIn() {
     resolver: zodResolver(signInSchema),
   });
 
+  if (clientConfig.auth.disablePasswordAuth) {
+    return (
+      <>
+        {signinError && (
+          <p className="w-full text-center text-destructive">{signinError}</p>
+        )}
+        <p className="text-center">
+          Password authentication is currently disabled.
+        </p>
+      </>
+    );
+  }
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(async (value) => {
           const resp = await signIn("credentials", {
             redirect: false,
-            email: value.email,
+            email: value.email.trim(),
             password: value.password,
           });
           if (!resp || !resp?.ok) {
@@ -131,7 +146,7 @@ function SignUp() {
           }
           const resp = await signIn("credentials", {
             redirect: false,
-            email: value.email,
+            email: value.email.trim(),
             password: value.password,
           });
           if (!resp || !resp.ok) {
@@ -233,7 +248,8 @@ export default function CredentialsForm() {
         <SignIn />
       </TabsContent>
       <TabsContent value="signup">
-        {clientConfig.auth.disableSignups ? (
+        {clientConfig.auth.disableSignups ||
+        clientConfig.auth.disablePasswordAuth ? (
           <p className="text-center">Signups are currently disabled.</p>
         ) : (
           <SignUp />

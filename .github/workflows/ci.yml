@@ -48,3 +48,28 @@ jobs:
 
       - name: Typecheck
         run: pnpm typecheck
+  open-api-spec:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup
+        uses: ./tooling/github/setup
+
+      - name: Regenerate OpenAPI spec
+        working-directory: packages/open-api
+        run: pnpm run generate
+
+      - name: Check for changes
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            echo "Error: Generated files are not up to date!"
+            echo "The following files have changes:"
+            git status --porcelain
+            echo ""
+            echo "Please regenerate the files locally with (pnpm run generate) and commit the changes."
+            git diff
+            exit 1
+          else
+            echo "✅ Generated files are up to date!"
+          fi

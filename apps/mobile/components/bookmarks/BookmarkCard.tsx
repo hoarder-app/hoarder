@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -9,9 +8,9 @@ import {
   View,
 } from "react-native";
 import * as Haptics from "expo-haptics";
+import { router, useRouter } from "expo-router";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
-import { BottomSheetModal } from "@gorhom/bottom-sheet";
 import { MenuView } from "@react-native-menu/menu";
 import { Ellipsis, Star } from "lucide-react-native";
 
@@ -32,9 +31,7 @@ import { Skeleton } from "../ui/Skeleton";
 import { useToast } from "../ui/Toast";
 import BookmarkAssetImage from "./BookmarkAssetImage";
 import BookmarkTextMarkdown from "./BookmarkTextMarkdown";
-import ListPickerModal from "./ListPickerModal";
 import TagPill from "./TagPill";
-import ViewBookmarkModal from "./ViewBookmarkModal";
 
 function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
@@ -73,8 +70,6 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
       onError,
     });
 
-  const manageListsSheetRef = useRef<BottomSheetModal>(null);
-
   return (
     <View className="flex flex-row gap-4">
       {(isArchivePending || isDeletionPending) && <ActivityIndicator />}
@@ -94,12 +89,6 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         )}
       </Pressable>
 
-      <ListPickerModal
-        ref={manageListsSheetRef}
-        snapPoints={["50%", "90%"]}
-        bookmarkId={bookmark.id}
-      />
-
       <MenuView
         onPressAction={({ nativeEvent }) => {
           Haptics.selectionAsync();
@@ -113,7 +102,9 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
               archived: !bookmark.archived,
             });
           } else if (nativeEvent.event === "manage_list") {
-            manageListsSheetRef?.current?.present();
+            router.push(`/dashboard/bookmarks/${bookmark.id}/manage_lists`);
+          } else if (nativeEvent.event === "manage_tags") {
+            router.push(`/dashboard/bookmarks/${bookmark.id}/manage_tags`);
           }
         }}
         actions={[
@@ -139,6 +130,13 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             title: "Manage Lists",
             image: Platform.select({
               ios: "list",
+            }),
+          },
+          {
+            id: "manage_tags",
+            title: "Manage Tags",
+            image: Platform.select({
+              ios: "tag",
             }),
           },
         ]}
@@ -341,7 +339,7 @@ export default function BookmarkCard({
     },
   );
 
-  const viewBookmarkModal = useRef<BottomSheetModal>(null);
+  const router = useRouter();
 
   let comp;
   switch (bookmark.content.type) {
@@ -349,7 +347,9 @@ export default function BookmarkCard({
       comp = (
         <LinkCard
           bookmark={bookmark}
-          onOpenBookmark={() => viewBookmarkModal.current?.present()}
+          onOpenBookmark={() =>
+            router.push(`/dashboard/bookmarks/${bookmark.id}`)
+          }
         />
       );
       break;
@@ -357,7 +357,9 @@ export default function BookmarkCard({
       comp = (
         <TextCard
           bookmark={bookmark}
-          onOpenBookmark={() => viewBookmarkModal.current?.present()}
+          onOpenBookmark={() =>
+            router.push(`/dashboard/bookmarks/${bookmark.id}`)
+          }
         />
       );
       break;
@@ -365,7 +367,9 @@ export default function BookmarkCard({
       comp = (
         <AssetCard
           bookmark={bookmark}
-          onOpenBookmark={() => viewBookmarkModal.current?.present()}
+          onOpenBookmark={() =>
+            router.push(`/dashboard/bookmarks/${bookmark.id}`)
+          }
         />
       );
       break;
@@ -373,11 +377,6 @@ export default function BookmarkCard({
 
   return (
     <View className="overflow-hidden rounded-xl border-b border-accent bg-background">
-      <ViewBookmarkModal
-        bookmark={bookmark}
-        ref={viewBookmarkModal}
-        snapPoints={["95%"]}
-      />
       {comp}
     </View>
   );

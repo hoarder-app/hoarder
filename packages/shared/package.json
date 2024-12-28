@@ -5,8 +5,11 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@hoarder/queue": "workspace:^0.1.0",
+    "glob": "^11.0.0",
+    "liteque": "^0.3.0",
     "meilisearch": "^0.37.0",
+    "ollama": "^0.5.9",
+    "openai": "^4.67.1",
     "winston": "^3.11.0",
     "zod": "^3.22.4"
   },

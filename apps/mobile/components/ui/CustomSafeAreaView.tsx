@@ -4,8 +4,10 @@ import { useHeaderHeight } from "@react-navigation/elements";
 
 export default function CustomSafeAreaView({
   children,
+  edges = ["top", "bottom"],
 }: {
   children: React.ReactNode;
+  edges?: ("top" | "bottom")[];
 }) {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
@@ -15,11 +17,12 @@ export default function CustomSafeAreaView({
       style={{
         paddingTop:
           // Some ugly hacks to make the app look the same on both android and ios
-          Platform.OS == "android"
+          Platform.OS == "android" && edges.includes("top")
             ? headerHeight > 0
               ? headerHeight
               : insets.top
             : undefined,
+        paddingBottom: edges.includes("bottom") ? insets.bottom : undefined,
       }}
     >
       {children}

@@ -1,0 +1,213 @@
+{
+  "common": {
+    "url": "URL",
+    "name": "Name",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "action": "Aktion",
+    "actions": "Aktionen",
+    "created_at": "Erstellt am",
+    "key": "Schlüssel",
+    "role": "Rolle",
+    "roles": {
+      "user": "Benutzer",
+      "admin": "Administrator"
+    },
+    "something_went_wrong": "Etwas ist schief gelaufen",
+    "experimental": "Experimentell",
+    "search": "Suche",
+    "tags": "Tags",
+    "note": "Notiz",
+    "attachments": "Anhänge",
+    "screenshot": "Screenshot",
+    "video": "Video",
+    "archive": "Archiv",
+    "home": "Startseite"
+  },
+  "layouts": {
+    "masonry": "Mauerwerk",
+    "grid": "Raster",
+    "list": "Liste",
+    "compact": "Kompakt"
+  },
+  "actions": {
+    "change_layout": "Layout ändern",
+    "archive": "Archivieren",
+    "unarchive": "Archivierung aufheben",
+    "favorite": "Favorit",
+    "unfavorite": "Favorit entfernen",
+    "delete": "Löschen",
+    "refresh": "Aktualisieren",
+    "download_full_page_archive": "Vollständiges Seitenarchiv herunterladen",
+    "edit_tags": "Tags bearbeiten",
+    "add_to_list": "Zur Liste hinzufügen",
+    "select_all": "Alle auswählen",
+    "unselect_all": "Auswahl aufheben",
+    "copy_link": "Link kopieren",
+    "close_bulk_edit": "Massenbearbeitung schließen",
+    "bulk_edit": "Massenbearbeitung",
+    "manage_lists": "Listen verwalten",
+    "remove_from_list": "Aus Liste entfernen",
+    "save": "Speichern",
+    "add": "Hinzufügen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "fetch_now": "Jetzt abrufen",
+    "summarize_with_ai": "Mit KI zusammenfassen",
+    "edit_title": "Titel bearbeiten",
+    "sign_out": "Abmelden",
+    "close": "Schließen",
+    "merge": "Zusammenführen",
+    "cancel": "Abbrechen",
+    "apply_all": "Alle anwenden",
+    "ignore": "Ignorieren",
+    "recrawl": "Erneutes Crawlen"
+  },
+  "settings": {
+    "back_to_app": "Zurück zur App",
+    "user_settings": "Benutzereinstellungen",
+    "info": {
+      "user_info": "Benutzerinformationen",
+      "basic_details": "Grundlegende Details",
+      "change_password": "Passwort ändern",
+      "current_password": "Aktuelles Passwort",
+      "new_password": "Neues Passwort",
+      "confirm_new_password": "Neues Passwort bestätigen",
+      "options": "Optionen",
+      "interface_lang": "Oberflächensprache"
+    },
+    "ai": {
+      "ai_settings": "KI-Einstellungen",
+      "tagging_rules": "Tagging-Regeln",
+      "tagging_rule_description": "Eingabeaufforderungen, die Sie hier hinzufügen, werden als Regeln für das Modell bei der Tag-Generierung verwendet. Sie können die endgültigen Aufforderungen im Bereich Vorschau anzeigen.",
+      "prompt_preview": "Aufforderungsvorschau",
+      "text_prompt": "Text-Aufforderung",
+      "images_prompt": "Bild-Aufforderung"
+    },
+    "feeds": {
+      "rss_subscriptions": "RSS-Abonnements",
+      "add_a_subscription": "Ein Abonnement hinzufügen"
+    },
+    "import": {
+      "import_export": "Import / Export",
+      "import_export_bookmarks": "Lesezeichen importieren / exportieren",
+      "import_bookmarks_from_html_file": "Lesezeichen aus HTML-Datei importieren",
+      "import_bookmarks_from_pocket_export": "Lesezeichen aus Pocket-Export importieren",
+      "import_bookmarks_from_omnivore_export": "Lesezeichen aus Omnivore-Export importieren",
+      "import_bookmarks_from_hoarder_export": "Lesezeichen aus Hoarder-Export importieren",
+      "export_links_and_notes": "Links und Notizen exportieren",
+      "imported_bookmarks": "Importierte Lesezeichen"
+    },
+    "api_keys": {
+      "api_keys": "API-Schlüssel",
+      "new_api_key": "Neuer API-Schlüssel",
+      "new_api_key_desc": "Geben Sie Ihrem API-Schlüssel einen eindeutigen Namen",
+      "key_success": "Schlüssel wurde erfolgreich erstellt",
+      "key_success_please_copy": "Bitte kopieren Sie den Schlüssel und speichern Sie ihn an einem sicheren Ort. Sobald Sie das Dialogfeld schließen, können Sie nicht mehr darauf zugreifen."
+    },
+    "broken_links": {
+      "broken_links": "Defekter Link",
+      "last_crawled_at": "Zuletzt gecrawlt am",
+      "crawling_status": "Crawling-Status",
+      "crawling_failed": "Crawling fehlgeschlagen"
+    }
+  },
+  "admin": {
+    "admin_settings": "Admin-Einstellungen",
+    "server_stats": {
+      "server_stats": "Serverstatistiken",
+      "total_users": "Gesamte Benutzer",
+      "total_bookmarks": "Gesamte Lesezeichen",
+      "server_version": "Serverversion"
+    },
+    "background_jobs": {
+      "background_jobs": "Hintergrundaufgaben",
+      "crawler_jobs": "Crawler-Aufgaben",
+      "indexing_jobs": "Indexierungsaufgaben",
+      "inference_jobs": "Inferenzaufgaben",
+      "tidy_assets_jobs": "Aufräumaufgaben",
+      "job": "Aufgabe",
+      "queued": "Warteschlange",
+      "pending": "Ausstehend",
+      "failed": "Fehlgeschlagen"
+    },
+    "actions": {
+      "recrawl_failed_links_only": "Nur fehlgeschlagene Links erneut durchsuchen",
+      "recrawl_all_links": "Alle Links erneut durchsuchen",
+      "without_inference": "Ohne Inferenz",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "KI-Tags nur für fehlgeschlagene Lesezeichen neu generieren",
+      "regenerate_ai_tags_for_all_bookmarks": "KI-Tags für alle Lesezeichen neu generieren",
+      "reindex_all_bookmarks": "Alle Lesezeichen neu indizieren",
+      "compact_assets": "Assets komprimieren"
+    },
+    "users_list": {
+      "users_list": "Benutzerliste",
+      "create_user": "Benutzer erstellen",
+      "change_role": "Rolle ändern",
+      "reset_password": "Passwort zurücksetzen",
+      "delete_user": "Benutzer löschen",
+      "num_bookmarks": "Anzahl der Lesezeichen",
+      "asset_sizes": "Asset-Größen",
+      "local_user": "Lokaler Benutzer",
+      "confirm_password": "Passwort bestätigen"
+    }
+  },
+  "options": {
+    "dark_mode": "Dunkelmodus",
+    "light_mode": "Hellmodus"
+  },
+  "lists": {
+    "all_lists": "Alle Listen",
+    "favourites": "Favoriten",
+    "new_list": "Neue Liste",
+    "new_nested_list": "Neue verschachtelte Liste"
+  },
+  "tags": {
+    "all_tags": "Alle Tags",
+    "your_tags": "Ihre Tags",
+    "your_tags_info": "Tags, die Sie mindestens einmal angehängt haben",
+    "ai_tags": "KI-Tags",
+    "ai_tags_info": "Tags, die nur automatisch (von der KI) angehängt wurden",
+    "unused_tags": "Ungeliebte Tags",
+    "unused_tags_info": "Tags, die an keine Lesezeichen angehängt sind",
+    "delete_all_unused_tags": "Alle ungeliebten Tags löschen",
+    "drag_and_drop_merging": "Ziehen & Ablegen zum Zusammenführen",
+    "drag_and_drop_merging_info": "Ziehen und ablegen, um Tags zusammenzuführen",
+    "sort_by_name": "Nach Name sortieren"
+  },
+  "preview": {
+    "view_original": "Original anzeigen",
+    "cached_content": "Gecachte Inhalte"
+  },
+  "editor": {
+    "quickly_focus": "Sie können schnell auf dieses Feld fokussieren, indem Sie ⌘ + E drücken",
+    "multiple_urls_dialog_title": "URLs als separate Lesezeichen importieren?",
+    "multiple_urls_dialog_desc": "Die Eingabe enthält mehrere URLs in separaten Zeilen. Möchten Sie sie als separate Lesezeichen importieren?",
+    "import_as_text": "Als Text-Lesezeichen importieren",
+    "import_as_separate_bookmarks": "Als separate Lesezeichen importieren",
+    "placeholder": "Fügen Sie einen Link oder ein Bild ein, schreiben Sie eine Notiz oder ziehen Sie ein Bild hierher ...",
+    "new_item": "NEUER EINTRAG",
+    "disabled_submissions": "Einsendungen sind deaktiviert"
+  },
+  "toasts": {
+    "bookmarks": {
+      "updated": "Das Lesezeichen wurde aktualisiert!",
+      "deleted": "Das Lesezeichen wurde gelöscht!",
+      "refetch": "Neuabruf wurde in die Warteschlange gestellt!",
+      "full_page_archive": "Erstellung des vollständigen Seitenarchivs wurde ausgelöst",
+      "delete_from_list": "Das Lesezeichen wurde aus der Liste gelöscht",
+      "clipboard_copied": "Link wurde in Ihre Zwischenablage kopiert!"
+    },
+    "lists": {
+      "created": "Liste wurde erstellt!",
+      "updated": "Liste wurde aktualisiert!"
+    }
+  },
+  "cleanups": {
+    "cleanups": "Bereinigungen",
+    "duplicate_tags": {
+      "title": "Doppelte Tags",
+      "merge_all_suggestions": "Alle Vorschläge zusammenführen?"
+    }
+  }
+}
