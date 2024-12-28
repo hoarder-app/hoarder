@@ -555,7 +555,8 @@
                         "type": "string"
                       },
                       "createdAt": {
-                        "type": "string"
+                        "type": "string",
+                        "nullable": true
                       }
                     }
                   },
@@ -748,7 +749,8 @@
                     "maxLength": 250
                   },
                   "createdAt": {
-                    "type": "string"
+                    "type": "string",
+                    "nullable": true
                   }
                 }
               }

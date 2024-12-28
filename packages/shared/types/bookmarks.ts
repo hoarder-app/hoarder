@@ -122,7 +122,7 @@ export const zNewBookmarkRequestSchema = z
     favourited: z.boolean().optional(),
     note: z.string().optional(),
     summary: z.string().optional(),
-    createdAt: z.date().optional(),
+    createdAt: z.coerce.date().optional(),
   })
   .and(
     z.discriminatedUnion("type", [
@@ -178,7 +178,7 @@ export const zUpdateBookmarksRequestSchema = z.object({
   summary: z.string().nullish(),
   note: z.string().optional(),
   title: z.string().max(MAX_TITLE_LENGTH).nullish(),
-  createdAt: z.date().optional(),
+  createdAt: z.coerce.date().optional(),
 });
 export type ZUpdateBookmarksRequest = z.infer<
   typeof zUpdateBookmarksRequestSchema
