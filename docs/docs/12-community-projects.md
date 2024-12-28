@@ -22,3 +22,11 @@ Get it [here](https://www.raycast.com/luolei/hoarder).
 An Alfred workflow to quickly hoard stuff or access your hoarded bookmarks!
 
 Get it [here](https://www.alfredforum.com/topic/22528-hoarder-workflow-for-self-hosted-bookmark-management/).
+
+### Telegram Bot
+
+*By [@Madh93](https://github.com/Madh93)*
+
+A Telegram Bot for saving bookmarks to Hoarder directly through Telegram.
+
+Get it [here](https://github.com/Madh93/hoarderbot).
