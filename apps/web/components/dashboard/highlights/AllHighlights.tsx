@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import { ActionButton } from "@/components/ui/action-button";
 import useRelativeTime from "@/lib/hooks/relative-time";
@@ -75,13 +75,10 @@ export default function AllHighlights({
       {allHighlights &&
         allHighlights.length > 0 &&
         allHighlights.map((h) => (
-          <>
-            <Highlight key={h.id} highlight={h} />
-            <Separator
-              key={`sep-${h.id}`}
-              className="m-2 h-0.5 bg-gray-100 last:hidden"
-            />
-          </>
+          <React.Fragment key={h.id}>
+            <Highlight highlight={h} />
+            <Separator className="m-2 h-0.5 bg-gray-100 last:hidden" />
+          </React.Fragment>
         ))}
       {allHighlights && allHighlights.length == 0 && (
         <p className="rounded-md bg-muted p-2 text-sm text-muted-foreground">
