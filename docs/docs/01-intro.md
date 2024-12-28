@@ -20,13 +20,15 @@ Hoarder is an open source "Bookmark Everything" app that uses AI for automatical
 - 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje) and [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/hoarder/) for quick bookmarking.
 - 📱 An [iOS app](https://apps.apple.com/us/app/hoarder-app/id6479258022), and an [Android app](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
 - 📰 Auto hoarding from RSS feeds.
-- 🌐 REST API.
+- 🔌 REST API.
+- 🌐 Mutli-language support.
+- 🖍️ Mark and store highlights from your hoarded content.
 - 🗄️ Full page archival (using [monolith](https://github.com/Y2Z/monolith)) to protect against link rot. Auto video archiving using [youtube-dl](https://github.com/marado/youtube-dl).
 - ☑️ Bulk actions support.
 - 🔐 SSO support.
 - 🌙 Dark mode support.
 - 💾 Self-hosting first.
-- [Planned] Downloading the content for offline reading.
+- [Planned] Downloading the content for offline reading in the mobile app.
 
 **⚠️ This app is under heavy development and it's far from stable.**
 
