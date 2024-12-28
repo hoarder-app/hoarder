@@ -1,0 +1,261 @@
+{
+  "common": {
+    "roles": {
+      "user": "Пользователь",
+      "admin": "Администратор"
+    },
+    "role": "Роль",
+    "experimental": "Экспериментально",
+    "search": "Поиск",
+    "url": "URL",
+    "name": "Имя",
+    "email": "Email",
+    "actions": "Действия",
+    "created_at": "Создано",
+    "key": "Ключ",
+    "something_went_wrong": "Что-то пошло не так",
+    "video": "Видео",
+    "note": "Заметка",
+    "attachments": "Вложения",
+    "screenshot": "Снимок экрана",
+    "archive": "Архив",
+    "password": "Пароль",
+    "action": "Действие",
+    "tags": "Метки",
+    "home": "Главная"
+  },
+  "lists": {
+    "new_list": "Новый список",
+    "new_nested_list": "Новый вложенный список",
+    "all_lists": "Все списки",
+    "favourites": "Избранное"
+  },
+  "settings": {
+    "user_settings": "Настройки пользователя",
+    "info": {
+      "user_info": "Информация о пользователе",
+      "options": "Опции",
+      "basic_details": "Основные сведения",
+      "change_password": "Сменить пароль",
+      "confirm_new_password": "Подтвердить новый пароль",
+      "interface_lang": "Язык интерфейса",
+      "current_password": "Текущий пароль",
+      "new_password": "Новый пароль"
+    },
+    "import": {
+      "import_bookmarks_from_hoarder_export": "Импортировать закладки из экспорта Hoarder",
+      "import_export": "Импорт / Экспорт",
+      "import_export_bookmarks": "Импорт / Экспорт закладок",
+      "import_bookmarks_from_pocket_export": "Импортировать закладки из экспорта Pocket",
+      "import_bookmarks_from_omnivore_export": "Импортировать закладки из экспорта Omnivore",
+      "imported_bookmarks": "Импортировано закладок",
+      "import_bookmarks_from_html_file": "Импортировать закладки из HTML файла",
+      "export_links_and_notes": "Экспортировать ссылки и заметки"
+    },
+    "api_keys": {
+      "key_success": "Ключ был успешно создан",
+      "key_success_please_copy": "Пожалуйста, скопируйте ключ и сохраните в безопасном месте. После закрытия окна, вы больше не сможете его посмотреть.",
+      "new_api_key": "Новый API ключ",
+      "new_api_key_desc": "Дайте вашему API ключу уникальное имя",
+      "api_keys": "API ключи"
+    },
+    "ai": {
+      "ai_settings": "Настройки ИИ",
+      "tagging_rules": "Правила создания меток",
+      "prompt_preview": "Предпросмотр запроса",
+      "text_prompt": "Запрос для текста",
+      "images_prompt": "Запрос для изображения",
+      "tagging_rule_description": "Запросы, которые вы добавите сюда, будут включены как правила для модели во время генерации меток. Вы можете просмотреть итоговые запросы в разделе предпросмотра запроса."
+    },
+    "feeds": {
+      "rss_subscriptions": "RSS подписки",
+      "add_a_subscription": "Добавить подписку"
+    },
+    "broken_links": {
+      "last_crawled_at": "Последний раз сканирован",
+      "crawling_failed": "Сканирование не удалось",
+      "crawling_status": "Статус сканирования",
+      "broken_links": "Сломанные ссылки"
+    },
+    "back_to_app": "Вернуться в приложение"
+  },
+  "actions": {
+    "remove_from_list": "Удалить из списка",
+    "refresh": "Обновить",
+    "unarchive": "Вернуть из архива",
+    "favorite": "В избранное",
+    "unfavorite": "Удалить из избранного",
+    "recrawl": "Пересканировать",
+    "change_layout": "Изменить разметку",
+    "save": "Сохранить",
+    "create": "Создать",
+    "summarize_with_ai": "Суммировать с ИИ",
+    "sign_out": "Выйти",
+    "close": "Закрыть",
+    "download_full_page_archive": "Скачать полный архив страницы",
+    "add_to_list": "Добавить в список",
+    "close_bulk_edit": "Закрыть массовое редактирование",
+    "bulk_edit": "Массовое редактирование",
+    "manage_lists": "Управление списками",
+    "fetch_now": "Получить сейчас",
+    "edit_title": "Редактировать заголовок",
+    "ignore": "Игнорировать",
+    "delete": "Удалить",
+    "cancel": "Отменить",
+    "archive": "В архив",
+    "edit": "Редактировать",
+    "merge": "Слить",
+    "add": "Добавить",
+    "edit_tags": "Редактировать метки",
+    "copy_link": "Скопировать ссылку",
+    "unselect_all": "Отменить выбор",
+    "select_all": "Выбрать все",
+    "apply_all": "Применить всё"
+  },
+  "editor": {
+    "text_toolbar": {
+      "markdown_shortcuts": {
+        "inline_code": {
+          "example": "`Код`",
+          "label": "Встроенный код"
+        },
+        "heading": {
+          "label": "Оглавление",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "italic": {
+          "example": "*Курсив* или _Курсив_ или CTRL+i",
+          "label": "Курсив"
+        },
+        "blockquote": {
+          "label": "Цитата",
+          "example": "> Цитата"
+        },
+        "ordered_list": {
+          "example": "1. Элемент списка",
+          "label": "Упорядоченный список"
+        },
+        "block_code": {
+          "example": "``` + пробел",
+          "label": "Блок кода"
+        },
+        "label": "Горячие клавиши Markdown",
+        "bold": {
+          "label": "Жирный",
+          "example": "**текст** или CTRL+b"
+        },
+        "unordered_list": {
+          "example": "- Элемент списка",
+          "label": "Неупорядоченный список"
+        }
+      },
+      "undo": "Отменить",
+      "redo": "Повторить",
+      "bold": "Жирный",
+      "italic": "Курсив",
+      "underline": "Подчёркивание",
+      "strikethrough": "Зачеркнуть",
+      "code": "Код",
+      "highlight": "Выделить",
+      "align_left": "Выровнить слева",
+      "align_center": "Выровнить по центру",
+      "align_right": "Выровнить справа"
+    },
+    "quickly_focus": "Для быстрого перехода к полю нажмите ⌘ + E",
+    "placeholder": "Вставьте ссылку или изображение, напишите заметку или перетащите изображение сюда ...",
+    "new_item": "НОВЫЙ ЭЛЕМЕНТ",
+    "import_as_text": "Импортировать как текстовую закладку",
+    "disabled_submissions": "Редактирование отключено",
+    "multiple_urls_dialog_desc": "Ввод содержит несколько ссылок на разных строках. Вы хотите импортировать их как разные закладки?",
+    "multiple_urls_dialog_title": "Импрортировать ссылки как отдельные закладки?",
+    "import_as_separate_bookmarks": "Импортировать как разные закладки"
+  },
+  "admin": {
+    "server_stats": {
+      "total_users": "Всего пользователей",
+      "server_version": "Версия сервера",
+      "total_bookmarks": "Всего закладок",
+      "server_stats": "Статистика сервера"
+    },
+    "users_list": {
+      "users_list": "Список пользователей",
+      "reset_password": "Сбросить пароль",
+      "asset_sizes": "Размеры ресурсов",
+      "confirm_password": "Подтвердить пароль",
+      "local_user": "Локальный пользователь",
+      "num_bookmarks": "Закладок",
+      "change_role": "Изменить роль",
+      "delete_user": "Удалить пользователя",
+      "create_user": "Создать пользователя"
+    },
+    "background_jobs": {
+      "queued": "В очереди",
+      "tidy_assets_jobs": "Задачи очистки ресурсов",
+      "background_jobs": "Фоновые задачи",
+      "inference_jobs": "Задачи обработки",
+      "pending": "В ожидании",
+      "failed": "Неудачно",
+      "job": "Задача",
+      "indexing_jobs": "Задачи индексирования",
+      "crawler_jobs": "Задачи сканирования"
+    },
+    "actions": {
+      "recrawl_failed_links_only": "Пересканировать только неудачные ссылки",
+      "without_inference": "Без обработки",
+      "regenerate_ai_tags_for_all_bookmarks": "Перегенерировать ИИ метки всем закладкам",
+      "compact_assets": "Сжать ресурсы",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Перегенерировать ИИ метки только для неудачных закладок",
+      "reindex_all_bookmarks": "Переиндексировать все закладки",
+      "recrawl_all_links": "Пересканировать все ссылки"
+    },
+    "admin_settings": "Настройки администратора"
+  },
+  "layouts": {
+    "grid": "Сетка",
+    "list": "Список",
+    "compact": "Компактно",
+    "masonry": "Плитка"
+  },
+  "options": {
+    "dark_mode": "Тёмный режим",
+    "light_mode": "Светлый режим"
+  },
+  "tags": {
+    "your_tags_info": "Метки, которые вами были хоть раз прикреплены",
+    "all_tags": "Все метки",
+    "ai_tags_info": "Метки, которые были приклеплены только автоматически (от ИИ)",
+    "unused_tags_info": "Метки, которые не были прикреплены к любой закладке",
+    "ai_tags": "ИИ метки",
+    "unused_tags": "Неиспользованные метки",
+    "delete_all_unused_tags": "Удалить все неиспользованные метки",
+    "drag_and_drop_merging_info": "Перетащите метки друг на друга, чтобы их слить",
+    "sort_by_name": "Сортировать по имени",
+    "drag_and_drop_merging": "Слияние перетаскиванием",
+    "your_tags": "Ваши метки"
+  },
+  "preview": {
+    "view_original": "Посмотреть оригинал",
+    "cached_content": "Содержимое кеша"
+  },
+  "toasts": {
+    "bookmarks": {
+      "refetch": "Повторная загрузка была добавлена в очередь!",
+      "full_page_archive": "Запущено создание полного архива страницы",
+      "delete_from_list": "Закладка была удалена из списка",
+      "clipboard_copied": "Ссылка была скопирована в буфер обмена!",
+      "deleted": "Закладка была удалена!",
+      "updated": "Закладка была обновлена!"
+    },
+    "lists": {
+      "created": "Список был создан!",
+      "updated": "Список был обновлён!"
+    }
+  },
+  "cleanups": {
+    "cleanups": "Очистка",
+    "duplicate_tags": {
+      "merge_all_suggestions": "Слить все предложения?",
+      "title": "Дублирующиеся метки"
+    }
+  }
+}

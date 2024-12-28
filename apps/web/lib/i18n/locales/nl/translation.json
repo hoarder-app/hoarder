@@ -22,7 +22,8 @@
     "home": "Home",
     "password": "Wachtwoord",
     "action": "Actie",
-    "key": "Sleutel"
+    "key": "Sleutel",
+    "highlights": "Hoogtepunten"
   },
   "layouts": {
     "list": "Lijst",
@@ -31,20 +32,20 @@
     "compact": "Compact"
   },
   "actions": {
-    "close_bulk_edit": "Bulkbewerking sluiten",
+    "close_bulk_edit": "Bulk bewerking sluiten",
     "delete": "Verwijderen",
     "change_layout": "Wijzig Layout",
     "archive": "Archiveer",
-    "unarchive": "Verwijderen uit het archief",
+    "unarchive": "Verwijder uit archief",
     "unfavorite": "Verwijder uit favorieten",
     "refresh": "Vernieuwen",
-    "download_full_page_archive": "Download pagina archief",
-    "edit_tags": "Wijzig Labels",
+    "download_full_page_archive": "Download volledig pagina archief",
+    "edit_tags": "Wijzig Tags",
     "add_to_list": "Toevoegen aan lijst",
     "select_all": "Selecteer alles",
     "unselect_all": "Deselecteer alles",
-    "bulk_edit": "Bulkbewerking",
-    "remove_from_list": "Verwijderen uit lijst",
+    "bulk_edit": "Bulk bewerking",
+    "remove_from_list": "Verwijder uit lijst",
     "add": "Toevoegen",
     "edit": "Wijzigen",
     "create": "Creëer",
@@ -52,9 +53,9 @@
     "summarize_with_ai": "Samenvatten met AI",
     "manage_lists": "Lijsten beheren",
     "favorite": "Favoriet",
-    "copy_link": "Kopieer link",
+    "copy_link": "Kopieër link",
     "save": "Bewaar",
-    "recrawl": "Opnieuw crawlen",
+    "recrawl": "Opnieuw doorzoeken",
     "apply_all": "Alles Toepassen",
     "edit_title": "Wijzig Titel",
     "sign_out": "Afmelden",
@@ -89,7 +90,7 @@
       "new_api_key_desc": "Geef je API sleutel een unieke naam"
     },
     "info": {
-      "user_info": "Gebruiker Info",
+      "user_info": "Gebruikersinfo",
       "basic_details": "Algemene Details",
       "change_password": "Wijzig Wachtwoord",
       "current_password": "Huidige Wachtwoord",

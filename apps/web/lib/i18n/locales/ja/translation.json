@@ -1,0 +1,138 @@
+{
+  "actions": {
+    "add_to_list": "リストに追加",
+    "apply_all": "全て適用",
+    "create": "作成",
+    "fetch_now": "フェッチする",
+    "summarize_with_ai": "AIで要約する",
+    "add": "追加",
+    "delete": "削除",
+    "archive": "アーカイブ",
+    "favorite": "お気に入り",
+    "edit_tags": "タグを編集",
+    "select_all": "全選択",
+    "unselect_all": "全ての選択を解除",
+    "bulk_edit": "一括編集",
+    "manage_lists": "リストの管理",
+    "remove_from_list": "リストから削除",
+    "save": "保存",
+    "edit_title": "タイトルの編集",
+    "sign_out": "サインアウト",
+    "close": "閉じる",
+    "merge": "マージする",
+    "close_bulk_edit": "一括編集を閉じる",
+    "unarchive": "アーカイブを解除",
+    "copy_link": "リンクのコピー",
+    "change_layout": "レイアウトの変更",
+    "edit": "編集",
+    "unfavorite": "お気に入りを解除",
+    "refresh": "リフレッシュ",
+    "recrawl": "再クロール",
+    "ignore": "無視する",
+    "cancel": "キャンセル",
+    "download_full_page_archive": "全てのページアーカイブをダウンロード"
+  },
+  "admin": {
+    "actions": {
+      "regenerate_ai_tags_for_failed_bookmarks_only": "失敗したブックマークのみの AI タグを再生成する",
+      "regenerate_ai_tags_for_all_bookmarks": "すべてのブックマークの AI タグを再生成",
+      "without_inference": "推論なし",
+      "reindex_all_bookmarks": "すべてのブックマークを再インデックスする",
+      "recrawl_failed_links_only": "失敗したリンクのみ再クロール",
+      "recrawl_all_links": "すべてのリンクを再クロール"
+    },
+    "server_stats": {
+      "server_version": "サーバーバージョン",
+      "server_stats": "サーバー統計情報",
+      "total_bookmarks": "総ブックマーク",
+      "total_users": "総ユーザ数"
+    },
+    "background_jobs": {
+      "job": "ジョブ",
+      "failed": "失敗",
+      "background_jobs": "バックグラウンドジョブ",
+      "inference_jobs": "推論ジョブ",
+      "tidy_assets_jobs": "Tidy アセットジョブ",
+      "queued": "キュー",
+      "indexing_jobs": "インデックス作成ジョブ",
+      "crawler_jobs": "クローラージョブ",
+      "pending": "保留中"
+    },
+    "admin_settings": "管理者設定"
+  },
+  "settings": {
+    "info": {
+      "user_info": "ユーザ情報",
+      "new_password": "新しいパスワード",
+      "basic_details": "基本情報",
+      "change_password": "パスワードを変更する",
+      "current_password": "現在のパスワード",
+      "confirm_new_password": "新しいパスワードの確認",
+      "options": "オプション",
+      "interface_lang": "インターフェース言語"
+    },
+    "ai": {
+      "prompt_preview": "プロンプトプレビュー",
+      "images_prompt": "画像プロンプト",
+      "tagging_rule_description": "ここで追加したプロンプトは、タグ生成時にモデルのルールとして組み込まれます。最終的なプロンプトは、プロンプト プレビュー セクションで確認できます。",
+      "ai_settings": "AI設定",
+      "text_prompt": "テキストプロンプト",
+      "tagging_rules": "タグ付けルール"
+    },
+    "import": {
+      "import_export_bookmarks": "ブックマークのインポート/エクスポート",
+      "import_bookmarks_from_html_file": "HTML ファイルからブックマークをインポートする",
+      "import_bookmarks_from_hoarder_export": "Hoarder エクスポートからブックマークをインポート",
+      "imported_bookmarks": "インポートされたブックマーク",
+      "import_bookmarks_from_pocket_export": "Pocketのエクスポートからブックマークをインポート",
+      "import_bookmarks_from_omnivore_export": "Omnivoreエクスポートからブックマークをインポート",
+      "export_links_and_notes": "リンクとメモをエクスポートする",
+      "import_export": "インポート/エクスポート"
+    },
+    "api_keys": {
+      "key_success_please_copy": "キーをコピーして安全な場所に保管してください。ダイアログを閉じると、再度アクセスできなくなります。",
+      "new_api_key_desc": "APIキーに一意の名前を付ける",
+      "key_success": "キーが正常に作成されました",
+      "api_keys": "APIキー",
+      "new_api_key": "新しいAPIキー"
+    },
+    "broken_links": {
+      "broken_links": "リンク切れ",
+      "last_crawled_at": "最終クロール日時",
+      "crawling_status": "クロールステータス"
+    },
+    "back_to_app": "アプリに戻る",
+    "user_settings": "ユーザ設定",
+    "feeds": {
+      "add_a_subscription": "サブスクリプションを追加する",
+      "rss_subscriptions": "RSS 購読"
+    }
+  },
+  "common": {
+    "role": "ロール",
+    "roles": {
+      "admin": "管理者",
+      "user": "ユーザ"
+    },
+    "url": "URL",
+    "password": "パスワード",
+    "email": "メールアドレス",
+    "name": "Name",
+    "something_went_wrong": "問題が発生しました",
+    "experimental": "実験的",
+    "search": "検索",
+    "action": "アクション",
+    "tags": "タグ",
+    "note": "ノート",
+    "attachments": "添付ファイル",
+    "screenshot": "スクリーンショット",
+    "video": "ビデオ",
+    "archive": "アーカイブ",
+    "key": "キー",
+    "home": "ホーム"
+  },
+  "layouts": {
+    "grid": "グリッド",
+    "list": "リスト"
+  }
+}

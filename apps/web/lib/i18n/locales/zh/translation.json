@@ -60,7 +60,8 @@
     "merge": "合并",
     "cancel": "取消",
     "apply_all": "全部应用",
-    "ignore": "忽略"
+    "ignore": "忽略",
+    "recrawl": "重新抓取"
   },
   "settings": {
     "back_to_app": "返回应用",
@@ -103,6 +104,12 @@
       "new_api_key_desc": "给您的API密钥一个唯一名称",
       "key_success": "密钥创建成功",
       "key_success_please_copy": "请复制密钥并妥善保存。一旦关闭对话框，您将无法再次访问它。"
+    },
+    "broken_links": {
+      "broken_links": "失效链接",
+      "last_crawled_at": "最后抓取时间",
+      "crawling_status": "抓取状态",
+      "crawling_failed": "抓取失败"
     }
   },
   "admin": {
@@ -180,7 +187,55 @@
     "import_as_separate_bookmarks": "作为单独书签导入",
     "placeholder": "粘贴链接或图像，写笔记或将图像拖放到此处...",
     "new_item": "新项目",
-    "disabled_submissions": "提交已禁用"
+    "disabled_submissions": "提交已禁用",
+    "text_toolbar": {
+      "bold": "粗体",
+      "underline": "下划线",
+      "code": "代码",
+      "align_center": "居中对齐",
+      "align_right": "右对齐",
+      "markdown_shortcuts": {
+        "label": "Markdown快捷键",
+        "heading": {
+          "label": "标题",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "bold": {
+          "label": "粗体",
+          "example": "**text** 或 CTRL+b"
+        },
+        "italic": {
+          "label": "斜体",
+          "example": "*Italic* 或 _Italic_ 或 CTRL+i"
+        },
+        "blockquote": {
+          "label": "块引用",
+          "example": "> 块引用"
+        },
+        "ordered_list": {
+          "example": "1. 列表项",
+          "label": "有序列表"
+        },
+        "unordered_list": {
+          "label": "无序列表",
+          "example": "- 列表项"
+        },
+        "inline_code": {
+          "label": "内联代码",
+          "example": "`代码`"
+        },
+        "block_code": {
+          "label": "代码块",
+          "example": "``` + 空格"
+        }
+      },
+      "italic": "斜体",
+      "highlight": "高亮",
+      "strikethrough": "删除线",
+      "undo": "取消",
+      "redo": "重做",
+      "align_left": "左对齐"
+    }
   },
   "toasts": {
     "bookmarks": {
