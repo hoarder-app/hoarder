@@ -10,6 +10,7 @@ export function useCreateHighlight(
       apiUtils.highlights.getForBookmark.invalidate({
         bookmarkId: req.bookmarkId,
       });
+      apiUtils.highlights.getAll.invalidate();
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });
@@ -25,6 +26,7 @@ export function useUpdateHighlight(
       apiUtils.highlights.getForBookmark.invalidate({
         bookmarkId: res.bookmarkId,
       });
+      apiUtils.highlights.getAll.invalidate();
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });
@@ -40,6 +42,7 @@ export function useDeleteHighlight(
       apiUtils.highlights.getForBookmark.invalidate({
         bookmarkId: res.bookmarkId,
       });
+      apiUtils.highlights.getAll.invalidate();
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });

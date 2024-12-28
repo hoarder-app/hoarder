@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { zCursorV2 } from "./pagination";
+
 export const DEFAULT_NUM_HIGHLIGHTS_PER_PAGE = 20;
 
 const zHighlightColorSchema = z.enum(["yellow", "red", "green", "blue"]);
@@ -31,3 +33,11 @@ export const zUpdateHighlightSchema = z.object({
   highlightId: z.string(),
   color: zHighlightColorSchema.optional(),
 });
+
+export const zGetAllHighlightsResponseSchema = z.object({
+  highlights: z.array(zHighlightSchema),
+  nextCursor: zCursorV2.nullable(),
+});
+export type ZGetAllHighlightsResponse = z.infer<
+  typeof zGetAllHighlightsResponseSchema
+>;

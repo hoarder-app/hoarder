@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTagsEditor";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
@@ -12,10 +11,9 @@ import {
   TooltipPortal,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import useRelativeTime from "@/lib/hooks/relative-time";
 import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 import { CalendarDays, ExternalLink } from "lucide-react";
 
 import {
@@ -35,8 +33,6 @@ import LinkContentSection from "./LinkContentSection";
 import { NoteEditor } from "./NoteEditor";
 import { TextContentSection } from "./TextContentSection";
 
-dayjs.extend(relativeTime);
-
 function ContentLoading() {
   return (
     <div className="flex w-full flex-col gap-2">
@@ -48,14 +44,7 @@ function ContentLoading() {
 }
 
 function CreationTime({ createdAt }: { createdAt: Date }) {
-  const [fromNow, setFromNow] = useState("");
-  const [localCreatedAt, setLocalCreatedAt] = useState("");
-
-  // This is to avoid hydration errors when server and clients are in different timezones
-  useEffect(() => {
-    setFromNow(dayjs(createdAt).fromNow());
-    setLocalCreatedAt(createdAt.toLocaleString());
-  }, [createdAt]);
+  const { fromNow, localCreatedAt } = useRelativeTime(createdAt);
   return (
     <Tooltip delayDuration={0}>
       <TooltipTrigger asChild>

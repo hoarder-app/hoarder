@@ -1,10 +1,11 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, eq, lt, lte, or } from "drizzle-orm";
+import { and, desc, eq, lt, lte, or } from "drizzle-orm";
 import { z } from "zod";
 
 import { highlights } from "@hoarder/db/schema";
 import {
   DEFAULT_NUM_HIGHLIGHTS_PER_PAGE,
+  zGetAllHighlightsResponseSchema,
   zHighlightSchema,
   zNewHighlightSchema,
   zUpdateHighlightSchema,
@@ -76,6 +77,7 @@ export const highlightsAppRouter = router({
           eq(highlights.bookmarkId, input.bookmarkId),
           eq(highlights.userId, ctx.user.id),
         ),
+        orderBy: [desc(highlights.createdAt), desc(highlights.id)],
       });
       return { highlights: results };
     }),
@@ -102,12 +104,7 @@ export const highlightsAppRouter = router({
         limit: z.number().optional().default(DEFAULT_NUM_HIGHLIGHTS_PER_PAGE),
       }),
     )
-    .output(
-      z.object({
-        highlights: z.array(zHighlightSchema),
-        nextCursor: zCursorV2.nullable(),
-      }),
-    )
+    .output(zGetAllHighlightsResponseSchema)
     .query(async ({ input, ctx }) => {
       const results = await ctx.db.query.highlights.findMany({
         where: and(
@@ -123,6 +120,7 @@ export const highlightsAppRouter = router({
             : undefined,
         ),
         limit: input.limit + 1,
+        orderBy: [desc(highlights.createdAt), desc(highlights.id)],
       });
       let nextCursor: z.infer<typeof zCursorV2> | null = null;
       if (results.length > input.limit) {

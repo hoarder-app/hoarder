@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { useTranslation } from "@/lib/i18n/server";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
-import { Archive, Home, Search, Tag } from "lucide-react";
+import { Archive, Highlighter, Home, Search, Tag } from "lucide-react";
 
 import serverConfig from "@hoarder/shared/config";
 
@@ -44,6 +44,11 @@ export default async function Sidebar() {
       name: t("common.tags"),
       icon: <Tag size={18} />,
       path: "/dashboard/tags",
+    },
+    {
+      name: t("common.highlights"),
+      icon: <Highlighter size={18} />,
+      path: "/dashboard/highlights",
     },
     {
       name: t("common.archive"),

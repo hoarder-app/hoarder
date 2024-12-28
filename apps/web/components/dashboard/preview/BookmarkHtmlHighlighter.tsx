@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
@@ -61,14 +62,15 @@ const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
           </Button>
         ))}
         {selectedHighlight && (
-          <Button
+          <ActionButton
+            loading={false}
             size="none"
             className="size-8 rounded-full"
             onClick={onDelete}
             variant="ghost"
           >
             <Trash2 className="size-5 text-destructive" />
-          </Button>
+          </ActionButton>
         )}
       </PopoverContent>
     </Popover>
