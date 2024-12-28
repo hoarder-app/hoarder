@@ -51,6 +51,7 @@
       "versionCode": 20
     },
     "plugins": [
+      "./plugins/trust-local-certs.js",
       "./plugins/camera-not-required.js",
       "expo-router",
       [

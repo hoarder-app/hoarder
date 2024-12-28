@@ -3,6 +3,7 @@
 # dependencies
 node_modules
 .pnp
+.pnpm-store
 .pnp.js
 .yarn/install-state.gz
 
@@ -53,4 +54,8 @@ data
 # Idea
 .idea
 *.iml
-.aider*
+
+# Aider
+.vscode
+
+# VS-Code
