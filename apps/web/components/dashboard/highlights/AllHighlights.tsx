@@ -47,6 +47,7 @@ export default function AllHighlights({
 }: {
   highlights: ZGetAllHighlightsResponse;
 }) {
+  const { t } = useTranslation();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     api.highlights.getAll.useInfiniteQuery(
       {},
@@ -67,11 +68,13 @@ export default function AllHighlights({
     }
   }, [loadMoreButtonInView]);
 
+  const allHighlights = data?.pages.flatMap((p) => p.highlights);
+
   return (
     <div className="flex flex-col gap-2">
-      {data?.pages
-        .flatMap((p) => p.highlights)
-        .map((h) => (
+      {allHighlights &&
+        allHighlights.length > 0 &&
+        allHighlights.map((h) => (
           <>
             <Highlight key={h.id} highlight={h} />
             <Separator
@@ -80,6 +83,11 @@ export default function AllHighlights({
             />
           </>
         ))}
+      {allHighlights && allHighlights.length == 0 && (
+        <p className="rounded-md bg-muted p-2 text-sm text-muted-foreground">
+          {t("highlights.no_highlights")}
+        </p>
+      )}
       {hasNextPage && (
         <div className="flex justify-center">
           <ActionButton

@@ -65,6 +65,9 @@
     "apply_all": "Apply All",
     "ignore": "Ignore"
   },
+  "highlights": {
+    "no_highlights": "You don't have any highlights yet."
+  },
   "settings": {
     "back_to_app": "Back To App",
     "user_settings": "User Settings",
