@@ -79,7 +79,8 @@
     "ignorePatterns": [
       "expo-plugins/**",
       "ios/**",
-      "android/**"
+      "android/**",
+      "plugins/**"
     ]
   },
   "prettier": "@hoarder/prettier-config"

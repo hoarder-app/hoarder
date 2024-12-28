@@ -51,6 +51,7 @@
       "versionCode": 20
     },
     "plugins": [
+      "./plugins/camera-not-required.js",
       "expo-router",
       [
         "expo-share-intent",
