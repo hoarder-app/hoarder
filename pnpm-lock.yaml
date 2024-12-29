@@ -575,8 +575,8 @@ importers:
         specifier: ^1.11.10
         version: 1.11.10
       drizzle-orm:
-        specifier: ^0.33.0
-        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.3.1)
+        specifier: ^0.38.3
+        version: 0.38.3(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.3.1)
       fastest-levenshtein:
         specifier: ^1.0.16
         version: 1.0.16
@@ -747,8 +747,8 @@ importers:
         specifier: ^16.4.1
         version: 16.4.5
       drizzle-orm:
-        specifier: ^0.33.0
-        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.3.1)
+        specifier: ^0.38.3
+        version: 0.38.3(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.3.1)
       execa:
         specifier: 9.3.1
         version: 9.3.1
@@ -905,8 +905,8 @@ importers:
         specifier: ^16.4.1
         version: 16.4.5
       drizzle-orm:
-        specifier: ^0.33.0
-        version: 0.33.0(@types/better-sqlite3@7.6.11)(better-sqlite3@11.3.0)
+        specifier: ^0.38.3
+        version: 0.38.3(@types/better-sqlite3@7.6.11)(better-sqlite3@11.3.0)
       tsx:
         specifier: ^4.7.1
         version: 4.7.1
@@ -1038,8 +1038,8 @@ importers:
         specifier: ^2.4.3
         version: 2.4.3
       drizzle-orm:
-        specifier: ^0.33.0
-        version: 0.33.0(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.3.1)
+        specifier: ^0.38.3
+        version: 0.38.3(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.3.1)
       superjson:
         specifier: ^2.2.1
         version: 2.2.1
@@ -6710,6 +6710,98 @@ packages:
       sqlite3:
         optional: true
 
+  drizzle-orm@0.38.3:
+    resolution: {integrity: sha512-w41Y+PquMpSff/QDRGdItG0/aWca+/J3Sda9PPGkTxBtjWQvgU1jxlFBXdjog5tYvTu58uvi3PwR1NuCx0KeZg==}
+    peerDependencies:
+      '@aws-sdk/client-rds-data': '>=3'
+      '@cloudflare/workers-types': '>=4'
+      '@electric-sql/pglite': '>=0.2.0'
+      '@libsql/client': '>=0.10.0'
+      '@libsql/client-wasm': '>=0.10.0'
+      '@neondatabase/serverless': '>=0.10.0'
+      '@op-engineering/op-sqlite': '>=2'
+      '@opentelemetry/api': ^1.4.1
+      '@planetscale/database': '>=1'
+      '@prisma/client': '*'
+      '@tidbcloud/serverless': '*'
+      '@types/better-sqlite3': '*'
+      '@types/pg': '*'
+      '@types/react': '>=18'
+      '@types/sql.js': '*'
+      '@vercel/postgres': '>=0.8.0'
+      '@xata.io/client': '*'
+      better-sqlite3: '>=7'
+      bun-types: '*'
+      expo-sqlite: '>=14.0.0'
+      knex: '*'
+      kysely: '*'
+      mysql2: '>=2'
+      pg: '>=8'
+      postgres: '>=3'
+      prisma: '*'
+      react: '>=18'
+      sql.js: '>=1'
+      sqlite3: '>=5'
+    peerDependenciesMeta:
+      '@aws-sdk/client-rds-data':
+        optional: true
+      '@cloudflare/workers-types':
+        optional: true
+      '@electric-sql/pglite':
+        optional: true
+      '@libsql/client':
+        optional: true
+      '@libsql/client-wasm':
+        optional: true
+      '@neondatabase/serverless':
+        optional: true
+      '@op-engineering/op-sqlite':
+        optional: true
+      '@opentelemetry/api':
+        optional: true
+      '@planetscale/database':
+        optional: true
+      '@prisma/client':
+        optional: true
+      '@tidbcloud/serverless':
+        optional: true
+      '@types/better-sqlite3':
+        optional: true
+      '@types/pg':
+        optional: true
+      '@types/react':
+        optional: true
+      '@types/sql.js':
+        optional: true
+      '@vercel/postgres':
+        optional: true
+      '@xata.io/client':
+        optional: true
+      better-sqlite3:
+        optional: true
+      bun-types:
+        optional: true
+      expo-sqlite:
+        optional: true
+      knex:
+        optional: true
+      kysely:
+        optional: true
+      mysql2:
+        optional: true
+      pg:
+        optional: true
+      postgres:
+        optional: true
+      prisma:
+        optional: true
+      react:
+        optional: true
+      sql.js:
+        optional: true
+      sqlite3:
+        optional: true
+
   duplexer@0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
 
@@ -12112,9 +12204,11 @@ packages:
 
   sudo-prompt@8.2.5:
     resolution: {integrity: sha512-rlBo3HU/1zAJUrkY6jNxDOC9eVYliG6nS4JA8u8KAshITd07tafMc/Br7xQwCSseXwJ2iCcHCE8SNWX3q8Z+kw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   sudo-prompt@9.1.1:
     resolution: {integrity: sha512-es33J1g2HjMpyAhz8lOR+ICmXXAqTuKbuXuUWLhOLew20oN9oUCgCJx615U/v7aioZg7IX5lIh9x34vwneu4pA==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   superagent@7.1.6:
     resolution: {integrity: sha512-gZkVCQR1gy/oUXr+kxJMLDjla434KmSOKbx5iGD30Ql+AkJQ/YlPKECJy2nhqOsHLjGHzoDTXNSjhnvWhzKk7g==}
@@ -21134,13 +21228,18 @@ snapshots:
       - supports-color
     dev: true
 
-  drizzle-orm@0.33.0(@types/better-sqlite3@7.6.11)(better-sqlite3@11.3.0):
+  drizzle-orm@0.33.0(better-sqlite3@11.3.0):
+    dependencies:
+      better-sqlite3: 11.3.0
+    dev: false
+
+  drizzle-orm@0.38.3(@types/better-sqlite3@7.6.11)(better-sqlite3@11.3.0):
     dependencies:
       '@types/better-sqlite3': 7.6.11
       better-sqlite3: 11.3.0
     dev: false
 
-  drizzle-orm@0.33.0(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.3.1):
+  drizzle-orm@0.38.3(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.3.1):
     dependencies:
       '@types/react': 18.2.58
       better-sqlite3: 11.3.0
@@ -24188,7 +24287,7 @@ snapshots:
     dependencies:
       async-mutex: 0.4.1
       better-sqlite3: 11.3.0
-      drizzle-orm: 0.33.0(@types/react@18.2.58)(better-sqlite3@11.3.0)(react@18.3.1)
+      drizzle-orm: 0.33.0(better-sqlite3@11.3.0)
       zod: 3.22.4
     transitivePeerDependencies:
       - '@aws-sdk/client-rds-data'

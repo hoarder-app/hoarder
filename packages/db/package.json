@@ -15,7 +15,7 @@
     "@paralleldrive/cuid2": "^2.2.2",
     "better-sqlite3": "^11.3.0",
     "dotenv": "^16.4.1",
-    "drizzle-orm": "^0.33.0",
+    "drizzle-orm": "^0.38.3",
     "tsx": "^4.7.1"
   },
   "devDependencies": {
