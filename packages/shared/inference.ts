@@ -32,7 +32,7 @@ export interface InferenceClient {
     image: string,
     opts: InferenceOptions,
   ): Promise<InferenceResponse>;
-  generateEmbeddingFromText(prompt: string): Promise<EmbeddingResponse>;
+  generateEmbeddingFromText(inputs: string[]): Promise<EmbeddingResponse>;
 }
 
 export class InferenceClientFactory {
@@ -109,11 +109,13 @@ class OpenAIInferenceClient implements InferenceClient {
     return { response, totalTokens: chatCompletion.usage?.total_tokens };
   }
 
-  async generateEmbeddingFromText(prompt: string): Promise<EmbeddingResponse> {
+  async generateEmbeddingFromText(
+    inputs: string[],
+  ): Promise<EmbeddingResponse> {
     const model = serverConfig.embedding.textModel;
     const embedResponse = await this.openAI.embeddings.create({
       model: model,
-      input: [prompt],
+      input: inputs,
     });
     const embedding2D: number[][] = embedResponse.data.map(
       (embedding: OpenAI.Embedding) => embedding.embedding,
@@ -175,17 +177,6 @@ class OllamaInferenceClient implements InferenceClient {
     return { response, totalTokens };
   }
 
-  async runEmbeddingModel(model: string, prompt: string) {
-    const embedding = await this.ollama.embed({
-      model: model,
-      input: prompt,
-      // Truncate the input to fit into the model's max token limit,
-      // in the future we want to add a way to split the input into multiple parts.
-      truncate: true,
-    });
-    return { response: embedding };
-  }
-
   async inferFromText(
     prompt: string,
     opts: InferenceOptions = defaultInferenceOptions,
@@ -212,11 +203,16 @@ class OllamaInferenceClient implements InferenceClient {
     );
   }
 
-  async generateEmbeddingFromText(prompt: string): Promise<EmbeddingResponse> {
-    const embedResponse = await this.runEmbeddingModel(
-      serverConfig.embedding.textModel,
-      prompt,
-    );
-    return { embeddings: embedResponse.response.embeddings };
+  async generateEmbeddingFromText(
+    inputs: string[],
+  ): Promise<EmbeddingResponse> {
+    const embedding = await this.ollama.embed({
+      model: serverConfig.embedding.textModel,
+      input: inputs,
+      // Truncate the input to fit into the model's max token limit,
+      // in the future we want to add a way to split the input into multiple parts.
+      truncate: true,
+    });
+    return { embeddings: embedding.embeddings };
   }
 }
