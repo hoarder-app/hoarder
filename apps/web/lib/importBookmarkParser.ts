@@ -145,49 +145,34 @@ export async function parseLinkwardenBookmarkFile(
   file: File,
 ): Promise<ParsedBookmark[]> {
   const textContent = await file.text();
-  const zLinkwardenExportSchema = z.array(
-    z.object({
-      name: z.string(),
-      url: z.string(),
-      _tags: z.array(z.string()),
-      createdAt: z.coerce.date(),
-    }),
-  );
+  const zLinkwardenExportSchema = z.object({
+    collections: z.array(
+      z.object({
+        links: z.array(
+          z.object({
+            name: z.string(),
+            url: z.string(),
+            tags: z.array(z.object({ name: z.string() })),
+            createdAt: z.coerce.date(),
+          }),
+        ),
+      }),
+    ),
+  });
 
-  const jsonData = JSON.parse(textContent);
-  
-  if( !jsonData.hasOwnProperty('collections')){
-    throw new Error(
-      `The uploaded JSON file contains an invalid Linkwarden bookmark file`,
-    );
-  }
-
-  const data = jsonData.collections.map( (collection: {}[] ): {}[] => {
-    return collection.links
-  }).reduce(( pre: object[], current: object) => {
-    return pre.concat(current)
-  }).map( ( item: { _tags: string[], tags: {name: string}[] } ) => {
-    item._tags = item.tags.map( ( tag: {name: string} ) =>{
-      return tag.name;
-    } )
-    return item;
-  })
-  
-  const parsed = zLinkwardenExportSchema.safeParse(data);
-
+  const parsed = zLinkwardenExportSchema.safeParse(JSON.parse(textContent));
   if (!parsed.success) {
     throw new Error(
       `The uploaded JSON file contains an invalid Linkwarden bookmark file: ${parsed.error.toString()}`,
     );
   }
 
-  return parsed.data.map((bookmark) => {
-    return {
+  return parsed.data.collections.flatMap((collection) => {
+    return collection.links.map((bookmark) => ({
       title: bookmark.name ?? "",
       content: { type: BookmarkTypes.LINK as const, url: bookmark.url },
-      tags: bookmark._tags,
+      tags: bookmark.tags.map((tag) => tag.name),
       addDate: bookmark.createdAt.getTime() / 1000,
-    };
+    }));
   });
 }
-

@@ -11,9 +11,9 @@ import { useTranslation } from "@/lib/i18n/client";
 import {
   ParsedBookmark,
   parseHoarderBookmarkFile,
+  parseLinkwardenBookmarkFile,
   parseNetscapeBookmarkFile,
   parseOmnivoreBookmarkFile,
-  parseLinkwardenBookmarkFile,
   parsePocketBookmarkFile,
 } from "@/lib/importBookmarkParser";
 import { cn } from "@/lib/utils";
@@ -232,7 +232,8 @@ export function ImportExportRow() {
         >
           <Upload />
           <p>{t("settings.import.import_bookmarks_from_omnivore_export")}</p>
-        </FilePickerButton><FilePickerButton
+        </FilePickerButton>
+        <FilePickerButton
           loading={false}
           accept=".json"
           multiple={false}
@@ -285,4 +286,3 @@ export default function ImportExport() {
     </div>
   );
 }
-
