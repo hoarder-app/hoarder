@@ -2,9 +2,11 @@
 
 import { ActionButton } from "@/components/ui/action-button";
 import { toast } from "@/components/ui/use-toast";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 
 export default function AdminActions() {
+  const { t } = useTranslation();
   const { mutate: recrawlLinks, isPending: isRecrawlPending } =
     api.admin.recrawlLinks.useMutation({
       onSuccess: () => {
@@ -35,9 +37,41 @@ export default function AdminActions() {
       },
     });
 
+  const {
+    mutate: reRunInferenceOnAllBookmarks,
+    isPending: isInferencePending,
+  } = api.admin.reRunInferenceOnAllBookmarks.useMutation({
+    onSuccess: () => {
+      toast({
+        description: "Inference jobs enqueued",
+      });
+    },
+    onError: (e) => {
+      toast({
+        variant: "destructive",
+        description: e.message,
+      });
+    },
+  });
+
+  const { mutateAsync: tidyAssets, isPending: isTidyAssetsPending } =
+    api.admin.tidyAssets.useMutation({
+      onSuccess: () => {
+        toast({
+          description: "Tidy assets request has been enqueued!",
+        });
+      },
+      onError: (e) => {
+        toast({
+          variant: "destructive",
+          description: e.message,
+        });
+      },
+    });
+
   return (
     <div>
-      <div className="mb-2 mt-8 text-xl font-medium">Actions</div>
+      <div className="mb-2 mt-8 text-xl font-medium">{t("common.actions")}</div>
       <div className="flex flex-col gap-2 sm:w-1/2">
         <ActionButton
           variant="destructive"
@@ -46,7 +80,7 @@ export default function AdminActions() {
             recrawlLinks({ crawlStatus: "failure", runInference: true })
           }
         >
-          Recrawl Failed Links Only
+          {t("admin.actions.recrawl_failed_links_only")}
         </ActionButton>
         <ActionButton
           variant="destructive"
@@ -55,7 +89,7 @@ export default function AdminActions() {
             recrawlLinks({ crawlStatus: "all", runInference: true })
           }
         >
-          Recrawl All Links
+          {t("admin.actions.recrawl_all_links")}
         </ActionButton>
         <ActionButton
           variant="destructive"
@@ -64,14 +98,38 @@ export default function AdminActions() {
             recrawlLinks({ crawlStatus: "all", runInference: false })
           }
         >
-          Recrawl All Links (Without Inference)
+          {t("admin.actions.recrawl_all_links")} (
+          {t("admin.actions.without_inference")})
+        </ActionButton>
+        <ActionButton
+          variant="destructive"
+          loading={isInferencePending}
+          onClick={() =>
+            reRunInferenceOnAllBookmarks({ taggingStatus: "failure" })
+          }
+        >
+          {t("admin.actions.regenerate_ai_tags_for_failed_bookmarks_only")}
+        </ActionButton>
+        <ActionButton
+          variant="destructive"
+          loading={isInferencePending}
+          onClick={() => reRunInferenceOnAllBookmarks({ taggingStatus: "all" })}
+        >
+          {t("admin.actions.regenerate_ai_tags_for_all_bookmarks")}
         </ActionButton>
         <ActionButton
           variant="destructive"
           loading={isReindexPending}
           onClick={() => reindexBookmarks()}
         >
-          Reindex All Bookmarks
+          {t("admin.actions.reindex_all_bookmarks")}
+        </ActionButton>
+        <ActionButton
+          variant="destructive"
+          loading={isTidyAssetsPending}
+          onClick={() => tidyAssets()}
+        >
+          {t("admin.actions.compact_assets")}
         </ActionButton>
       </div>
     </div>

@@ -83,6 +83,24 @@ export async function addToList(listId: string, bookmarkId: string) {
 }
 
 listsCmd
+  .command("get")
+  .description("gets all the ids of the bookmarks assigned to the list")
+  .requiredOption("--list <id>", "the id of the list")
+  .action(async (opts) => {
+    const api = getAPIClient();
+    try {
+      const results = await api.lists.get.query({ listId: opts.list });
+
+      printObject(results.bookmarks);
+    } catch (error) {
+      printErrorMessageWithReason(
+        "Failed to get the ids of the bookmarks in the list",
+        error as object,
+      );
+    }
+  });
+
+listsCmd
   .command("add-bookmark")
   .description("add a bookmark to list")
   .requiredOption("--list <id>", "the id of the list")

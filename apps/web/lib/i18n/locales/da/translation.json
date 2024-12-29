@@ -1,0 +1,261 @@
+{
+  "actions": {
+    "select_all": "Vælg alle",
+    "sign_out": "Log ud",
+    "apply_all": "Anvend på alle",
+    "unarchive": "Fjern arkivering",
+    "favorite": "Stjernemarker",
+    "change_layout": "Skift visning",
+    "download_full_page_archive": "Download hele siden til arkiv",
+    "recrawl": "Gennemsøg igen",
+    "add_to_list": "Tilføj til liste",
+    "copy_link": "Kopiér link",
+    "close_bulk_edit": "Luk masseredigering",
+    "bulk_edit": "Masseredigering",
+    "manage_lists": "Administrer lister",
+    "remove_from_list": "Fjern fra liste",
+    "add": "Tilføj",
+    "create": "Opret",
+    "fetch_now": "Hent nu",
+    "summarize_with_ai": "Opsummer med AI",
+    "edit_title": "Rediger titel",
+    "cancel": "Annuller",
+    "ignore": "Ignorer",
+    "unselect_all": "Fravælg alle",
+    "refresh": "Genopfrisk",
+    "unfavorite": "Fjern stjernemarkering",
+    "archive": "Arkivér",
+    "delete": "Slet",
+    "edit": "Rediger",
+    "close": "Luk",
+    "edit_tags": "Rediger tags",
+    "save": "Gem",
+    "merge": "Sammenflet"
+  },
+  "settings": {
+    "import": {
+      "export_links_and_notes": "Eksporter links og noter",
+      "import_bookmarks_from_omnivore_export": "Importer bogmærker fra Omnivore-eksport",
+      "import_bookmarks_from_hoarder_export": "Importer bogmærker fra Hoarder-eksport",
+      "import_export": "Import / eksport",
+      "import_export_bookmarks": "Import / eksport bogmærker",
+      "import_bookmarks_from_html_file": "Importer bogmærker fra HTML-fil",
+      "import_bookmarks_from_pocket_export": "Importer bogmærker fra Pocket-eksport",
+      "imported_bookmarks": "Importerede bogmærker"
+    },
+    "back_to_app": "Tilbage til app",
+    "info": {
+      "basic_details": "Grundlæggende",
+      "user_info": "Brugeroplysninger",
+      "interface_lang": "Grænseflade sprog",
+      "current_password": "Nuværende adgangskode",
+      "new_password": "Ny adgangskode",
+      "confirm_new_password": "Bekræft ny adgangskode",
+      "change_password": "Skift adgangskode",
+      "options": "Indstillinger"
+    },
+    "feeds": {
+      "add_a_subscription": "Tilføj et abonnement",
+      "rss_subscriptions": "RSS-abonnementer"
+    },
+    "ai": {
+      "tagging_rules": "Regler for tagging",
+      "tagging_rule_description": "Prompts, som du tilføjer her, vil blive inkluderet som regler i modellen under taggenereringen. Du kan se de endelige prompts i afsnittet med forhåndsvisning af prompts.",
+      "ai_settings": "AI-indstillinger",
+      "images_prompt": "Billede-prompt",
+      "prompt_preview": "Forhåndsvisning af prompt",
+      "text_prompt": "Tekst-prompt"
+    },
+    "broken_links": {
+      "crawling_status": "Gennemsøgningsstatus",
+      "broken_links": "Ugyldige links",
+      "last_crawled_at": "Sidst gennemsøgt",
+      "crawling_failed": "Gennemsøgning mislykkedes"
+    },
+    "api_keys": {
+      "new_api_key_desc": "Giv din API-nøgle et unikt navn",
+      "api_keys": "API-nøgler",
+      "new_api_key": "Ny API-nøgle",
+      "key_success": "Nøglen blev succesfuldt oprettet",
+      "key_success_please_copy": "Kopiér venligst nøglen og gem den et sikkert sted. Vær opmærksom på, at du ikke vil kunne få adgang til den igen, efter dialogboksen lukkes."
+    },
+    "user_settings": "Brugerindstillinger"
+  },
+  "admin": {
+    "actions": {
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Genopret AI-tags kun for mislykkede bogmærker",
+      "recrawl_failed_links_only": "Gennemsøg kun mislykkede links igen",
+      "compact_assets": "Komprimér ressourcer",
+      "recrawl_all_links": "Gennemsøg alle links",
+      "without_inference": "Uden inferens",
+      "regenerate_ai_tags_for_all_bookmarks": "Genopret AI-tags for alle bogmærker",
+      "reindex_all_bookmarks": "Genindeksér alle bogmærker"
+    },
+    "background_jobs": {
+      "inference_jobs": "Inferensopgaver",
+      "failed": "Mislykket",
+      "background_jobs": "Baggrundsjobs",
+      "crawler_jobs": "Gennemsøgningsopgaver",
+      "indexing_jobs": "Indekseringsopgaver",
+      "tidy_assets_jobs": "Oprydningsopgaver for ressourcer",
+      "job": "Opgave",
+      "queued": "I kø",
+      "pending": "Afventer"
+    },
+    "server_stats": {
+      "server_version": "Server-version",
+      "server_stats": "Serverstatistik",
+      "total_users": "Brugere i alt",
+      "total_bookmarks": "Bogmærker i alt"
+    },
+    "admin_settings": "Admin-indstillinger",
+    "users_list": {
+      "create_user": "Opret bruger",
+      "users_list": "Liste over brugere",
+      "change_role": "Skift rolle",
+      "reset_password": "Nulstil adgangskode",
+      "delete_user": "Slet bruger",
+      "num_bookmarks": "Antal bogmærker",
+      "asset_sizes": "Størrelse på ressourcer",
+      "local_user": "Lokal bruger",
+      "confirm_password": "Bekræft adgangskode"
+    }
+  },
+  "tags": {
+    "unused_tags": "Ikke-anvendte tags",
+    "your_tags": "Dine tags",
+    "ai_tags": "AI-tags",
+    "all_tags": "Alle tags",
+    "delete_all_unused_tags": "Fjern alle ikke-anvendte tags",
+    "drag_and_drop_merging": "Træk og slip-sammenfletning",
+    "your_tags_info": "Tags, du har anvendt mindst én gang",
+    "ai_tags_info": "Tags, der er tilføjet automatisk (af AI)",
+    "unused_tags_info": "Tags, der ikke er knyttet til nogen bogmærker",
+    "drag_and_drop_merging_info": "Træk og slip tags oven på hinanden for at sammenflette dem",
+    "sort_by_name": "Sorter efter navn"
+  },
+  "options": {
+    "light_mode": "Lys tilstand",
+    "dark_mode": "Mørk tilstand"
+  },
+  "editor": {
+    "quickly_focus": "Du kan hurtigt fokusere på dette felt ved at bruge genvejen ⌘ + E",
+    "multiple_urls_dialog_title": "Importer URL’er som separate bogmærker?",
+    "multiple_urls_dialog_desc": "Indtastningen indeholder flere URL’er på separate linjer. Ønsker du at importere dem som individuelle bogmærker?",
+    "import_as_text": "Importer som tekstbogmærke",
+    "import_as_separate_bookmarks": "Importer som separate bogmærker",
+    "new_item": "NYT ELEMENT",
+    "disabled_submissions": "Indsendelser er deaktiveret",
+    "text_toolbar": {
+      "undo": "Fortryd",
+      "redo": "Annuller fortryd",
+      "italic": "Kursiv",
+      "underline": "Understregning",
+      "strikethrough": "Gennemstreget",
+      "code": "Kode",
+      "highlight": "Fremhæv",
+      "align_left": "Venstrejuster",
+      "align_center": "Centreret",
+      "align_right": "Højrejuster",
+      "markdown_shortcuts": {
+        "label": "Markdown-genveje",
+        "heading": {
+          "label": "Overskrift",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "bold": {
+          "label": "Fed",
+          "example": "**tekst** eller CTRL+b"
+        },
+        "blockquote": {
+          "label": "Blokcitat",
+          "example": "> Blokcitat"
+        },
+        "ordered_list": {
+          "label": "Opstilling med tal",
+          "example": "1. Listepunkt"
+        },
+        "unordered_list": {
+          "label": "Punktopstilling",
+          "example": "- Listepunkt"
+        },
+        "inline_code": {
+          "label": "Indlejret kode",
+          "example": "`Kode`"
+        },
+        "block_code": {
+          "label": "Blokkode",
+          "example": "``` + mellemrum"
+        },
+        "italic": {
+          "label": "Kursiv",
+          "example": "*Kursiv* eller _Kursiv_ eller CTRL+i"
+        }
+      },
+      "bold": "Fed"
+    },
+    "placeholder": "Indsæt et link eller billede, skriv en note, eller træk og slip et billede her ..."
+  },
+  "common": {
+    "roles": {
+      "user": "Bruger",
+      "admin": "Admin"
+    },
+    "tags": "Tags",
+    "experimental": "Eksperimentel",
+    "role": "Rolle",
+    "archive": "Arkiv",
+    "actions": "Handlinger",
+    "action": "Handling",
+    "created_at": "Oprettet",
+    "attachments": "Vedhæftninger",
+    "screenshot": "Skærmbillede",
+    "something_went_wrong": "Noget gik galt",
+    "search": "Søg",
+    "key": "Nøgle",
+    "name": "Navn",
+    "note": "Note",
+    "url": "URL",
+    "email": "E-mail",
+    "password": "Adganskode",
+    "video": "Video",
+    "home": "Hjem"
+  },
+  "layouts": {
+    "masonry": "Fliser",
+    "grid": "Gitter",
+    "list": "Liste",
+    "compact": "Kompakt"
+  },
+  "lists": {
+    "all_lists": "Alle lister",
+    "favourites": "Stjernemarkeringer",
+    "new_list": "Ny liste",
+    "new_nested_list": "Ny underliste"
+  },
+  "preview": {
+    "view_original": "Se original",
+    "cached_content": "Cachelagret indhold"
+  },
+  "toasts": {
+    "bookmarks": {
+      "refetch": "Genhentning er blevet sat i kø!",
+      "full_page_archive": "Oprettelse af hele siden til arkivering er blevet igangsat",
+      "delete_from_list": "Bogmærket er blevet slettet fra listen",
+      "deleted": "Bogmærket er blevet slettet!",
+      "clipboard_copied": "Linket er kopieret til din udklipsholder!",
+      "updated": "Bogmærket er blevet opdateret!"
+    },
+    "lists": {
+      "created": "Listen er oprettet!",
+      "updated": "Listen er blevet opdateret!"
+    }
+  },
+  "cleanups": {
+    "cleanups": "Oprydning",
+    "duplicate_tags": {
+      "title": "Dublerede tags",
+      "merge_all_suggestions": "Sammenflet alle forslag?"
+    }
+  }
+}

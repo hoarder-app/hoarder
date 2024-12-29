@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import BookmarkAlreadyExistsToast from "@/components/utils/BookmarkAlreadyExistsToast";
 import { useClientConfig } from "@/lib/clientConfig";
+import { useTranslation } from "@/lib/i18n/client";
 import {
   useBookmarkLayout,
   useBookmarkLayoutSwitch,
@@ -31,6 +32,7 @@ function useFocusOnKeyPress(inputRef: React.RefObject<HTMLTextAreaElement>) {
       }
       if ((e.metaKey || e.ctrlKey) && e.code === "KeyE") {
         inputRef.current.focus();
+        e.preventDefault();
       }
     }
 
@@ -47,6 +49,7 @@ interface MultiUrlImportState {
 }
 
 export default function EditorCard({ className }: { className?: string }) {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const [multiUrlImportState, setMultiUrlImportState] =
@@ -180,11 +183,9 @@ export default function EditorCard({ className }: { className?: string }) {
         onSubmit={form.handleSubmit(onSubmit, onError)}
       >
         <div className="flex justify-between">
-          <p className="text-sm">NEW ITEM</p>
+          <p className="text-sm">{t("editor.new_item")}</p>
           <InfoTooltip size={15}>
-            <p className="text-center">
-              You can quickly focus on this field by pressing ⌘ + E
-            </p>
+            <p className="text-center">{t("editor.quickly_focus")}</p>
           </InfoTooltip>
         </div>
         <Separator />
@@ -197,9 +198,7 @@ export default function EditorCard({ className }: { className?: string }) {
                 "h-full w-full border-none p-0 text-lg focus-visible:ring-0",
                 { "resize-none": bookmarkLayout !== "list" },
               )}
-              placeholder={
-                "Paste a link or an image, write a note or drag and drop an image in here ..."
-              }
+              placeholder={t("editor.placeholder")}
               onKeyDown={(e) => {
                 if (demoMode) {
                   return;
@@ -222,16 +221,16 @@ export default function EditorCard({ className }: { className?: string }) {
         <ActionButton loading={isPending} type="submit" variant="default">
           {form.formState.dirtyFields.text
             ? demoMode
-              ? "Submissions are disabled"
-              : `Save (${OS === "macos" ? "⌘" : "Ctrl"} + Enter)`
-            : "Save"}
+              ? t("editor.disabled_submissions")
+              : `${t("actions.save")} (${OS === "macos" ? "⌘" : "Ctrl"} + Enter)`
+            : t("actions.save")}
         </ActionButton>
 
         {multiUrlImportState && (
           <MultipleChoiceDialog
             open={true}
-            title={`Import URLs as separate Bookmarks?`}
-            description={`The input contains multiple URLs on separate lines. Do you want to import them as separate bookmarks?`}
+            title={t("editor.multiple_urls_dialog_title")}
+            description={t("editor.multiple_urls_dialog_desc")}
             onOpenChange={(open) => {
               if (!open) {
                 setMultiUrlImportState(null);
@@ -251,7 +250,7 @@ export default function EditorCard({ className }: { className?: string }) {
                     setMultiUrlImportState(null);
                   }}
                 >
-                  Import as Text Bookmark
+                  {t("editor.import_as_text")}
                 </ActionButton>
               ),
               () => (
@@ -266,7 +265,7 @@ export default function EditorCard({ className }: { className?: string }) {
                     setMultiUrlImportState(null);
                   }}
                 >
-                  Import as separate Bookmarks
+                  {t("editor.import_as_separate_bookmarks")}
                 </ActionButton>
               ),
             ]}

@@ -8,6 +8,7 @@ import NextAuth, {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Provider } from "next-auth/providers/index";
+import requestIp from "request-ip";
 
 import { db } from "@hoarder/db";
 import {
@@ -17,7 +18,7 @@ import {
   verificationTokens,
 } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
-import { validatePassword } from "@hoarder/trpc/auth";
+import { logAuthenticationError, validatePassword } from "@hoarder/trpc/auth";
 
 type UserRole = "admin" | "user";
 
@@ -77,7 +78,7 @@ const providers: Provider[] = [
       email: { label: "Email", type: "email", placeholder: "Email" },
       password: { label: "Password", type: "password" },
     },
-    async authorize(credentials) {
+    async authorize(credentials, req) {
       if (!credentials) {
         return null;
       }
@@ -88,6 +89,12 @@ const providers: Provider[] = [
           credentials?.password,
         );
       } catch (e) {
+        const error = e as Error;
+        logAuthenticationError(
+          credentials?.email,
+          error.message,
+          requestIp.getClientIp({ headers: req.headers }),
+        );
         return null;
       }
     },
@@ -114,7 +121,7 @@ if (oauth.wellKnownUrl) {
       ]);
       return {
         id: profile.sub,
-        name: profile.name,
+        name: profile.name || profile.email,
         email: profile.email,
         image: profile.picture,
         role: admin || firstUser ? "admin" : "user",
@@ -146,7 +153,7 @@ export const authOptions: NextAuthOptions = {
       if (credentials) {
         return true;
       }
-      if (!profile?.email || !profile?.name) {
+      if (!profile?.email) {
         throw new Error("No profile");
       }
       const [{ count: userCount }] = await db

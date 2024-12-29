@@ -5,7 +5,6 @@ import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
 import FullPageError from "@/components/FullPageError";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
-import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
 import { MenuView } from "@react-native-menu/menu";
 import { Ellipsis } from "lucide-react-native";
@@ -25,9 +24,10 @@ export default function ListView() {
     <CustomSafeAreaView>
       <Stack.Screen
         options={{
-          headerTitle: "",
+          headerTitle: list ? `${list.icon} ${list.name}` : "",
           headerBackTitle: "Back",
-          headerTransparent: true,
+          headerLargeTitle: true,
+          headerRight: () => <ListActionsMenu listId={slug} />,
         }}
       />
       {error ? (
@@ -38,12 +38,6 @@ export default function ListView() {
             query={{
               listId: list.id,
             }}
-            header={
-              <View className="flex flex-row items-center justify-between">
-                <PageTitle title={`${list.icon} ${list.name}`} />
-                <ListActionsMenu listId={list.id} />
-              </View>
-            }
           />
         </View>
       ) : (

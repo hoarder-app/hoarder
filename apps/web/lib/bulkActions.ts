@@ -5,13 +5,19 @@ import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 interface BookmarkState {
   selectedBookmarks: ZBookmark[];
+  visibleBookmarks: ZBookmark[];
   isBulkEditEnabled: boolean;
   setIsBulkEditEnabled: (isEnabled: boolean) => void;
   toggleBookmark: (bookmark: ZBookmark) => void;
+  setVisibleBookmarks: (visibleBookmarks: ZBookmark[]) => void;
+  selectAll: () => void;
+  unSelectAll: () => void;
+  isEverythingSelected: () => boolean;
 }
 
 const useBulkActionsStore = create<BookmarkState>((set, get) => ({
   selectedBookmarks: [],
+  visibleBookmarks: [],
   isBulkEditEnabled: false,
 
   toggleBookmark: (bookmark: ZBookmark) => {
@@ -30,9 +36,26 @@ const useBulkActionsStore = create<BookmarkState>((set, get) => ({
     }
   },
 
+  selectAll: () => {
+    set({ selectedBookmarks: get().visibleBookmarks });
+  },
+  unSelectAll: () => {
+    set({ selectedBookmarks: [] });
+  },
+
+  isEverythingSelected: () => {
+    return get().selectedBookmarks.length === get().visibleBookmarks.length;
+  },
+
   setIsBulkEditEnabled: (isEnabled) => {
     set({ isBulkEditEnabled: isEnabled });
     set({ selectedBookmarks: [] });
+  },
+
+  setVisibleBookmarks: (visibleBookmarks: ZBookmark[]) => {
+    set({
+      visibleBookmarks,
+    });
   },
 }));
 

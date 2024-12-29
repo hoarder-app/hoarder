@@ -190,6 +190,76 @@
       "when": 1720334457344,
       "tag": "0026_silky_imperial_guard",
       "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "6",
+      "when": 1727572281889,
+      "tag": "0027_cute_talon",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "6",
+      "when": 1728149644203,
+      "tag": "0028_melodic_norrin_radd",
+      "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "6",
+      "when": 1728214930701,
+      "tag": "0029_short_gunslinger",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "6",
+      "when": 1728220453621,
+      "tag": "0030_blue_synch",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "6",
+      "when": 1729980727614,
+      "tag": "0031_yummy_famine",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "6",
+      "when": 1730653452808,
+      "tag": "0032_futuristic_shiva",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "6",
+      "when": 1731106561236,
+      "tag": "0033_nappy_molten_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "6",
+      "when": 1732990622928,
+      "tag": "0034_wet_the_stranger",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "6",
+      "when": 1735291137509,
+      "tag": "0035_gorgeous_may_parker",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "6",
+      "when": 1735308236125,
+      "tag": "0036_luxuriant_white_queen",
+      "breakpoints": true
     }
   ]
 }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -9,19 +9,24 @@ import Draggable from "react-draggable";
 
 import { useMergeTag } from "@hoarder/shared-react/hooks/tags";
 
-import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";
-
 export function TagPill({
   id,
   name,
   count,
   isDraggable,
+  onOpenDialog,
 }: {
   id: string;
   name: string;
   count: number;
   isDraggable: boolean;
+  onOpenDialog: (tag: { id: string; name: string }) => void;
 }) {
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseOver = () => setIsHovered(true);
+  const handleMouseOut = () => setIsHovered(false);
+
   const { mutate: mergeTag } = useMergeTag({
     onSuccess: () => {
       toast({
@@ -62,6 +67,39 @@ export function TagPill({
     },
   );
 
+  const pill = (
+    <div
+      className="group relative flex"
+      onMouseOver={handleMouseOver}
+      onFocus={handleMouseOver}
+      onMouseOut={handleMouseOut}
+      onBlur={handleMouseOut}
+    >
+      <Link
+        className={
+          "flex gap-2 rounded-md border border-border bg-background px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
+        }
+        href={`/dashboard/tags/${id}`}
+        data-id={id}
+      >
+        {name} <Separator orientation="vertical" /> {count}
+      </Link>
+
+      {isHovered && !isDraggable && (
+        <Button
+          size="none"
+          variant="secondary"
+          className="-translate-1/2 absolute -right-1 -top-1 hidden rounded-full group-hover:block"
+          onClick={() => onOpenDialog({ id, name })}
+        >
+          <X className="size-3" />
+        </Button>
+      )}
+    </div>
+  );
+  if (!isDraggable) {
+    return pill;
+  }
   return (
     <Draggable
       key={id}
@@ -72,27 +110,7 @@ export function TagPill({
       defaultClassNameDragging={"position-relative z-10 pointer-events-none"}
       position={{ x: 0, y: 0 }}
     >
-      <div className="group relative flex">
-        <Link
-          className={
-            "flex gap-2 rounded-md border border-border bg-background px-2 py-1 text-foreground hover:bg-foreground hover:text-background"
-          }
-          href={`/dashboard/tags/${id}`}
-          data-id={id}
-        >
-          {name} <Separator orientation="vertical" /> {count}
-        </Link>
-
-        <DeleteTagConfirmationDialog tag={{ name, id }}>
-          <Button
-            size="none"
-            variant="secondary"
-            className="-translate-1/2 absolute -right-1 -top-1 hidden rounded-full group-hover:block"
-          >
-            <X className="size-3" />
-          </Button>
-        </DeleteTagConfirmationDialog>
-      </div>
+      {pill}
     </Draggable>
   );
 }

@@ -4,7 +4,6 @@ import UpdatingBookmarkList from "@/components/bookmarks/UpdatingBookmarkList";
 import FullPageError from "@/components/FullPageError";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
-import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
 
 export default function TagView() {
@@ -19,9 +18,10 @@ export default function TagView() {
     <CustomSafeAreaView>
       <Stack.Screen
         options={{
-          headerTitle: "",
+          headerTitle: tag?.name ?? "",
           headerBackTitle: "Back",
           headerTransparent: true,
+          headerLargeTitle: true,
         }}
       />
       {error ? (
@@ -32,7 +32,6 @@ export default function TagView() {
             query={{
               tagId: tag.id,
             }}
-            header={<PageTitle title={tag.name} />}
           />
         </View>
       ) : (

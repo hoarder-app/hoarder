@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.1.1",
-    "prettier": "^3.2.5",
+    "prettier": "^3.4.2",
     "prettier-plugin-tailwindcss": "^0.5.11"
   },
   "devDependencies": {
