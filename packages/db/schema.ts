@@ -223,7 +223,9 @@ export const highlights = sqliteTable(
     endOffset: integer("endOffset").notNull(),
     color: text("color", {
       enum: ["red", "green", "blue", "yellow"],
-    }).default("yellow").notNull(),
+    })
+      .default("yellow")
+      .notNull(),
     text: text("text"),
     note: text("note"),
     createdAt: createdAtField(),
@@ -258,6 +260,32 @@ export const bookmarkAssets = sqliteTable("bookmarkAssets", {
   fileName: text("fileName"),
   sourceUrl: text("sourceUrl"),
 });
+
+export const bookmarkEmbeddings = sqliteTable(
+  "bookmarkEmbeddings",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    bookmarkId: text("bookmarkId")
+      .notNull()
+      .references(() => bookmarks.id, { onDelete: "cascade" }),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    embedding: text("embedding").notNull(),
+    embeddingType: text("embeddingType", {
+      enum: ["description", "content_full", "content_chunk"],
+    }).notNull(),
+    fromOffset: integer("fromOffset"),
+    toOffset: integer("toOffset"),
+  },
+  (tb) => ({
+    bookmarkIdIdx: index("bookmarkEmbeddings_bookmarkId_idx").on(tb.bookmarkId),
+    userIdIdx: index("bookmarkEmbeddings_userId_idx").on(tb.userId),
+  }),
+);
 
 export const bookmarkTags = sqliteTable(
   "bookmarkTags",
