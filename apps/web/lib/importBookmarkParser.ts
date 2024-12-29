@@ -140,3 +140,39 @@ export async function parseOmnivoreBookmarkFile(
     };
   });
 }
+
+export async function parseLinkwardenBookmarkFile(
+  file: File,
+): Promise<ParsedBookmark[]> {
+  const textContent = await file.text();
+  const zLinkwardenExportSchema = z.object({
+    collections: z.array(
+      z.object({
+        links: z.array(
+          z.object({
+            name: z.string(),
+            url: z.string(),
+            tags: z.array(z.object({ name: z.string() })),
+            createdAt: z.coerce.date(),
+          }),
+        ),
+      }),
+    ),
+  });
+
+  const parsed = zLinkwardenExportSchema.safeParse(JSON.parse(textContent));
+  if (!parsed.success) {
+    throw new Error(
+      `The uploaded JSON file contains an invalid Linkwarden bookmark file: ${parsed.error.toString()}`,
+    );
+  }
+
+  return parsed.data.collections.flatMap((collection) => {
+    return collection.links.map((bookmark) => ({
+      title: bookmark.name ?? "",
+      content: { type: BookmarkTypes.LINK as const, url: bookmark.url },
+      tags: bookmark.tags.map((tag) => tag.name),
+      addDate: bookmark.createdAt.getTime() / 1000,
+    }));
+  });
+}

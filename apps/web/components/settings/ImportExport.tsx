@@ -11,6 +11,7 @@ import { useTranslation } from "@/lib/i18n/client";
 import {
   ParsedBookmark,
   parseHoarderBookmarkFile,
+  parseLinkwardenBookmarkFile,
   parseNetscapeBookmarkFile,
   parseOmnivoreBookmarkFile,
   parsePocketBookmarkFile,
@@ -121,7 +122,7 @@ export function ImportExportRow() {
       source,
     }: {
       file: File;
-      source: "html" | "pocket" | "omnivore" | "hoarder";
+      source: "html" | "pocket" | "omnivore" | "hoarder" | "linkwarden";
     }) => {
       if (source === "html") {
         return await parseNetscapeBookmarkFile(file);
@@ -131,6 +132,8 @@ export function ImportExportRow() {
         return await parseHoarderBookmarkFile(file);
       } else if (source === "omnivore") {
         return await parseOmnivoreBookmarkFile(file);
+      } else if (source === "linkwarden") {
+        return await parseLinkwardenBookmarkFile(file);
       } else {
         throw new Error("Unknown source");
       }
@@ -229,6 +232,18 @@ export function ImportExportRow() {
         >
           <Upload />
           <p>{t("settings.import.import_bookmarks_from_omnivore_export")}</p>
+        </FilePickerButton>
+        <FilePickerButton
+          loading={false}
+          accept=".json"
+          multiple={false}
+          className="flex items-center gap-2"
+          onFileSelect={(file) =>
+            runUploadBookmarkFile({ file, source: "linkwarden" })
+          }
+        >
+          <Upload />
+          <p>{t("settings.import.import_bookmarks_from_linkwarden_export")}</p>
         </FilePickerButton>
         <FilePickerButton
           loading={false}
