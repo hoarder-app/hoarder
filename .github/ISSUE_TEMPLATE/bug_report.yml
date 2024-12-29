@@ -7,7 +7,7 @@ body:
       value: |
         Thanks for taking the time to fill out a bug report!
         Please note that this form is for reporting bugs in existing supported functionality.
-        
+
         If you are reporting something that's not an issue in functionality we've previously supported and/or is simply something different to your expectations, then it may be more appropriate to raise via a feature or support request instead.
   - type: textarea
     id: description
@@ -59,3 +59,13 @@ body:
       placeholder: (eg. v0.18.0)
     validations:
       required: true
+
+  - type: checkboxes
+    id: confirm-troubleshooting
+    attributes:
+      label: Have you checked the troubleshooting guide?
+      description: |
+        We have a troubleshooting guide that you can find [here](https://docs.hoarder.app/next/troubleshooting). Please check it out as you might find a solution to your problem.
+      options:
+        - label: I have checked the troubleshooting guide and I haven't found a solution to my problem
+          required: true
