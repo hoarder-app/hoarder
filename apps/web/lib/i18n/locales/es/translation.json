@@ -22,7 +22,9 @@
     "password": "Contraseña",
     "key": "Clave",
     "experimental": "Experimental",
-    "note": "Nota"
+    "note": "Nota",
+    "highlights": "Destacados",
+    "source": "Fuente"
   },
   "settings": {
     "info": {
@@ -57,7 +59,8 @@
       "imported_bookmarks": "Marcadores importados",
       "import_bookmarks_from_hoarder_export": "Importar marcadores desde exportación de Hoarder",
       "import_bookmarks_from_html_file": "Importar marcadores desde archivo HTML",
-      "import_bookmarks_from_omnivore_export": "Importar marcadores desde exportación de Omnivore"
+      "import_bookmarks_from_omnivore_export": "Importar marcadores desde exportación de Omnivore",
+      "import_bookmarks_from_linkwarden_export": "Importar marcadores desde Linkwarden"
     },
     "api_keys": {
       "api_keys": "Claves APIs",
@@ -252,10 +255,13 @@
     }
   },
   "cleanups": {
-    "cleanups": "Cleanups",
+    "cleanups": "Limpiezas",
     "duplicate_tags": {
       "title": "Etiquetas duplicadas",
       "merge_all_suggestions": "¿Fusionar todas las sugerencias?"
     }
+  },
+  "highlights": {
+    "no_highlights": "Aún no tienes nada destacado."
   }
 }
