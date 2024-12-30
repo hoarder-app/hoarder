@@ -8,7 +8,8 @@
       "delete_user": "Izbriši korisnika",
       "confirm_password": "Potvrdi lozinku",
       "create_user": "Kreiraj korisnika",
-      "change_role": "Promijeni ulogu"
+      "change_role": "Promijeni ulogu",
+      "asset_sizes": "Veličine resursa"
     },
     "admin_settings": "Postavke administratora",
     "server_stats": {
@@ -24,14 +25,18 @@
       "job": "Zadatak",
       "pending": "Na čekanju",
       "queued": "U čekanju",
-      "failed": "Neuspješno"
+      "failed": "Neuspješno",
+      "inference_jobs": "Zadaci zaključivanja",
+      "tidy_assets_jobs": "Zadaci čišćenja resursa"
     },
     "actions": {
       "recrawl_failed_links_only": "Ponovno pregledavanje samo neuspjelih veza",
       "regenerate_ai_tags_for_failed_bookmarks_only": "Ponovno generiranje AI oznaka samo za neuspjele oznake",
       "reindex_all_bookmarks": "Ponovno indeksiranje svih oznaka",
       "recrawl_all_links": "Ponovno pregledavanje svih veza",
-      "regenerate_ai_tags_for_all_bookmarks": "Ponovno generiranje AI oznaka za sve oznake"
+      "regenerate_ai_tags_for_all_bookmarks": "Ponovno generiranje AI oznaka za sve oznake",
+      "without_inference": "Bez zaključivanja",
+      "compact_assets": "Kompaktiranje resursa"
     }
   },
   "layouts": {
@@ -111,6 +116,10 @@
       "last_crawled_at": "Posljednjo pregledano u",
       "crawling_status": "Status pregledavanja",
       "crawling_failed": "Pregledavanje nije uspjelo"
+    },
+    "feeds": {
+      "rss_subscriptions": "RSS pretplate",
+      "add_a_subscription": "Dodaj pretplatu"
     }
   },
   "actions": {
@@ -156,7 +165,8 @@
   "lists": {
     "all_lists": "Svi popisi",
     "favourites": "Omiljeni",
-    "new_list": "Novi popis"
+    "new_list": "Novi popis",
+    "new_nested_list": "Novi ugniježđeni popis"
   },
   "tags": {
     "all_tags": "Sve oznake",
@@ -180,6 +190,78 @@
     "import_as_text": "Uvoz kao tekstualnu oznaku",
     "import_as_separate_bookmarks": "Uvoz kao odvojene oznake",
     "multiple_urls_dialog_title": "Uvoz URL-ova kao odvojene oznake?",
-    "multiple_urls_dialog_desc": "Unos sadrži više URL-ova na odvojenim redovima. Želite li ih uvesti kao odvojene oznake?"
+    "multiple_urls_dialog_desc": "Unos sadrži više URL-ova na odvojenim redovima. Želite li ih uvesti kao odvojene oznake?",
+    "placeholder": "Zalijepite vezu ili sliku, napišite bilješku ili povucite i ispustite sliku ovdje...",
+    "new_item": "NOVI ITEM",
+    "disabled_submissions": "Podnošenja su onemogućena",
+    "text_toolbar": {
+      "undo": "Poništi",
+      "redo": "Ponovi",
+      "bold": "Podebljano",
+      "italic": "Kurziv",
+      "underline": "Podcrtano",
+      "strikethrough": "Prekriženo",
+      "code": "Kod",
+      "highlight": "Označeno",
+      "align_left": "Poravnaj lijevo",
+      "align_center": "Poravnaj centar",
+      "align_right": "Poravnaj desno",
+      "markdown_shortcuts": {
+        "label": "Prečaci za Markdown",
+        "heading": {
+          "label": "Naslov",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "blockquote": {
+          "label": "Citat blokova",
+          "example": "> Citat blokova"
+        },
+        "ordered_list": {
+          "label": "Numerirana lista",
+          "example": "1. Stavka liste"
+        },
+        "unordered_list": {
+          "label": "Nenumirirana lista",
+          "example": "- Stavka liste"
+        },
+        "inline_code": {
+          "label": "Inline kod",
+          "example": "`Kod`"
+        },
+        "block_code": {
+          "label": "Blok kod",
+          "example": "``` + razmak"
+        },
+        "italic": {
+          "example": "*Italic* ili _Italic_ ili CTRL+i",
+          "label": "Kurziv"
+        },
+        "bold": {
+          "example": "**text** ili CTRL+b",
+          "label": "Podebljano"
+        }
+      }
+    }
+  },
+  "toasts": {
+    "bookmarks": {
+      "updated": "Oznaka je ažurirana!",
+      "deleted": "Oznaka je izbrisana!",
+      "refetch": "Ponovno preuzimanje je stavljeno u čekanje!",
+      "full_page_archive": "Pokrenuto je stvaranje potpune arhive stranice",
+      "delete_from_list": "Oznaka je izbrisana s popisa",
+      "clipboard_copied": "Veza je dodana u vaš međuspremnik!"
+    },
+    "lists": {
+      "created": "Popis je kreiran!",
+      "updated": "Popis je ažuriran!"
+    }
+  },
+  "cleanups": {
+    "cleanups": "Čišćenje",
+    "duplicate_tags": {
+      "title": "Duplikatne oznake",
+      "merge_all_suggestions": "Spojiti sve prijedloge?"
+    }
   }
 }
