@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@hoarder/trpc": "workspace:^0.1.0",
-    "@hoarderapp/sdk": "workspace:^0.20.0",
+    "@hoarderapp/sdk": "^0.20.0",
     "superjson": "^2.2.1"
   },
   "devDependencies": {

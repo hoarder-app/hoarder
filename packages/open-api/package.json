@@ -17,7 +17,7 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "generate": "tsx index.ts && pnpm dlx openapi-typescript hoarder-openapi-spec.json -o hoarder-api.d.ts",
+    "generate": "tsx index.ts",
     "format": "prettier . --ignore-path ../../.prettierignore",
     "lint": "eslint ."
   },
