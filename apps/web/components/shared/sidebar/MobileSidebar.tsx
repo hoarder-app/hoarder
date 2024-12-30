@@ -1,14 +1,19 @@
-import MobileSidebarItem from "@/components/shared/sidebar/ModileSidebarItem";
 import { useTranslation } from "@/lib/i18n/server";
+import { TFunction } from "i18next";
 
-import { adminSidebarItems } from "./items";
+import MobileSidebarItem from "./ModileSidebarItem";
+import { TSidebarItem } from "./TSidebarItem";
 
-export default async function MobileSidebar() {
+export default async function MobileSidebar({
+  items,
+}: {
+  items: (t: TFunction) => TSidebarItem[];
+}) {
   const { t } = await useTranslation();
   return (
     <aside className="w-full">
       <ul className="flex justify-between space-x-2 border-b-black px-5 py-2 pt-5">
-        {adminSidebarItems(t).map((item) => (
+        {items(t).map((item) => (
           <MobileSidebarItem
             key={item.name}
             logo={item.icon}

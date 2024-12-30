@@ -1,11 +1,41 @@
 import { redirect } from "next/navigation";
 import { AdminCard } from "@/components/admin/AdminCard";
 import { AdminNotices } from "@/components/admin/AdminNotices";
-import MobileAdminSidebar from "@/components/admin/sidebar/MobileSidebar";
-import AdminSidebar from "@/components/admin/sidebar/Sidebar";
-import Header from "@/components/dashboard/header/Header";
-import { Separator } from "@/components/ui/separator";
+import MobileSidebar from "@/components/shared/sidebar/MobileSidebar";
+import Sidebar from "@/components/shared/sidebar/Sidebar";
+import SidebarLayout from "@/components/shared/sidebar/SidebarLayout";
 import { getServerAuthSession } from "@/server/auth";
+import { TFunction } from "i18next";
+import { Activity, ArrowLeft, Settings, Users } from "lucide-react";
+
+const adminSidebarItems = (
+  t: TFunction,
+): {
+  name: string;
+  icon: JSX.Element;
+  path: string;
+}[] => [
+  {
+    name: t("settings.back_to_app"),
+    icon: <ArrowLeft size={18} />,
+    path: "/dashboard/bookmarks",
+  },
+  {
+    name: t("admin.server_stats.server_stats"),
+    icon: <Activity size={18} />,
+    path: "/admin/overview",
+  },
+  {
+    name: t("admin.users_list.users_list"),
+    icon: <Users size={18} />,
+    path: "/admin/users",
+  },
+  {
+    name: t("common.actions"),
+    icon: <Settings size={18} />,
+    path: "/admin/actions",
+  },
+];
 
 export default async function AdminLayout({
   children,
@@ -18,23 +48,14 @@ export default async function AdminLayout({
   }
 
   return (
-    <div>
-      <Header />
-      <div className="flex min-h-[calc(100vh-64px)] w-screen flex-col sm:h-[calc(100vh-64px)] sm:flex-row">
-        <div className="hidden flex-none sm:flex">
-          <AdminSidebar />
-        </div>
-        <main className="flex-1 bg-muted sm:overflow-y-auto">
-          <div className="block w-full sm:hidden">
-            <MobileAdminSidebar />
-            <Separator />
-          </div>
-          <div className="min-h-30 container flex flex-col gap-1 p-4">
-            <AdminNotices />
-            <AdminCard>{children}</AdminCard>
-          </div>
-        </main>
+    <SidebarLayout
+      sidebar={<Sidebar items={adminSidebarItems} />}
+      mobileSidebar={<MobileSidebar items={adminSidebarItems} />}
+    >
+      <div className="flex flex-col gap-1">
+        <AdminNotices />
+        <AdminCard>{children}</AdminCard>
       </div>
-    </div>
+    </SidebarLayout>
   );
 }

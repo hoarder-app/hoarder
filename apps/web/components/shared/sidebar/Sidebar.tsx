@@ -1,24 +1,25 @@
-import { redirect } from "next/navigation";
-import SidebarItem from "@/components/shared/sidebar/SidebarItem";
 import { useTranslation } from "@/lib/i18n/server";
-import { getServerAuthSession } from "@/server/auth";
+import { TFunction } from "i18next";
 
 import serverConfig from "@hoarder/shared/config";
 
-import { adminSidebarItems } from "./items";
+import SidebarItem from "./SidebarItem";
+import { TSidebarItem } from "./TSidebarItem";
 
-export default async function Sidebar() {
+export default async function Sidebar({
+  items,
+  extraSections,
+}: {
+  items: (t: TFunction) => TSidebarItem[];
+  extraSections?: React.ReactNode;
+}) {
   const { t } = await useTranslation();
-  const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/");
-  }
 
   return (
     <aside className="flex h-[calc(100vh-64px)] w-60 flex-col gap-5 border-r p-4 ">
       <div>
         <ul className="space-y-2 text-sm font-medium">
-          {adminSidebarItems(t).map((item) => (
+          {items(t).map((item) => (
             <SidebarItem
               key={item.name}
               logo={item.icon}
@@ -28,6 +29,7 @@ export default async function Sidebar() {
           ))}
         </ul>
       </div>
+      {extraSections}
       <div className="mt-auto flex items-center border-t pt-2 text-sm text-gray-400">
         Hoarder v{serverConfig.serverVersion}
       </div>
