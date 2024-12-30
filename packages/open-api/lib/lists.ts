@@ -120,7 +120,7 @@ registry.registerPath({
 
 registry.registerPath({
   method: "patch",
-  path: "/list/{listId}",
+  path: "/lists/{listId}",
   description: "Update list by its id",
   summary: "Update a list",
   tags: ["Lists"],

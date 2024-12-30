@@ -483,22 +483,6 @@ export interface paths {
     };
     options?: never;
     head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/list/{listId}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
     /**
      * Update a list
      * @description Update list by its id

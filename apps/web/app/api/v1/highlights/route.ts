@@ -25,6 +25,6 @@ export const POST = (req: NextRequest) =>
     bodySchema: zNewHighlightSchema,
     handler: async ({ body, api }) => {
       const resp = await api.highlights.create(body!);
-      return { status: 200, resp };
+      return { status: 201, resp };
     },
   });

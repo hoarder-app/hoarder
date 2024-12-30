@@ -1136,9 +1136,7 @@
             "description": "No content - the bookmark was deleted"
           }
         }
-      }
-    },
-    "/list/{listId}": {
+      },
       "patch": {
         "description": "Update list by its id",
         "summary": "Update a list",
