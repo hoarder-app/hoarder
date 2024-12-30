@@ -1,5 +1,6 @@
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { ActionButton } from "@/components/ui/action-button";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -10,16 +11,16 @@ import { useTranslation } from "@/lib/i18n/client";
 import { Trash2 } from "lucide-react";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
-import {
-  useDeleteBookmark,
-  useUpdateBookmark,
-} from "@hoarder/shared-react/hooks/bookmarks";
+import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
 
+import DeleteBookmarkConfirmationDialog from "../bookmarks/DeleteBookmarkConfirmationDialog";
 import { ArchivedActionIcon, FavouritedActionIcon } from "../bookmarks/icons";
 
 export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   const { t } = useTranslation();
-  const router = useRouter();
+  const [deleteBookmarkDialogOpen, setDeleteBookmarkDialogOpen] =
+    useState(false);
+
   const onError = () => {
     toast({
       variant: "destructive",
@@ -41,16 +42,6 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         toast({
           description: `The bookmark has been ${resp.archived ? "Archived" : "Un-archived"}!`,
         });
-      },
-      onError,
-    });
-  const { mutate: deleteBookmark, isPending: pendingDeletion } =
-    useDeleteBookmark({
-      onSuccess: () => {
-        toast({
-          description: "The bookmark has been deleted!",
-        });
-        router.back();
       },
       onError,
     });
@@ -100,17 +91,19 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         </TooltipContent>
       </Tooltip>
       <Tooltip delayDuration={0}>
+        <DeleteBookmarkConfirmationDialog
+          bookmark={bookmark}
+          open={deleteBookmarkDialogOpen}
+          setOpen={setDeleteBookmarkDialogOpen}
+        />
         <TooltipTrigger asChild>
-          <ActionButton
-            loading={pendingDeletion}
+          <Button
             className="size-14 rounded-full bg-background"
             variant="none"
-            onClick={() => {
-              deleteBookmark({ bookmarkId: bookmark.id });
-            }}
+            onClick={() => setDeleteBookmarkDialogOpen(true)}
           >
             <Trash2 />
-          </ActionButton>
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom">{t("actions.delete")}</TooltipContent>
       </Tooltip>
