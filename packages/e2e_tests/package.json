@@ -1,27 +1,28 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@hoarder/open-api",
+  "name": "@hoarder/e2e_tests",
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "format": "prettier . --ignore-path ../../.prettierignore",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
   "dependencies": {
-    "@asteasolutions/zod-to-openapi": "^7.2.0",
-    "@hoarder/shared": "workspace:^0.1.0",
-    "zod": "^3.22.4"
+    "@hoarder/trpc": "workspace:^0.1.0",
+    "@hoarderapp/sdk": "workspace:^0.20.0",
+    "superjson": "^2.2.1"
   },
   "devDependencies": {
     "@hoarder/eslint-config": "workspace:^0.2.0",
     "@hoarder/prettier-config": "workspace:^0.1.0",
     "@hoarder/tsconfig": "workspace:^0.1.0",
-    "tsx": "^4.7.1"
+    "vite-tsconfig-paths": "^4.3.1",
+    "vitest": "^1.3.1"
   },
-  "scripts": {
-    "typecheck": "tsc --noEmit",
-    "generate": "tsx index.ts && pnpm dlx openapi-typescript hoarder-openapi-spec.json -o hoarder-api.d.ts",
-    "format": "prettier . --ignore-path ../../.prettierignore",
-    "lint": "eslint ."
-  },
-  "main": "index.ts",
   "eslintConfig": {
     "root": true,
     "extends": [
