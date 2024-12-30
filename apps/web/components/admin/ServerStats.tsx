@@ -73,7 +73,7 @@ export default function ServerStats() {
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <div className="mb-2 text-xl font-medium">
         {t("admin.server_stats.server_stats")}
       </div>
@@ -143,6 +143,6 @@ export default function ServerStats() {
           </TableBody>
         </Table>
       </div>
-    </>
+    </div>
   );
 }

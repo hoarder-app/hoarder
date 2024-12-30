@@ -55,7 +55,7 @@ export default function UsersSection() {
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <div className="mb-2 flex items-center justify-between text-xl font-medium">
         <span>{t("admin.users_list.users_list")}</span>
         <AddUserDialog>
@@ -125,6 +125,6 @@ export default function UsersSection() {
           ))}
         </TableBody>
       </Table>
-    </>
+    </div>
   );
 }

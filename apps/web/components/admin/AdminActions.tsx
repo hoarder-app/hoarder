@@ -71,7 +71,7 @@ export default function AdminActions() {
 
   return (
     <div>
-      <div className="mb-2 mt-8 text-xl font-medium">{t("common.actions")}</div>
+      <div className="mb-2 text-xl font-medium">{t("common.actions")}</div>
       <div className="flex flex-col gap-2 sm:w-1/2">
         <ActionButton
           variant="destructive"
