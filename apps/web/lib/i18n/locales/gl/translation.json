@@ -34,16 +34,16 @@
     "edit_tags": "Editar etiquetas",
     "select_all": "Seleccionar todo",
     "unselect_all": "Deseleccionar todo",
-    "copy_link": "Copiar enlace",
+    "copy_link": "Copiar ligazón",
     "unarchive": "Desarquivar",
     "recrawl": "Volver a facer un crawl",
     "download_full_page_archive": "Descargar Arquivo da Páxina Completa",
     "add_to_list": "Agregar á lista",
-    "save": "Guardar",
-    "add": "Añadir",
+    "save": "Gardar",
+    "add": "Engadir",
     "edit": "Editar",
     "create": "Crear",
-    "fetch_now": "Actualizar ahora",
+    "fetch_now": "Actualizar agora",
     "summarize_with_ai": "Resumir con IA",
     "edit_title": "Cambiar título",
     "sign_out": "Cerrar sesión",
@@ -52,7 +52,7 @@
     "close_bulk_edit": "Cerrar editor en masa",
     "bulk_edit": "Editar en masa",
     "manage_lists": "Administrar listas",
-    "remove_from_list": "Eliminar de la lista",
+    "remove_from_list": "Eliminar da lista",
     "cancel": "Cancelar",
     "apply_all": "Aplicar todo",
     "ignore": "Ignorar",
@@ -60,37 +60,37 @@
     "archive": "Arquivar"
   },
   "tags": {
-    "drag_and_drop_merging_info": "Arrastra y suelta etiquetas sobre otras para unirlas",
-    "all_tags": "Todas las etiquetas",
-    "your_tags": "Tus etiquetas",
-    "your_tags_info": "Etiquetas que has añadido al menos una vez",
+    "drag_and_drop_merging_info": "Arrastra e solta etiquetas sobre outras para unilas",
+    "all_tags": "Todas as etiquetas",
+    "your_tags": "Tuas etiquetas",
+    "your_tags_info": "Etiquetas que engadiches polo menos unha vez",
     "ai_tags": "Etiquetas IA",
     "ai_tags_info": "Etiquetas solo usadas automáticamente (por IA)",
-    "unused_tags": "Etiquetas sin usar",
-    "unused_tags_info": "Etiquetas sin marcadores",
-    "delete_all_unused_tags": "Eliminar etiquetas no usadas",
-    "drag_and_drop_merging": "Fusionar arrastrando y soltando",
-    "sort_by_name": "Ordenar por nombre"
+    "unused_tags": "Etiquetas sen usar",
+    "unused_tags_info": "Etiquetas sen marcadores",
+    "delete_all_unused_tags": "Eliminar etiquetas sen usar",
+    "drag_and_drop_merging": "Fusionar arrastrando e soltando",
+    "sort_by_name": "Ordenar por nome"
   },
   "toasts": {
     "bookmarks": {
-      "updated": "¡El marcador se ha actualizado!",
-      "deleted": "¡El marcador se ha eliminado!",
-      "refetch": "¡Se ha solicitado la actualización!",
-      "full_page_archive": "Se ha pedido un Archivo de Página Completa",
-      "delete_from_list": "El marcador se ha borrado de la lista",
-      "clipboard_copied": "¡El enlace se ha copiado en tu portapapeles!"
+      "updated": "O marcador actualizouse!",
+      "deleted": "O marcador eliminouse!",
+      "refetch": "Solicitouse a actualización!",
+      "full_page_archive": "Pediuse un Arquivo de Páxina Completa",
+      "delete_from_list": "O marcador borrouse da lista",
+      "clipboard_copied": "A ligazón copiouse no teu portapapeis!"
     },
     "lists": {
-      "updated": "¡La lista ha sido actualizada!",
-      "created": "¡Enlace creado correctamente!"
+      "updated": "A lista foi actualizada!",
+      "created": "Enlace creado correctamente!"
     }
   },
   "cleanups": {
-    "cleanups": "Limpiezas",
+    "cleanups": "Limpezas",
     "duplicate_tags": {
       "title": "Etiquetas duplicadas",
-      "merge_all_suggestions": "¿Fusionar todas las sugerencias?"
+      "merge_all_suggestions": "Fusionar todas as suxestións?"
     }
   },
   "layouts": {
@@ -103,143 +103,143 @@
     "import": {
       "import_export": "Importar / Exportar",
       "import_export_bookmarks": "Importar / Exportar marcadores",
-      "import_bookmarks_from_html_file": "Importar marcadores desde archivo HTML",
-      "import_bookmarks_from_pocket_export": "Importar marcadores desde exportación de Pocket",
-      "import_bookmarks_from_omnivore_export": "Importar marcadores desde exportación de Omnivore",
+      "import_bookmarks_from_html_file": "Importar marcadores desde arquivo HTML",
+      "import_bookmarks_from_pocket_export": "Importar marcadores desde Pocket",
+      "import_bookmarks_from_omnivore_export": "Importar marcadores desde Omnivore",
       "import_bookmarks_from_linkwarden_export": "Importar marcadores desde Linkwarden",
-      "import_bookmarks_from_hoarder_export": "Importar marcadores desde exportación de Hoarder",
-      "export_links_and_notes": "Exportar links y notas",
+      "import_bookmarks_from_hoarder_export": "Importar marcadores desde Hoarder",
+      "export_links_and_notes": "Exportar links e notas",
       "imported_bookmarks": "Marcadores importados"
     },
-    "back_to_app": "Volver a la aplicación",
-    "user_settings": "Ajustes de usuario",
+    "back_to_app": "Volver á aplicación",
+    "user_settings": "Axustes de usuario",
     "info": {
-      "user_info": "Información del usuario",
+      "user_info": "Información do usuario",
       "basic_details": "Detalles básicos",
-      "change_password": "Cambiar contraseña",
-      "current_password": "Contraseña actual",
-      "new_password": "Nueva contraseña",
-      "confirm_new_password": "Confirmar nueva contraseña",
-      "options": "Ajustes",
-      "interface_lang": "Idioma de la interfaz"
+      "change_password": "Cambiar contrasinal",
+      "current_password": "Contrasinal actual",
+      "new_password": "Novo contrasinal",
+      "confirm_new_password": "Confirmar novo contrasinal",
+      "options": "Axustes",
+      "interface_lang": "Idioma de la interface"
     },
     "ai": {
-      "ai_settings": "Ajustes de la IA",
-      "tagging_rules": "Reglas de etiquetado",
-      "tagging_rule_description": "Los prompts que añadas aquí se incluirán como reglas durante la generación de etiquetas. Puedes comprobar el prompt final en la sección de previsualización.",
+      "ai_settings": "Axustes de la IA",
+      "tagging_rules": "Regras de etiquetado",
+      "tagging_rule_description": "Os prompts que engadas aquí incluiranse como regras durante la xeración de etiquetas. Podes comprobar o prompt final na sección de previsualización.",
       "prompt_preview": "Previsualización",
       "text_prompt": "Prompt para texto",
-      "images_prompt": "Prompt para Imagen"
+      "images_prompt": "Prompt para Imaxen"
     },
     "feeds": {
-      "rss_subscriptions": "Subscripciones RSS",
-      "add_a_subscription": "Añadir subscripción"
+      "rss_subscriptions": "Subscricións RSS",
+      "add_a_subscription": "Engadir subscrición"
     },
     "api_keys": {
-      "api_keys": "Claves APIs",
-      "new_api_key": "Crear clave API",
-      "new_api_key_desc": "Dale a la clave API un nombre único",
-      "key_success": "Clave creada correctamente",
-      "key_success_please_copy": "Copia la clave y guárdala en un lugar seguro. Una vez cierres este mensaje, no podrás volver a verla."
+      "api_keys": "Chaves APIs",
+      "new_api_key": "Crear chave API",
+      "new_api_key_desc": "Ponlle a chave API un nome único",
+      "key_success": "Chave creada correctamente",
+      "key_success_please_copy": "Copia a chave e garda a nun lugar seguro. Unha vez cerres este mensaxe, non o poderás volver a ver."
     },
     "broken_links": {
-      "broken_links": "Enlaces rotos",
-      "last_crawled_at": "Última vez indexado:",
-      "crawling_status": "Estado de la indexación",
-      "crawling_failed": "Indexado fallido"
+      "broken_links": "Ligazóns rotos",
+      "last_crawled_at": "Indexado por ultima vez",
+      "crawling_status": "Estado da indexación",
+      "crawling_failed": "Indexado errado"
     }
   },
   "highlights": {
-    "no_highlights": "Aún no tienes nada destacado."
+    "no_highlights": "Inda non tés nada destacado."
   },
   "admin": {
-    "admin_settings": "Ajustes de Administrador",
+    "admin_settings": "Axustes de Administrador",
     "server_stats": {
-      "server_stats": "Estadísticas del servidor",
+      "server_stats": "Estatísticas do servidor",
       "total_users": "Número de usuarios",
       "total_bookmarks": "Número de marcadores",
-      "server_version": "Versión del servidor"
+      "server_version": "Versión do servidor"
     },
     "background_jobs": {
-      "background_jobs": "Operaciones en segundo plano",
-      "crawler_jobs": "Trabajos de crawling",
-      "indexing_jobs": "Trabajos de indexación",
-      "inference_jobs": "Trabajos de inferencia",
-      "tidy_assets_jobs": "Trabajos de refinación",
-      "job": "Trabajo",
-      "queued": "En cola",
-      "pending": "Pendiente",
-      "failed": "Error"
+      "background_jobs": "Operacións en segundo plano",
+      "crawler_jobs": "Traballos de crawling",
+      "indexing_jobs": "Traballos de indexación",
+      "inference_jobs": "Traballos de inferencia",
+      "tidy_assets_jobs": "Traballos de refinación",
+      "job": "Traballo",
+      "queued": "Na cola",
+      "pending": "Pendente",
+      "failed": "Erro"
     },
     "actions": {
-      "recrawl_failed_links_only": "Recrawlear solo los enlaces fallidos",
-      "recrawl_all_links": "Recrawlear todos los enlaces",
-      "without_inference": "Sin inferencia",
-      "regenerate_ai_tags_for_failed_bookmarks_only": "Regenerar etiquetas IA solo en marcadores fallidos",
-      "regenerate_ai_tags_for_all_bookmarks": "Regenerar etiquetas IA para todos los marcadores",
+      "recrawl_failed_links_only": "Recrawlear só ligazóns erradas",
+      "recrawl_all_links": "Recrawlear todas as ligazóns",
+      "without_inference": "Sen inferencia",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Rexenerar etiquetas IA so en marcadores errados",
+      "regenerate_ai_tags_for_all_bookmarks": "Rexenerar etiquetas IA para todos os marcadores",
       "reindex_all_bookmarks": "Reindexar marcadores",
       "compact_assets": "Optimizar multimedia"
     },
     "users_list": {
-      "users_list": "Lista de usuarios",
+      "users_list": "Listado de usuarios",
       "create_user": "Crear usuario",
       "change_role": "Cambiar rol",
-      "reset_password": "Reiniciar contraseña",
+      "reset_password": "Reiniciar contrasinal",
       "delete_user": "Borrar usuario",
       "local_user": "Usuario local",
-      "confirm_password": "Confirmar contraseña",
+      "confirm_password": "Confirmar contrasinal",
       "num_bookmarks": "Núm. Marcadores",
       "asset_sizes": "Espacio utilizado"
     }
   },
   "options": {
-    "dark_mode": "Modo oscuro",
+    "dark_mode": "Modo escuro",
     "light_mode": "Modo claro"
   },
   "lists": {
-    "all_lists": "Todas las listas",
+    "all_lists": "Todas as listas",
     "favourites": "Favoritos",
-    "new_list": "Nueva lista",
-    "new_nested_list": "Nueva lista anidada"
+    "new_list": "Nova lista",
+    "new_nested_list": "Nova lista aniñada"
   },
   "preview": {
-    "view_original": "Ver original",
-    "cached_content": "Contenido cacheado"
+    "view_original": "Ver orixinal",
+    "cached_content": "Contendo cacheado"
   },
   "editor": {
-    "quickly_focus": "Puedes enfocar este campo pulsando ⌘ + E",
-    "multiple_urls_dialog_title": "¿Importar URLs como marcadores independientes?",
-    "multiple_urls_dialog_desc": "La entrada contiende varias URLs en líneas independientes. ¿Quieres importarlas como distintos marcadores?",
+    "quickly_focus": "Podes enfocar este campo pulsando ⌘ + E",
+    "multiple_urls_dialog_title": "¿Importar URLs como marcadores independentes?",
+    "multiple_urls_dialog_desc": "A entrada contén varias URLs en liñas independentes. ¿Queres importalas como distintos marcadores?",
     "import_as_text": "Importar como marcador de texto",
     "import_as_separate_bookmarks": "Importar como distintos marcadores",
-    "placeholder": "Pega un enlace o una imagen, escribe una nota o arrastra una imagen aquí…",
-    "new_item": "NUEVA ENTRADA",
+    "placeholder": "Pega un enlace ou imaxe, escribe unha nota ou arrastra unha imaxe aquí…",
+    "new_item": "NOVA ENTRADA",
     "disabled_submissions": "Entradas deshabilitadas",
     "text_toolbar": {
-      "undo": "Deshacer",
-      "redo": "Rehacer",
-      "bold": "Negrita",
+      "undo": "Desfacer",
+      "redo": "Refacer",
+      "bold": "Grosa",
       "italic": "Cursiva",
-      "underline": "Subrayado",
+      "underline": "Subliñado",
       "strikethrough": "Tachado",
       "code": "Código",
       "highlight": "Destacar",
-      "align_left": "Alinear a la izquierda",
-      "align_center": "Alinear al centro",
-      "align_right": "Alinear a la derecha",
+      "align_left": "Aliñar á esquerda",
+      "align_center": "Aliñar ao centro",
+      "align_right": "Aliñar á dereita",
       "markdown_shortcuts": {
-        "label": "Atajos de Markdown",
+        "label": "Atallos de Markdown",
         "heading": {
-          "label": "Cabecera",
+          "label": "Cabeceira",
           "example": "# H1, ## H2, ### H3"
         },
         "bold": {
-          "label": "Negrita",
-          "example": "**texto** o CTRL+B"
+          "label": "Grosa",
+          "example": "**texto** o CTRL+b"
         },
         "italic": {
           "label": "Cursiva",
-          "example": "*texto*, _texto_ o CTRL+I"
+          "example": "*texto*, _texto_ o CTRL+i"
         },
         "blockquote": {
           "label": "Cita en Bloque",
@@ -250,11 +250,11 @@
           "example": "1. Texto"
         },
         "unordered_list": {
-          "label": "Lista sin orden",
+          "label": "Lista sen orden",
           "example": "- Texto"
         },
         "inline_code": {
-          "label": "Código en línea",
+          "label": "Código en liña",
           "example": "`Texto`"
         },
         "block_code": {
