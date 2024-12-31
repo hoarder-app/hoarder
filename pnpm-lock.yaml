@@ -1028,6 +1028,9 @@ importers:
       openai:
         specifier: ^4.67.1
         version: 4.67.1(zod@3.22.4)
+      typescript-parsec:
+        specifier: ^0.3.4
+        version: 0.3.4
       winston:
         specifier: ^3.11.0
         version: 3.11.0
@@ -1044,6 +1047,9 @@ importers:
       '@hoarder/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
+      vitest:
+        specifier: ^1.3.1
+        version: 1.3.1(@types/node@20.11.20)
 
   packages/shared-react:
     dependencies:
@@ -12807,6 +12813,9 @@ packages:
 
   typedarray-to-buffer@3.1.5:
     resolution: {integrity: sha512-zdu8XMNEDepKKR+XYOXAVPtWui0ly0NtohUscw+UmaHiAWT8hrV1rr//H6V+0DvJ3OQ19S979M0laLfX8rm82Q==}
+
+  typescript-parsec@0.3.4:
+    resolution: {integrity: sha512-6RD4xOxp26BTZLopNbqT2iErqNhQZZWb5m5F07/UwGhldGvOAKOl41pZ3fxsFp04bNL+PbgMjNfb6IvJAC/uYQ==}
 
   typescript@5.3.3:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
@@ -29978,6 +29987,9 @@ snapshots:
   typedarray-to-buffer@3.1.5:
     dependencies:
       is-typedarray: 1.0.0
+    dev: false
+
+  typescript-parsec@0.3.4:
     dev: false
 
   typescript@5.3.3: {}
