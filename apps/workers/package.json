@@ -53,7 +53,9 @@
     "start": "tsx watch index.ts",
     "start:prod": "tsx index.ts",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier . --ignore-path ../../.prettierignore",
+    "format:fix": "prettier . --ignore-path ../../.prettierignore --write",
     "typecheck": "tsc --noEmit"
   },
   "eslintConfig": {

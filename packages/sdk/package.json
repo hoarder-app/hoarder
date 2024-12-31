@@ -23,7 +23,9 @@
     "build": "vite build",
     "run": "tsx src/index.ts",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier . --ignore-path ../../.prettierignore",
+    "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
     "typecheck": "tsc --noEmit"
   },
   "repository": {

@@ -23,7 +23,9 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "format": "prettier . --ignore-path ../../.prettierignore",
+    "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "vitest"
   },
   "main": "index.ts",
