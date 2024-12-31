@@ -30,6 +30,13 @@ interface Props {
   wrapTags: boolean;
 }
 
+function BookmarkFormattedCreatedAt({ bookmark }: { bookmark: ZBookmark }) {
+  const createdAt = dayjs(bookmark.createdAt);
+  const oneYearAgo = dayjs().subtract(1, "year");
+  const formatString = createdAt.isAfter(oneYearAgo) ? "MMM D" : "MMM D, YYYY";
+  return createdAt.format(formatString);
+}
+
 function BottomRow({
   footer,
   bookmark,
@@ -45,7 +52,7 @@ function BottomRow({
           href={`/dashboard/preview/${bookmark.id}`}
           suppressHydrationWarning
         >
-          {dayjs(bookmark.createdAt).format("MMM DD")}
+          <BookmarkFormattedCreatedAt bookmark={bookmark} />
         </Link>
       </div>
       <BookmarkActionBar bookmark={bookmark} />
@@ -232,7 +239,7 @@ function CompactView({ bookmark, title, footer, className }: Props) {
             suppressHydrationWarning
             className="shrink-0 gap-2 text-gray-500"
           >
-            {dayjs(bookmark.createdAt).format("MMM DD")}
+            <BookmarkFormattedCreatedAt bookmark={bookmark} />
           </Link>
         </div>
         <BookmarkActionBar bookmark={bookmark} />
