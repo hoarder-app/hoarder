@@ -5,6 +5,7 @@ import {
   kmid,
   kright,
   lrec_sc,
+  opt,
   rule,
   seq,
   str,
@@ -28,6 +29,7 @@ enum TokenType {
   RParen = "RPAREN",
   Space = "SPACE",
   Hash = "HASH",
+  Minus = "MINUS",
 }
 
 // Rules are in order of priority
@@ -43,6 +45,7 @@ const lexerRules: [RegExp, TokenType][] = [
   [/^\(/, TokenType.LParen],
   [/^\)/, TokenType.RParen],
   [/^\s+/, TokenType.Space],
+  [/^-/, TokenType.Minus],
 
   // This needs to be last as it matches a lot of stuff
   [/^[^ )(]+/, TokenType.Ident],
@@ -109,38 +112,32 @@ const EXP = rule<TokenType, TextAndMatcher>();
 
 MATCHER.setPattern(
   alt_sc(
-    apply(kright(str("is:"), tok(TokenType.Ident)), (toks) => {
-      switch (toks.text) {
-        case "fav":
-          return {
-            text: "",
-            matcher: { type: "favourited", favourited: true },
-          };
-        case "not_fav":
-          return {
-            text: "",
-            matcher: { type: "favourited", favourited: false },
-          };
-        case "archived":
-          return {
-            text: "",
-            matcher: { type: "archived", archived: true },
-          };
-        case "not_archived":
-          return {
-            text: "",
-            matcher: { type: "archived", archived: false },
-          };
-        default:
-          // If the token is not known, emit it as pure text
-          return {
-            text: `is:${toks.text}`,
-            matcher: undefined,
-          };
-      }
-    }),
+    apply(
+      seq(opt(str("-")), kright(str("is:"), tok(TokenType.Ident))),
+      ([minus, ident]) => {
+        switch (ident.text) {
+          case "fav":
+            return {
+              text: "",
+              matcher: { type: "favourited", favourited: !minus },
+            };
+          case "archived":
+            return {
+              text: "",
+              matcher: { type: "archived", archived: !minus },
+            };
+          default:
+            // If the token is not known, emit it as pure text
+            return {
+              text: `${minus?.text ?? ""}is:${ident.text}`,
+              matcher: undefined,
+            };
+        }
+      },
+    ),
     apply(
       seq(
+        opt(str("-")),
         alt(tok(TokenType.Qualifier), tok(TokenType.Hash)),
         alt(
           apply(tok(TokenType.Ident), (tok) => {
@@ -151,22 +148,22 @@ MATCHER.setPattern(
           }),
         ),
       ),
-      (toks) => {
-        switch (toks[0].text) {
+      ([minus, qualifier, ident]) => {
+        switch (qualifier.text) {
           case "url:":
             return {
               text: "",
-              matcher: { type: "url", url: toks[1] },
+              matcher: { type: "url", url: ident, inverse: !!minus },
             };
           case "#":
             return {
               text: "",
-              matcher: { type: "tagName", tagName: toks[1] },
+              matcher: { type: "tagName", tagName: ident, inverse: !!minus },
             };
           case "list:":
             return {
               text: "",
-              matcher: { type: "listName", listName: toks[1] },
+              matcher: { type: "listName", listName: ident, inverse: !!minus },
             };
           case "after:":
             try {
@@ -174,13 +171,14 @@ MATCHER.setPattern(
                 text: "",
                 matcher: {
                   type: "dateAfter",
-                  dateAfter: z.coerce.date().parse(toks[1]),
+                  dateAfter: z.coerce.date().parse(ident),
+                  inverse: !!minus,
                 },
               };
             } catch (e) {
               return {
                 // If parsing the date fails, emit it as pure text
-                text: toks[0].text + toks[1],
+                text: (minus?.text ?? "") + qualifier.text + ident,
                 matcher: undefined,
               };
             }
@@ -190,20 +188,21 @@ MATCHER.setPattern(
                 text: "",
                 matcher: {
                   type: "dateBefore",
-                  dateBefore: z.coerce.date().parse(toks[1]),
+                  dateBefore: z.coerce.date().parse(ident),
+                  inverse: !!minus,
                 },
               };
             } catch (e) {
               return {
                 // If parsing the date fails, emit it as pure text
-                text: toks[0].text + toks[1],
+                text: (minus?.text ?? "") + qualifier.text + ident,
                 matcher: undefined,
               };
             }
           default:
             // If the token is not known, emit it as pure text
             return {
-              text: toks[0].text + toks[1],
+              text: (minus?.text ?? "") + qualifier.text + ident,
               matcher: undefined,
             };
         }

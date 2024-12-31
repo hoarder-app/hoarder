@@ -12,7 +12,7 @@ describe("Search Query Parser", () => {
         archived: true,
       },
     });
-    expect(parseSearchQuery("is:not_archived")).toEqual({
+    expect(parseSearchQuery("-is:archived")).toEqual({
       result: "full",
       text: "",
       matcher: {
@@ -28,7 +28,7 @@ describe("Search Query Parser", () => {
         favourited: true,
       },
     });
-    expect(parseSearchQuery("is:not_fav")).toEqual({
+    expect(parseSearchQuery("-is:fav")).toEqual({
       result: "full",
       text: "",
       matcher: {
@@ -45,6 +45,16 @@ describe("Search Query Parser", () => {
       matcher: {
         type: "url",
         url: "https://example.com",
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery("-url:https://example.com")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "url",
+        url: "https://example.com",
+        inverse: true,
       },
     });
     expect(parseSearchQuery('url:"https://example.com"')).toEqual({
@@ -53,6 +63,16 @@ describe("Search Query Parser", () => {
       matcher: {
         type: "url",
         url: "https://example.com",
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery('-url:"https://example.com"')).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "url",
+        url: "https://example.com",
+        inverse: true,
       },
     });
     expect(parseSearchQuery("#my-tag")).toEqual({
@@ -61,6 +81,16 @@ describe("Search Query Parser", () => {
       matcher: {
         type: "tagName",
         tagName: "my-tag",
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery("-#my-tag")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "tagName",
+        tagName: "my-tag",
+        inverse: true,
       },
     });
     expect(parseSearchQuery('#"my tag"')).toEqual({
@@ -69,6 +99,16 @@ describe("Search Query Parser", () => {
       matcher: {
         type: "tagName",
         tagName: "my tag",
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery('-#"my tag"')).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "tagName",
+        tagName: "my tag",
+        inverse: true,
       },
     });
     expect(parseSearchQuery("list:my-list")).toEqual({
@@ -77,6 +117,16 @@ describe("Search Query Parser", () => {
       matcher: {
         type: "listName",
         listName: "my-list",
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery("-list:my-list")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "listName",
+        listName: "my-list",
+        inverse: true,
       },
     });
     expect(parseSearchQuery('list:"my list"')).toEqual({
@@ -85,6 +135,16 @@ describe("Search Query Parser", () => {
       matcher: {
         type: "listName",
         listName: "my list",
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery('-list:"my list"')).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "listName",
+        listName: "my list",
+        inverse: true,
       },
     });
   });
@@ -95,6 +155,16 @@ describe("Search Query Parser", () => {
       matcher: {
         type: "dateAfter",
         dateAfter: new Date("2023-10-12"),
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery("-after:2023-10-12")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "dateAfter",
+        dateAfter: new Date("2023-10-12"),
+        inverse: true,
       },
     });
     expect(parseSearchQuery("before:2023-10-12")).toEqual({
@@ -103,12 +173,22 @@ describe("Search Query Parser", () => {
       matcher: {
         type: "dateBefore",
         dateBefore: new Date("2023-10-12"),
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery("-before:2023-10-12")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "dateBefore",
+        dateBefore: new Date("2023-10-12"),
+        inverse: true,
       },
     });
   });
 
   test("complex queries", () => {
-    expect(parseSearchQuery("is:fav is:archived")).toEqual({
+    expect(parseSearchQuery("is:fav -is:archived")).toEqual({
       result: "full",
       text: "",
       matcher: {
@@ -120,7 +200,7 @@ describe("Search Query Parser", () => {
           },
           {
             type: "archived",
-            archived: true,
+            archived: false,
           },
         ],
       },
@@ -143,6 +223,7 @@ describe("Search Query Parser", () => {
           {
             type: "tagName",
             tagName: "my-tag",
+            inverse: false,
           },
         ],
       },
@@ -170,6 +251,7 @@ describe("Search Query Parser", () => {
           {
             type: "tagName",
             tagName: "my-tag",
+            inverse: false,
           },
         ],
       },
@@ -197,6 +279,7 @@ describe("Search Query Parser", () => {
           {
             type: "tagName",
             tagName: "my-tag",
+            inverse: false,
           },
         ],
       },
@@ -237,6 +320,7 @@ describe("Search Query Parser", () => {
           {
             type: "tagName",
             tagName: "my-tag",
+            inverse: false,
           },
         ],
       },

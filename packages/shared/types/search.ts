@@ -3,11 +3,13 @@ import { z } from "zod";
 const zTagNameMatcher = z.object({
   type: z.literal("tagName"),
   tagName: z.string(),
+  inverse: z.boolean(),
 });
 
 const zListNameMatcher = z.object({
   type: z.literal("listName"),
   listName: z.string(),
+  inverse: z.boolean(),
 });
 
 const zArchivedMatcher = z.object({
@@ -18,6 +20,7 @@ const zArchivedMatcher = z.object({
 const urlMatcher = z.object({
   type: z.literal("url"),
   url: z.string(),
+  inverse: z.boolean(),
 });
 
 const zFavouritedMatcher = z.object({
@@ -28,11 +31,13 @@ const zFavouritedMatcher = z.object({
 const zDateAfterMatcher = z.object({
   type: z.literal("dateAfter"),
   dateAfter: z.date(),
+  inverse: z.boolean(),
 });
 
 const zDateBeforeMatcher = z.object({
   type: z.literal("dateBefore"),
   dateBefore: z.date(),
+  inverse: z.boolean(),
 });
 
 const zNonRecursiveMatcher = z.union([

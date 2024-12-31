@@ -160,15 +160,43 @@ beforeEach(async () => {
 
 describe("getBookmarkIdsFromMatcher", () => {
   it("should handle tagName matcher", async () => {
-    const matcher: Matcher = { type: "tagName", tagName: "tag1" };
+    const matcher: Matcher = {
+      type: "tagName",
+      tagName: "tag1",
+      inverse: false,
+    };
     const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
     expect(result).toEqual(["b1"]);
   });
 
+  it("should handle tagName matcher with inverse=true", async () => {
+    const matcher: Matcher = {
+      type: "tagName",
+      tagName: "tag1",
+      inverse: true,
+    };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result.sort()).toEqual(["b2", "b3", "b4", "b5", "b6"]);
+  });
+
   it("should handle listName matcher", async () => {
-    const matcher: Matcher = { type: "listName", listName: "list1" };
+    const matcher: Matcher = {
+      type: "listName",
+      listName: "list1",
+      inverse: false,
+    };
     const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
     expect(result).toEqual(["b1", "b6"]);
+  });
+
+  it("should handle listName matcher with inverse=true", async () => {
+    const matcher: Matcher = {
+      type: "listName",
+      listName: "list1",
+      inverse: true,
+    };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result.sort()).toEqual(["b2", "b3", "b4", "b5"]);
   });
 
   it("should handle archived matcher", async () => {
@@ -177,34 +205,83 @@ describe("getBookmarkIdsFromMatcher", () => {
     expect(result).toEqual(["b2", "b3", "b6"]);
   });
 
+  it("should handle archived matcher archived=false", async () => {
+    const matcher: Matcher = { type: "archived", archived: false };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result).toEqual(["b1", "b4", "b5"]);
+  });
+
   it("should handle favourited matcher", async () => {
     const matcher: Matcher = { type: "favourited", favourited: true };
     const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
     expect(result).toEqual(["b2", "b4"]);
   });
 
+  it("should handle favourited matcher favourited=false", async () => {
+    const matcher: Matcher = { type: "favourited", favourited: false };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result).toEqual(["b1", "b3", "b5", "b6"]);
+  });
+
   it("should handle url matcher", async () => {
-    const matcher: Matcher = { type: "url", url: "example.com" };
+    const matcher: Matcher = {
+      type: "url",
+      url: "example.com",
+      inverse: false,
+    };
     const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
     expect(result).toEqual(["b1", "b4"]);
+  });
+
+  it("should handle url matcher with inverse=true", async () => {
+    const matcher: Matcher = {
+      type: "url",
+      url: "example.com",
+      inverse: true,
+    };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    // Not that only bookmarks of type link are returned
+    expect(result.sort()).toEqual(["b2"]);
   });
 
   it("should handle dateAfter matcher", async () => {
     const matcher: Matcher = {
       type: "dateAfter",
       dateAfter: new Date("2024-01-02"),
+      inverse: false,
     };
     const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
     expect(result).toEqual(["b2", "b3", "b4", "b5", "b6"]);
+  });
+
+  it("should handle dateAfter matcher with inverse=true", async () => {
+    const matcher: Matcher = {
+      type: "dateAfter",
+      dateAfter: new Date("2024-01-02"),
+      inverse: true,
+    };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result).toEqual(["b1"]);
   });
 
   it("should handle dateBefore matcher", async () => {
     const matcher: Matcher = {
       type: "dateBefore",
       dateBefore: new Date("2024-01-02"),
+      inverse: false,
     };
     const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
     expect(result).toEqual(["b1", "b2"]);
+  });
+
+  it("should handle dateBefore matcher with inverse=true", async () => {
+    const matcher: Matcher = {
+      type: "dateBefore",
+      dateBefore: new Date("2024-01-02"),
+      inverse: true,
+    };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result.sort()).toEqual(["b3", "b4", "b5", "b6"]);
   });
 
   it("should handle AND matcher", async () => {
@@ -235,8 +312,8 @@ describe("getBookmarkIdsFromMatcher", () => {
     const matcher: Matcher = {
       type: "or",
       matchers: [
-        { type: "listName", listName: "favorites" },
-        { type: "tagName", tagName: "work" },
+        { type: "listName", listName: "favorites", inverse: false },
+        { type: "tagName", tagName: "work", inverse: false },
       ],
     };
     const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
@@ -250,8 +327,8 @@ describe("getBookmarkIdsFromMatcher", () => {
         {
           type: "or",
           matchers: [
-            { type: "listName", listName: "favorites" },
-            { type: "tagName", tagName: "work" },
+            { type: "listName", listName: "favorites", inverse: false },
+            { type: "tagName", tagName: "work", inverse: false },
           ],
         },
         {

@@ -20,28 +20,32 @@ export default function QueryExplainerTooltip({
       case "tagName":
         return (
           <TableRow>
-            <TableCell>Tag Name</TableCell>
+            <TableCell>
+              {matcher.inverse ? "Doesn't have" : "Has"} Tag
+            </TableCell>
             <TableCell>{matcher.tagName}</TableCell>
           </TableRow>
         );
       case "listName":
         return (
           <TableRow>
-            <TableCell>List Name</TableCell>
+            <TableCell>
+              {matcher.inverse ? "Is not in" : "Is in "} List
+            </TableCell>
             <TableCell>{matcher.listName}</TableCell>
           </TableRow>
         );
       case "dateAfter":
         return (
           <TableRow>
-            <TableCell>Created After</TableCell>
+            <TableCell>{matcher.inverse ? "Not" : ""} Created After</TableCell>
             <TableCell>{matcher.dateAfter.toDateString()}</TableCell>
           </TableRow>
         );
       case "dateBefore":
         return (
           <TableRow>
-            <TableCell>Created Before</TableCell>
+            <TableCell>{matcher.inverse ? "Not" : ""} Created Before</TableCell>
             <TableCell>{matcher.dateBefore.toDateString()}</TableCell>
           </TableRow>
         );

@@ -1,4 +1,15 @@
-import { and, eq, gte, like, lte, sql } from "drizzle-orm";
+import {
+  and,
+  eq,
+  exists,
+  gt,
+  gte,
+  like,
+  lt,
+  lte,
+  notExists,
+  notLike,
+} from "drizzle-orm";
 
 import {
   bookmarkLinks,
@@ -76,26 +87,56 @@ async function getIds(
 ): Promise<BookmarkQueryReturnType[]> {
   switch (matcher.type) {
     case "tagName": {
+      const comp = matcher.inverse ? notExists : exists;
       return db
-        .select({ id: sql<string>`${tagsOnBookmarks.bookmarkId}`.as("id") })
-        .from(tagsOnBookmarks)
-        .innerJoin(bookmarkTags, eq(tagsOnBookmarks.tagId, bookmarkTags.id))
+        .selectDistinct({ id: bookmarks.id })
+        .from(bookmarks)
         .where(
           and(
-            eq(bookmarkTags.userId, userId),
-            eq(bookmarkTags.name, matcher.tagName),
+            eq(bookmarks.userId, userId),
+            comp(
+              db
+                .select()
+                .from(tagsOnBookmarks)
+                .innerJoin(
+                  bookmarkTags,
+                  eq(tagsOnBookmarks.tagId, bookmarkTags.id),
+                )
+                .where(
+                  and(
+                    eq(tagsOnBookmarks.bookmarkId, bookmarks.id),
+                    eq(bookmarkTags.userId, userId),
+                    eq(bookmarkTags.name, matcher.tagName),
+                  ),
+                ),
+            ),
           ),
         );
     }
     case "listName": {
+      const comp = matcher.inverse ? notExists : exists;
       return db
-        .select({ id: sql<string>`${bookmarksInLists.bookmarkId}`.as("id") })
-        .from(bookmarksInLists)
-        .innerJoin(bookmarkLists, eq(bookmarksInLists.listId, bookmarkLists.id))
+        .selectDistinct({ id: bookmarks.id })
+        .from(bookmarks)
         .where(
           and(
-            eq(bookmarkLists.userId, userId),
-            eq(bookmarkLists.name, matcher.listName),
+            eq(bookmarks.userId, userId),
+            comp(
+              db
+                .select()
+                .from(bookmarksInLists)
+                .innerJoin(
+                  bookmarkLists,
+                  eq(bookmarksInLists.listId, bookmarkLists.id),
+                )
+                .where(
+                  and(
+                    eq(bookmarksInLists.bookmarkId, bookmarks.id),
+                    eq(bookmarkLists.userId, userId),
+                    eq(bookmarkLists.name, matcher.listName),
+                  ),
+                ),
+            ),
           ),
         );
     }
@@ -111,6 +152,7 @@ async function getIds(
         );
     }
     case "url": {
+      const comp = matcher.inverse ? notLike : like;
       return db
         .select({ id: bookmarkLinks.id })
         .from(bookmarkLinks)
@@ -118,7 +160,7 @@ async function getIds(
         .where(
           and(
             eq(bookmarks.userId, userId),
-            like(bookmarkLinks.url, `%${matcher.url}%`),
+            comp(bookmarkLinks.url, `%${matcher.url}%`),
           ),
         );
     }
@@ -134,24 +176,26 @@ async function getIds(
         );
     }
     case "dateAfter": {
+      const comp = matcher.inverse ? lt : gte;
       return db
         .select({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
             eq(bookmarks.userId, userId),
-            gte(bookmarks.createdAt, matcher.dateAfter),
+            comp(bookmarks.createdAt, matcher.dateAfter),
           ),
         );
     }
     case "dateBefore": {
+      const comp = matcher.inverse ? gt : lte;
       return db
         .select({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
             eq(bookmarks.userId, userId),
-            lte(bookmarks.createdAt, matcher.dateBefore),
+            comp(bookmarks.createdAt, matcher.dateBefore),
           ),
         );
     }
