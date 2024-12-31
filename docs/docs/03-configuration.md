@@ -22,7 +22,7 @@ Only OIDC compliant OAuth providers are supported! For information on how to set
 :::
 
 :::info
-When setting up OAuth, the allowed redirect URLs configured at the provider should be set to `<HOARDER_ADDRESS>/api/auth/callback/custom` where `<HOARDER_ADDRESS>` is the address you configured in `NEXTAUTH_URL` (for example: `https://try.hoarder.app/api/auth/callback/custom`).
+When setting up OAuth, the allowed redirect URLs configured at the provider should be set to `<HOARDER_ADDRESS>/api/auth/callback/custom` where `<HOARDER_ADDRESS>` is the address you configured in `NEXTAUTH_URL` (for example: `https://try.hoarder.app/api/auth/callback/custom`). You should also set `NEXTAUTH_URL_INTERNAL` to `http://localhost:DEFAULT_HOARDER_PORT` (`DEFAULT_HOARDER_PORT` is `3000` by default) when your `NEXTAUTL_URL` is set to your domain/subdomain behind a reverse proxy when setting up OAuth.
 :::
 
 | Name                                        | Required | Default                | Description                                                                                                                                                         |
