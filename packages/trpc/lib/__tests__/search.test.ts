@@ -344,6 +344,30 @@ describe("getBookmarkIdsFromMatcher", () => {
     expect(result).toEqual(["b4"]);
   });
 
+  it("should handle tagged matcher", async () => {
+    const matcher: Matcher = { type: "tagged", tagged: true };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result.sort()).toEqual(["b1", "b2", "b4", "b5", "b6"]);
+  });
+
+  it("should handle tagged matcher with tagged=false", async () => {
+    const matcher: Matcher = { type: "tagged", tagged: false };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result).toEqual(["b3"]);
+  });
+
+  it("should handle inlist matcher", async () => {
+    const matcher: Matcher = { type: "inlist", inList: true };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result.sort()).toEqual(["b1", "b2", "b4", "b5", "b6"]);
+  });
+
+  it("should handle inlist matcher with inList=false", async () => {
+    const matcher: Matcher = { type: "inlist", inList: false };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result).toEqual(["b3"]);
+  });
+
   it("should throw error for unknown matcher type", async () => {
     const matcher = { type: "unknown" } as unknown as Matcher;
     await expect(getBookmarkIdsFromMatcher(mockCtx, matcher)).rejects.toThrow(

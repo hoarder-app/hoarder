@@ -36,6 +36,38 @@ describe("Search Query Parser", () => {
         favourited: false,
       },
     });
+    expect(parseSearchQuery("is:tagged")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "tagged",
+        tagged: true,
+      },
+    });
+    expect(parseSearchQuery("-is:tagged")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "tagged",
+        tagged: false,
+      },
+    });
+    expect(parseSearchQuery("is:inlist")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "inlist",
+        inList: true,
+      },
+    });
+    expect(parseSearchQuery("-is:inlist")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "inlist",
+        inList: false,
+      },
+    });
   });
 
   test("simple string queries", () => {

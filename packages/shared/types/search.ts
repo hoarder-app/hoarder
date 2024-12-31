@@ -40,6 +40,16 @@ const zDateBeforeMatcher = z.object({
   inverse: z.boolean(),
 });
 
+const zIsTaggedMatcher = z.object({
+  type: z.literal("tagged"),
+  tagged: z.boolean(),
+});
+
+const zIsInListMatcher = z.object({
+  type: z.literal("inlist"),
+  inList: z.boolean(),
+});
+
 const zNonRecursiveMatcher = z.union([
   zTagNameMatcher,
   zListNameMatcher,
@@ -48,6 +58,8 @@ const zNonRecursiveMatcher = z.union([
   zFavouritedMatcher,
   zDateAfterMatcher,
   zDateBeforeMatcher,
+  zIsTaggedMatcher,
+  zIsInListMatcher,
 ]);
 
 type NonRecursiveMatcher = z.infer<typeof zNonRecursiveMatcher>;
@@ -65,6 +77,8 @@ export const zMatcherSchema: z.ZodType<Matcher> = z.lazy(() => {
     zFavouritedMatcher,
     zDateAfterMatcher,
     zDateBeforeMatcher,
+    zIsTaggedMatcher,
+    zIsInListMatcher,
     z.object({
       type: z.literal("and"),
       matchers: z.array(zMatcherSchema),

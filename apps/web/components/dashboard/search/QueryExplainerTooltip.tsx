@@ -63,6 +63,20 @@ export default function QueryExplainerTooltip({
             <TableCell>{matcher.archived.toString()}</TableCell>
           </TableRow>
         );
+      case "tagged":
+        return (
+          <TableRow>
+            <TableCell>Has Tags</TableCell>
+            <TableCell>{matcher.tagged.toString()}</TableCell>
+          </TableRow>
+        );
+      case "inlist":
+        return (
+          <TableRow>
+            <TableCell>In Any List</TableCell>
+            <TableCell>{matcher.inList.toString()}</TableCell>
+          </TableRow>
+        );
       case "and":
       case "or":
         return (

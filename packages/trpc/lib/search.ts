@@ -113,6 +113,23 @@ async function getIds(
           ),
         );
     }
+    case "tagged": {
+      const comp = matcher.tagged ? exists : notExists;
+      return db
+        .select({ id: bookmarks.id })
+        .from(bookmarks)
+        .where(
+          and(
+            eq(bookmarks.userId, userId),
+            comp(
+              db
+                .select()
+                .from(tagsOnBookmarks)
+                .where(and(eq(tagsOnBookmarks.bookmarkId, bookmarks.id))),
+            ),
+          ),
+        );
+    }
     case "listName": {
       const comp = matcher.inverse ? notExists : exists;
       return db
@@ -136,6 +153,23 @@ async function getIds(
                     eq(bookmarkLists.name, matcher.listName),
                   ),
                 ),
+            ),
+          ),
+        );
+    }
+    case "inlist": {
+      const comp = matcher.inList ? exists : notExists;
+      return db
+        .select({ id: bookmarks.id })
+        .from(bookmarks)
+        .where(
+          and(
+            eq(bookmarks.userId, userId),
+            comp(
+              db
+                .select()
+                .from(bookmarksInLists)
+                .where(and(eq(bookmarksInLists.bookmarkId, bookmarks.id))),
             ),
           ),
         );

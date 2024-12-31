@@ -126,6 +126,16 @@ MATCHER.setPattern(
               text: "",
               matcher: { type: "archived", archived: !minus },
             };
+          case "tagged":
+            return {
+              text: "",
+              matcher: { type: "tagged", tagged: !minus },
+            };
+          case "inlist":
+            return {
+              text: "",
+              matcher: { type: "inlist", inList: !minus },
+            };
           default:
             // If the token is not known, emit it as pure text
             return {
