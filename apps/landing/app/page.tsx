@@ -107,7 +107,7 @@ function NavBar() {
           href={GITHUB_LINK}
           className="flex justify-center gap-2 text-center"
         >
-          Github
+          GitHub
         </Link>
         <Link
           href={DEMO_LINK}
@@ -162,7 +162,7 @@ function Hero() {
             buttonVariants({ variant: "outline", size: "lg" }),
           )}
         >
-          <Github /> Github
+          <Github /> GitHub
         </Link>
       </div>
     </div>
@@ -234,7 +234,7 @@ function Footer() {
           href={GITHUB_LINK}
           className="flex justify-center gap-2 text-center"
         >
-          Github
+          GitHub
         </Link>
       </div>
     </div>
