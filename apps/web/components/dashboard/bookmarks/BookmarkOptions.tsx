@@ -28,7 +28,6 @@ import type {
   ZBookmarkedLink,
 } from "@hoarder/shared/types/bookmarks";
 import {
-  useDeleteBookmark,
   useRecrawlBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks//bookmarks";
@@ -37,6 +36,7 @@ import { useBookmarkGridContext } from "@hoarder/shared-react/hooks/bookmark-gri
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
+import DeleteBookmarkConfirmationDialog from "./DeleteBookmarkConfirmationDialog";
 import { ArchivedActionIcon, FavouritedActionIcon } from "./icons";
 import { useManageListsModal } from "./ManageListsModal";
 import { useTagModel } from "./TagModal";
@@ -53,6 +53,8 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { setOpen: setManageListsModalOpen, content: manageListsModal } =
     useManageListsModal(bookmark.id);
 
+  const [deleteBookmarkDialogOpen, setDeleteBookmarkDialogOpen] =
+    useState(false);
   const [isTextEditorOpen, setTextEditorOpen] = useState(false);
 
   const { listId } = useBookmarkGridContext() ?? {};
@@ -63,14 +65,6 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       title: t("common.something_went_wrong"),
     });
   };
-  const deleteBookmarkMutator = useDeleteBookmark({
-    onSuccess: () => {
-      toast({
-        description: t("toasts.bookmarks.deleted"),
-      });
-    },
-    onError,
-  });
 
   const updateBookmarkMutator = useUpdateBookmark({
     onSuccess: () => {
@@ -112,6 +106,11 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
     <>
       {tagModal}
       {manageListsModal}
+      <DeleteBookmarkConfirmationDialog
+        bookmark={bookmark}
+        open={deleteBookmarkDialogOpen}
+        setOpen={setDeleteBookmarkDialogOpen}
+      />
       <BookmarkedTextEditor
         bookmark={bookmark}
         open={isTextEditorOpen}
@@ -240,9 +239,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
           <DropdownMenuItem
             disabled={demoMode}
             className="text-destructive"
-            onClick={() =>
-              deleteBookmarkMutator.mutate({ bookmarkId: bookmark.id })
-            }
+            onClick={() => setDeleteBookmarkDialogOpen(true)}
           >
             <Trash2 className="mr-2 size-4" />
             <span>{t("actions.delete")}</span>

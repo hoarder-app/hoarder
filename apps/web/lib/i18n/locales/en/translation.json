@@ -243,6 +243,12 @@
       }
     }
   },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_title": "Delete Bookmark?",
+      "delete_confirmation_description": "Are you sure you want to delete this bookmark?"
+    }
+  },
   "toasts": {
     "bookmarks": {
       "updated": "The bookmark has been updated!",
