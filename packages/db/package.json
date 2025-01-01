@@ -24,7 +24,7 @@
     "@hoarder/tsconfig": "workspace:^0.1.0",
     "@tsconfig/node21": "^21.0.1",
     "@types/better-sqlite3": "^7.6.11",
-    "drizzle-kit": "^0.24.02"
+    "drizzle-kit": "^0.30.01"
   },
   "eslintConfig": {
     "root": true,
