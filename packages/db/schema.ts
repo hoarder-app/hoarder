@@ -49,11 +49,11 @@ export const accounts = sqliteTable(
     id_token: text("id_token"),
     session_state: text("session_state"),
   },
-  (account) => ({
-    compoundKey: primaryKey({
+  (account) => [
+    primaryKey({
       columns: [account.provider, account.providerAccountId],
     }),
-  }),
+  ],
 );
 
 export const sessions = sqliteTable("session", {
@@ -74,9 +74,7 @@ export const verificationTokens = sqliteTable(
     token: text("token").notNull(),
     expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
   },
-  (vt) => ({
-    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-  }),
+  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
 );
 
 export const apiKeys = sqliteTable(
@@ -94,9 +92,7 @@ export const apiKeys = sqliteTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  (ak) => ({
-    unq: unique().on(ak.name, ak.userId),
-  }),
+  (ak) => [unique().on(ak.name, ak.userId)],
 );
 
 export const bookmarks = sqliteTable(
@@ -124,12 +120,12 @@ export const bookmarks = sqliteTable(
       enum: [BookmarkTypes.LINK, BookmarkTypes.TEXT, BookmarkTypes.ASSET],
     }).notNull(),
   },
-  (b) => ({
-    userIdIdx: index("bookmarks_userId_idx").on(b.userId),
-    archivedIdx: index("bookmarks_archived_idx").on(b.archived),
-    favIdx: index("bookmarks_favourited_idx").on(b.favourited),
-    createdAtIdx: index("bookmarks_createdAt_idx").on(b.createdAt),
-  }),
+  (b) => [
+    index("bookmarks_userId_idx").on(b.userId),
+    index("bookmarks_archived_idx").on(b.archived),
+    index("bookmarks_favourited_idx").on(b.favourited),
+    index("bookmarks_createdAt_idx").on(b.createdAt),
+  ],
 );
 
 export const bookmarkLinks = sqliteTable(
@@ -155,11 +151,7 @@ export const bookmarkLinks = sqliteTable(
     }).default("pending"),
     crawlStatusCode: integer("crawlStatusCode").default(200),
   },
-  (bl) => {
-    return {
-      urlIdx: index("bookmarkLinks_url_idx").on(bl.url),
-    };
-  },
+  (bl) => [index("bookmarkLinks_url_idx").on(bl.url)],
 );
 
 export const enum AssetTypes {
@@ -197,11 +189,11 @@ export const assets = sqliteTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
 
-  (tb) => ({
-    bookmarkIdIdx: index("assets_bookmarkId_idx").on(tb.bookmarkId),
-    assetTypeIdx: index("assets_assetType_idx").on(tb.assetType),
-    userIdIdx: index("assets_userId_idx").on(tb.userId),
-  }),
+  (tb) => [
+    index("assets_bookmarkId_idx").on(tb.bookmarkId),
+    index("assets_assetType_idx").on(tb.assetType),
+    index("assets_userId_idx").on(tb.userId),
+  ],
 );
 
 export const highlights = sqliteTable(
@@ -223,16 +215,17 @@ export const highlights = sqliteTable(
     endOffset: integer("endOffset").notNull(),
     color: text("color", {
       enum: ["red", "green", "blue", "yellow"],
-    }).default("yellow").notNull(),
+    })
+      .default("yellow")
+      .notNull(),
     text: text("text"),
     note: text("note"),
     createdAt: createdAtField(),
   },
-
-  (tb) => ({
-    bookmarkIdIdx: index("highlights_bookmarkId_idx").on(tb.bookmarkId),
-    userIdIdx: index("highlights_userId_idx").on(tb.userId),
-  }),
+  (tb) => [
+    index("highlights_bookmarkId_idx").on(tb.bookmarkId),
+    index("highlights_userId_idx").on(tb.userId),
+  ],
 );
 
 export const bookmarkTexts = sqliteTable("bookmarkTexts", {
@@ -272,11 +265,11 @@ export const bookmarkTags = sqliteTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  (bt) => ({
-    uniq: unique().on(bt.userId, bt.name),
-    nameIdx: index("bookmarkTags_name_idx").on(bt.name),
-    userIdIdx: index("bookmarkTags_userId_idx").on(bt.userId),
-  }),
+  (bt) => [
+    unique().on(bt.userId, bt.name),
+    index("bookmarkTags_name_idx").on(bt.name),
+    index("bookmarkTags_userId_idx").on(bt.userId),
+  ],
 );
 
 export const tagsOnBookmarks = sqliteTable(
@@ -294,11 +287,11 @@ export const tagsOnBookmarks = sqliteTable(
     ),
     attachedBy: text("attachedBy", { enum: ["ai", "human"] }).notNull(),
   },
-  (tb) => ({
-    pk: primaryKey({ columns: [tb.bookmarkId, tb.tagId] }),
-    tagIdIdx: index("tagsOnBookmarks_tagId_idx").on(tb.tagId),
-    bookmarkIdIdx: index("tagsOnBookmarks_bookmarkId_idx").on(tb.bookmarkId),
-  }),
+  (tb) => [
+    primaryKey({ columns: [tb.bookmarkId, tb.tagId] }),
+    index("tagsOnBookmarks_tagId_idx").on(tb.tagId),
+    index("tagsOnBookmarks_bookmarkId_idx").on(tb.bookmarkId),
+  ],
 );
 
 export const bookmarkLists = sqliteTable(
@@ -319,9 +312,7 @@ export const bookmarkLists = sqliteTable(
       { onDelete: "set null" },
     ),
   },
-  (bl) => ({
-    userIdIdx: index("bookmarkLists_userId_idx").on(bl.userId),
-  }),
+  (bl) => [index("bookmarkLists_userId_idx").on(bl.userId)],
 );
 
 export const bookmarksInLists = sqliteTable(
@@ -337,11 +328,11 @@ export const bookmarksInLists = sqliteTable(
       () => new Date(),
     ),
   },
-  (tb) => ({
-    pk: primaryKey({ columns: [tb.bookmarkId, tb.listId] }),
-    bookmarkIdIdx: index("bookmarksInLists_bookmarkId_idx").on(tb.bookmarkId),
-    listIdIdx: index("bookmarksInLists_listId_idx").on(tb.listId),
-  }),
+  (tb) => [
+    primaryKey({ columns: [tb.bookmarkId, tb.listId] }),
+    index("bookmarksInLists_bookmarkId_idx").on(tb.bookmarkId),
+    index("bookmarksInLists_listId_idx").on(tb.listId),
+  ],
 );
 
 export const customPrompts = sqliteTable(
@@ -361,9 +352,7 @@ export const customPrompts = sqliteTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  (bl) => ({
-    userIdIdx: index("customPrompts_userId_idx").on(bl.userId),
-  }),
+  (bl) => [index("customPrompts_userId_idx").on(bl.userId)],
 );
 
 export const rssFeedsTable = sqliteTable(
@@ -384,9 +373,7 @@ export const rssFeedsTable = sqliteTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
   },
-  (bl) => ({
-    userIdIdx: index("rssFeeds_userId_idx").on(bl.userId),
-  }),
+  (bl) => [index("rssFeeds_userId_idx").on(bl.userId)],
 );
 
 export const rssFeedImportsTable = sqliteTable(
@@ -405,11 +392,11 @@ export const rssFeedImportsTable = sqliteTable(
       onDelete: "set null",
     }),
   },
-  (bl) => ({
-    feedIdIdx: index("rssFeedImports_feedIdIdx_idx").on(bl.rssFeedId),
-    entryIdIdx: index("rssFeedImports_entryIdIdx_idx").on(bl.entryId),
-    feedIdEntryIdUnique: unique().on(bl.rssFeedId, bl.entryId),
-  }),
+  (bl) => [
+    index("rssFeedImports_feedIdIdx_idx").on(bl.rssFeedId),
+    index("rssFeedImports_entryIdIdx_idx").on(bl.entryId),
+    unique().on(bl.rssFeedId, bl.entryId),
+  ],
 );
 
 export const config = sqliteTable("config", {
