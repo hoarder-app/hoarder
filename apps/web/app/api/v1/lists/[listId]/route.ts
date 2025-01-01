@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { buildHandler } from "@/app/api/v1/utils/handler";
 
-import { zNewBookmarkListSchema } from "@hoarder/shared/types/lists";
+import { zEditBookmarkListSchema } from "@hoarder/shared/types/lists";
 
 export const dynamic = "force-dynamic";
 
@@ -28,11 +28,11 @@ export const PATCH = (
 ) =>
   buildHandler({
     req,
-    bodySchema: zNewBookmarkListSchema.partial(),
+    bodySchema: zEditBookmarkListSchema,
     handler: async ({ api, body }) => {
       const list = await api.lists.edit({
-        listId: params.listId,
         ...body!,
+        listId: params.listId,
       });
       return { status: 200, resp: list };
     },

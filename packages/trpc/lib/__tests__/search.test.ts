@@ -130,10 +130,16 @@ beforeEach(async () => {
   ]);
 
   await db.insert(bookmarkLists).values([
-    { id: "l1", userId: testUserId, name: "list1", icon: "🚀" },
-    { id: "l2", userId: testUserId, name: "list2", icon: "🚀" },
-    { id: "l3", userId: testUserId, name: "favorites", icon: "⭐" },
-    { id: "l4", userId: testUserId, name: "work", icon: "💼" },
+    { id: "l1", userId: testUserId, name: "list1", icon: "🚀", type: "manual" },
+    { id: "l2", userId: testUserId, name: "list2", icon: "🚀", type: "manual" },
+    {
+      id: "l3",
+      userId: testUserId,
+      name: "favorites",
+      icon: "⭐",
+      type: "manual",
+    },
+    { id: "l4", userId: testUserId, name: "work", icon: "💼", type: "manual" },
   ]);
 
   await db.insert(bookmarksInLists).values([

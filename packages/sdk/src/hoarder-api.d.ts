@@ -400,6 +400,12 @@ export interface paths {
           "application/json": {
             name: string;
             icon: string;
+            /**
+             * @default manual
+             * @enum {string}
+             */
+            type?: "manual" | "smart";
+            query?: string;
             parentId?: string | null;
           };
         };
@@ -503,6 +509,7 @@ export interface paths {
             name?: string;
             icon?: string;
             parentId?: string | null;
+            query?: string;
           };
         };
       };
@@ -1089,6 +1096,12 @@ export interface components {
       name: string;
       icon: string;
       parentId: string | null;
+      /**
+       * @default manual
+       * @enum {string}
+       */
+      type: "manual" | "smart";
+      query?: string | null;
     };
     Tag: {
       id: string;

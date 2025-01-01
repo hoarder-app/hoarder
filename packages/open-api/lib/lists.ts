@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import {
   zBookmarkListSchema,
+  zEditBookmarkListSchema,
   zNewBookmarkListSchema,
 } from "@hoarder/shared/types/lists";
 
@@ -132,7 +133,7 @@ registry.registerPath({
         "The data to update. Only the fields you want to update need to be provided.",
       content: {
         "application/json": {
-          schema: zNewBookmarkListSchema.partial(),
+          schema: zEditBookmarkListSchema.omit({ listId: true }),
         },
       },
     },

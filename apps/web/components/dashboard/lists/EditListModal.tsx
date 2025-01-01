@@ -25,6 +25,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
 import data from "@emoji-mart/data";
@@ -46,13 +53,13 @@ export function EditListModal({
   open: userOpen,
   setOpen: userSetOpen,
   list,
-  parent,
+  prefill,
   children,
 }: {
   open?: boolean;
   setOpen?: (v: boolean) => void;
   list?: ZBookmarkList;
-  parent?: ZBookmarkList;
+  prefill?: Partial<Omit<ZBookmarkList, "id">>;
   children?: React.ReactNode;
 }) {
   const { t } = useTranslation();
@@ -68,13 +75,17 @@ export function EditListModal({
     name: z.string(),
     icon: z.string(),
     parentId: z.string().nullish(),
+    type: z.enum(["manual", "smart"]).default("manual"),
+    query: z.string().optional(),
   });
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: list?.name ?? "",
-      icon: list?.icon ?? "🚀",
-      parentId: list?.parentId ?? parent?.id,
+      name: list?.name ?? prefill?.name ?? "",
+      icon: list?.icon ?? prefill?.icon ?? "🚀",
+      parentId: list?.parentId ?? prefill?.parentId,
+      type: list?.type ?? prefill?.type ?? "manual",
+      query: list?.query ?? prefill?.query ?? undefined,
     },
   });
   const [open, setOpen] = [
@@ -84,9 +95,11 @@ export function EditListModal({
 
   useEffect(() => {
     form.reset({
-      name: list?.name ?? "",
-      icon: list?.icon ?? "🚀",
-      parentId: list?.parentId ?? parent?.id,
+      name: list?.name ?? prefill?.name ?? "",
+      icon: list?.icon ?? prefill?.icon ?? "🚀",
+      parentId: list?.parentId ?? prefill?.parentId,
+      type: list?.type ?? prefill?.type ?? "manual",
+      query: list?.query ?? prefill?.query ?? undefined,
     });
   }, [open]);
 
@@ -154,12 +167,14 @@ export function EditListModal({
       }
     },
   });
+  const listType = form.watch("type");
 
   const isEdit = !!list;
   const isPending = isCreating || isEditing;
 
   const onSubmit = form.handleSubmit((value: z.infer<typeof formSchema>) => {
     value.parentId = value.parentId === "" ? null : value.parentId;
+    value.query = value.type === "smart" ? value.query : undefined;
     isEdit ? editList({ ...value, listId: list.id }) : createList(value);
   });
 
@@ -258,6 +273,54 @@ export function EditListModal({
                 );
               }}
             />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => {
+                return (
+                  <FormItem className="grow pb-4">
+                    <FormLabel>List Type</FormLabel>
+                    <FormControl>
+                      <Select
+                        disabled={isEdit}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="manual">Manual</SelectItem>
+                          <SelectItem value="smart">Smart</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
+            {listType === "smart" && (
+              <FormField
+                control={form.control}
+                name="query"
+                render={({ field }) => {
+                  return (
+                    <FormItem className="grow pb-4">
+                      <FormLabel>Search Query</FormLabel>
+                      <FormControl>
+                        <Input
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder={"Query"}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+            )}
             <DialogFooter className="sm:justify-end">
               <DialogClose asChild>
                 <Button type="button" variant="secondary">

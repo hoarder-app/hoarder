@@ -25,7 +25,7 @@ export default async function ListPage({
     <Bookmarks
       query={{ listId: list.id }}
       showDivider={true}
-      showEditorCard={true}
+      showEditorCard={list.type === "manual"}
       header={<ListHeader initialData={list} />}
     />
   );
