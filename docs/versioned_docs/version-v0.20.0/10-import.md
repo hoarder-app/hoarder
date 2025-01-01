@@ -14,13 +14,6 @@ All the URLs in the bookmarks file will be added automatically, you will not be 
 - This will download an html file with all of your bookmarks.
 - To import the bookmark file, go to the settings and click "Import Bookmarks from HTML file".
 
-## Import from Firefox
-- Open Firefox and click on the menu button (☰) in the top right corner.
-- Navigate to Bookmarks > Manage bookmarks (or press Ctrl + Shift + O / Cmd + Shift + O to open the Bookmarks Library).
-- In the Bookmarks Library, click the Import and Backup button at the top. Select Export Bookmarks to HTML... to save your bookmarks as an HTML file.
-- To import a bookmark file, go back to the Import and Backup menu, then select Import Bookmarks from HTML... and choose your saved HTML file.
-
-
 ## Import from Pocket
 
 - Go to the [Pocket export page](https://getpocket.com/export) and follow the instructions to export your bookmarks.
