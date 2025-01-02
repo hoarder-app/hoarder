@@ -246,6 +246,7 @@ async function getIds(
       return union(vals);
     }
     default: {
+      const _exhaustiveCheck: never = matcher;
       throw new Error("Unknown matcher type");
     }
   }

@@ -1,5 +1,6 @@
 import InfoTooltip from "@/components/ui/info-tooltip";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { useTranslation } from "@/lib/i18n/client";
 
 import { TextAndMatcher } from "@hoarder/shared/searchQueryParser";
 import { Matcher } from "@hoarder/shared/types/search";
@@ -13,6 +14,7 @@ export default function QueryExplainerTooltip({
   parsedSearchQuery: TextAndMatcher & { result: string };
   className?: string;
 }) {
+  const { t } = useTranslation();
   if (parsedSearchQuery.result == "invalid") {
     return null;
   }
@@ -23,7 +25,9 @@ export default function QueryExplainerTooltip({
         return (
           <TableRow>
             <TableCell>
-              {matcher.inverse ? "Doesn't have" : "Has"} Tag
+              {matcher.inverse
+                ? t("search.does_not_have_tag")
+                : t("search.has_tag")}
             </TableCell>
             <TableCell>{matcher.tagName}</TableCell>
           </TableRow>
@@ -32,7 +36,9 @@ export default function QueryExplainerTooltip({
         return (
           <TableRow>
             <TableCell>
-              {matcher.inverse ? "Is not in" : "Is in "} List
+              {matcher.inverse
+                ? t("search.is_not_in_list")
+                : t("search.is_in_list")}
             </TableCell>
             <TableCell>{matcher.listName}</TableCell>
           </TableRow>
@@ -40,50 +46,72 @@ export default function QueryExplainerTooltip({
       case "dateAfter":
         return (
           <TableRow>
-            <TableCell>{matcher.inverse ? "Not" : ""} Created After</TableCell>
+            <TableCell>
+              {matcher.inverse
+                ? t("search.not_created_on_or_after")
+                : t("search.created_on_or_after")}
+            </TableCell>
             <TableCell>{matcher.dateAfter.toDateString()}</TableCell>
           </TableRow>
         );
       case "dateBefore":
         return (
           <TableRow>
-            <TableCell>{matcher.inverse ? "Not" : ""} Created Before</TableCell>
+            <TableCell>
+              {matcher.inverse
+                ? t("search.not_created_on_or_before")
+                : t("search.created_on_or_before")}
+            </TableCell>
             <TableCell>{matcher.dateBefore.toDateString()}</TableCell>
           </TableRow>
         );
       case "favourited":
         return (
           <TableRow>
-            <TableCell>Favourited</TableCell>
-            <TableCell>{matcher.favourited.toString()}</TableCell>
+            <TableCell colSpan={2} className="text-center">
+              {matcher.favourited
+                ? t("search.is_favorited")
+                : t("search.is_not_favorited")}
+            </TableCell>
           </TableRow>
         );
       case "archived":
         return (
           <TableRow>
-            <TableCell>Archived</TableCell>
-            <TableCell>{matcher.archived.toString()}</TableCell>
+            <TableCell colSpan={2} className="text-center">
+              {matcher.archived
+                ? t("search.is_archived")
+                : t("search.is_not_archived")}
+            </TableCell>
           </TableRow>
         );
       case "tagged":
         return (
           <TableRow>
-            <TableCell>Has Tags</TableCell>
-            <TableCell>{matcher.tagged.toString()}</TableCell>
+            <TableCell colSpan={2} className="text-center">
+              {matcher.tagged
+                ? t("search.has_any_tag")
+                : t("search.has_no_tags")}
+            </TableCell>
           </TableRow>
         );
       case "inlist":
         return (
           <TableRow>
-            <TableCell>In Any List</TableCell>
-            <TableCell>{matcher.inList.toString()}</TableCell>
+            <TableCell colSpan={2} className="text-center">
+              {matcher.inList
+                ? t("search.is_in_any_list")
+                : t("search.is_not_in_any_list")}
+            </TableCell>
           </TableRow>
         );
       case "and":
       case "or":
         return (
           <TableRow>
-            <TableCell className="capitalize">{matcher.type}</TableCell>
+            <TableCell>
+              {matcher.type === "and" ? t("search.and") : t("search.or")}
+            </TableCell>
             <TableCell>
               <Table>
                 <TableBody>
@@ -95,6 +123,21 @@ export default function QueryExplainerTooltip({
             </TableCell>
           </TableRow>
         );
+      case "url":
+        return (
+          <TableRow>
+            <TableCell>
+              {matcher.inverse
+                ? t("search.url_does_not_contain")
+                : t("search.url_contains")}
+            </TableCell>
+            <TableCell>{matcher.url}</TableCell>
+          </TableRow>
+        );
+      default: {
+        const _exhaustiveCheck: never = matcher;
+        return null;
+      }
     }
   };
 
@@ -105,7 +148,7 @@ export default function QueryExplainerTooltip({
         <TableBody>
           {parsedSearchQuery.text && (
             <TableRow>
-              <TableCell>Text</TableCell>
+              <TableCell>{t("search.full_text_search")}</TableCell>
               <TableCell>{parsedSearchQuery.text}</TableCell>
             </TableRow>
           )}
