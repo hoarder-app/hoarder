@@ -166,7 +166,14 @@
     "all_lists": "All Lists",
     "favourites": "Favourites",
     "new_list": "New List",
-    "new_nested_list": "New Nested List"
+    "edit_list": "Edit List",
+    "new_nested_list": "New Nested List",
+    "parent_list": "Parent List",
+    "no_parent": "No Parent",
+    "list_type": "List Type",
+    "manual_list": "Manual List",
+    "smart_list": "Smart List",
+    "search_query": "Search Query"
   },
   "tags": {
     "all_tags": "All Tags",

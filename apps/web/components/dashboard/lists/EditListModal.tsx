@@ -191,7 +191,9 @@ export function EditListModal({
         <Form {...form}>
           <form onSubmit={onSubmit}>
             <DialogHeader>
-              <DialogTitle>{isEdit ? "Edit" : "New"} List</DialogTitle>
+              <DialogTitle>
+                {isEdit ? t("lists.edit_list") : t("lists.new_list")}
+              </DialogTitle>
             </DialogHeader>
             <div className="flex w-full gap-2 py-4">
               <FormField
@@ -247,7 +249,7 @@ export function EditListModal({
               render={({ field }) => {
                 return (
                   <FormItem className="grow pb-4">
-                    <FormLabel>Parent</FormLabel>
+                    <FormLabel>{t("lists.parent_list")}</FormLabel>
                     <div className="flex items-center gap-1">
                       <FormControl>
                         <BookmarkListSelector
@@ -255,7 +257,7 @@ export function EditListModal({
                           hideSubtreeOf={list ? list.id : undefined}
                           value={field.value}
                           onChange={field.onChange}
-                          placeholder={"No Parent"}
+                          placeholder={t("lists.no_parent")}
                         />
                       </FormControl>
                       <Button
@@ -279,7 +281,7 @@ export function EditListModal({
               render={({ field }) => {
                 return (
                   <FormItem className="grow pb-4">
-                    <FormLabel>List Type</FormLabel>
+                    <FormLabel>{t("lists.list_type")}</FormLabel>
                     <FormControl>
                       <Select
                         disabled={isEdit}
@@ -290,8 +292,12 @@ export function EditListModal({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="manual">Manual</SelectItem>
-                          <SelectItem value="smart">Smart</SelectItem>
+                          <SelectItem value="manual">
+                            {t("lists.manual_list")}
+                          </SelectItem>
+                          <SelectItem value="smart">
+                            {t("lists.smart_list")}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -307,12 +313,12 @@ export function EditListModal({
                 render={({ field }) => {
                   return (
                     <FormItem className="grow pb-4">
-                      <FormLabel>Search Query</FormLabel>
+                      <FormLabel>{t("lists.search_query")}</FormLabel>
                       <FormControl>
                         <Input
                           value={field.value}
                           onChange={field.onChange}
-                          placeholder={"Query"}
+                          placeholder={t("lists.search_query")}
                         />
                       </FormControl>
                       <FormMessage />
