@@ -182,4 +182,51 @@ describe("Lists API", () => {
 
     expect(updatedListBookmarks!.bookmarks.length).toBe(0);
   });
+
+  it("should support smart lists", async () => {
+    // Create a bookmark
+    const { data: createdBookmark1 } = await client.POST("/bookmarks", {
+      body: {
+        type: "text",
+        title: "Test Bookmark",
+        text: "This is a test bookmark",
+        favourited: true,
+      },
+    });
+
+    const { data: _ } = await client.POST("/bookmarks", {
+      body: {
+        type: "text",
+        title: "Test Bookmark",
+        text: "This is a test bookmark",
+        favourited: false,
+      },
+    });
+
+    // Create a list
+    const { data: createdList } = await client.POST("/lists", {
+      body: {
+        name: "Test List",
+        icon: "🚀",
+        type: "smart",
+        query: "is:fav",
+      },
+    });
+
+    // Get bookmarks in list
+    const { data: listBookmarks, response: getResponse } = await client.GET(
+      "/lists/{listId}/bookmarks",
+      {
+        params: {
+          path: {
+            listId: createdList!.id,
+          },
+        },
+      },
+    );
+
+    expect(getResponse.status).toBe(200);
+    expect(listBookmarks!.bookmarks.length).toBe(1);
+    expect(listBookmarks!.bookmarks[0].id).toBe(createdBookmark1!.id);
+  });
 });
