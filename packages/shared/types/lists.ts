@@ -29,7 +29,8 @@ export const zNewBookmarkListSchema = z
     },
   )
   .refine((val) => !val.query || parseSearchQuery(val.query).text.length == 0, {
-    message: "Smart lists cannot have text in the query",
+    message:
+      "Smart lists cannot have unqualified terms (aka full text search terms) in the query",
     path: ["query"],
   });
 
@@ -69,6 +70,7 @@ export const zEditBookmarkListSchemaWithValidation = zEditBookmarkListSchema
     },
   )
   .refine((val) => !val.query || parseSearchQuery(val.query).text.length == 0, {
-    message: "Smart lists cannot have text in the query",
+    message:
+      "Smart lists cannot have unqualified terms (aka full text search terms) in the query",
     path: ["query"],
   });

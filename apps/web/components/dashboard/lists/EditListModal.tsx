@@ -45,7 +45,10 @@ import {
   useCreateBookmarkList,
   useEditBookmarkList,
 } from "@hoarder/shared-react/hooks/lists";
-import { ZBookmarkList } from "@hoarder/shared/types/lists";
+import {
+  ZBookmarkList,
+  zNewBookmarkListSchema,
+} from "@hoarder/shared/types/lists";
 
 import { BookmarkListSelector } from "./BookmarkListSelector";
 
@@ -71,15 +74,8 @@ export function EditListModal({
     throw new Error("You must provide both open and setOpen or neither");
   }
   const [customOpen, customSetOpen] = useState(false);
-  const formSchema = z.object({
-    name: z.string(),
-    icon: z.string(),
-    parentId: z.string().nullish(),
-    type: z.enum(["manual", "smart"]).default("manual"),
-    query: z.string().optional(),
-  });
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof zNewBookmarkListSchema>>({
+    resolver: zodResolver(zNewBookmarkListSchema),
     defaultValues: {
       name: list?.name ?? prefill?.name ?? "",
       icon: list?.icon ?? prefill?.icon ?? "🚀",
@@ -169,14 +165,22 @@ export function EditListModal({
   });
   const listType = form.watch("type");
 
+  useEffect(() => {
+    if (listType !== "smart") {
+      form.resetField("query");
+    }
+  }, [listType]);
+
   const isEdit = !!list;
   const isPending = isCreating || isEditing;
 
-  const onSubmit = form.handleSubmit((value: z.infer<typeof formSchema>) => {
-    value.parentId = value.parentId === "" ? null : value.parentId;
-    value.query = value.type === "smart" ? value.query : undefined;
-    isEdit ? editList({ ...value, listId: list.id }) : createList(value);
-  });
+  const onSubmit = form.handleSubmit(
+    (value: z.infer<typeof zNewBookmarkListSchema>) => {
+      value.parentId = value.parentId === "" ? null : value.parentId;
+      value.query = value.type === "smart" ? value.query : undefined;
+      isEdit ? editList({ ...value, listId: list.id }) : createList(value);
+    },
+  );
 
   return (
     <Dialog
