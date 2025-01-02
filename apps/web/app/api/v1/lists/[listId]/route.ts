@@ -28,7 +28,7 @@ export const PATCH = (
 ) =>
   buildHandler({
     req,
-    bodySchema: zEditBookmarkListSchema,
+    bodySchema: zEditBookmarkListSchema.omit({ listId: true }),
     handler: async ({ api, body }) => {
       const list = await api.lists.edit({
         ...body!,
