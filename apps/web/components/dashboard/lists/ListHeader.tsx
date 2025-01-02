@@ -3,7 +3,8 @@
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/client";
+import { MoreHorizontal, SearchIcon } from "lucide-react";
 
 import { api } from "@hoarder/shared-react/trpc";
 import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
@@ -17,6 +18,7 @@ export default function ListHeader({
 }: {
   initialData: ZBookmarkList;
 }) {
+  const { t } = useTranslation();
   const router = useRouter();
   const { data: list, error } = api.lists.get.useQuery(
     {
@@ -47,11 +49,20 @@ export default function ListHeader({
         <span className="text-2xl">
           {list.icon} {list.name}
         </span>
-        {parsedQuery && (
-          <QueryExplainerTooltip parsedSearchQuery={parsedQuery} />
-        )}
       </div>
-      <div className="flex">
+      <div className="flex items-center">
+        {parsedQuery && (
+          <QueryExplainerTooltip
+            header={
+              <div className="flex items-center justify-center gap-1">
+                <SearchIcon className="size-3" />
+                <span className="text-sm">{t("lists.smart_list")}</span>
+              </div>
+            }
+            parsedSearchQuery={parsedQuery}
+            className="size-6 stroke-foreground"
+          />
+        )}
         <ListOptions list={list}>
           <Button variant="ghost">
             <MoreHorizontal />

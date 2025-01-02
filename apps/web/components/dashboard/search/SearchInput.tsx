@@ -95,7 +95,7 @@ const SearchInput = React.forwardRef<
             variant="secondary"
             className="absolute right-9 top-2 z-50 px-2 py-1 text-xs"
           >
-            Save
+            {t("actions.save")}
           </Button>
         )}
       <Input
