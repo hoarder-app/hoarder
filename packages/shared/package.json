@@ -26,7 +26,8 @@
     "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "vitest"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "main": "index.ts",
   "eslintConfig": {

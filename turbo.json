@@ -48,6 +48,7 @@
         "node_modules/.cache/tsbuildinfo.json"
       ]
     },
+    "test": {},
     "clean": {
       "cache": false
     },
