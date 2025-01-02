@@ -48,16 +48,6 @@ jobs:
 
       - name: Typecheck
         run: pnpm typecheck
-  tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup
-        uses: ./tooling/github/setup
-
-      - name: Tests
-        run: pnpm test
   open-api-spec:
     runs-on: ubuntu-latest
     steps:

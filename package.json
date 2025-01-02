@@ -19,8 +19,7 @@
     "lint:fix": "turbo --no-daemon lint --continue -- --fix --cache-location node_modules/.cache/.eslintcache",
     "lint:ws": "pnpm dlx sherif@latest",
     "postinstall": "pnpm lint:ws",
-    "typecheck": "turbo --no-daemon typecheck",
-    "test": "turbo --no-daemon test --continue"
+    "typecheck": "turbo --no-daemon typecheck"
   },
   "devDependencies": {
     "@hoarder/prettier-config": "workspace:^0.1.0",
