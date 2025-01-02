@@ -12,7 +12,7 @@ export const db = drizzle(sqlite, { schema });
 
 export function getInMemoryDB(runMigrations: boolean) {
   const mem = new Database(":memory:");
-  const db = drizzle(mem, { schema, logger: true });
+  const db = drizzle(mem, { schema, logger: false });
   if (runMigrations) {
     migrate(db, { migrationsFolder: path.resolve(__dirname, "./drizzle") });
   }
