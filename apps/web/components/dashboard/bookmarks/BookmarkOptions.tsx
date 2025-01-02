@@ -33,6 +33,7 @@ import {
 } from "@hoarder/shared-react/hooks//bookmarks";
 import { useRemoveBookmarkFromList } from "@hoarder/shared-react/hooks//lists";
 import { useBookmarkGridContext } from "@hoarder/shared-react/hooks/bookmark-grid-context";
+import { useBookmarkListContext } from "@hoarder/shared-react/hooks/bookmark-list-context";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
@@ -58,6 +59,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const [isTextEditorOpen, setTextEditorOpen] = useState(false);
 
   const { listId } = useBookmarkGridContext() ?? {};
+  const withinListContext = useBookmarkListContext();
 
   const onError = () => {
     toast({
@@ -210,20 +212,22 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             <span>{t("actions.manage_lists")}</span>
           </DropdownMenuItem>
 
-          {listId && (
-            <DropdownMenuItem
-              disabled={demoMode}
-              onClick={() =>
-                removeFromListMutator.mutate({
-                  listId,
-                  bookmarkId: bookmark.id,
-                })
-              }
-            >
-              <ListX className="mr-2 size-4" />
-              <span>{t("actions.remove_from_list")}</span>
-            </DropdownMenuItem>
-          )}
+          {listId &&
+            withinListContext &&
+            withinListContext.type === "manual" && (
+              <DropdownMenuItem
+                disabled={demoMode}
+                onClick={() =>
+                  removeFromListMutator.mutate({
+                    listId,
+                    bookmarkId: bookmark.id,
+                  })
+                }
+              >
+                <ListX className="mr-2 size-4" />
+                <span>{t("actions.remove_from_list")}</span>
+              </DropdownMenuItem>
+            )}
 
           {bookmark.content.type === BookmarkTypes.LINK && (
             <DropdownMenuItem

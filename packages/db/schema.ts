@@ -307,6 +307,9 @@ export const bookmarkLists = sqliteTable(
     userId: text("userId")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
+    type: text("type", { enum: ["manual", "smart"] }).notNull(),
+    // Only applicable for smart lists
+    query: text("query"),
     parentId: text("parentId").references(
       (): AnySQLiteColumn => bookmarkLists.id,
       { onDelete: "set null" },

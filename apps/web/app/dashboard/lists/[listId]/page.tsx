@@ -4,6 +4,8 @@ import ListHeader from "@/components/dashboard/lists/ListHeader";
 import { api } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
+import { BookmarkListContextProvider } from "@hoarder/shared-react/hooks/bookmark-list-context";
+
 export default async function ListPage({
   params,
 }: {
@@ -22,11 +24,13 @@ export default async function ListPage({
   }
 
   return (
-    <Bookmarks
-      query={{ listId: list.id }}
-      showDivider={true}
-      showEditorCard={true}
-      header={<ListHeader initialData={list} />}
-    />
+    <BookmarkListContextProvider list={list}>
+      <Bookmarks
+        query={{ listId: list.id }}
+        showDivider={true}
+        showEditorCard={list.type === "manual"}
+        header={<ListHeader initialData={list} />}
+      />
+    </BookmarkListContextProvider>
   );
 }

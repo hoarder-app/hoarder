@@ -1,12 +1,14 @@
 import assert from "node:assert";
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
+import invariant from "tiny-invariant";
 import { z } from "zod";
 
 import { SqliteError } from "@hoarder/db";
 import { bookmarkLists, bookmarksInLists } from "@hoarder/db/schema";
 import {
   zBookmarkListSchema,
+  zEditBookmarkListSchemaWithValidation,
   zNewBookmarkListSchema,
 } from "@hoarder/shared/types/lists";
 
@@ -58,28 +60,40 @@ export const listsAppRouter = router({
           icon: input.icon,
           userId: ctx.user.id,
           parentId: input.parentId,
+          type: input.type,
+          query: input.query,
         })
         .returning();
       return result;
     }),
   edit: authedProcedure
-    .input(
-      zNewBookmarkListSchema
-        .partial()
-        .merge(z.object({ listId: z.string() }))
-        .refine((val) => val.parentId != val.listId, {
-          message: "List can't be its own parent",
-          path: ["parentId"],
-        }),
-    )
+    .input(zEditBookmarkListSchemaWithValidation)
     .output(zBookmarkListSchema)
+    .use(ensureListOwnership)
     .mutation(async ({ input, ctx }) => {
+      if (input.query) {
+        const list = await ctx.db.query.bookmarkLists.findFirst({
+          where: and(
+            eq(bookmarkLists.id, input.listId),
+            eq(bookmarkLists.userId, ctx.user.id),
+          ),
+        });
+        // List must exist given that we passed the ownership check
+        invariant(list);
+        if (list.type !== "smart") {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Manual lists cannot have a query",
+          });
+        }
+      }
       const result = await ctx.db
         .update(bookmarkLists)
         .set({
           name: input.name,
           icon: input.icon,
           parentId: input.parentId,
+          query: input.query,
         })
         .where(
           and(
@@ -123,6 +137,19 @@ export const listsAppRouter = router({
     .use(ensureListOwnership)
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
+      const list = await ctx.db.query.bookmarkLists.findFirst({
+        where: and(
+          eq(bookmarkLists.id, input.listId),
+          eq(bookmarkLists.userId, ctx.user.id),
+        ),
+      });
+      invariant(list);
+      if (list.type === "smart") {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Smart lists cannot be added to",
+        });
+      }
       try {
         await ctx.db.insert(bookmarksInLists).values({
           listId: input.listId,
@@ -174,13 +201,7 @@ export const listsAppRouter = router({
         listId: z.string(),
       }),
     )
-    .output(
-      zBookmarkListSchema.merge(
-        z.object({
-          bookmarks: z.array(z.string()),
-        }),
-      ),
-    )
+    .output(zBookmarkListSchema)
     .use(ensureListOwnership)
     .query(async ({ input, ctx }) => {
       const res = await ctx.db.query.bookmarkLists.findFirst({
@@ -188,9 +209,6 @@ export const listsAppRouter = router({
           eq(bookmarkLists.id, input.listId),
           eq(bookmarkLists.userId, ctx.user.id),
         ),
-        with: {
-          bookmarksInLists: true,
-        },
       });
       if (!res) {
         throw new TRPCError({ code: "NOT_FOUND" });
@@ -201,7 +219,8 @@ export const listsAppRouter = router({
         name: res.name,
         icon: res.icon,
         parentId: res.parentId,
-        bookmarks: res.bookmarksInLists.map((b) => b.bookmarkId),
+        type: res.type,
+        query: res.query,
       };
     }),
   list: authedProcedure

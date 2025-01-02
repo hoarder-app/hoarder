@@ -89,9 +89,17 @@ listsCmd
   .action(async (opts) => {
     const api = getAPIClient();
     try {
-      const results = await api.lists.get.query({ listId: opts.list });
+      let resp = await api.bookmarks.getBookmarks.query({ listId: opts.list });
+      let results: string[] = resp.bookmarks.map((b) => b.id);
+      while (resp.nextCursor) {
+        resp = await api.bookmarks.getBookmarks.query({
+          listId: opts.list,
+          cursor: resp.nextCursor,
+        });
+        results = [...results, ...resp.bookmarks.map((b) => b.id)];
+      }
 
-      printObject(results.bookmarks);
+      printObject(results);
     } catch (error) {
       printErrorMessageWithReason(
         "Failed to get the ids of the bookmarks in the list",

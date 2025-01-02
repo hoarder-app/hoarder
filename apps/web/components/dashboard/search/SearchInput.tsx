@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useEffect, useImperativeHandle, useRef } from "react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDoBookmarkSearch } from "@/lib/hooks/bookmark-search";
 import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 
+import { EditListModal } from "../lists/EditListModal";
 import QueryExplainerTooltip from "./QueryExplainerTooltip";
 
 function useFocusSearchOnKeyPress(
@@ -63,6 +65,7 @@ const SearchInput = React.forwardRef<
 
   useFocusSearchOnKeyPress(inputRef, onChange);
   useImperativeHandle(ref, () => inputRef.current!);
+  const [newNestedListModalOpen, setNewNestedListModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isInSearchPage) {
@@ -72,10 +75,29 @@ const SearchInput = React.forwardRef<
 
   return (
     <div className={cn("relative flex-1", className)}>
+      <EditListModal
+        open={newNestedListModalOpen}
+        setOpen={setNewNestedListModalOpen}
+        prefill={{
+          type: "smart",
+          query: value,
+        }}
+      />
       <QueryExplainerTooltip
         className="-translate-1/2 absolute right-1.5 top-2 p-0.5"
         parsedSearchQuery={parsedSearchQuery}
       />
+      {parsedSearchQuery.result === "full" &&
+        parsedSearchQuery.text.length == 0 && (
+          <Button
+            onClick={() => setNewNestedListModalOpen(true)}
+            size="none"
+            variant="secondary"
+            className="absolute right-9 top-2 z-50 px-2 py-1 text-xs"
+          >
+            {t("actions.save")}
+          </Button>
+        )}
       <Input
         ref={inputRef}
         value={value}

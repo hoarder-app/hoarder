@@ -39,7 +39,7 @@ export default async function ({ provide }: GlobalSetupContext) {
   const port = await getRandomPort();
 
   console.log(`Starting docker compose on port ${port}...`);
-  execSync(`docker compose up -d`, {
+  execSync(`docker compose up --build -d`, {
     cwd: __dirname,
     stdio: "inherit",
     env: {

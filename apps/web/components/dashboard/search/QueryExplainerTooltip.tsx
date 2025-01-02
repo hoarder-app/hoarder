@@ -6,8 +6,10 @@ import { Matcher } from "@hoarder/shared/types/search";
 
 export default function QueryExplainerTooltip({
   parsedSearchQuery,
+  header,
   className,
 }: {
+  header?: React.ReactNode;
   parsedSearchQuery: TextAndMatcher & { result: string };
   className?: string;
 }) {
@@ -98,6 +100,7 @@ export default function QueryExplainerTooltip({
 
   return (
     <InfoTooltip className={className}>
+      {header}
       <Table>
         <TableBody>
           {parsedSearchQuery.text && (

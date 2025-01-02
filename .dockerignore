@@ -7,3 +7,4 @@ README.md
 **/*.db
 **/.env*
 .git
+./data

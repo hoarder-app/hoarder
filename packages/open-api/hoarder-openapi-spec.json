@@ -362,6 +362,18 @@
           "parentId": {
             "type": "string",
             "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "smart"
+            ],
+            "default": "manual"
+          },
+          "query": {
+            "type": "string",
+            "nullable": true
           }
         },
         "required": [
@@ -1058,6 +1070,18 @@
                   "icon": {
                     "type": "string"
                   },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "manual",
+                      "smart"
+                    ],
+                    "default": "manual"
+                  },
+                  "query": {
+                    "type": "string",
+                    "minLength": 1
+                  },
                   "parentId": {
                     "type": "string",
                     "nullable": true
@@ -1171,6 +1195,10 @@
                   "parentId": {
                     "type": "string",
                     "nullable": true
+                  },
+                  "query": {
+                    "type": "string",
+                    "minLength": 1
                   }
                 }
               }
