@@ -10,8 +10,7 @@
     "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "vitest"
   },
   "dependencies": {
     "@hoarder/db": "workspace:*",

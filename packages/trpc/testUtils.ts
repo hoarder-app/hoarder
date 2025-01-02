@@ -1,6 +1,5 @@
 import { getInMemoryDB } from "@hoarder/db/drizzle";
 import { users } from "@hoarder/db/schema";
-import { runQueueDBMigrations } from "@hoarder/shared/queues";
 
 import { createCallerFactory } from "./index";
 import { appRouter } from "./routers/_app";
@@ -55,7 +54,6 @@ export interface CustomTestContext {
 export async function buildTestContext(
   seedDB: boolean,
 ): Promise<CustomTestContext> {
-  runQueueDBMigrations();
   const db = getTestDB();
   let users: Awaited<ReturnType<typeof seedUsers>> = [];
   if (seedDB) {
