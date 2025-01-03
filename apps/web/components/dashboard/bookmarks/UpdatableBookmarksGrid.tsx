@@ -1,15 +1,15 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import UploadDropzone from "@/components/dashboard/UploadDropzone";
 import { api } from "@/lib/trpc";
+import { useSearchParams } from "next/navigation";
 
+import { BookmarkGridContextProvider } from "@hoarder/shared-react/hooks/bookmark-grid-context";
 import type {
   SortOrder,
   ZGetBookmarksRequest,
   ZGetBookmarksResponse,
 } from "@hoarder/shared/types/bookmarks";
-import { BookmarkGridContextProvider } from "@hoarder/shared-react/hooks/bookmark-grid-context";
 
 import BookmarksGrid from "./BookmarksGrid";
 
@@ -43,6 +43,7 @@ export default function UpdatableBookmarksGrid({
         }),
         initialCursor: null,
         getNextPageParam: (lastPage) => lastPage.nextCursor,
+        refetchOnMount: true,
       },
     );
 

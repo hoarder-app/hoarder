@@ -1,4 +1,3 @@
-import { useRouter, useSearchParams } from "next/navigation";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,7 +6,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTranslation } from "@/lib/i18n/client";
+import { api } from "@hoarder/shared-react/trpc";
 import { Check, SortDesc } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import type { SortOrder } from "@hoarder/shared/types/bookmarks";
 
@@ -17,10 +18,18 @@ export default function SortOrderToggle() {
   const searchParams = useSearchParams();
   const currentSort = (searchParams.get("sort") as SortOrder) ?? "desc";
 
-  const updateSort = (newSort: SortOrder) => {
+  const apiUtils = api.useUtils();
+
+  const updateSort = async (newSort: SortOrder) => {
+    // invalidate the query
+    await apiUtils.bookmarks.getBookmarks.invalidate();
+
     const params = new URLSearchParams(searchParams.toString());
     params.set("sort", newSort);
     router.replace(`?${params.toString()}`);
+
+    // Force a refetch after URL update
+    await apiUtils.bookmarks.getBookmarks.refetch();
   };
 
   return (
