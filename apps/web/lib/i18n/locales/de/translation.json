@@ -61,7 +61,12 @@
     "cancel": "Abbrechen",
     "apply_all": "Alle anwenden",
     "ignore": "Ignorieren",
-    "recrawl": "Erneutes Crawlen"
+    "recrawl": "Erneutes Crawlen",
+    "sort": {
+      "title": "Sortieren",
+      "newest_first": "Neueste zuerst",
+      "oldest_first": "Älteste zuerst"
+    }
   },
   "settings": {
     "back_to_app": "Zurück zur App",

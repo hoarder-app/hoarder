@@ -63,7 +63,12 @@
     "merge": "Merge",
     "cancel": "Cancel",
     "apply_all": "Apply All",
-    "ignore": "Ignore"
+    "ignore": "Ignore",
+    "sort": {
+      "title": "Sort",
+      "newest_first": "Newest First",
+      "oldest_first": "Oldest First"
+    }
   },
   "highlights": {
     "no_highlights": "You don't have any highlights yet."

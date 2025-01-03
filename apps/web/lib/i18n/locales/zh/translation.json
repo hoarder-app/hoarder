@@ -61,7 +61,12 @@
     "cancel": "取消",
     "apply_all": "全部应用",
     "ignore": "忽略",
-    "recrawl": "重新抓取"
+    "recrawl": "重新抓取",
+    "sort": {
+      "title": "排序",
+      "newest_first": "最新优先",
+      "oldest_first": "最早优先"
+    }
   },
   "settings": {
     "back_to_app": "返回应用",

@@ -1,5 +1,16 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, desc, eq, exists, gt, inArray, lt, lte, or } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  exists,
+  gt,
+  inArray,
+  lt,
+  lte,
+  or,
+} from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -721,7 +732,12 @@ export const bookmarksAppRouter = router({
             ),
           )
           .limit(input.limit + 1)
-          .orderBy(desc(bookmarks.createdAt), desc(bookmarks.id)),
+          .orderBy(
+            input.sortOrder === "asc"
+              ? asc(bookmarks.createdAt)
+              : desc(bookmarks.createdAt),
+            desc(bookmarks.id),
+          ),
       );
       // TODO: Consider not inlining the tags in the response of getBookmarks as this query is getting kinda expensive
       const results = await ctx.db
@@ -825,7 +841,9 @@ export const bookmarksAppRouter = router({
 
       bookmarksArr.sort((a, b) => {
         if (a.createdAt != b.createdAt) {
-          return b.createdAt.getTime() - a.createdAt.getTime();
+          return input.sortOrder === "asc"
+            ? a.createdAt.getTime() - b.createdAt.getTime()
+            : b.createdAt.getTime() - a.createdAt.getTime();
         } else {
           return b.id.localeCompare(a.id);
         }

@@ -12,6 +12,12 @@ export const enum BookmarkTypes {
   UNKNOWN = "unknown",
 }
 
+export const zSortOrder = z.enum(["asc", "desc"]);
+export type SortOrder = z.infer<typeof zSortOrder>;
+
+export const zSortBy = z.enum(["createdAt"]);
+export type SortBy = z.infer<typeof zSortBy>;
+
 export const zAssetTypesSchema = z.enum([
   "screenshot",
   "bannerImage",
@@ -161,6 +167,8 @@ export const zGetBookmarksRequestSchema = z.object({
   // The value is currently not being used, but keeping it so that client can still set it to true for older
   // servers.
   useCursorV2: z.boolean().optional(),
+  sortBy: zSortBy.optional().default("createdAt"),
+  sortOrder: zSortOrder.optional().default("desc"),
 });
 export type ZGetBookmarksRequest = z.infer<typeof zGetBookmarksRequestSchema>;
 

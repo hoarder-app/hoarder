@@ -30,7 +30,12 @@
     "recrawl": "再クロール",
     "ignore": "無視する",
     "cancel": "キャンセル",
-    "download_full_page_archive": "全てのページアーカイブをダウンロード"
+    "download_full_page_archive": "全てのページアーカイブをダウンロード",
+    "sort": {
+      "title": "並び替え",
+      "newest_first": "新しい順",
+      "oldest_first": "古い順"
+    }
   },
   "admin": {
     "actions": {

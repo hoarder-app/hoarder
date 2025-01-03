@@ -30,7 +30,12 @@
     "merge": "Unisci",
     "cancel": "Cancella",
     "apply_all": "Applica a tutto",
-    "copy_link": "Copia link"
+    "copy_link": "Copia link",
+    "sort": {
+      "title": "Ordina",
+      "newest_first": "Prima i più recenti",
+      "oldest_first": "Prima i più vecchi"
+    }
   },
   "common": {
     "attachments": "Allegati",

@@ -63,7 +63,12 @@
     "merge": "Birleştir",
     "cancel": "İptal",
     "apply_all": "Hepsine Uygula",
-    "ignore": "Yoksay"
+    "ignore": "Yoksay",
+    "sort": {
+      "title": "Sırala",
+      "newest_first": "En yeni önce",
+      "oldest_first": "En eski önce"
+    }
   },
   "highlights": {
     "no_highlights": "Henüz hiçbir öne çıkarılmış içeriğiniz yok."

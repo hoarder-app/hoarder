@@ -55,7 +55,12 @@
     "edit_tags": "Ändra taggar",
     "summarize_with_ai": "Sammanfatta med AI",
     "save": "Spara",
-    "merge": "Sammanfoga"
+    "merge": "Sammanfoga",
+    "sort": {
+      "title": "Sortera",
+      "newest_first": "Nyast först",
+      "oldest_first": "Äldst först"
+    }
   },
   "settings": {
     "back_to_app": "Tillbaka till app",

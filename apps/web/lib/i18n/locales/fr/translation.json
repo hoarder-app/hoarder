@@ -60,7 +60,12 @@
     "merge": "Fusionner",
     "cancel": "Annuler",
     "apply_all": "Tout appliquer",
-    "ignore": "Ignorer"
+    "ignore": "Ignorer",
+    "sort": {
+      "title": "Trier",
+      "newest_first": "Plus récents d'abord",
+      "oldest_first": "Plus anciens d'abord"
+    }
   },
   "settings": {
     "back_to_app": "Retour à l'application",
