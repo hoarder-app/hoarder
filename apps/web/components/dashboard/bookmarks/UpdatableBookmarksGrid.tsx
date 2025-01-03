@@ -1,9 +1,11 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
 import UploadDropzone from "@/components/dashboard/UploadDropzone";
 import { api } from "@/lib/trpc";
 
 import type {
+  SortOrder,
   ZGetBookmarksRequest,
   ZGetBookmarksResponse,
 } from "@hoarder/shared/types/bookmarks";
@@ -21,9 +23,19 @@ export default function UpdatableBookmarksGrid({
   showEditorCard?: boolean;
   itemsPerPage?: number;
 }) {
+  const searchParams = useSearchParams();
+  const sortOrder = (searchParams.get("sort") as SortOrder) ?? "desc";
+
+  // Merge the sort order from URL with existing query params
+  const finalQuery = {
+    ...query,
+    sortOrder,
+    sortBy: "createdAt" as const,
+  };
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     api.bookmarks.getBookmarks.useInfiniteQuery(
-      { ...query, useCursorV2: true },
+      { ...finalQuery, useCursorV2: true },
       {
         initialData: () => ({
           pages: [initialBookmarks],

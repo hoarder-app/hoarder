@@ -60,7 +60,12 @@
     "merge": "合併",
     "cancel": "取消",
     "apply_all": "全部套用",
-    "ignore": "忽略"
+    "ignore": "忽略",
+    "sort": {
+      "title": "排序",
+      "newest_first": "最新優先",
+      "oldest_first": "最舊優先"
+    }
   },
   "settings": {
     "back_to_app": "返回應用程式",

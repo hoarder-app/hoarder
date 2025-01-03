@@ -30,7 +30,12 @@
     "close": "Luk",
     "edit_tags": "Rediger tags",
     "save": "Gem",
-    "merge": "Sammenflet"
+    "merge": "Sammenflet",
+    "sort": {
+      "title": "Sortér",
+      "newest_first": "Nyeste først",
+      "oldest_first": "Ældste først"
+    }
   },
   "settings": {
     "import": {

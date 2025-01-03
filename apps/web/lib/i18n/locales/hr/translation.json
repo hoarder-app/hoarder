@@ -153,7 +153,12 @@
     "close": "Zatvori",
     "merge": "Spoji",
     "cancel": "Otkaži",
-    "apply_all": "Primijeni sve"
+    "apply_all": "Primijeni sve",
+    "sort": {
+      "title": "Sortiraj",
+      "newest_first": "Najnovije prvo",
+      "oldest_first": "Najstarije prvo"
+    }
   },
   "highlights": {
     "no_highlights": "Još nemate nijednu istaknutu stavku."

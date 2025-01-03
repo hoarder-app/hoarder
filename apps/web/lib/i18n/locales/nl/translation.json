@@ -62,7 +62,12 @@
     "close": "Sluiten",
     "merge": "Samenvoegen",
     "cancel": "Annuleer",
-    "ignore": "Negeren"
+    "ignore": "Negeren",
+    "sort": {
+      "title": "Sorteren",
+      "newest_first": "Nieuwste eerst",
+      "oldest_first": "Oudste eerst"
+    }
   },
   "settings": {
     "ai": {
