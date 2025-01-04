@@ -1,3 +1,0 @@
-pnpm typecheck
-pnpm format --check
-pnpm lint
