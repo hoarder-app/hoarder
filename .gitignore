@@ -61,3 +61,6 @@ data
 
 # VS-Code
 .vscode
+
+# V8 compile cache
+v8-compile-cache-*/
