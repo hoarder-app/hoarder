@@ -5,6 +5,7 @@ services:
     volumes:
       - data:/data
       - ..:/app
+      - modules:/app/node_modules
     ports:
       - 3000:3000
     env_file:
@@ -36,6 +37,7 @@ services:
     volumes:
       - data:/data
       - ..:/app
+      - modules:/app/node_modules
     working_dir: /app
     environment:
       MEILI_ADDR: http://meilisearch:7700
@@ -57,6 +59,7 @@ services:
     volumes:
       - data:/data
       - ..:/app
+      - modules:/app/node_modules
     command:
      - /bin/sh
      - -c
@@ -66,3 +69,4 @@ services:
 volumes:
   meilisearch:
   data:
+  modules:
