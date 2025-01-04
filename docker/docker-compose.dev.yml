@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   web:
     build:
@@ -61,7 +60,8 @@ services:
     command:
      - /bin/sh
      - -c
-     - "pnpm install --frozen-lockfile && pnpm run db:migrate"
+     - "pnpm install && pnpm run db:migrate"
+    #  - "pnpm install --frozen-lockfile && pnpm run db:migrate" # frozen flag messes with m1 docker builds
 
 volumes:
   meilisearch:

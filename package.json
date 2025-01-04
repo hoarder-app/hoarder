@@ -38,5 +38,8 @@
     "patchedDependencies": {
       "xcode@3.0.1": "patches/xcode@3.0.1.patch"
     }
+  },
+  "volta": {
+    "node": "22.12.0"
   }
 }
