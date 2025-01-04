@@ -19,3 +19,4 @@ clean:
     docker compose -f docker/docker-compose.dev.yml down -v
     rm -rf node_modules packages/*/node_modules apps/*/node_modules
     pnpm clean
+    pnpm install

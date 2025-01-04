@@ -12,7 +12,6 @@
     "db:studio": "pnpm --filter @hoarder/db studio",
     "workers": "pnpm --filter @hoarder/workers run start",
     "web": "pnpm --filter @hoarder/web run dev",
-    "prepare": "husky",
     "format": "turbo --no-daemon format --continue -- --cache-location node_modules/.cache/.prettiercache",
     "format:fix": "turbo --no-daemon format --continue -- --write --cache-location node_modules/.cache/.prettiercache",
     "lint": "turbo --no-daemon lint --continue -- --cache-location node_modules/.cache/.eslintcache",
