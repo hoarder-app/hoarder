@@ -15,8 +15,9 @@ stop:
     docker compose -f docker/docker-compose.dev.yml down
 
 # Clean everything (containers, volumes, node_modules)
-clean:
+clean-all:
     docker compose -f docker/docker-compose.dev.yml down -v
+    docker system prune -a --force
     rm -rf node_modules packages/*/node_modules apps/*/node_modules
     pnpm clean
     pnpm install
