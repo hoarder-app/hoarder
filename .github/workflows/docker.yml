@@ -6,6 +6,21 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        type: choice
+        required: true
+        default: 'latest'
+        options:
+          - latest
+          - release
+      debug_enabled:
+        description: 'Enable debug logging'
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   push:
@@ -38,29 +53,28 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GHCR_GITHUB_PAT }}
 
-      - name: Build ${{ matrix.package }}
+      - name: Build ${{ matrix.package }} (latest)
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'latest')
         uses: docker/build-push-action@v5
         with:
           context: .
-          build-args: SERVER_VERSION=nightly
           file: docker/Dockerfile
           target: ${{ matrix.target }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/hoarder-app/${{ matrix.package }}:latest,ghcr.io/mohamedbassem/${{ matrix.package }}:latest
-          cache-from: type=registry,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.target }}
-          cache-to: type=registry,mode=max,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.target }}
+          tags: ghcr.io/ahmedtwine/hoarder:${{ matrix.package }}-latest
+          cache-from: type=registry,ref=ghcr.io/ahmedtwine/hoarder-build-cache:${{ matrix.target }}
+          cache-to: type=registry,mode=max,ref=ghcr.io/ahmedtwine/hoarder-build-cache:${{ matrix.target }}
 
       - name: Build ${{ matrix.package }} (release)
+        if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'release')
         uses: docker/build-push-action@v5
-        if: github.event_name == 'release'
         with:
           context: .
-          build-args: SERVER_VERSION=${{ github.event.release.name }}
           file: docker/Dockerfile
           target: ${{ matrix.target }}
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/hoarder-app/${{ matrix.package }}:${{ github.event.release.name }},ghcr.io/hoarder-app/${{ matrix.package }}:release,ghcr.io/mohamedbassem/${{ matrix.package }}:${{ github.event.release.name }},ghcr.io/mohamedbassem/${{ matrix.package }}:release
-          cache-from: type=registry,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.target }}
-          cache-to: type=registry,mode=max,ref=ghcr.io/hoarder-app/hoarder-build-cache:${{ matrix.target }}
+          tags: ghcr.io/ahmedtwine/hoarder:${{ matrix.package }}-${{ github.event.release.name || 'manual-release' }},ghcr.io/ahmedtwine/hoarder:${{ matrix.package }}-release
+          cache-from: type=registry,ref=ghcr.io/ahmedtwine/hoarder-build-cache:${{ matrix.target }}
+          cache-to: type=registry,mode=max,ref=ghcr.io/ahmedtwine/hoarder-build-cache:${{ matrix.target }}
