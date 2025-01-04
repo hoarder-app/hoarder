@@ -47,7 +47,6 @@ import {
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "@hoarder/shared/types/bookmarks";
-import { zMatcherSchema } from "@hoarder/shared/types/search";
 
 import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";
@@ -525,7 +524,6 @@ export const bookmarksAppRouter = router({
     .input(
       z.object({
         text: z.string(),
-        matcher: zMatcherSchema.optional(),
         cursor: z
           .object({
             offset: z.number(),
@@ -553,10 +551,14 @@ export const bookmarksAppRouter = router({
           message: "Search functionality is not configured",
         });
       }
+      const parsedQuery = parseSearchQuery(input.text);
 
       let filter: string[];
-      if (input.matcher) {
-        const bookmarkIds = await getBookmarkIdsFromMatcher(ctx, input.matcher);
+      if (parsedQuery.matcher) {
+        const bookmarkIds = await getBookmarkIdsFromMatcher(
+          ctx,
+          parsedQuery.matcher,
+        );
         filter = [
           `userId = '${ctx.user.id}' AND id IN [${bookmarkIds.join(",")}]`,
         ];
@@ -564,7 +566,7 @@ export const bookmarksAppRouter = router({
         filter = [`userId = '${ctx.user.id}'`];
       }
 
-      const resp = await client.search(input.text, {
+      const resp = await client.search(parsedQuery.text, {
         filter,
         showRankingScore: true,
         attributesToRetrieve: ["id"],

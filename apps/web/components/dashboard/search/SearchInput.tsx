@@ -84,7 +84,7 @@ const SearchInput = React.forwardRef<
         }}
       />
       <QueryExplainerTooltip
-        className="-translate-1/2 absolute right-1.5 top-2 p-0.5"
+        className="-translate-1/2 absolute right-1.5 top-2 stroke-foreground p-0.5"
         parsedSearchQuery={parsedSearchQuery}
       />
       {parsedSearchQuery.result === "full" &&
