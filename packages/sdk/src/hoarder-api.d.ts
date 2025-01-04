@@ -349,6 +349,143 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/bookmarks/{bookmarkId}/assets": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Attach asset
+     * @description Attach a new asset to a bookmark
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          bookmarkId: components["parameters"]["BookmarkId"];
+        };
+        cookie?: never;
+      };
+      /** @description The asset to attach */
+      requestBody?: {
+        content: {
+          "application/json": {
+            id: string;
+            /** @enum {string} */
+            assetType:
+              | "screenshot"
+              | "bannerImage"
+              | "fullPageArchive"
+              | "video"
+              | "bookmarkAsset"
+              | "unknown";
+          };
+        };
+      };
+      responses: {
+        /** @description The attached asset */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              id: string;
+              /** @enum {string} */
+              assetType:
+                | "screenshot"
+                | "bannerImage"
+                | "fullPageArchive"
+                | "video"
+                | "bookmarkAsset"
+                | "unknown";
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/bookmarks/{bookmarkId}/assets/{assetId}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Replace asset
+     * @description Replace an existing asset with a new one
+     */
+    put: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          bookmarkId: components["parameters"]["BookmarkId"];
+          assetId: components["parameters"]["AssetId"];
+        };
+        cookie?: never;
+      };
+      /** @description The new asset to replace with */
+      requestBody?: {
+        content: {
+          "application/json": {
+            assetId: string;
+          };
+        };
+      };
+      responses: {
+        /** @description No content - asset was replaced successfully */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    post?: never;
+    /**
+     * Detach asset
+     * @description Detach an asset from a bookmark
+     */
+    delete: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          bookmarkId: components["parameters"]["BookmarkId"];
+          assetId: components["parameters"]["AssetId"];
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description No content - asset was detached successfully */
+        204: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content?: never;
+        };
+      };
+    };
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/lists": {
     parameters: {
       query?: never;
@@ -1001,6 +1138,8 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     /** @example ieidlxygmwj87oxz5hxttoc8 */
+    AssetId: string;
+    /** @example ieidlxygmwj87oxz5hxttoc8 */
     BookmarkId: string;
     /** @example ieidlxygmwj87oxz5hxttoc8 */
     ListId: string;
@@ -1119,6 +1258,7 @@ export interface components {
   };
   responses: never;
   parameters: {
+    AssetId: components["schemas"]["AssetId"];
     BookmarkId: components["schemas"]["BookmarkId"];
     ListId: components["schemas"]["ListId"];
     TagId: components["schemas"]["TagId"];
