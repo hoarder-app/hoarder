@@ -12,17 +12,24 @@ services:
     environment:
       MEILI_ADDR: http://meilisearch:7700
       BROWSER_WEB_URL: http://chrome:9222
-      # OPENAI_API_KEY: ...
       DATA_DIR: /data
-  # workers:
-  #   image: 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-workers-latest
-  #   restart: unless-stopped
-  #   volumes:
-  #     - data:/data
-  #   environment:
-  #     MEILI_ADDR: http://meilisearch:7700
-  #     BROWSER_WEB_URL: http://chrome:9222
-  #     DATA_DIR: /data
+    depends_on:
+      - meilisearch
+      - chrome
+
+  workers:
+    image: 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-workers-latest
+    restart: unless-stopped
+    volumes:
+      - data:/data
+    environment:
+      MEILI_ADDR: http://meilisearch:7700
+      BROWSER_WEB_URL: http://chrome:9222
+      DATA_DIR: /data
+    depends_on:
+      - meilisearch
+      - chrome
+
   chrome:
     image: gcr.io/zenika-hub/alpine-chrome:123
     restart: unless-stopped
@@ -33,6 +40,7 @@ services:
       - --remote-debugging-address=0.0.0.0
       - --remote-debugging-port=9222
       - --hide-scrollbars
+
   meilisearch:
     image: getmeili/meilisearch:v1.11.1
     restart: unless-stopped

@@ -38,8 +38,8 @@ jobs:
             target: web
           - package: hoarder-workers
             target: workers
-          - package: hoarder-cli
-            target: cli
+          # - package: hoarder-cli
+          #   target: cli
           - package: hoarder
             target: aio
     runs-on: ubuntu-latest

@@ -56,3 +56,8 @@ push-latest:
         --tag 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-latest \
         .
     docker push 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-latest
+
+# Run the ECR images
+run-ecr:
+    aws ecr get-login-password --region us-west-2 --profile pique | docker login --username AWS --password-stdin 654654146385.dkr.ecr.us-west-2.amazonaws.com
+    docker compose -f docker/docker-compose.yml up
