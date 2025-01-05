@@ -252,32 +252,6 @@ export const bookmarkAssets = sqliteTable("bookmarkAssets", {
   sourceUrl: text("sourceUrl"),
 });
 
-export const bookmarkEmbeddings = sqliteTable(
-  "bookmarkEmbeddings",
-  {
-    id: text("id")
-      .notNull()
-      .primaryKey()
-      .$defaultFn(() => createId()),
-    bookmarkId: text("bookmarkId")
-      .notNull()
-      .references(() => bookmarks.id, { onDelete: "cascade" }),
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    embedding: text("embedding").notNull(),
-    embeddingType: text("embeddingType", {
-      enum: ["description", "content_full", "content_chunk"],
-    }).notNull(),
-    fromOffset: integer("fromOffset"),
-    toOffset: integer("toOffset"),
-  },
-  (tb) => ({
-    bookmarkIdIdx: index("bookmarkEmbeddings_bookmarkId_idx").on(tb.bookmarkId),
-    userIdIdx: index("bookmarkEmbeddings_userId_idx").on(tb.userId),
-  }),
-);
-
 export const bookmarkTags = sqliteTable(
   "bookmarkTags",
   {
