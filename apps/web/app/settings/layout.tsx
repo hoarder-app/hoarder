@@ -1,11 +1,60 @@
-import Header from "@/components/dashboard/header/Header";
-import DemoModeBanner from "@/components/DemoModeBanner";
-import MobileSidebar from "@/components/settings/sidebar/ModileSidebar";
-import Sidebar from "@/components/settings/sidebar/Sidebar";
-import { Separator } from "@/components/ui/separator";
-import ValidAccountCheck from "@/components/utils/ValidAccountCheck";
+import MobileSidebar from "@/components/shared/sidebar/MobileSidebar";
+import Sidebar from "@/components/shared/sidebar/Sidebar";
+import SidebarLayout from "@/components/shared/sidebar/SidebarLayout";
+import { TFunction } from "i18next";
+import {
+  ArrowLeft,
+  Download,
+  KeyRound,
+  Link,
+  Rss,
+  Sparkles,
+  User,
+} from "lucide-react";
 
-import serverConfig from "@hoarder/shared/config";
+const settingsSidebarItems = (
+  t: TFunction,
+): {
+  name: string;
+  icon: JSX.Element;
+  path: string;
+}[] => [
+  {
+    name: t("settings.back_to_app"),
+    icon: <ArrowLeft size={18} />,
+    path: "/dashboard/bookmarks",
+  },
+  {
+    name: t("settings.info.user_info"),
+    icon: <User size={18} />,
+    path: "/settings/info",
+  },
+  {
+    name: t("settings.ai.ai_settings"),
+    icon: <Sparkles size={18} />,
+    path: "/settings/ai",
+  },
+  {
+    name: t("settings.feeds.rss_subscriptions"),
+    icon: <Rss size={18} />,
+    path: "/settings/feeds",
+  },
+  {
+    name: t("settings.import.import_export"),
+    icon: <Download size={18} />,
+    path: "/settings/import",
+  },
+  {
+    name: t("settings.api_keys.api_keys"),
+    icon: <KeyRound size={18} />,
+    path: "/settings/api-keys",
+  },
+  {
+    name: t("settings.broken_links.broken_links"),
+    icon: <Link size={18} />,
+    path: "/settings/broken-links",
+  },
+];
 
 export default async function SettingsLayout({
   children,
@@ -13,22 +62,11 @@ export default async function SettingsLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
-      <Header />
-      <div className="flex min-h-[calc(100vh-64px)] w-screen flex-col sm:h-[calc(100vh-64px)] sm:flex-row">
-        <ValidAccountCheck />
-        <div className="hidden flex-none sm:flex">
-          <Sidebar />
-        </div>
-        <main className="flex-1 bg-muted sm:overflow-y-auto">
-          {serverConfig.demoMode && <DemoModeBanner />}
-          <div className="block w-full sm:hidden">
-            <MobileSidebar />
-            <Separator />
-          </div>
-          <div className="min-h-30 container p-4">{children}</div>
-        </main>
-      </div>
-    </div>
+    <SidebarLayout
+      sidebar={<Sidebar items={settingsSidebarItems} />}
+      mobileSidebar={<MobileSidebar items={settingsSidebarItems} />}
+    >
+      {children}
+    </SidebarLayout>
   );
 }

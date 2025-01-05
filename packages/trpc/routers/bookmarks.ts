@@ -14,6 +14,7 @@ import {
   AssetTypes,
   bookmarkAssets,
   bookmarkLinks,
+  bookmarkLists,
   bookmarks,
   bookmarksInLists,
   bookmarkTags,
@@ -33,6 +34,7 @@ import {
   triggerSearchReindex,
 } from "@hoarder/shared/queues";
 import { getSearchIdxClient } from "@hoarder/shared/search";
+import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
 import {
   BookmarkTypes,
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
@@ -43,6 +45,8 @@ import {
   zGetBookmarksResponseSchema,
   zManipulatedTagSchema,
   zNewBookmarkRequestSchema,
+  zSearchBookmarksCursor,
+  zSearchBookmarksRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "@hoarder/shared/types/bookmarks";
 
@@ -54,6 +58,7 @@ import {
   mapDBAssetTypeToUserType,
   mapSchemaAssetTypeToDB,
 } from "../lib/attachments";
+import { getBookmarkIdsFromMatcher } from "../lib/search";
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: Context;
@@ -518,29 +523,17 @@ export const bookmarksAppRouter = router({
       return await getBookmark(ctx, input.bookmarkId);
     }),
   searchBookmarks: authedProcedure
-    .input(
-      z.object({
-        text: z.string(),
-        cursor: z
-          .object({
-            offset: z.number(),
-            limit: z.number(),
-          })
-          .nullish(),
-      }),
-    )
+    .input(zSearchBookmarksRequestSchema)
     .output(
       z.object({
         bookmarks: z.array(zBookmarkSchema),
-        nextCursor: z
-          .object({
-            offset: z.number(),
-            limit: z.number(),
-          })
-          .nullable(),
+        nextCursor: zSearchBookmarksCursor.nullable(),
       }),
     )
     .query(async ({ input, ctx }) => {
+      if (!input.limit) {
+        input.limit = DEFAULT_NUM_BOOKMARKS_PER_PAGE;
+      }
       const client = await getSearchIdxClient();
       if (!client) {
         throw new TRPCError({
@@ -548,15 +541,30 @@ export const bookmarksAppRouter = router({
           message: "Search functionality is not configured",
         });
       }
-      const resp = await client.search(input.text, {
-        filter: [`userId = '${ctx.user.id}'`],
+      const parsedQuery = parseSearchQuery(input.text);
+
+      let filter: string[];
+      if (parsedQuery.matcher) {
+        const bookmarkIds = await getBookmarkIdsFromMatcher(
+          ctx,
+          parsedQuery.matcher,
+        );
+        filter = [
+          `userId = '${ctx.user.id}' AND id IN [${bookmarkIds.join(",")}]`,
+        ];
+      } else {
+        filter = [`userId = '${ctx.user.id}'`];
+      }
+
+      const resp = await client.search(parsedQuery.text, {
+        filter,
         showRankingScore: true,
         attributesToRetrieve: ["id"],
         sort: ["createdAt:desc"],
+        limit: input.limit,
         ...(input.cursor
           ? {
               offset: input.cursor.offset,
-              limit: input.cursor.limit,
             }
           : {}),
       });
@@ -596,8 +604,8 @@ export const bookmarksAppRouter = router({
           resp.hits.length + resp.offset >= resp.estimatedTotalHits
             ? null
             : {
+                ver: 1 as const,
                 offset: resp.hits.length + resp.offset,
-                limit: resp.limit,
               },
       };
     }),
@@ -610,6 +618,34 @@ export const bookmarksAppRouter = router({
       }
       if (!input.limit) {
         input.limit = DEFAULT_NUM_BOOKMARKS_PER_PAGE;
+      }
+      if (input.listId) {
+        const list = await ctx.db.query.bookmarkLists.findFirst({
+          where: and(
+            eq(bookmarkLists.id, input.listId),
+            eq(bookmarkLists.userId, ctx.user.id),
+          ),
+        });
+        if (!list) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "List not found",
+          });
+        }
+        if (list.type === "smart") {
+          invariant(list.query);
+          const query = parseSearchQuery(list.query);
+          if (query.result !== "full") {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Found an invalid smart list query",
+            });
+          }
+          if (query.matcher) {
+            input.ids = await getBookmarkIdsFromMatcher(ctx, query.matcher);
+            delete input.listId;
+          }
+        }
       }
 
       const sq = ctx.db.$with("bookmarksSq").as(

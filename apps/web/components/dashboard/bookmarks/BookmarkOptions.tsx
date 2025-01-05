@@ -28,15 +28,16 @@ import type {
   ZBookmarkedLink,
 } from "@hoarder/shared/types/bookmarks";
 import {
-  useDeleteBookmark,
   useRecrawlBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks//bookmarks";
 import { useRemoveBookmarkFromList } from "@hoarder/shared-react/hooks//lists";
 import { useBookmarkGridContext } from "@hoarder/shared-react/hooks/bookmark-grid-context";
+import { useBookmarkListContext } from "@hoarder/shared-react/hooks/bookmark-list-context";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
+import DeleteBookmarkConfirmationDialog from "./DeleteBookmarkConfirmationDialog";
 import { ArchivedActionIcon, FavouritedActionIcon } from "./icons";
 import { useManageListsModal } from "./ManageListsModal";
 import { useTagModel } from "./TagModal";
@@ -53,9 +54,12 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { setOpen: setManageListsModalOpen, content: manageListsModal } =
     useManageListsModal(bookmark.id);
 
+  const [deleteBookmarkDialogOpen, setDeleteBookmarkDialogOpen] =
+    useState(false);
   const [isTextEditorOpen, setTextEditorOpen] = useState(false);
 
   const { listId } = useBookmarkGridContext() ?? {};
+  const withinListContext = useBookmarkListContext();
 
   const onError = () => {
     toast({
@@ -63,14 +67,6 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       title: t("common.something_went_wrong"),
     });
   };
-  const deleteBookmarkMutator = useDeleteBookmark({
-    onSuccess: () => {
-      toast({
-        description: t("toasts.bookmarks.deleted"),
-      });
-    },
-    onError,
-  });
 
   const updateBookmarkMutator = useUpdateBookmark({
     onSuccess: () => {
@@ -112,6 +108,11 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
     <>
       {tagModal}
       {manageListsModal}
+      <DeleteBookmarkConfirmationDialog
+        bookmark={bookmark}
+        open={deleteBookmarkDialogOpen}
+        setOpen={setDeleteBookmarkDialogOpen}
+      />
       <BookmarkedTextEditor
         bookmark={bookmark}
         open={isTextEditorOpen}
@@ -211,20 +212,22 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
             <span>{t("actions.manage_lists")}</span>
           </DropdownMenuItem>
 
-          {listId && (
-            <DropdownMenuItem
-              disabled={demoMode}
-              onClick={() =>
-                removeFromListMutator.mutate({
-                  listId,
-                  bookmarkId: bookmark.id,
-                })
-              }
-            >
-              <ListX className="mr-2 size-4" />
-              <span>{t("actions.remove_from_list")}</span>
-            </DropdownMenuItem>
-          )}
+          {listId &&
+            withinListContext &&
+            withinListContext.type === "manual" && (
+              <DropdownMenuItem
+                disabled={demoMode}
+                onClick={() =>
+                  removeFromListMutator.mutate({
+                    listId,
+                    bookmarkId: bookmark.id,
+                  })
+                }
+              >
+                <ListX className="mr-2 size-4" />
+                <span>{t("actions.remove_from_list")}</span>
+              </DropdownMenuItem>
+            )}
 
           {bookmark.content.type === BookmarkTypes.LINK && (
             <DropdownMenuItem
@@ -240,9 +243,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
           <DropdownMenuItem
             disabled={demoMode}
             className="text-destructive"
-            onClick={() =>
-              deleteBookmarkMutator.mutate({ bookmarkId: bookmark.id })
-            }
+            onClick={() => setDeleteBookmarkDialogOpen(true)}
           >
             <Trash2 className="mr-2 size-4" />
             <span>{t("actions.delete")}</span>

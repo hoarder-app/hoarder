@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "5de3851d-dbaf-45b4-8a8f-aee04ae0b53d",
+  "id": "21860136-dd1f-4d1e-b157-3c99132e2036",
   "prevId": "7c51445d-0b54-4a42-aad3-630b85601478",
   "tables": {
     "account": {
@@ -110,7 +110,8 @@
           "name": "account_provider_providerAccountId_pk"
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "apiKey": {
       "name": "apiKey",
@@ -191,7 +192,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "assets": {
       "name": "assets",
@@ -299,7 +301,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "bookmarkAssets": {
       "name": "bookmarkAssets",
@@ -371,107 +374,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "bookmarkEmbeddings": {
-      "name": "bookmarkEmbeddings",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "bookmarkId": {
-          "name": "bookmarkId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "userId": {
-          "name": "userId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "embedding": {
-          "name": "embedding",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "embeddingType": {
-          "name": "embeddingType",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "fromOffset": {
-          "name": "fromOffset",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "toOffset": {
-          "name": "toOffset",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "bookmarkEmbeddings_bookmarkId_idx": {
-          "name": "bookmarkEmbeddings_bookmarkId_idx",
-          "columns": [
-            "bookmarkId"
-          ],
-          "isUnique": false
-        },
-        "bookmarkEmbeddings_userId_idx": {
-          "name": "bookmarkEmbeddings_userId_idx",
-          "columns": [
-            "userId"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {
-        "bookmarkEmbeddings_bookmarkId_bookmarks_id_fk": {
-          "name": "bookmarkEmbeddings_bookmarkId_bookmarks_id_fk",
-          "tableFrom": "bookmarkEmbeddings",
-          "tableTo": "bookmarks",
-          "columnsFrom": [
-            "bookmarkId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "bookmarkEmbeddings_userId_user_id_fk": {
-          "name": "bookmarkEmbeddings_userId_user_id_fk",
-          "tableFrom": "bookmarkEmbeddings",
-          "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "bookmarkLinks": {
       "name": "bookmarkLinks",
@@ -581,7 +485,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "bookmarkLists": {
       "name": "bookmarkLists",
@@ -619,6 +524,20 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
+          "autoincrement": false
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "query": {
+          "name": "query",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
           "autoincrement": false
         },
         "parentId": {
@@ -667,7 +586,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "bookmarkTags": {
       "name": "bookmarkTags",
@@ -741,7 +661,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "bookmarkTexts": {
       "name": "bookmarkTexts",
@@ -785,7 +706,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "bookmarks": {
       "name": "bookmarks",
@@ -910,7 +832,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "bookmarksInLists": {
       "name": "bookmarksInLists",
@@ -990,7 +913,8 @@
           "name": "bookmarksInLists_bookmarkId_listId_pk"
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "config": {
       "name": "config",
@@ -1013,7 +937,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "customPrompts": {
       "name": "customPrompts",
@@ -1086,7 +1011,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "highlights": {
       "name": "highlights",
@@ -1201,7 +1127,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "rssFeedImports": {
       "name": "rssFeedImports",
@@ -1295,7 +1222,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "rssFeeds": {
       "name": "rssFeeds",
@@ -1376,7 +1304,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "session": {
       "name": "session",
@@ -1420,7 +1349,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "tagsOnBookmarks": {
       "name": "tagsOnBookmarks",
@@ -1507,7 +1437,8 @@
           "name": "tagsOnBookmarks_bookmarkId_tagId_pk"
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "user": {
       "name": "user",
@@ -1574,7 +1505,8 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "verificationToken": {
       "name": "verificationToken",
@@ -1612,9 +1544,11 @@
           "name": "verificationToken_identifier_token_pk"
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
+  "views": {},
   "enums": {},
   "_meta": {
     "schemas": {},

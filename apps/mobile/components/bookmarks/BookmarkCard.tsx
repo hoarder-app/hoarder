@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   Image,
   Platform,
   Pressable,
@@ -70,6 +71,20 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
       onError,
     });
 
+  const deleteBookmarkAlert = () =>
+    Alert.alert(
+      "Delete bookmark?",
+      "Are you sure you want to delete this bookmark?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          onPress: () => deleteBookmark({ bookmarkId: bookmark.id }),
+          style: "destructive",
+        },
+      ],
+    );
+
   return (
     <View className="flex flex-row gap-4">
       {(isArchivePending || isDeletionPending) && <ActivityIndicator />}
@@ -93,9 +108,7 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         onPressAction={({ nativeEvent }) => {
           Haptics.selectionAsync();
           if (nativeEvent.event === "delete") {
-            deleteBookmark({
-              bookmarkId: bookmark.id,
-            });
+            deleteBookmarkAlert();
           } else if (nativeEvent.event === "archive") {
             archiveBookmark({
               bookmarkId: bookmark.id,

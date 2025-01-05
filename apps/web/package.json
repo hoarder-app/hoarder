@@ -12,7 +12,9 @@
     "lint": "next lint",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
-    "format": "prettier --check . --ignore-path ../../.gitignore"
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
+    "lint:fix": "next lint --fix"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "^1.4.2",
@@ -55,13 +57,13 @@
     "clsx": "^2.1.0",
     "csv-parse": "^5.5.6",
     "dayjs": "^1.11.10",
-    "drizzle-orm": "^0.33.0",
+    "drizzle-orm": "^0.38.3",
     "fastest-levenshtein": "^1.0.16",
     "i18next": "^23.16.5",
     "i18next-resources-to-backend": "^1.2.1",
     "lexical": "^0.20.2",
     "lucide-react": "^0.330.0",
-    "next": "14.2.15",
+    "next": "14.2.21",
     "next-auth": "^4.24.5",
     "next-i18next": "^15.3.1",
     "next-pwa": "^5.6.0",

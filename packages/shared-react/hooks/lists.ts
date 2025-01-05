@@ -28,6 +28,9 @@ export function useEditBookmarkList(
     onSuccess: (res, req, meta) => {
       apiUtils.lists.list.invalidate();
       apiUtils.lists.get.invalidate({ listId: req.listId });
+      if (res.type === "smart") {
+        apiUtils.bookmarks.getBookmarks.invalidate({ listId: req.listId });
+      }
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });

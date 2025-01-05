@@ -16,7 +16,7 @@
     "async-mutex": "^0.4.1",
     "dompurify": "^3.0.9",
     "dotenv": "^16.4.1",
-    "drizzle-orm": "^0.33.0",
+    "drizzle-orm": "^0.38.3",
     "execa": "9.3.1",
     "jsdom": "^24.0.0",
     "liteque": "^0.3.0",
@@ -55,7 +55,9 @@
     "start": "tsx watch index.ts",
     "start:prod": "tsx index.ts",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier . --ignore-path ../../.prettierignore",
+    "format:fix": "prettier . --ignore-path ../../.prettierignore --write",
     "typecheck": "tsc --noEmit"
   },
   "eslintConfig": {

@@ -10,5 +10,9 @@ export default defineConfig({
     alias: {
       "@/*": "./*",
     },
+    deps: {
+      // TODO: this need to be fixed
+      inline: ["liteque"],
+    },
   },
 });

@@ -33,7 +33,9 @@ export function ListOptions({
       <EditListModal
         open={newNestedListModalOpen}
         setOpen={setNewNestedListModalOpen}
-        parent={list}
+        prefill={{
+          parentId: list.id,
+        }}
       />
       <EditListModal
         open={editModalOpen}

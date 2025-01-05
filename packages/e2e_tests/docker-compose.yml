@@ -1,0 +1,20 @@
+services:
+  web:
+    build:
+      dockerfile: docker/Dockerfile
+      context: ../../
+      target: aio
+    restart: unless-stopped
+    ports:
+      - "${HOARDER_PORT:-3000}:3000"
+    environment:
+      DATA_DIR: /tmp
+      NEXTAUTH_SECRET: secret
+      MEILI_MASTER_KEY: dummy
+      MEILI_ADDR: http://meilisearch:7700
+  meilisearch:
+    image: getmeili/meilisearch:v1.11.1
+    restart: unless-stopped
+    environment:
+      MEILI_NO_ANALYTICS: "true"
+      MEILI_MASTER_KEY: dummy
