@@ -679,6 +679,58 @@
         }
       }
     },
+    "/bookmarks/search": {
+      "get": {
+        "description": "Search bookmarks",
+        "summary": "Search bookmarks",
+        "tags": [
+          "Bookmarks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "q",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/Cursor"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with the search results.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedBookmarks"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/bookmarks/{bookmarkId}": {
       "get": {
         "description": "Get bookmark by its id",

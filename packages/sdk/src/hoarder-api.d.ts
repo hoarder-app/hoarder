@@ -105,6 +105,49 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/bookmarks/search": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Search bookmarks
+     * @description Search bookmarks
+     */
+    get: {
+      parameters: {
+        query: {
+          q: string;
+          limit?: number;
+          cursor?: components["schemas"]["Cursor"];
+        };
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description Object with the search results. */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": components["schemas"]["PaginatedBookmarks"];
+          };
+        };
+      };
+    };
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/bookmarks/{bookmarkId}": {
     parameters: {
       query?: never;

@@ -285,4 +285,113 @@ describe("Bookmarks API", () => {
 
     expect(removeTagsRes.status).toBe(200);
   });
+
+  it("should search bookmarks", async () => {
+    // Create test bookmarks
+    await client.POST("/bookmarks", {
+      body: {
+        type: "text",
+        title: "Search Test 1",
+        text: "This is a test bookmark for search",
+      },
+    });
+    await client.POST("/bookmarks", {
+      body: {
+        type: "text",
+        title: "Search Test 2",
+        text: "Another test bookmark for search",
+      },
+    });
+
+    // Wait 3 seconds for the search index to be updated
+    // TODO: Replace with a check that all queues are empty
+    await new Promise((f) => setTimeout(f, 3000));
+
+    // Search for bookmarks
+    const { data: searchResults, response: searchResponse } = await client.GET(
+      "/bookmarks/search",
+      {
+        params: {
+          query: {
+            q: "test bookmark",
+          },
+        },
+      },
+    );
+
+    expect(searchResponse.status).toBe(200);
+    expect(searchResults!.bookmarks.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("should paginate search results", async () => {
+    // Create multiple bookmarks
+    const bookmarkPromises = Array.from({ length: 5 }, (_, i) =>
+      client.POST("/bookmarks", {
+        body: {
+          type: "text",
+          title: `Search Pagination ${i}`,
+          text: `This is test bookmark ${i} for pagination`,
+        },
+      }),
+    );
+
+    await Promise.all(bookmarkPromises);
+
+    // Wait 3 seconds for the search index to be updated
+    // TODO: Replace with a check that all queues are empty
+    await new Promise((f) => setTimeout(f, 3000));
+
+    // Get first page
+    const { data: firstPage, response: firstResponse } = await client.GET(
+      "/bookmarks/search",
+      {
+        params: {
+          query: {
+            q: "pagination",
+            limit: 2,
+          },
+        },
+      },
+    );
+
+    expect(firstResponse.status).toBe(200);
+    expect(firstPage!.bookmarks.length).toBe(2);
+    expect(firstPage!.nextCursor).toBeDefined();
+
+    // Get second page
+    const { data: secondPage, response: secondResponse } = await client.GET(
+      "/bookmarks/search",
+      {
+        params: {
+          query: {
+            q: "pagination",
+            limit: 2,
+            cursor: firstPage!.nextCursor!,
+          },
+        },
+      },
+    );
+
+    expect(secondResponse.status).toBe(200);
+    expect(secondPage!.bookmarks.length).toBe(2);
+    expect(secondPage!.nextCursor).toBeDefined();
+
+    // Get final page
+    const { data: finalPage, response: finalResponse } = await client.GET(
+      "/bookmarks/search",
+      {
+        params: {
+          query: {
+            q: "pagination",
+            limit: 2,
+            cursor: secondPage!.nextCursor!,
+          },
+        },
+      },
+    );
+
+    expect(finalResponse.status).toBe(200);
+    expect(finalPage!.bookmarks.length).toBe(1);
+    expect(finalPage!.nextCursor).toBeNull();
+  });
 });

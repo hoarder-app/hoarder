@@ -74,6 +74,32 @@ registry.registerPath({
 });
 
 registry.registerPath({
+  method: "get",
+  path: "/bookmarks/search",
+  description: "Search bookmarks",
+  summary: "Search bookmarks",
+  tags: ["Bookmarks"],
+  security: [{ [BearerAuth.name]: [] }],
+  request: {
+    query: z
+      .object({
+        q: z.string(),
+      })
+      .merge(PaginationSchema),
+  },
+  responses: {
+    200: {
+      description: "Object with the search results.",
+      content: {
+        "application/json": {
+          schema: PaginatedBookmarksSchema,
+        },
+      },
+    },
+  },
+});
+
+registry.registerPath({
   method: "post",
   path: "/bookmarks",
   description: "Create a new bookmark",

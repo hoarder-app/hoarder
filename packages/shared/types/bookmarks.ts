@@ -195,3 +195,15 @@ export const zManipulatedTagSchema = z
     message: "You must provide either a tagId or a tagName",
     path: ["tagId", "tagName"],
   });
+
+export const zSearchBookmarksCursor = z.discriminatedUnion("ver", [
+  z.object({
+    ver: z.literal(1),
+    offset: z.number(),
+  }),
+]);
+export const zSearchBookmarksRequestSchema = z.object({
+  text: z.string(),
+  limit: z.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),
+  cursor: zSearchBookmarksCursor.nullish(),
+});

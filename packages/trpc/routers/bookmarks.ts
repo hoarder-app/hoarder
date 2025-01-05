@@ -45,6 +45,8 @@ import {
   zGetBookmarksResponseSchema,
   zManipulatedTagSchema,
   zNewBookmarkRequestSchema,
+  zSearchBookmarksCursor,
+  zSearchBookmarksRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "@hoarder/shared/types/bookmarks";
 
@@ -521,29 +523,17 @@ export const bookmarksAppRouter = router({
       return await getBookmark(ctx, input.bookmarkId);
     }),
   searchBookmarks: authedProcedure
-    .input(
-      z.object({
-        text: z.string(),
-        cursor: z
-          .object({
-            offset: z.number(),
-            limit: z.number(),
-          })
-          .nullish(),
-      }),
-    )
+    .input(zSearchBookmarksRequestSchema)
     .output(
       z.object({
         bookmarks: z.array(zBookmarkSchema),
-        nextCursor: z
-          .object({
-            offset: z.number(),
-            limit: z.number(),
-          })
-          .nullable(),
+        nextCursor: zSearchBookmarksCursor.nullable(),
       }),
     )
     .query(async ({ input, ctx }) => {
+      if (!input.limit) {
+        input.limit = DEFAULT_NUM_BOOKMARKS_PER_PAGE;
+      }
       const client = await getSearchIdxClient();
       if (!client) {
         throw new TRPCError({
@@ -571,10 +561,10 @@ export const bookmarksAppRouter = router({
         showRankingScore: true,
         attributesToRetrieve: ["id"],
         sort: ["createdAt:desc"],
+        limit: input.limit,
         ...(input.cursor
           ? {
               offset: input.cursor.offset,
-              limit: input.cursor.limit,
             }
           : {}),
       });
@@ -614,8 +604,8 @@ export const bookmarksAppRouter = router({
           resp.hits.length + resp.offset >= resp.estimatedTotalHits
             ? null
             : {
+                ver: 1 as const,
                 offset: resp.hits.length + resp.offset,
-                limit: resp.limit,
               },
       };
     }),
