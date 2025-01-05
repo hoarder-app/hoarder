@@ -15,7 +15,7 @@ import { createHoarderClient } from "@hoarderapp/sdk";
 
 // Create a client
 const apiKey = "my-super-secret-key";
-const addr  = `https://hoarder.mydomain.com`;
+const addr = `https://hoarder.mydomain.com`;
 const client = createHoarderClient({
   baseUrl: `${addr}/api/v1/`,
   headers: {
@@ -24,29 +24,35 @@ const client = createHoarderClient({
   },
 });
 
-
-// Search for bookmarks
-const { data: searchResults, response: searchResponse } = await client.GET(
-  "/bookmarks/search",
-  {
-    params: {
-      query: {
-        q: "test bookmark",
-      },
-    },
-  },
-);
-
 // Create a bookmark
-await client.POST("/bookmarks", {
+const {
+  data: createdBookmark,
+  response: createResponse,
+  error: createError,
+} = await client.POST("/bookmarks", {
   body: {
     type: "text",
     title: "Search Test 1",
     text: "This is a test bookmark for search",
   },
 });
-```
 
+console.log(createResponse.status, createdBookmark, createError);
+
+// Search for bookmarks
+const {
+  data: searchResults,
+  response: searchResponse,
+  error: searchError,
+} = await client.GET("/bookmarks/search", {
+  params: {
+    query: {
+      q: "test bookmark",
+    },
+  },
+});
+console.log(searchResponse.status, searchResults, searchError);
+```
 
 ## Docs
 
