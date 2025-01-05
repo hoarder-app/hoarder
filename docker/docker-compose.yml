@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   web:
-    image: 654654146385.dkr.ecr.us-east-1.amazonaws.com/pique/hoarder:hoarder-web-latest
+    image: 654654146385.dkr.ecr.us-east-1.amazonaws.com/pique/hoarder:hoarder-latest
     restart: unless-stopped
     volumes:
       - data:/data
@@ -9,19 +9,6 @@ services:
       - 3000:3000
     env_file:
       - .env
-    environment:
-      MEILI_ADDR: http://meilisearch:7700
-      BROWSER_WEB_URL: http://chrome:9222
-      DATA_DIR: /data
-    depends_on:
-      - meilisearch
-      - chrome
-
-  workers:
-    image: 654654146385.dkr.ecr.us-east-1.amazonaws.com/pique/hoarder:hoarder-workers-latest
-    restart: unless-stopped
-    volumes:
-      - data:/data
     environment:
       MEILI_ADDR: http://meilisearch:7700
       BROWSER_WEB_URL: http://chrome:9222
