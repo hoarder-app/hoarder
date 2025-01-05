@@ -26,8 +26,10 @@ RUN (cd apps/web && pnpm exec next build --experimental-build-mode compile)
 # Build the worker code
 RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-linker=isolated --filter @hoarder/workers --prod /prod/workers
 
-# Build the cli
-RUN (cd apps/cli && pnpm build)
+# Pique Update: Build fails, skip for now
+
+# Skip CLI build as it's not needed for docker-compose
+# RUN (cd apps/cli && pnpm build)
 
 ################# The All-in-one builder ##############
 

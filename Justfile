@@ -48,15 +48,6 @@ push-latest:
         .
     docker push 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-workers-latest
     
-    # Build and push cli component
-    echo "Building and pushing cli component..."
-    docker build \
-        --file docker/Dockerfile \
-        --target cli \
-        --tag 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-cli-latest \
-        .
-    docker push 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-cli-latest
-    
     # Build and push all-in-one image
     echo "Building and pushing all-in-one image..."
     docker build \
