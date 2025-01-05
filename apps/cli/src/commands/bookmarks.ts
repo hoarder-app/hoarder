@@ -73,7 +73,10 @@ bookmarkCmd
     collect<string>,
     [],
   )
-  .option("--title <title>", "if set, this will be used as the bookmark's title")
+  .option(
+    "--title <title>",
+    "if set, this will be used as the bookmark's title",
+  )
   .action(async (opts) => {
     const api = getAPIClient();
 

@@ -6,13 +6,16 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   build: {
+    lib: {
+      entry: "src/index.ts",
+      formats: ["es", "cjs"],
+      fileName: (format) => `index.${format === "es" ? "mjs" : "js"}`,
+    },
     rollupOptions: {
-      input: "src/index.ts",
-      output: {
-        dir: "dist",
-      },
+      external: ["openapi-fetch"],
     },
     ssr: true,
+    sourcemap: true,
   },
   plugins: [tsconfigPaths(), dts({ rollupTypes: true, copyDtsFiles: true })],
 });

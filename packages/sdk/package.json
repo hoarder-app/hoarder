@@ -10,7 +10,9 @@
   ],
   "main": "./src/index.ts",
   "publishConfig": {
-    "exports": "./dist/index.mjs",
+    "main": "./dist/index.js",
+    "exports": "./dist/index.js",
+    "module": "./dist/index.mjs",
     "types": "./dist/index.d.ts"
   },
   "devDependencies": {
