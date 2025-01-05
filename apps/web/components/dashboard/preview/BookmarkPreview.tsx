@@ -114,7 +114,7 @@ export default function BookmarkPreview({
       <div className="row-span-2 h-full w-full overflow-auto p-2 md:col-span-2 lg:row-auto">
         {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
       </div>
-      <div className="lg:col-span1 row-span-1 flex flex-col gap-4 overflow-auto bg-accent p-4 lg:row-auto">
+      <div className="row-span-1  flex flex-col gap-4 overflow-auto bg-accent p-4 md:col-span-2 lg:col-span-1 lg:row-auto">
         <div className="flex w-full flex-col items-center justify-center gap-y-2">
           <EditableTitle bookmark={bookmark} />
           {sourceUrl && (
