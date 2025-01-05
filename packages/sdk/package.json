@@ -8,8 +8,11 @@
     "hoarder",
     "sdk"
   ],
-  "exports": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
+  "publishConfig": {
+    "exports": "./dist/index.mjs",
+    "types": "./dist/index.d.ts"
+  },
   "devDependencies": {
     "@hoarder/eslint-config": "workspace:^0.2.0",
     "@hoarder/prettier-config": "workspace:^0.1.0",

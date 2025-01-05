@@ -936,8 +936,8 @@ importers:
         specifier: workspace:^0.1.0
         version: link:../trpc
       '@hoarderapp/sdk':
-        specifier: ^0.20.0
-        version: 0.20.0
+        specifier: workspace:*
+        version: link:../sdk
       superjson:
         specifier: ^2.2.1
         version: 2.2.1
@@ -3034,9 +3034,6 @@ packages:
 
   '@hapi/topo@5.1.0':
     resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
-
-  '@hoarderapp/sdk@0.20.0':
-    resolution: {integrity: sha512-nxtHuDm2rzQ1JzwxNbtQkaccuz0LoLauvRqV1aTPYB/xuOe/vLCfsCYRGcQFmsZn48fTIh9Dz70wczXyO4UbeA==}
 
   '@hookform/resolvers@3.3.4':
     resolution: {integrity: sha512-o5cgpGOuJYrd+iMKvkttOclgwRW86EsWJZZRC23prf0uU2i48Htq4PuT73AVb9ionFyZrwYEITuOFGF+BydEtQ==}
@@ -16624,11 +16621,6 @@ snapshots:
   '@hapi/topo@5.1.0':
     dependencies:
       '@hapi/hoek': 9.3.0
-
-  '@hoarderapp/sdk@0.20.0':
-    dependencies:
-      openapi-fetch: 0.13.3
-    dev: false
 
   '@hookform/resolvers@3.3.4(react-hook-form@7.50.1(react@18.3.1))':
     dependencies:
