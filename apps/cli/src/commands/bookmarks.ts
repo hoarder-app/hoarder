@@ -73,6 +73,7 @@ bookmarkCmd
     collect<string>,
     [],
   )
+  .option("--title <title>", "if set, this will be used as the bookmark's title")
   .action(async (opts) => {
     const api = getAPIClient();
 
@@ -81,7 +82,7 @@ bookmarkCmd
     const promises = [
       ...opts.link.map((url) =>
         api.bookmarks.createBookmark
-          .mutate({ type: BookmarkTypes.LINK, url })
+          .mutate({ type: BookmarkTypes.LINK, url, title: opts.title })
           .then((bookmark: ZBookmark) => {
             results.push(normalizeBookmark(bookmark));
           })
@@ -89,7 +90,7 @@ bookmarkCmd
       ),
       ...opts.note.map((text) =>
         api.bookmarks.createBookmark
-          .mutate({ type: BookmarkTypes.TEXT, text })
+          .mutate({ type: BookmarkTypes.TEXT, text, title: opts.title })
           .then((bookmark: ZBookmark) => {
             results.push(normalizeBookmark(bookmark));
           })
@@ -105,7 +106,7 @@ bookmarkCmd
       const text = fs.readFileSync(0, "utf-8");
       promises.push(
         api.bookmarks.createBookmark
-          .mutate({ type: BookmarkTypes.TEXT, text })
+          .mutate({ type: BookmarkTypes.TEXT, text, title: opts.title })
           .then((bookmark: ZBookmark) => {
             results.push(normalizeBookmark(bookmark));
           })
