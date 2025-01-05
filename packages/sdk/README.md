@@ -15,8 +15,9 @@ import { createHoarderClient } from "@hoarderapp/sdk";
 
 // Create a client
 const apiKey = "my-super-secret-key";
+const addr  = `https://hoarder.mydomain.com`;
 const client = createHoarderClient({
-  baseUrl: `http://localhost:${port}/api/v1/`,
+  baseUrl: `${addr}/api/v1/`,
   headers: {
     "Content-Type": "application/json",
     authorization: `Bearer ${apiKey}`,

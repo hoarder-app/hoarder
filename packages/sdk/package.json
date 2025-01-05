@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@hoarderapp/sdk",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "description": "Typescript SDK for Hoarder",
   "license": "GNU Affero General Public License version 3",
   "keywords": [
@@ -9,6 +9,7 @@
     "sdk"
   ],
   "main": "./src/index.ts",
+  "type": "module",
   "publishConfig": {
     "main": "./dist/index.js",
     "exports": "./dist/index.js",
