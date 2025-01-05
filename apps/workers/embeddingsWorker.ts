@@ -4,7 +4,7 @@ import { DequeuedJob, Runner } from "liteque";
 
 import type { EmbeddingsRequest, ZOpenAIRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
-import { bookmarkEmbeddings, bookmarks } from "@hoarder/db/schema";
+import { bookmarks } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
 import { InferenceClientFactory } from "@hoarder/shared/inference";
 import logger from "@hoarder/shared/logger";
@@ -14,10 +14,12 @@ import {
 } from "@hoarder/shared/queues";
 import { getBookmarkVectorDb } from "@hoarder/shared/vectorDb";
 
-type EmbeddingChunk = Pick<
-  typeof bookmarkEmbeddings.$inferSelect,
-  "embeddingType" | "fromOffset" | "toOffset"
-> & { text: string };
+interface EmbeddingChunk {
+  embeddingType: "description" | "content_full" | "content_chunk";
+  fromOffset: number;
+  toOffset: number;
+  text: string;
+}
 
 export class EmbeddingsWorker {
   static build() {
