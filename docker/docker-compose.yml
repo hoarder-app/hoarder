@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   web:
-    image: 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-web-latest
+    image: 654654146385.dkr.ecr.us-east-1.amazonaws.com/pique/hoarder:hoarder-web-latest
     restart: unless-stopped
     volumes:
       - data:/data
@@ -18,7 +18,7 @@ services:
       - chrome
 
   workers:
-    image: 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-workers-latest
+    image: 654654146385.dkr.ecr.us-east-1.amazonaws.com/pique/hoarder:hoarder-workers-latest
     restart: unless-stopped
     volumes:
       - data:/data

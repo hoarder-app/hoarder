@@ -28,36 +28,36 @@ push-latest:
     set -euo pipefail
     
     # Login to AWS ECR
-    aws ecr get-login-password --region us-west-2 --profile pique | docker login --username AWS --password-stdin 654654146385.dkr.ecr.us-west-2.amazonaws.com
+    aws ecr get-login-password --region us-east-1 --profile pique | docker login --username AWS --password-stdin 654654146385.dkr.ecr.us-east-1.amazonaws.com
     
     # Build and push web component
     echo "Building and pushing web component..."
     docker build \
         --file docker/Dockerfile \
         --target web \
-        --tag 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-web-latest \
+        --tag 654654146385.dkr.ecr.us-east-1.amazonaws.com/pique/hoarder:hoarder-web-latest \
         .
-    docker push 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-web-latest
+    docker push 654654146385.dkr.ecr.us-east-1.amazonaws.com/pique/hoarder:hoarder-web-latest
     
     # Build and push workers component
     echo "Building and pushing workers component..."
     docker build \
         --file docker/Dockerfile \
         --target workers \
-        --tag 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-workers-latest \
+        --tag 654654146385.dkr.ecr.us-east-1.amazonaws.com/pique/hoarder:hoarder-workers-latest \
         .
-    docker push 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-workers-latest
+    docker push 654654146385.dkr.ecr.us-east-1.amazonaws.com/pique/hoarder:hoarder-workers-latest
     
     # Build and push all-in-one image
     echo "Building and pushing all-in-one image..."
     docker build \
         --file docker/Dockerfile \
         --target aio \
-        --tag 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-latest \
+        --tag 654654146385.dkr.ecr.us-east-1.amazonaws.com/pique/hoarder:hoarder-latest \
         .
-    docker push 654654146385.dkr.ecr.us-west-2.amazonaws.com/pique/hoarder:hoarder-latest
+    docker push 654654146385.dkr.ecr.us-east-1.amazonaws.com/pique/hoarder:hoarder-latest
 
 # Run the ECR images
 run-ecr:
-    aws ecr get-login-password --region us-west-2 --profile pique | docker login --username AWS --password-stdin 654654146385.dkr.ecr.us-west-2.amazonaws.com
+    aws ecr get-login-password --region us-east-1 --profile pique | docker login --username AWS --password-stdin 654654146385.dkr.ecr.us-east-1.amazonaws.com
     docker compose -f docker/docker-compose.yml up
