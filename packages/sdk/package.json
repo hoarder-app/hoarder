@@ -1,15 +1,21 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@hoarderapp/sdk",
-  "version": "0.20.0",
+  "version": "0.21.2",
   "description": "Typescript SDK for Hoarder",
   "license": "GNU Affero General Public License version 3",
   "keywords": [
     "hoarder",
     "sdk"
   ],
-  "exports": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
+  "main": "./src/index.ts",
+  "type": "module",
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "exports": "./dist/index.js",
+    "module": "./dist/index.mjs",
+    "types": "./dist/index.d.ts"
+  },
   "devDependencies": {
     "@hoarder/eslint-config": "workspace:^0.2.0",
     "@hoarder/prettier-config": "workspace:^0.1.0",

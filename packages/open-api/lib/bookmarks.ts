@@ -5,6 +5,7 @@ import {
 import { z } from "zod";
 
 import {
+  zAssetSchema,
   zBareBookmarkSchema,
   zManipulatedTagSchema,
   zNewBookmarkRequestSchema,
@@ -22,6 +23,17 @@ import { TagIdSchema } from "./tags";
 
 export const registry = new OpenAPIRegistry();
 extendZodWithOpenApi(z);
+
+export const AssetIdSchema = registry.registerParameter(
+  "AssetId",
+  z.string().openapi({
+    param: {
+      name: "assetId",
+      in: "path",
+    },
+    example: "ieidlxygmwj87oxz5hxttoc8",
+  }),
+);
 
 export const BookmarkIdSchema = registry.registerParameter(
   "BookmarkId",
@@ -52,6 +64,32 @@ registry.registerPath({
   responses: {
     200: {
       description: "Object with all bookmarks data.",
+      content: {
+        "application/json": {
+          schema: PaginatedBookmarksSchema,
+        },
+      },
+    },
+  },
+});
+
+registry.registerPath({
+  method: "get",
+  path: "/bookmarks/search",
+  description: "Search bookmarks",
+  summary: "Search bookmarks",
+  tags: ["Bookmarks"],
+  security: [{ [BearerAuth.name]: [] }],
+  request: {
+    query: z
+      .object({
+        q: z.string(),
+      })
+      .merge(PaginationSchema),
+  },
+  responses: {
+    200: {
+      description: "Object with the search results.",
       content: {
         "application/json": {
           schema: PaginatedBookmarksSchema,
@@ -237,6 +275,86 @@ registry.registerPath({
           schema: z.object({ highlights: z.array(HighlightSchema) }),
         },
       },
+    },
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/bookmarks/{bookmarkId}/assets",
+  description: "Attach a new asset to a bookmark",
+  summary: "Attach asset",
+  tags: ["Bookmarks"],
+  security: [{ [BearerAuth.name]: [] }],
+  request: {
+    params: z.object({ bookmarkId: BookmarkIdSchema }),
+    body: {
+      description: "The asset to attach",
+      content: {
+        "application/json": {
+          schema: zAssetSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: "The attached asset",
+      content: {
+        "application/json": {
+          schema: zAssetSchema,
+        },
+      },
+    },
+  },
+});
+
+registry.registerPath({
+  method: "put",
+  path: "/bookmarks/{bookmarkId}/assets/{assetId}",
+  description: "Replace an existing asset with a new one",
+  summary: "Replace asset",
+  tags: ["Bookmarks"],
+  security: [{ [BearerAuth.name]: [] }],
+  request: {
+    params: z.object({
+      bookmarkId: BookmarkIdSchema,
+      assetId: AssetIdSchema,
+    }),
+    body: {
+      description: "The new asset to replace with",
+      content: {
+        "application/json": {
+          schema: z.object({
+            assetId: z.string(),
+          }),
+        },
+      },
+    },
+  },
+  responses: {
+    204: {
+      description: "No content - asset was replaced successfully",
+    },
+  },
+});
+
+registry.registerPath({
+  method: "delete",
+  path: "/bookmarks/{bookmarkId}/assets/{assetId}",
+  description: "Detach an asset from a bookmark",
+  summary: "Detach asset",
+  tags: ["Bookmarks"],
+  security: [{ [BearerAuth.name]: [] }],
+  request: {
+    params: z.object({
+      bookmarkId: BookmarkIdSchema,
+      assetId: AssetIdSchema,
+    }),
+  },
+  responses: {
+    204: {
+      description: "No content - asset was detached successfully",
     },
   },
 });

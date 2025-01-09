@@ -22,7 +22,9 @@
     "screenshot": "Screenshot",
     "video": "Video",
     "archive": "Archiv",
-    "home": "Startseite"
+    "home": "Startseite",
+    "highlights": "Highlights",
+    "source": "Quelle"
   },
   "layouts": {
     "masonry": "Mauerwerk",
@@ -101,7 +103,8 @@
       "import_bookmarks_from_omnivore_export": "Lesezeichen aus Omnivore-Export importieren",
       "import_bookmarks_from_hoarder_export": "Lesezeichen aus Hoarder-Export importieren",
       "export_links_and_notes": "Links und Notizen exportieren",
-      "imported_bookmarks": "Importierte Lesezeichen"
+      "imported_bookmarks": "Importierte Lesezeichen",
+      "import_bookmarks_from_linkwarden_export": "Importieren Sie Lesezeichen aus dem Linkwarden-Export"
     },
     "api_keys": {
       "api_keys": "API-Schlüssel",
@@ -192,7 +195,55 @@
     "import_as_separate_bookmarks": "Als separate Lesezeichen importieren",
     "placeholder": "Fügen Sie einen Link oder ein Bild ein, schreiben Sie eine Notiz oder ziehen Sie ein Bild hierher ...",
     "new_item": "NEUER EINTRAG",
-    "disabled_submissions": "Einsendungen sind deaktiviert"
+    "disabled_submissions": "Einsendungen sind deaktiviert",
+    "text_toolbar": {
+      "align_right": "Rechtsbündig",
+      "italic": "Kursiv",
+      "underline": "Unterstrichen",
+      "strikethrough": "Durchgestrichen",
+      "code": "Quellcode",
+      "highlight": "Hervorheben",
+      "align_left": "Linksbündig",
+      "align_center": "Zentriert",
+      "markdown_shortcuts": {
+        "label": "Markdown-Verknüpfungen",
+        "inline_code": {
+          "example": "`Code`",
+          "label": "Inline-Code"
+        },
+        "block_code": {
+          "label": "Blockcode",
+          "example": "``` + Leertaste"
+        },
+        "heading": {
+          "label": "Überschrift",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "ordered_list": {
+          "label": "Sortierte Liste",
+          "example": "1. Listenelement"
+        },
+        "blockquote": {
+          "example": "> Blockzitat",
+          "label": "Blockzitat"
+        },
+        "bold": {
+          "label": "Fett",
+          "example": "**text** oder CTRL+b"
+        },
+        "italic": {
+          "label": "Kursiv",
+          "example": "*Italic* oder _Italic_ or CTRL+i"
+        },
+        "unordered_list": {
+          "example": "- Listenelement",
+          "label": "Unsortierte Liste"
+        }
+      },
+      "undo": "Rückgängig",
+      "redo": "Wiederholen",
+      "bold": "Fett"
+    }
   },
   "toasts": {
     "bookmarks": {
@@ -214,5 +265,8 @@
       "title": "Doppelte Tags",
       "merge_all_suggestions": "Alle Vorschläge zusammenführen?"
     }
+  },
+  "highlights": {
+    "no_highlights": "Sie haben noch keine Highlights."
   }
 }

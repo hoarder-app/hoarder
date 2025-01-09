@@ -131,4 +131,166 @@ describe("Assets API", () => {
     );
     expect(assetResponse.status).toBe(404);
   });
+
+  it("should manage assets on a bookmark", async () => {
+    // Create a new bookmark
+    const { data: createdBookmark, error: createError } = await client.POST(
+      "/bookmarks",
+      {
+        body: {
+          type: "text",
+          title: "Test Bookmark",
+          text: "This is a test bookmark",
+        },
+      },
+    );
+
+    if (createError) {
+      console.error("Error creating bookmark:", createError);
+      throw createError;
+    }
+    if (!createdBookmark) {
+      throw new Error("Bookmark creation failed");
+    }
+
+    const file = new File(["test content"], "test.pdf", {
+      type: "application/pdf",
+    });
+
+    // Upload the asset
+    const uploadResponse1 = await uploadTestAsset(apiKey, port, file);
+    const uploadResponse2 = await uploadTestAsset(apiKey, port, file);
+    const uploadResponse3 = await uploadTestAsset(apiKey, port, file);
+
+    // Attach first asset
+    const { data: firstAsset, response: attachFirstRes } = await client.POST(
+      "/bookmarks/{bookmarkId}/assets",
+      {
+        params: {
+          path: {
+            bookmarkId: createdBookmark.id,
+          },
+        },
+        body: {
+          id: uploadResponse1.assetId,
+          assetType: "bannerImage",
+        },
+      },
+    );
+
+    expect(attachFirstRes.status).toBe(201);
+    expect(firstAsset).toEqual({
+      id: uploadResponse1.assetId,
+      assetType: "bannerImage",
+    });
+
+    // Attach second asset
+    const { data: secondAsset, response: attachSecondRes } = await client.POST(
+      "/bookmarks/{bookmarkId}/assets",
+      {
+        params: {
+          path: {
+            bookmarkId: createdBookmark.id,
+          },
+        },
+        body: {
+          id: uploadResponse2.assetId,
+          assetType: "bannerImage",
+        },
+      },
+    );
+
+    expect(attachSecondRes.status).toBe(201);
+    expect(secondAsset).toEqual({
+      id: uploadResponse2.assetId,
+      assetType: "bannerImage",
+    });
+
+    // Get bookmark and verify assets
+    const { data: bookmarkWithAssets } = await client.GET(
+      "/bookmarks/{bookmarkId}",
+      {
+        params: {
+          path: {
+            bookmarkId: createdBookmark.id,
+          },
+        },
+      },
+    );
+
+    expect(bookmarkWithAssets?.assets).toEqual(
+      expect.arrayContaining([
+        { id: uploadResponse1.assetId, assetType: "bannerImage" },
+        { id: uploadResponse2.assetId, assetType: "bannerImage" },
+      ]),
+    );
+
+    // Replace first asset
+    const { response: replaceRes } = await client.PUT(
+      "/bookmarks/{bookmarkId}/assets/{assetId}",
+      {
+        params: {
+          path: {
+            bookmarkId: createdBookmark.id,
+            assetId: uploadResponse1.assetId,
+          },
+        },
+        body: {
+          assetId: uploadResponse3.assetId,
+        },
+      },
+    );
+
+    expect(replaceRes.status).toBe(204);
+
+    // Verify replacement
+    const { data: bookmarkAfterReplace } = await client.GET(
+      "/bookmarks/{bookmarkId}",
+      {
+        params: {
+          path: {
+            bookmarkId: createdBookmark.id,
+          },
+        },
+      },
+    );
+
+    expect(bookmarkAfterReplace?.assets).toEqual(
+      expect.arrayContaining([
+        { id: uploadResponse3.assetId, assetType: "bannerImage" },
+        { id: uploadResponse2.assetId, assetType: "bannerImage" },
+      ]),
+    );
+
+    // Detach second asset
+    const { response: detachRes } = await client.DELETE(
+      "/bookmarks/{bookmarkId}/assets/{assetId}",
+      {
+        params: {
+          path: {
+            bookmarkId: createdBookmark.id,
+            assetId: uploadResponse2.assetId,
+          },
+        },
+      },
+    );
+
+    expect(detachRes.status).toBe(204);
+
+    // Verify detachment
+    const { data: bookmarkAfterDetach } = await client.GET(
+      "/bookmarks/{bookmarkId}",
+      {
+        params: {
+          path: {
+            bookmarkId: createdBookmark.id,
+          },
+        },
+      },
+    );
+
+    expect(bookmarkAfterDetach?.assets).toEqual([
+      { id: uploadResponse3.assetId, assetType: "bannerImage" },
+    ]);
+  });
 });

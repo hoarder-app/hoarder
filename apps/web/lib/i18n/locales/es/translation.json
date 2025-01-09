@@ -22,7 +22,9 @@
     "password": "Contraseña",
     "key": "Clave",
     "experimental": "Experimental",
-    "note": "Nota"
+    "note": "Nota",
+    "highlights": "Destacados",
+    "source": "Fuente"
   },
   "settings": {
     "info": {
@@ -57,7 +59,8 @@
       "imported_bookmarks": "Marcadores importados",
       "import_bookmarks_from_hoarder_export": "Importar marcadores desde exportación de Hoarder",
       "import_bookmarks_from_html_file": "Importar marcadores desde archivo HTML",
-      "import_bookmarks_from_omnivore_export": "Importar marcadores desde exportación de Omnivore"
+      "import_bookmarks_from_omnivore_export": "Importar marcadores desde exportación de Omnivore",
+      "import_bookmarks_from_linkwarden_export": "Importar marcadores desde Linkwarden"
     },
     "api_keys": {
       "api_keys": "Claves APIs",
@@ -186,7 +189,7 @@
   },
   "editor": {
     "multiple_urls_dialog_title": "¿Importar URLs como marcadores independientes?",
-    "multiple_urls_dialog_desc": "La entrada contiende varias URLs en líneas independientes. ¿Quieres importarlas como distintos marcadores?",
+    "multiple_urls_dialog_desc": "La entrada contiene varias URLs en líneas independientes. ¿Quieres importarlas como distintos marcadores?",
     "import_as_text": "Importar como marcador de texto",
     "import_as_separate_bookmarks": "Importar como distintos marcadores",
     "placeholder": "Pega un enlace o una imagen, escribe una nota o arrastra una imagen aquí…",
@@ -257,10 +260,13 @@
     }
   },
   "cleanups": {
-    "cleanups": "Cleanups",
+    "cleanups": "Limpiezas",
     "duplicate_tags": {
       "title": "Etiquetas duplicadas",
       "merge_all_suggestions": "¿Fusionar todas las sugerencias?"
     }
+  },
+  "highlights": {
+    "no_highlights": "Aún no tienes nada destacado."
   }
 }

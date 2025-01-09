@@ -123,6 +123,25 @@ export async function readAsset({
   return { asset, metadata };
 }
 
+export function createAssetReadStream({
+  userId,
+  assetId,
+  start,
+  end,
+}: {
+  userId: string;
+  assetId: string;
+  start?: number;
+  end?: number;
+}) {
+  const assetDir = getAssetDir(userId, assetId);
+
+  return fs.createReadStream(path.join(assetDir, "asset.bin"), {
+    start,
+    end,
+  });
+}
+
 export async function readAssetMetadata({
   userId,
   assetId,

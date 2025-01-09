@@ -25,6 +25,10 @@
       }
     },
     "schemas": {
+      "AssetId": {
+        "type": "string",
+        "example": "ieidlxygmwj87oxz5hxttoc8"
+      },
       "BookmarkId": {
         "type": "string",
         "example": "ieidlxygmwj87oxz5hxttoc8"
@@ -435,6 +439,14 @@
       }
     },
     "parameters": {
+      "AssetId": {
+        "schema": {
+          "$ref": "#/components/schemas/AssetId"
+        },
+        "required": true,
+        "name": "assetId",
+        "in": "path"
+      },
       "BookmarkId": {
         "schema": {
           "$ref": "#/components/schemas/BookmarkId"
@@ -660,6 +672,58 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Bookmark"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookmarks/search": {
+      "get": {
+        "description": "Search bookmarks",
+        "summary": "Search bookmarks",
+        "tags": [
+          "Bookmarks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "q",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number"
+            },
+            "required": false,
+            "name": "limit",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "$ref": "#/components/schemas/Cursor"
+            },
+            "required": false,
+            "name": "cursor",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with the search results.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedBookmarks"
                 }
               }
             }
@@ -1004,6 +1068,157 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/bookmarks/{bookmarkId}/assets": {
+      "post": {
+        "description": "Attach a new asset to a bookmark",
+        "summary": "Attach asset",
+        "tags": [
+          "Bookmarks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          }
+        ],
+        "requestBody": {
+          "description": "The asset to attach",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "assetType": {
+                    "type": "string",
+                    "enum": [
+                      "screenshot",
+                      "bannerImage",
+                      "fullPageArchive",
+                      "video",
+                      "bookmarkAsset",
+                      "unknown"
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "assetType"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The attached asset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "assetType": {
+                      "type": "string",
+                      "enum": [
+                        "screenshot",
+                        "bannerImage",
+                        "fullPageArchive",
+                        "video",
+                        "bookmarkAsset",
+                        "unknown"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "assetType"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookmarks/{bookmarkId}/assets/{assetId}": {
+      "put": {
+        "description": "Replace an existing asset with a new one",
+        "summary": "Replace asset",
+        "tags": [
+          "Bookmarks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          },
+          {
+            "$ref": "#/components/parameters/AssetId"
+          }
+        ],
+        "requestBody": {
+          "description": "The new asset to replace with",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "assetId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "assetId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No content - asset was replaced successfully"
+          }
+        }
+      },
+      "delete": {
+        "description": "Detach an asset from a bookmark",
+        "summary": "Detach asset",
+        "tags": [
+          "Bookmarks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          },
+          {
+            "$ref": "#/components/parameters/AssetId"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content - asset was detached successfully"
           }
         }
       }

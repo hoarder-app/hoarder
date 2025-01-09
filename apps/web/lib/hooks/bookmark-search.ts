@@ -52,7 +52,7 @@ export function useDoBookmarkSearch() {
 }
 
 export function useBookmarkSearch() {
-  const { parsedSearchQuery } = useSearchQuery();
+  const { searchQuery } = useSearchQuery();
 
   const {
     data,
@@ -64,8 +64,7 @@ export function useBookmarkSearch() {
     isFetchingNextPage,
   } = api.bookmarks.searchBookmarks.useInfiniteQuery(
     {
-      text: parsedSearchQuery.text,
-      matcher: parsedSearchQuery.matcher,
+      text: searchQuery,
     },
     {
       placeholderData: keepPreviousData,

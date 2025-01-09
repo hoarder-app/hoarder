@@ -30,7 +30,7 @@ export function BookmarkMarkdownComponent({
     });
   };
   return (
-    <div className="h-full overflow-hidden">
+    <div className="h-full">
       {readOnly ? (
         <MarkdownReadonly>{bookmark.content.text}</MarkdownReadonly>
       ) : (
