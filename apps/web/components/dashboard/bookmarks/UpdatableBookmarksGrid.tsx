@@ -1,15 +1,15 @@
 "use client";
 
+import { useEffect } from "react";
 import UploadDropzone from "@/components/dashboard/UploadDropzone";
+import { useSortOrder } from "@/lib/hooks/useSortOrder";
 import { api } from "@/lib/trpc";
-import { useSearchParams } from "next/navigation";
 
-import { BookmarkGridContextProvider } from "@hoarder/shared-react/hooks/bookmark-grid-context";
 import type {
-  SortOrder,
   ZGetBookmarksRequest,
   ZGetBookmarksResponse,
 } from "@hoarder/shared/types/bookmarks";
+import { BookmarkGridContextProvider } from "@hoarder/shared-react/hooks/bookmark-grid-context";
 
 import BookmarksGrid from "./BookmarksGrid";
 
@@ -23,17 +23,15 @@ export default function UpdatableBookmarksGrid({
   showEditorCard?: boolean;
   itemsPerPage?: number;
 }) {
-  const searchParams = useSearchParams();
-  const sortOrder = (searchParams.get("sort") as SortOrder) ?? "desc";
+  const { sortOrder } = useSortOrder();
 
   // Merge the sort order from URL with existing query params
   const finalQuery = {
     ...query,
     sortOrder,
-    sortBy: "createdAt" as const,
   };
 
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     api.bookmarks.getBookmarks.useInfiniteQuery(
       { ...finalQuery, useCursorV2: true },
       {
@@ -46,6 +44,10 @@ export default function UpdatableBookmarksGrid({
         refetchOnMount: true,
       },
     );
+
+  useEffect(() => {
+    refetch();
+  }, [sortOrder, refetch]);
 
   const grid = (
     <BookmarksGrid

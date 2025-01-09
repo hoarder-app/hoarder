@@ -6,6 +6,7 @@ import {
   eq,
   exists,
   gt,
+  gte,
   inArray,
   lt,
   lte,
@@ -545,6 +546,7 @@ export const bookmarksAppRouter = router({
       if (!input.limit) {
         input.limit = DEFAULT_NUM_BOOKMARKS_PER_PAGE;
       }
+      const sortOrder = input.sortOrder || "desc";
       const client = await getSearchIdxClient();
       if (!client) {
         throw new TRPCError({
@@ -571,7 +573,7 @@ export const bookmarksAppRouter = router({
         filter,
         showRankingScore: true,
         attributesToRetrieve: ["id"],
-        sort: ["createdAt:desc"],
+        sort: [`createdAt:${sortOrder}`],
         limit: input.limit,
         ...(input.cursor
           ? {
@@ -713,13 +715,21 @@ export const bookmarksAppRouter = router({
                   )
                 : undefined,
               input.cursor
-                ? or(
-                    lt(bookmarks.createdAt, input.cursor.createdAt),
-                    and(
-                      eq(bookmarks.createdAt, input.cursor.createdAt),
-                      lte(bookmarks.id, input.cursor.id),
-                    ),
-                  )
+                ? input.sortOrder === "asc"
+                  ? or(
+                      gt(bookmarks.createdAt, input.cursor.createdAt),
+                      and(
+                        eq(bookmarks.createdAt, input.cursor.createdAt),
+                        gte(bookmarks.id, input.cursor.id),
+                      ),
+                    )
+                  : or(
+                      lt(bookmarks.createdAt, input.cursor.createdAt),
+                      and(
+                        eq(bookmarks.createdAt, input.cursor.createdAt),
+                        lte(bookmarks.id, input.cursor.id),
+                      ),
+                    )
                 : undefined,
             ),
           )

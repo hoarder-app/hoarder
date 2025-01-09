@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSortOrder } from "@/lib/hooks/useSortOrder";
 import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 
@@ -8,6 +9,7 @@ import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
 function useSearchQuery() {
   const searchParams = useSearchParams();
   const searchQuery = decodeURIComponent(searchParams.get("q") ?? "");
+
   const parsed = useMemo(() => parseSearchQuery(searchQuery), [searchQuery]);
   return { searchQuery, parsedSearchQuery: parsed };
 }
@@ -53,6 +55,7 @@ export function useDoBookmarkSearch() {
 
 export function useBookmarkSearch() {
   const { searchQuery } = useSearchQuery();
+  const { sortOrder } = useSortOrder();
 
   const {
     data,
@@ -65,6 +68,7 @@ export function useBookmarkSearch() {
   } = api.bookmarks.searchBookmarks.useInfiniteQuery(
     {
       text: searchQuery,
+      sortOrder,
     },
     {
       placeholderData: keepPreviousData,

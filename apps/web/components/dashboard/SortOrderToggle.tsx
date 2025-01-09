@@ -5,31 +5,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSortOrder } from "@/lib/hooks/useSortOrder";
 import { useTranslation } from "@/lib/i18n/client";
-import { api } from "@hoarder/shared-react/trpc";
-import { Check, SortDesc } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Check, SortAsc, SortDesc } from "lucide-react";
 
-import type { SortOrder } from "@hoarder/shared/types/bookmarks";
+import { ZSortOrder } from "@hoarder/shared/types/bookmarks";
 
 export default function SortOrderToggle() {
   const { t } = useTranslation();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentSort = (searchParams.get("sort") as SortOrder) ?? "desc";
 
-  const apiUtils = api.useUtils();
+  const { sortOrder: currentSort, setSortOrder } = useSortOrder();
 
-  const updateSort = async (newSort: SortOrder) => {
-    // invalidate the query
-    await apiUtils.bookmarks.getBookmarks.invalidate();
-
-    const params = new URLSearchParams(searchParams.toString());
-    params.set("sort", newSort);
-    router.replace(`?${params.toString()}`);
-
-    // Force a refetch after URL update
-    await apiUtils.bookmarks.getBookmarks.refetch();
+  const updateSort = async (newSort: ZSortOrder) => {
+    setSortOrder(newSort);
   };
 
   return (
@@ -40,7 +28,11 @@ export default function SortOrderToggle() {
           delayDuration={100}
           variant="ghost"
         >
-          <SortDesc size={18} />
+          {currentSort === "asc" ? (
+            <SortAsc size={18} />
+          ) : (
+            <SortDesc size={18} />
+          )}
         </ButtonWithTooltip>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
@@ -48,15 +40,21 @@ export default function SortOrderToggle() {
           className="cursor-pointer justify-between"
           onClick={() => updateSort("desc")}
         >
-          <span>{t("actions.sort.newest_first")}</span>
-          {currentSort === "desc" && <Check className="ml-2 size-4" />}
+          <div className="flex items-center">
+            <SortDesc size={16} className="mr-2" />
+            <span>{t("actions.sort.newest_first")}</span>
+          </div>
+          {currentSort === "desc" && <Check className="ml-2 h-4 w-4" />}
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer justify-between"
           onClick={() => updateSort("asc")}
         >
-          <span>{t("actions.sort.oldest_first")}</span>
-          {currentSort === "asc" && <Check className="ml-2 size-4" />}
+          <div className="flex items-center">
+            <SortAsc size={16} className="mr-2" />
+            <span>{t("actions.sort.oldest_first")}</span>
+          </div>
+          {currentSort === "asc" && <Check className="ml-2 h-4 w-4" />}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
