@@ -158,3 +158,30 @@ export const AssetPreprocessingQueue =
       keepFailedJobs: false,
     },
   );
+
+
+//Webhook worker
+export const zWebhookRequestSchema = z.object({
+  bookmarkId: z.string(),
+  url: z.string(),
+  operation: z.enum(["create"]),
+});
+export type ZWebhookRequest = z.infer<typeof zWebhookRequestSchema>;
+export const WebhookQueue = new SqliteQueue<ZWebhookRequest>(
+  "webhook_queue",
+  queueDB,
+  {
+    defaultJobArgs: {
+      numRetries: 1,
+    },
+    keepFailedJobs: false,
+  },
+);
+
+export async function triggerWebhookWorker(bookmarkId: string, url: string, operation: "create") {
+  await WebhookQueue.enqueue({
+    bookmarkId,
+    url,
+    operation,
+  });
+}
