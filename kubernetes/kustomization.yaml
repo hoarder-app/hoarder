@@ -9,7 +9,7 @@ secretGenerator:
   name: hoarder-secrets
 
 images:
-  - name: hoarder
+  - name: ghcr.io/hoarder-app/hoarder
     newTag: v0.21.0 # Specify the version here
 
 configMapGenerator:
