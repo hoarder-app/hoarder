@@ -27,7 +27,7 @@ patches:
         value: hoarder.example.com
       - op: replace
         path: /spec/tls/0/secretName
-        value: wildcard
+        value: tls-secret-name
       - op: replace
         path: /spec/rules/0/host
         value: hoarder.example.com
