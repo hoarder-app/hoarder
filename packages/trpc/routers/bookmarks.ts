@@ -22,7 +22,10 @@ import {
   rssFeedImportsTable,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
-import { deleteAsset } from "@hoarder/shared/assetdb";
+import {
+  deleteAsset,
+  SUPPORTED_BOOKMARK_ASSET_TYPES,
+} from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import { InferenceClientFactory } from "@hoarder/shared/inference";
 import { buildSummaryPrompt } from "@hoarder/shared/prompts";
@@ -98,9 +101,6 @@ export const ensureAssetOwnership = async (opts: {
 }) => {
   const asset = await opts.ctx.db.query.assets.findFirst({
     where: eq(bookmarks.id, opts.assetId),
-    columns: {
-      userId: true,
-    },
   });
   if (!opts.ctx.user) {
     throw new TRPCError({
@@ -120,6 +120,7 @@ export const ensureAssetOwnership = async (opts: {
       message: "User is not allowed to access resource",
     });
   }
+  return asset;
 };
 
 async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
@@ -307,6 +308,24 @@ export const bookmarksAppRouter = router({
                 })
                 .returning()
             )[0];
+            if (input.precrawledArchiveId) {
+              await ensureAssetOwnership({
+                ctx,
+                assetId: input.precrawledArchiveId,
+              });
+              await tx
+                .update(assets)
+                .set({
+                  bookmarkId: bookmark.id,
+                  assetType: AssetTypes.LINK_PRECRAWLED_ARCHIVE,
+                })
+                .where(
+                  and(
+                    eq(assets.id, input.precrawledArchiveId),
+                    eq(assets.userId, ctx.user.id),
+                  ),
+                );
+            }
             content = {
               type: BookmarkTypes.LINK,
               ...link,
@@ -344,7 +363,19 @@ export const bookmarksAppRouter = router({
                 sourceUrl: null,
               })
               .returning();
-            await ensureAssetOwnership({ ctx, assetId: input.assetId });
+            const uploadedAsset = await ensureAssetOwnership({
+              ctx,
+              assetId: input.assetId,
+            });
+            if (
+              !uploadedAsset.contentType ||
+              !SUPPORTED_BOOKMARK_ASSET_TYPES.has(uploadedAsset.contentType)
+            ) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Unsupported asset type",
+              });
+            }
             await tx
               .update(assets)
               .set({

@@ -18,6 +18,7 @@ export const zAssetTypesSchema = z.enum([
   "fullPageArchive",
   "video",
   "bookmarkAsset",
+  "precrawledArchive",
   "unknown",
 ]);
 export type ZAssetType = z.infer<typeof zAssetTypesSchema>;
@@ -126,7 +127,11 @@ export const zNewBookmarkRequestSchema = z
   })
   .and(
     z.discriminatedUnion("type", [
-      z.object({ type: z.literal(BookmarkTypes.LINK), url: z.string().url() }),
+      z.object({
+        type: z.literal(BookmarkTypes.LINK),
+        url: z.string().url(),
+        precrawledArchiveId: z.string().optional(),
+      }),
       z.object({
         type: z.literal(BookmarkTypes.TEXT),
         text: z.string(),

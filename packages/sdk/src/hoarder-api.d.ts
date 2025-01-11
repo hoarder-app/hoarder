@@ -68,6 +68,7 @@ export interface paths {
                 type: "link";
                 /** Format: uri */
                 url: string;
+                precrawledArchiveId?: string;
               }
             | {
                 /** @enum {string} */
@@ -426,6 +427,7 @@ export interface paths {
               | "fullPageArchive"
               | "video"
               | "bookmarkAsset"
+              | "precrawledArchive"
               | "unknown";
           };
         };
@@ -446,6 +448,7 @@ export interface paths {
                 | "fullPageArchive"
                 | "video"
                 | "bookmarkAsset"
+                | "precrawledArchive"
                 | "unknown";
             };
           };
@@ -1250,6 +1253,7 @@ export interface components {
           | "fullPageArchive"
           | "video"
           | "bookmarkAsset"
+          | "precrawledArchive"
           | "unknown";
       }[];
     };
