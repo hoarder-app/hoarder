@@ -10,7 +10,7 @@ secretGenerator:
 
 images:
   - name: ghcr.io/hoarder-app/hoarder
-    newTag: v0.21.0 # Specify the version here
+    newTag: 0.21.0 # Specify the version here
 
 configMapGenerator:
   - name: nextauth-configuration
