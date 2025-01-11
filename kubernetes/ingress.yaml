@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: hoarder-web-ingress
+  namespace: hoarder
+spec:
+  tls:
+  - hosts:
+      - hoarder.example.com
+    secretName: tls-secret
+  rules:
+  - host: "hoarder.example.com"
+    http:
+      paths:
+      - path: "/"
+        pathType: Prefix
+        backend:
+          service:
+            name: "web"
+            port:
+              number: 3000

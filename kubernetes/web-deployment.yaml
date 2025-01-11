@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: ghcr.io/hoarder-app/hoarder:HOARDER_VERSION_PLACEHOLDER
+          image: ghcr.io/hoarder-app/hoarder
           ports:
             - containerPort: 3000
           env:
@@ -29,8 +29,10 @@ spec:
             - mountPath: /data
               name: data
           envFrom:
+            - secretRef:
+                name: hoarder-secrets
             - configMapRef:
-                name: hoarder-env
+                name: nextauth-configuration
       volumes:
         - name: data
           persistentVolumeClaim:
