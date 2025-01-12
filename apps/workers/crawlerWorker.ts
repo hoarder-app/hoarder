@@ -41,6 +41,7 @@ import {
   getAssetSize,
   IMAGE_ASSET_TYPES,
   newAssetId,
+  readAsset,
   saveAsset,
   saveAssetFromFile,
   silentDeleteAsset,
@@ -582,14 +583,35 @@ async function crawlAndParseUrl(
   oldScreenshotAssetId: string | undefined,
   oldImageAssetId: string | undefined,
   oldFullPageArchiveAssetId: string | undefined,
+  precrawledArchiveAssetId: string | undefined,
   archiveFullPage: boolean,
 ) {
-  const {
-    htmlContent,
-    screenshot,
-    statusCode,
-    url: browserUrl,
-  } = await crawlPage(jobId, url);
+  let result: {
+    htmlContent: string;
+    screenshot: Buffer | undefined;
+    statusCode: number | null;
+    url: string;
+  };
+
+  if (precrawledArchiveAssetId) {
+    logger.info(
+      `[Crawler][${jobId}] The page has been precrawled. Will use the precrawled archive instead.`,
+    );
+    const asset = await readAsset({
+      userId,
+      assetId: precrawledArchiveAssetId,
+    });
+    result = {
+      htmlContent: asset.asset.toString(),
+      screenshot: undefined,
+      statusCode: 200,
+      url,
+    };
+  } else {
+    result = await crawlPage(jobId, url);
+  }
+
+  const { htmlContent, screenshot, statusCode, url: browserUrl } = result;
 
   const [meta, readableContent, screenshotAssetInfo] = await Promise.all([
     extractMetadata(htmlContent, browserUrl, jobId),
@@ -701,6 +723,7 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
     screenshotAssetId: oldScreenshotAssetId,
     imageAssetId: oldImageAssetId,
     fullPageArchiveAssetId: oldFullPageArchiveAssetId,
+    precrawledArchiveAssetId,
   } = await getBookmarkDetails(bookmarkId);
 
   logger.info(
@@ -730,6 +753,7 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
       oldScreenshotAssetId,
       oldImageAssetId,
       oldFullPageArchiveAssetId,
+      precrawledArchiveAssetId,
       archiveFullPage,
     );
 

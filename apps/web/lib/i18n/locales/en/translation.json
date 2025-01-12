@@ -92,7 +92,12 @@
       "tagging_rule_description": "Prompts that you add here will be included as rules to the model during tag generation. You can view the final prompts in the prompt preview section.",
       "prompt_preview": "Prompt Preview",
       "text_prompt": "Text Prompt",
-      "images_prompt": "Image Prompt"
+      "images_prompt": "Image Prompt",
+      "summarization_prompt": "Summarization Prompt",
+      "all_tagging": "All Tagging",
+      "text_tagging": "Text Tagging",
+      "image_tagging": "Image Tagging",
+      "summarization": "Summarization"
     },
     "feeds": {
       "rss_subscriptions": "RSS Subscriptions",

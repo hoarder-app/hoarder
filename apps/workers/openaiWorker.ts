@@ -172,7 +172,7 @@ async function fetchCustomPrompts(
   const prompts = await db.query.customPrompts.findMany({
     where: and(
       eq(customPrompts.userId, userId),
-      inArray(customPrompts.appliesTo, ["all", appliesTo]),
+      inArray(customPrompts.appliesTo, ["all_tagging", appliesTo]),
     ),
     columns: {
       text: true,

@@ -158,6 +158,7 @@ export const enum AssetTypes {
   LINK_BANNER_IMAGE = "linkBannerImage",
   LINK_SCREENSHOT = "linkScreenshot",
   LINK_FULL_PAGE_ARCHIVE = "linkFullPageArchive",
+  LINK_PRECRAWLED_ARCHIVE = "linkPrecrawledArchive",
   LINK_VIDEO = "linkVideo",
   BOOKMARK_ASSET = "bookmarkAsset",
   UNKNOWN = "unknown",
@@ -173,6 +174,7 @@ export const assets = sqliteTable(
         AssetTypes.LINK_BANNER_IMAGE,
         AssetTypes.LINK_SCREENSHOT,
         AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+        AssetTypes.LINK_PRECRAWLED_ARCHIVE,
         AssetTypes.LINK_VIDEO,
         AssetTypes.BOOKMARK_ASSET,
         AssetTypes.UNKNOWN,
@@ -347,8 +349,8 @@ export const customPrompts = sqliteTable(
       .$defaultFn(() => createId()),
     text: text("text").notNull(),
     enabled: integer("enabled", { mode: "boolean" }).notNull(),
-    appliesTo: text("attachedBy", {
-      enum: ["all", "text", "images"],
+    appliesTo: text("appliesTo", {
+      enum: ["all_tagging", "text", "images", "summary"],
     }).notNull(),
     createdAt: createdAtField(),
     userId: text("userId")
