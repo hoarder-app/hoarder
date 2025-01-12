@@ -27,11 +27,14 @@ import {
   useRecrawlBookmark,
   useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
+import { limitConcurrency } from "@hoarder/shared/concurrency";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import BulkManageListsModal from "./bookmarks/BulkManageListsModal";
 import BulkTagModal from "./bookmarks/BulkTagModal";
 import { ArchivedActionIcon, FavouritedActionIcon } from "./bookmarks/icons";
+
+const MAX_CONCURRENT_BULK_ACTIONS = 50;
 
 export default function BulkBookmarksAction() {
   const { t } = useTranslation();
@@ -100,11 +103,15 @@ export default function BulkBookmarksAction() {
       (item) => item.content.type === BookmarkTypes.LINK,
     );
     await Promise.all(
-      links.map((item) =>
-        recrawlBookmarkMutator.mutateAsync({
-          bookmarkId: item.id,
-          archiveFullPage,
-        }),
+      limitConcurrency(
+        links.map(
+          (item) => () =>
+            recrawlBookmarkMutator.mutateAsync({
+              bookmarkId: item.id,
+              archiveFullPage,
+            }),
+        ),
+        MAX_CONCURRENT_BULK_ACTIONS,
       ),
     );
     toast({
@@ -145,12 +152,16 @@ export default function BulkBookmarksAction() {
     archived,
   }: UpdateBookmarkProps) => {
     await Promise.all(
-      selectedBookmarks.map((item) =>
-        updateBookmarkMutator.mutateAsync({
-          bookmarkId: item.id,
-          favourited,
-          archived,
-        }),
+      limitConcurrency(
+        selectedBookmarks.map(
+          (item) => () =>
+            updateBookmarkMutator.mutateAsync({
+              bookmarkId: item.id,
+              favourited,
+              archived,
+            }),
+        ),
+        MAX_CONCURRENT_BULK_ACTIONS,
       ),
     );
     toast({
@@ -160,8 +171,12 @@ export default function BulkBookmarksAction() {
 
   const deleteBookmarks = async () => {
     await Promise.all(
-      selectedBookmarks.map((item) =>
-        deleteBookmarkMutator.mutateAsync({ bookmarkId: item.id }),
+      limitConcurrency(
+        selectedBookmarks.map(
+          (item) => () =>
+            deleteBookmarkMutator.mutateAsync({ bookmarkId: item.id }),
+        ),
+        MAX_CONCURRENT_BULK_ACTIONS,
       ),
     );
     toast({

@@ -21,6 +21,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { useAddBookmarkToList } from "@hoarder/shared-react/hooks/lists";
+import { limitConcurrency } from "@hoarder/shared/concurrency";
 
 import { BookmarkListSelector } from "../lists/BookmarkListSelector";
 
@@ -67,11 +68,15 @@ export default function BulkManageListsModal({
 
   const onSubmit = async (value: z.infer<typeof formSchema>) => {
     const results = await Promise.allSettled(
-      bookmarkIds.map((bookmarkId) =>
-        addToList({
-          bookmarkId,
-          listId: value.listId,
-        }),
+      limitConcurrency(
+        bookmarkIds.map(
+          (bookmarkId) => () =>
+            addToList({
+              bookmarkId,
+              listId: value.listId,
+            }),
+        ),
+        50,
       ),
     );
 
