@@ -1,5 +1,17 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, desc, eq, exists, gt, inArray, lt, lte, or } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  exists,
+  gt,
+  gte,
+  inArray,
+  lt,
+  lte,
+  or,
+} from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -566,6 +578,7 @@ export const bookmarksAppRouter = router({
       if (!input.limit) {
         input.limit = DEFAULT_NUM_BOOKMARKS_PER_PAGE;
       }
+      const sortOrder = input.sortOrder || "desc";
       const client = await getSearchIdxClient();
       if (!client) {
         throw new TRPCError({
@@ -592,7 +605,7 @@ export const bookmarksAppRouter = router({
         filter,
         showRankingScore: true,
         attributesToRetrieve: ["id"],
-        sort: ["createdAt:desc"],
+        sort: [`createdAt:${sortOrder}`],
         limit: input.limit,
         ...(input.cursor
           ? {
@@ -734,18 +747,31 @@ export const bookmarksAppRouter = router({
                   )
                 : undefined,
               input.cursor
-                ? or(
-                    lt(bookmarks.createdAt, input.cursor.createdAt),
-                    and(
-                      eq(bookmarks.createdAt, input.cursor.createdAt),
-                      lte(bookmarks.id, input.cursor.id),
-                    ),
-                  )
+                ? input.sortOrder === "asc"
+                  ? or(
+                      gt(bookmarks.createdAt, input.cursor.createdAt),
+                      and(
+                        eq(bookmarks.createdAt, input.cursor.createdAt),
+                        gte(bookmarks.id, input.cursor.id),
+                      ),
+                    )
+                  : or(
+                      lt(bookmarks.createdAt, input.cursor.createdAt),
+                      and(
+                        eq(bookmarks.createdAt, input.cursor.createdAt),
+                        lte(bookmarks.id, input.cursor.id),
+                      ),
+                    )
                 : undefined,
             ),
           )
           .limit(input.limit + 1)
-          .orderBy(desc(bookmarks.createdAt), desc(bookmarks.id)),
+          .orderBy(
+            input.sortOrder === "asc"
+              ? asc(bookmarks.createdAt)
+              : desc(bookmarks.createdAt),
+            desc(bookmarks.id),
+          ),
       );
       // TODO: Consider not inlining the tags in the response of getBookmarks as this query is getting kinda expensive
       const results = await ctx.db
@@ -849,7 +875,9 @@ export const bookmarksAppRouter = router({
 
       bookmarksArr.sort((a, b) => {
         if (a.createdAt != b.createdAt) {
-          return b.createdAt.getTime() - a.createdAt.getTime();
+          return input.sortOrder === "asc"
+            ? a.createdAt.getTime() - b.createdAt.getTime()
+            : b.createdAt.getTime() - a.createdAt.getTime();
         } else {
           return b.id.localeCompare(a.id);
         }

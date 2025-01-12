@@ -55,7 +55,12 @@
     "sign_out": "Wyloguj się",
     "merge": "Scal",
     "cancel": "Anuluj",
-    "apply_all": "Zastosuj wszystko"
+    "apply_all": "Zastosuj wszystko",
+    "sort": {
+      "title": "Sortowanie",
+      "newest_first": "Najnowsze pierwsze",
+      "oldest_first": "Najstarsze pierwsze"
+    }
   },
   "settings": {
     "info": {

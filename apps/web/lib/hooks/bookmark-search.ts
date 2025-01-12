@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSortOrderStore } from "@/lib/store/useSortOrderStore";
 import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 
@@ -8,6 +9,7 @@ import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
 function useSearchQuery() {
   const searchParams = useSearchParams();
   const searchQuery = decodeURIComponent(searchParams.get("q") ?? "");
+
   const parsed = useMemo(() => parseSearchQuery(searchQuery), [searchQuery]);
   return { searchQuery, parsedSearchQuery: parsed };
 }
@@ -53,6 +55,7 @@ export function useDoBookmarkSearch() {
 
 export function useBookmarkSearch() {
   const { searchQuery } = useSearchQuery();
+  const sortOrder = useSortOrderStore((state) => state.sortOrder);
 
   const {
     data,
@@ -62,9 +65,11 @@ export function useBookmarkSearch() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
+    refetch,
   } = api.bookmarks.searchBookmarks.useInfiniteQuery(
     {
       text: searchQuery,
+      sortOrder,
     },
     {
       placeholderData: keepPreviousData,
@@ -73,6 +78,10 @@ export function useBookmarkSearch() {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     },
   );
+
+  useEffect(() => {
+    refetch();
+  }, [refetch, sortOrder]);
 
   if (error) {
     throw error;
