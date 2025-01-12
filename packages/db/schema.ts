@@ -349,8 +349,8 @@ export const customPrompts = sqliteTable(
       .$defaultFn(() => createId()),
     text: text("text").notNull(),
     enabled: integer("enabled", { mode: "boolean" }).notNull(),
-    appliesTo: text("attachedBy", {
-      enum: ["all", "text", "images"],
+    appliesTo: text("appliesTo", {
+      enum: ["all_tagging", "text", "images", "summary"],
     }).notNull(),
     createdAt: createdAtField(),
     userId: text("userId")

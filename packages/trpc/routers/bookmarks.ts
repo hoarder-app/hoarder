@@ -19,6 +19,7 @@ import {
   bookmarksInLists,
   bookmarkTags,
   bookmarkTexts,
+  customPrompts,
   rssFeedImportsTable,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
@@ -1191,8 +1192,19 @@ Description: ${bookmark.description ?? ""}
 Content: ${bookmark.content ?? ""}
 `;
 
+      const prompts = await ctx.db.query.customPrompts.findMany({
+        where: and(
+          eq(customPrompts.userId, ctx.user.id),
+          eq(customPrompts.appliesTo, "summary"),
+        ),
+        columns: {
+          text: true,
+        },
+      });
+
       const summaryPrompt = buildSummaryPrompt(
         serverConfig.inference.inferredTagLang,
+        prompts.map((p) => p.text),
         bookmarkDetails,
         serverConfig.inference.contextLength,
       );
