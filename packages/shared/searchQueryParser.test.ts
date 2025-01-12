@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { parseSearchQuery } from "./searchQueryParser";
+import { BookmarkTypes } from "./types/bookmarks";
 
 describe("Search Query Parser", () => {
   test("simple is queries", () => {
@@ -66,6 +67,60 @@ describe("Search Query Parser", () => {
       matcher: {
         type: "inlist",
         inList: false,
+      },
+    });
+    expect(parseSearchQuery("is:link")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "type",
+        typeName: BookmarkTypes.LINK,
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery("-is:link")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "type",
+        typeName: BookmarkTypes.LINK,
+        inverse: true,
+      },
+    });
+    expect(parseSearchQuery("is:text")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "type",
+        typeName: BookmarkTypes.TEXT,
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery("-is:text")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "type",
+        typeName: BookmarkTypes.TEXT,
+        inverse: true,
+      },
+    });
+    expect(parseSearchQuery("is:media")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "type",
+        typeName: BookmarkTypes.ASSET,
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery("-is:media")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "type",
+        typeName: BookmarkTypes.ASSET,
+        inverse: true,
       },
     });
   });

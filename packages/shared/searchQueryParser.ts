@@ -15,6 +15,7 @@ import {
 } from "typescript-parsec";
 import { z } from "zod";
 
+import { BookmarkTypes } from "./types/bookmarks";
 import { Matcher } from "./types/search";
 
 enum TokenType {
@@ -135,6 +136,33 @@ MATCHER.setPattern(
             return {
               text: "",
               matcher: { type: "inlist", inList: !minus },
+            };
+          case "link":
+            return {
+              text: "",
+              matcher: {
+                type: "type",
+                typeName: BookmarkTypes.LINK,
+                inverse: !!minus,
+              },
+            };
+          case "text":
+            return {
+              text: "",
+              matcher: {
+                type: "type",
+                typeName: BookmarkTypes.TEXT,
+                inverse: !!minus,
+              },
+            };
+          case "media":
+            return {
+              text: "",
+              matcher: {
+                type: "type",
+                typeName: BookmarkTypes.ASSET,
+                inverse: !!minus,
+              },
             };
           default:
             // If the token is not known, emit it as pure text

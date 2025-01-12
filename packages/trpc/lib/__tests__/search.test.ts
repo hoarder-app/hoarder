@@ -280,6 +280,54 @@ describe("getBookmarkIdsFromMatcher", () => {
     expect(result).toEqual(["b1", "b2"]);
   });
 
+  it("should handle type matcher", async () => {
+    expect(
+      await getBookmarkIdsFromMatcher(mockCtx, {
+        type: "type",
+        typeName: BookmarkTypes.LINK,
+        inverse: false,
+      }),
+    ).toEqual(["b1", "b2", "b4"]);
+    expect(
+      await getBookmarkIdsFromMatcher(mockCtx, {
+        type: "type",
+        typeName: BookmarkTypes.TEXT,
+        inverse: false,
+      }),
+    ).toEqual(["b3", "b5"]);
+    expect(
+      await getBookmarkIdsFromMatcher(mockCtx, {
+        type: "type",
+        typeName: BookmarkTypes.ASSET,
+        inverse: false,
+      }),
+    ).toEqual(["b6"]);
+  });
+
+  it("should handle type matcher with inverse=true", async () => {
+    expect(
+      await getBookmarkIdsFromMatcher(mockCtx, {
+        type: "type",
+        typeName: BookmarkTypes.LINK,
+        inverse: true,
+      }),
+    ).toEqual(["b3", "b5", "b6"]);
+    expect(
+      await getBookmarkIdsFromMatcher(mockCtx, {
+        type: "type",
+        typeName: BookmarkTypes.TEXT,
+        inverse: true,
+      }),
+    ).toEqual(["b1", "b2", "b4", "b6"]);
+    expect(
+      await getBookmarkIdsFromMatcher(mockCtx, {
+        type: "type",
+        typeName: BookmarkTypes.ASSET,
+        inverse: true,
+      }),
+    ).toEqual(["b1", "b2", "b3", "b4", "b5"]);
+  });
+
   it("should handle dateBefore matcher with inverse=true", async () => {
     const matcher: Matcher = {
       type: "dateBefore",

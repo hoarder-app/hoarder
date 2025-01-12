@@ -24,7 +24,13 @@
     "screenshot": "Screenshot",
     "video": "Video",
     "archive": "Archive",
-    "home": "Home"
+    "home": "Home",
+    "bookmark_types": {
+      "title": "Bookmark Type",
+      "link": "Link",
+      "text": "Text",
+      "media": "Media"
+    }
   },
   "layouts": {
     "masonry": "Masonry",
@@ -218,6 +224,8 @@
     "has_tag": "Has Tag",
     "does_not_have_tag": "Does Not Have Tag",
     "full_text_search": "Full Text Search",
+    "type_is": "Type is",
+    "type_is_not": "Type is not",
     "and": "And",
     "or": "Or"
   },

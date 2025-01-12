@@ -7,6 +7,7 @@ import {
   like,
   lt,
   lte,
+  ne,
   notExists,
   notLike,
 } from "drizzle-orm";
@@ -232,6 +233,15 @@ async function getIds(
             comp(bookmarks.createdAt, matcher.dateBefore),
           ),
         );
+    }
+    case "type": {
+      const comp = matcher.inverse
+        ? ne(bookmarks.type, matcher.typeName)
+        : eq(bookmarks.type, matcher.typeName);
+      return db
+        .select({ id: bookmarks.id })
+        .from(bookmarks)
+        .where(and(eq(bookmarks.userId, userId), comp));
     }
     case "and": {
       const vals = await Promise.all(
