@@ -11,7 +11,7 @@ export default function UpdatingBookmarkList({
   query,
   header,
 }: {
-  query: ZGetBookmarksRequest;
+  query: Omit<ZGetBookmarksRequest, "sortOrder">; // Sort order is not supported in mobile yet
   header?: React.ReactElement;
 }) {
   const apiUtils = api.useUtils();

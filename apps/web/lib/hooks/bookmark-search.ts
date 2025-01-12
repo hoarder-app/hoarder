@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useSortOrder } from "@/lib/hooks/useSortOrder";
+import { useSortOrderStore } from "@/lib/store/useSortOrderStore";
 import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 
@@ -55,7 +55,7 @@ export function useDoBookmarkSearch() {
 
 export function useBookmarkSearch() {
   const { searchQuery } = useSearchQuery();
-  const { sortOrder } = useSortOrder();
+  const sortOrder = useSortOrderStore((state) => state.sortOrder);
 
   const {
     data,
@@ -65,6 +65,7 @@ export function useBookmarkSearch() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
+    refetch,
   } = api.bookmarks.searchBookmarks.useInfiniteQuery(
     {
       text: searchQuery,
@@ -77,6 +78,10 @@ export function useBookmarkSearch() {
       getNextPageParam: (lastPage) => lastPage.nextCursor,
     },
   );
+
+  useEffect(() => {
+    refetch();
+  }, [refetch, sortOrder]);
 
   if (error) {
     throw error;

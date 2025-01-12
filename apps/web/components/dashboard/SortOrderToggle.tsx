@@ -5,20 +5,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useSortOrder } from "@/lib/hooks/useSortOrder";
 import { useTranslation } from "@/lib/i18n/client";
+import { useSortOrderStore } from "@/lib/store/useSortOrderStore";
 import { Check, SortAsc, SortDesc } from "lucide-react";
-
-import { ZSortOrder } from "@hoarder/shared/types/bookmarks";
 
 export default function SortOrderToggle() {
   const { t } = useTranslation();
 
-  const { sortOrder: currentSort, setSortOrder } = useSortOrder();
-
-  const updateSort = async (newSort: ZSortOrder) => {
-    setSortOrder(newSort);
-  };
+  const { sortOrder: currentSort, setSortOrder } = useSortOrderStore();
 
   return (
     <DropdownMenu>
@@ -38,7 +32,7 @@ export default function SortOrderToggle() {
       <DropdownMenuContent className="w-fit">
         <DropdownMenuItem
           className="cursor-pointer justify-between"
-          onClick={() => updateSort("desc")}
+          onClick={() => setSortOrder("desc")}
         >
           <div className="flex items-center">
             <SortDesc size={16} className="mr-2" />
@@ -48,7 +42,7 @@ export default function SortOrderToggle() {
         </DropdownMenuItem>
         <DropdownMenuItem
           className="cursor-pointer justify-between"
-          onClick={() => updateSort("asc")}
+          onClick={() => setSortOrder("asc")}
         >
           <div className="flex items-center">
             <SortAsc size={16} className="mr-2" />

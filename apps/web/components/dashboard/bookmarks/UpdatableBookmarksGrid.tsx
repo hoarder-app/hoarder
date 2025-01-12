@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import UploadDropzone from "@/components/dashboard/UploadDropzone";
-import { useSortOrder } from "@/lib/hooks/useSortOrder";
+import { useSortOrderStore } from "@/lib/store/useSortOrderStore";
 import { api } from "@/lib/trpc";
 
 import type {
@@ -18,18 +18,14 @@ export default function UpdatableBookmarksGrid({
   bookmarks: initialBookmarks,
   showEditorCard = false,
 }: {
-  query: ZGetBookmarksRequest;
+  query: Omit<ZGetBookmarksRequest, "sortOrder">; // Sort order is handled by the store
   bookmarks: ZGetBookmarksResponse;
   showEditorCard?: boolean;
   itemsPerPage?: number;
 }) {
-  const { sortOrder } = useSortOrder();
+  const sortOrder = useSortOrderStore((state) => state.sortOrder);
 
-  // Merge the sort order from URL with existing query params
-  const finalQuery = {
-    ...query,
-    sortOrder,
-  };
+  const finalQuery = { ...query, sortOrder };
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     api.bookmarks.getBookmarks.useInfiniteQuery(
@@ -60,7 +56,7 @@ export default function UpdatableBookmarksGrid({
   );
 
   return (
-    <BookmarkGridContextProvider query={query}>
+    <BookmarkGridContextProvider query={finalQuery}>
       {showEditorCard ? <UploadDropzone>{grid}</UploadDropzone> : grid}
     </BookmarkGridContextProvider>
   );

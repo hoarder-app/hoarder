@@ -8,6 +8,6 @@ interface SortOrderState {
 }
 
 export const useSortOrderStore = create<SortOrderState>((set) => ({
-  sortOrder: "desc" as ZSortOrder, // default sort order
+  sortOrder: "desc", // default sort order
   setSortOrder: (sortOrder) => set({ sortOrder }),
 }));
