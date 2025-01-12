@@ -4,10 +4,6 @@ metadata:
   name: hoarder-web-ingress
   namespace: hoarder
 spec:
-  tls:
-  - hosts:
-      - hoarder.example.com
-    secretName: tls-secret
   rules:
   - host: "hoarder.example.com"
     http:

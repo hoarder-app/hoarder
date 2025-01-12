@@ -5,32 +5,13 @@ namespace: hoarder
 
 secretGenerator:
 - envs:
-  - .env
+  - .secrets
   name: hoarder-secrets
 
-images:
-  - name: ghcr.io/hoarder-app/hoarder
-    newTag: 0.21.0 # Specify the version here
-
 configMapGenerator:
-  - name: nextauth-configuration
-    literals:
-      - NEXTAUTH_URL=https://hoarder.example.com
-
-patches:
-  - target:
-      kind: Ingress
-      name: hoarder-web-ingress
-    patch: |-
-      - op: replace
-        path: /spec/tls/0/hosts/0
-        value: hoarder.example.com
-      - op: replace
-        path: /spec/tls/0/secretName
-        value: tls-secret-name
-      - op: replace
-        path: /spec/rules/0/host
-        value: hoarder.example.com
+  - envs:
+    - .env
+    name: hoarder-configuration
 
 resources:
 - namespace.yaml
@@ -42,4 +23,21 @@ resources:
 - meilisearch-service.yaml
 - meilisearch-pvc.yaml
 - data-pvc.yaml
-- ingress.yaml
+
+replacements:
+- source:
+    fieldPath: data.HOARDER_VERSION
+    kind: ConfigMap
+    name: hoarder-configuration
+    version: v1
+  targets:
+  - fieldPaths:
+    - spec.template.spec.containers.0.image
+    options:
+      delimiter: ':'
+      index: 1
+    select:
+      group: apps
+      kind: Deployment
+      name: web
+      version: v1

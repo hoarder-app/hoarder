@@ -15,6 +15,7 @@ spec:
       containers:
         - name: web
           image: ghcr.io/hoarder-app/hoarder
+          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           env:
@@ -32,7 +33,7 @@ spec:
             - secretRef:
                 name: hoarder-secrets
             - configMapRef:
-                name: nextauth-configuration
+                name: hoarder-configuration
       volumes:
         - name: data
           persistentVolumeClaim:
