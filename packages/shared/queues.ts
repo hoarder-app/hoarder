@@ -158,3 +158,19 @@ export const AssetPreprocessingQueue =
       keepFailedJobs: false,
     },
   );
+
+// Embeddings Queue
+export const zEmbeddingsRequestSchema = z.object({
+  bookmarkId: z.string(),
+});
+export type EmbeddingsRequest = z.infer<typeof zEmbeddingsRequestSchema>;
+export const EmbeddingsQueue = new SqliteQueue<EmbeddingsRequest>(
+  "embeddings_queue",
+  queueDB,
+  {
+    defaultJobArgs: {
+      numRetries: 3,
+    },
+    keepFailedJobs: false,
+  },
+);

@@ -160,6 +160,7 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "Regenerate AI Tags for Failed Bookmarks Only",
       "regenerate_ai_tags_for_all_bookmarks": "Regenerate AI Tags for All Bookmarks",
       "reindex_all_bookmarks": "Reindex All Bookmarks",
+      "reembed_all_bookmarks": "Re-embed All Bookmarks",
       "compact_assets": "Compact Assets"
     },
     "users_list": {

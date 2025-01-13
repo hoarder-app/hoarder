@@ -5,6 +5,7 @@ import { z } from "zod";
 import { assets, bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
 import {
+  EmbeddingsQueue,
   LinkCrawlerQueue,
   OpenAIQueue,
   SearchIndexingQueue,
@@ -153,6 +154,17 @@ export const adminAppRouter = router({
     });
 
     await Promise.all(bookmarkIds.map((b) => triggerSearchReindex(b.id)));
+  }),
+  reEmbedAllBookmarks: adminProcedure.mutation(async ({ ctx }) => {
+    const bookmarkIds = await ctx.db.query.bookmarks.findMany({
+      columns: {
+        id: true,
+      },
+    });
+
+    await Promise.all(
+      bookmarkIds.map((b) => EmbeddingsQueue.enqueue({ bookmarkId: b.id })),
+    );
   }),
   reRunInferenceOnAllBookmarks: adminProcedure
     .input(
