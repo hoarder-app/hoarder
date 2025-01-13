@@ -13,12 +13,13 @@ import { shutdownPromise } from "./exit";
 import { OpenAiWorker } from "./openaiWorker";
 import { SearchIndexingWorker } from "./searchWorker";
 import { VideoWorker } from "./videoWorker";
+import { WebhookWorker } from "./webhookWorker";
 
 async function main() {
   logger.info(`Workers version: ${serverConfig.serverVersion ?? "not set"}`);
   runQueueDBMigrations();
 
-  const [crawler, openai, search, tidyAssets, video, feed, assetPreprocessing] =
+  const [crawler, openai, search, tidyAssets, video, feed, assetPreprocessing, webhook] =
     [
       await CrawlerWorker.build(),
       OpenAiWorker.build(),
@@ -27,6 +28,7 @@ async function main() {
       VideoWorker.build(),
       FeedWorker.build(),
       AssetPreprocessingWorker.build(),
+      WebhookWorker.build(),
     ];
   FeedRefreshingWorker.start();
 
@@ -39,11 +41,12 @@ async function main() {
       video.run(),
       feed.run(),
       assetPreprocessing.run(),
+      webhook.run(),
     ]),
     shutdownPromise,
   ]);
   logger.info(
-    "Shutting down crawler, openai, tidyAssets, video, feed, assetPreprocessing and search workers ...",
+    "Shutting down crawler, openai, tidyAssets, video, feed, assetPreprocessing, webhook and search workers ...",
   );
 
   FeedRefreshingWorker.stop();
@@ -54,6 +57,7 @@ async function main() {
   video.stop();
   feed.stop();
   assetPreprocessing.stop();
+  webhook.stop();
 }
 
 main();
