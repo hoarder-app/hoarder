@@ -29,7 +29,7 @@ export class WebhookWorker {
       {
         concurrency: 1,
         pollIntervalMs: 1000,
-        timeoutSecs: serverConfig.inference.jobTimeoutSec,
+        timeoutSecs: serverConfig.webhook.timeout / 1000 * (serverConfig.webhook.retryTimes + 1) * serverConfig.webhook.urls.length + 1,  //consider retry times, urls, and timeout and add 1 second for other stuff
       },
     );
 
@@ -75,35 +75,37 @@ async function runWebhook(job: DequeuedJob<ZWebhookRequest>) {
   );
 
   for (const url of webhookUrls) {
-    try {
-      const response = await Promise.race([
-        fetch(url, {
+    const maxRetries = serverConfig.webhook.retryTimes;
+    let attempt = 0;
+    let success = false;
+
+    while (attempt < maxRetries && !success) {
+      try {
+        const response = await fetch(url, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${webhookToken}`,
           },
           body: JSON.stringify({
-            jobId, bookmarkId, userId: bookmark.userId, url: bookmark.link.url, operation: job.data.operation
-          })
-        }),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error(`Request timed out in ${webhookTimeout}ms`)), webhookTimeout)
-        )
-      ]);
+            jobId, bookmarkId, userId: bookmark.userId, url: bookmark.link.url, type: bookmark.type, operation: job.data.operation
+          }),
+          signal: AbortSignal.timeout(webhookTimeout)
+        });
 
-      if (!(response instanceof Response)) {
-        throw new Error(`Webhook call to ${url} failed: response is not a Response object`);
+        if (!response.ok) {
+          logger.error(`Webhook call to ${url} failed with status: ${response.status}`);
+        } else {
+          logger.info(`[webhook][${jobId}] Webhook to ${url} call succeeded`);
+          success = true;
+        }
+      } catch (error) {
+        logger.error(`[webhook][${jobId}] Webhook to ${url} call failed: ${error}`);
       }
-
-      if (!response.ok) {
-        logger.error(`Webhook call to ${url} failed with status: ${response.status}`);
+      attempt++;
+      if (!success && attempt < maxRetries) {
+        logger.info(`[webhook][${jobId}] Retrying webhook call to ${url}, attempt ${attempt + 1}`);
       }
-
-      logger.info(`[webhook][${jobId}] Webhook to ${url} call succeeded`);
-    } catch (error) {
-      logger.error(`[webhook][${jobId}] Webhook to ${url} call failed: ${error}`);
-      throw error;
     }
   }
 }

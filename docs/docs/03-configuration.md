@@ -98,13 +98,14 @@ Hoarder uses [tesseract.js](https://github.com/naptha/tesseract.js) to extract t
 
 ## Webhook Configs
 
-You can use webhooks to trigger actions when bookmarks are changed ( only support *create* now ).
+You can use webhooks to trigger actions when bookmarks are changed ( only support *crawled* now ).
 
-| Name            | Required | Default | Description                                                                                    |
-| --------------- | -------- | ------- | ---------------------------------------------------------------------------------------------- |
-| WEBHOOK_URLS    | No       |         | The urls of the webhooks to trigger, separated by commas.                                      |
-| WEBHOOK_TOKEN   | No       |         | The token to use for authentication. Will appears in the Authorization header as Bearer token. |
-| WEBHOOK_TIMEOUT | No       | 5000    | The timeout for the webhook request in milliseconds.                                           |
+| Name                | Required | Default | Description                                                                                    |
+| ------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------- |
+| WEBHOOK_URLS        | No       |         | The urls of the webhooks to trigger, separated by commas.                                      |
+| WEBHOOK_TOKEN       | No       |         | The token to use for authentication. Will appears in the Authorization header as Bearer token. |
+| WEBHOOK_TIMEOUT     | No       | 5000    | The timeout for the webhook request in milliseconds.                                           |
+| WEBHOOK_RETRY_TIMES | No       | 3       | The number of times to retry the webhook request.                                              |
 
 :::info
 
@@ -113,15 +114,16 @@ You can use webhooks to trigger actions when bookmarks are changed ( only suppor
   ```
   Authorization: Bearer <WEBHOOK_TOKEN>
   ```
-- The webhook will be triggered with the job id (used for idempotent), bookmark id, the user id, the url and the operation in JSON format in the body.
+- The webhook will be triggered with the job id (used for idempotence), bookmark id, bookmark type, the user id, the url and the operation in JSON format in the body.
 
   ```json
   {
     "jobId": 123,
+    "type": "link",
     "bookmarkId": "exampleBookmarkId",
     "userId": "exampleUserId",
     "url": "https://example.com",
-    "operation": "create"
+    "operation": "crawled"
   }
   ```
 :::

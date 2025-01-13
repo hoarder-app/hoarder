@@ -748,7 +748,7 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
     await triggerVideoWorker(bookmarkId, url);
 
     // Trigger a webhook
-    await triggerWebhookWorker(bookmarkId, url, "create");
+    await triggerWebhookWorker(bookmarkId, "crawled");
 
     // Do the archival as a separate last step as it has the potential for failure
     await archivalLogic();

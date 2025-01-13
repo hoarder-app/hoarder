@@ -163,8 +163,7 @@ export const AssetPreprocessingQueue =
 //Webhook worker
 export const zWebhookRequestSchema = z.object({
   bookmarkId: z.string(),
-  url: z.string(),
-  operation: z.enum(["create"]),
+  operation: z.enum(["crawled"]),
 });
 export type ZWebhookRequest = z.infer<typeof zWebhookRequestSchema>;
 export const WebhookQueue = new SqliteQueue<ZWebhookRequest>(
@@ -172,16 +171,15 @@ export const WebhookQueue = new SqliteQueue<ZWebhookRequest>(
   queueDB,
   {
     defaultJobArgs: {
-      numRetries: 1,
+      numRetries: 3,
     },
     keepFailedJobs: false,
   },
 );
 
-export async function triggerWebhookWorker(bookmarkId: string, url: string, operation: "create") {
+export async function triggerWebhookWorker(bookmarkId: string, operation: "crawled") {
   await WebhookQueue.enqueue({
     bookmarkId,
-    url,
     operation,
   });
 }
