@@ -12,7 +12,7 @@ RUN apk add --no-cache libc6-compat make g++ py3-pip linux-headers
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV PUPPETEER_SKIP_DOWNLOAD true
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 
 # Build the db migration script
 RUN cd packages/db && \
@@ -24,7 +24,7 @@ RUN cd packages/db && \
 RUN (cd apps/web && pnpm exec next build --experimental-build-mode compile)
 
 # Build the worker code
-RUN --mount=type=cache,id=pnpm_workers,target=/pnpm/store pnpm deploy --node-linker=isolated --filter @hoarder/workers --prod /prod/workers
+RUN pnpm deploy --node-linker=isolated --filter @hoarder/workers --prod /prod/workers
 
 # Build the cli
 RUN (cd apps/cli && pnpm build)
@@ -75,6 +75,7 @@ RUN apk add --no-cache monolith yt-dlp
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXTAUTH_URL_INTERNAL=http://localhost:${PORT}
 
 COPY --from=base --chown=node:node /app/apps/web/.next/standalone ./
 COPY --from=base /app/apps/web/public ./apps/web/public

@@ -12,12 +12,16 @@ export const enum BookmarkTypes {
   UNKNOWN = "unknown",
 }
 
+export const zSortOrder = z.enum(["asc", "desc"]);
+export type ZSortOrder = z.infer<typeof zSortOrder>;
+
 export const zAssetTypesSchema = z.enum([
   "screenshot",
   "bannerImage",
   "fullPageArchive",
   "video",
   "bookmarkAsset",
+  "precrawledArchive",
   "unknown",
 ]);
 export type ZAssetType = z.infer<typeof zAssetTypesSchema>;
@@ -126,7 +130,11 @@ export const zNewBookmarkRequestSchema = z
   })
   .and(
     z.discriminatedUnion("type", [
-      z.object({ type: z.literal(BookmarkTypes.LINK), url: z.string().url() }),
+      z.object({
+        type: z.literal(BookmarkTypes.LINK),
+        url: z.string().url(),
+        precrawledArchiveId: z.string().optional(),
+      }),
       z.object({
         type: z.literal(BookmarkTypes.TEXT),
         text: z.string(),
@@ -161,6 +169,7 @@ export const zGetBookmarksRequestSchema = z.object({
   // The value is currently not being used, but keeping it so that client can still set it to true for older
   // servers.
   useCursorV2: z.boolean().optional(),
+  sortOrder: zSortOrder.optional().default("desc"),
 });
 export type ZGetBookmarksRequest = z.infer<typeof zGetBookmarksRequestSchema>;
 
@@ -206,4 +215,5 @@ export const zSearchBookmarksRequestSchema = z.object({
   text: z.string(),
   limit: z.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),
   cursor: zSearchBookmarksCursor.nullish(),
+  sortOrder: zSortOrder.optional().default("desc"),
 });

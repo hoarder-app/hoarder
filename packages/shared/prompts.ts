@@ -53,11 +53,15 @@ You must respond in JSON with the key "tags" and the value is an array of string
 
 export function buildSummaryPrompt(
   lang: string,
+  customPrompts: string[],
   content: string,
   contextLength: number,
 ) {
   const constructPrompt = (c: string) => `
-    Summarize the following content in 3-4 sentences in ${lang}, responding ONLY with the summary:
+    Summarize the following content responding ONLY with the summary. You MUST follow the following rules:
+- Summary must be in 3-4 sentences.
+- The summary language must be in ${lang}.
+${customPrompts && customPrompts.map((p) => `- ${p}`).join("\n")}
     ${c}`;
 
   const promptSize = calculateNumTokens(constructPrompt(""));

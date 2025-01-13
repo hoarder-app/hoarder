@@ -1,6 +1,7 @@
 import InfoTooltip from "@/components/ui/info-tooltip";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useTranslation } from "@/lib/i18n/client";
+import { match } from "@/lib/utils";
 
 import { TextAndMatcher } from "@hoarder/shared/searchQueryParser";
 import { Matcher } from "@hoarder/shared/types/search";
@@ -132,6 +133,21 @@ export default function QueryExplainerTooltip({
                 : t("search.url_contains")}
             </TableCell>
             <TableCell>{matcher.url}</TableCell>
+          </TableRow>
+        );
+      case "type":
+        return (
+          <TableRow>
+            <TableCell>
+              {matcher.inverse ? t("search.type_is_not") : t("search.type_is")}
+            </TableCell>
+            <TableCell>
+              {match(matcher.typeName, {
+                link: t("common.bookmark_types.link"),
+                text: t("common.bookmark_types.text"),
+                asset: t("common.bookmark_types.media"),
+              })}
+            </TableCell>
           </TableRow>
         );
       default: {

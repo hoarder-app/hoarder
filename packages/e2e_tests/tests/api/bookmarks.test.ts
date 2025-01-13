@@ -394,4 +394,55 @@ describe("Bookmarks API", () => {
     expect(finalPage!.bookmarks.length).toBe(1);
     expect(finalPage!.nextCursor).toBeNull();
   });
+
+  it("should support precrawling via singlefile", async () => {
+    const file = new File(["<html>HELLO WORLD</html>"], "test.html", {
+      type: "text/html",
+    });
+
+    const formData = new FormData();
+    formData.append("url", "https://example.com");
+    formData.append("file", file);
+
+    // OpenAPI typescript doesn't support multipart/form-data
+    // Upload the singlefile archive
+    const response = await fetch(
+      `http://localhost:${port}/api/v1/bookmarks/singlefile`,
+      {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${apiKey}`,
+        },
+        body: formData,
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to upload asset: ${response.statusText}`);
+    }
+
+    expect(response.status).toBe(201);
+
+    const { id: bookmarkId } = (await response.json()) as {
+      id: string;
+    };
+
+    // Get the created bookmark
+    const { data: retrievedBookmark, response: getResponse } = await client.GET(
+      "/bookmarks/{bookmarkId}",
+      {
+        params: {
+          path: {
+            bookmarkId: bookmarkId,
+          },
+        },
+      },
+    );
+
+    expect(getResponse.status).toBe(200);
+    assert(retrievedBookmark!.content.type === "link");
+    expect(retrievedBookmark!.assets.map((a) => a.assetType)).toContain(
+      "precrawledArchive",
+    );
+  });
 });

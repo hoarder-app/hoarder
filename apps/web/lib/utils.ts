@@ -29,3 +29,17 @@ export function getOS() {
   }
   return os;
 }
+
+export function match<T extends string | number | symbol, U>(
+  val: T,
+  options: Record<T, U>,
+) {
+  return options[val];
+}
+
+export function matchFunc<T extends string | number | symbol, U>(
+  val: T,
+  options: Record<T, () => U>,
+) {
+  return options[val]();
+}

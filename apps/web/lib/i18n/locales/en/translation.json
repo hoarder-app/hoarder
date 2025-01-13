@@ -24,7 +24,13 @@
     "screenshot": "Screenshot",
     "video": "Video",
     "archive": "Archive",
-    "home": "Home"
+    "home": "Home",
+    "bookmark_types": {
+      "title": "Bookmark Type",
+      "link": "Link",
+      "text": "Text",
+      "media": "Media"
+    }
   },
   "layouts": {
     "masonry": "Masonry",
@@ -63,7 +69,12 @@
     "merge": "Merge",
     "cancel": "Cancel",
     "apply_all": "Apply All",
-    "ignore": "Ignore"
+    "ignore": "Ignore",
+    "sort": {
+      "title": "Sort",
+      "newest_first": "Newest First",
+      "oldest_first": "Oldest First"
+    }
   },
   "highlights": {
     "no_highlights": "You don't have any highlights yet."
@@ -87,7 +98,12 @@
       "tagging_rule_description": "Prompts that you add here will be included as rules to the model during tag generation. You can view the final prompts in the prompt preview section.",
       "prompt_preview": "Prompt Preview",
       "text_prompt": "Text Prompt",
-      "images_prompt": "Image Prompt"
+      "images_prompt": "Image Prompt",
+      "summarization_prompt": "Summarization Prompt",
+      "all_tagging": "All Tagging",
+      "text_tagging": "Text Tagging",
+      "image_tagging": "Image Tagging",
+      "summarization": "Summarization"
     },
     "feeds": {
       "rss_subscriptions": "RSS Subscriptions",
@@ -208,6 +224,8 @@
     "has_tag": "Has Tag",
     "does_not_have_tag": "Does Not Have Tag",
     "full_text_search": "Full Text Search",
+    "type_is": "Type is",
+    "type_is_not": "Type is not",
     "and": "And",
     "or": "Or"
   },

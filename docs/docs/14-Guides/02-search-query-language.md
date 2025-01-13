@@ -13,19 +13,20 @@ Hoarder provides a search query language to filter and find bookmarks. Here are 
 
 Here's a comprehensive table of all supported qualifiers:
 
-| Qualifier       | Description                                        | Example Usage         |
-| --------------- | -------------------------------------------------- | --------------------- |
-| `is:fav`        | Favorited bookmarks                                | `is:fav`              |
-| `is:archived`   | Archived bookmarks                                 | `-is:archived`        |
-| `is:tagged`     | Bookmarks that has one or more tags                | `is:tagged`           |
-| `is:inlist`     | Bookmarks that are in one or more lists            | `is:inlist`           |
-| `url:<value>`   | Match bookmarks with URL substring                 | `url:example.com`     |
-| `#<tag>`        | Match bookmarks with specific tag                  | `#important`          |
-|                 | Supports quoted strings for tags with spaces       | `#"work in progress"` |
-| `list:<name>`   | Match bookmarks in specific list                   | `list:reading`        |
-|                 | Supports quoted strings for list names with spaces | `list:"to review"`    |
-| `after:<date>`  | Bookmarks created on or after date (YYYY-MM-DD)    | `after:2023-01-01`    |
-| `before:<date>` | Bookmarks created on orbefore date (YYYY-MM-DD)    | `before:2023-12-31`   |
+| Qualifier                        | Description                                        | Example Usage         |
+| -------------------------------- | -------------------------------------------------- | --------------------- |
+| `is:fav`                         | Favorited bookmarks                                | `is:fav`              |
+| `is:archived`                    | Archived bookmarks                                 | `-is:archived`        |
+| `is:tagged`                      | Bookmarks that has one or more tags                | `is:tagged`           |
+| `is:inlist`                      | Bookmarks that are in one or more lists            | `is:inlist`           |
+| `is:link`, `is:text`, `is:media` | Bookmarks that are of type link, text or media     | `is:link`             |
+| `url:<value>`                    | Match bookmarks with URL substring                 | `url:example.com`     |
+| `#<tag>`                         | Match bookmarks with specific tag                  | `#important`          |
+|                                  | Supports quoted strings for tags with spaces       | `#"work in progress"` |
+| `list:<name>`                    | Match bookmarks in specific list                   | `list:reading`        |
+|                                  | Supports quoted strings for list names with spaces | `list:"to review"`    |
+| `after:<date>`                   | Bookmarks created on or after date (YYYY-MM-DD)    | `after:2023-01-01`    |
+| `before:<date>`                  | Bookmarks created on orbefore date (YYYY-MM-DD)    | `before:2023-12-31`   |
 
 ### Examples
 

@@ -1,5 +1,17 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, desc, eq, exists, gt, inArray, lt, lte, or } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  exists,
+  gt,
+  gte,
+  inArray,
+  lt,
+  lte,
+  or,
+} from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -19,10 +31,14 @@ import {
   bookmarksInLists,
   bookmarkTags,
   bookmarkTexts,
+  customPrompts,
   rssFeedImportsTable,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
-import { deleteAsset } from "@hoarder/shared/assetdb";
+import {
+  deleteAsset,
+  SUPPORTED_BOOKMARK_ASSET_TYPES,
+} from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import { InferenceClientFactory } from "@hoarder/shared/inference";
 import { buildSummaryPrompt } from "@hoarder/shared/prompts";
@@ -98,9 +114,6 @@ export const ensureAssetOwnership = async (opts: {
 }) => {
   const asset = await opts.ctx.db.query.assets.findFirst({
     where: eq(bookmarks.id, opts.assetId),
-    columns: {
-      userId: true,
-    },
   });
   if (!opts.ctx.user) {
     throw new TRPCError({
@@ -120,6 +133,7 @@ export const ensureAssetOwnership = async (opts: {
       message: "User is not allowed to access resource",
     });
   }
+  return asset;
 };
 
 async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
@@ -307,6 +321,24 @@ export const bookmarksAppRouter = router({
                 })
                 .returning()
             )[0];
+            if (input.precrawledArchiveId) {
+              await ensureAssetOwnership({
+                ctx,
+                assetId: input.precrawledArchiveId,
+              });
+              await tx
+                .update(assets)
+                .set({
+                  bookmarkId: bookmark.id,
+                  assetType: AssetTypes.LINK_PRECRAWLED_ARCHIVE,
+                })
+                .where(
+                  and(
+                    eq(assets.id, input.precrawledArchiveId),
+                    eq(assets.userId, ctx.user.id),
+                  ),
+                );
+            }
             content = {
               type: BookmarkTypes.LINK,
               ...link,
@@ -344,7 +376,19 @@ export const bookmarksAppRouter = router({
                 sourceUrl: null,
               })
               .returning();
-            await ensureAssetOwnership({ ctx, assetId: input.assetId });
+            const uploadedAsset = await ensureAssetOwnership({
+              ctx,
+              assetId: input.assetId,
+            });
+            if (
+              !uploadedAsset.contentType ||
+              !SUPPORTED_BOOKMARK_ASSET_TYPES.has(uploadedAsset.contentType)
+            ) {
+              throw new TRPCError({
+                code: "BAD_REQUEST",
+                message: "Unsupported asset type",
+              });
+            }
             await tx
               .update(assets)
               .set({
@@ -534,6 +578,7 @@ export const bookmarksAppRouter = router({
       if (!input.limit) {
         input.limit = DEFAULT_NUM_BOOKMARKS_PER_PAGE;
       }
+      const sortOrder = input.sortOrder || "desc";
       const client = await getSearchIdxClient();
       if (!client) {
         throw new TRPCError({
@@ -560,7 +605,7 @@ export const bookmarksAppRouter = router({
         filter,
         showRankingScore: true,
         attributesToRetrieve: ["id"],
-        sort: ["createdAt:desc"],
+        sort: [`createdAt:${sortOrder}`],
         limit: input.limit,
         ...(input.cursor
           ? {
@@ -702,18 +747,31 @@ export const bookmarksAppRouter = router({
                   )
                 : undefined,
               input.cursor
-                ? or(
-                    lt(bookmarks.createdAt, input.cursor.createdAt),
-                    and(
-                      eq(bookmarks.createdAt, input.cursor.createdAt),
-                      lte(bookmarks.id, input.cursor.id),
-                    ),
-                  )
+                ? input.sortOrder === "asc"
+                  ? or(
+                      gt(bookmarks.createdAt, input.cursor.createdAt),
+                      and(
+                        eq(bookmarks.createdAt, input.cursor.createdAt),
+                        gte(bookmarks.id, input.cursor.id),
+                      ),
+                    )
+                  : or(
+                      lt(bookmarks.createdAt, input.cursor.createdAt),
+                      and(
+                        eq(bookmarks.createdAt, input.cursor.createdAt),
+                        lte(bookmarks.id, input.cursor.id),
+                      ),
+                    )
                 : undefined,
             ),
           )
           .limit(input.limit + 1)
-          .orderBy(desc(bookmarks.createdAt), desc(bookmarks.id)),
+          .orderBy(
+            input.sortOrder === "asc"
+              ? asc(bookmarks.createdAt)
+              : desc(bookmarks.createdAt),
+            desc(bookmarks.id),
+          ),
       );
       // TODO: Consider not inlining the tags in the response of getBookmarks as this query is getting kinda expensive
       const results = await ctx.db
@@ -817,7 +875,9 @@ export const bookmarksAppRouter = router({
 
       bookmarksArr.sort((a, b) => {
         if (a.createdAt != b.createdAt) {
-          return b.createdAt.getTime() - a.createdAt.getTime();
+          return input.sortOrder === "asc"
+            ? a.createdAt.getTime() - b.createdAt.getTime()
+            : b.createdAt.getTime() - a.createdAt.getTime();
         } else {
           return b.id.localeCompare(a.id);
         }
@@ -1160,8 +1220,19 @@ Description: ${bookmark.description ?? ""}
 Content: ${bookmark.content ?? ""}
 `;
 
+      const prompts = await ctx.db.query.customPrompts.findMany({
+        where: and(
+          eq(customPrompts.userId, ctx.user.id),
+          eq(customPrompts.appliesTo, "summary"),
+        ),
+        columns: {
+          text: true,
+        },
+      });
+
       const summaryPrompt = buildSummaryPrompt(
         serverConfig.inference.inferredTagLang,
+        prompts.map((p) => p.text),
         bookmarkDetails,
         serverConfig.inference.contextLength,
       );

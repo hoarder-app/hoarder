@@ -40,7 +40,7 @@ If you want more config params, check the config documentation [here](/configura
 
 ### 4. Setup OpenAI
 
-To enable automatic tagging, you'll need to configure OpenAI. This is optional though but hightly recommended.
+To enable automatic tagging, you'll need to configure OpenAI. This is optional though but highly recommended.
 
 - Follow [OpenAI's help](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) to get an API key.
 - Add the OpenAI API key to the env file:

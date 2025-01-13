@@ -27,7 +27,11 @@ import { Plus, Save, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { buildImagePrompt, buildTextPrompt } from "@hoarder/shared/prompts";
+import {
+  buildImagePrompt,
+  buildSummaryPrompt,
+  buildTextPrompt,
+} from "@hoarder/shared/prompts";
 import {
   zNewPromptSchema,
   ZPrompt,
@@ -42,7 +46,7 @@ export function PromptEditor() {
     resolver: zodResolver(zNewPromptSchema),
     defaultValues: {
       text: "",
-      appliesTo: "all",
+      appliesTo: "all_tagging",
     },
   });
 
@@ -100,9 +104,18 @@ export function PromptEditor() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="all">All</SelectItem>
-                        <SelectItem value="text">Text</SelectItem>
-                        <SelectItem value="images">Images</SelectItem>
+                        <SelectItem value="all_tagging">
+                          {t("settings.ai.all_tagging")}
+                        </SelectItem>
+                        <SelectItem value="text">
+                          {t("settings.ai.text_tagging")}
+                        </SelectItem>
+                        <SelectItem value="images">
+                          {t("settings.ai.image_tagging")}
+                        </SelectItem>
+                        <SelectItem value="summary">
+                          {t("settings.ai.summarization")}
+                        </SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -214,9 +227,18 @@ export function PromptRow({ prompt }: { prompt: ZPrompt }) {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="all">All</SelectItem>
-                        <SelectItem value="text">Text</SelectItem>
-                        <SelectItem value="images">Images</SelectItem>
+                        <SelectItem value="all_tagging">
+                          {t("settings.ai.all_tagging")}
+                        </SelectItem>
+                        <SelectItem value="text">
+                          {t("settings.ai.text_tagging")}
+                        </SelectItem>
+                        <SelectItem value="images">
+                          {t("settings.ai.image_tagging")}
+                        </SelectItem>
+                        <SelectItem value="summary">
+                          {t("settings.ai.summarization")}
+                        </SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -289,7 +311,9 @@ export function PromptDemo() {
         {buildTextPrompt(
           clientConfig.inference.inferredTagLang,
           (prompts ?? [])
-            .filter((p) => p.appliesTo == "text" || p.appliesTo == "all")
+            .filter(
+              (p) => p.appliesTo == "text" || p.appliesTo == "all_tagging",
+            )
             .map((p) => p.text),
           "\n<CONTENT_HERE>\n",
           /* context length */ 1024 /* The value here doesn't matter */,
@@ -300,8 +324,21 @@ export function PromptDemo() {
         {buildImagePrompt(
           clientConfig.inference.inferredTagLang,
           (prompts ?? [])
-            .filter((p) => p.appliesTo == "images" || p.appliesTo == "all")
+            .filter(
+              (p) => p.appliesTo == "images" || p.appliesTo == "all_tagging",
+            )
             .map((p) => p.text),
+        ).trim()}
+      </code>
+      <p>{t("settings.ai.summarization_prompt")}</p>
+      <code className="whitespace-pre-wrap rounded-md bg-muted p-3 text-sm text-muted-foreground">
+        {buildSummaryPrompt(
+          clientConfig.inference.inferredTagLang,
+          (prompts ?? [])
+            .filter((p) => p.appliesTo == "summary")
+            .map((p) => p.text),
+          "\n<CONTENT_HERE>\n",
+          /* context length */ 1024 /* The value here doesn't matter */,
         ).trim()}
       </code>
     </div>

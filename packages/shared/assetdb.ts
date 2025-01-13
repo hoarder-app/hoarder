@@ -25,6 +25,13 @@ export const IMAGE_ASSET_TYPES: Set<string> = new Set<string>([
 // The assets that we allow the users to upload
 export const SUPPORTED_UPLOAD_ASSET_TYPES: Set<string> = new Set<string>([
   ...IMAGE_ASSET_TYPES,
+  ASSET_TYPES.TEXT_HTML,
+  ASSET_TYPES.APPLICATION_PDF,
+]);
+
+// The assets that we allow as a bookmark of type asset
+export const SUPPORTED_BOOKMARK_ASSET_TYPES: Set<string> = new Set<string>([
+  ...IMAGE_ASSET_TYPES,
   ASSET_TYPES.APPLICATION_PDF,
 ]);
 

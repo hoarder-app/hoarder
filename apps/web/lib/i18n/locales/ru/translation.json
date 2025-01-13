@@ -110,7 +110,12 @@
     "copy_link": "Скопировать ссылку",
     "unselect_all": "Отменить выбор",
     "select_all": "Выбрать все",
-    "apply_all": "Применить всё"
+    "apply_all": "Применить всё",
+    "sort": {
+      "title": "Сортировка",
+      "newest_first": "Сначала новые",
+      "oldest_first": "Сначала старые"
+    }
   },
   "editor": {
     "text_toolbar": {

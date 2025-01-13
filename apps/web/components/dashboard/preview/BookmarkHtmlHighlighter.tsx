@@ -136,10 +136,29 @@ function BookmarkHTMLHighlighter({
     highlights.forEach((highlight) => {
       applyHighlightByOffset(highlight);
     });
-    if (pendingHighlight) {
-      applyHighlightByOffset(pendingHighlight);
-    }
   });
+
+  // Re-apply the selection when the pending range changes
+  useEffect(() => {
+    if (!pendingHighlight) {
+      return;
+    }
+    if (!contentRef.current) {
+      return;
+    }
+    const ranges = getRangeFromHighlight(pendingHighlight);
+    if (!ranges) {
+      return;
+    }
+    const newRange = document.createRange();
+    newRange.setStart(ranges[0].node, ranges[0].start);
+    newRange.setEnd(
+      ranges[ranges.length - 1].node,
+      ranges[ranges.length - 1].end,
+    );
+    window.getSelection()?.removeAllRanges();
+    window.getSelection()?.addRange(newRange);
+  }, [pendingHighlight, contentRef]);
 
   const handleMouseUp = (e: React.MouseEvent) => {
     const selection = window.getSelection();
@@ -250,7 +269,7 @@ function BookmarkHTMLHighlighter({
     return highlight;
   };
 
-  const applyHighlightByOffset = (highlight: Highlight) => {
+  const getRangeFromHighlight = (highlight: Highlight) => {
     if (!contentRef.current) return;
 
     let currentOffset = 0;
@@ -279,7 +298,14 @@ function BookmarkHTMLHighlighter({
 
       currentOffset += nodeLength;
     }
+    return ranges;
+  };
 
+  const applyHighlightByOffset = (highlight: Highlight) => {
+    const ranges = getRangeFromHighlight(highlight);
+    if (!ranges) {
+      return;
+    }
     // Apply highlights to found ranges
     ranges.forEach(({ node, start, end }) => {
       if (start > 0) {

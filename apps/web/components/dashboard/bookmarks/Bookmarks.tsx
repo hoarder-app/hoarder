@@ -13,7 +13,7 @@ export default async function Bookmarks({
   showDivider,
   showEditorCard = false,
 }: {
-  query: ZGetBookmarksRequest;
+  query: Omit<ZGetBookmarksRequest, "sortOrder">; // Sort order is handled by the store
   header?: React.ReactNode;
   showDivider?: boolean;
   showEditorCard?: boolean;

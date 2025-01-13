@@ -11,6 +11,7 @@ import { toast } from "@/components/ui/use-toast";
 
 import { useUpdateBookmarkTags } from "@hoarder/shared-react/hooks/bookmarks";
 import { api } from "@hoarder/shared-react/trpc";
+import { limitConcurrency } from "@hoarder/shared/concurrency";
 import { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import { TagsEditor } from "./TagsEditor";
@@ -59,12 +60,16 @@ export default function BulkTagModal({
 
   const onAttach = async (tag: { tagName: string; tagId?: string }) => {
     const results = await Promise.allSettled(
-      bookmarkIds.map((id) =>
-        mutateAsync({
-          bookmarkId: id,
-          attach: [tag],
-          detach: [],
-        }),
+      limitConcurrency(
+        bookmarkIds.map(
+          (id) => () =>
+            mutateAsync({
+              bookmarkId: id,
+              attach: [tag],
+              detach: [],
+            }),
+        ),
+        50,
       ),
     );
     const successes = results.filter((r) => r.status == "fulfilled").length;
@@ -81,12 +86,16 @@ export default function BulkTagModal({
     tagName: string;
   }) => {
     const results = await Promise.allSettled(
-      bookmarkIds.map((id) =>
-        mutateAsync({
-          bookmarkId: id,
-          attach: [],
-          detach: [{ tagId }],
-        }),
+      limitConcurrency(
+        bookmarkIds.map(
+          (id) => () =>
+            mutateAsync({
+              bookmarkId: id,
+              attach: [],
+              detach: [{ tagId }],
+            }),
+        ),
+        50,
       ),
     );
     const successes = results.filter((r) => r.status == "fulfilled").length;
