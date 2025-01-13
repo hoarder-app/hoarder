@@ -3,10 +3,15 @@ kind: Kustomization
 
 namespace: hoarder
 
-configMapGenerator:
+secretGenerator:
 - envs:
-  - .env
-  name: hoarder-env
+  - .secrets
+  name: hoarder-secrets
+
+configMapGenerator:
+  - envs:
+    - .env
+    name: hoarder-configuration
 
 resources:
 - namespace.yaml
@@ -23,7 +28,7 @@ replacements:
 - source:
     fieldPath: data.HOARDER_VERSION
     kind: ConfigMap
-    name: hoarder-env
+    name: hoarder-configuration
     version: v1
   targets:
   - fieldPaths:
