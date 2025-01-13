@@ -4,6 +4,7 @@ import {
   exists,
   gt,
   gte,
+  isNotNull,
   like,
   lt,
   lte,
@@ -13,6 +14,7 @@ import {
 } from "drizzle-orm";
 
 import {
+  bookmarkAssets,
   bookmarkLinks,
   bookmarkLists,
   bookmarks,
@@ -197,6 +199,20 @@ async function getIds(
             eq(bookmarks.userId, userId),
             comp(bookmarkLinks.url, `%${matcher.url}%`),
           ),
+        )
+        .union(
+          db
+            .select({ id: bookmarkAssets.id })
+            .from(bookmarkAssets)
+            .leftJoin(bookmarks, eq(bookmarks.id, bookmarkAssets.id))
+            .where(
+              and(
+                eq(bookmarks.userId, userId),
+                // When a user is asking for a link, the inverse matcher should match only assets with URLs.
+                isNotNull(bookmarkAssets.sourceUrl),
+                comp(bookmarkAssets.sourceUrl, `%${matcher.url}%`),
+              ),
+            ),
         );
     }
     case "favourited": {
@@ -235,13 +251,16 @@ async function getIds(
         );
     }
     case "type": {
-      const comp = matcher.inverse
-        ? ne(bookmarks.type, matcher.typeName)
-        : eq(bookmarks.type, matcher.typeName);
+      const comp = matcher.inverse ? ne : eq;
       return db
         .select({ id: bookmarks.id })
         .from(bookmarks)
-        .where(and(eq(bookmarks.userId, userId), comp));
+        .where(
+          and(
+            eq(bookmarks.userId, userId),
+            comp(bookmarks.type, matcher.typeName),
+          ),
+        );
     }
     case "and": {
       const vals = await Promise.all(

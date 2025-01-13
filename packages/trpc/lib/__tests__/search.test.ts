@@ -111,6 +111,7 @@ beforeEach(async () => {
       assetType: "image",
       fileName: "test.png",
       assetId: "asset-id",
+      sourceUrl: "https://example.com/image.png",
     },
   ]);
 
@@ -236,7 +237,7 @@ describe("getBookmarkIdsFromMatcher", () => {
       inverse: false,
     };
     const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
-    expect(result).toEqual(["b1", "b4"]);
+    expect(result).toEqual(["b1", "b4", "b6"]);
   });
 
   it("should handle url matcher with inverse=true", async () => {
