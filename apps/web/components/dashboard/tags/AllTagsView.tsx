@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { Button } from "@/components/ui/button";
@@ -13,14 +13,17 @@ import InfoTooltip from "@/components/ui/info-tooltip";
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
 import { toast } from "@/components/ui/use-toast";
+import useBulkTagActionsStore from "@/lib/bulkTagActions";
 import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { ArrowDownAZ, Combine } from "lucide-react";
 
-import type { ZGetTagResponse } from "@hoarder/shared/types/tags";
+import type { ZGetTagResponse, ZTagBasic } from "@hoarder/shared/types/tags";
 import { useDeleteUnusedTags } from "@hoarder/shared-react/hooks/tags";
 
+import BulkTagAction from "./BulkTagAction";
 import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";
+import { MultiTagSelector } from "./MultiTagSelector";
 import { TagPill } from "./TagPill";
 
 function DeleteAllUnusedTags({ numUnusedTags }: { numUnusedTags: number }) {
@@ -75,18 +78,26 @@ export default function AllTagsView({
   initialData: ZGetTagResponse[];
 }) {
   const { t } = useTranslation();
-  interface Tag {
-    id: string;
-    name: string;
-  }
-
   const [draggingEnabled, setDraggingEnabled] = React.useState(false);
   const [sortByName, setSortByName] = React.useState(false);
 
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
-  const [selectedTag, setSelectedTag] = React.useState<Tag | null>(null);
+  const [selectedTag, setSelectedTag] = React.useState<ZTagBasic | null>(null);
 
-  const handleOpenDialog = (tag: Tag) => {
+  const { setVisibleTags, isBulkEditEnabled } = useBulkTagActionsStore();
+
+  useEffect(() => {
+    const visibleTags: ZTagBasic[] = initialData.map((tag) => ({
+      id: tag.id,
+      name: tag.name,
+    }));
+    setVisibleTags(visibleTags);
+    return () => {
+      setVisibleTags([]);
+    };
+  }, [initialData]);
+
+  const handleOpenDialog = (tag: ZTagBasic) => {
     setSelectedTag(tag);
     setIsDialogOpen(true);
   };
@@ -113,21 +124,31 @@ export default function AllTagsView({
   );
   const emptyTags = allTags.filter((t) => t.numBookmarks === 0);
 
-  const tagsToPill = (tags: typeof allTags) => {
+  const tagsToPill = (tags: typeof allTags, bulkEditEnabled: boolean) => {
+    console.log(bulkEditEnabled);
     let tagPill;
     if (tags.length) {
       tagPill = (
         <div className="flex flex-wrap gap-3">
-          {tags.map((t) => (
-            <TagPill
-              key={t.id}
-              id={t.id}
-              name={t.name}
-              count={t.numBookmarks}
-              isDraggable={draggingEnabled}
-              onOpenDialog={handleOpenDialog}
-            />
-          ))}
+          {tags.map((t) =>
+            bulkEditEnabled ? (
+              <MultiTagSelector
+                key={t.id}
+                id={t.id}
+                name={t.name}
+                count={t.numBookmarks}
+              />
+            ) : (
+              <TagPill
+                key={t.id}
+                id={t.id}
+                name={t.name}
+                count={t.numBookmarks}
+                isDraggable={draggingEnabled}
+                onOpenDialog={handleOpenDialog}
+              />
+            ),
+          )}
         </div>
       );
     } else {
@@ -150,11 +171,13 @@ export default function AllTagsView({
         />
       )}
       <div className="flex justify-end gap-x-2">
+        <BulkTagAction />
         <Toggle
           variant="outline"
           aria-label="Toggle bold"
           pressed={draggingEnabled}
           onPressedChange={toggleDraggingEnabled}
+          disabled={isBulkEditEnabled}
         >
           <Combine className="mr-2 size-4" />
           {t("tags.drag_and_drop_merging")}
@@ -177,7 +200,7 @@ export default function AllTagsView({
           <p>{t("tags.your_tags_info")}</p>
         </InfoTooltip>
       </span>
-      {tagsToPill(humanTags)}
+      {tagsToPill(humanTags, isBulkEditEnabled)}
       <Separator />
       <span className="flex items-center gap-2">
         <p className="text-lg">{t("tags.ai_tags")}</p>
@@ -185,7 +208,7 @@ export default function AllTagsView({
           <p>{t("tags.ai_tags_info")}</p>
         </InfoTooltip>
       </span>
-      {tagsToPill(aiTags)}
+      {tagsToPill(aiTags, isBulkEditEnabled)}
       <Separator />
       <span className="flex items-center gap-2">
         <p className="text-lg">{t("tags.unused_tags")}</p>
@@ -206,7 +229,9 @@ export default function AllTagsView({
             <DeleteAllUnusedTags numUnusedTags={emptyTags.length} />
           )}
         </div>
-        <CollapsibleContent>{tagsToPill(emptyTags)}</CollapsibleContent>
+        <CollapsibleContent>
+          {tagsToPill(emptyTags, isBulkEditEnabled)}
+        </CollapsibleContent>
       </Collapsible>
     </>
   );

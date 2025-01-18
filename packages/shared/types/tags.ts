@@ -21,3 +21,9 @@ export const zUpdateTagRequestSchema = z.object({
   tagId: z.string(),
   name: z.string().optional(),
 });
+
+export const zTagBasicSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+export type ZTagBasic = z.infer<typeof zTagBasicSchema>;
