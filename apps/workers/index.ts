@@ -19,17 +19,25 @@ async function main() {
   logger.info(`Workers version: ${serverConfig.serverVersion ?? "not set"}`);
   runQueueDBMigrations();
 
-  const [crawler, openai, search, tidyAssets, video, feed, assetPreprocessing, webhook] =
-    [
-      await CrawlerWorker.build(),
-      OpenAiWorker.build(),
-      SearchIndexingWorker.build(),
-      TidyAssetsWorker.build(),
-      VideoWorker.build(),
-      FeedWorker.build(),
-      AssetPreprocessingWorker.build(),
-      WebhookWorker.build(),
-    ];
+  const [
+    crawler,
+    openai,
+    search,
+    tidyAssets,
+    video,
+    feed,
+    assetPreprocessing,
+    webhook,
+  ] = [
+    await CrawlerWorker.build(),
+    OpenAiWorker.build(),
+    SearchIndexingWorker.build(),
+    TidyAssetsWorker.build(),
+    VideoWorker.build(),
+    FeedWorker.build(),
+    AssetPreprocessingWorker.build(),
+    WebhookWorker.build(),
+  ];
   FeedRefreshingWorker.start();
 
   await Promise.any([

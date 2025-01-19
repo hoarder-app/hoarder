@@ -159,7 +159,6 @@ export const AssetPreprocessingQueue =
     },
   );
 
-
 //Webhook worker
 export const zWebhookRequestSchema = z.object({
   bookmarkId: z.string(),
@@ -177,7 +176,10 @@ export const WebhookQueue = new SqliteQueue<ZWebhookRequest>(
   },
 );
 
-export async function triggerWebhookWorker(bookmarkId: string, operation: "crawled") {
+export async function triggerWebhookWorker(
+  bookmarkId: string,
+  operation: "crawled",
+) {
   await WebhookQueue.enqueue({
     bookmarkId,
     operation,

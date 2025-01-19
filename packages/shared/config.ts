@@ -56,9 +56,13 @@ const allEnv = z.object({
   DATA_DIR: z.string().default(""),
   MAX_ASSET_SIZE_MB: z.coerce.number().default(4),
   INFERENCE_LANG: z.string().default("english"),
-  WEBHOOK_URLS: z.string().default("").optional().transform(val => val?.split(",") ?? []).pipe(z.array(z.string().url())),
-  WEBHOOK_TOKEN: z.string().default(""),
-  WEBHOOK_TIMEOUT: z.coerce.number().default(5000),
+  WEBHOOK_URLS: z
+    .string()
+    .transform((val) => val.split(","))
+    .pipe(z.array(z.string().url()))
+    .optional(),
+  WEBHOOK_TOKEN: z.string().optional(),
+  WEBHOOK_TIMEOUT_SEC: z.coerce.number().default(5),
   WEBHOOK_RETRY_TIMES: z.coerce.number().int().min(0).default(3),
   // Build only flag
   SERVER_VERSION: z.string().optional(),
@@ -122,16 +126,16 @@ const serverConfigSchema = allEnv.transform((val) => {
     },
     meilisearch: val.MEILI_ADDR
       ? {
-        address: val.MEILI_ADDR,
-        key: val.MEILI_MASTER_KEY,
-      }
+          address: val.MEILI_ADDR,
+          key: val.MEILI_MASTER_KEY,
+        }
       : undefined,
     logLevel: val.LOG_LEVEL,
     demoMode: val.DEMO_MODE
       ? {
-        email: val.DEMO_MODE_EMAIL,
-        password: val.DEMO_MODE_PASSWORD,
-      }
+          email: val.DEMO_MODE_EMAIL,
+          password: val.DEMO_MODE_PASSWORD,
+        }
       : undefined,
     dataDir: val.DATA_DIR,
     maxAssetSizeMb: val.MAX_ASSET_SIZE_MB,
@@ -141,7 +145,7 @@ const serverConfigSchema = allEnv.transform((val) => {
     webhook: {
       urls: val.WEBHOOK_URLS,
       token: val.WEBHOOK_TOKEN,
-      timeout: val.WEBHOOK_TIMEOUT,
+      timeoutSec: val.WEBHOOK_TIMEOUT_SEC,
       retryTimes: val.WEBHOOK_RETRY_TIMES,
     },
   };
