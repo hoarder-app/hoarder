@@ -56,6 +56,14 @@ const allEnv = z.object({
   DATA_DIR: z.string().default(""),
   MAX_ASSET_SIZE_MB: z.coerce.number().default(4),
   INFERENCE_LANG: z.string().default("english"),
+  WEBHOOK_URLS: z
+    .string()
+    .transform((val) => val.split(","))
+    .pipe(z.array(z.string().url()))
+    .optional(),
+  WEBHOOK_TOKEN: z.string().optional(),
+  WEBHOOK_TIMEOUT_SEC: z.coerce.number().default(5),
+  WEBHOOK_RETRY_TIMES: z.coerce.number().int().min(0).default(3),
   // Build only flag
   SERVER_VERSION: z.string().optional(),
   DISABLE_NEW_RELEASE_CHECK: stringBool("false"),
@@ -134,6 +142,12 @@ const serverConfigSchema = allEnv.transform((val) => {
     serverVersion: val.SERVER_VERSION,
     disableNewReleaseCheck: val.DISABLE_NEW_RELEASE_CHECK,
     usingLegacySeparateContainers: val.USING_LEGACY_SEPARATE_CONTAINERS,
+    webhook: {
+      urls: val.WEBHOOK_URLS,
+      token: val.WEBHOOK_TOKEN,
+      timeoutSec: val.WEBHOOK_TIMEOUT_SEC,
+      retryTimes: val.WEBHOOK_RETRY_TIMES,
+    },
   };
 });
 

@@ -95,3 +95,36 @@ Hoarder uses [tesseract.js](https://github.com/naptha/tesseract.js) to extract t
 | OCR_CACHE_DIR            | No       | $TEMP_DIR | The dir where tesseract will download its models. By default, those models are not persisted and stored in the OS' temp dir.                                                                                                              |
 | OCR_LANGS                | No       | eng       | Comma separated list of the language codes that you want tesseract to support. You can find the language codes [here](https://tesseract-ocr.github.io/tessdoc/Data-Files-in-different-versions.html). Set to empty string to disable OCR. |
 | OCR_CONFIDENCE_THRESHOLD | No       | 50        | A number between 0 and 100 indicating the minimum acceptable confidence from tessaract. If tessaract's confidence is lower than this value, extracted text won't be stored.                                                               |
+
+## Webhook Configs
+
+You can use webhooks to trigger actions when bookmarks are changed ( only support _crawled_ now ).
+
+| Name                | Required | Default | Description                                                                                    |
+| ------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------- |
+| WEBHOOK_URLS        | No       |         | The urls of the webhooks to trigger, separated by commas.                                      |
+| WEBHOOK_TOKEN       | No       |         | The token to use for authentication. Will appears in the Authorization header as Bearer token. |
+| WEBHOOK_TIMEOUT_SEC | No       | 5       | The timeout for the webhook request in seconds.                                                |
+| WEBHOOK_RETRY_TIMES | No       | 3       | The number of times to retry the webhook request.                                              |
+
+:::info
+
+- If a url is add to hoarder , after it is crawled, the webhook will be triggered.
+- The WEBHOOK_TOKEN is used for authentication. It will appear in the Authorization header as Bearer token.
+  ```
+  Authorization: Bearer <WEBHOOK_TOKEN>
+  ```
+- The webhook will be triggered with the job id (used for idempotence), bookmark id, bookmark type, the user id, the url and the operation in JSON format in the body.
+
+  ```json
+  {
+    "jobId": 123,
+    "type": "link",
+    "bookmarkId": "exampleBookmarkId",
+    "userId": "exampleUserId",
+    "url": "https://example.com",
+    "operation": "crawled"
+  }
+  ```
+
+  :::
