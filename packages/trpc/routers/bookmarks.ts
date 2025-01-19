@@ -48,6 +48,7 @@ import {
   OpenAIQueue,
   triggerSearchDeletion,
   triggerSearchReindex,
+  triggerWebhook,
 } from "@hoarder/shared/queues";
 import { getSearchIdxClient } from "@hoarder/shared/search";
 import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
@@ -442,6 +443,7 @@ export const bookmarksAppRouter = router({
         }
       }
       await triggerSearchReindex(bookmark.id);
+      await triggerWebhook(bookmark.id, "created");
       return bookmark;
     }),
 
@@ -474,6 +476,7 @@ export const bookmarksAppRouter = router({
         });
       }
       await triggerSearchReindex(input.bookmarkId);
+      await triggerWebhook(input.bookmarkId, "edited");
       return res[0];
     }),
 
@@ -500,6 +503,7 @@ export const bookmarksAppRouter = router({
         });
       }
       await triggerSearchReindex(input.bookmarkId);
+      await triggerWebhook(input.bookmarkId, "edited");
     }),
 
   deleteBookmark: authedProcedure
@@ -1012,6 +1016,7 @@ export const bookmarksAppRouter = router({
           .onConflictDoNothing();
 
         await triggerSearchReindex(input.bookmarkId);
+        await triggerWebhook(input.bookmarkId, "edited");
         return {
           bookmarkId: input.bookmarkId,
           attached: allIds,
@@ -1254,6 +1259,7 @@ Content: ${bookmark.content ?? ""}
         })
         .where(eq(bookmarks.id, input.bookmarkId));
       await triggerSearchReindex(input.bookmarkId);
+      await triggerWebhook(input.bookmarkId, "edited");
 
       return {
         bookmarkId: input.bookmarkId,

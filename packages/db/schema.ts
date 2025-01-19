@@ -381,6 +381,26 @@ export const rssFeedsTable = sqliteTable(
   (bl) => [index("rssFeeds_userId_idx").on(bl.userId)],
 );
 
+export const webhooksTable = sqliteTable(
+  "webhooks",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    createdAt: createdAtField(),
+    url: text("url").notNull(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    events: text("events", { mode: "json" })
+      .notNull()
+      .$type<("created" | "edited" | "crawled")[]>(),
+    token: text("token"),
+  },
+  (bl) => [index("webhooks_userId_idx").on(bl.userId)],
+);
+
 export const rssFeedImportsTable = sqliteTable(
   "rssFeedImports",
   {
@@ -414,6 +434,7 @@ export const config = sqliteTable("config", {
 export const userRelations = relations(users, ({ many }) => ({
   tags: many(bookmarkTags),
   bookmarks: many(bookmarks),
+  webhooks: many(webhooksTable),
 }));
 
 export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
@@ -505,3 +526,11 @@ export const bookmarksInListsRelations = relations(
     }),
   }),
 );
+
+
+export const webhooksRelations = relations(webhooksTable, ({ one }) => ({
+  user: one(users, {
+    fields: [webhooksTable.userId],
+    references: [users.id],
+  }),
+}));

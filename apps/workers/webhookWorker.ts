@@ -54,20 +54,17 @@ async function fetchBookmark(linkId: string) {
       link: true,
       text: true,
       asset: true,
+      user: {
+        with: {
+          webhooks: true,
+        },
+      },
     },
   });
 }
 
 async function runWebhook(job: DequeuedJob<ZWebhookRequest>) {
   const jobId = job.id;
-  const webhookUrls = serverConfig.webhook.urls;
-  if (!webhookUrls) {
-    logger.info(
-      `[webhook][${jobId}] No webhook urls configured. Skipping webhook job.`,
-    );
-    return;
-  }
-  const webhookToken = serverConfig.webhook.token;
   const webhookTimeoutSec = serverConfig.webhook.timeoutSec;
 
   const { bookmarkId } = job.data;
@@ -78,12 +75,18 @@ async function runWebhook(job: DequeuedJob<ZWebhookRequest>) {
     );
   }
 
+  if (!bookmark.user.webhooks) {
+    return;
+  }
+
   logger.info(
     `[webhook][${jobId}] Starting a webhook job for bookmark with id "${bookmark.id}"`,
   );
 
   await Promise.allSettled(
-    webhookUrls.map(async (url) => {
+    bookmark.user.webhooks.map(async (webhook) => {
+      const url = webhook.url;
+      const webhookToken = webhook.token;
       const maxRetries = serverConfig.webhook.retryTimes;
       let attempt = 0;
       let success = false;

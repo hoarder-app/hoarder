@@ -109,6 +109,24 @@
       "rss_subscriptions": "RSS Subscriptions",
       "add_a_subscription": "Add a Subscription"
     },
+    "webhooks": {
+      "webhooks": "Webhooks",
+      "description": "You can use webhooks to trigger actions when bookmarks are created, changed or crawled.",
+      "events": {
+        "title": "Events",
+        "crawled": "Crawled",
+        "created": "Created",
+        "edited": "Edited"
+      },
+      "auth_token": "Auth Token",
+      "add_auth_token": "Add Auth Token",
+      "edit_auth_token": "Edit Auth Token",
+      "create_webhook": "Create Webhook",
+      "delete_webhook": "Delete Webhook",
+      "delete_webhook_confirmation": "Are you sure you want to delete this webhook?",
+      "edit_webhook": "Edit Webhook",
+      "webhook_url": "Webhook URL"
+    },
     "import": {
       "import_export": "Import / Export",
       "import_export_bookmarks": "Import / Export Bookmarks",

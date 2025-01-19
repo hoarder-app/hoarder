@@ -55,7 +55,7 @@ import {
   OpenAIQueue,
   triggerSearchReindex,
   triggerVideoWorker,
-  triggerWebhookWorker,
+  triggerWebhook,
   zCrawlLinkRequestSchema,
 } from "@hoarder/shared/queues";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
@@ -772,7 +772,7 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
     await triggerVideoWorker(bookmarkId, url);
 
     // Trigger a webhook
-    await triggerWebhookWorker(bookmarkId, "crawled");
+    await triggerWebhook(bookmarkId, "crawled");
 
     // Do the archival as a separate last step as it has the potential for failure
     await archivalLogic();

@@ -98,18 +98,15 @@ Hoarder uses [tesseract.js](https://github.com/naptha/tesseract.js) to extract t
 
 ## Webhook Configs
 
-You can use webhooks to trigger actions when bookmarks are changed ( only support _crawled_ now ).
+You can use webhooks to trigger actions when bookmarks are created, changed or crawled.
 
 | Name                | Required | Default | Description                                                                                    |
 | ------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------- |
-| WEBHOOK_URLS        | No       |         | The urls of the webhooks to trigger, separated by commas.                                      |
-| WEBHOOK_TOKEN       | No       |         | The token to use for authentication. Will appears in the Authorization header as Bearer token. |
 | WEBHOOK_TIMEOUT_SEC | No       | 5       | The timeout for the webhook request in seconds.                                                |
 | WEBHOOK_RETRY_TIMES | No       | 3       | The number of times to retry the webhook request.                                              |
 
 :::info
 
-- If a url is add to hoarder , after it is crawled, the webhook will be triggered.
 - The WEBHOOK_TOKEN is used for authentication. It will appear in the Authorization header as Bearer token.
   ```
   Authorization: Bearer <WEBHOOK_TOKEN>
@@ -118,7 +115,7 @@ You can use webhooks to trigger actions when bookmarks are changed ( only suppor
 
   ```json
   {
-    "jobId": 123,
+    "jobId": "123",
     "type": "link",
     "bookmarkId": "exampleBookmarkId",
     "userId": "exampleUserId",
