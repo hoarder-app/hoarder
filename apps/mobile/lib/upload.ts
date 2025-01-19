@@ -1,3 +1,4 @@
+import ReactNativeBlobUtil from "react-native-blob-util";
 import { useMutation } from "@tanstack/react-query";
 
 import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
@@ -36,23 +37,24 @@ export function useUploadAsset(
 
   const { mutate: uploadAsset, isPending: isUploading } = useMutation({
     mutationFn: async (file: { type: string; name: string; uri: string }) => {
-      const formData = new FormData();
-      // @ts-expect-error This is a valid api in react native
-      formData.append("file", {
-        uri: file.uri,
-        name: file.name,
-        type: file.type,
-      });
-      const resp = await fetch(`${settings.address}/api/assets`, {
-        method: "POST",
-        body: formData,
-        headers: {
+      // There's a bug in the native FormData implementation (https://github.com/facebook/react-native/issues/44737)
+      // that will only get fixed in react native 0.77. Using the BlobUtil implementation for now.
+      const resp = await ReactNativeBlobUtil.fetch(
+        "POST",
+        `${settings.address}/api/assets`,
+        {
           Authorization: `Bearer ${settings.apiKey}`,
+          "Content-Type": "multipart/form-data",
         },
-      });
-      if (!resp.ok) {
-        throw new Error(await resp.text());
-      }
+        [
+          {
+            name: "file",
+            filename: file.name,
+            type: file.type,
+            data: ReactNativeBlobUtil.wrap(file.uri.replace("file://", "")),
+          },
+        ],
+      );
       return zUploadResponseSchema.parse(await resp.json());
     },
     onSuccess: (resp) => {

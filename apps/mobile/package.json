@@ -44,6 +44,7 @@
     "react": "^18.3.1",
     "react-native": "0.76.3",
     "react-native-awesome-slider": "^2.5.3",
+    "react-native-blob-util": "^0.21.2",
     "react-native-gesture-handler": "~2.21.2",
     "react-native-image-viewing": "^0.2.2",
     "react-native-markdown-display": "^7.0.2",
