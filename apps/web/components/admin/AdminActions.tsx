@@ -69,6 +69,21 @@ export default function AdminActions() {
       },
     });
 
+  const { mutateAsync: reEmbedBookmarks, isPending: isReEmbedPending } =
+    api.admin.reEmbedAllBookmarks.useMutation({
+      onSuccess: () => {
+        toast({
+          description: "ReEmbed request has been enqueued!",
+        });
+      },
+      onError: (e) => {
+        toast({
+          variant: "destructive",
+          description: e.message,
+        });
+      },
+    });
+
   return (
     <div>
       <div className="mb-2 text-xl font-medium">{t("common.actions")}</div>
@@ -123,6 +138,13 @@ export default function AdminActions() {
           onClick={() => reindexBookmarks()}
         >
           {t("admin.actions.reindex_all_bookmarks")}
+        </ActionButton>
+        <ActionButton
+          variant="destructive"
+          loading={isReEmbedPending}
+          onClick={() => reEmbedBookmarks()}
+        >
+          {t("admin.actions.reembed_all_bookmarks")}
         </ActionButton>
         <ActionButton
           variant="destructive"

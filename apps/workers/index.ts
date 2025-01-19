@@ -1,6 +1,7 @@
 import "dotenv/config";
 
 import { AssetPreprocessingWorker } from "assetPreprocessingWorker";
+import { EmbeddingsWorker } from "embeddingsWorker";
 import { FeedRefreshingWorker, FeedWorker } from "feedWorker";
 import { TidyAssetsWorker } from "tidyAssetsWorker";
 
@@ -18,16 +19,25 @@ async function main() {
   logger.info(`Workers version: ${serverConfig.serverVersion ?? "not set"}`);
   runQueueDBMigrations();
 
-  const [crawler, openai, search, tidyAssets, video, feed, assetPreprocessing] =
-    [
-      await CrawlerWorker.build(),
-      OpenAiWorker.build(),
-      SearchIndexingWorker.build(),
-      TidyAssetsWorker.build(),
-      VideoWorker.build(),
-      FeedWorker.build(),
-      AssetPreprocessingWorker.build(),
-    ];
+  const [
+    crawler,
+    openai,
+    search,
+    tidyAssets,
+    video,
+    feed,
+    assetPreprocessing,
+    embeddingsWorker,
+  ] = [
+    await CrawlerWorker.build(),
+    OpenAiWorker.build(),
+    SearchIndexingWorker.build(),
+    TidyAssetsWorker.build(),
+    VideoWorker.build(),
+    FeedWorker.build(),
+    AssetPreprocessingWorker.build(),
+    EmbeddingsWorker.build(),
+  ];
   FeedRefreshingWorker.start();
 
   await Promise.any([
@@ -39,11 +49,12 @@ async function main() {
       video.run(),
       feed.run(),
       assetPreprocessing.run(),
+      embeddingsWorker.run(),
     ]),
     shutdownPromise,
   ]);
   logger.info(
-    "Shutting down crawler, openai, tidyAssets, video, feed, assetPreprocessing and search workers ...",
+    "Shutting down crawler, openai, tidyAssets, video, feed, assetPreprocessing, embeddingsWorker and search workers ...",
   );
 
   FeedRefreshingWorker.stop();
@@ -54,6 +65,7 @@ async function main() {
   video.stop();
   feed.stop();
   assetPreprocessing.stop();
+  embeddingsWorker.stop();
 }
 
 main();
