@@ -24,7 +24,13 @@
     "archive": "Archiv",
     "home": "Startseite",
     "highlights": "Highlights",
-    "source": "Quelle"
+    "source": "Quelle",
+    "bookmark_types": {
+      "title": "Lesezeichen Kategorie",
+      "link": "Link",
+      "media": "Medium",
+      "text": "Text"
+    }
   },
   "layouts": {
     "masonry": "Mauerwerk",
@@ -89,7 +95,8 @@
       "tagging_rule_description": "Eingabeaufforderungen, die Sie hier hinzufügen, werden als Regeln für das Modell bei der Tag-Generierung verwendet. Sie können die endgültigen Aufforderungen im Bereich Vorschau anzeigen.",
       "prompt_preview": "Aufforderungsvorschau",
       "text_prompt": "Text-Aufforderung",
-      "images_prompt": "Bild-Aufforderung"
+      "images_prompt": "Bild-Aufforderung",
+      "summarization_prompt": "Zusammenfassung des  Prompts"
     },
     "feeds": {
       "rss_subscriptions": "RSS-Abonnements",
