@@ -55,7 +55,7 @@
     "cheerio": "^1.0.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
-    "cmdk": "1.0.0",
+    "cmdk": "^1.0.0",
     "csv-parse": "^5.5.6",
     "dayjs": "^1.11.10",
     "drizzle-orm": "^0.38.3",
