@@ -6,10 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-interface ConditionalProps {
-  condition: boolean;
-  props: Record<string, unknown>;
-}
 /**
  * Merge props conditionally.
  *
@@ -36,7 +32,12 @@ interface ConditionalProps {
  * <View style={ color: "red", fontWeight: "bold" } />
  * ```
  */
-export function condProps(...condProps: ConditionalProps[]) {
+export function condProps(
+  ...condProps: {
+    condition: boolean;
+    props: Record<string, unknown>;
+  }[]
+) {
   return condProps.reduce((acc, { condition, props }) => {
     return condition ? { ...acc, ...props } : acc;
   }, {});
