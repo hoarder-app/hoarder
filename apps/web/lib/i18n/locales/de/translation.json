@@ -96,7 +96,7 @@
       "prompt_preview": "Aufforderungsvorschau",
       "text_prompt": "Text-Aufforderung",
       "images_prompt": "Bild-Aufforderung",
-      "summarization_prompt": "Zusammenfassung des  Prompts"
+      "summarization_prompt": "Zusammenfassung des Prompts"
     },
     "feeds": {
       "rss_subscriptions": "RSS-Abonnements",
