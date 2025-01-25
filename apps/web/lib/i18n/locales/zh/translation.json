@@ -22,7 +22,15 @@
     "screenshot": "截图",
     "video": "视频",
     "archive": "归档",
-    "home": "主页"
+    "home": "主页",
+    "highlights": "高亮",
+    "source": "来源",
+    "bookmark_types": {
+      "title": "书签类型",
+      "link": "链接",
+      "text": "文字",
+      "media": "媒体"
+    }
   },
   "layouts": {
     "masonry": "砌体",
@@ -87,7 +95,12 @@
       "tagging_rule_description": "在此添加的提示将包含在模型生成标签的规则中。您可以在提示预览部分查看最终的提示。",
       "prompt_preview": "提示预览",
       "text_prompt": "文本提示",
-      "images_prompt": "图像提示"
+      "images_prompt": "图像提示",
+      "summarization": "总结",
+      "image_tagging": "图片标记",
+      "text_tagging": "文字标记",
+      "all_tagging": "所有标记",
+      "summarization_prompt": "摘要生成提示"
     },
     "feeds": {
       "rss_subscriptions": "RSS订阅",
@@ -101,7 +114,8 @@
       "import_bookmarks_from_omnivore_export": "从Omnivore导出导入书签",
       "import_bookmarks_from_hoarder_export": "从Hoarder导出导入书签",
       "export_links_and_notes": "导出链接和笔记",
-      "imported_bookmarks": "已导入书签"
+      "imported_bookmarks": "已导入书签",
+      "import_bookmarks_from_linkwarden_export": "导入 Linkwarden 导出的书签"
     },
     "api_keys": {
       "api_keys": "API密钥",
@@ -115,6 +129,24 @@
       "last_crawled_at": "最后抓取时间",
       "crawling_status": "抓取状态",
       "crawling_failed": "抓取失败"
+    },
+    "webhooks": {
+      "edit_webhook": "修改网络钩子",
+      "webhook_url": "网络钩子链接",
+      "webhooks": "网络钩子",
+      "description": "您可以用网络钩子在创建、更改或爬取书签时触发操作。",
+      "events": {
+        "created": "创造了",
+        "edited": "已修改",
+        "crawled": "已爬取",
+        "title": "事件"
+      },
+      "auth_token": "认证 Token",
+      "add_auth_token": "添加认证 Token",
+      "edit_auth_token": "修改认证 Token",
+      "create_webhook": "创建网络钩子",
+      "delete_webhook": "删除网络钩子",
+      "delete_webhook_confirmation": "是否确定要删除这个网络钩子？"
     }
   },
   "admin": {
@@ -165,7 +197,14 @@
     "all_lists": "所有列表",
     "favourites": "收藏",
     "new_list": "新列表",
-    "new_nested_list": "新嵌套列表"
+    "new_nested_list": "新嵌套列表",
+    "no_parent": "没有父级",
+    "parent_list": "父级列表",
+    "list_type": "列表类型",
+    "manual_list": "手动列表",
+    "smart_list": "智能列表",
+    "search_query": "搜索查询",
+    "edit_list": "修改列表"
   },
   "tags": {
     "all_tags": "所有标签",
@@ -190,7 +229,7 @@
     "multiple_urls_dialog_desc": "输入包含多行上的多个URL。您要将它们作为单独的书签导入吗？",
     "import_as_text": "作为文本书签导入",
     "import_as_separate_bookmarks": "作为单独书签导入",
-    "placeholder": "粘贴链接或图像，写笔记或将图像拖放到此处...",
+    "placeholder": "粘贴链接或图像，写笔记或将图像拖放到此处…",
     "new_item": "新项目",
     "disabled_submissions": "提交已禁用",
     "text_toolbar": {
@@ -262,5 +301,39 @@
       "title": "重复标签",
       "merge_all_suggestions": "合并所有建议？"
     }
+  },
+  "search": {
+    "type_is_not": "类型不是",
+    "is_favorited": "已收藏",
+    "is_archived": "已存档",
+    "is_not_archived": "未存档",
+    "has_any_tag": "有任何标签",
+    "has_no_tags": "没有标签",
+    "is_in_any_list": "在任何列表里",
+    "is_not_in_any_list": "不在任何列表里",
+    "created_on_or_after": "创建于或晚于",
+    "not_created_on_or_after": "创建时间不晚于",
+    "is_in_list": "在列表里",
+    "is_not_in_list": "不在列表里",
+    "has_tag": "有标签",
+    "and": "和",
+    "is_not_favorited": "未收藏",
+    "created_on_or_before": "创建于或早于",
+    "not_created_on_or_before": "创建时间不早于",
+    "url_contains": "链接包含",
+    "url_does_not_contain": "链接不包含",
+    "does_not_have_tag": "没有标签",
+    "type_is": "类型是",
+    "or": "或",
+    "full_text_search": "全文搜索"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_title": "删除书签？",
+      "delete_confirmation_description": "是否确定要删除此标签？"
+    }
+  },
+  "highlights": {
+    "no_highlights": "你目前没有高亮的地方。"
   }
 }
