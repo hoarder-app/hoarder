@@ -1,1 +1,41 @@
-{}
+{
+  "common": {
+    "url": "URL",
+    "name": "이름",
+    "email": "이메일",
+    "password": "비밀번호",
+    "screenshot": "스크린샷",
+    "video": "비디오",
+    "archive": "보관",
+    "home": "홈",
+    "bookmark_types": {
+      "title": "북마크 유형",
+      "link": "링크",
+      "text": "텍스트",
+      "media": "미디어"
+    },
+    "roles": {
+      "user": "사용자",
+      "admin": "관리자"
+    },
+    "something_went_wrong": "문제가 발생했습니다",
+    "experimental": "실험적",
+    "search": "검색",
+    "tags": "태그",
+    "note": "노트",
+    "attachments": "첨부 파일",
+    "highlights": "하이라이트",
+    "source": "출처"
+  },
+  "layouts": {
+    "list": "목록"
+  },
+  "actions": {
+    "change_layout": "레이아웃 변경",
+    "archive": "보관",
+    "favorite": "즐겨찾기",
+    "unfavorite": "즐겨찾기 해제",
+    "delete": "삭제",
+    "refresh": "새로 고침"
+  }
+}
