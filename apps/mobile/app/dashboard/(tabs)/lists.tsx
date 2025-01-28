@@ -8,6 +8,7 @@ import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import PageTitle from "@/components/ui/PageTitle";
 import { api } from "@/lib/trpc";
+import { condProps } from "@/lib/utils";
 import { ChevronRight, Plus } from "lucide-react-native";
 
 import { useBookmarkLists } from "@hoarder/shared-react/hooks/lists";
@@ -130,7 +131,10 @@ export default function Lists() {
         renderItem={(l) => (
           <View
             className="mx-2 flex flex-row items-center rounded-xl border border-input bg-white px-4 py-2 dark:bg-accent"
-            style={{ marginLeft: l.item.level * 20 }}
+            style={condProps({
+              condition: l.item.level > 0,
+              props: { marginLeft: l.item.level * 20 },
+            })}
           >
             {l.item.numChildren > 0 && (
               <Pressable
