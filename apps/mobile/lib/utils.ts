@@ -37,7 +37,7 @@ export function condProps(
     condition: boolean;
     props: Record<string, unknown>;
   }[]
-) {
+): Record<string, unknown> { 
   return condProps.reduce((acc, { condition, props }) => {
     return condition ? { ...acc, ...props } : acc;
   }, {});
