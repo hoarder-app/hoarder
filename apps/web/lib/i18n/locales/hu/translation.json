@@ -1,1 +1,339 @@
-{}
+{
+  "actions": {
+    "add": "Hozzáad",
+    "sort": {
+      "newest_first": "Legújabb elől",
+      "oldest_first": "Legrégebbi elől",
+      "title": "Rendezés"
+    },
+    "unfavorite": "Kedvencség visszavonása",
+    "refresh": "Frissítés",
+    "edit_tags": "Címkék szerkesztése",
+    "create": "Létrehozás",
+    "bulk_edit": "Tömeges szerkesztés",
+    "sign_out": "Kijelentkezés",
+    "change_layout": "Elrendezés változtatása",
+    "archive": "Archívum",
+    "favorite": "Kedvenc",
+    "unarchive": "Archiváltság visszavonása",
+    "delete": "Törlés",
+    "recrawl": "Újratérképezés",
+    "download_full_page_archive": "Teljes oldal letöltése",
+    "add_to_list": "Hozzáadás listához",
+    "select_all": "Összes kiválasztása",
+    "unselect_all": "Összes kiválasztásának megszüntetése",
+    "copy_link": "Link Másolása",
+    "manage_lists": "Listák kezelése",
+    "remove_from_list": "Levétel listáról",
+    "edit": "Szerkesztés",
+    "fetch_now": "Begyűjtés most",
+    "summarize_with_ai": "Összegzés MI segítségével",
+    "edit_title": "Cím szerkesztése",
+    "merge": "Egyesítés",
+    "apply_all": "Alkalmazás mindenre",
+    "ignore": "Figyelmen kívül hagyás",
+    "cancel": "Visszavonás",
+    "close": "Bezárás",
+    "close_bulk_edit": "Tömeges szerkesztés bezárása",
+    "save": "Mentés"
+  },
+  "settings": {
+    "user_settings": "Felhasználói beállítások",
+    "feeds": {
+      "rss_subscriptions": "RSS feliratkozások",
+      "add_a_subscription": "Feliratkozás hozzáadása"
+    },
+    "info": {
+      "confirm_new_password": "Új jelszó megerősítése",
+      "user_info": "Felhasználói adatok",
+      "basic_details": "Alap adatok",
+      "change_password": "Jelszó megváltoztatása",
+      "current_password": "Aktuális jelszó",
+      "new_password": "Új jelszó",
+      "options": "Beállítások",
+      "interface_lang": "Felület nyelve"
+    },
+    "webhooks": {
+      "description": "A webhook-ok segítségével műveleteket indíthatsz a könyvjelzők létrehozásakor, módosításakor és újratérképezésekor.",
+      "events": {
+        "edited": "Módosítva",
+        "title": "Események",
+        "crawled": "Feltérképezve",
+        "created": "Létrehozva"
+      },
+      "create_webhook": "Webhook létrehozása",
+      "delete_webhook": "Webhook törlése",
+      "webhooks": "Webhook-ok",
+      "auth_token": "Hitelesítő token",
+      "add_auth_token": "Hitelesítő token hozzáadása",
+      "edit_auth_token": "Hitelesítő token módosítása",
+      "delete_webhook_confirmation": "Biztos vagy a webhook törlésében?",
+      "edit_webhook": "Webhook múdosítása",
+      "webhook_url": "Webhook URL címe"
+    },
+    "ai": {
+      "tagging_rule_description": "Az ide írt utasításokat a modell szabályként fogja használni címke generáláskor. A végső utasításokat megtalálhatók a utasítás előnézetben.",
+      "summarization_prompt": "Összegző utasítás",
+      "all_tagging": "Minden címkézés",
+      "ai_settings": "MI beállítások",
+      "tagging_rules": "Címkézési szabályok",
+      "prompt_preview": "Utasítás előnézet",
+      "text_prompt": "Szöveges utasítás",
+      "images_prompt": "Utasítás képpel",
+      "text_tagging": "Szöveg címkézés",
+      "image_tagging": "Kép címkézés",
+      "summarization": "Összesítés"
+    },
+    "api_keys": {
+      "new_api_key": "Új API kulcs",
+      "key_success_please_copy": "Másold le a kulcsot és tartsd biztonságos helyen! Az ablak becsukását követően már nem fogsz tudni visszatérni hozzá.",
+      "api_keys": "API kulcsok",
+      "new_api_key_desc": "Adj egyedi nevet az API kulcsodnak",
+      "key_success": "A kulcs létrehozás sikeres"
+    },
+    "import": {
+      "import_bookmarks_from_hoarder_export": "Könyvjelző importálása Hoarder-ből",
+      "import_bookmarks_from_omnivore_export": "Könyvjelző importálása Omnivore-ból",
+      "import_export": "Importálás / Exportálás",
+      "import_export_bookmarks": "Könyvjelző importálása / exportálása",
+      "import_bookmarks_from_html_file": "Könyvjelző importálása HTML fájlból",
+      "import_bookmarks_from_pocket_export": "Könyvjelző importálása Pocket-ből",
+      "import_bookmarks_from_linkwarden_export": "Könyvjelző importálása Linkwarden-ből",
+      "export_links_and_notes": "Jegyzetek és hivatkozások exportálása",
+      "imported_bookmarks": "Importált könyvjelzők"
+    },
+    "broken_links": {
+      "crawling_status": "Feltérképezési állapot",
+      "last_crawled_at": "Utoljára feltérképezve",
+      "broken_links": "Hibás hivatkozások",
+      "crawling_failed": "Feltérképezési hiba"
+    },
+    "back_to_app": "Vissza az alkalmazáshoz"
+  },
+  "common": {
+    "archive": "Archívum",
+    "bookmark_types": {
+      "link": "Hivatkozás",
+      "title": "Könyvjelző típusa",
+      "text": "Szöveg",
+      "media": "Média"
+    },
+    "roles": {
+      "admin": "Admin",
+      "user": "Felhasználó"
+    },
+    "url": "URL",
+    "email": "Email",
+    "name": "Név",
+    "password": "Jelszó",
+    "action": "Művelet",
+    "actions": "Műveletek",
+    "created_at": "Létrehozás Ideje",
+    "role": "Szerep",
+    "something_went_wrong": "Hiba történt",
+    "experimental": "Kísérleti",
+    "tags": "Címkék",
+    "note": "Jegyzet",
+    "attachments": "Csatolmányok",
+    "highlights": "Kiemelések",
+    "source": "Forrás",
+    "screenshot": "Képernyőkép",
+    "video": "Videó",
+    "home": "Otthon",
+    "key": "Kulcs",
+    "search": "Keresés"
+  },
+  "editor": {
+    "import_as_text": "Importálás szöveges könyvjelzőként",
+    "text_toolbar": {
+      "markdown_shortcuts": {
+        "blockquote": {
+          "label": "Idézetblokk",
+          "example": "> Blockquote"
+        },
+        "block_code": {
+          "example": "``` + space",
+          "label": "Kód tömb"
+        },
+        "heading": {
+          "label": "Fejléc",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "unordered_list": {
+          "label": "Rendezetlen lista",
+          "example": "- lista elem"
+        },
+        "bold": {
+          "label": "Félkövér",
+          "example": "**text** vagy CTRL+b"
+        },
+        "italic": {
+          "label": "Dőlt",
+          "example": "*Italic* vagy _Italic_ vagy CTRL+i"
+        },
+        "label": "Markdown rövidítés",
+        "ordered_list": {
+          "label": "Rendezett lista",
+          "example": "A lista 1. eleme"
+        },
+        "inline_code": {
+          "label": "Inline kód",
+          "example": "`Code`"
+        }
+      },
+      "strikethrough": "Áthúzott",
+      "underline": "Aláhúzott",
+      "code": "Kód",
+      "align_right": "Jobbra igazított",
+      "redo": "Előrelépés",
+      "undo": "Visszalépés",
+      "bold": "Félkövér",
+      "italic": "Dőlt",
+      "highlight": "Kiemelés",
+      "align_left": "Balra igazított",
+      "align_center": "Középre igazított"
+    },
+    "multiple_urls_dialog_desc": "A beadott szöveg több URL-t tartalmat különböző sorokban. Külön könyvjelzőként importálod őket?",
+    "placeholder": "Illesszen be hivatkozást vagy képet, írjon jegyzetet vagy húzzon be ide képet…",
+    "quickly_focus": "A ⌘ + E megnyomásával gyorsan erre a mezőre fókuszálhatsz",
+    "multiple_urls_dialog_title": "Az URL címeket külön könyvjelzőként importálod?",
+    "import_as_separate_bookmarks": "Importálás külön könyvjelzőkként",
+    "new_item": "ÚJ TÁRGY",
+    "disabled_submissions": "Az alárendelések le vannak tiltva"
+  },
+  "search": {
+    "is_in_any_list": "Szerepel bármely listán",
+    "and": "És",
+    "type_is": "A típusa",
+    "type_is_not": "A típusa nem",
+    "is_not_archived": "Nem archivált",
+    "is_not_favorited": "Nincs kedvencekhez adva",
+    "is_archived": "Archivált",
+    "is_not_in_any_list": "Nem szerepel bármely listán",
+    "is_favorited": "Kedvencekhez van adva",
+    "has_any_tag": "Van hozzáadott címke",
+    "has_no_tags": "Nincs hozzáadott címke",
+    "created_on_or_after": "Létrehozva akkor vagy azóta",
+    "not_created_on_or_after": "Nem létrehozva akkor vagy azóta",
+    "created_on_or_before": "Létrehozva akkor vagy előtte",
+    "not_created_on_or_before": "Nem létrehozva akkor vagy előtte",
+    "url_contains": "Az URL tartalmazza",
+    "url_does_not_contain": "Az URL nem tartalmazza",
+    "is_in_list": "Szerepel listán",
+    "is_not_in_list": "Nem szerepel listán",
+    "has_tag": "Van címkéje",
+    "does_not_have_tag": "Nincs címkéje",
+    "full_text_search": "Teljes szöveg keresése",
+    "or": "Vagy"
+  },
+  "lists": {
+    "manual_list": "Manuális lista",
+    "new_nested_list": "Új beágyazott lista",
+    "favourites": "Kedvencek",
+    "all_lists": "Minden lista",
+    "new_list": "Új lista",
+    "edit_list": "Lista módosítása",
+    "parent_list": "Szülő lista",
+    "no_parent": "Nincs szülő",
+    "list_type": "Lista típusa",
+    "smart_list": "Okos lista",
+    "search_query": "Kereső lekérdezés"
+  },
+  "admin": {
+    "background_jobs": {
+      "crawler_jobs": "Feltérképezési feladatok",
+      "background_jobs": "Háttér feladatok",
+      "inference_jobs": "Becslési feladatok",
+      "indexing_jobs": "Indexelési feladatok",
+      "tidy_assets_jobs": "Tiszta tulajdon feladatok",
+      "job": "Feladatok",
+      "queued": "Ütemezve",
+      "pending": "Folyamatban van",
+      "failed": "Hibá történt"
+    },
+    "actions": {
+      "recrawl_failed_links_only": "Hibás hivatkozások újratérképezése",
+      "recrawl_all_links": "Minden hivatkozások újratérképezése",
+      "without_inference": "Nincs becslés",
+      "regenerate_ai_tags_for_all_bookmarks": "Minden könyvjelző MI címkéjének lecserélése",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Hibás könyvjelzők MI címkéjének lecserélése",
+      "reindex_all_bookmarks": "Minden könyvjelző újraindexelése",
+      "compact_assets": "Kompakt tulajdonok"
+    },
+    "users_list": {
+      "asset_sizes": "Tulajdon méretek",
+      "users_list": "Felhasználók listája",
+      "local_user": "Helyi felhasználó",
+      "create_user": "Felhasználó létrehozása",
+      "change_role": "Szerepkör módosítása",
+      "reset_password": "Jelszó alaphelyzetbe állítása",
+      "delete_user": "Felhasználó törlése",
+      "num_bookmarks": "Számozott könyvjelzők",
+      "confirm_password": "Jelszó megerősítése"
+    },
+    "admin_settings": "Rendszergazdai beállítások",
+    "server_stats": {
+      "server_stats": "Szerver statisztika",
+      "total_users": "Összes felhasználó",
+      "total_bookmarks": "Összes könyvjelző",
+      "server_version": "Szerver verzió"
+    }
+  },
+  "options": {
+    "dark_mode": "Sötét mód",
+    "light_mode": "Világos mód"
+  },
+  "tags": {
+    "your_tags": "Salyát címkék",
+    "drag_and_drop_merging": "Egyesítés odahúzással",
+    "all_tags": "Minden címke",
+    "your_tags_info": "Címkék amiket legalább egyszer használtál",
+    "ai_tags_info": "Csak automatikusan (MI) hozzáadott címkék",
+    "unused_tags_info": "Semelyik könyvjelzőhöz sem hozzáadott címkék",
+    "delete_all_unused_tags": "Minden nem használt címke törlése",
+    "drag_and_drop_merging_info": "Húzza egymásra a címkéket az egyesítéshez",
+    "sort_by_name": "Rendezés név szerint",
+    "ai_tags": "MI címkék",
+    "unused_tags": "Nem használt címkék"
+  },
+  "layouts": {
+    "masonry": "Falazat",
+    "grid": "Rács",
+    "list": "Lista",
+    "compact": "Kompakt"
+  },
+  "preview": {
+    "view_original": "Eredeti megjelenítése",
+    "cached_content": "Gyorsítótárazott tartalmak"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_title": "Törli a könyvjelzőt?",
+      "delete_confirmation_description": "Biztos benne, hogy törli a könyvjelzőt?"
+    }
+  },
+  "toasts": {
+    "bookmarks": {
+      "updated": "A könyvjelző frissítve lett!",
+      "deleted": "A könyvjelző törölve lett!",
+      "refetch": "Újra begyűjtés beütemezve!",
+      "full_page_archive": "Minden oldal lecserélése beütemezésre került",
+      "delete_from_list": "A könyvjelző törlődött a listából",
+      "clipboard_copied": "A hivatkozás kimásolva a memóriába!"
+    },
+    "lists": {
+      "created": "A hivatkozás létrejött!",
+      "updated": "A hivatkozás frissült!"
+    }
+  },
+  "cleanups": {
+    "cleanups": "Tisztítás",
+    "duplicate_tags": {
+      "title": "Duplikált címkék",
+      "merge_all_suggestions": "Minden javasolt elemet egyesít?"
+    }
+  },
+  "highlights": {
+    "no_highlights": "Még nem emeltél kis semmit."
+  }
+}
