@@ -20,6 +20,8 @@ Please analyze the attached image and suggest relevant tags that describe its ke
 - The tags language must be in ${lang}.
 - If the tag is not generic enough, don't include it.
 - Aim for 10-15 tags.
+- Tags should be converted to Title Case.
+- If applicable, tags should be plural. For example, 'recipes' instead of 'recipe'.
 - If there are no good tags, don't emit any.
 ${customPrompts && customPrompts.map((p) => `- ${p}`).join("\n")}
 You must respond in valid JSON with the key "tags" and the value is list of tags. Don't wrap the response in a markdown code.`;
@@ -39,6 +41,8 @@ Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT 
 - If it's a famous website you may also include a tag for the website. If the tag is not generic enough, don't include it.
 - The content can include text for cookie consent and privacy policy, ignore those while tagging.
 - Aim for 3-5 tags.
+- Tags should be converted to Title Case.
+- If applicable, tags should be plural. For example, 'recipes' instead of 'recipe'.
 - If there are no good tags, leave the array empty.
 ${customPrompts && customPrompts.map((p) => `- ${p}`).join("\n")}
 CONTENT START HERE
