@@ -246,6 +246,7 @@ export interface paths {
             "application/json": {
               id: string;
               createdAt: string;
+              modifiedAt: string | null;
               title?: string | null;
               archived: boolean;
               favourited: boolean;
@@ -1196,6 +1197,7 @@ export interface components {
     Bookmark: {
       id: string;
       createdAt: string;
+      modifiedAt: string | null;
       title?: string | null;
       archived: boolean;
       favourited: boolean;
