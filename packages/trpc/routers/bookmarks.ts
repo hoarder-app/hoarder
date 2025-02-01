@@ -1025,6 +1025,15 @@ export const bookmarksAppRouter = router({
             })),
           )
           .onConflictDoNothing();
+        await tx
+          .update(bookmarks)
+          .set({ modifiedAt: new Date() })
+          .where(
+            and(
+              eq(bookmarks.id, input.bookmarkId),
+              eq(bookmarks.userId, ctx.user.id),
+            ),
+          );
 
         await triggerSearchReindex(input.bookmarkId);
         await triggerWebhook(input.bookmarkId, "edited");
