@@ -9,6 +9,7 @@ OS="$( awk -F'=' '/^VERSION_CODENAME=/{ print $NF }' /etc/os-release )"
 INSTALL_DIR=/opt/hoarder
 export DATA_DIR=/var/lib/hoarder
 CONFIG_DIR=/etc/hoarder
+LOG_DIR=/var/log/hoarder
 ENV_FILE=${CONFIG_DIR}/hoarder.env
 
 function install {
@@ -49,6 +50,7 @@ function install {
   echo "Installing Hoarder..."
   mkdir -p $DATA_DIR
   mkdir -p $CONFIG_DIR
+  mkdir -p $LOG_DIR
   M_DATA_DIR=/var/lib/meilisearch
   M_CONFIG_FILE=/etc/meilisearch.toml
   RELEASE=$(curl -s https://api.github.com/repos/hoarder-app/hoarder/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
@@ -109,7 +111,7 @@ EOF
   useradd -U -s /usr/sbin/nologin -r -m -d "${M_DATA_DIR}" meilisearch
   useradd -U -s /usr/sbin/nologin -r -M -d "${INSTALL_DIR}" hoarder
   chown meilisearch:meilisearch "${M_CONFIG_FILE}"
-  chown -R hoarder:hoarder "${INSTALL_DIR}" "${CONFIG_DIR}" "${DATA_DIR}"
+  chown -R hoarder:hoarder "${INSTALL_DIR}" "${CONFIG_DIR}" "${DATA_DIR}" "${LOG_DIR}"
   echo "Users created, permissions modified" && sleep 1
 
   echo "Creating service files..."
@@ -177,6 +179,8 @@ Restart=always
 EnvironmentFile=${ENV_FILE}
 WorkingDirectory=${INSTALL_DIR}/apps/workers
 ExecStart=/usr/bin/pnpm run start:prod
+StandardOutput=file:${LOG_DIR}/hoarder-workers.log
+StandardError=file:${LOG_DIR}/hoarder-workers.log
 TimeoutStopSec=5
 SyslogIdentifier=hoarder-workers
 
@@ -197,6 +201,8 @@ Restart=on-failure
 EnvironmentFile=${ENV_FILE}
 WorkingDirectory=${INSTALL_DIR}/apps/web
 ExecStart=/usr/bin/pnpm start
+StandardOutput=file:${LOG_DIR}/hoarder-web.log
+StandardError=file:${LOG_DIR}/hoarder-web.log
 TimeoutStopSec=5
 SyslogIdentifier=hoarder-web
 
