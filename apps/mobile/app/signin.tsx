@@ -142,7 +142,7 @@ export default function Signin() {
                   autoCapitalize="none"
                   value={formState.email}
                   onChangeText={(e) =>
-                    setFormState((s) => ({ ...s, email: e }))
+                    setFormState((s) => ({ ...s, email: e.trim() }))
                   }
                 />
               </View>
