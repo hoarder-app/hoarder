@@ -280,7 +280,7 @@ EXP.setPattern(
                     type: "and",
                     matchers: [toks.matcher, next[1].matcher].filter(
                       (a) => !!a,
-                    ) as Matcher[],
+                    ),
                   }
                 : undefined,
           };
@@ -293,7 +293,7 @@ EXP.setPattern(
                     type: "or",
                     matchers: [toks.matcher, next[1].matcher].filter(
                       (a) => !!a,
-                    ) as Matcher[],
+                    ),
                   }
                 : undefined,
           };
