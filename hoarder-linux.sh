@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# Copyright 2024
+# v2.0
+# Copyright 2025
 # Author: vhsdream
 # Adapted from: The Hoarder installation script from https://github.com/community-scripts/ProxmoxVE
 # License: MIT
@@ -53,11 +54,11 @@ function install {
   mkdir -p $LOG_DIR
   M_DATA_DIR=/var/lib/meilisearch
   M_CONFIG_FILE=/etc/meilisearch.toml
-  RELEASE=$(curl -s https://api.github.com/repos/hoarder-app/hoarder/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
+  RELEASE=$(curl -s https://api.github.com/repos/hoarder-app/hoarder/branches/main | grep -m1 "sha" | awk -F '"' '{print substr($4, 1, 7)}')-github
   cd /tmp
-  wget -q "https://github.com/hoarder-app/hoarder/archive/refs/tags/v${RELEASE}.zip"
-  unzip -q v${RELEASE}.zip
-  mv hoarder-${RELEASE} ${INSTALL_DIR} && cd ${INSTALL_DIR}/apps/web
+  wget -q "https://github.com/hoarder-app/hoarder/archive/refs/heads/main.zip"
+  unzip -q main.zip
+  mv hoarder-main ${INSTALL_DIR} && cd ${INSTALL_DIR}/apps/web
   corepack enable
   export NEXT_TELEMETRY_DISABLED=1
   export PUPPETEER_SKIP_DOWNLOAD="true"
@@ -226,7 +227,7 @@ EOF
   echo "Done" && sleep 1
 
   echo "Cleaning up" && sleep 1
-  rm /tmp/v${RELEASE}.zip
+  rm /tmp/main.zip
   apt -y autoremove
   apt -y autoclean
   echo "Cleaned" && sleep 1
@@ -238,7 +239,7 @@ EOF
 function update {
   echo "Checking for an update..." && sleep 1
   if [[ ! -d ${INSTALL_DIR} ]]; then echo "Is Hoarder even installed?"; exit 1; fi
-  RELEASE=$(curl -s https://api.github.com/repos/hoarder-app/hoarder/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
+  RELEASE=$(curl -s https://api.github.com/repos/hoarder-app/hoarder/branches/main | grep -m1 "sha" | awk -F '"' '{print substr($4, 1, 7)}')-github
   PREV_RELEASE=$(cat ${INSTALL_DIR}/version.txt)
   if [[ "${RELEASE}" != "${PREV_RELEASE}" ]]; then
     echo "Stopping affected services..." && sleep 1
@@ -249,9 +250,9 @@ function update {
     sed -i "s|SERVER_VERSION=${PREV_RELEASE}|SERVER_VERSION=${RELEASE}|" ${ENV_FILE}
     rm -R ${INSTALL_DIR}
     cd /tmp
-    wget -q "https://github.com/hoarder-app/hoarder/archive/refs/tags/v${RELEASE}.zip"
-    unzip -q v${RELEASE}.zip
-    mv hoarder-${RELEASE} ${INSTALL_DIR}
+    wget -q "https://github.com/hoarder-app/hoarder/archive/refs/heads/main.zip"
+    unzip -q main.zip
+    mv hoarder-main ${INSTALL_DIR}
     cd ${INSTALL_DIR}/apps/web && pnpm i --frozen-lockfile
     pnpm exec next build --experimental-build-mode compile
     cd ${INSTALL_DIR}/apps/workers && pnpm i --frozen-lockfile
@@ -263,7 +264,7 @@ function update {
     echo "Updated Hoarder to v${RELEASE}" && sleep 1
     echo "Restarting services and cleaning up..." && sleep 1
     systemctl start hoarder-workers hoarder-web
-    rm /tmp/v${RELEASE}.zip
+    rm /tmp/main.zip
     echo "Ready!"
   else
     echo "No update required."
