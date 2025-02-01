@@ -37,6 +37,9 @@ importers:
       prettier:
         specifier: ^3.4.2
         version: 3.4.2
+      sherif:
+        specifier: ^1.2.0
+        version: 1.2.0
       turbo:
         specifier: ^2.1.2
         version: 2.1.2
@@ -12105,6 +12108,40 @@ packages:
   shelljs@0.8.5:
     resolution: {integrity: sha512-TiwcRcrkhHvbrZbnRcFYMLl30Dfov3HKqzp5tO5b4pt6G/SezKcYhmDg15zXVBswHmctSAQKznqNW2LO5tTDow==}
     engines: {node: '>=4'}
+    hasBin: true
+
+  sherif-darwin-arm64@1.2.0:
+    resolution: {integrity: sha512-v3EcA7qVYz+jQHbYrH1E8dYTXCm6/+UcwIa2dsGhSMxEZcLw/4nDJ3q5MtDBexcutVZNYzoDFurjGZ7AwB0fEQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  sherif-darwin-x64@1.2.0:
+    resolution: {integrity: sha512-Mj1qNSNS0+uV/X53uCgAb51+mm9652mT+E6ji3uc+Sc5DKotMVKq9MyL5S1ZaaXa7KGRFCyXDUhdJSJR3lJ9tg==}
+    cpu: [x64]
+    os: [darwin]
+
+  sherif-linux-arm64@1.2.0:
+    resolution: {integrity: sha512-aMn1ZVISZiDDiPSwRtwDmTd2uQ9OWNQvhikIqHluTUbhzaWtPtodV8ZhJrmRs+DHKnEDxV4XfXsOYvsCv2bQQw==}
+    cpu: [arm64]
+    os: [linux]
+
+  sherif-linux-x64@1.2.0:
+    resolution: {integrity: sha512-n3rIpf479PyR5tcSOJm9lfD5d+iQTKQYBddzjY1nOWrjvagSkH/1EKhNzponNZWGfqgKlzBhUOBhcGkVXwTTRA==}
+    cpu: [x64]
+    os: [linux]
+
+  sherif-windows-arm64@1.2.0:
+    resolution: {integrity: sha512-bsIFSu3JTaad15gte/BsqMSunivdTXSXgDqSYtTXdEWK90+UrogVLK5D/Iy/CV7v0mgCWfXzs2wxg5jIhbC08Q==}
+    cpu: [arm64]
+    os: [win32]
+
+  sherif-windows-x64@1.2.0:
+    resolution: {integrity: sha512-Pqg1H1XYVHovirtfnC3YY53PhWF1KOMLcSc1k3+qRUzfYXRE66BpuSHLwNPAHqGvw6b8gDsJD4ZMTZvzs6hspw==}
+    cpu: [x64]
+    os: [win32]
+
+  sherif@1.2.0:
+    resolution: {integrity: sha512-lWdfPk9hqTSz78en8XrTnClYO/uP3LTAbxrrjxoIvi0ll4ts1WjXV6SRvBKXBXpcklGxETzQxqLZKqeqq0u+dQ==}
     hasBin: true
 
   side-channel@1.0.6:
@@ -29102,6 +29139,40 @@ snapshots:
       interpret: 1.4.0
       rechoir: 0.6.2
     dev: false
+
+  sherif-darwin-arm64@1.2.0:
+    dev: true
+    optional: true
+
+  sherif-darwin-x64@1.2.0:
+    dev: true
+    optional: true
+
+  sherif-linux-arm64@1.2.0:
+    dev: true
+    optional: true
+
+  sherif-linux-x64@1.2.0:
+    dev: true
+    optional: true
+
+  sherif-windows-arm64@1.2.0:
+    dev: true
+    optional: true
+
+  sherif-windows-x64@1.2.0:
+    dev: true
+    optional: true
+
+  sherif@1.2.0:
+    optionalDependencies:
+      sherif-darwin-arm64: 1.2.0
+      sherif-darwin-x64: 1.2.0
+      sherif-linux-arm64: 1.2.0
+      sherif-linux-x64: 1.2.0
+      sherif-windows-arm64: 1.2.0
+      sherif-windows-x64: 1.2.0
+    dev: true
 
   side-channel@1.0.6:
     dependencies:

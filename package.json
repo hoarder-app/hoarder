@@ -17,8 +17,6 @@
     "format:fix": "turbo --no-daemon format --continue -- --write --cache-location node_modules/.cache/.prettiercache",
     "lint": "turbo --no-daemon lint --continue -- --cache-location node_modules/.cache/.eslintcache",
     "lint:fix": "turbo --no-daemon lint --continue -- --fix --cache-location node_modules/.cache/.eslintcache",
-    "lint:ws": "pnpm dlx sherif@latest",
-    "postinstall": "pnpm lint:ws",
     "typecheck": "turbo --no-daemon typecheck"
   },
   "devDependencies": {
@@ -30,6 +28,7 @@
     "husky": "^9.0.11",
     "install": "^0.13.0",
     "prettier": "^3.4.2",
+    "sherif": "^1.2.0",
     "turbo": "^2.1.2"
   },
   "prettier": "@hoarder/prettier-config",
