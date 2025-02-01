@@ -11,6 +11,6 @@ export default function App() {
   } else if (isLoggedIn) {
     return <Redirect href="dashboard" />;
   } else {
-    return <Redirect href="server-address" />;
+    return <Redirect href="signin" />;
   }
 }

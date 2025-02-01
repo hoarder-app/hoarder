@@ -8,13 +8,15 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { Redirect } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import Logo from "@/components/Logo";
 import { TailwindResolver } from "@/components/TailwindResolver";
-import { Button } from "@/components/ui/Button";
+import { Button, buttonVariants } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
+import { cn } from "@/lib/utils";
+import { Bug } from "lucide-react-native";
 
 enum LoginType {
   Password,
@@ -23,6 +25,7 @@ enum LoginType {
 
 export default function Signin() {
   const { settings, setSettings } = useAppSettings();
+  const router = useRouter();
 
   const [error, setError] = useState<string | undefined>();
   const [loginType, setLoginType] = useState<LoginType>(LoginType.Password);
@@ -53,7 +56,7 @@ export default function Signin() {
   const { mutate: validateApiKey, isPending: apiKeyValueRequestIsPending } =
     api.apiKeys.validate.useMutation({
       onSuccess: () => {
-        setSettings({ ...settings, apiKey: apiFormData.apiKey });
+        setSettings({ ...settings, apiKey: formState.apiKey });
       },
       onError: (e) => {
         if (e.data?.code === "UNAUTHORIZED") {
@@ -64,17 +67,15 @@ export default function Signin() {
       },
     });
 
-  const [usernameFormData, setUserNameFormData] = useState<{
+  const [formState, setFormState] = useState<{
+    serverAddress: string;
     email: string;
     password: string;
-  }>({
-    email: "",
-    password: "",
-  });
-
-  const [apiFormData, setApiFormData] = useState<{
     apiKey: string;
   }>({
+    serverAddress: "",
+    email: "",
+    password: "",
     apiKey: "",
   });
 
@@ -85,9 +86,13 @@ export default function Signin() {
   const onSignin = () => {
     if (loginType === LoginType.Password) {
       const randStr = (Math.random() + 1).toString(36).substring(5);
-      login({ ...usernameFormData, keyName: `Mobile App: (${randStr})` });
+      login({
+        email: formState.email,
+        password: formState.password,
+        keyName: `Mobile App: (${randStr})`,
+      });
     } else if (loginType === LoginType.ApiKey) {
-      validateApiKey({ apiKey: apiFormData.apiKey });
+      validateApiKey({ apiKey: formState.apiKey });
     }
   };
 
@@ -112,6 +117,20 @@ export default function Signin() {
           {error && (
             <Text className="w-full text-center text-red-500">{error}</Text>
           )}
+          <View className="gap-2">
+            <Text className="font-bold">Server Address</Text>
+            <Input
+              className="w-full"
+              placeholder="Server Address"
+              value={formState.serverAddress}
+              autoCapitalize="none"
+              keyboardType="url"
+              onChangeText={(e) => {
+                setFormState((s) => ({ ...s, serverAddress: e }));
+                setSettings({ ...settings, address: e.replace(/\/$/, "") });
+              }}
+            />
+          </View>
           {loginType === LoginType.Password && (
             <>
               <View className="gap-2">
@@ -121,9 +140,9 @@ export default function Signin() {
                   placeholder="Email"
                   keyboardType="email-address"
                   autoCapitalize="none"
-                  value={usernameFormData.email}
+                  value={formState.email}
                   onChangeText={(e) =>
-                    setUserNameFormData((s) => ({ ...s, email: e.trim() }))
+                    setFormState((s) => ({ ...s, email: e }))
                   }
                 />
               </View>
@@ -133,11 +152,11 @@ export default function Signin() {
                   className="w-full"
                   placeholder="Password"
                   secureTextEntry
-                  value={usernameFormData.password}
+                  value={formState.password}
                   autoCapitalize="none"
                   textContentType="password"
                   onChangeText={(e) =>
-                    setUserNameFormData((s) => ({ ...s, password: e }))
+                    setFormState((s) => ({ ...s, password: e }))
                   }
                 />
               </View>
@@ -151,12 +170,10 @@ export default function Signin() {
                 className="w-full"
                 placeholder="API Key"
                 secureTextEntry
-                value={apiFormData.apiKey}
+                value={formState.apiKey}
                 autoCapitalize="none"
                 textContentType="password"
-                onChangeText={(e) =>
-                  setApiFormData((s) => ({ ...s, apiKey: e }))
-                }
+                onChangeText={(e) => setFormState((s) => ({ ...s, apiKey: e }))}
               />
             </View>
           )}
@@ -170,6 +187,21 @@ export default function Signin() {
                 userNamePasswordRequestIsPending || apiKeyValueRequestIsPending
               }
             />
+            <Pressable
+              className={cn(
+                buttonVariants({ variant: "default" }),
+                !settings.address && "bg-gray-500",
+              )}
+              onPress={() => router.push("/test-connection")}
+              disabled={!settings.address}
+            >
+              <TailwindResolver
+                comp={(styles) => (
+                  <Bug size={20} color={styles?.color?.toString()} />
+                )}
+                className="text-background"
+              />
+            </Pressable>
           </View>
           <Pressable onPress={toggleLoginType}>
             <Text className="mt-2 text-center text-gray-500">
