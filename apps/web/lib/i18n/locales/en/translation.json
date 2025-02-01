@@ -207,7 +207,8 @@
     "list_type": "List Type",
     "manual_list": "Manual List",
     "smart_list": "Smart List",
-    "search_query": "Search Query"
+    "search_query": "Search Query",
+    "search_query_help": "Learn more about the search query language."
   },
   "tags": {
     "all_tags": "All Tags",

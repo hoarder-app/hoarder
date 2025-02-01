@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -45,11 +47,13 @@ import {
   useCreateBookmarkList,
   useEditBookmarkList,
 } from "@hoarder/shared-react/hooks/lists";
+import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
 import {
   ZBookmarkList,
   zNewBookmarkListSchema,
 } from "@hoarder/shared/types/lists";
 
+import QueryExplainerTooltip from "../search/QueryExplainerTooltip";
 import { BookmarkListSelector } from "./BookmarkListSelector";
 
 export function EditListModal({
@@ -98,6 +102,14 @@ export function EditListModal({
       query: list?.query ?? prefill?.query ?? undefined,
     });
   }, [open]);
+
+  const parsedSearchQuery = useMemo(() => {
+    const query = form.getValues().query;
+    if (!query) {
+      return undefined;
+    }
+    return parseSearchQuery(query);
+  }, [form.watch("query")]);
 
   const { mutate: createList, isPending: isCreating } = useCreateBookmarkList({
     onSuccess: (resp) => {
@@ -318,13 +330,29 @@ export function EditListModal({
                   return (
                     <FormItem className="grow pb-4">
                       <FormLabel>{t("lists.search_query")}</FormLabel>
-                      <FormControl>
-                        <Input
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder={t("lists.search_query")}
-                        />
-                      </FormControl>
+                      <div className="relative">
+                        <FormControl>
+                          <Input
+                            value={field.value}
+                            onChange={field.onChange}
+                            placeholder={t("lists.search_query")}
+                          />
+                        </FormControl>
+                        {parsedSearchQuery && (
+                          <QueryExplainerTooltip
+                            className="translate-1/2 absolute right-1.5 top-2 stroke-foreground p-0.5"
+                            parsedSearchQuery={parsedSearchQuery}
+                          />
+                        )}
+                      </div>
+                      <FormDescription>
+                        <Link
+                          href="https://docs.hoarder.app/Guides/search-query-language"
+                          className="italic"
+                        >
+                          {t("lists.search_query_help")}
+                        </Link>
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   );
