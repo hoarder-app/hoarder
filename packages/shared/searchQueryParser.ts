@@ -2,6 +2,7 @@ import {
   alt,
   alt_sc,
   apply,
+  kleft,
   kmid,
   kright,
   lrec_sc,
@@ -35,8 +36,8 @@ enum TokenType {
 
 // Rules are in order of priority
 const lexerRules: [RegExp, TokenType][] = [
-  [/^and/i, TokenType.And],
-  [/^or/i, TokenType.Or],
+  [/^\s+and/i, TokenType.And],
+  [/^\s+or/i, TokenType.Or],
 
   [/^#/, TokenType.Hash],
   [/^(is|url|list|after|before):/, TokenType.Qualifier],
@@ -263,8 +264,8 @@ EXP.setPattern(
     seq(
       alt(
         tok(TokenType.Space),
-        kmid(tok(TokenType.Space), tok(TokenType.And), tok(TokenType.Space)),
-        kmid(tok(TokenType.Space), tok(TokenType.Or), tok(TokenType.Space)),
+        kleft(tok(TokenType.And), tok(TokenType.Space)),
+        kleft(tok(TokenType.Or), tok(TokenType.Space)),
       ),
       MATCHER,
     ),

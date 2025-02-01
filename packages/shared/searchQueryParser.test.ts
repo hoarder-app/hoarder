@@ -198,6 +198,16 @@ describe("Search Query Parser", () => {
         inverse: true,
       },
     });
+    // Tags starting with qualifiers should be treated correctly
+    expect(parseSearchQuery("#android")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "tagName",
+        tagName: "android",
+        inverse: false,
+      },
+    });
     expect(parseSearchQuery("list:my-list")).toEqual({
       result: "full",
       text: "",
