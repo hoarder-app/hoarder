@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@tsconfig/node21/tsconfig.json",
+  "extends": "@tsconfig/node22/tsconfig.json",
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "build", "dist", ".next", ".expo"],
   "compilerOptions": {

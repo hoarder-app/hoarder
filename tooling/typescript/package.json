@@ -7,6 +7,6 @@
     "node.json"
   ],
   "devDependencies": {
-    "@tsconfig/node21": "^21.0.1"
+    "@tsconfig/node22": "^22.0.0"
   }
 }

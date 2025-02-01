@@ -17,7 +17,7 @@
     "drizzle-orm": "^0.38.3",
     "execa": "9.3.1",
     "jsdom": "^24.0.0",
-    "liteque": "^0.3.0",
+    "liteque": "^0.3.2",
     "metascraper": "^5.45.24",
     "metascraper-amazon": "^5.45.22",
     "metascraper-description": "^5.45.22",

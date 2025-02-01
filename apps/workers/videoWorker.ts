@@ -104,7 +104,9 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
       `[VideoCrawler][${jobId}] Attempting to download a file from "${url}" to "${assetPath}" using the following arguments: "${ytDlpArguments}"`,
     );
 
-    await execa("yt-dlp", ytDlpArguments);
+    await execa("yt-dlp", ytDlpArguments, {
+      cancelSignal: job.abortSignal,
+    });
     const downloadPath = await findAssetFile(videoAssetId);
     if (!downloadPath) {
       logger.info(
@@ -124,7 +126,6 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
       );
       return;
     }
-    console.log(JSON.stringify(err));
     logger.error(
       `[VideoCrawler][${jobId}] Failed to download a file from "${url}" to "${assetPath}"`,
     );
