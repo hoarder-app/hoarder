@@ -489,19 +489,30 @@ export const bookmarksAppRouter = router({
     )
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.db
-        .update(bookmarkTexts)
-        .set({
-          text: input.text,
-        })
-        .where(and(eq(bookmarkTexts.id, input.bookmarkId)))
-        .returning();
-      if (res.length == 0) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Bookmark not found",
-        });
-      }
+      await ctx.db.transaction(async (tx) => {
+        const res = await tx
+          .update(bookmarkTexts)
+          .set({
+            text: input.text,
+          })
+          .where(and(eq(bookmarkTexts.id, input.bookmarkId)))
+          .returning();
+        if (res.length == 0) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Bookmark not found",
+          });
+        }
+        await tx
+          .update(bookmarks)
+          .set({ modifiedAt: new Date() })
+          .where(
+            and(
+              eq(bookmarks.id, input.bookmarkId),
+              eq(bookmarks.userId, ctx.user.id),
+            ),
+          );
+      });
       await triggerSearchReindex(input.bookmarkId);
       await triggerWebhook(input.bookmarkId, "edited");
     }),

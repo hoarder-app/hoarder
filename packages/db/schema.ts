@@ -19,6 +19,12 @@ function createdAtField() {
     .$defaultFn(() => new Date());
 }
 
+function modifiedAtField() {
+  return integer("modifiedAt", { mode: "timestamp" })
+    .$defaultFn(() => new Date())
+    .$onUpdate(() => new Date());
+}
+
 export const users = sqliteTable("user", {
   id: text("id")
     .notNull()
@@ -103,6 +109,7 @@ export const bookmarks = sqliteTable(
       .primaryKey()
       .$defaultFn(() => createId()),
     createdAt: createdAtField(),
+    modifiedAt: modifiedAtField(),
     title: text("title"),
     archived: integer("archived", { mode: "boolean" }).notNull().default(false),
     favourited: integer("favourited", { mode: "boolean" })
