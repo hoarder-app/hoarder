@@ -26,10 +26,12 @@ import {
 } from "@hoarder/shared/types/bookmarks";
 
 function FullPageArchiveSection({ link }: { link: ZBookmarkedLink }) {
+  const archiveAssetId =
+    link.fullPageArchiveAssetId ?? link.precrawledArchiveAssetId;
   return (
     <iframe
       title={link.url}
-      src={`/api/assets/${link.fullPageArchiveAssetId}`}
+      src={`/api/assets/${archiveAssetId}`}
       className="relative h-full min-w-full"
     />
   );
@@ -199,7 +201,10 @@ export default function LinkContentSection({
             </SelectItem>
             <SelectItem
               value="archive"
-              disabled={!bookmark.content.fullPageArchiveAssetId}
+              disabled={
+                !bookmark.content.fullPageArchiveAssetId &&
+                !bookmark.content.precrawledArchiveAssetId
+              }
             >
               {t("common.archive")}
             </SelectItem>

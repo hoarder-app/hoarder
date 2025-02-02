@@ -109,7 +109,9 @@ export default function AllTagsView({
     (t) => (t.numBookmarksByAttachedType.human ?? 0) > 0,
   );
   const aiTags = allTags.filter(
-    (t) => (t.numBookmarksByAttachedType.ai ?? 0) > 0,
+    (t) =>
+      (t.numBookmarksByAttachedType.human ?? 0) == 0 &&
+      (t.numBookmarksByAttachedType.ai ?? 0) > 0,
   );
   const emptyTags = allTags.filter((t) => t.numBookmarks === 0);
 

@@ -22,7 +22,12 @@
     "screenshot": "Capture d'écran",
     "video": "Vidéo",
     "archive": "Archive",
-    "home": "Accueil"
+    "home": "Accueil",
+    "source": "Source",
+    "bookmark_types": {
+      "link": "Lien",
+      "text": "Texte"
+    }
   },
   "layouts": {
     "masonry": "Mosaïque",
@@ -108,6 +113,11 @@
       "new_api_key_desc": "Donnez un nom unique à votre clé API",
       "key_success": "La clé a été créée avec succès",
       "key_success_please_copy": "Veuillez copier la clé et la stocker dans un endroit sûr. Une fois que vous fermerez la fenêtre de dialogue, vous ne pourrez plus y accéder."
+    },
+    "webhooks": {
+      "auth_token": "Jeton d'authentification",
+      "webhooks": "",
+      "add_auth_token": "Ajouter un jeton d'authentification"
     }
   },
   "admin": {

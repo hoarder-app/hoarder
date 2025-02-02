@@ -54,7 +54,7 @@ const allEnv = z.object({
   DEMO_MODE_EMAIL: z.string().optional(),
   DEMO_MODE_PASSWORD: z.string().optional(),
   DATA_DIR: z.string().default(""),
-  MAX_ASSET_SIZE_MB: z.coerce.number().default(4),
+  MAX_ASSET_SIZE_MB: z.coerce.number().default(50),
   INFERENCE_LANG: z.string().default("english"),
   WEBHOOK_TIMEOUT_SEC: z.coerce.number().default(5),
   WEBHOOK_RETRY_TIMES: z.coerce.number().int().min(0).default(3),

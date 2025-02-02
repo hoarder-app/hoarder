@@ -234,6 +234,9 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
         fullPageArchiveAssetId: assets.find(
           (a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE,
         )?.id,
+        precrawledArchiveAssetId: assets.find(
+          (a) => a.assetType == AssetTypes.LINK_PRECRAWLED_ARCHIVE,
+        )?.id,
         imageAssetId: assets.find(
           (a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE,
         )?.id,
@@ -489,19 +492,30 @@ export const bookmarksAppRouter = router({
     )
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.db
-        .update(bookmarkTexts)
-        .set({
-          text: input.text,
-        })
-        .where(and(eq(bookmarkTexts.id, input.bookmarkId)))
-        .returning();
-      if (res.length == 0) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Bookmark not found",
-        });
-      }
+      await ctx.db.transaction(async (tx) => {
+        const res = await tx
+          .update(bookmarkTexts)
+          .set({
+            text: input.text,
+          })
+          .where(and(eq(bookmarkTexts.id, input.bookmarkId)))
+          .returning();
+        if (res.length == 0) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Bookmark not found",
+          });
+        }
+        await tx
+          .update(bookmarks)
+          .set({ modifiedAt: new Date() })
+          .where(
+            and(
+              eq(bookmarks.id, input.bookmarkId),
+              eq(bookmarks.userId, ctx.user.id),
+            ),
+          );
+      });
       await triggerSearchReindex(input.bookmarkId);
       await triggerWebhook(input.bookmarkId, "edited");
     }),
@@ -862,6 +876,9 @@ export const bookmarksAppRouter = router({
               if (row.assets.assetType == AssetTypes.LINK_VIDEO) {
                 content.videoAssetId = row.assets.id;
               }
+              if (row.assets.assetType == AssetTypes.LINK_PRECRAWLED_ARCHIVE) {
+                content.precrawledArchiveAssetId = row.assets.id;
+              }
               acc[bookmarkId].content = content;
             }
             acc[bookmarkId].assets.push({
@@ -1014,6 +1031,15 @@ export const bookmarksAppRouter = router({
             })),
           )
           .onConflictDoNothing();
+        await tx
+          .update(bookmarks)
+          .set({ modifiedAt: new Date() })
+          .where(
+            and(
+              eq(bookmarks.id, input.bookmarkId),
+              eq(bookmarks.userId, ctx.user.id),
+            ),
+          );
 
         await triggerSearchReindex(input.bookmarkId);
         await triggerWebhook(input.bookmarkId, "edited");
