@@ -669,7 +669,8 @@ async function crawlAndParseUrl(
       .set({
         title: meta.title,
         description: meta.description,
-        imageUrl: meta.image,
+        // Don't store data URIs as they're not valid URLs and are usually quite large
+        imageUrl: meta.image?.startsWith("data:") ? null : meta.image,
         favicon: meta.logo,
         content: readableContent?.textContent,
         htmlContent: readableContent?.content,
@@ -705,7 +706,10 @@ async function crawlAndParseUrl(
   ]);
 
   return async () => {
-    if (serverConfig.crawler.fullPageArchive || archiveFullPage) {
+    if (
+      !precrawledArchiveAssetId &&
+      (serverConfig.crawler.fullPageArchive || archiveFullPage)
+    ) {
       const {
         assetId: fullPageArchiveAssetId,
         size,

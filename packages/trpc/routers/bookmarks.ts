@@ -234,6 +234,9 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
         fullPageArchiveAssetId: assets.find(
           (a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE,
         )?.id,
+        precrawledArchiveAssetId: assets.find(
+          (a) => a.assetType == AssetTypes.LINK_PRECRAWLED_ARCHIVE,
+        )?.id,
         imageAssetId: assets.find(
           (a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE,
         )?.id,
@@ -872,6 +875,9 @@ export const bookmarksAppRouter = router({
               }
               if (row.assets.assetType == AssetTypes.LINK_VIDEO) {
                 content.videoAssetId = row.assets.id;
+              }
+              if (row.assets.assetType == AssetTypes.LINK_PRECRAWLED_ARCHIVE) {
+                content.precrawledArchiveAssetId = row.assets.id;
               }
               acc[bookmarkId].content = content;
             }
