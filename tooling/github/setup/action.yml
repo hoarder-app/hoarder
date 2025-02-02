@@ -15,7 +15,7 @@ runs:
       run: pnpm add -g turbo
 
     - shell: bash
-      run: corepack enable
+      run: npm install -g corepack@0.31.0 && corepack enable
 
     - shell: bash
       run: pnpm install
