@@ -20,7 +20,7 @@
     "@hoarder/eslint-config": "workspace:^0.2.0",
     "@hoarder/prettier-config": "workspace:^0.1.0",
     "@hoarder/tsconfig": "workspace:^0.1.0",
-    "@tsconfig/node21": "^21.0.1",
+    "@tsconfig/node22": "^22.0.0",
     "tsx": "^4.7.1",
     "vite": "^5.1.0",
     "vite-plugin-dts": "^4.4.0"

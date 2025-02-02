@@ -200,9 +200,9 @@ importers:
       '@trpc/server':
         specifier: 11.0.0-next-beta.308
         version: 11.0.0-next-beta.308
-      '@tsconfig/node21':
-        specifier: ^21.0.1
-        version: 21.0.1
+      '@tsconfig/node22':
+        specifier: ^22.0.0
+        version: 22.0.0
       chalk:
         specifier: ^5.3.0
         version: 5.3.0
@@ -743,9 +743,9 @@ importers:
       '@mozilla/readability':
         specifier: ^0.5.0
         version: 0.5.0
-      '@tsconfig/node21':
-        specifier: ^21.0.1
-        version: 21.0.1
+      '@tsconfig/node22':
+        specifier: ^22.0.0
+        version: 22.0.0
       async-mutex:
         specifier: ^0.4.1
         version: 0.4.1
@@ -929,9 +929,9 @@ importers:
       '@hoarder/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
-      '@tsconfig/node21':
-        specifier: ^21.0.1
-        version: 21.0.1
+      '@tsconfig/node22':
+        specifier: ^22.0.0
+        version: 22.0.0
       '@types/better-sqlite3':
         specifier: ^7.6.11
         version: 7.6.11
@@ -1007,9 +1007,9 @@ importers:
       '@hoarder/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
-      '@tsconfig/node21':
-        specifier: ^21.0.1
-        version: 21.0.1
+      '@tsconfig/node22':
+        specifier: ^22.0.0
+        version: 22.0.0
       tsx:
         specifier: ^4.7.1
         version: 4.7.1
@@ -4680,9 +4680,6 @@ packages:
   '@trysound/sax@0.2.0':
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
-
-  '@tsconfig/node21@21.0.1':
-    resolution: {integrity: sha512-2Khg79N+z2Qkb9SjLzOi8cz2PSa/oUpHIeQm1YWzmWXkoFcPXFZSHgs+Z8iPCDjIoXFqMNYntiTXxfLYQMcRhw==}
 
   '@tsconfig/node22@22.0.0':
     resolution: {integrity: sha512-twLQ77zevtxobBOD4ToAtVmuYrpeYUh3qh+TEp+08IWhpsrIflVHqQ1F1CiPxQGL7doCdBIOOCF+1Tm833faNg==}
@@ -18743,10 +18740,7 @@ snapshots:
   '@trysound/sax@0.2.0':
     dev: false
 
-  '@tsconfig/node21@21.0.1': {}
-
-  '@tsconfig/node22@22.0.0':
-    dev: true
+  '@tsconfig/node22@22.0.0': {}
 
   '@types/acorn@4.0.6':
     dependencies:
