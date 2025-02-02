@@ -9,7 +9,7 @@ The app is mainly configured by environment variables. All the used environment 
 | NEXTAUTH_SECRET           | Yes                                   | Not set | Random string used to sign the JWT tokens. Generate one with `openssl rand -base64 36`.                                                        |
 | MEILI_ADDR                | No                                    | Not set | The address of meilisearch. If not set, Search will be disabled. E.g. (`http://meilisearch:7700`)                                              |
 | MEILI_MASTER_KEY          | Only in Prod and if search is enabled | Not set | The master key configured for meilisearch. Not needed in development environment. Generate one with `openssl rand -base64 36`                  |
-| MAX_ASSET_SIZE_MB         | No                                    | 4       | Sets the maximum allowed asset size (in MB) to be uploaded                                                                                     |
+| MAX_ASSET_SIZE_MB         | No                                    | 50      | Sets the maximum allowed asset size (in MB) to be uploaded                                                                                     |
 | DISABLE_NEW_RELEASE_CHECK | No                                    | false   | If set to true, latest release check will be disabled in the admin panel.                                                                      |
 
 ## Authentication / Signup
@@ -100,10 +100,10 @@ Hoarder uses [tesseract.js](https://github.com/naptha/tesseract.js) to extract t
 
 You can use webhooks to trigger actions when bookmarks are created, changed or crawled.
 
-| Name                | Required | Default | Description                                                                                    |
-| ------------------- | -------- | ------- | ---------------------------------------------------------------------------------------------- |
-| WEBHOOK_TIMEOUT_SEC | No       | 5       | The timeout for the webhook request in seconds.                                                |
-| WEBHOOK_RETRY_TIMES | No       | 3       | The number of times to retry the webhook request.                                              |
+| Name                | Required | Default | Description                                       |
+| ------------------- | -------- | ------- | ------------------------------------------------- |
+| WEBHOOK_TIMEOUT_SEC | No       | 5       | The timeout for the webhook request in seconds.   |
+| WEBHOOK_RETRY_TIMES | No       | 3       | The number of times to retry the webhook request. |
 
 :::info
 
