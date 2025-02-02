@@ -45,6 +45,8 @@ function install {
   echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" >/etc/apt/sources.list.d/nodesource.list
   apt-get update
   apt-get install -y nodejs
+  # https://github.com/hoarder-app/hoarder/issues/967
+  npm install -g corepack@0.31.0
   echo "Installed Node.js" && sleep 1
 
   echo "Installing Hoarder..."
