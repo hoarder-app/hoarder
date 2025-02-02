@@ -254,6 +254,10 @@ function update {
     wget -q "https://github.com/hoarder-app/hoarder/archive/refs/tags/v${RELEASE}.zip"
     unzip -q v${RELEASE}.zip
     mv hoarder-${RELEASE} ${INSTALL_DIR}
+    # https://github.com/hoarder-app/hoarder/issues/967
+    if [[ $(corepack -v) < "0.31.0" ]]; then
+        npm install -g corepack@0.31.0
+    fi
     cd ${INSTALL_DIR}/apps/web && pnpm i --frozen-lockfile
     pnpm exec next build --experimental-build-mode compile
     cd ${INSTALL_DIR}/apps/workers && pnpm i --frozen-lockfile
