@@ -23,8 +23,14 @@
     "video": "Video",
     "archive": "Archiv",
     "home": "Startseite",
-    "highlights": "Highlights",
-    "source": "Quelle"
+    "highlights": "Höhepunkte",
+    "source": "Quelle",
+    "bookmark_types": {
+      "title": "Lesezeichen Kategorie",
+      "link": "Link",
+      "media": "Medium",
+      "text": "Text"
+    }
   },
   "layouts": {
     "masonry": "Mauerwerk",
@@ -89,7 +95,12 @@
       "tagging_rule_description": "Eingabeaufforderungen, die Sie hier hinzufügen, werden als Regeln für das Modell bei der Tag-Generierung verwendet. Sie können die endgültigen Aufforderungen im Bereich Vorschau anzeigen.",
       "prompt_preview": "Aufforderungsvorschau",
       "text_prompt": "Text-Aufforderung",
-      "images_prompt": "Bild-Aufforderung"
+      "images_prompt": "Bild-Aufforderung",
+      "summarization_prompt": "Zusammenfassung des Prompts",
+      "all_tagging": "Benutzerinformationen",
+      "text_tagging": "Textverschlagwortung",
+      "image_tagging": "Bildverschlagwortung",
+      "summarization": "Zusammenfassung"
     },
     "feeds": {
       "rss_subscriptions": "RSS-Abonnements",
@@ -118,6 +129,24 @@
       "last_crawled_at": "Zuletzt gecrawlt am",
       "crawling_status": "Crawling-Status",
       "crawling_failed": "Crawling fehlgeschlagen"
+    },
+    "webhooks": {
+      "webhook_url": "Webhook URL",
+      "edit_auth_token": "Auth Token bearbeiten",
+      "webhooks": "Webhooks",
+      "description": "Du kannst Webhooks nutzen, um Aktionen auszulösen wenn Lesezeichen erstellt, geändert oder gecrawled werden.",
+      "events": {
+        "title": "Vorgänge",
+        "crawled": "Crawled",
+        "created": "erstellt",
+        "edited": "bearbeitet"
+      },
+      "auth_token": "Auth Token",
+      "add_auth_token": "Auth Token hinzufügen",
+      "create_webhook": "Webhook erstellen",
+      "delete_webhook": "Webhook löschen",
+      "delete_webhook_confirmation": "Bist du sicher, dass du diesen Webhook löschen willst?",
+      "edit_webhook": "Webhook bearbeiten"
     }
   },
   "admin": {
@@ -168,7 +197,14 @@
     "all_lists": "Alle Listen",
     "favourites": "Favoriten",
     "new_list": "Neue Liste",
-    "new_nested_list": "Neue verschachtelte Liste"
+    "new_nested_list": "Neue verschachtelte Liste",
+    "edit_list": "Liste bearbeiten",
+    "parent_list": "Übergeordnete Liste",
+    "manual_list": "Manuelle Liste",
+    "smart_list": "Smart Liste",
+    "search_query": "Suchanfrage",
+    "list_type": "Listentyp",
+    "no_parent": "ohne übergeordnete Liste"
   },
   "tags": {
     "all_tags": "Alle Tags",
@@ -176,9 +212,9 @@
     "your_tags_info": "Tags, die Sie mindestens einmal angehängt haben",
     "ai_tags": "KI-Tags",
     "ai_tags_info": "Tags, die nur automatisch (von der KI) angehängt wurden",
-    "unused_tags": "Ungeliebte Tags",
-    "unused_tags_info": "Tags, die an keine Lesezeichen angehängt sind",
-    "delete_all_unused_tags": "Alle ungeliebten Tags löschen",
+    "unused_tags": "Ungenutzte Tags",
+    "unused_tags_info": "Tags, die keinem Lesezeichen angehängt sind",
+    "delete_all_unused_tags": "Alle ungenutzen Tags löschen",
     "drag_and_drop_merging": "Ziehen & Ablegen zum Zusammenführen",
     "drag_and_drop_merging_info": "Ziehen und ablegen, um Tags zusammenzuführen",
     "sort_by_name": "Nach Name sortieren"
@@ -193,7 +229,7 @@
     "multiple_urls_dialog_desc": "Die Eingabe enthält mehrere URLs in separaten Zeilen. Möchten Sie sie als separate Lesezeichen importieren?",
     "import_as_text": "Als Text-Lesezeichen importieren",
     "import_as_separate_bookmarks": "Als separate Lesezeichen importieren",
-    "placeholder": "Fügen Sie einen Link oder ein Bild ein, schreiben Sie eine Notiz oder ziehen Sie ein Bild hierher ...",
+    "placeholder": "Fügen Sie einen Link oder ein Bild ein, schreiben Sie eine Notiz oder ziehen Sie ein Bild hierher …",
     "new_item": "NEUER EINTRAG",
     "disabled_submissions": "Einsendungen sind deaktiviert",
     "text_toolbar": {
@@ -268,5 +304,36 @@
   },
   "highlights": {
     "no_highlights": "Sie haben noch keine Highlights."
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_description": "Bist du sicher, dass du das Lesezeichen löschen willst?",
+      "delete_confirmation_title": "Lesezeichen löschen?"
+    }
+  },
+  "search": {
+    "is_favorited": "ist favorisiert",
+    "is_not_favorited": "ist nicht favorisiert",
+    "is_archived": "ist archiviert",
+    "has_no_tags": "hat kein Tag",
+    "created_on_or_after": "wurde am oder danach erstellt",
+    "is_in_list": "ist in der Liste",
+    "is_in_any_list": "ist in irgendeiner Liste",
+    "is_not_in_any_list": "ist in keiner Liste",
+    "does_not_have_tag": "ist nicht getagged mit",
+    "full_text_search": "Volltextsuche",
+    "and": "und",
+    "or": "oder",
+    "is_not_archived": "ist nicht archiviert",
+    "not_created_on_or_after": "wurde nicht am oder danach erstellt",
+    "url_contains": "URL beinhaltet",
+    "url_does_not_contain": "URL beinhaltet nicht",
+    "is_not_in_list": "ist nicht in der Liste",
+    "has_tag": "ist getagged mit",
+    "type_is": "vom Typ",
+    "type_is_not": "nicht vom Typ",
+    "has_any_tag": "hat irgendein Tag",
+    "created_on_or_before": "erstellt am oder danach",
+    "not_created_on_or_before": "erstellt vor"
   }
 }

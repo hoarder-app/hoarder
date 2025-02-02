@@ -258,7 +258,7 @@
     "multiple_urls_dialog_desc": "The input contains multiple URLs on separate lines. Do you want to import them as separate bookmarks?",
     "import_as_text": "Import as Text Bookmark",
     "import_as_separate_bookmarks": "Import as separate Bookmarks",
-    "placeholder": "Paste a link or an image, write a note or drag and drop an image in here ...",
+    "placeholder": "Paste a link or an image, write a note or drag and drop an image in here…",
     "new_item": "NEW ITEM",
     "disabled_submissions": "Submissions are disabled",
     "text_toolbar": {

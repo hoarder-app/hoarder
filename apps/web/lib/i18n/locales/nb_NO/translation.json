@@ -1,0 +1,19 @@
+{
+  "common": {
+    "home": "Hjem",
+    "name": "Navn",
+    "roles": {
+      "user": "Bruker",
+      "admin": "Administrator"
+    },
+    "something_went_wrong": "Noe gikk galt",
+    "email": "E-post",
+    "search": "Søk",
+    "password": "Passord"
+  },
+  "admin": {
+    "users_list": {
+      "delete_user": "Slett bruker"
+    }
+  }
+}

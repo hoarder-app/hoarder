@@ -22,7 +22,15 @@
     "screenshot": "螢幕截圖",
     "video": "影片",
     "archive": "封存",
-    "home": "首頁"
+    "home": "首頁",
+    "highlights": "突出顯示",
+    "source": "來源",
+    "bookmark_types": {
+      "title": "書籤類型",
+      "link": "連結",
+      "text": "文字",
+      "media": "媒體"
+    }
   },
   "layouts": {
     "masonry": "瀑布式",
@@ -65,7 +73,8 @@
       "title": "排序",
       "newest_first": "最新優先",
       "oldest_first": "最舊優先"
-    }
+    },
+    "recrawl": "重新抓取"
   },
   "settings": {
     "back_to_app": "返回應用程式",
@@ -86,7 +95,10 @@
       "tagging_rule_description": "您在此處新增的提示詞將作為規則提供給模型用於產生標籤。您可以在提示詞預覽區塊檢視最終提示詞。",
       "prompt_preview": "提示詞預覽",
       "text_prompt": "文字提示詞",
-      "images_prompt": "圖片提示詞"
+      "images_prompt": "圖片提示詞",
+      "all_tagging": "全部標記",
+      "text_tagging": "文字標記",
+      "image_tagging": "圖片標記"
     },
     "feeds": {
       "rss_subscriptions": "RSS 訂閱",
@@ -108,6 +120,14 @@
       "new_api_key_desc": "為您的 API 金鑰指定一個獨一無二的名稱",
       "key_success": "金鑰建立成功",
       "key_success_please_copy": "請複製金鑰並儲存至安全的位置。關閉對話框後，您將無法再次存取此金鑰。"
+    },
+    "webhooks": {
+      "webhooks": "網路鈎子",
+      "events": {
+        "title": "事件",
+        "created": "已建立",
+        "edited": "已編輯"
+      }
     }
   },
   "admin": {
