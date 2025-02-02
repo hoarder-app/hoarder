@@ -150,6 +150,10 @@
                     "type": "string",
                     "nullable": true
                   },
+                  "precrawledArchiveAssetId": {
+                    "type": "string",
+                    "nullable": true
+                  },
                   "videoAssetId": {
                     "type": "string",
                     "nullable": true

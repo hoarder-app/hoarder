@@ -1222,6 +1222,7 @@ export interface components {
             imageAssetId?: string | null;
             screenshotAssetId?: string | null;
             fullPageArchiveAssetId?: string | null;
+            precrawledArchiveAssetId?: string | null;
             videoAssetId?: string | null;
             favicon?: string | null;
             htmlContent?: string | null;
