@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@hoarderapp/sdk",
-  "version": "0.21.2",
+  "version": "0.22.0",
   "description": "Typescript SDK for Hoarder",
   "license": "GNU Affero General Public License version 3",
   "keywords": [
