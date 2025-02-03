@@ -1,9 +1,22 @@
 #!/usr/bin/env bash
 
-# Copyright 2024
+set -Eeuo pipefail
+
+# v2.0
+# Copyright 2024-2025
 # Author: vhsdream
 # Adapted from: The Hoarder installation script from https://github.com/community-scripts/ProxmoxVE
 # License: MIT
+
+# Basic error handling
+trap 'catch $? $LINENO' ERR
+
+catch() {
+    if [ "$1" == 0 ]; then
+        return
+    fi
+    echo "Caught error $1 on line $2"
+}
 
 OS="$( awk -F'=' '/^VERSION_CODENAME=/{ print $NF }' /etc/os-release )"
 INSTALL_DIR=/opt/hoarder
@@ -12,7 +25,7 @@ CONFIG_DIR=/etc/hoarder
 LOG_DIR=/var/log/hoarder
 ENV_FILE=${CONFIG_DIR}/hoarder.env
 
-function install {
+install() {
   echo "Hoarder installation for Debian 12/Ubuntu 24.04" && sleep 4
   echo "Installing Dependencies..." && sleep 1
   apt-get install --no-install-recommends -y \
@@ -237,7 +250,7 @@ EOF
   exit 0
 }
 
-function update {
+update() {
   echo "Checking for an update..." && sleep 1
   if [[ ! -d ${INSTALL_DIR} ]]; then echo "Is Hoarder even installed?"; exit 1; fi
   RELEASE=$(curl -s https://api.github.com/repos/hoarder-app/hoarder/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
@@ -254,6 +267,10 @@ function update {
     wget -q "https://github.com/hoarder-app/hoarder/archive/refs/tags/v${RELEASE}.zip"
     unzip -q v${RELEASE}.zip
     mv hoarder-${RELEASE} ${INSTALL_DIR}
+    # https://github.com/hoarder-app/hoarder/issues/967
+    if [[ $(corepack -v) < "0.31.0" ]]; then
+        npm install -g corepack@0.31.0
+    fi
     cd ${INSTALL_DIR}/apps/web && pnpm i --frozen-lockfile
     pnpm exec next build --experimental-build-mode compile
     cd ${INSTALL_DIR}/apps/workers && pnpm i --frozen-lockfile
@@ -274,10 +291,18 @@ function update {
 }
 
 [ "$(id -u)" -ne 0 ] && echo "This script requires root privileges. Please run with sudo or as the root user." && exit 1
-if [[ "$1" == "install" ]]; then
-    install
-elif [[ "$1" == "update" ]]; then
-    update
-else
+command="${1:-}"
+if [ -z "$command" ]; then
     echo -e "Run script with 'install' to install Hoarder and 'update' to update Hoarder" && exit 1
 fi
+
+case "$command" in
+    install)
+        install
+        ;;
+    update)
+        update
+        ;;
+    *)
+        echo -e "Unknown command. Choose 'install' or 'update'" && exit 1
+esac
