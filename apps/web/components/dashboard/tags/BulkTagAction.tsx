@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
 import {
   ActionButton,
   ActionButtonWithTooltip,
 } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
-import InfoTooltip from "@/components/ui/info-tooltip";
 import { Toggle } from "@/components/ui/toggle";
 import { useToast } from "@/components/ui/use-toast";
 import useBulkTagActionsStore from "@/lib/bulkTagActions";
@@ -23,7 +21,7 @@ export default function BulkTagAction() {
   const { t } = useTranslation();
   const { toast } = useToast();
 
-  const { selectedTags, isBulkEditEnabled } = useBulkTagActionsStore();
+  const { selectedTagIds, isBulkEditEnabled } = useBulkTagActionsStore();
   const setIsBulkEditEnabled = useBulkTagActionsStore(
     (state) => state.setIsBulkEditEnabled,
   );
@@ -34,15 +32,12 @@ export default function BulkTagAction() {
   );
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const pathname = usePathname();
-  const [currentPathname, setCurrentPathname] = useState("");
 
   useEffect(() => {
-    if (pathname !== currentPathname) {
-      setCurrentPathname(pathname);
+    return () => {
       setIsBulkEditEnabled(false);
-    }
-  }, [pathname, currentPathname]);
+    };
+  }, []); 
 
   const onError = () => {
     toast({
@@ -62,14 +57,14 @@ export default function BulkTagAction() {
   const deleteSelectedTags = async () => {
     await Promise.all(
       limitConcurrency(
-        selectedTags.map(
-          (item) => () => deleteTagMutator.mutateAsync({ tagId: item.id }),
+        selectedTagIds.map(
+          (item) => () => deleteTagMutator.mutateAsync({ tagId: item }),
         ),
         MAX_CONCURRENT_BULK_ACTIONS,
       ),
     );
     toast({
-      description: `${selectedTags.length} tags have been deleted!`,
+      description: `${selectedTagIds.length} tags have been deleted!`,
     });
     setIsDeleteDialogOpen(false);
   };
@@ -81,7 +76,7 @@ export default function BulkTagAction() {
         : t("actions.select_all"),
       icon: (
         <p className="flex items-center gap-2">
-          ( <CheckCheck size={18} /> {selectedTags.length} )
+          ( <CheckCheck size={18} /> {selectedTagIds.length} )
         </p>
       ),
       action: () =>
@@ -128,17 +123,14 @@ export default function BulkTagAction() {
           onPressedChange={setIsBulkEditEnabled}
         >
           <Pencil className="mr-2 size-4" />
-          Bulk Edit
-          <InfoTooltip size={15} className="my-auto ml-2" variant="explain">
-            <p>Bulk Edit Tags</p>
-          </InfoTooltip>
+          {t("actions.bulk_edit")}
         </Toggle>
       ) : (
         <div className="flex items-center">
           {actionList.map(({ name, icon: Icon, action, alwaysEnable }) => (
             <ActionButtonWithTooltip
               tooltip={name}
-              disabled={!selectedTags.length && !alwaysEnable}
+              disabled={!selectedTagIds.length && !alwaysEnable}
               delayDuration={100}
               variant="ghost"
               loading={false}

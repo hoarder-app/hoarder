@@ -84,18 +84,7 @@ export default function AllTagsView({
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [selectedTag, setSelectedTag] = React.useState<ZTagBasic | null>(null);
 
-  const { setVisibleTags, isBulkEditEnabled } = useBulkTagActionsStore();
-
-  useEffect(() => {
-    const visibleTags: ZTagBasic[] = initialData.map((tag) => ({
-      id: tag.id,
-      name: tag.name,
-    }));
-    setVisibleTags(visibleTags);
-    return () => {
-      setVisibleTags([]);
-    };
-  }, [initialData]);
+  const { setVisibleTagIds, isBulkEditEnabled } = useBulkTagActionsStore();
 
   const handleOpenDialog = (tag: ZTagBasic) => {
     setSelectedTag(tag);
@@ -113,6 +102,15 @@ export default function AllTagsView({
   const { data } = api.tags.list.useQuery(undefined, {
     initialData: { tags: initialData },
   });
+
+  useEffect(() => {
+    const visibleTagIds = data.tags.map(tag => tag.id);
+    setVisibleTagIds(visibleTagIds);
+    return () => {
+      setVisibleTagIds([]);
+    };
+  }, [data.tags]);
+
   // Sort tags by usage desc
   const allTags = data.tags.sort(sortByName ? byNameSorter : byUsageSorter);
 

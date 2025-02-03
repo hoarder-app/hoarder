@@ -42,7 +42,7 @@ export function MultiTagSelector({
             : "bg-background text-foreground hover:bg-foreground hover:text-background",
         )}
         data-id={id}
-        onClick={() => toggleTag({ id: id, name: name })}
+        onClick={() => toggleTag(id)}
       >
         {name} <Separator orientation="vertical" /> {count}
         <div

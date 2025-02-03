@@ -1,14 +1,12 @@
 import { create } from "zustand";
 
-import type { ZTagBasic } from "@hoarder/shared/types/tags";
-
 interface TagState {
-  selectedTags: ZTagBasic[];
-  visibleTags: ZTagBasic[];
+  selectedTagIds: string[];
+  visibleTagIds: string[];
   isBulkEditEnabled: boolean;
   setIsBulkEditEnabled: (isEnabled: boolean) => void;
-  toggleTag: (tag: ZTagBasic) => void;
-  setVisibleTags: (visibleTags: ZTagBasic[]) => void;
+  toggleTag: (tagId: string) => void;
+  setVisibleTagIds: (visibleTagIds: string[]) => void;
   selectAll: () => void;
   unSelectAll: () => void;
   isEverythingSelected: () => boolean;
@@ -16,45 +14,42 @@ interface TagState {
 }
 
 const useBulkTagActionsStore = create<TagState>((set, get) => ({
-  selectedTags: [],
-  visibleTags: [],
+  selectedTagIds: [],
+  visibleTagIds: [],
   isBulkEditEnabled: false,
 
-  toggleTag: (tag: ZTagBasic) => {
-    const selectedTags = get().selectedTags;
-    const isTagAlreadySelected = selectedTags.some((b) => b.id === tag.id);
-    if (isTagAlreadySelected) {
-      set({
-        selectedTags: selectedTags.filter((b) => b.id !== tag.id),
-      });
-    } else {
-      set({ selectedTags: [...selectedTags, tag] });
-    }
+  toggleTag: (tagId: string) => {
+    const selectedTagIds = get().selectedTagIds;
+    set({
+      selectedTagIds: selectedTagIds.includes(tagId)
+        ? selectedTagIds.filter((id) => id !== tagId)
+        : [...selectedTagIds, tagId],
+    });
   },
 
   selectAll: () => {
-    set({ selectedTags: get().visibleTags });
+    set({ selectedTagIds: get().visibleTagIds });
   },
   unSelectAll: () => {
-    set({ selectedTags: [] });
+    set({ selectedTagIds: [] });
   },
 
   isEverythingSelected: () => {
-    return get().selectedTags.length === get().visibleTags.length;
+    return get().selectedTagIds.length === get().visibleTagIds.length;
   },
 
   setIsBulkEditEnabled: (isEnabled) => {
-    set({ isBulkEditEnabled: isEnabled });
-    set({ selectedTags: [] });
-  },
-
-  setVisibleTags: (visibleTags: ZTagBasic[]) => {
     set({
-      visibleTags,
+      isBulkEditEnabled: isEnabled,
+      selectedTagIds: [],
     });
   },
+
+  setVisibleTagIds: (visibleTagIds: string[]) => {
+    set({ visibleTagIds });
+  },
   isTagSelected: (tagId: string) => {
-    return get().selectedTags.some((tag) => tag.id === tagId);
+    return get().selectedTagIds.includes(tagId);
   },
 }));
 
