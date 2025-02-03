@@ -104,7 +104,7 @@ export default function AllTagsView({
   });
 
   useEffect(() => {
-    const visibleTagIds = data.tags.map(tag => tag.id);
+    const visibleTagIds = data.tags.map((tag) => tag.id);
     setVisibleTagIds(visibleTagIds);
     return () => {
       setVisibleTagIds([]);

@@ -37,7 +37,7 @@ export default function BulkTagAction() {
     return () => {
       setIsBulkEditEnabled(false);
     };
-  }, []); 
+  }, []);
 
   const onError = () => {
     toast({
