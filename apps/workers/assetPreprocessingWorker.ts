@@ -67,17 +67,14 @@ async function readImageText(buffer: Buffer) {
 
 async function readPDFText(buffer: Buffer): Promise<{
   text: string;
-  metadata: Record<string, string>;
+  metadata: Record<string, object>;
 }> {
   return new Promise((resolve, reject) => {
-    // Need raw text flag represents as number (1), reference : https://github.com/modesty/pdf2json/issues/76#issuecomment-236569265
-    const pdfParser = new PDFParser(null, 1);
+    const pdfParser = new PDFParser(null, true);
     pdfParser.on("pdfParser_dataError", reject);
     pdfParser.on("pdfParser_dataReady", (pdfData) => {
       resolve({
-        // The type isn't set correctly, reference : https://github.com/modesty/pdf2json/issues/327
-        // eslint-disable-next-line
-        text: (pdfParser as any).getRawTextContent(),
+        text: pdfParser.getRawTextContent(),
         metadata: pdfData.Meta,
       });
     });

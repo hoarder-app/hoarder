@@ -804,8 +804,8 @@ importers:
         specifier: ^3.3.2
         version: 3.3.2
       pdf2json:
-        specifier: ^3.0.5
-        version: 3.0.5
+        specifier: ^3.1.5
+        version: 3.1.5
       pdfjs-dist:
         specifier: ^4.0.379
         version: 4.0.379
@@ -10559,9 +10559,9 @@ packages:
   pathval@1.1.1:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
 
-  pdf2json@3.0.5:
-    resolution: {integrity: sha512-Un1yLbSlk/zfwrltgguskExIioXZlFSFwsyXU0cnBorLywbTbcdzmJJEebh+U2cFCtR7y8nDs5lPHAe7ldxjZg==}
-    engines: {node: '>=18.12.1', npm: '>=8.19.2'}
+  pdf2json@3.1.5:
+    resolution: {integrity: sha512-djZPInDLNuJU+o6GaJNvcoUh6MtUAx3IYTQCTxywHzeg1jC5YWgz/XzlgmduxxBblpMTqY2fjcWwvyRdGPTyrQ==}
+    engines: {node: '>=20.18.0', npm: '>=10.8.2'}
     hasBin: true
     bundledDependencies:
       - '@xmldom/xmldom'
@@ -26931,7 +26931,7 @@ snapshots:
   pathval@1.1.1:
     dev: true
 
-  pdf2json@3.0.5:
+  pdf2json@3.1.5:
     dev: false
 
   pdfjs-dist@4.0.379:
