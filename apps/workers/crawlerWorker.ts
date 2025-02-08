@@ -380,7 +380,7 @@ function extractReadableContent(
   return readableContent;
 }
 
-async function storeScreenshot(
+export async function storeScreenshot(
   screenshot: Buffer | undefined,
   userId: string,
   jobId: string,

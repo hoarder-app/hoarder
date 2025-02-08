@@ -2,11 +2,17 @@ import os from "os";
 import { eq } from "drizzle-orm";
 import { DequeuedJob, Runner } from "liteque";
 import PDFParser from "pdf2json";
+import { fromBuffer } from "pdf2pic";
 import { createWorker } from "tesseract.js";
 
 import type { AssetPreprocessingRequest } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
-import { bookmarkAssets, bookmarks } from "@hoarder/db/schema";
+import {
+  assets,
+  AssetTypes,
+  bookmarkAssets,
+  bookmarks,
+} from "@hoarder/db/schema";
 import { readAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
@@ -15,6 +21,8 @@ import {
   OpenAIQueue,
   triggerSearchReindex,
 } from "@hoarder/shared/queues";
+
+import { storeScreenshot } from "./crawlerWorker";
 
 export class AssetPreprocessingWorker {
   static build() {
@@ -82,6 +90,60 @@ async function readPDFText(buffer: Buffer): Promise<{
   });
 }
 
+export async function extractAndSavePDFScreenshot(
+  pdfBuffer: Buffer,
+  userId: string,
+  bookmarkId: string,
+  jobId: string,
+): Promise<boolean> {
+  try {
+    console.log("extracting =================================");
+    logger.info(
+      `[${jobId}] Attempting to generate PDF screenshot for bookmarkId: ${bookmarkId}`,
+    );
+    /**
+     * If you encountered any issues with this library, make sure you have ghostscript and graphicsmagick installed following this URL
+     * https://github.com/yakovmeister/pdf2image/blob/HEAD/docs/gm-installation.md
+     */
+    const screenshot = await fromBuffer(pdfBuffer, {
+      density: 100,
+      quality: 100,
+      format: "png",
+      preserveAspectRatio: true,
+    })(1, { responseType: "buffer" });
+
+    if (!screenshot.buffer) {
+      logger.error(`[${jobId}] Failed to generate PDF screenshot`);
+      return false;
+    }
+
+    // Store the screenshot
+    const asset = await storeScreenshot(screenshot.buffer, userId, jobId);
+
+    if (!asset) {
+      logger.error(`[${jobId}] Failed to store PDF screenshot`);
+      return false;
+    }
+
+    // Insert into database
+    await db.insert(assets).values({
+      id: asset.assetId,
+      bookmarkId,
+      userId,
+      assetType: AssetTypes.LINK_SCREENSHOT,
+      contentType: asset.contentType,
+      size: asset.size,
+      fileName: asset.fileName,
+    });
+
+    logger.info(`[${jobId}] Successfully saved PDF screenshot to database`);
+    return true;
+  } catch (error) {
+    logger.error(`[${jobId}] Failed to process PDF screenshot: ${error}`);
+    return false;
+  }
+}
+
 async function preprocessImage(
   jobId: string,
   asset: Buffer,
@@ -107,7 +169,13 @@ async function preprocessImage(
 async function preProcessPDF(
   jobId: string,
   asset: Buffer,
-): Promise<{ content: string; metadata: string | null } | undefined> {
+): Promise<
+  | {
+      content: string;
+      metadata: string | null;
+    }
+  | undefined
+> {
   const pdfParse = await readPDFText(asset);
   if (!pdfParse?.text) {
     throw new Error(
@@ -159,8 +227,12 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
     );
   }
 
-  let result: { content: string; metadata: string | null } | undefined =
-    undefined;
+  let result:
+    | {
+        content: string;
+        metadata: string | null;
+      }
+    | undefined = undefined;
 
   switch (bookmark.asset.assetType) {
     case "image":
@@ -168,6 +240,12 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
       break;
     case "pdf":
       result = await preProcessPDF(jobId, asset);
+      await extractAndSavePDFScreenshot(
+        asset,
+        bookmark.userId,
+        bookmarkId,
+        jobId,
+      );
       break;
     default:
       throw new Error(
