@@ -178,6 +178,7 @@ export const adminAppRouter = router({
     await TidyAssetsQueue.enqueue({
       cleanDanglingAssets: true,
       syncAssetMetadata: true,
+      generateMissingPDFScreenshots: true,
     });
   }),
   userStats: adminProcedure

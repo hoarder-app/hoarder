@@ -71,6 +71,7 @@ export const SearchIndexingQueue = new SqliteQueue<ZSearchIndexingRequest>(
 export const zTidyAssetsRequestSchema = z.object({
   cleanDanglingAssets: z.boolean().optional().default(false),
   syncAssetMetadata: z.boolean().optional().default(false),
+  generateMissingPDFScreenshots: z.boolean().optional().default(false),
 });
 export type ZTidyAssetsRequest = z.infer<typeof zTidyAssetsRequestSchema>;
 export const TidyAssetsQueue = new SqliteQueue<ZTidyAssetsRequest>(
