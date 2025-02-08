@@ -5,7 +5,10 @@ import Link from "next/link";
 
 import type { ZBookmarkTypeAsset } from "@hoarder/shared/types/bookmarks";
 import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
-import { getSourceUrl } from "@hoarder/shared-react/utils/bookmarkUtils";
+import {
+  getSourceUrl,
+  isBookmarkStillTagging,
+} from "@hoarder/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 import FooterLinkURL from "./FooterLinkURL";
@@ -32,13 +35,42 @@ function AssetImage({
       );
     }
     case "pdf": {
-      return (
-        <iframe
-          title={bookmarkedAsset.assetId}
-          className={className}
-          src={getAssetUrl(bookmarkedAsset.assetId)}
-        />
+      const screenshot = bookmark.assets.find(
+        (item) => item.assetType === "screenshot",
       );
+      if (screenshot) {
+        return (
+          <Link href={`/dashboard/preview/${bookmark.id}`}>
+            <Image
+              alt="asset"
+              src={getAssetUrl(screenshot.id)}
+              fill={true}
+              className={className}
+            />
+          </Link>
+        );
+      } else {
+        return (
+          <div>
+            <div className="mb-2 text-red-400">
+              {!isBookmarkStillTagging(bookmark) && (
+                <p className="m-2">
+                  Please contact your administrator to perform a compact assets
+                  action to generate PDF screenshots by visiting{" "}
+                  <Link href="/admin/actions" className="underline">
+                    admin/actions
+                  </Link>
+                </p>
+              )}
+            </div>
+            <iframe
+              title={bookmarkedAsset.assetId}
+              className={className}
+              src={getAssetUrl(bookmarkedAsset.assetId)}
+            />
+          </div>
+        );
+      }
     }
     default: {
       const _exhaustiveCheck: never = bookmarkedAsset.assetType;
