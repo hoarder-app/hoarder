@@ -803,9 +803,6 @@ importers:
       node-fetch:
         specifier: ^3.3.2
         version: 3.3.2
-      pdf-to-png-converter:
-        specifier: ^3.6.4
-        version: 3.6.4
       pdf2json:
         specifier: ^3.1.5
         version: 3.1.5
@@ -10536,10 +10533,6 @@ packages:
 
   pathval@1.1.1:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
-
-  pdf-to-png-converter@3.6.4:
-    resolution: {integrity: sha512-zVrvSnyRBukhpmD8e+U1aeKgWbHjggb+dVYHOZYYW1Gtp0HUzydGt4Y1htC7SLURAsQjfYQC0VuxyElfoYWifg==}
-    engines: {node: '>=20', yarn: please-use-npm}
 
   pdf2json@3.1.5:
     resolution: {integrity: sha512-djZPInDLNuJU+o6GaJNvcoUh6MtUAx3IYTQCTxywHzeg1jC5YWgz/XzlgmduxxBblpMTqY2fjcWwvyRdGPTyrQ==}
@@ -26822,11 +26815,6 @@ snapshots:
 
   pathval@1.1.1:
     dev: true
-
-  pdf-to-png-converter@3.6.4:
-    dependencies:
-      pdfjs-dist: 4.10.38
-    dev: false
 
   pdf2json@3.1.5:
     dev: false
