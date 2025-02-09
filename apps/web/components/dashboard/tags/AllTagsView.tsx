@@ -125,7 +125,6 @@ export default function AllTagsView({
   const emptyTags = allTags.filter((t) => t.numBookmarks === 0);
 
   const tagsToPill = (tags: typeof allTags, bulkEditEnabled: boolean) => {
-    console.log(bulkEditEnabled);
     let tagPill;
     if (tags.length) {
       tagPill = (

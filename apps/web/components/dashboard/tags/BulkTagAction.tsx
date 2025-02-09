@@ -1,11 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  ActionButton,
-  ActionButtonWithTooltip,
-} from "@/components/ui/action-button";
+import { ActionButton } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import { Toggle } from "@/components/ui/toggle";
 import { useToast } from "@/components/ui/use-toast";
 import useBulkTagActionsStore from "@/lib/bulkTagActions";
@@ -21,15 +19,14 @@ export default function BulkTagAction() {
   const { t } = useTranslation();
   const { toast } = useToast();
 
-  const { selectedTagIds, isBulkEditEnabled } = useBulkTagActionsStore();
-  const setIsBulkEditEnabled = useBulkTagActionsStore(
-    (state) => state.setIsBulkEditEnabled,
-  );
-  const selectAllTags = useBulkTagActionsStore((state) => state.selectAll);
-  const unSelectAllTags = useBulkTagActionsStore((state) => state.unSelectAll);
-  const isEverythingSelected = useBulkTagActionsStore(
-    (state) => state.isEverythingSelected,
-  );
+  const {
+    selectedTagIds,
+    isBulkEditEnabled,
+    selectAll: selectAllTags,
+    unSelectAll: unSelectAllTags,
+    isEverythingSelected,
+    setIsBulkEditEnabled,
+  } = useBulkTagActionsStore();
 
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
@@ -42,7 +39,7 @@ export default function BulkTagAction() {
   const onError = () => {
     toast({
       variant: "destructive",
-      title: "Something went wrong",
+      title: t("common.something_went_wrong"),
       description: "There was a problem with your request.",
     });
   };
@@ -127,18 +124,17 @@ export default function BulkTagAction() {
         </Toggle>
       ) : (
         <div className="flex items-center">
-          {actionList.map(({ name, icon: Icon, action, alwaysEnable }) => (
-            <ActionButtonWithTooltip
+          {actionList.map(({ name, icon, action, alwaysEnable }) => (
+            <ButtonWithTooltip
               tooltip={name}
               disabled={!selectedTagIds.length && !alwaysEnable}
               delayDuration={100}
               variant="ghost"
-              loading={false}
               key={name}
               onClick={action}
             >
-              {Icon}
-            </ActionButtonWithTooltip>
+              {icon}
+            </ButtonWithTooltip>
           ))}
         </div>
       )}
