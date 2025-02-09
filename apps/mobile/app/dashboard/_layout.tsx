@@ -40,6 +40,7 @@ export default function Dashboard() {
   return (
     <StyledStack
       contentClassName="bg-gray-100 dark:bg-background"
+      headerClassName="dark:text-white"
       screenOptions={{
         headerTransparent: true,
       }}
