@@ -55,7 +55,6 @@ export default function RootLayout() {
                 title: "",
               }}
             />
-            <Stack.Screen name="server-address" />
             <Stack.Screen name="sharing" />
             <Stack.Screen
               name="test-connection"

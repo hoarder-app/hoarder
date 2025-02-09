@@ -40,6 +40,7 @@ export const zBookmarkedLinkSchema = z.object({
   imageAssetId: z.string().nullish(),
   screenshotAssetId: z.string().nullish(),
   fullPageArchiveAssetId: z.string().nullish(),
+  precrawledArchiveAssetId: z.string().nullish(),
   videoAssetId: z.string().nullish(),
   favicon: z.string().nullish(),
   htmlContent: z.string().nullish(),
@@ -74,6 +75,7 @@ export type ZBookmarkContent = z.infer<typeof zBookmarkContentSchema>;
 export const zBareBookmarkSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
+  modifiedAt: z.date().nullable(),
   title: z.string().max(MAX_TITLE_LENGTH).nullish(),
   archived: z.boolean(),
   favourited: z.boolean(),

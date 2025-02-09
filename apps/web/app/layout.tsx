@@ -46,8 +46,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerAuthSession();
+  const userSettings = await getUserLocalSettings();
+  const isRTL = userSettings.lang === "ar";
   return (
-    <html lang="en">
+    <html lang={userSettings.lang} dir={isRTL ? "rtl" : "ltr"}>
       <body className={inter.className}>
         <Providers
           session={session}

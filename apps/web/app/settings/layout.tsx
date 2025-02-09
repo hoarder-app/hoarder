@@ -10,6 +10,7 @@ import {
   Rss,
   Sparkles,
   User,
+  Webhook,
 } from "lucide-react";
 
 const settingsSidebarItems = (
@@ -53,6 +54,11 @@ const settingsSidebarItems = (
     name: t("settings.broken_links.broken_links"),
     icon: <Link size={18} />,
     path: "/settings/broken-links",
+  },
+  {
+    name: t("settings.webhooks.webhooks"),
+    icon: <Webhook size={18} />,
+    path: "/settings/webhooks",
   },
 ];
 

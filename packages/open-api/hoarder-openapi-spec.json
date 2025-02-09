@@ -54,6 +54,10 @@
           "createdAt": {
             "type": "string"
           },
+          "modifiedAt": {
+            "type": "string",
+            "nullable": true
+          },
           "title": {
             "type": "string",
             "nullable": true,
@@ -143,6 +147,10 @@
                     "nullable": true
                   },
                   "fullPageArchiveAssetId": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "precrawledArchiveAssetId": {
                     "type": "string",
                     "nullable": true
                   },
@@ -271,6 +279,7 @@
         "required": [
           "id",
           "createdAt",
+          "modifiedAt",
           "archived",
           "favourited",
           "taggingStatus",
@@ -851,6 +860,10 @@
                     "createdAt": {
                       "type": "string"
                     },
+                    "modifiedAt": {
+                      "type": "string",
+                      "nullable": true
+                    },
                     "title": {
                       "type": "string",
                       "nullable": true,
@@ -883,6 +896,7 @@
                   "required": [
                     "id",
                     "createdAt",
+                    "modifiedAt",
                     "archived",
                     "favourited",
                     "taggingStatus"

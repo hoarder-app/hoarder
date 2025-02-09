@@ -4,7 +4,9 @@ FROM node:22-alpine AS base
 WORKDIR /app
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+
+# https://github.com/hoarder-app/hoarder/issues/967
+RUN npm install -g corepack@0.31.0 && corepack enable
 
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat make g++ py3-pip linux-headers
