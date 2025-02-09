@@ -97,7 +97,6 @@ export async function extractAndSavePDFScreenshot(
   jobId: string,
 ): Promise<boolean> {
   try {
-    console.log("extracting =================================");
     logger.info(
       `[${jobId}] Attempting to generate PDF screenshot for bookmarkId: ${bookmarkId}`,
     );
