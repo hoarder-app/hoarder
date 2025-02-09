@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { FileText } from "lucide-react";
 
 import type { ZBookmarkTypeAsset } from "@hoarder/shared/types/bookmarks";
 import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
@@ -63,11 +64,9 @@ function AssetImage({
                 </p>
               )}
             </div>
-            <iframe
-              title={bookmarkedAsset.assetId}
-              className={className}
-              src={getAssetUrl(bookmarkedAsset.assetId)}
-            />
+            <div className={`${className}`}>
+              <FileText size={48} />
+            </div>
           </div>
         );
       }
