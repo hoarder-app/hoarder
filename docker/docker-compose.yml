@@ -4,6 +4,9 @@ services:
     image: ghcr.io/hoarder-app/hoarder:${HOARDER_VERSION:-release}
     restart: unless-stopped
     volumes:
+      # By default, the data is stored in a docker volume called "data".
+      # If you want to mount a custom directory, change the volume mapping to:
+      # - /path/to/your/directory:/data
       - data:/data
     ports:
       - 3000:3000
@@ -13,7 +16,10 @@ services:
       MEILI_ADDR: http://meilisearch:7700
       BROWSER_WEB_URL: http://chrome:9222
       # OPENAI_API_KEY: ...
-      DATA_DIR: /data
+
+      # You almost never want to change the value of the DATA_DIR variable.
+      # If you want to mount a custom directory, change the volume mapping above instead.
+      DATA_DIR: /data # DON'T CHANGE THIS
   chrome:
     image: gcr.io/zenika-hub/alpine-chrome:123
     restart: unless-stopped
