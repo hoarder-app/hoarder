@@ -10,6 +10,9 @@ export const ClientConfigCtx = createContext<ClientConfig>({
   },
   inference: {
     inferredTagLang: "english",
+    taggingPrompt: "",
+    imagePrompt: "",
+    summarizationPrompt: "",
   },
   serverVersion: undefined,
   disableNewReleaseCheck: true,

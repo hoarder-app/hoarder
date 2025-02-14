@@ -28,9 +28,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import {
-  buildImagePrompt,
-  buildSummaryPrompt,
-  buildTextPrompt,
+  buildContentPromptFromTemplate,
+  buildPromptFromTemplate,
 } from "@hoarder/shared/prompts";
 import {
   zNewPromptSchema,
@@ -297,9 +296,35 @@ export function TaggingRules() {
   );
 }
 
+function fetchCustomPrompts() {
+  const { data: prompts } = api.prompts.list.useQuery();
+
+  const textPrompts = (prompts ?? [])
+    .filter((p) => p.appliesTo == "text" || p.appliesTo == "all_tagging")
+    .map((p) => p.text);
+  const imagePrompts = (prompts ?? [])
+    .filter((p) => p.appliesTo == "images" || p.appliesTo == "all_tagging")
+    .map((p) => p.text);
+  const summaryPrompts = (prompts ?? [])
+    .filter((p) => p.appliesTo == "summary" || p.appliesTo == "all_tagging")
+    .map((p) => p.text);
+  return {
+    text: textPrompts,
+    images: imagePrompts,
+    summary: summaryPrompts,
+  };
+}
+
 export function PromptDemo() {
   const { t } = useTranslation();
-  const { data: prompts } = api.prompts.list.useQuery();
+
+  const tags = {
+    all: ["<ALL_TAGS>"],
+    ai: ["<AI_TAGS>"],
+    human: ["<USER_TAGS>"],
+  };
+  const customPrompts = fetchCustomPrompts();
+
   const clientConfig = useClientConfig();
   return (
     <div className="flex flex-col gap-2">
@@ -308,35 +333,31 @@ export function PromptDemo() {
       </div>
       <p>{t("settings.ai.text_prompt")}</p>
       <code className="whitespace-pre-wrap rounded-md bg-muted p-3 text-sm text-muted-foreground">
-        {buildTextPrompt(
+        {buildContentPromptFromTemplate(
+          clientConfig.inference.taggingPrompt,
           clientConfig.inference.inferredTagLang,
-          (prompts ?? [])
-            .filter(
-              (p) => p.appliesTo == "text" || p.appliesTo == "all_tagging",
-            )
-            .map((p) => p.text),
+          tags,
+          customPrompts.text,
           "\n<CONTENT_HERE>\n",
           /* context length */ 1024 /* The value here doesn't matter */,
         ).trim()}
       </code>
       <p>{t("settings.ai.images_prompt")}</p>
       <code className="whitespace-pre-wrap rounded-md bg-muted p-3 text-sm text-muted-foreground">
-        {buildImagePrompt(
+        {buildPromptFromTemplate(
+          clientConfig.inference.imagePrompt,
           clientConfig.inference.inferredTagLang,
-          (prompts ?? [])
-            .filter(
-              (p) => p.appliesTo == "images" || p.appliesTo == "all_tagging",
-            )
-            .map((p) => p.text),
+          tags,
+          customPrompts.images,
         ).trim()}
       </code>
       <p>{t("settings.ai.summarization_prompt")}</p>
       <code className="whitespace-pre-wrap rounded-md bg-muted p-3 text-sm text-muted-foreground">
-        {buildSummaryPrompt(
+        {buildContentPromptFromTemplate(
+          clientConfig.inference.summarizationPrompt,
           clientConfig.inference.inferredTagLang,
-          (prompts ?? [])
-            .filter((p) => p.appliesTo == "summary")
-            .map((p) => p.text),
+          tags,
+          customPrompts.summary,
           "\n<CONTENT_HERE>\n",
           /* context length */ 1024 /* The value here doesn't matter */,
         ).trim()}

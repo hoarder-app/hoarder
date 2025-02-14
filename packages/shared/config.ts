@@ -26,6 +26,37 @@ const allEnv = z.object({
   INFERENCE_IMAGE_MODEL: z.string().default("gpt-4o-mini"),
   EMBEDDING_TEXT_MODEL: z.string().default("text-embedding-3-small"),
   INFERENCE_CONTEXT_LENGTH: z.coerce.number().default(2048),
+  TAGGING_PROMPT: z.coerce.string().default(
+    `You are a bot in a read-it-later app and your responsibility is to help with automatic tagging.
+Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT END HERE" and suggest relevant tags that describe its key themes, topics, and main ideas. The rules are:
+- Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres.
+- The tags language must be in {{ lang }}.
+- If it's a famous website you may also include a tag for the website. If the tag is not generic enough, don't include it.
+- The content can include text for cookie consent and privacy policy, ignore those while tagging.
+- Aim for 3-5 tags.
+- If there are no good tags, leave the array empty.
+{{ customPrompts }}
+
+CONTENT START HERE
+{{ content }}
+CONTENT END HERE
+You must respond in JSON with the key "tags" and the value is an array of string tags.`,
+  ),
+  IMAGE_PROMPT: z.coerce.string().default(`
+You are a bot in a read-it-later app and your responsibility is to help with automatic tagging.
+Please analyze the attached image and suggest relevant tags that describe its key themes, topics, and main ideas. The rules are:
+- Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres.
+- The tags language must be in  {{ lang }}.
+- If the tag is not generic enough, don't include it.
+- Aim for 10-15 tags.
+- If there are no good tags, don't emit any.
+{{ customPrompts }}
+You must respond in valid JSON with the key "tags" and the value is list of tags. Don't wrap the response in a markdown code.`),
+  SUMMARIZATION_PROMPT: z.coerce.string().default(`
+Summarize the following content responding ONLY with the summary. You MUST follow the following rules:
+- Summary must be in 3-4 sentences.
+- The summary language must be in {{ lang }}.
+{{ customPrompts }}`),
   OCR_CACHE_DIR: z.string().optional(),
   OCR_LANGS: z
     .string()
@@ -92,6 +123,9 @@ const serverConfigSchema = allEnv.transform((val) => {
       imageModel: val.INFERENCE_IMAGE_MODEL,
       inferredTagLang: val.INFERENCE_LANG,
       contextLength: val.INFERENCE_CONTEXT_LENGTH,
+      taggingPrompt: val.TAGGING_PROMPT,
+      imagePrompt: val.IMAGE_PROMPT,
+      summarizationPrompt: val.SUMMARIZATION_PROMPT,
     },
     embedding: {
       textModel: val.EMBEDDING_TEXT_MODEL,
@@ -153,6 +187,9 @@ export const clientConfig = {
   },
   inference: {
     inferredTagLang: serverConfig.inference.inferredTagLang,
+    taggingPrompt: serverConfig.inference.taggingPrompt,
+    imagePrompt: serverConfig.inference.imagePrompt,
+    summarizationPrompt: serverConfig.inference.summarizationPrompt,
   },
   serverVersion: serverConfig.serverVersion,
   disableNewReleaseCheck: serverConfig.disableNewReleaseCheck,

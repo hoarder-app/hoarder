@@ -41,7 +41,7 @@ import {
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import { InferenceClientFactory } from "@hoarder/shared/inference";
-import { buildSummaryPrompt } from "@hoarder/shared/prompts";
+import { buildContentPromptFromTemplate } from "@hoarder/shared/prompts";
 import {
   AssetPreprocessingQueue,
   LinkCrawlerQueue,
@@ -1260,10 +1260,39 @@ Content: ${bookmark.content ?? ""}
           text: true,
         },
       });
+      const dbTags = await ctx.db.query.bookmarkTags.findMany({
+        where: eq(bookmarkTags.userId, ctx.user.id),
+        with: {
+          tagsOnBookmarks: {
+            columns: {
+              attachedBy: true,
+            },
+          },
+        },
+      });
+      const tags = {
+        all: dbTags.map((tag) => tag.name),
+        ai: dbTags
+          .filter(
+            (tag) =>
+              tag.tagsOnBookmarks.filter((tob) => tob.attachedBy == "ai")
+                .length > 0,
+          )
+          .map((tag) => tag.name),
+        human: dbTags
+          .filter(
+            (tag) =>
+              tag.tagsOnBookmarks.filter((tob) => tob.attachedBy == "human")
+                .length > 0,
+          )
+          .map((tag) => tag.name),
+      };
 
-      const summaryPrompt = buildSummaryPrompt(
+      const summaryPrompt = buildContentPromptFromTemplate(
+        serverConfig.inference.summarizationPrompt,
         serverConfig.inference.inferredTagLang,
-        prompts.map((p) => p.text),
+        tags,
+        prompts.map((prompt) => prompt.text),
         bookmarkDetails,
         serverConfig.inference.contextLength,
       );
