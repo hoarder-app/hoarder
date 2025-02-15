@@ -61,6 +61,7 @@ export const zBookmarkedAssetSchema = z.object({
   assetId: z.string(),
   fileName: z.string().nullish(),
   sourceUrl: z.string().nullish(),
+  size: z.number().nullish(),
 });
 export type ZBookmarkedAsset = z.infer<typeof zBookmarkedAssetSchema>;
 

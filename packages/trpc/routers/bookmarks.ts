@@ -259,6 +259,8 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
         assetId: asset.assetId,
         fileName: asset.fileName,
         sourceUrl: asset.sourceUrl,
+        size: assets.find((a) => a.assetType == AssetTypes.BOOKMARK_ASSET)
+          ?.size,
       };
       break;
   }
@@ -807,6 +809,7 @@ export const bookmarksAppRouter = router({
       const bookmarksRes = results.reduce<Record<string, ZBookmark>>(
         (acc, row) => {
           const bookmarkId = row.bookmarksSq.id;
+          const asset = row.assets;
           if (!acc[bookmarkId]) {
             let content: ZBookmarkContent;
             switch (row.bookmarksSq.type) {
@@ -830,6 +833,7 @@ export const bookmarksAppRouter = router({
                   assetType: bookmarkAssets.assetType,
                   fileName: bookmarkAssets.fileName,
                   sourceUrl: bookmarkAssets.sourceUrl ?? null,
+                  size: asset?.size ?? null,
                 };
                 break;
               }
