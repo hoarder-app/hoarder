@@ -31,14 +31,14 @@ function fillPromptTemplate(
   const customPromptsGroup = customPrompts.map((p) => `- ${p}`).join("\n");
 
   return template
-    .replace(RegExp("{{ lang }}", "g"), lang)
     .replace(RegExp("{{ customPrompts }}", "g"), customPromptsGroup)
-    .replace(RegExp("$tags", "g"), "{{ tags }}")
-    .replace(RegExp("$aiTags", "g"), "{{ aiTags }}")
-    .replace(RegExp("$userTags", "g"), "{{ userTags }}")
+    .replace(RegExp("\\$tags", "g"), "{{ tags }}")
+    .replace(RegExp("\\$aiTags", "g"), "{{ aiTags }}")
+    .replace(RegExp("\\$userTags", "g"), "{{ userTags }}")
     .replace(RegExp("{{ tags }}", "g"), allTags)
     .replace(RegExp("{{ aiTags }}", "g"), aiTags)
     .replace(RegExp("{{ userTags }}", "g"), userTags)
+    .replace(RegExp("{{ lang }}", "g"), lang)
     .replace(RegExp("{{ content }}", "g"), content);
 }
 
