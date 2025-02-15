@@ -37,6 +37,9 @@ FROM node:22-alpine AS aio_builder
 LABEL org.opencontainers.image.source="https://github.com/hoarder-app/hoarder"
 WORKDIR /app
 
+# https://github.com/hoarder-app/hoarder/issues/967
+RUN npm install -g corepack@0.31.0
+
 ARG SERVER_VERSION=nightly
 ENV SERVER_VERSION=${SERVER_VERSION}
 

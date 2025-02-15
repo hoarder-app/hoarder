@@ -22,6 +22,16 @@ export default function NotConfiguredPage() {
       setError("Server address is required");
       return;
     }
+
+    // Add URL protocol validation
+    if (
+      !serverAddress.startsWith("http://") &&
+      !serverAddress.startsWith("https://")
+    ) {
+      setError("Server address must start with http:// or https://");
+      return;
+    }
+
     setSettings((s) => ({ ...s, address: serverAddress.replace(/\/$/, "") }));
     navigate("/signin");
   };

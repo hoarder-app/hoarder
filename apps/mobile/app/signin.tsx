@@ -84,6 +84,19 @@ export default function Signin() {
   }
 
   const onSignin = () => {
+    if (!formState.serverAddress) {
+      setError("Server address is required");
+      return;
+    }
+
+    if (
+      !formState.serverAddress.startsWith("http://") &&
+      !formState.serverAddress.startsWith("https://")
+    ) {
+      setError("Server address must start with http:// or https://");
+      return;
+    }
+
     if (loginType === LoginType.Password) {
       const randStr = (Math.random() + 1).toString(36).substring(5);
       login({
