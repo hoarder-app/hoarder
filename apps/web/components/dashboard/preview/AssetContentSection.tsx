@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -13,18 +13,14 @@ import {
 import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 export function AssetContentSection({ bookmark }: { bookmark: ZBookmark }) {
-  const [section, setSection] = useState<string>("");
-
-  useEffect(() => {
+  const initialSection = useMemo(() => {
     const screenshot = bookmark.assets.find(
       (item) => item.assetType === "screenshot",
     );
-    if (screenshot) {
-      setSection("screenshot");
-    } else {
-      setSection("pdf");
-    }
+    return screenshot ? "screenshot" : "pdf";
   }, [bookmark]);
+
+  const [section, setSection] = useState(initialSection);
 
   if (bookmark.content.type != BookmarkTypes.ASSET) {
     throw new Error("Invalid content type");
@@ -44,12 +40,10 @@ export function AssetContentSection({ bookmark }: { bookmark: ZBookmark }) {
       </div>
     );
   }
-
   if (bookmark.content.assetType === "pdf") {
     const screenshot = bookmark.assets.find(
       (item) => item.assetType === "screenshot",
     );
-
     const content =
       section === "screenshot" && screenshot ? (
         <div className="relative h-full min-w-full">
