@@ -224,6 +224,10 @@
                   "sourceUrl": {
                     "type": "string",
                     "nullable": true
+                  },
+                  "size": {
+                    "type": "number",
+                    "nullable": true
                   }
                 },
                 "required": [
