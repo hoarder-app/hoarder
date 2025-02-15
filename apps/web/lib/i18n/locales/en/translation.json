@@ -178,7 +178,8 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "Regenerate AI Tags for Failed Bookmarks Only",
       "regenerate_ai_tags_for_all_bookmarks": "Regenerate AI Tags for All Bookmarks",
       "reindex_all_bookmarks": "Reindex All Bookmarks",
-      "compact_assets": "Compact Assets"
+      "compact_assets": "Compact Assets",
+      "reprocess_assets_fix_mode": "Reprocess Assets (Fix Mode)"
     },
     "users_list": {
       "users_list": "Users List",

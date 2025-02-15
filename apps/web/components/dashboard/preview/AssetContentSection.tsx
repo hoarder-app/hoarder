@@ -57,15 +57,13 @@ export function AssetContentSection({ bookmark }: { bookmark: ZBookmark }) {
     );
   }
   if (bookmark.content.assetType === "pdf") {
-    const screenshot = bookmark.assets.find(
-      (item) => item.assetType === "screenshot",
-    );
+    const screenshot = bookmark.content.screenshotAssetId;
     const content =
       section === "screenshot" && screenshot ? (
         <div className="relative h-full min-w-full">
           <Image
             alt="screenshot"
-            src={`/api/assets/${screenshot.id}`}
+            src={`/api/assets/${screenshot}`}
             fill={true}
             className="object-contain"
           />

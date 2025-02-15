@@ -255,6 +255,9 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
     case BookmarkTypes.ASSET:
       content = {
         type: bookmark.type,
+        screenshotAssetId: assets.find(
+          (a) => a.assetType == AssetTypes.ASSET_SCREENSHOT,
+        )?.id,
         assetType: asset.assetType,
         assetId: asset.assetId,
         fileName: asset.fileName,
@@ -443,6 +446,7 @@ export const bookmarksAppRouter = router({
         case BookmarkTypes.ASSET: {
           await AssetPreprocessingQueue.enqueue({
             bookmarkId: bookmark.id,
+            fixMode: false,
           });
           break;
         }
@@ -832,7 +836,6 @@ export const bookmarksAppRouter = router({
                   assetId: bookmarkAssets.assetId,
                   assetType: bookmarkAssets.assetType,
                   fileName: bookmarkAssets.fileName,
-                  sourceUrl: bookmarkAssets.sourceUrl ?? null,
                   size: asset?.size ?? null,
                 };
                 break;
@@ -884,6 +887,12 @@ export const bookmarksAppRouter = router({
                 content.precrawledArchiveAssetId = row.assets.id;
               }
               acc[bookmarkId].content = content;
+            } else if (acc[bookmarkId].content.type == BookmarkTypes.ASSET) {
+              const content = acc[bookmarkId].content;
+              invariant(content.type == BookmarkTypes.ASSET);
+              if (row.assets.assetType == AssetTypes.ASSET_SCREENSHOT) {
+                content.screenshotAssetId = row.assets.id;
+              }
             }
             acc[bookmarkId].assets.push({
               id: row.assets.id,

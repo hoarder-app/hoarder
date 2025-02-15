@@ -17,6 +17,7 @@ export type ZSortOrder = z.infer<typeof zSortOrder>;
 
 export const zAssetTypesSchema = z.enum([
   "screenshot",
+  "assetScreenshot",
   "bannerImage",
   "fullPageArchive",
   "video",
@@ -62,6 +63,7 @@ export const zBookmarkedAssetSchema = z.object({
   fileName: z.string().nullish(),
   sourceUrl: z.string().nullish(),
   size: z.number().nullish(),
+  screenshotAssetId: z.string().nullish(),
 });
 export type ZBookmarkedAsset = z.infer<typeof zBookmarkedAssetSchema>;
 

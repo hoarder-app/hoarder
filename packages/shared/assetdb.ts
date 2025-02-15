@@ -4,6 +4,7 @@ import { Glob } from "glob";
 import { z } from "zod";
 
 import serverConfig from "./config";
+import logger from "./logger";
 
 const ROOT_PATH = path.join(serverConfig.dataDir, "assets");
 
@@ -240,4 +241,36 @@ export async function* getAllAssets() {
       size,
     };
   }
+}
+
+export async function storeScreenshot(
+  screenshot: Buffer | undefined,
+  userId: string,
+  jobId: string,
+) {
+  if (!serverConfig.crawler.storeScreenshot) {
+    logger.info(
+      `[Crawler][${jobId}] Skipping storing the screenshot as per the config.`,
+    );
+    return null;
+  }
+  if (!screenshot) {
+    logger.info(
+      `[Crawler][${jobId}] Skipping storing the screenshot as it's empty.`,
+    );
+    return null;
+  }
+  const assetId = newAssetId();
+  const contentType = "image/png";
+  const fileName = "screenshot.png";
+  await saveAsset({
+    userId,
+    assetId,
+    metadata: { contentType, fileName },
+    asset: screenshot,
+  });
+  logger.info(
+    `[Crawler][${jobId}] Stored the screenshot as assetId: ${assetId}`,
+  );
+  return { assetId, contentType, fileName, size: screenshot.byteLength };
 }

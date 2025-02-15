@@ -1,22 +1,15 @@
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { DequeuedJob, Runner } from "liteque";
 
 import { db } from "@hoarder/db";
-import {
-  assets,
-  AssetTypes,
-  bookmarkAssets,
-  bookmarks,
-} from "@hoarder/db/schema";
-import { deleteAsset, getAllAssets, readAsset } from "@hoarder/shared/assetdb";
+import { assets } from "@hoarder/db/schema";
+import { deleteAsset, getAllAssets } from "@hoarder/shared/assetdb";
 import logger from "@hoarder/shared/logger";
 import {
   TidyAssetsQueue,
   ZTidyAssetsRequest,
   zTidyAssetsRequestSchema,
 } from "@hoarder/shared/queues";
-
-import { extractAndSavePDFScreenshot } from "./assetPreprocessingWorker";
 
 export class TidyAssetsWorker {
   static build() {
@@ -100,55 +93,6 @@ async function runTidyAssets(job: DequeuedJob<ZTidyAssetsRequest>) {
     throw new Error(
       `[tidyAssets][${jobId}] Got malformed job request: ${request.error.toString()}`,
     );
-  }
-
-  if (request.data.generateMissingPDFScreenshots) {
-    logger.info(`[tidyAssets][${jobId}] Generating missing PDF screenshots...`);
-    const pdfAssets = await db.query.bookmarkAssets.findMany({
-      where: eq(bookmarkAssets.assetType, "pdf"),
-    });
-    for (const pdfAsset of pdfAssets) {
-      try {
-        const pdfScreenshot = await db.query.assets.findFirst({
-          where: and(
-            eq(assets.assetType, AssetTypes.LINK_SCREENSHOT),
-            eq(assets.bookmarkId, pdfAsset.id),
-          ),
-        });
-        console.log(pdfScreenshot);
-        if (!pdfScreenshot) {
-          logger.info(
-            `[tidyAssets][${jobId}] Generating missing PDF screenshot for asset ${pdfAsset.id}...`,
-          );
-          const bookmark = await db.query.bookmarks.findFirst({
-            where: eq(bookmarks.id, pdfAsset.id),
-          });
-          if (!bookmark) {
-            throw new Error(
-              `[tidyAssets][${jobId}] Bookmark not found for asset ${pdfAsset.id}`,
-            );
-          }
-          const pdfBuffer = await readAsset({
-            userId: bookmark.userId,
-            assetId: pdfAsset.assetId,
-          });
-          await extractAndSavePDFScreenshot(
-            Buffer.from(pdfBuffer.asset),
-            bookmark.userId,
-            bookmark.id,
-            jobId,
-          );
-        } else {
-          logger.info(
-            `[tidyAssets][${jobId}] PDF screenshot for asset ${pdfAsset.id} already exists, skipping...`,
-          );
-        }
-      } catch (e) {
-        logger.error(
-          `[tidyAssets][${jobId}] Failed to generate missing PDF screenshots: ${e}`,
-        );
-      }
-    }
   }
 
   for await (const asset of getAllAssets()) {

@@ -228,6 +228,10 @@
                   "size": {
                     "type": "number",
                     "nullable": true
+                  },
+                  "screenshotAssetId": {
+                    "type": "string",
+                    "nullable": true
                   }
                 },
                 "required": [
@@ -264,6 +268,7 @@
                   "type": "string",
                   "enum": [
                     "screenshot",
+                    "assetScreenshot",
                     "bannerImage",
                     "fullPageArchive",
                     "video",
@@ -1125,6 +1130,7 @@
                     "type": "string",
                     "enum": [
                       "screenshot",
+                      "assetScreenshot",
                       "bannerImage",
                       "fullPageArchive",
                       "video",
@@ -1157,6 +1163,7 @@
                       "type": "string",
                       "enum": [
                         "screenshot",
+                        "assetScreenshot",
                         "bannerImage",
                         "fullPageArchive",
                         "video",

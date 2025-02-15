@@ -1,5 +1,5 @@
 import os from "os";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { DequeuedJob, Runner } from "liteque";
 import PDFParser from "pdf2json";
 import { fromBuffer } from "pdf2pic";
@@ -13,7 +13,7 @@ import {
   bookmarkAssets,
   bookmarks,
 } from "@hoarder/db/schema";
-import { readAsset } from "@hoarder/shared/assetdb";
+import { readAsset, storeScreenshot } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
 import {
@@ -21,8 +21,6 @@ import {
   OpenAIQueue,
   triggerSearchReindex,
 } from "@hoarder/shared/queues";
-
-import { storeScreenshot } from "./crawlerWorker";
 
 export class AssetPreprocessingWorker {
   static build() {
@@ -129,7 +127,7 @@ export async function extractAndSavePDFScreenshot(
       id: asset.assetId,
       bookmarkId,
       userId,
-      assetType: AssetTypes.LINK_SCREENSHOT,
+      assetType: AssetTypes.ASSET_SCREENSHOT,
       contentType: asset.contentType,
       size: asset.size,
       fileName: asset.fileName,
@@ -191,6 +189,7 @@ async function preProcessPDF(
 }
 
 async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
+  const isFixMode = req.data.fixMode;
   const jobId = req.id;
   const bookmarkId = req.data.bookmarkId;
 
@@ -235,9 +234,50 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
 
   switch (bookmark.asset.assetType) {
     case "image":
+      if (isFixMode) {
+        const bookmarkAsset = await db.query.bookmarkAssets.findFirst({
+          where: eq(bookmarkAssets.id, bookmarkId),
+        });
+        if (!bookmarkAsset || bookmarkAsset.content) {
+          logger.info(
+            `[assetPreprocessing][${jobId}] Preprocessing image ${bookmark.asset.assetId} for bookmark ${bookmarkId}`,
+          );
+          result = await preprocessImage(jobId, asset);
+        }
+        break;
+      }
       result = await preprocessImage(jobId, asset);
       break;
     case "pdf":
+      if (isFixMode) {
+        const bookmarkAsset = await db.query.bookmarkAssets.findFirst({
+          where: eq(bookmarkAssets.id, bookmarkId),
+        });
+        if (!bookmarkAsset || bookmarkAsset.content) {
+          logger.info(
+            `[assetPreprocessing][${jobId}] Preprocessing PDF ${bookmark.asset.assetId} for bookmark ${bookmarkId}`,
+          );
+          result = await preProcessPDF(jobId, asset);
+        }
+        const screenshotAsset = await db.query.assets.findFirst({
+          where: and(
+            eq(assets.bookmarkId, bookmarkId),
+            eq(assets.assetType, AssetTypes.ASSET_SCREENSHOT),
+          ),
+        });
+        if (!screenshotAsset) {
+          logger.info(
+            `[assetPreprocessing][${jobId}] Preprocessing PDF ${bookmark.asset.assetId} for bookmark ${bookmarkId}`,
+          );
+          await extractAndSavePDFScreenshot(
+            asset,
+            bookmark.userId,
+            bookmarkId,
+            jobId,
+          );
+        }
+        break;
+      }
       result = await preProcessPDF(jobId, asset);
       await extractAndSavePDFScreenshot(
         asset,
@@ -261,10 +301,11 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
       })
       .where(eq(bookmarkAssets.id, bookmarkId));
   }
-
-  await OpenAIQueue.enqueue({
-    bookmarkId,
-  });
+  if (!isFixMode) {
+    await OpenAIQueue.enqueue({
+      bookmarkId,
+    });
+  }
 
   // Update the search index
   await triggerSearchReindex(bookmarkId);

@@ -36,15 +36,12 @@ function AssetImage({
       );
     }
     case "pdf": {
-      const screenshot = bookmark.assets.find(
-        (item) => item.assetType === "screenshot",
-      );
-      if (screenshot) {
+      if (bookmarkedAsset.screenshotAssetId) {
         return (
           <Link href={`/dashboard/preview/${bookmark.id}`}>
             <Image
               alt="asset"
-              src={getAssetUrl(screenshot.id)}
+              src={getAssetUrl(bookmarkedAsset.screenshotAssetId)}
               fill={true}
               className={className}
             />
@@ -56,8 +53,7 @@ function AssetImage({
             <div className="mb-2 text-red-400">
               {!isBookmarkStillTagging(bookmark) && (
                 <p className="m-2">
-                  Please contact your administrator to perform a compact assets
-                  action to generate PDF screenshots by visiting{" "}
+                  You should run Assets preprocessing job fix via{" "}
                   <Link href="/admin/actions" className="underline">
                     admin/actions
                   </Link>

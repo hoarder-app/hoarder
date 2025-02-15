@@ -302,8 +302,7 @@ function AssetCard({
   const title = bookmark.title ?? bookmark.content.fileName;
 
   const assetImage =
-    bookmark.assets.find((item) => item.assetType === "screenshot")?.id ??
-    bookmark.content.assetId;
+    bookmark.content.screenshotAssetId ?? bookmark.content.assetId;
 
   return (
     <View className="flex gap-2">
