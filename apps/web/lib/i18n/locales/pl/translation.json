@@ -148,7 +148,8 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "Regeneruj tagi AI tylko dla nieudanych zakładek",
       "regenerate_ai_tags_for_all_bookmarks": "Regeneruj tagi AI dla wszystkich zakładek",
       "reindex_all_bookmarks": "Ponowne indeksowanie wszystkich zakładek",
-      "compact_assets": "Kompaktuj zasoby"
+      "compact_assets": "Kompaktuj zasoby",
+      "reprocess_assets_fix_mode": "Ponowne przetwarzanie zasobów (tryb fiksny)"
     }
   },
   "tags": {

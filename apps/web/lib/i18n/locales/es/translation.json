@@ -146,7 +146,8 @@
       "compact_assets": "Optimizar multimedia",
       "without_inference": "Sin inferencia",
       "recrawl_failed_links_only": "Recrawlear solo los enlaces fallidos",
-      "recrawl_all_links": "Recrawlear todos los enlaces"
+      "recrawl_all_links": "Recrawlear todos los enlaces",
+      "reprocess_assets_fix_mode": "Reprocesar assets (modo fijo)"
     },
     "users_list": {
       "users_list": "Lista de usuarios",

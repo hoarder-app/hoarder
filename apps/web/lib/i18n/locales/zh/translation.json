@@ -175,7 +175,8 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "仅为失败书签重新生成AI标签",
       "regenerate_ai_tags_for_all_bookmarks": "为所有书签重新生成AI标签",
       "reindex_all_bookmarks": "重新索引所有书签",
-      "compact_assets": "压缩资产"
+      "compact_assets": "压缩资产",
+      "reprocess_assets_fix_mode": "重新处理资产(固定模式)"
     },
     "users_list": {
       "users_list": "用户列表",

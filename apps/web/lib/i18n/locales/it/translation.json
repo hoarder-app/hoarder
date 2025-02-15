@@ -201,7 +201,8 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "Rigenera tag AI solo per i segnalibri falliti",
       "regenerate_ai_tags_for_all_bookmarks": "Rigenera tag AI per tutti i segnalibri",
       "compact_assets": "Compatta asset",
-      "reindex_all_bookmarks": "Reindicizza tutti i segnalibri"
+      "reindex_all_bookmarks": "Reindicizza tutti i segnalibri",
+      "reprocess_assets_fix_mode": "Riprocessa asset (modalità fissa)"
     },
     "users_list": {
       "users_list": "Lista utenti",

@@ -178,7 +178,8 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "Rexenerar etiquetas IA so en marcadores errados",
       "regenerate_ai_tags_for_all_bookmarks": "Rexenerar etiquetas IA para todos os marcadores",
       "reindex_all_bookmarks": "Reindexar marcadores",
-      "compact_assets": "Optimizar multimedia"
+      "compact_assets": "Optimizar multimedia",
+      "reprocess_assets_fix_mode": "Reprocesar assets (modo fixo)"
     },
     "users_list": {
       "users_list": "Listado de usuarios",

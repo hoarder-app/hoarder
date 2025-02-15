@@ -36,7 +36,8 @@
       "recrawl_all_links": "Ponovno pregledavanje svih veza",
       "regenerate_ai_tags_for_all_bookmarks": "Ponovno generiranje AI oznaka za sve oznake",
       "without_inference": "Bez zaključivanja",
-      "compact_assets": "Kompaktiranje resursa"
+      "compact_assets": "Kompaktiranje resursa",
+      "reprocess_assets_fix_mode": "Ponovno postupanje s resursima (fiksni mod)"
     }
   },
   "layouts": {

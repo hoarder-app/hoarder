@@ -94,7 +94,8 @@
       "recrawl_all_links": "Gennemsøg alle links",
       "without_inference": "Uden inferens",
       "regenerate_ai_tags_for_all_bookmarks": "Genopret AI-tags for alle bogmærker",
-      "reindex_all_bookmarks": "Genindeksér alle bogmærker"
+      "reindex_all_bookmarks": "Genindeksér alle bogmærker",
+      "reprocess_assets_fix_mode": "Genbehandling af aktiver (Fix Mode)"
     },
     "background_jobs": {
       "inference_jobs": "Inferensopgaver",

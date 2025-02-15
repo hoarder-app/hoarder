@@ -146,7 +146,8 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "Régénérer les tags AI uniquement pour les favoris échoués",
       "regenerate_ai_tags_for_all_bookmarks": "Régénérer les tags AI pour tous les favoris",
       "reindex_all_bookmarks": "Réindexer tous les favoris",
-      "compact_assets": "Compacter les assets"
+      "compact_assets": "Compacter les assets",
+      "reprocess_assets_fix_mode": "Reprocesser les assets (mode fix)"
     },
     "users_list": {
       "users_list": "Liste des utilisateurs",

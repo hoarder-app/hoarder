@@ -175,7 +175,8 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "KI-Tags nur für fehlgeschlagene Lesezeichen neu generieren",
       "regenerate_ai_tags_for_all_bookmarks": "KI-Tags für alle Lesezeichen neu generieren",
       "reindex_all_bookmarks": "Alle Lesezeichen neu indizieren",
-      "compact_assets": "Assets komprimieren"
+      "compact_assets": "Assets komprimieren",
+      "reprocess_assets_fix_mode": "Assets neu verarbeiten (Fix-Modus)"
     },
     "users_list": {
       "users_list": "Benutzerliste",
