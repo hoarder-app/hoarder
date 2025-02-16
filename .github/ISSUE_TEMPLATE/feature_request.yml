@@ -1,6 +1,6 @@
 name: Feature Request
 description: Request a new feature or idea to be added to Hoarder
-labels: [":hammer: Feature Request"]
+labels: ["feature request", "status/untriaged"]
 body:
   - type: textarea
     id: description
