@@ -228,10 +228,6 @@
                   "size": {
                     "type": "number",
                     "nullable": true
-                  },
-                  "screenshotAssetId": {
-                    "type": "string",
-                    "nullable": true
                   }
                 },
                 "required": [
