@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
 import { TFunction } from "i18next";
-import { Archive, Highlighter, Home, Search, Tag } from "lucide-react";
+import { Archive, Highlighter, Home, Inbox, Search, Tag } from "lucide-react";
 
 import serverConfig from "@hoarder/shared/config";
 
@@ -55,6 +55,11 @@ export default async function Dashboard({
         name: t("common.archive"),
         icon: <Archive size={18} />,
         path: "/dashboard/archive",
+      },
+      {
+        name: t("common.unsorted"),
+        icon: <Inbox size={18} />,
+        path: "/dashboard/unsorted",
       },
     ].flat();
 
