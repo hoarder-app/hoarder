@@ -50,7 +50,7 @@ export function humanFriendlyNameForAssertType(type: ZAssetType) {
 export function isAllowedToAttachAsset(type: ZAssetType) {
   const map: Record<ZAssetType, boolean> = {
     screenshot: true,
-    assetScreenshot: false,
+    assetScreenshot: true,
     fullPageArchive: false,
     precrawledArchive: false,
     bannerImage: true,
@@ -64,7 +64,7 @@ export function isAllowedToAttachAsset(type: ZAssetType) {
 export function isAllowedToDetachAsset(type: ZAssetType) {
   const map: Record<ZAssetType, boolean> = {
     screenshot: true,
-    assetScreenshot: false,
+    assetScreenshot: true,
     fullPageArchive: true,
     precrawledArchive: false,
     bannerImage: true,

@@ -156,7 +156,7 @@ export const adminAppRouter = router({
     await Promise.all(bookmarkIds.map((b) => triggerSearchReindex(b.id)));
   }),
   reprocessAssetsFixMode: adminProcedure.mutation(async ({ ctx }) => {
-    const bookmarkIds = await ctx.db.query.bookmarks.findMany({
+    const bookmarkIds = await ctx.db.query.bookmarkAssets.findMany({
       columns: {
         id: true,
       },

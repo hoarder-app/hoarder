@@ -1,5 +1,5 @@
 import os from "os";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { DequeuedJob, Runner } from "liteque";
 import PDFParser from "pdf2json";
 import { fromBuffer } from "pdf2pic";
@@ -13,7 +13,7 @@ import {
   bookmarkAssets,
   bookmarks,
 } from "@hoarder/db/schema";
-import { readAsset, storeScreenshot } from "@hoarder/shared/assetdb";
+import { newAssetId, readAsset, saveAsset } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
 import logger from "@hoarder/shared/logger";
 import {
@@ -89,20 +89,32 @@ async function readPDFText(buffer: Buffer): Promise<{
 }
 
 export async function extractAndSavePDFScreenshot(
-  pdfBuffer: Buffer,
-  userId: string,
-  bookmarkId: string,
   jobId: string,
+  asset: Buffer,
+  bookmark: NonNullable<Awaited<ReturnType<typeof getBookmark>>>,
+  isFixMode: boolean,
 ): Promise<boolean> {
+  {
+    const alreadyHasScreenshot =
+      bookmark.assets.find(
+        (r) => r.assetType === AssetTypes.ASSET_SCREENSHOT,
+      ) !== undefined;
+    if (alreadyHasScreenshot && isFixMode) {
+      logger.info(
+        `[assetPreprocessing][${jobId}] Skipping PDF screenshot generation as it's already been generated.`,
+      );
+      return false;
+    }
+  }
+  logger.info(
+    `[assetPreprocessing][${jobId}] Attempting to generate PDF screenshot for bookmarkId: ${bookmark.id}`,
+  );
   try {
-    logger.info(
-      `[${jobId}] Attempting to generate PDF screenshot for bookmarkId: ${bookmarkId}`,
-    );
     /**
      * If you encountered any issues with this library, make sure you have ghostscript and graphicsmagick installed following this URL
      * https://github.com/yakovmeister/pdf2image/blob/HEAD/docs/gm-installation.md
      */
-    const screenshot = await fromBuffer(pdfBuffer, {
+    const screenshot = await fromBuffer(asset, {
       density: 100,
       quality: 100,
       format: "png",
@@ -110,42 +122,68 @@ export async function extractAndSavePDFScreenshot(
     })(1, { responseType: "buffer" });
 
     if (!screenshot.buffer) {
-      logger.error(`[${jobId}] Failed to generate PDF screenshot`);
+      logger.error(
+        `[assetPreprocessing][${jobId}] Failed to generate PDF screenshot`,
+      );
       return false;
     }
 
     // Store the screenshot
-    const asset = await storeScreenshot(screenshot.buffer, userId, jobId);
-
-    if (!asset) {
-      logger.error(`[${jobId}] Failed to store PDF screenshot`);
-      return false;
-    }
+    const assetId = newAssetId();
+    const fileName = "screenshot.png";
+    const contentType = "image/png";
+    await saveAsset({
+      userId: bookmark.userId,
+      assetId,
+      asset: screenshot.buffer,
+      metadata: {
+        contentType,
+        fileName,
+      },
+    });
 
     // Insert into database
     await db.insert(assets).values({
-      id: asset.assetId,
-      bookmarkId,
-      userId,
+      id: assetId,
+      bookmarkId: bookmark.id,
+      userId: bookmark.userId,
       assetType: AssetTypes.ASSET_SCREENSHOT,
-      contentType: asset.contentType,
-      size: asset.size,
-      fileName: asset.fileName,
+      contentType,
+      size: screenshot.buffer.byteLength,
+      fileName,
     });
 
-    logger.info(`[${jobId}] Successfully saved PDF screenshot to database`);
+    logger.info(
+      `[assetPreprocessing][${jobId}] Successfully saved PDF screenshot to database`,
+    );
     return true;
   } catch (error) {
-    logger.error(`[${jobId}] Failed to process PDF screenshot: ${error}`);
+    logger.error(
+      `[assetPreprocessing][${jobId}] Failed to process PDF screenshot: ${error}`,
+    );
     return false;
   }
 }
 
-async function preprocessImage(
+async function extractAndSaveImageText(
   jobId: string,
   asset: Buffer,
-): Promise<{ content: string; metadata: string | null } | undefined> {
+  bookmark: NonNullable<Awaited<ReturnType<typeof getBookmark>>>,
+  isFixMode: boolean,
+): Promise<boolean> {
+  {
+    const alreadyHasText = !!bookmark.asset.content;
+    if (alreadyHasText && isFixMode) {
+      logger.info(
+        `[assetPreprocessing][${jobId}] Skipping image text extraction as it's already been extracted.`,
+      );
+      return false;
+    }
+  }
   let imageText = null;
+  logger.info(
+    `[assetPreprocessing][${jobId}] Attempting to extract text from image.`,
+  );
   try {
     imageText = await readImageText(asset);
   } catch (e) {
@@ -154,25 +192,40 @@ async function preprocessImage(
     );
   }
   if (!imageText) {
-    return undefined;
+    return false;
   }
 
   logger.info(
     `[assetPreprocessing][${jobId}] Extracted ${imageText.length} characters from image.`,
   );
-  return { content: imageText, metadata: null };
+  await db
+    .update(bookmarkAssets)
+    .set({
+      content: imageText,
+      metadata: null,
+    })
+    .where(eq(bookmarkAssets.id, bookmark.id));
+  return true;
 }
 
-async function preProcessPDF(
+async function extractAndSavePDFText(
   jobId: string,
   asset: Buffer,
-): Promise<
-  | {
-      content: string;
-      metadata: string | null;
+  bookmark: NonNullable<Awaited<ReturnType<typeof getBookmark>>>,
+  isFixMode: boolean,
+): Promise<boolean> {
+  {
+    const alreadyHasText = !!bookmark.asset.content;
+    if (alreadyHasText && isFixMode) {
+      logger.info(
+        `[assetPreprocessing][${jobId}] Skipping PDF text extraction as it's already been extracted.`,
+      );
+      return false;
     }
-  | undefined
-> {
+  }
+  logger.info(
+    `[assetPreprocessing][${jobId}] Attempting to extract text from pdf.`,
+  );
   const pdfParse = await readPDFText(asset);
   if (!pdfParse?.text) {
     throw new Error(
@@ -182,10 +235,24 @@ async function preProcessPDF(
   logger.info(
     `[assetPreprocessing][${jobId}] Extracted ${pdfParse.text.length} characters from pdf.`,
   );
-  return {
-    content: pdfParse.text,
-    metadata: pdfParse.metadata ? JSON.stringify(pdfParse.metadata) : null,
-  };
+  await db
+    .update(bookmarkAssets)
+    .set({
+      content: pdfParse.text,
+      metadata: pdfParse.metadata ? JSON.stringify(pdfParse.metadata) : null,
+    })
+    .where(eq(bookmarkAssets.id, bookmark.id));
+  return true;
+}
+
+async function getBookmark(bookmarkId: string) {
+  return db.query.bookmarks.findFirst({
+    where: eq(bookmarks.id, bookmarkId),
+    with: {
+      asset: true,
+      assets: true,
+    },
+  });
 }
 
 async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
@@ -197,6 +264,7 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
     where: eq(bookmarks.id, bookmarkId),
     with: {
       asset: true,
+      assets: true,
     },
   });
 
@@ -225,65 +293,28 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
     );
   }
 
-  let result:
-    | {
-        content: string;
-        metadata: string | null;
-      }
-    | undefined = undefined;
-
+  let anythingChanged = false;
   switch (bookmark.asset.assetType) {
     case "image":
-      if (isFixMode) {
-        const bookmarkAsset = await db.query.bookmarkAssets.findFirst({
-          where: eq(bookmarkAssets.id, bookmarkId),
-        });
-        if (!bookmarkAsset || bookmarkAsset.content) {
-          logger.info(
-            `[assetPreprocessing][${jobId}] Preprocessing image ${bookmark.asset.assetId} for bookmark ${bookmarkId}`,
-          );
-          result = await preprocessImage(jobId, asset);
-        }
-        break;
-      }
-      result = await preprocessImage(jobId, asset);
+      anythingChanged ||= await extractAndSaveImageText(
+        jobId,
+        asset,
+        bookmark,
+        isFixMode,
+      );
       break;
     case "pdf":
-      if (isFixMode) {
-        const bookmarkAsset = await db.query.bookmarkAssets.findFirst({
-          where: eq(bookmarkAssets.id, bookmarkId),
-        });
-        if (!bookmarkAsset || bookmarkAsset.content) {
-          logger.info(
-            `[assetPreprocessing][${jobId}] Preprocessing PDF ${bookmark.asset.assetId} for bookmark ${bookmarkId}`,
-          );
-          result = await preProcessPDF(jobId, asset);
-        }
-        const screenshotAsset = await db.query.assets.findFirst({
-          where: and(
-            eq(assets.bookmarkId, bookmarkId),
-            eq(assets.assetType, AssetTypes.ASSET_SCREENSHOT),
-          ),
-        });
-        if (!screenshotAsset) {
-          logger.info(
-            `[assetPreprocessing][${jobId}] Preprocessing PDF ${bookmark.asset.assetId} for bookmark ${bookmarkId}`,
-          );
-          await extractAndSavePDFScreenshot(
-            asset,
-            bookmark.userId,
-            bookmarkId,
-            jobId,
-          );
-        }
-        break;
-      }
-      result = await preProcessPDF(jobId, asset);
-      await extractAndSavePDFScreenshot(
-        asset,
-        bookmark.userId,
-        bookmarkId,
+      anythingChanged ||= await extractAndSavePDFText(
         jobId,
+        asset,
+        bookmark,
+        isFixMode,
+      );
+      anythingChanged ||= await extractAndSavePDFScreenshot(
+        jobId,
+        asset,
+        bookmark,
+        isFixMode,
       );
       break;
     default:
@@ -292,21 +323,12 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
       );
   }
 
-  if (result) {
-    await db
-      .update(bookmarkAssets)
-      .set({
-        content: result.content,
-        metadata: result.metadata,
-      })
-      .where(eq(bookmarkAssets.id, bookmarkId));
-  }
-  if (!isFixMode) {
+  if (anythingChanged) {
     await OpenAIQueue.enqueue({
       bookmarkId,
     });
-  }
 
-  // Update the search index
-  await triggerSearchReindex(bookmarkId);
+    // Update the search index
+    await triggerSearchReindex(bookmarkId);
+  }
 }

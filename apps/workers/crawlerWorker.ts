@@ -45,7 +45,6 @@ import {
   saveAsset,
   saveAssetFromFile,
   silentDeleteAsset,
-  storeScreenshot,
   SUPPORTED_UPLOAD_ASSET_TYPES,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
@@ -379,6 +378,38 @@ function extractReadableContent(
   const readableContent = new Readability(purifiedDOM.window.document).parse();
   logger.info(`[Crawler][${jobId}] Done extracting readable content.`);
   return readableContent;
+}
+
+async function storeScreenshot(
+  screenshot: Buffer | undefined,
+  userId: string,
+  jobId: string,
+) {
+  if (!serverConfig.crawler.storeScreenshot) {
+    logger.info(
+      `[Crawler][${jobId}] Skipping storing the screenshot as per the config.`,
+    );
+    return null;
+  }
+  if (!screenshot) {
+    logger.info(
+      `[Crawler][${jobId}] Skipping storing the screenshot as it's empty.`,
+    );
+    return null;
+  }
+  const assetId = newAssetId();
+  const contentType = "image/png";
+  const fileName = "screenshot.png";
+  await saveAsset({
+    userId,
+    assetId,
+    metadata: { contentType, fileName },
+    asset: screenshot,
+  });
+  logger.info(
+    `[Crawler][${jobId}] Stored the screenshot as assetId: ${assetId}`,
+  );
+  return { assetId, contentType, fileName, size: screenshot.byteLength };
 }
 
 async function downloadAndStoreFile(

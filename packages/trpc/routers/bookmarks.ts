@@ -255,15 +255,11 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
     case BookmarkTypes.ASSET:
       content = {
         type: bookmark.type,
-        screenshotAssetId: assets.find(
-          (a) => a.assetType == AssetTypes.ASSET_SCREENSHOT,
-        )?.id,
         assetType: asset.assetType,
         assetId: asset.assetId,
         fileName: asset.fileName,
         sourceUrl: asset.sourceUrl,
-        size: assets.find((a) => a.assetType == AssetTypes.BOOKMARK_ASSET)
-          ?.size,
+        size: assets.find((a) => a.id == asset.assetId)?.size,
       };
       break;
   }
@@ -813,7 +809,6 @@ export const bookmarksAppRouter = router({
       const bookmarksRes = results.reduce<Record<string, ZBookmark>>(
         (acc, row) => {
           const bookmarkId = row.bookmarksSq.id;
-          const asset = row.assets;
           if (!acc[bookmarkId]) {
             let content: ZBookmarkContent;
             switch (row.bookmarksSq.type) {
@@ -836,7 +831,8 @@ export const bookmarksAppRouter = router({
                   assetId: bookmarkAssets.assetId,
                   assetType: bookmarkAssets.assetType,
                   fileName: bookmarkAssets.fileName,
-                  size: asset?.size ?? null,
+                  sourceUrl: bookmarkAssets.sourceUrl ?? null,
+                  size: null, // This will get filled in the asset loop
                 };
                 break;
               }
@@ -887,11 +883,12 @@ export const bookmarksAppRouter = router({
                 content.precrawledArchiveAssetId = row.assets.id;
               }
               acc[bookmarkId].content = content;
-            } else if (acc[bookmarkId].content.type == BookmarkTypes.ASSET) {
+            }
+            if (acc[bookmarkId].content.type == BookmarkTypes.ASSET) {
               const content = acc[bookmarkId].content;
-              invariant(content.type == BookmarkTypes.ASSET);
-              if (row.assets.assetType == AssetTypes.ASSET_SCREENSHOT) {
-                content.screenshotAssetId = row.assets.id;
+              if (row.assets.id == content.assetId) {
+                // If this is the bookmark's main aset, caputure its size.
+                content.size = row.assets.size;
               }
             }
             acc[bookmarkId].assets.push({
