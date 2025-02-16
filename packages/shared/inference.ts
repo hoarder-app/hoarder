@@ -2,8 +2,8 @@ import { Ollama } from "ollama";
 import OpenAI from "openai";
 
 import serverConfig from "./config";
-import logger from "./logger";
 import { customFetch } from "./customFetch";
+import logger from "./logger";
 
 export interface InferenceResponse {
   response: string;
