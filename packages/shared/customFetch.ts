@@ -10,5 +10,5 @@ export function customFetch(
     signal: AbortSignal.timeout(timeout),
     ...init,
   });
-};
+}
 
