@@ -9,6 +9,7 @@ import {
   OpenAIQueue,
   SearchIndexingQueue,
   TidyAssetsQueue,
+  triggerReprocessingFixMode,
   triggerSearchReindex,
 } from "@hoarder/shared/queues";
 import {
@@ -153,6 +154,15 @@ export const adminAppRouter = router({
     });
 
     await Promise.all(bookmarkIds.map((b) => triggerSearchReindex(b.id)));
+  }),
+  reprocessAssetsFixMode: adminProcedure.mutation(async ({ ctx }) => {
+    const bookmarkIds = await ctx.db.query.bookmarkAssets.findMany({
+      columns: {
+        id: true,
+      },
+    });
+
+    await Promise.all(bookmarkIds.map((b) => triggerReprocessingFixMode(b.id)));
   }),
   reRunInferenceOnAllBookmarks: adminProcedure
     .input(

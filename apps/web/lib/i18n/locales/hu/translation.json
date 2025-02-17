@@ -258,7 +258,8 @@
       "regenerate_ai_tags_for_all_bookmarks": "Minden könyvjelző MI címkéjének lecserélése",
       "regenerate_ai_tags_for_failed_bookmarks_only": "Hibás könyvjelzők MI címkéjének lecserélése",
       "reindex_all_bookmarks": "Minden könyvjelző újraindexelése",
-      "compact_assets": "Kompakt tulajdonok"
+      "compact_assets": "Kompakt tulajdonok",
+      "reprocess_assets_fix_mode": "Tulajdonok függvényezése (Fix Mod)"
     },
     "users_list": {
       "asset_sizes": "Tulajdon méretek",

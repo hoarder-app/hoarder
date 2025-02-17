@@ -156,7 +156,8 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "僅重新產生失敗書籤的 AI 標籤",
       "regenerate_ai_tags_for_all_bookmarks": "重新產生所有書籤的 AI 標籤",
       "reindex_all_bookmarks": "重新索引所有書籤",
-      "compact_assets": "壓縮資源"
+      "compact_assets": "壓縮資源",
+      "reprocess_assets_fix_mode": "重新處理資源(固定模式)"
     },
     "users_list": {
       "users_list": "使用者清單",

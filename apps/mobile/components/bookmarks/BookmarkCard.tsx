@@ -1,3 +1,4 @@
+import React from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -300,11 +301,15 @@ function AssetCard({
   }
   const title = bookmark.title ?? bookmark.content.fileName;
 
+  const assetImage =
+    bookmark.assets.find((r) => r.assetType == "assetScreenshot")?.id ??
+    bookmark.content.assetId;
+
   return (
     <View className="flex gap-2">
       <Pressable onPress={onOpenBookmark}>
         <BookmarkAssetImage
-          assetId={bookmark.content.assetId}
+          assetId={assetImage}
           className="h-56 min-h-56 w-full object-cover"
         />
       </Pressable>

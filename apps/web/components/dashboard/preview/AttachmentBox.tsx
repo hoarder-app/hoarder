@@ -45,6 +45,7 @@ export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
   const { t } = useTranslation();
   const typeToIcon: Record<ZAssetType, React.ReactNode> = {
     screenshot: <Camera className="size-4" />,
+    assetScreenshot: <Camera className="size-4" />,
     fullPageArchive: <Archive className="size-4" />,
     precrawledArchive: <Archive className="size-4" />,
     bannerImage: <Image className="size-4" />,

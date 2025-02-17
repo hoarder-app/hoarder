@@ -592,6 +592,7 @@ async function handleAsAssetBookmark(
   });
   await AssetPreprocessingQueue.enqueue({
     bookmarkId,
+    fixMode: false,
   });
 }
 

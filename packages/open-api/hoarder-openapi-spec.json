@@ -224,6 +224,10 @@
                   "sourceUrl": {
                     "type": "string",
                     "nullable": true
+                  },
+                  "size": {
+                    "type": "number",
+                    "nullable": true
                   }
                 },
                 "required": [
@@ -260,6 +264,7 @@
                   "type": "string",
                   "enum": [
                     "screenshot",
+                    "assetScreenshot",
                     "bannerImage",
                     "fullPageArchive",
                     "video",
@@ -1121,6 +1126,7 @@
                     "type": "string",
                     "enum": [
                       "screenshot",
+                      "assetScreenshot",
                       "bannerImage",
                       "fullPageArchive",
                       "video",
@@ -1153,6 +1159,7 @@
                       "type": "string",
                       "enum": [
                         "screenshot",
+                        "assetScreenshot",
                         "bannerImage",
                         "fullPageArchive",
                         "video",

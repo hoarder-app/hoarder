@@ -148,7 +148,8 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "Yalnızca Başarısız Yer İşaretleri için Yapay Zeka Etiketlerini Yeniden Oluştur",
       "regenerate_ai_tags_for_all_bookmarks": "Tüm Yer İşaretleri için Yapay Zeka Etiketlerini Yeniden Oluştur",
       "reindex_all_bookmarks": "Tüm Yer İşaretlerini Yeniden Dizine Al",
-      "compact_assets": "Varlıkları Sıkıştır"
+      "compact_assets": "Varlıkları Sıkıştır",
+      "reprocess_assets_fix_mode": "Varlıkları Yeniden İşle (Fix Mod)"
     },
     "users_list": {
       "users_list": "Kullanıcı Listesi",

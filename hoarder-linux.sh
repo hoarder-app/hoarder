@@ -36,6 +36,8 @@ install() {
     sudo \
     unzip \
     gnupg \
+    graphicsmagick \
+    ghostscript \
     ca-certificates
   if [[ "$OS" == "noble" ]]; then
     apt-get install -y software-properties-common

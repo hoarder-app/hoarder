@@ -259,6 +259,7 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
         assetId: asset.assetId,
         fileName: asset.fileName,
         sourceUrl: asset.sourceUrl,
+        size: assets.find((a) => a.id == asset.assetId)?.size,
       };
       break;
   }
@@ -441,6 +442,7 @@ export const bookmarksAppRouter = router({
         case BookmarkTypes.ASSET: {
           await AssetPreprocessingQueue.enqueue({
             bookmarkId: bookmark.id,
+            fixMode: false,
           });
           break;
         }
@@ -830,6 +832,7 @@ export const bookmarksAppRouter = router({
                   assetType: bookmarkAssets.assetType,
                   fileName: bookmarkAssets.fileName,
                   sourceUrl: bookmarkAssets.sourceUrl ?? null,
+                  size: null, // This will get filled in the asset loop
                 };
                 break;
               }
@@ -880,6 +883,13 @@ export const bookmarksAppRouter = router({
                 content.precrawledArchiveAssetId = row.assets.id;
               }
               acc[bookmarkId].content = content;
+            }
+            if (acc[bookmarkId].content.type == BookmarkTypes.ASSET) {
+              const content = acc[bookmarkId].content;
+              if (row.assets.id == content.assetId) {
+                // If this is the bookmark's main aset, caputure its size.
+                content.size = row.assets.size;
+              }
             }
             acc[bookmarkId].assets.push({
               id: row.assets.id,

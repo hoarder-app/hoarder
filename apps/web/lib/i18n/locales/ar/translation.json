@@ -153,7 +153,7 @@
     }
   },
   "admin": {
-    "admin_settings": "إعدادات المدير",
+    "admin_settings": "إعدادات المشرف",
     "server_stats": {
       "server_stats": "إحصائيات الخادم",
       "total_users": "إجمالي المستخدمين",
@@ -161,15 +161,36 @@
       "server_version": "إصدار الخادم"
     },
     "background_jobs": {
-      "background_jobs": "المهام التلقائية",
+      "background_jobs": "المهام الخلفية",
       "crawler_jobs": "مهام الاستكشاف",
       "indexing_jobs": "مهام الفهرسة",
-      "inference_jobs": "مهام التحليل الذكي",
-      "tidy_assets_jobs": "مهام تنظيم الملفات",
+      "inference_jobs": "مهام الاستدلال",
+      "tidy_assets_jobs": "مهام تنظيم الوسائط",
       "job": "مهمة",
       "queued": "في قائمة الانتظار",
-      "pending": "معلق",
-      "failed": "فشل"
+      "pending": "قيد الانتظار",
+      "failed": "فشلت"
+    },
+    "actions": {
+      "recrawl_failed_links_only": "إعادة استكشاف الروابط الفاشلة فقط",
+      "recrawl_all_links": "إعادة استكشاف جميع الروابط",
+      "without_inference": "بدون استدلال",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "إعادة إنشاء علامات الذكاء الاصطناعي للإشارات المرجعية الفاشلة فقط",
+      "regenerate_ai_tags_for_all_bookmarks": "إعادة إنشاء علامات الذكاء الاصطناعي لجميع الإشارات المرجعية",
+      "reindex_all_bookmarks": "إعادة فهرسة جميع الإشارات المرجعية",
+      "compact_assets": "ضغط الوسائط",
+      "reprocess_assets_fix_mode": "إعادة معالجة الوسائط (وضع الإصلاح)"
+    },
+    "users_list": {
+      "users_list": "قائمة المستخدمين",
+      "create_user": "إنشاء مستخدم",
+      "change_role": "تغيير الدور",
+      "reset_password": "إعادة تعيين كلمة المرور",
+      "delete_user": "حذف المستخدم",
+      "num_bookmarks": "عدد الإشارات المرجعية",
+      "asset_sizes": "أحجام الوسائط",
+      "local_user": "مستخدم محلي",
+      "confirm_password": "تأكيد كلمة المرور"
     }
   },
   "options": {

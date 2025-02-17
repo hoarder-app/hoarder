@@ -37,6 +37,21 @@ export default function AdminActions() {
       },
     });
 
+  const { mutate: reprocessAssetsFixMode, isPending: isReprocessingPending } =
+    api.admin.reprocessAssetsFixMode.useMutation({
+      onSuccess: () => {
+        toast({
+          description: "Reprocessing enqueued",
+        });
+      },
+      onError: (e) => {
+        toast({
+          variant: "destructive",
+          description: e.message,
+        });
+      },
+    });
+
   const {
     mutate: reRunInferenceOnAllBookmarks,
     isPending: isInferencePending,
@@ -123,6 +138,13 @@ export default function AdminActions() {
           onClick={() => reindexBookmarks()}
         >
           {t("admin.actions.reindex_all_bookmarks")}
+        </ActionButton>
+        <ActionButton
+          variant="destructive"
+          loading={isReprocessingPending}
+          onClick={() => reprocessAssetsFixMode()}
+        >
+          {t("admin.actions.reprocess_assets_fix_mode")}
         </ActionButton>
         <ActionButton
           variant="destructive"

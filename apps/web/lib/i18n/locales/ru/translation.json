@@ -211,7 +211,8 @@
       "compact_assets": "Сжать ресурсы",
       "regenerate_ai_tags_for_failed_bookmarks_only": "Перегенерировать ИИ метки только для неудачных закладок",
       "reindex_all_bookmarks": "Переиндексировать все закладки",
-      "recrawl_all_links": "Пересканировать все ссылки"
+      "recrawl_all_links": "Пересканировать все ссылки",
+      "reprocess_assets_fix_mode": "Перепроцессировать ресурсы (фиксный режим)"
     },
     "admin_settings": "Настройки администратора"
   },

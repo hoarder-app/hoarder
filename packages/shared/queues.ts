@@ -98,6 +98,13 @@ export async function triggerSearchDeletion(bookmarkId: string) {
   });
 }
 
+export async function triggerReprocessingFixMode(bookmarkId: string) {
+  await AssetPreprocessingQueue.enqueue({
+    bookmarkId,
+    fixMode: true,
+  });
+}
+
 export const zvideoRequestSchema = z.object({
   bookmarkId: z.string(),
   url: z.string(),
@@ -143,6 +150,7 @@ export const FeedQueue = new SqliteQueue<ZFeedRequestSchema>(
 // Preprocess Assets
 export const zAssetPreprocessingRequestSchema = z.object({
   bookmarkId: z.string(),
+  fixMode: z.boolean().optional().default(false),
 });
 export type AssetPreprocessingRequest = z.infer<
   typeof zAssetPreprocessingRequestSchema
