@@ -7,7 +7,14 @@ import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
 import { TFunction } from "i18next";
-import { Archive, Highlighter, Home, Search, Tag } from "lucide-react";
+import {
+  Archive,
+  ClipboardList,
+  Highlighter,
+  Home,
+  Search,
+  Tag,
+} from "lucide-react";
 
 import serverConfig from "@hoarder/shared/config";
 
@@ -58,6 +65,15 @@ export default async function Dashboard({
       },
     ].flat();
 
+  const mobileSidebar = (t: TFunction) => [
+    ...items(t),
+    {
+      name: t("lists.all_lists"),
+      icon: <ClipboardList size={18} />,
+      path: "/dashboard/lists",
+    },
+  ];
+
   return (
     <SidebarLayout
       sidebar={
@@ -71,7 +87,7 @@ export default async function Dashboard({
           }
         />
       }
-      mobileSidebar={<MobileSidebar items={items} />}
+      mobileSidebar={<MobileSidebar items={mobileSidebar} />}
       modal={modal}
     >
       {children}
