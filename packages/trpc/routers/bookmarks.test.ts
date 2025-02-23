@@ -1,7 +1,7 @@
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
-import { assets, AssetTypes, bookmarks } from "@hoarder/db/schema";
-import { BookmarkTypes, ZAssetType } from "@hoarder/shared/types/bookmarks";
+import { bookmarks } from "@hoarder/db/schema";
+import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import type { CustomTestContext } from "../testUtils";
 import { defaultBeforeEach } from "../testUtils";
@@ -340,120 +340,5 @@ describe("Bookmark Routes", () => {
     await validateWithLimit(3);
     await validateWithLimit(10);
     await validateWithLimit(100);
-  });
-
-  test<CustomTestContext>("mutate assets", async ({ apiCallers, db }) => {
-    const api = apiCallers[0].bookmarks;
-    const userId = await apiCallers[0].users.whoami().then((u) => u.id);
-
-    const bookmark = await api.createBookmark({
-      url: "https://google.com",
-      type: BookmarkTypes.LINK,
-    });
-    await Promise.all([
-      db.insert(assets).values({
-        id: "asset1",
-        assetType: AssetTypes.LINK_SCREENSHOT,
-        bookmarkId: bookmark.id,
-        userId,
-      }),
-      db.insert(assets).values({
-        id: "asset2",
-        assetType: AssetTypes.LINK_BANNER_IMAGE,
-        bookmarkId: bookmark.id,
-        userId,
-      }),
-      db.insert(assets).values({
-        id: "asset3",
-        assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
-        bookmarkId: bookmark.id,
-        userId,
-      }),
-      db.insert(assets).values({
-        id: "asset4",
-        assetType: AssetTypes.UNKNOWN,
-        bookmarkId: null,
-        userId,
-      }),
-      db.insert(assets).values({
-        id: "asset5",
-        assetType: AssetTypes.UNKNOWN,
-        bookmarkId: null,
-        userId,
-      }),
-      db.insert(assets).values({
-        id: "asset6",
-        assetType: AssetTypes.UNKNOWN,
-        bookmarkId: null,
-        userId,
-      }),
-    ]);
-
-    const validateAssets = async (
-      expected: { id: string; assetType: ZAssetType }[],
-    ) => {
-      const b = await api.getBookmark({ bookmarkId: bookmark.id });
-      b.assets.sort((a, b) => a.id.localeCompare(b.id));
-      expect(b.assets).toEqual(expected);
-    };
-
-    await api.attachAsset({
-      bookmarkId: bookmark.id,
-      asset: {
-        id: "asset4",
-        assetType: "screenshot",
-      },
-    });
-
-    await validateAssets([
-      { id: "asset1", assetType: "screenshot" },
-      { id: "asset2", assetType: "bannerImage" },
-      { id: "asset3", assetType: "fullPageArchive" },
-      { id: "asset4", assetType: "screenshot" },
-    ]);
-
-    await api.replaceAsset({
-      bookmarkId: bookmark.id,
-      oldAssetId: "asset1",
-      newAssetId: "asset5",
-    });
-
-    await validateAssets([
-      { id: "asset2", assetType: "bannerImage" },
-      { id: "asset3", assetType: "fullPageArchive" },
-      { id: "asset4", assetType: "screenshot" },
-      { id: "asset5", assetType: "screenshot" },
-    ]);
-
-    await api.detachAsset({
-      bookmarkId: bookmark.id,
-      assetId: "asset4",
-    });
-
-    await validateAssets([
-      { id: "asset2", assetType: "bannerImage" },
-      { id: "asset3", assetType: "fullPageArchive" },
-      { id: "asset5", assetType: "screenshot" },
-    ]);
-
-    // You're not allowed to attach/replace a fullPageArchive
-    await expect(
-      async () =>
-        await api.replaceAsset({
-          bookmarkId: bookmark.id,
-          oldAssetId: "asset3",
-          newAssetId: "asset6",
-        }),
-    ).rejects.toThrow(/You can't attach this type of asset/);
-    await expect(
-      async () =>
-        await api.attachAsset({
-          bookmarkId: bookmark.id,
-          asset: {
-            id: "asset6",
-            assetType: "fullPageArchive",
-          },
-        }),
-    ).rejects.toThrow(/You can't attach this type of asset/);
   });
 });

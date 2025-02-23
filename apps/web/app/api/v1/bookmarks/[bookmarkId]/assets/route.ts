@@ -27,7 +27,7 @@ export const POST = (
     req,
     bodySchema: zAssetSchema,
     handler: async ({ api, body }) => {
-      const asset = await api.bookmarks.attachAsset({
+      const asset = await api.assets.attachAsset({
         bookmarkId: params.params.bookmarkId,
         asset: body!,
       });

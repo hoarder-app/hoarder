@@ -55,7 +55,6 @@ import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
 import {
   BookmarkTypes,
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
-  zAssetSchema,
   zBareBookmarkSchema,
   zBookmarkSchema,
   zGetBookmarksRequestSchema,
@@ -69,13 +68,9 @@ import {
 
 import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";
-import {
-  isAllowedToAttachAsset,
-  isAllowedToDetachAsset,
-  mapDBAssetTypeToUserType,
-  mapSchemaAssetTypeToDB,
-} from "../lib/attachments";
+import { mapDBAssetTypeToUserType } from "../lib/attachments";
 import { getBookmarkIdsFromMatcher } from "../lib/search";
+import { ensureAssetOwnership } from "./assets";
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: Context;
@@ -108,34 +103,6 @@ export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
 
   return opts.next();
 });
-
-export const ensureAssetOwnership = async (opts: {
-  ctx: Context;
-  assetId: string;
-}) => {
-  const asset = await opts.ctx.db.query.assets.findFirst({
-    where: eq(bookmarks.id, opts.assetId),
-  });
-  if (!opts.ctx.user) {
-    throw new TRPCError({
-      code: "UNAUTHORIZED",
-      message: "User is not authorized",
-    });
-  }
-  if (!asset) {
-    throw new TRPCError({
-      code: "NOT_FOUND",
-      message: "Asset not found",
-    });
-  }
-  if (asset.userId != opts.ctx.user.id) {
-    throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "User is not allowed to access resource",
-    });
-  }
-  return asset;
-};
 
 async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
   const bookmark = await ctx.db.query.bookmarks.findFirst({
@@ -1059,122 +1026,6 @@ export const bookmarksAppRouter = router({
           detached: idsToRemove,
         };
       });
-    }),
-
-  attachAsset: authedProcedure
-    .input(
-      z.object({
-        bookmarkId: z.string(),
-        asset: zAssetSchema,
-      }),
-    )
-    .output(zAssetSchema)
-    .use(ensureBookmarkOwnership)
-    .mutation(async ({ input, ctx }) => {
-      await ensureAssetOwnership({ ctx, assetId: input.asset.id });
-      if (!isAllowedToAttachAsset(input.asset.assetType)) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "You can't attach this type of asset",
-        });
-      }
-      await ctx.db
-        .update(assets)
-        .set({
-          assetType: mapSchemaAssetTypeToDB(input.asset.assetType),
-          bookmarkId: input.bookmarkId,
-        })
-        .where(
-          and(eq(assets.id, input.asset.id), eq(assets.userId, ctx.user.id)),
-        );
-      return input.asset;
-    }),
-  replaceAsset: authedProcedure
-    .input(
-      z.object({
-        bookmarkId: z.string(),
-        oldAssetId: z.string(),
-        newAssetId: z.string(),
-      }),
-    )
-    .output(z.void())
-    .use(ensureBookmarkOwnership)
-    .mutation(async ({ input, ctx }) => {
-      await Promise.all([
-        ensureAssetOwnership({ ctx, assetId: input.oldAssetId }),
-        ensureAssetOwnership({ ctx, assetId: input.newAssetId }),
-      ]);
-      const [oldAsset] = await ctx.db
-        .select()
-        .from(assets)
-        .where(
-          and(eq(assets.id, input.oldAssetId), eq(assets.userId, ctx.user.id)),
-        )
-        .limit(1);
-      if (
-        !isAllowedToAttachAsset(mapDBAssetTypeToUserType(oldAsset.assetType))
-      ) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "You can't attach this type of asset",
-        });
-      }
-
-      await ctx.db.transaction(async (tx) => {
-        await tx.delete(assets).where(eq(assets.id, input.oldAssetId));
-        await tx
-          .update(assets)
-          .set({
-            bookmarkId: input.bookmarkId,
-            assetType: oldAsset.assetType,
-          })
-          .where(eq(assets.id, input.newAssetId));
-      });
-
-      await deleteAsset({
-        userId: ctx.user.id,
-        assetId: input.oldAssetId,
-      }).catch(() => ({}));
-    }),
-  detachAsset: authedProcedure
-    .input(
-      z.object({
-        bookmarkId: z.string(),
-        assetId: z.string(),
-      }),
-    )
-    .output(z.void())
-    .use(ensureBookmarkOwnership)
-    .mutation(async ({ input, ctx }) => {
-      await ensureAssetOwnership({ ctx, assetId: input.assetId });
-      const [oldAsset] = await ctx.db
-        .select()
-        .from(assets)
-        .where(
-          and(eq(assets.id, input.assetId), eq(assets.userId, ctx.user.id)),
-        );
-      if (
-        !isAllowedToDetachAsset(mapDBAssetTypeToUserType(oldAsset.assetType))
-      ) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "You can't deattach this type of asset",
-        });
-      }
-      const result = await ctx.db
-        .delete(assets)
-        .where(
-          and(
-            eq(assets.id, input.assetId),
-            eq(assets.bookmarkId, input.bookmarkId),
-          ),
-        );
-      if (result.changes == 0) {
-        throw new TRPCError({ code: "NOT_FOUND" });
-      }
-      await deleteAsset({ userId: ctx.user.id, assetId: input.assetId }).catch(
-        () => ({}),
-      );
     }),
   getBrokenLinks: authedProcedure
     .output(

@@ -1,6 +1,7 @@
 import { router } from "../index";
 import { adminAppRouter } from "./admin";
 import { apiKeysAppRouter } from "./apiKeys";
+import { assetsAppRouter } from "./assets";
 import { bookmarksAppRouter } from "./bookmarks";
 import { feedsAppRouter } from "./feeds";
 import { highlightsAppRouter } from "./highlights";
@@ -21,6 +22,7 @@ export const appRouter = router({
   feeds: feedsAppRouter,
   highlights: highlightsAppRouter,
   webhooks: webhooksAppRouter,
+  assets: assetsAppRouter,
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;

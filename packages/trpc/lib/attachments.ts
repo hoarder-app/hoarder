@@ -66,7 +66,7 @@ export function isAllowedToDetachAsset(type: ZAssetType) {
     screenshot: true,
     assetScreenshot: true,
     fullPageArchive: true,
-    precrawledArchive: false,
+    precrawledArchive: true,
     bannerImage: true,
     video: true,
     bookmarkAsset: false,

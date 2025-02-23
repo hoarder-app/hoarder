@@ -12,7 +12,7 @@ export const PUT = (
     req,
     bodySchema: z.object({ assetId: z.string() }),
     handler: async ({ api, body }) => {
-      await api.bookmarks.replaceAsset({
+      await api.assets.replaceAsset({
         bookmarkId: params.params.bookmarkId,
         oldAssetId: params.params.assetId,
         newAssetId: body!.assetId,
@@ -28,7 +28,7 @@ export const DELETE = (
   buildHandler({
     req,
     handler: async ({ api }) => {
-      await api.bookmarks.detachAsset({
+      await api.assets.detachAsset({
         bookmarkId: params.params.bookmarkId,
         assetId: params.params.assetId,
       });
