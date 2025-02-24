@@ -4,7 +4,7 @@ services:
     build:
       dockerfile: Dockerfile.dev
     volumes:
-      - data:/data
+      - ${DOCKER_DATA_DIR}/data:/data
       - ..:/app
     ports:
       - 3000:3000
@@ -30,12 +30,12 @@ services:
   meilisearch:
     image: getmeili/meilisearch:v1.11.1
     volumes:
-      - meilisearch:/meili_data
+      - ${DOCKER_DATA_DIR}/meilisearch:/meili_data
   workers:
     build:
       dockerfile: Dockerfile.dev
     volumes:
-      - data:/data
+      - ${DOCKER_DATA_DIR}/data:/data
       - ..:/app
     env_file:
       - .env
@@ -60,13 +60,10 @@ services:
     environment:
       DATA_DIR: /data
     volumes:
-      - data:/data
+      - ${DOCKER_DATA_DIR}/data:/data
       - ..:/app
     command:
      - /bin/sh
      - -c
      - "pnpm install --frozen-lockfile && pnpm run db:migrate"
 
-volumes:
-  meilisearch:
-  data:
