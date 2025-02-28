@@ -1,6 +1,58 @@
 # Setup
 
 ## Manual Setup
+
+Hoarder uses `node` version 22. To install it, you can use `nvm` [^1]
+
+```
+$ nvm install  22
+```
+
+Verify node version using this command:
+```
+$ node --version
+v22.14.0
+```
+
+Hoarder also makes use of `corepack`[^2]. If you have `node` installed, then `corepack` should already be
+installed on your machine, and you don't need to do anything. To verify the `corepack` is installed run:
+
+```
+$ command -v corepack
+/home/<user>/.nvm/versions/node/v22.14.0/bin/corepack
+```
+
+To enable `corepack` run the following command:
+
+```
+$ corepack enable
+```
+
+Then install the packages and dependencies using:
+
+```
+$ pnpm install
+```
+
+Output of a successful `pnpm install` run should look something like:
+
+```
+Scope: all 20 workspace projects
+Lockfile is up to date, resolution step is skipped
+Packages: +3129
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 0, reused 2699, downloaded 0, added 3129, done
+
+devDependencies:
++ @hoarder/prettier-config 0.1.0 <- tooling/prettier
+
+. prepare$ husky
+└─ Done in 45ms
+Done in 5.5s
+```
+
+You can now continue with the rest of this documentation.
+
 ### First Setup
 
 - You'll need to prepare the environment variables for the dev env.
@@ -61,3 +113,10 @@ In dev mode, opening and closing the plugin menu should reload the code.
 ## Docker Dev Env
 
 If the manual setup is too much hassle for you. You can use a docker based dev environment by running `docker compose -f docker/docker-compose.dev.yml up` in the root of the repo. This setup wasn't super reliable for me though.
+
+
+[^1]: [nvm](https://github.com/nvm-sh/nvm) is a node version manager. You can install it following [these
+instructions](https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating).
+
+[^2]: [corepack](https://nodejs.org/api/corepack.html) is an experimental tool to help with managing versions of your
+package managers.
