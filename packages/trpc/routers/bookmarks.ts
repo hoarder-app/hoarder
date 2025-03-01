@@ -26,7 +26,6 @@ import {
   AssetTypes,
   bookmarkAssets,
   bookmarkLinks,
-  bookmarkLists,
   bookmarks,
   bookmarksInLists,
   bookmarkTags,
@@ -70,6 +69,7 @@ import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";
 import { mapDBAssetTypeToUserType } from "../lib/attachments";
 import { getBookmarkIdsFromMatcher } from "../lib/search";
+import { List } from "../models/lists";
 import { ensureAssetOwnership } from "./assets";
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
@@ -652,31 +652,10 @@ export const bookmarksAppRouter = router({
         input.limit = DEFAULT_NUM_BOOKMARKS_PER_PAGE;
       }
       if (input.listId) {
-        const list = await ctx.db.query.bookmarkLists.findFirst({
-          where: and(
-            eq(bookmarkLists.id, input.listId),
-            eq(bookmarkLists.userId, ctx.user.id),
-          ),
-        });
-        if (!list) {
-          throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "List not found",
-          });
-        }
+        const list = await List.fromId(ctx, input.listId);
         if (list.type === "smart") {
-          invariant(list.query);
-          const query = parseSearchQuery(list.query);
-          if (query.result !== "full") {
-            throw new TRPCError({
-              code: "INTERNAL_SERVER_ERROR",
-              message: "Found an invalid smart list query",
-            });
-          }
-          if (query.matcher) {
-            input.ids = await getBookmarkIdsFromMatcher(ctx, query.matcher);
-            delete input.listId;
-          }
+          input.ids = await list.getBookmarkIds();
+          delete input.listId;
         }
       }
 

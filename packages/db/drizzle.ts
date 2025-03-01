@@ -9,6 +9,7 @@ import dbConfig from "./drizzle.config";
 
 const sqlite = new Database(dbConfig.dbCredentials.url);
 export const db = drizzle(sqlite, { schema });
+export type DB = typeof db;
 
 export function getInMemoryDB(runMigrations: boolean) {
   const mem = new Database(":memory:");
