@@ -1,12 +1,14 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import SidebarItem from "@/components/shared/sidebar/SidebarItem";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CollapsibleTriggerTriangle } from "@/components/ui/collapsible";
 import { useTranslation } from "@/lib/i18n/client";
+import { cn } from "@/lib/utils";
 import { MoreHorizontal, Plus } from "lucide-react";
 
 import type { ZBookmarkList } from "@hoarder/shared/types/lists";
@@ -27,6 +29,9 @@ export default function AllLists({
     (node: ZBookmarkListTreeNode) => pathName.includes(node.item.id),
     [pathName],
   );
+
+  const [selectedListId, setSelectedListId] = useState<string | null>(null);
+
   return (
     <ul className="max-h-full gap-y-2 overflow-auto text-sm font-medium">
       <li className="flex justify-between pb-2 font-bold">
@@ -49,45 +54,69 @@ export default function AllLists({
         path={`/dashboard/favourites`}
         linkClassName="py-0.5"
       />
+      <CollapsibleBookmarkLists
+        initialData={initialData.lists}
+        isOpenFunc={isNodeOpen}
+        render={({ item: node, level, open, numBookmarks }) => (
+          <SidebarItem
+            collapseButton={
+              node.children.length > 0 && (
+                <CollapsibleTriggerTriangle
+                  className="absolute left-0 top-1/2 size-2 -translate-y-1/2"
+                  open={open}
+                />
+              )
+            }
+            logo={
+              <span className="flex">
+                <span className="text-lg"> {node.item.icon}</span>
+              </span>
+            }
+            name={node.item.name}
+            path={`/dashboard/lists/${node.item.id}`}
+            right={
+              <ListOptions
+                onOpenChange={(open) => {
+                  if (open) {
+                    setSelectedListId(node.item.id);
+                  } else {
+                    setSelectedListId(null);
+                  }
+                }}
+                list={node.item}
+              >
+                <Button size="none" variant="ghost">
+                  <div className="relative">
+                    <MoreHorizontal
+                      className={cn(
+                        "absolute inset-0 m-auto size-4 opacity-0 transition-opacity duration-100 group-hover:opacity-100",
+                        selectedListId == node.item.id
+                          ? "opacity-100"
+                          : "opacity-0",
+                      )}
+                    />
 
-      {
-        <CollapsibleBookmarkLists
-          initialData={initialData.lists}
-          isOpenFunc={isNodeOpen}
-          render={({ item: node, level, open }) => (
-            <SidebarItem
-              collapseButton={
-                node.children.length > 0 && (
-                  <CollapsibleTriggerTriangle
-                    className="absolute left-0 top-1/2 size-2 -translate-y-1/2"
-                    open={open}
-                  />
-                )
-              }
-              logo={
-                <span className="flex">
-                  <span className="text-lg"> {node.item.icon}</span>
-                </span>
-              }
-              name={node.item.name}
-              path={`/dashboard/lists/${node.item.id}`}
-              right={
-                <ListOptions list={node.item}>
-                  <Button
-                    size="none"
-                    variant="ghost"
-                    className="invisible group-hover:visible"
-                  >
-                    <MoreHorizontal className="size-4" />
-                  </Button>
-                </ListOptions>
-              }
-              linkClassName="group py-0.5"
-              style={{ marginLeft: `${level * 1}rem` }}
-            />
-          )}
-        />
-      }
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "opacity-100 transition-opacity duration-100 group-hover:opacity-0",
+                        selectedListId == node.item.id ||
+                          numBookmarks === undefined
+                          ? "opacity-0"
+                          : "opacity-100",
+                      )}
+                    >
+                      {numBookmarks}
+                    </Badge>
+                  </div>
+                </Button>
+              </ListOptions>
+            }
+            linkClassName="group py-0.5"
+            style={{ marginLeft: `${level * 1}rem` }}
+          />
+        )}
+      />
     </ul>
   );
 }

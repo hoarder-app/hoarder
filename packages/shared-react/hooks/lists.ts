@@ -47,6 +47,7 @@ export function useAddBookmarkToList(
       apiUtils.lists.getListsOfBookmark.invalidate({
         bookmarkId: req.bookmarkId,
       });
+      apiUtils.lists.stats.invalidate();
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });
@@ -63,6 +64,7 @@ export function useRemoveBookmarkFromList(
       apiUtils.lists.getListsOfBookmark.invalidate({
         bookmarkId: req.bookmarkId,
       });
+      apiUtils.lists.stats.invalidate();
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });

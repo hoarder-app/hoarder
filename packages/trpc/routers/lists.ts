@@ -106,4 +106,15 @@ export const listsAppRouter = router({
       const lists = await List.forBookmark(ctx, input.bookmarkId);
       return { lists: lists.map((l) => l.list) };
     }),
+  stats: authedProcedure
+    .output(
+      z.object({
+        stats: z.map(z.string(), z.number()),
+      }),
+    )
+    .query(async ({ ctx }) => {
+      const lists = await List.getAll(ctx);
+      const sizes = await Promise.all(lists.map((l) => l.getSize()));
+      return { stats: new Map(lists.map((l, i) => [l.list.id, sizes[i]])) };
+    }),
 });

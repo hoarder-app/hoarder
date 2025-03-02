@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Collapsible, CollapsibleContent } from "@/components/ui/collapsible";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
+import { api } from "@/lib/trpc";
+import { keepPreviousData } from "@tanstack/react-query";
 
 import {
   augmentBookmarkListsWithInitialData,
@@ -13,6 +15,7 @@ type RenderFunc = (params: {
   item: ZBookmarkListTreeNode;
   level: number;
   open: boolean;
+  numBookmarks?: number;
 }) => React.ReactNode;
 
 type IsOpenFunc = (list: ZBookmarkListTreeNode) => boolean;
@@ -44,6 +47,9 @@ function ListItem({
   useEffect(() => {
     setOpen((curr) => curr || isAnyChildOpen(node, isOpenFunc));
   }, [node, isOpenFunc]);
+  const { data: listStats } = api.lists.stats.useQuery(undefined, {
+    placeholderData: keepPreviousData,
+  });
 
   return (
     <Collapsible open={open} onOpenChange={setOpen} className={className}>
@@ -51,6 +57,7 @@ function ListItem({
         item: node,
         level,
         open,
+        numBookmarks: listStats?.stats.get(node.item.id),
       })}
       <CollapsibleContent>
         {node.children

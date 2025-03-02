@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import {
   DropdownMenu,
@@ -17,8 +15,12 @@ import DeleteListConfirmationDialog from "./DeleteListConfirmationDialog";
 
 export function ListOptions({
   list,
+  isOpen,
+  onOpenChange,
   children,
 }: {
+  isOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
   list: ZBookmarkList;
   children?: React.ReactNode;
 }) {
@@ -29,7 +31,7 @@ export function ListOptions({
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
       <EditListModal
         open={newNestedListModalOpen}
         setOpen={setNewNestedListModalOpen}

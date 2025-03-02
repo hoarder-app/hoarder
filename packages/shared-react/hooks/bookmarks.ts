@@ -30,6 +30,7 @@ export function useCreateBookmark(
     onSuccess: (res, req, meta) => {
       apiUtils.bookmarks.getBookmarks.invalidate();
       apiUtils.bookmarks.searchBookmarks.invalidate();
+      apiUtils.lists.stats.invalidate();
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });
@@ -61,6 +62,7 @@ export function useDeleteBookmark(
       apiUtils.bookmarks.getBookmarks.invalidate();
       apiUtils.bookmarks.searchBookmarks.invalidate();
       apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
+      apiUtils.lists.stats.invalidate();
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });
@@ -76,6 +78,7 @@ export function useUpdateBookmark(
       apiUtils.bookmarks.getBookmarks.invalidate();
       apiUtils.bookmarks.searchBookmarks.invalidate();
       apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
+      apiUtils.lists.stats.invalidate();
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });
@@ -138,6 +141,7 @@ export function useUpdateBookmarkTags(
         apiUtils.bookmarks.getBookmarks.invalidate({ tagId: id });
       });
       apiUtils.tags.list.invalidate();
+      apiUtils.lists.stats.invalidate();
       return opts[0]?.onSuccess?.(res, req, meta);
     },
   });
