@@ -199,6 +199,29 @@ registry.registerPath({
 
 registry.registerPath({
   method: "post",
+  path: "/bookmarks/{bookmarkId}/summarize",
+  description:
+    "Attaches a summary to the bookmark and returns the updated record.",
+  summary: "Summarize a bookmark",
+  tags: ["Bookmarks"],
+  security: [{ [BearerAuth.name]: [] }],
+  request: {
+    params: z.object({ bookmarkId: BookmarkIdSchema }),
+  },
+  responses: {
+    200: {
+      description: "The updated bookmark with summary",
+      content: {
+        "application/json": {
+          schema: zBareBookmarkSchema,
+        },
+      },
+    },
+  },
+});
+
+registry.registerPath({
+  method: "post",
   path: "/bookmarks/{bookmarkId}/tags",
   description: "Attach tags to a bookmark",
   summary: "Attach tags to a bookmark",
