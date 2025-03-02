@@ -323,7 +323,7 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
       );
   }
 
-  if (anythingChanged) {
+  if (!isFixMode || anythingChanged) {
     await OpenAIQueue.enqueue({
       bookmarkId,
     });
