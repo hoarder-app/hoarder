@@ -27,6 +27,7 @@ const allEnv = z.object({
   INFERENCE_IMAGE_MODEL: z.string().default("gpt-4o-mini"),
   EMBEDDING_TEXT_MODEL: z.string().default("text-embedding-3-small"),
   INFERENCE_CONTEXT_LENGTH: z.coerce.number().default(2048),
+  INFERENCE_SUPPORTS_STRUCTURED_OUTPUT: stringBool("true"),
   OCR_CACHE_DIR: z.string().optional(),
   OCR_LANGS: z
     .string()
@@ -94,6 +95,7 @@ const serverConfigSchema = allEnv.transform((val) => {
       imageModel: val.INFERENCE_IMAGE_MODEL,
       inferredTagLang: val.INFERENCE_LANG,
       contextLength: val.INFERENCE_CONTEXT_LENGTH,
+      supportsStructuredOutput: val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT,
     },
     embedding: {
       textModel: val.EMBEDDING_TEXT_MODEL,

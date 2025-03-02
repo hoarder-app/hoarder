@@ -1035,11 +1035,11 @@ importers:
         specifier: ^0.37.0
         version: 0.37.0
       ollama:
-        specifier: ^0.5.9
-        version: 0.5.9
+        specifier: ^0.5.14
+        version: 0.5.14
       openai:
-        specifier: ^4.67.1
-        version: 4.67.1(zod@3.22.4)
+        specifier: ^4.86.1
+        version: 4.86.1(zod@3.22.4)
       typescript-parsec:
         specifier: ^0.3.4
         version: 0.3.4
@@ -1049,6 +1049,9 @@ importers:
       zod:
         specifier: ^3.22.4
         version: 3.22.4
+      zod-to-json-schema:
+        specifier: ^3.24.3
+        version: 3.24.3(zod@3.22.4)
     devDependencies:
       '@hoarder/eslint-config':
         specifier: workspace:^0.2.0
@@ -10279,8 +10282,8 @@ packages:
     resolution: {integrity: sha512-IF4PcGgzAr6XXSff26Sk/+P4KZFJVuHAJZj3wgO3vX2bMdNVp/QXTP3P7CEm9V1IdG8lDLY3HhiqpsE/nOwpPw==}
     engines: {node: ^10.13.0 || >=12.0.0}
 
-  ollama@0.5.9:
-    resolution: {integrity: sha512-F/KZuDRC+ZsVCuMvcOYuQ6zj42/idzCkkuknGyyGVmNStMZ/sU3jQpvhnl4SyC0+zBzLiKNZJnJeuPFuieWZvQ==}
+  ollama@0.5.14:
+    resolution: {integrity: sha512-pvOuEYa2WkkAumxzJP0RdEYHkbZ64AYyyUszXVX7ruLvk5L+EiO2G71da2GqEQ4IAk4j6eLoUbGk5arzFT1wJA==}
 
   on-finished@2.3.0:
     resolution: {integrity: sha512-ikqdkGAAyf/X/gPhXGvfgAytDZtDbr+bkNUJ0N9h5MI/dmdgCs3l6hoHrcUv41sRKew3jIwrp4qQDXiK99Utww==}
@@ -10320,12 +10323,15 @@ packages:
     resolution: {integrity: sha512-7x81NCL719oNbsq/3mh+hVrAWmFuEYUqrq/Iw3kUzH8ReypT9QQ0BLoJS7/G9k6N81XjW4qHWtjWwe/9eLy1EQ==}
     engines: {node: '>=12'}
 
-  openai@4.67.1:
-    resolution: {integrity: sha512-2YbRFy6qaYRJabK2zLMn4txrB2xBy0KP5g/eoqeSPTT31mIJMnkT75toagvfE555IKa2RdrzJrZwdDsUipsAMw==}
+  openai@4.86.1:
+    resolution: {integrity: sha512-x3iCLyaC3yegFVZaxOmrYJjitKxZ9hpVbLi+ZlT5UHuHTMlEQEbKXkGOM78z9qm2T5GF+XRUZCP2/aV4UPFPJQ==}
     hasBin: true
     peerDependencies:
+      ws: ^8.18.0
       zod: ^3.23.8
     peerDependenciesMeta:
+      ws:
+        optional: true
       zod:
         optional: true
 
@@ -13702,6 +13708,11 @@ packages:
 
   zlibjs@0.3.1:
     resolution: {integrity: sha512-+J9RrgTKOmlxFSDHo0pI1xM6BLVUv+o0ZT9ANtCxGkjIVCCUdx9alUF8Gm+dGLKbkkkidWIHFDZHDMpfITt4+w==}
+
+  zod-to-json-schema@3.24.3:
+    resolution: {integrity: sha512-HIAfWdYIt1sssHfYZFCXp4rU1w2r8hVVXYIlmoa0r0gABLs5di3RCqPU5DDROogVz1pAdYBaz7HK5n9pSUNs3A==}
+    peerDependencies:
+      zod: ^3.24.1
 
   zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
@@ -26595,7 +26606,7 @@ snapshots:
   oidc-token-hash@5.0.3:
     dev: false
 
-  ollama@0.5.9:
+  ollama@0.5.14:
     dependencies:
       whatwg-fetch: 3.6.20
     dev: false
@@ -26650,7 +26661,7 @@ snapshots:
       is-wsl: 2.2.0
     dev: false
 
-  openai@4.67.1(zod@3.22.4):
+  openai@4.86.1(zod@3.22.4):
     dependencies:
       '@types/node': 18.19.18
       '@types/node-fetch': 2.6.11
@@ -31123,6 +31134,11 @@ snapshots:
     dev: false
 
   zlibjs@0.3.1:
+    dev: false
+
+  zod-to-json-schema@3.24.3(zod@3.22.4):
+    dependencies:
+      zod: 3.22.4
     dev: false
 
   zod@3.22.4:

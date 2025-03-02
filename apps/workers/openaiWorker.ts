@@ -162,7 +162,7 @@ async function inferTagsFromImage(
     ),
     metadata.contentType,
     base64,
-    { json: true, abortSignal },
+    { schema: openAIResponseSchema, abortSignal },
   );
 }
 
@@ -235,7 +235,10 @@ async function inferTagsFromPDF(
     `Content: ${bookmark.asset.content}`,
     serverConfig.inference.contextLength,
   );
-  return inferenceClient.inferFromText(prompt, { json: true, abortSignal });
+  return inferenceClient.inferFromText(prompt, {
+    schema: openAIResponseSchema,
+    abortSignal,
+  });
 }
 
 async function inferTagsFromText(
@@ -244,7 +247,7 @@ async function inferTagsFromText(
   abortSignal: AbortSignal,
 ) {
   return await inferenceClient.inferFromText(await buildPrompt(bookmark), {
-    json: true,
+    schema: openAIResponseSchema,
     abortSignal,
   });
 }

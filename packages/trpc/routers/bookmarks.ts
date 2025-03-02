@@ -1109,7 +1109,7 @@ Content: ${bookmark.content ?? ""}
       );
 
       const summary = await inferenceClient.inferFromText(summaryPrompt, {
-        json: false,
+        schema: null,
       });
 
       if (!summary.response) {
