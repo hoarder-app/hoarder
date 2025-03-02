@@ -3,6 +3,7 @@ import { DequeuedJob, Runner } from "liteque";
 import cron from "node-cron";
 import Parser from "rss-parser";
 import { buildImpersonatingTRPCClient } from "trpc";
+import { z } from "zod";
 
 import type { ZFeedRequestSchema } from "@hoarder/shared/queues";
 import { db } from "@hoarder/db";
@@ -123,19 +124,31 @@ async function run(req: DequeuedJob<ZFeedRequestSchema>) {
       item: ["id"],
     },
   });
-  const feedData = await parser.parseString(xmlData);
+  const unparseFeedData = await parser.parseString(xmlData);
+
+  // Apparently, we can't trust the output of the xml parser. So let's do our own type
+  // validation.
+  const feedItemsSchema = z.object({
+    id: z.coerce.string(),
+    link: z.string().optional(),
+    guid: z.string().optional(),
+  });
+
+  const feedItems = unparseFeedData.items
+    .map((i) => feedItemsSchema.safeParse(i))
+    .flatMap((i) => (i.success ? [i.data] : []));
 
   logger.info(
-    `[feed][${jobId}] Found ${feedData.items.length} entries in feed "${feed.name}" (${feed.id}) ...`,
+    `[feed][${jobId}] Found ${feedItems.length} entries in feed "${feed.name}" (${feed.id}) ...`,
   );
 
-  if (feedData.items.length === 0) {
+  if (feedItems.length === 0) {
     logger.info(`[feed][${jobId}] No entries found.`);
     return;
   }
 
   // For feeds that don't have guids, use the link as the id
-  feedData.items.forEach((item) => {
+  feedItems.forEach((item) => {
     item.guid = item.guid ?? `${item.id}` ?? item.link;
   });
 
@@ -144,14 +157,12 @@ async function run(req: DequeuedJob<ZFeedRequestSchema>) {
       eq(rssFeedImportsTable.rssFeedId, feed.id),
       inArray(
         rssFeedImportsTable.entryId,
-        feedData.items
-          .map((item) => item.guid)
-          .filter((id): id is string => !!id),
+        feedItems.map((item) => item.guid).filter((id): id is string => !!id),
       ),
     ),
   });
 
-  const newEntries = feedData.items.filter(
+  const newEntries = feedItems.filter(
     (item) =>
       !exitingEntries.some((entry) => entry.entryId === item.guid) &&
       item.link &&
