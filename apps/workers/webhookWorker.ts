@@ -80,60 +80,64 @@ async function runWebhook(job: DequeuedJob<ZWebhookRequest>) {
   }
 
   logger.info(
-    `[webhook][${jobId}] Starting a webhook job for bookmark with id "${bookmark.id}"`,
+    `[webhook][${jobId}] Starting a webhook job for bookmark with id "${bookmark.id} for operation "${job.data.operation}"`,
   );
 
   await Promise.allSettled(
-    bookmark.user.webhooks.map(async (webhook) => {
-      const url = webhook.url;
-      const webhookToken = webhook.token;
-      const maxRetries = serverConfig.webhook.retryTimes;
-      let attempt = 0;
-      let success = false;
+    bookmark.user.webhooks
+      .filter((w) => w.events.includes(job.data.operation))
+      .map(async (webhook) => {
+        const url = webhook.url;
+        const webhookToken = webhook.token;
+        const maxRetries = serverConfig.webhook.retryTimes;
+        let attempt = 0;
+        let success = false;
 
-      while (attempt < maxRetries && !success) {
-        try {
-          const response = await fetch(url, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              ...(webhookToken
-                ? {
-                    Authorization: `Bearer ${webhookToken}`,
-                  }
-                : {}),
-            },
-            body: JSON.stringify({
-              jobId,
-              bookmarkId,
-              userId: bookmark.userId,
-              url: bookmark.link ? bookmark.link.url : undefined,
-              type: bookmark.type,
-              operation: job.data.operation,
-            }),
-            signal: AbortSignal.timeout(webhookTimeoutSec * 1000),
-          });
+        while (attempt < maxRetries && !success) {
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                ...(webhookToken
+                  ? {
+                      Authorization: `Bearer ${webhookToken}`,
+                    }
+                  : {}),
+              },
+              body: JSON.stringify({
+                jobId,
+                bookmarkId,
+                userId: bookmark.userId,
+                url: bookmark.link ? bookmark.link.url : undefined,
+                type: bookmark.type,
+                operation: job.data.operation,
+              }),
+              signal: AbortSignal.timeout(webhookTimeoutSec * 1000),
+            });
 
-          if (!response.ok) {
+            if (!response.ok) {
+              logger.error(
+                `Webhook call to ${url} failed with status: ${response.status}`,
+              );
+            } else {
+              logger.info(
+                `[webhook][${jobId}] Webhook to ${url} call succeeded`,
+              );
+              success = true;
+            }
+          } catch (error) {
             logger.error(
-              `Webhook call to ${url} failed with status: ${response.status}`,
+              `[webhook][${jobId}] Webhook to ${url} call failed: ${error}`,
             );
-          } else {
-            logger.info(`[webhook][${jobId}] Webhook to ${url} call succeeded`);
-            success = true;
           }
-        } catch (error) {
-          logger.error(
-            `[webhook][${jobId}] Webhook to ${url} call failed: ${error}`,
-          );
+          attempt++;
+          if (!success && attempt < maxRetries) {
+            logger.info(
+              `[webhook][${jobId}] Retrying webhook call to ${url}, attempt ${attempt + 1}`,
+            );
+          }
         }
-        attempt++;
-        if (!success && attempt < maxRetries) {
-          logger.info(
-            `[webhook][${jobId}] Retrying webhook call to ${url}, attempt ${attempt + 1}`,
-          );
-        }
-      }
-    }),
+      }),
   );
 }
