@@ -296,13 +296,13 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
   let anythingChanged = false;
   switch (bookmark.asset.assetType) {
     case "image": {
-      const extarctedText = await extractAndSaveImageText(
+      const extractedText = await extractAndSaveImageText(
         jobId,
         asset,
         bookmark,
         isFixMode,
       );
-      anythingChanged ||= extarctedText;
+      anythingChanged ||= extractedText;
       break;
     }
     case "pdf": {
