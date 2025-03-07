@@ -295,28 +295,32 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
 
   let anythingChanged = false;
   switch (bookmark.asset.assetType) {
-    case "image":
-      anythingChanged ||= await extractAndSaveImageText(
+    case "image": {
+      const extarctedText = await extractAndSaveImageText(
         jobId,
         asset,
         bookmark,
         isFixMode,
       );
+      anythingChanged ||= extarctedText;
       break;
-    case "pdf":
-      anythingChanged ||= await extractAndSavePDFText(
+    }
+    case "pdf": {
+      const extractedText = await extractAndSavePDFText(
         jobId,
         asset,
         bookmark,
         isFixMode,
       );
-      anythingChanged ||= await extractAndSavePDFScreenshot(
+      const extractedScreenshot = await extractAndSavePDFScreenshot(
         jobId,
         asset,
         bookmark,
         isFixMode,
       );
+      anythingChanged ||= extractedText || extractedScreenshot;
       break;
+    }
     default:
       throw new Error(
         `[assetPreprocessing][${jobId}] Unsupported bookmark type`,
