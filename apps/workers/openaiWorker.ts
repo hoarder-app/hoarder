@@ -20,6 +20,7 @@ import { buildImagePrompt, buildTextPrompt } from "@hoarder/shared/prompts";
 import {
   OpenAIQueue,
   triggerSearchReindex,
+  triggerWebhook,
   zOpenAIRequestSchema,
 } from "@hoarder/shared/queues";
 
@@ -439,6 +440,9 @@ async function runOpenAI(job: DequeuedJob<ZOpenAIRequest>) {
   );
 
   await connectTags(bookmarkId, tags, bookmark.userId);
+
+  // Trigger a webhook
+  await triggerWebhook(bookmarkId, "ai tagged");
 
   // Update the search index
   await triggerSearchReindex(bookmarkId);

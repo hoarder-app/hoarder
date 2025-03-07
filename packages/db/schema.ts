@@ -404,7 +404,7 @@ export const webhooksTable = sqliteTable(
       .references(() => users.id, { onDelete: "cascade" }),
     events: text("events", { mode: "json" })
       .notNull()
-      .$type<("created" | "edited" | "crawled")[]>(),
+      .$type<("created" | "edited" | "crawled" | "ai tagged")[]>(),
     token: text("token"),
   },
   (bl) => [index("webhooks_userId_idx").on(bl.userId)],
@@ -535,7 +535,6 @@ export const bookmarksInListsRelations = relations(
     }),
   }),
 );
-
 
 export const webhooksRelations = relations(webhooksTable, ({ one }) => ({
   user: one(users, {

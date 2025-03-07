@@ -3,7 +3,12 @@ import { z } from "zod";
 const MAX_WEBHOOK_URL_LENGTH = 500;
 const MAX_WEBHOOK_TOKEN_LENGTH = 100;
 
-export const zWebhookEventSchema = z.enum(["created", "edited", "crawled"]);
+export const zWebhookEventSchema = z.enum([
+  "created",
+  "edited",
+  "crawled",
+  "ai tagged",
+]);
 export type ZWebhookEvent = z.infer<typeof zWebhookEventSchema>;
 
 export const zWebhookSchema = z.object({
