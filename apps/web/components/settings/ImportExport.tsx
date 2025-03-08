@@ -31,19 +31,56 @@ import {
 } from "@hoarder/shared-react/hooks/lists";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
-export function ExportButton() {
+import { Card, CardContent } from "../ui/card";
+
+function ImportCard({
+  text,
+  description,
+  children,
+}: {
+  text: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Card className="transition-all hover:shadow-md">
+      <CardContent className="flex items-center gap-3 p-4">
+        <div className="rounded-full bg-primary/10 p-2">
+          <Upload className="h-5 w-5 text-primary" />
+        </div>
+        <div className="flex-1">
+          <h3 className="font-medium">{text}</h3>
+          <p>{description}</p>
+        </div>
+        {children}
+      </CardContent>
+    </Card>
+  );
+}
+
+function ExportButton() {
   const { t } = useTranslation();
   return (
-    <Link
-      href="/api/bookmarks/export"
-      className={cn(
-        buttonVariants({ variant: "default" }),
-        "flex items-center gap-2",
-      )}
-    >
-      <Download />
-      <p>{t("settings.import.export_links_and_notes")}</p>
-    </Link>
+    <Card className="transition-all hover:shadow-md">
+      <CardContent className="flex items-center gap-3 p-4">
+        <div className="rounded-full bg-primary/10 p-2">
+          <Download className="h-5 w-5 text-primary" />
+        </div>
+        <div className="flex-1">
+          <h3 className="font-medium">Export File</h3>
+          <p>{t("settings.import.export_links_and_notes")}</p>
+        </div>
+        <Link
+          href="/api/bookmarks/export"
+          className={cn(
+            buttonVariants({ variant: "default" }),
+            "flex items-center gap-2",
+          )}
+        >
+          <p>Export</p>
+        </Link>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -195,68 +232,98 @@ export function ImportExportRow() {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-row flex-wrap gap-2">
-        <FilePickerButton
-          loading={false}
-          accept=".html"
-          multiple={false}
-          className="flex items-center gap-2"
-          onFileSelect={(file) =>
-            runUploadBookmarkFile({ file, source: "html" })
-          }
+      <div className="grid gap-4 md:grid-cols-2">
+        <ImportCard
+          text="HTML File"
+          description={t("settings.import.import_bookmarks_from_html_file")}
         >
-          <Upload />
-          <p>{t("settings.import.import_bookmarks_from_html_file")}</p>
-        </FilePickerButton>
-
-        <FilePickerButton
-          loading={false}
-          accept=".csv"
-          multiple={false}
-          className="flex items-center gap-2"
-          onFileSelect={(file) =>
-            runUploadBookmarkFile({ file, source: "pocket" })
-          }
+          <FilePickerButton
+            size={"sm"}
+            loading={false}
+            accept=".html"
+            multiple={false}
+            className="flex items-center gap-2"
+            onFileSelect={(file) =>
+              runUploadBookmarkFile({ file, source: "html" })
+            }
+          >
+            <p>Import</p>
+          </FilePickerButton>
+        </ImportCard>
+        <ImportCard
+          text="Pocket"
+          description={t("settings.import.import_bookmarks_from_pocket_export")}
         >
-          <Upload />
-          <p>{t("settings.import.import_bookmarks_from_pocket_export")}</p>
-        </FilePickerButton>
-        <FilePickerButton
-          loading={false}
-          accept=".json"
-          multiple={false}
-          className="flex items-center gap-2"
-          onFileSelect={(file) =>
-            runUploadBookmarkFile({ file, source: "omnivore" })
-          }
+          <FilePickerButton
+            size={"sm"}
+            loading={false}
+            accept=".csv"
+            multiple={false}
+            className="flex items-center gap-2"
+            onFileSelect={(file) =>
+              runUploadBookmarkFile({ file, source: "pocket" })
+            }
+          >
+            <p>Import</p>
+          </FilePickerButton>
+        </ImportCard>
+        <ImportCard
+          text="Omnivore"
+          description={t(
+            "settings.import.import_bookmarks_from_omnivore_export",
+          )}
         >
-          <Upload />
-          <p>{t("settings.import.import_bookmarks_from_omnivore_export")}</p>
-        </FilePickerButton>
-        <FilePickerButton
-          loading={false}
-          accept=".json"
-          multiple={false}
-          className="flex items-center gap-2"
-          onFileSelect={(file) =>
-            runUploadBookmarkFile({ file, source: "linkwarden" })
-          }
+          <FilePickerButton
+            size={"sm"}
+            loading={false}
+            accept=".json"
+            multiple={false}
+            className="flex items-center gap-2"
+            onFileSelect={(file) =>
+              runUploadBookmarkFile({ file, source: "omnivore" })
+            }
+          >
+            <p>Import</p>
+          </FilePickerButton>
+        </ImportCard>
+        <ImportCard
+          text="Linkwarden"
+          description={t(
+            "settings.import.import_bookmarks_from_linkwarden_export",
+          )}
         >
-          <Upload />
-          <p>{t("settings.import.import_bookmarks_from_linkwarden_export")}</p>
-        </FilePickerButton>
-        <FilePickerButton
-          loading={false}
-          accept=".json"
-          multiple={false}
-          className="flex items-center gap-2"
-          onFileSelect={(file) =>
-            runUploadBookmarkFile({ file, source: "hoarder" })
-          }
+          <FilePickerButton
+            size={"sm"}
+            loading={false}
+            accept=".json"
+            multiple={false}
+            className="flex items-center gap-2"
+            onFileSelect={(file) =>
+              runUploadBookmarkFile({ file, source: "linkwarden" })
+            }
+          >
+            <p>Import</p>
+          </FilePickerButton>
+        </ImportCard>
+        <ImportCard
+          text="Hoarder"
+          description={t(
+            "settings.import.import_bookmarks_from_hoarder_export",
+          )}
         >
-          <Upload />
-          <p>{t("settings.import.import_bookmarks_from_hoarder_export")}</p>
-        </FilePickerButton>
+          <FilePickerButton
+            size={"sm"}
+            loading={false}
+            accept=".json"
+            multiple={false}
+            className="flex items-center gap-2"
+            onFileSelect={(file) =>
+              runUploadBookmarkFile({ file, source: "hoarder" })
+            }
+          >
+            <p>Import</p>
+          </FilePickerButton>
+        </ImportCard>
         <ExportButton />
       </div>
       {importProgress && (
