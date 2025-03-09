@@ -32,6 +32,23 @@ export const adminAppRouter = router({
       z.object({
         numUsers: z.number(),
         numBookmarks: z.number(),
+      }),
+    )
+    .query(async ({ ctx }) => {
+      const [[{ value: numUsers }], [{ value: numBookmarks }]] =
+        await Promise.all([
+          ctx.db.select({ value: count() }).from(users),
+          ctx.db.select({ value: count() }).from(bookmarks),
+        ]);
+
+      return {
+        numUsers,
+        numBookmarks,
+      };
+    }),
+  backgroundJobsStats: adminProcedure
+    .output(
+      z.object({
         crawlStats: z.object({
           queued: z.number(),
           pending: z.number(),
@@ -64,9 +81,6 @@ export const adminAppRouter = router({
     )
     .query(async ({ ctx }) => {
       const [
-        [{ value: numUsers }],
-        [{ value: numBookmarks }],
-
         // Crawls
         queuedCrawls,
         [{ value: pendingCrawls }],
@@ -95,9 +109,6 @@ export const adminAppRouter = router({
         // Feed
         queuedFeed,
       ] = await Promise.all([
-        ctx.db.select({ value: count() }).from(users),
-        ctx.db.select({ value: count() }).from(bookmarks),
-
         // Crawls
         LinkCrawlerQueue.stats(),
         ctx.db
@@ -140,8 +151,6 @@ export const adminAppRouter = router({
       ]);
 
       return {
-        numUsers,
-        numBookmarks,
         crawlStats: {
           queued: queuedCrawls.pending + queuedCrawls.pending_retry,
           pending: pendingCrawls,

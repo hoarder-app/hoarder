@@ -31,9 +31,9 @@ const adminSidebarItems = (
     path: "/admin/users",
   },
   {
-    name: t("common.actions"),
+    name: t("admin.background_jobs.background_jobs"),
     icon: <Settings size={18} />,
-    path: "/admin/actions",
+    path: "/admin/background_jobs",
   },
 ];
 
