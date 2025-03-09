@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zCursorV2 } from "./pagination";
 import { zBookmarkTagSchema } from "./tags";
 
-const MAX_TITLE_LENGTH = 250;
+const MAX_TITLE_LENGTH = 1000;
 
 export const enum BookmarkTypes {
   LINK = "link",
@@ -78,7 +78,7 @@ export const zBareBookmarkSchema = z.object({
   id: z.string(),
   createdAt: z.date(),
   modifiedAt: z.date().nullable(),
-  title: z.string().max(MAX_TITLE_LENGTH).nullish(),
+  title: z.string().nullish(),
   archived: z.boolean(),
   favourited: z.boolean(),
   taggingStatus: z.enum(["success", "failure", "pending"]).nullable(),

@@ -191,44 +191,42 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
   let content: ZBookmarkContent = {
     type: BookmarkTypes.UNKNOWN,
   };
-  switch (bookmark.type) {
-    case BookmarkTypes.LINK:
-      content = {
-        type: bookmark.type,
-        screenshotAssetId: assets.find(
-          (a) => a.assetType == AssetTypes.LINK_SCREENSHOT,
-        )?.id,
-        fullPageArchiveAssetId: assets.find(
-          (a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE,
-        )?.id,
-        precrawledArchiveAssetId: assets.find(
-          (a) => a.assetType == AssetTypes.LINK_PRECRAWLED_ARCHIVE,
-        )?.id,
-        imageAssetId: assets.find(
-          (a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE,
-        )?.id,
-        videoAssetId: assets.find((a) => a.assetType == AssetTypes.LINK_VIDEO)
-          ?.id,
-        ...link,
-      };
-      break;
-    case BookmarkTypes.TEXT:
-      content = {
-        type: bookmark.type,
-        text: text.text ?? "",
-        sourceUrl: text.sourceUrl,
-      };
-      break;
-    case BookmarkTypes.ASSET:
-      content = {
-        type: bookmark.type,
-        assetType: asset.assetType,
-        assetId: asset.assetId,
-        fileName: asset.fileName,
-        sourceUrl: asset.sourceUrl,
-        size: assets.find((a) => a.id == asset.assetId)?.size,
-      };
-      break;
+  if (bookmark.link) {
+    content = {
+      type: BookmarkTypes.LINK,
+      screenshotAssetId: assets.find(
+        (a) => a.assetType == AssetTypes.LINK_SCREENSHOT,
+      )?.id,
+      fullPageArchiveAssetId: assets.find(
+        (a) => a.assetType == AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+      )?.id,
+      precrawledArchiveAssetId: assets.find(
+        (a) => a.assetType == AssetTypes.LINK_PRECRAWLED_ARCHIVE,
+      )?.id,
+      imageAssetId: assets.find(
+        (a) => a.assetType == AssetTypes.LINK_BANNER_IMAGE,
+      )?.id,
+      videoAssetId: assets.find((a) => a.assetType == AssetTypes.LINK_VIDEO)
+        ?.id,
+      ...link,
+    };
+  }
+  if (bookmark.text) {
+    content = {
+      type: BookmarkTypes.TEXT,
+      text: text.text ?? "",
+      sourceUrl: text.sourceUrl,
+    };
+  }
+  if (bookmark.asset) {
+    content = {
+      type: BookmarkTypes.ASSET,
+      assetType: asset.assetType,
+      assetId: asset.assetId,
+      fileName: asset.fileName,
+      sourceUrl: asset.sourceUrl,
+      size: assets.find((a) => a.id == asset.assetId)?.size,
+    };
   }
 
   return {
@@ -269,8 +267,8 @@ export const bookmarksAppRouter = router({
             .insert(bookmarks)
             .values({
               userId: ctx.user.id,
-              type: input.type,
               title: input.title,
+              type: input.type,
               archived: input.archived,
               favourited: input.favourited,
               note: input.note,
@@ -757,31 +755,27 @@ export const bookmarksAppRouter = router({
           const bookmarkId = row.bookmarksSq.id;
           if (!acc[bookmarkId]) {
             let content: ZBookmarkContent;
-            switch (row.bookmarksSq.type) {
-              case BookmarkTypes.LINK: {
-                content = { type: row.bookmarksSq.type, ...row.bookmarkLinks! };
-                break;
-              }
-              case BookmarkTypes.TEXT: {
-                content = {
-                  type: row.bookmarksSq.type,
-                  text: row.bookmarkTexts?.text ?? "",
-                  sourceUrl: row.bookmarkTexts?.sourceUrl ?? null,
-                };
-                break;
-              }
-              case BookmarkTypes.ASSET: {
-                const bookmarkAssets = row.bookmarkAssets!;
-                content = {
-                  type: row.bookmarksSq.type,
-                  assetId: bookmarkAssets.assetId,
-                  assetType: bookmarkAssets.assetType,
-                  fileName: bookmarkAssets.fileName,
-                  sourceUrl: bookmarkAssets.sourceUrl ?? null,
-                  size: null, // This will get filled in the asset loop
-                };
-                break;
-              }
+            if (row.bookmarkLinks) {
+              content = { type: BookmarkTypes.LINK, ...row.bookmarkLinks };
+            } else if (row.bookmarkTexts) {
+              content = {
+                type: BookmarkTypes.TEXT,
+                text: row.bookmarkTexts.text ?? "",
+                sourceUrl: row.bookmarkTexts.sourceUrl ?? null,
+              };
+            } else if (row.bookmarkAssets) {
+              content = {
+                type: BookmarkTypes.ASSET,
+                assetId: row.bookmarkAssets.assetId,
+                assetType: row.bookmarkAssets.assetType,
+                fileName: row.bookmarkAssets.fileName,
+                sourceUrl: row.bookmarkAssets.sourceUrl ?? null,
+                size: null, // This will get filled in the asset loop
+              };
+            } else {
+              content = {
+                type: BookmarkTypes.UNKNOWN,
+              };
             }
             acc[bookmarkId] = {
               ...row.bookmarksSq,
