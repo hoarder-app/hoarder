@@ -12,7 +12,7 @@
     "@mozilla/readability": "^0.5.0",
     "@tsconfig/node22": "^22.0.0",
     "async-mutex": "^0.4.1",
-    "dompurify": "^3.0.9",
+    "dompurify": "^3.2.4",
     "dotenv": "^16.4.1",
     "drizzle-orm": "^0.38.3",
     "execa": "9.3.1",
