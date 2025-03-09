@@ -913,6 +913,85 @@
         }
       }
     },
+    "/bookmarks/{bookmarkId}/summarize": {
+      "post": {
+        "description": "Attaches a summary to the bookmark and returns the updated record.",
+        "summary": "Summarize a bookmark",
+        "tags": [
+          "Bookmarks"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/BookmarkId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The updated bookmark with summary",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string"
+                    },
+                    "modifiedAt": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "title": {
+                      "type": "string",
+                      "nullable": true,
+                      "maxLength": 250
+                    },
+                    "archived": {
+                      "type": "boolean"
+                    },
+                    "favourited": {
+                      "type": "boolean"
+                    },
+                    "taggingStatus": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "success",
+                        "failure",
+                        "pending"
+                      ]
+                    },
+                    "note": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "summary": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "createdAt",
+                    "modifiedAt",
+                    "archived",
+                    "favourited",
+                    "taggingStatus"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/bookmarks/{bookmarkId}/tags": {
       "post": {
         "description": "Attach tags to a bookmark",
