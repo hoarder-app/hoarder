@@ -60,8 +60,7 @@
           },
           "title": {
             "type": "string",
-            "nullable": true,
-            "maxLength": 250
+            "nullable": true
           },
           "archived": {
             "type": "boolean"
@@ -579,7 +578,7 @@
                       "title": {
                         "type": "string",
                         "nullable": true,
-                        "maxLength": 250
+                        "maxLength": 1000
                       },
                       "archived": {
                         "type": "boolean"
@@ -840,7 +839,7 @@
                   "title": {
                     "type": "string",
                     "nullable": true,
-                    "maxLength": 250
+                    "maxLength": 1000
                   },
                   "createdAt": {
                     "type": "string",
@@ -871,8 +870,7 @@
                     },
                     "title": {
                       "type": "string",
-                      "nullable": true,
-                      "maxLength": 250
+                      "nullable": true
                     },
                     "archived": {
                       "type": "boolean"
@@ -950,8 +948,7 @@
                     },
                     "title": {
                       "type": "string",
-                      "nullable": true,
-                      "maxLength": 250
+                      "nullable": true
                     },
                     "archived": {
                       "type": "boolean"

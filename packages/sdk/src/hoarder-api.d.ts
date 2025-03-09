@@ -261,6 +261,58 @@ export interface paths {
     };
     trace?: never;
   };
+  "/bookmarks/{bookmarkId}/summarize": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Summarize a bookmark
+     * @description Attaches a summary to the bookmark and returns the updated record.
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path: {
+          bookmarkId: components["parameters"]["BookmarkId"];
+        };
+        cookie?: never;
+      };
+      requestBody?: never;
+      responses: {
+        /** @description The updated bookmark with summary */
+        200: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              id: string;
+              createdAt: string;
+              modifiedAt: string | null;
+              title?: string | null;
+              archived: boolean;
+              favourited: boolean;
+              /** @enum {string|null} */
+              taggingStatus: "success" | "failure" | "pending" | null;
+              note?: string | null;
+              summary?: string | null;
+            };
+          };
+        };
+      };
+    };
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/bookmarks/{bookmarkId}/tags": {
     parameters: {
       query?: never;
@@ -424,6 +476,7 @@ export interface paths {
             /** @enum {string} */
             assetType:
               | "screenshot"
+              | "assetScreenshot"
               | "bannerImage"
               | "fullPageArchive"
               | "video"
@@ -445,6 +498,7 @@ export interface paths {
               /** @enum {string} */
               assetType:
                 | "screenshot"
+                | "assetScreenshot"
                 | "bannerImage"
                 | "fullPageArchive"
                 | "video"
@@ -1242,6 +1296,7 @@ export interface components {
             assetId: string;
             fileName?: string | null;
             sourceUrl?: string | null;
+            size?: number | null;
           }
         | {
             /** @enum {string} */
@@ -1252,6 +1307,7 @@ export interface components {
         /** @enum {string} */
         assetType:
           | "screenshot"
+          | "assetScreenshot"
           | "bannerImage"
           | "fullPageArchive"
           | "video"
