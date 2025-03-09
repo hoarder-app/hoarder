@@ -37,7 +37,6 @@
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
-    "use-chrome-storage": "^1.2.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
