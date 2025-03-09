@@ -5,12 +5,16 @@ import { z } from "zod";
 import { assets, bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
 import {
+  AssetPreprocessingQueue,
+  FeedQueue,
   LinkCrawlerQueue,
   OpenAIQueue,
   SearchIndexingQueue,
   TidyAssetsQueue,
   triggerReprocessingFixMode,
   triggerSearchReindex,
+  VideoWorkerQueue,
+  WebhookQueue,
 } from "@hoarder/shared/queues";
 import {
   changeRoleSchema,
@@ -44,6 +48,18 @@ export const adminAppRouter = router({
         tidyAssetsStats: z.object({
           queued: z.number(),
         }),
+        videoStats: z.object({
+          queued: z.number(),
+        }),
+        webhookStats: z.object({
+          queued: z.number(),
+        }),
+        assetPreprocessingStats: z.object({
+          queued: z.number(),
+        }),
+        feedStats: z.object({
+          queued: z.number(),
+        }),
       }),
     )
     .query(async ({ ctx }) => {
@@ -66,6 +82,18 @@ export const adminAppRouter = router({
 
         // Tidy Assets
         queuedTidyAssets,
+
+        // Video
+        queuedVideo,
+
+        // Webhook
+        queuedWebhook,
+
+        // Asset Preprocessing
+        queuedAssetPreprocessing,
+
+        // Feed
+        queuedFeed,
       ] = await Promise.all([
         ctx.db.select({ value: count() }).from(users),
         ctx.db.select({ value: count() }).from(bookmarks),
@@ -97,6 +125,18 @@ export const adminAppRouter = router({
 
         // Tidy Assets
         TidyAssetsQueue.stats(),
+
+        // Video
+        VideoWorkerQueue.stats(),
+
+        // Webhook
+        WebhookQueue.stats(),
+
+        // Asset Preprocessing
+        AssetPreprocessingQueue.stats(),
+
+        // Feed
+        FeedQueue.stats(),
       ]);
 
       return {
@@ -117,6 +157,20 @@ export const adminAppRouter = router({
         },
         tidyAssetsStats: {
           queued: queuedTidyAssets.pending + queuedTidyAssets.pending_retry,
+        },
+        videoStats: {
+          queued: queuedVideo.pending + queuedVideo.pending_retry,
+        },
+        webhookStats: {
+          queued: queuedWebhook.pending + queuedWebhook.pending_retry,
+        },
+        assetPreprocessingStats: {
+          queued:
+            queuedAssetPreprocessing.pending +
+            queuedAssetPreprocessing.pending_retry,
+        },
+        feedStats: {
+          queued: queuedFeed.pending + queuedFeed.pending_retry,
         },
       };
     }),

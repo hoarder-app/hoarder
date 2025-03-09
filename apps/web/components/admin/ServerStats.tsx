@@ -140,6 +140,34 @@ export default function ServerStats() {
               <TableCell>-</TableCell>
               <TableCell>-</TableCell>
             </TableRow>
+            <TableRow>
+              <TableCell>{t("admin.background_jobs.video_jobs")}</TableCell>
+              <TableCell>{serverStats.videoStats.queued}</TableCell>
+              <TableCell>-</TableCell>
+              <TableCell>-</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>{t("admin.background_jobs.webhook_jobs")}</TableCell>
+              <TableCell>{serverStats.webhookStats.queued}</TableCell>
+              <TableCell>-</TableCell>
+              <TableCell>-</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>
+                {t("admin.background_jobs.asset_preprocessing_jobs")}
+              </TableCell>
+              <TableCell>
+                {serverStats.assetPreprocessingStats.queued}
+              </TableCell>
+              <TableCell>-</TableCell>
+              <TableCell>-</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>{t("admin.background_jobs.feed_jobs")}</TableCell>
+              <TableCell>{serverStats.feedStats.queued}</TableCell>
+              <TableCell>-</TableCell>
+              <TableCell>-</TableCell>
+            </TableRow>
           </TableBody>
         </Table>
       </div>
