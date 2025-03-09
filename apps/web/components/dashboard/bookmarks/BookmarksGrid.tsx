@@ -7,6 +7,7 @@ import {
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import tailwindConfig from "@/tailwind.config";
 import { Slot } from "@radix-ui/react-slot";
+import { ErrorBoundary } from "react-error-boundary";
 import { useInView } from "react-intersection-observer";
 import Masonry from "react-masonry-css";
 import resolveConfig from "tailwindcss/resolveConfig";
@@ -15,6 +16,7 @@ import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 
 import BookmarkCard from "./BookmarkCard";
 import EditorCard from "./EditorCard";
+import UnknownCard from "./UnknownCard";
 
 function StyledBookmarkCard({ children }: { children: React.ReactNode }) {
   return (
@@ -78,9 +80,11 @@ export default function BookmarksGrid({
       </StyledBookmarkCard>
     ),
     ...bookmarks.map((b) => (
-      <StyledBookmarkCard key={b.id}>
-        <BookmarkCard bookmark={b} />
-      </StyledBookmarkCard>
+      <ErrorBoundary key={b.id} fallback={<UnknownCard bookmark={b} />}>
+        <StyledBookmarkCard>
+          <BookmarkCard bookmark={b} />
+        </StyledBookmarkCard>
+      </ErrorBoundary>
     )),
   ];
   return (

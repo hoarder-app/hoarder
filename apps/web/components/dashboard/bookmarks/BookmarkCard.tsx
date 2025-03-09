@@ -6,6 +6,7 @@ import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 import AssetCard from "./AssetCard";
 import LinkCard from "./LinkCard";
 import TextCard from "./TextCard";
+import UnknownCard from "./UnknownCard";
 
 export default function BookmarkCard({
   bookmark: initialData,
@@ -55,5 +56,7 @@ export default function BookmarkCard({
           bookmark={{ ...bookmark, content: bookmark.content }}
         />
       );
+    case BookmarkTypes.UNKNOWN:
+      return <UnknownCard className={className} bookmark={bookmark} />;
   }
 }
