@@ -9,6 +9,7 @@ import { registry as commonRegistry } from "./lib/common";
 import { registry as highlightsRegistry } from "./lib/highlights";
 import { registry as listsRegistry } from "./lib/lists";
 import { registry as tagsRegistry } from "./lib/tags";
+import { registry as userRegistry } from "./lib/users";
 
 function getOpenApiDocumentation() {
   const registry = new OpenAPIRegistry([
@@ -17,6 +18,7 @@ function getOpenApiDocumentation() {
     listsRegistry,
     tagsRegistry,
     highlightsRegistry,
+    userRegistry,
   ]);
 
   const generator = new OpenApiGeneratorV3(registry.definitions);

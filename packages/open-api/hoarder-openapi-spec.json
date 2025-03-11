@@ -2040,6 +2040,102 @@
           }
         }
       }
+    },
+    "/users/me": {
+      "get": {
+        "description": "Returns info about the current user",
+        "summary": "Get current user info",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with user data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string",
+                      "nullable": true
+                    },
+                    "email": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/me/stats": {
+      "get": {
+        "description": "Returns stats about the current user",
+        "summary": "Get current user stats",
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Object with user stats.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "numBookmarks": {
+                      "type": "number"
+                    },
+                    "numFavorites": {
+                      "type": "number"
+                    },
+                    "numArchived": {
+                      "type": "number"
+                    },
+                    "numTags": {
+                      "type": "number"
+                    },
+                    "numLists": {
+                      "type": "number"
+                    },
+                    "numHighlights": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "numBookmarks",
+                    "numFavorites",
+                    "numArchived",
+                    "numTags",
+                    "numLists",
+                    "numHighlights"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

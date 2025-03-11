@@ -4,10 +4,20 @@ import invariant from "tiny-invariant";
 import { z } from "zod";
 
 import { SqliteError } from "@hoarder/db";
-import { users } from "@hoarder/db/schema";
+import {
+  bookmarkLists,
+  bookmarks,
+  bookmarkTags,
+  highlights,
+  users,
+} from "@hoarder/db/schema";
 import { deleteUserAssets } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
-import { zSignUpSchema } from "@hoarder/shared/types/users";
+import {
+  zSignUpSchema,
+  zUserStatsResponseSchema,
+  zWhoAmIResponseSchema,
+} from "@hoarder/shared/types/users";
 
 import { hashPassword, validatePassword } from "../auth";
 import {
@@ -160,13 +170,7 @@ export const usersAppRouter = router({
       await deleteUserAssets({ userId: input.userId });
     }),
   whoami: authedProcedure
-    .output(
-      z.object({
-        id: z.string(),
-        name: z.string().nullish(),
-        email: z.string().nullish(),
-      }),
-    )
+    .output(zWhoAmIResponseSchema)
     .query(async ({ ctx }) => {
       if (!ctx.user.email) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
@@ -178,5 +182,60 @@ export const usersAppRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       return { id: ctx.user.id, name: ctx.user.name, email: ctx.user.email };
+    }),
+  stats: authedProcedure
+    .output(zUserStatsResponseSchema)
+    .query(async ({ ctx }) => {
+      const [
+        [{ numBookmarks }],
+        [{ numFavorites }],
+        [{ numArchived }],
+        [{ numTags }],
+        [{ numLists }],
+        [{ numHighlights }],
+      ] = await Promise.all([
+        ctx.db
+          .select({ numBookmarks: count() })
+          .from(bookmarks)
+          .where(eq(bookmarks.userId, ctx.user.id)),
+        ctx.db
+          .select({ numFavorites: count() })
+          .from(bookmarks)
+          .where(
+            and(
+              eq(bookmarks.userId, ctx.user.id),
+              eq(bookmarks.favourited, true),
+            ),
+          ),
+        ctx.db
+          .select({ numArchived: count() })
+          .from(bookmarks)
+          .where(
+            and(
+              eq(bookmarks.userId, ctx.user.id),
+              eq(bookmarks.archived, true),
+            ),
+          ),
+        ctx.db
+          .select({ numTags: count() })
+          .from(bookmarkTags)
+          .where(eq(bookmarkTags.userId, ctx.user.id)),
+        ctx.db
+          .select({ numLists: count() })
+          .from(bookmarkLists)
+          .where(eq(bookmarkLists.userId, ctx.user.id)),
+        ctx.db
+          .select({ numHighlights: count() })
+          .from(highlights)
+          .where(eq(highlights.userId, ctx.user.id)),
+      ]);
+      return {
+        numBookmarks,
+        numFavorites,
+        numArchived,
+        numTags,
+        numLists,
+        numHighlights,
+      };
     }),
 });

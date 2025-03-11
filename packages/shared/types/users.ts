@@ -24,3 +24,18 @@ export const zChangePasswordSchema = z
     message: "Passwords don't match",
     path: ["newPasswordConfirm"],
   });
+
+export const zWhoAmIResponseSchema = z.object({
+  id: z.string(),
+  name: z.string().nullish(),
+  email: z.string().nullish(),
+});
+
+export const zUserStatsResponseSchema = z.object({
+  numBookmarks: z.number(),
+  numFavorites: z.number(),
+  numArchived: z.number(),
+  numTags: z.number(),
+  numLists: z.number(),
+  numHighlights: z.number(),
+});
