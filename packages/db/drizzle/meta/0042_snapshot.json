@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "4219851a-7eed-421f-b52e-5d9cd045ff85",
+  "id": "103f5256-2aa0-4ff7-98f1-f3c897f7cc33",
   "prevId": "943b28e9-4b89-48c9-9e00-65314a09bd92",
   "tables": {
     "account": {
@@ -403,6 +403,34 @@
         },
         "description": {
           "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "author": {
+          "name": "author",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "publisher": {
+          "name": "publisher",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "datePublished": {
+          "name": "datePublished",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "dateModified": {
+          "name": "dateModified",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

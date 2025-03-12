@@ -71,6 +71,7 @@ function prepareYtDlpArguments(url: string, assetPath: string) {
       `best[filesize<${serverConfig.crawler.maxVideoDownloadSize}M]`,
     );
   }
+
   ytDlpArguments.push("-o", assetPath);
   ytDlpArguments.push("--no-playlist");
   return ytDlpArguments;
