@@ -177,7 +177,7 @@
       "indexing_jobs": "Indexing Jobs",
       "inference_jobs": "Inference Jobs",
       "tidy_assets_jobs": "Tidy Assets Jobs",
-      "video_jobs": "Video Donwload Jobs",
+      "video_jobs": "Video Download Jobs",
       "webhook_jobs": "Webhook Jobs",
       "asset_preprocessing_jobs": "Asset Preprocessing Jobs",
       "feed_jobs": "RSS Feed Jobs",
