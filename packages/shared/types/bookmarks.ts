@@ -46,6 +46,10 @@ export const zBookmarkedLinkSchema = z.object({
   favicon: z.string().nullish(),
   htmlContent: z.string().nullish(),
   crawledAt: z.date().nullish(),
+  author: z.string().nullish(),
+  publisher: z.string().nullish(),
+  datePublished: z.string().nullish(),
+  dateModified: z.string().nullish(),
 });
 export type ZBookmarkedLink = z.infer<typeof zBookmarkedLinkSchema>;
 
