@@ -3,7 +3,7 @@
     "name": "Hoarder App",
     "slug": "hoarder",
     "scheme": "hoarder",
-    "version": "1.6.8",
+    "version": "1.6.9",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -29,7 +29,7 @@
           "NSAllowsArbitraryLoads": true
         }
       },
-      "buildNumber": "21"
+      "buildNumber": "22"
     },
     "android": {
       "adaptiveIcon": {
@@ -47,7 +47,7 @@
         }
       },
       "package": "app.hoarder.hoardermobile",
-      "versionCode": 21
+      "versionCode": 22
     },
     "plugins": [
       "./plugins/trust-local-certs.js",
