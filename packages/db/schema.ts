@@ -148,6 +148,10 @@ export const bookmarkLinks = sqliteTable(
     // Crawled info
     title: text("title"),
     description: text("description"),
+    author: text("author"),
+    publisher: text("publisher"),
+    datePublished: integer("datePublished", { mode: "timestamp" }),
+    dateModified: integer("dateModified", { mode: "timestamp" }),
     imageUrl: text("imageUrl"),
     favicon: text("favicon"),
     content: text("content"),
