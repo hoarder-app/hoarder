@@ -49,6 +49,10 @@ const allEnv = z.object({
   CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE: z.coerce.number().default(50),
   CRAWLER_VIDEO_DOWNLOAD_TIMEOUT_SEC: z.coerce.number().default(10 * 60),
   CRAWLER_ENABLE_ADBLOCKER: stringBool("true"),
+  CRAWLER_YTDLP_ARGS: z
+    .string()
+    .default("")
+    .transform((t) => t.split("%%").filter((a) => a)),
   MEILI_ADDR: z.string().optional(),
   MEILI_MASTER_KEY: z.string().default(""),
   LOG_LEVEL: z.string().default("debug"),
@@ -116,6 +120,7 @@ const serverConfigSchema = allEnv.transform((val) => {
       maxVideoDownloadSize: val.CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE,
       downloadVideoTimeout: val.CRAWLER_VIDEO_DOWNLOAD_TIMEOUT_SEC,
       enableAdblocker: val.CRAWLER_ENABLE_ADBLOCKER,
+      ytDlpArguments: val.CRAWLER_YTDLP_ARGS,
     },
     ocr: {
       langs: val.OCR_LANGS,

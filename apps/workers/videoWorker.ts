@@ -63,7 +63,6 @@ export class VideoWorker {
 }
 
 function prepareYtDlpArguments(url: string, assetPath: string) {
-  // TODO allow custom commandline arguments?
   const ytDlpArguments = [url];
   if (serverConfig.crawler.maxVideoDownloadSize > 0) {
     ytDlpArguments.push(
@@ -71,6 +70,8 @@ function prepareYtDlpArguments(url: string, assetPath: string) {
       `best[filesize<${serverConfig.crawler.maxVideoDownloadSize}M]`,
     );
   }
+
+  ytDlpArguments.push(...serverConfig.crawler.ytDlpArguments);
   ytDlpArguments.push("-o", assetPath);
   ytDlpArguments.push("--no-playlist");
   return ytDlpArguments;
