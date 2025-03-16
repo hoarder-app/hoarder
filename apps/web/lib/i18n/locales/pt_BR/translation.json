@@ -30,7 +30,9 @@
     "screenshot": "Captura de tela",
     "video": "Vídeo",
     "archive": "Arquivo",
-    "home": "Home"
+    "home": "Home",
+    "type": "Tipo",
+    "size": "Tamanho"
   },
   "actions": {
     "unarchive": "Desarquivar",
@@ -141,6 +143,15 @@
       "last_crawled_at": "Último Rastreamento em",
       "crawling_status": "Status de Rastreamento",
       "crawling_failed": "Falha no Rastreamento"
+    },
+    "manage_assets": {
+      "asset_type": "Tipo de recurso",
+      "bookmark_link": "Link do marcador",
+      "asset_link": "Link do recurso",
+      "delete_asset": "Excluir recurso",
+      "delete_asset_confirmation": "Tem certeza de que deseja excluir este recurso?",
+      "manage_assets": "Gerenciar recursos",
+      "no_assets": "Você ainda não tem nenhum recurso."
     }
   },
   "layouts": {
@@ -169,7 +180,11 @@
       "job": "Tarefas",
       "queued": "Na Fila",
       "pending": "Pendentes",
-      "failed": "Falhou"
+      "failed": "Falhou",
+      "video_jobs": "Tarefas de download de vídeo",
+      "feed_jobs": "Tarefas de feed RSS",
+      "webhook_jobs": "Tarefas de Webhook",
+      "asset_preprocessing_jobs": "Tarefas de pré-processamento de recursos"
     },
     "actions": {
       "recrawl_failed_links_only": "Rastrear Novamente Somente os Links que Falharam",
@@ -178,7 +193,8 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "Regenerar Tags de IA apenas para Favoritos que Falharam",
       "regenerate_ai_tags_for_all_bookmarks": "Regenerar Tags de IA para Todos os Favoritos",
       "reindex_all_bookmarks": "Reindexar Todos os Favoritos",
-      "compact_assets": "Compactar Ativos"
+      "compact_assets": "Compactar Ativos",
+      "reprocess_assets_fix_mode": "Reprocessar recursos (modo de correção)"
     },
     "users_list": {
       "users_list": "Lista de Usuários",

@@ -24,7 +24,15 @@
     "screenshot": "Ekran Görüntüsü",
     "video": "Video",
     "archive": "Arşiv",
-    "home": "Ana Sayfa"
+    "home": "Ana Sayfa",
+    "size": "Boyut",
+    "bookmark_types": {
+      "text": "Metin",
+      "link": "Bağlantı",
+      "media": "Medya",
+      "title": "Yer İşareti Türü"
+    },
+    "type": "Yaz"
   },
   "layouts": {
     "masonry": "Döşeme",
@@ -92,7 +100,12 @@
       "tagging_rule_description": "Buraya eklediğiniz istemler, etiket oluşturma sırasında modele ek kurallar olarak dahil edilecektir. Son istemleri, istem önizleme bölümünde görebilirsiniz.",
       "prompt_preview": "İstem Önizlemesi",
       "text_prompt": "Metin İstemi",
-      "images_prompt": "Görseller İstemi"
+      "images_prompt": "Görseller İstemi",
+      "image_tagging": "Resim Etiketleme",
+      "summarization_prompt": "Özetleme İstemi",
+      "all_tagging": "Tüm Etiketleme",
+      "text_tagging": "Metin Etiketleme",
+      "summarization": "Özetleme"
     },
     "feeds": {
       "rss_subscriptions": "RSS Abonelikleri",
@@ -106,7 +119,8 @@
       "import_bookmarks_from_omnivore_export": "Omnivore Dışa Aktarımından Yer İşaretlerini İçe Aktar",
       "import_bookmarks_from_hoarder_export": "Hoarder Dışa Aktarımından Yer İşaretlerini İçe Aktar",
       "export_links_and_notes": "Bağlantı ve Notları Dışa Aktar",
-      "imported_bookmarks": "İçe Aktarılan Yer İşaretleri"
+      "imported_bookmarks": "İçe Aktarılan Yer İşaretleri",
+      "import_bookmarks_from_linkwarden_export": "Linkwarden dışa aktarımından Yer İşaretlerini İçe Aktar"
     },
     "api_keys": {
       "api_keys": "API Anahtarları",
@@ -120,6 +134,33 @@
       "last_crawled_at": "Son Tarama Tarihi",
       "crawling_status": "Tarama Durumu",
       "crawling_failed": "Tarama Başarısız Oldu"
+    },
+    "webhooks": {
+      "edit_auth_token": "Kimlik Doğrulama Jetonunu Düzenle",
+      "create_webhook": "Web Kancası Oluştur",
+      "delete_webhook": "Web Kancasını Sil",
+      "delete_webhook_confirmation": "Bu web kancasını silmek istediğinizden emin misiniz?",
+      "edit_webhook": "Web Kancasını Düzenle",
+      "webhook_url": "Web Kancası URL'si",
+      "add_auth_token": "Kimlik Doğrulama Jetonu Ekle",
+      "auth_token": "Kimlik Doğrulama Jetonu",
+      "webhooks": "Web kancaları",
+      "description": "Web kancaları kullanarak yer imleri oluşturulduğunda, değiştirildiğinde veya tarandığında eylemleri tetikleyebilirsin.",
+      "events": {
+        "title": "Etkinlikler",
+        "crawled": "Taranmış",
+        "created": "Oluşturuldu",
+        "edited": "Düzenlendi"
+      }
+    },
+    "manage_assets": {
+      "manage_assets": "Varlıkları Yönet",
+      "no_assets": "Henüz hiçbir varlığın yok.",
+      "asset_type": "Varlık Türü",
+      "bookmark_link": "Yer İşareti Bağlantısı",
+      "asset_link": "Varlık Bağlantısı",
+      "delete_asset": "Varlığı Sil",
+      "delete_asset_confirmation": "Bu varlığı silmek istediğinizden emin misiniz?"
     }
   },
   "admin": {
@@ -139,7 +180,11 @@
       "job": "Görev",
       "queued": "Sıraya Alındı",
       "pending": "Beklemede",
-      "failed": "Başarısız"
+      "failed": "Başarısız",
+      "video_jobs": "Video İndirme İşleri",
+      "feed_jobs": "RSS Besleme İşleri",
+      "webhook_jobs": "Webhook İşleri",
+      "asset_preprocessing_jobs": "Varlık Ön İşleme İşleri"
     },
     "actions": {
       "recrawl_failed_links_only": "Sadece Başarısız Bağlantıları Tekrar Tara",
@@ -171,7 +216,15 @@
     "all_lists": "Tüm Listeler",
     "favourites": "Favoriler",
     "new_list": "Yeni Liste",
-    "new_nested_list": "Yeni İç İçe Liste"
+    "new_nested_list": "Yeni İç İçe Liste",
+    "no_parent": "Üst Öğe Yok",
+    "list_type": "Liste Türü",
+    "manual_list": "Manuel Liste",
+    "smart_list": "Akıllı Liste",
+    "search_query": "Arama Sorgusu",
+    "search_query_help": "Arama sorgu dili hakkında daha fazla bilgi edinin.",
+    "parent_list": "Üst Öğe Listesi",
+    "edit_list": "Listeyi Düzenle"
   },
   "tags": {
     "all_tags": "Tüm Etiketler",
@@ -267,6 +320,37 @@
     "duplicate_tags": {
       "title": "Yinelenen Etiketler",
       "merge_all_suggestions": "Tüm önerileri birleştir?"
+    }
+  },
+  "search": {
+    "is_not_in_any_list": "Herhangi Bir Listede Değil",
+    "created_on_or_before": "Şu Tarihte veya Daha Önce Oluşturuldu",
+    "not_created_on_or_before": "Şu Tarihte veya Daha Önce Oluşturulmadı",
+    "url_contains": "URL İçeriyor",
+    "url_does_not_contain": "URL İçermiyor",
+    "full_text_search": "Tam Metin Arama",
+    "and": "Ve",
+    "is_favorited": "Favorilere Eklendi mi",
+    "is_not_in_list": "Listede Değil",
+    "not_created_on_or_after": "Şu Tarihte veya Sonrasında Oluşturulmadı",
+    "has_no_tags": "Etiketi Yok",
+    "is_in_any_list": "Herhangi Bir Listede mi",
+    "is_in_list": "Listede mi",
+    "or": "Veya",
+    "is_not_favorited": "Favorilere Eklenmemiş",
+    "created_on_or_after": "Şu Tarihte veya Sonrasında Oluşturuldu",
+    "has_tag": "Etiketi Var",
+    "does_not_have_tag": "Etiketi Yok",
+    "is_archived": "Arşivlendi",
+    "is_not_archived": "Arşivlenmedi",
+    "has_any_tag": "Herhangi Bir Etikete Sahip",
+    "type_is": "Türü",
+    "type_is_not": "Tür şu değil"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_description": "Bu yer işaretini silmek istediğinden emin misin?",
+      "delete_confirmation_title": "Yer İşaretini Silmek İstiyor Musun?"
     }
   }
 }

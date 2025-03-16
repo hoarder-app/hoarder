@@ -261,7 +261,11 @@
       "job": "Feladatok",
       "queued": "Ütemezve",
       "pending": "Folyamatban van",
-      "failed": "Hibá történt"
+      "failed": "Hibá történt",
+      "video_jobs": "Videóletöltési feladatok",
+      "webhook_jobs": "Webhook feladatok",
+      "asset_preprocessing_jobs": "Eszköz-előfeldolgozási feladatok",
+      "feed_jobs": "RSS-hírcsatorna feladatok"
     },
     "actions": {
       "recrawl_failed_links_only": "Hibás hivatkozások újratérképezése",

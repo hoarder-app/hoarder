@@ -30,7 +30,9 @@
       "link": "رابط",
       "text": "نص",
       "media": "وسائط متعددة"
-    }
+    },
+    "type": "نوع",
+    "size": "حجم"
   },
   "layouts": {
     "masonry": "متعدد الأعمدة",
@@ -150,6 +152,15 @@
       "last_crawled_at": "آخر استكشاف في",
       "crawling_status": "حالة الاستكشاف",
       "crawling_failed": "فشل الاستكشاف"
+    },
+    "manage_assets": {
+      "asset_type": "نوع الأصل",
+      "bookmark_link": "رابط الإشارة المرجعية",
+      "delete_asset": "حذف الأصل",
+      "delete_asset_confirmation": "هل أنت متأكد أنك تريد حذف هذا الأصل؟",
+      "asset_link": "رابط الأصل",
+      "manage_assets": "إدارة الأصول",
+      "no_assets": "ليس لديك أي أصول حتى الآن."
     }
   },
   "admin": {
@@ -169,7 +180,11 @@
       "job": "مهمة",
       "queued": "في قائمة الانتظار",
       "pending": "قيد الانتظار",
-      "failed": "فشلت"
+      "failed": "فشلت",
+      "feed_jobs": "وظائف موجز RSS",
+      "video_jobs": "وظائف تنزيل الفيديو",
+      "webhook_jobs": "وظائف Webhook",
+      "asset_preprocessing_jobs": "وظائف المعالجة المسبقة للأصول"
     },
     "actions": {
       "recrawl_failed_links_only": "إعادة استكشاف الروابط الفاشلة فقط",

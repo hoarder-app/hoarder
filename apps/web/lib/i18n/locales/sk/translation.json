@@ -30,7 +30,9 @@
       "text": "Text",
       "media": "Médiá"
     },
-    "archive": "Archív"
+    "archive": "Archív",
+    "type": "Typ",
+    "size": "Veľkosť"
   },
   "actions": {
     "cancel": "Zrušiť",
@@ -63,7 +65,12 @@
     "save": "Uložiť",
     "add_to_list": "Pridať do zoznamu",
     "add": "Pridať",
-    "refresh": "Obnoviť"
+    "refresh": "Obnoviť",
+    "unarchive": "Obnoviť z archívu",
+    "download_full_page_archive": "Stiahnuť archív celej stránky",
+    "recrawl": "Znova prehľadať",
+    "fetch_now": "Načítať teraz",
+    "summarize_with_ai": "Zhrnúť pomocou AI"
   },
   "lists": {
     "favourites": "Obľúbené",
@@ -100,11 +107,21 @@
       "confirm_new_password": "Potvrdiť nové heslo",
       "current_password": "Súčasné heslo",
       "options": "Možnosti",
-      "interface_lang": "Jazyk rozhrania"
+      "interface_lang": "Jazyk rozhrania",
+      "user_info": "Informácie o používateľovi"
     },
     "ai": {
       "ai_settings": "Nastavenia AI",
-      "tagging_rules": "Pravidlá označovania"
+      "tagging_rules": "Pravidlá označovania",
+      "tagging_rule_description": "Výzvy, ktoré tu pridáte, budú zahrnuté ako pravidlá pre model počas generovania značiek. Konečné výzvy si môžete pozrieť v sekcii ukážky výziev.",
+      "prompt_preview": "Náhľad výzvy",
+      "text_prompt": "Textová výzva",
+      "all_tagging": "Všetko označené",
+      "text_tagging": "Označovanie textu",
+      "image_tagging": "Označovanie obrázkov",
+      "summarization": "Zhrnutie",
+      "images_prompt": "Výzva obrázka",
+      "summarization_prompt": "Výzva na sumarizáciu"
     },
     "webhooks": {
       "add_auth_token": "Pridať autorizačný token",
@@ -114,11 +131,41 @@
       "webhook_url": "URL webhooku",
       "auth_token": "Autorizačný token",
       "create_webhook": "Vytvoriť webhook",
-      "delete_webhook_confirmation": "Naozaj chcete odstrániť tento webhook?"
+      "delete_webhook_confirmation": "Naozaj chcete odstrániť tento webhook?",
+      "description": "Webhooks môžeš použiť na spustenie akcií, keď sú záložky vytvorené, zmenené alebo prehľadané.",
+      "webhooks": "Webhooks",
+      "events": {
+        "crawled": "Prehľadané",
+        "created": "Vytvorené",
+        "edited": "Upravené",
+        "title": "Udalosti"
+      }
     },
     "api_keys": {
       "api_keys": "API kľúče",
-      "new_api_key": "Nový API kľúč"
+      "new_api_key": "Nový API kľúč",
+      "key_success_please_copy": "Prosím, skopírujte si kľúč a uložte ho na bezpečné miesto. Keď zatvoríte dialógové okno, už k nemu nebudete mať prístup.",
+      "new_api_key_desc": "Daj svojmu API kľúču jedinečný názov",
+      "key_success": "Kľúč bol úspešne vytvorený"
+    },
+    "manage_assets": {
+      "asset_link": "Odkaz na majetok",
+      "delete_asset": "Odstrániť aktívum",
+      "delete_asset_confirmation": "Naozaj chceš vymazať toto aktívum?",
+      "bookmark_link": "Odkaz na záložku",
+      "manage_assets": "Spravovať aktíva",
+      "no_assets": "Zatiaľ nemáš žiadne aktíva.",
+      "asset_type": "Typ aktíva"
+    },
+    "feeds": {
+      "rss_subscriptions": "Odbery RSS",
+      "add_a_subscription": "Pridať odber"
+    },
+    "broken_links": {
+      "broken_links": "Nefunkčné odkazy",
+      "last_crawled_at": "Naposledy prehľadané",
+      "crawling_status": "Stav prehľadávania",
+      "crawling_failed": "Prehľadávanie zlyhalo"
     }
   },
   "search": {
@@ -157,7 +204,11 @@
       "reindex_all_bookmarks": "Preindexovať všetky záložky",
       "compact_assets": "Optimalizovať dáta",
       "regenerate_ai_tags_for_failed_bookmarks_only": "Pregenerovať AI značky len pre zlyhané záložky",
-      "regenerate_ai_tags_for_all_bookmarks": "Pregenerovať AI značky pre všetky záložky"
+      "regenerate_ai_tags_for_all_bookmarks": "Pregenerovať AI značky pre všetky záložky",
+      "without_inference": "Bez odvodzovania",
+      "reprocess_assets_fix_mode": "Spracovať aktíva znova (režim opravy)",
+      "recrawl_all_links": "Znova prehľadať všetky odkazy",
+      "recrawl_failed_links_only": "Znova prehľadať iba nefunkčné odkazy"
     },
     "users_list": {
       "users_list": "Zoznam používateľov",
@@ -167,7 +218,30 @@
       "asset_sizes": "Veľkosť dát",
       "change_role": "Zmeniť rolu",
       "delete_user": "Odstrániť používateľa",
-      "confirm_password": "Potvrdiť heslo"
+      "confirm_password": "Potvrdiť heslo",
+      "create_user": "Vytvoriť používateľa"
+    },
+    "admin_settings": "Nastavenia správcu",
+    "background_jobs": {
+      "background_jobs": "Úlohy na pozadí",
+      "queued": "Zaradené do frontu",
+      "video_jobs": "Úlohy sťahovania videa",
+      "crawler_jobs": "Úlohy prehľadávača",
+      "indexing_jobs": "Úlohy indexovania",
+      "inference_jobs": "Úlohy odvodzovania",
+      "tidy_assets_jobs": "Úlohy na upratanie aktív",
+      "job": "Úloha",
+      "pending": "Čaká sa",
+      "failed": "Neúspešné",
+      "webhook_jobs": "Úlohy Webhook",
+      "asset_preprocessing_jobs": "Úlohy predbežného spracovania aktív",
+      "feed_jobs": "Úlohy RSS kanála"
+    },
+    "server_stats": {
+      "server_version": "Verzia servera",
+      "server_stats": "Štatistiky servera",
+      "total_users": "Celkový počet používateľov",
+      "total_bookmarks": "Celkový počet záložiek"
     }
   },
   "options": {
@@ -220,16 +294,63 @@
           "example": "> text"
         },
         "ordered_list": {
-          "label": "Zoradený zoznam"
+          "label": "Zoradený zoznam",
+          "example": "1. Položka zoznamu"
+        },
+        "unordered_list": {
+          "label": "Neusporiadaný zoznam",
+          "example": "- Položka zoznamu"
+        },
+        "inline_code": {
+          "label": "Vložený kód",
+          "example": "`Kód`"
+        },
+        "block_code": {
+          "label": "Blokovať kód",
+          "example": "``` + medzera"
         }
       },
       "align_center": "Zarovnanie na stred",
       "bold": "Tučné",
-      "strikethrough": "Preškrtnuté"
+      "strikethrough": "Preškrtnuté",
+      "undo": "Späť",
+      "redo": "Znova"
     },
-    "multiple_urls_dialog_desc": "Vstup obsahuje viaceré URL na samostatných riadkoch. Chcete ich importovať ako samostatné záložky?"
+    "multiple_urls_dialog_desc": "Vstup obsahuje viaceré URL na samostatných riadkoch. Chcete ich importovať ako samostatné záložky?",
+    "disabled_submissions": "Odosielanie je vypnuté"
   },
   "preview": {
-    "view_original": "Zobraziť originál"
+    "view_original": "Zobraziť originál",
+    "cached_content": "Obsah uložený vo vyrovnávacej pamäti"
+  },
+  "toasts": {
+    "bookmarks": {
+      "clipboard_copied": "Odkaz bol pridaný do schránky!",
+      "updated": "Záložka bola aktualizovaná!",
+      "delete_from_list": "Záložka bola odstránená zo zoznamu",
+      "deleted": "Záložka bola zmazaná!",
+      "refetch": "Opätovné načítanie bolo zaradené do frontu!",
+      "full_page_archive": "Bolo spustené vytváranie archívu celej stránky"
+    },
+    "lists": {
+      "updated": "Zoznam bol aktualizovaný!",
+      "created": "Zoznam bol vytvorený!"
+    }
+  },
+  "cleanups": {
+    "cleanups": "Čistenie",
+    "duplicate_tags": {
+      "title": "Duplicitné štítky",
+      "merge_all_suggestions": "Zlúčiť všetky návrhy?"
+    }
+  },
+  "highlights": {
+    "no_highlights": "Zatiaľ nemáš žiadne zvýraznenia."
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_description": "Naozaj chceš vymazať túto záložku?",
+      "delete_confirmation_title": "Odstrániť záložku?"
+    }
   }
 }

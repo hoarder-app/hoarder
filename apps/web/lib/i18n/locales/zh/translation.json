@@ -149,6 +149,15 @@
       "create_webhook": "创建网络钩子",
       "delete_webhook": "删除网络钩子",
       "delete_webhook_confirmation": "是否确定要删除这个网络钩子？"
+    },
+    "manage_assets": {
+      "manage_assets": "管理资源",
+      "no_assets": "你还没有任何资源。",
+      "asset_type": "资源类型",
+      "bookmark_link": "书签链接",
+      "asset_link": "资源链接",
+      "delete_asset": "删除资源",
+      "delete_asset_confirmation": "确定要删除此资源吗？"
     }
   },
   "admin": {
@@ -168,7 +177,11 @@
       "job": "任务",
       "queued": "已排队",
       "pending": "待处理",
-      "failed": "失败"
+      "failed": "失败",
+      "feed_jobs": "RSS 订阅作业",
+      "video_jobs": "视频下载作业",
+      "webhook_jobs": "Webhook 作业",
+      "asset_preprocessing_jobs": "资源预处理作业"
     },
     "actions": {
       "recrawl_failed_links_only": "仅重新抓取失败链接",

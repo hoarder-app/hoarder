@@ -30,7 +30,9 @@
       "link": "連結",
       "text": "文字",
       "media": "媒體"
-    }
+    },
+    "type": "類型",
+    "size": "大小"
   },
   "layouts": {
     "masonry": "瀑布式",
@@ -147,6 +149,15 @@
       "last_crawled_at": "最後抓取時間",
       "crawling_status": "抓取狀態",
       "crawling_failed": "抓取失敗"
+    },
+    "manage_assets": {
+      "manage_assets": "管理資產",
+      "no_assets": "你還沒有任何資產。",
+      "asset_type": "資產類型",
+      "bookmark_link": "書籤連結",
+      "asset_link": "資產連結",
+      "delete_asset": "刪除資產",
+      "delete_asset_confirmation": "你確定要刪除這個資產嗎？"
     }
   },
   "admin": {
@@ -166,7 +177,11 @@
       "job": "作業",
       "queued": "已排入佇列",
       "pending": "等待中",
-      "failed": "失敗"
+      "failed": "失敗",
+      "video_jobs": "影片下載工作",
+      "feed_jobs": "RSS 訂閱工作",
+      "webhook_jobs": "Webhook 工作",
+      "asset_preprocessing_jobs": "資產預處理工作"
     },
     "actions": {
       "recrawl_failed_links_only": "僅重新抓取失敗的連結",

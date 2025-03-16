@@ -149,6 +149,15 @@
       "delete_webhook": "Webhook löschen",
       "delete_webhook_confirmation": "Bist du sicher, dass du diesen Webhook löschen willst?",
       "edit_webhook": "Webhook bearbeiten"
+    },
+    "manage_assets": {
+      "delete_asset": "Asset löschen",
+      "delete_asset_confirmation": "Bist du sicher, dass du dieses Asset löschen möchtest?",
+      "manage_assets": "Assets verwalten",
+      "no_assets": "Du hast noch keine Assets.",
+      "asset_type": "Asset-Typ",
+      "bookmark_link": "Lesezeichen-Link",
+      "asset_link": "Asset-Link"
     }
   },
   "admin": {
@@ -168,7 +177,11 @@
       "job": "Aufgabe",
       "queued": "Warteschlange",
       "pending": "Ausstehend",
-      "failed": "Fehlgeschlagen"
+      "failed": "Fehlgeschlagen",
+      "video_jobs": "Video-Download-Aufträge",
+      "webhook_jobs": "Webhook-Aufträge",
+      "asset_preprocessing_jobs": "Asset-Vorverarbeitungsaufträge",
+      "feed_jobs": "RSS-Feed-Aufträge"
     },
     "actions": {
       "recrawl_failed_links_only": "Nur fehlgeschlagene Links erneut durchsuchen",

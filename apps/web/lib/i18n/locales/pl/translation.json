@@ -25,11 +25,14 @@
     "home": "Strona główna",
     "bookmark_types": {
       "title": "Typ zakładki",
-      "text": "Tekst"
+      "text": "Tekst",
+      "media": "Media",
+      "link": "Link"
     },
     "type": "Typ",
     "size": "Rozmiar",
-    "source": "Źródło"
+    "source": "Źródło",
+    "highlights": "Najważniejsze"
   },
   "actions": {
     "remove_from_list": "Usuń z listy",
@@ -88,7 +91,8 @@
       "import_bookmarks_from_omnivore_export": "Importuj zakładki z eksportu Omnivore",
       "import_bookmarks_from_hoarder_export": "Importuj zakładki z eksportu Hoarder",
       "export_links_and_notes": "Eksportuj linki i notatki",
-      "imported_bookmarks": "Zaimportowane zakładki"
+      "imported_bookmarks": "Zaimportowane zakładki",
+      "import_bookmarks_from_linkwarden_export": "Importuj zakładki z eksportu Linkwarden"
     },
     "back_to_app": "Powrót do aplikacji",
     "user_settings": "Ustawienia użytkownika",
@@ -99,7 +103,11 @@
       "prompt_preview": "Podgląd podpowiedzi",
       "text_prompt": "Podpowiedź tekstowa",
       "images_prompt": "Podpowiedź obrazowa",
-      "summarization": "Streszczanie"
+      "summarization": "Streszczanie",
+      "summarization_prompt": "Monit o podsumowanie",
+      "all_tagging": "Wszystkie tagi",
+      "text_tagging": "Tagowanie tekstu",
+      "image_tagging": "Tagowanie obrazów"
     },
     "feeds": {
       "rss_subscriptions": "Subskrypcje RSS",
@@ -117,6 +125,33 @@
       "last_crawled_at": "Ostatnie skanowanie",
       "crawling_status": "Status skanowania",
       "crawling_failed": "Skanowanie nieudane"
+    },
+    "manage_assets": {
+      "delete_asset_confirmation": "Na pewno chcesz usunąć ten zasób?",
+      "manage_assets": "Zarządzaj zasobami",
+      "no_assets": "Nie masz jeszcze żadnych zasobów.",
+      "asset_type": "Typ zasobu",
+      "bookmark_link": "Link do zakładki",
+      "asset_link": "Link do zasobu",
+      "delete_asset": "Usuń zasób"
+    },
+    "webhooks": {
+      "webhooks": "Webhooki",
+      "description": "Możesz użyć webhooków, aby wywoływać akcje, gdy zakładki są tworzone, zmieniane lub przeszukiwane.",
+      "events": {
+        "title": "Wydarzenia",
+        "crawled": "Przeszukano",
+        "created": "Utworzono",
+        "edited": "Edytowano"
+      },
+      "auth_token": "Token autoryzacyjny",
+      "add_auth_token": "Dodaj token autoryzacyjny",
+      "edit_auth_token": "Edytuj token autoryzacyjny",
+      "create_webhook": "Utwórz Webhook",
+      "delete_webhook": "Usuń Webhook",
+      "delete_webhook_confirmation": "Na pewno chcesz usunąć ten webhook?",
+      "edit_webhook": "Edytuj webhook",
+      "webhook_url": "Adres URL webhooka"
     }
   },
   "admin": {
@@ -147,7 +182,11 @@
       "job": "Zadanie",
       "queued": "W kolejce",
       "pending": "Oczekujące",
-      "failed": "Nieudane"
+      "failed": "Nieudane",
+      "feed_jobs": "Praca z kanałem RSS",
+      "webhook_jobs": "Zadania Webhook",
+      "asset_preprocessing_jobs": "Zadania przetwarzania zasobów",
+      "video_jobs": "Zadania pobierania wideo"
     },
     "actions": {
       "recrawl_failed_links_only": "Ponowne skanowanie tylko nieudanych linków",
@@ -266,10 +305,52 @@
     "all_lists": "Wszystkie listy",
     "favourites": "Ulubione",
     "new_list": "Nowa lista",
-    "new_nested_list": "Nowa zagnieżdżona lista"
+    "new_nested_list": "Nowa zagnieżdżona lista",
+    "manual_list": "Ręczna lista",
+    "smart_list": "Inteligentna lista",
+    "search_query": "Zapytanie wyszukiwania",
+    "search_query_help": "Dowiedz się więcej o języku zapytań.",
+    "edit_list": "Edytuj listę",
+    "parent_list": "Lista rodziców",
+    "no_parent": "Brak rodzica",
+    "list_type": "Typ listy"
   },
   "preview": {
     "view_original": "Zobacz oryginał",
     "cached_content": "Zbuforowana zawartość"
+  },
+  "highlights": {
+    "no_highlights": "Nie masz jeszcze żadnych wyróżnień."
+  },
+  "search": {
+    "is_not_favorited": "Nie jest ulubione",
+    "is_archived": "Jest zarchiwizowany",
+    "is_not_archived": "Nie jest zarchiwizowany",
+    "has_any_tag": "Ma dowolny tag",
+    "has_no_tags": "Nie ma tagu",
+    "is_in_any_list": "Jest na jakiejkolwiek liście",
+    "is_not_in_any_list": "Nie znajduje się na żadnej liście",
+    "created_on_or_after": "Utworzono w dniu lub po",
+    "not_created_on_or_after": "Nie utworzono w dniu lub po",
+    "type_is": "Typ to",
+    "created_on_or_before": "Utworzono w dniu lub przed",
+    "not_created_on_or_before": "Nie utworzono w dniu lub przed",
+    "url_contains": "URL zawiera",
+    "url_does_not_contain": "Adres URL nie zawiera",
+    "has_tag": "Ma tag",
+    "does_not_have_tag": "Nie ma tagu",
+    "full_text_search": "Wyszukiwanie pełnotekstowe",
+    "is_favorited": "Jest ulubione",
+    "or": "Lub",
+    "is_in_list": "Jest na liście",
+    "is_not_in_list": "Nie jest na liście",
+    "type_is_not": "Typ nie jest",
+    "and": "I"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_description": "Na pewno chcesz usunąć ten zakładkę?",
+      "delete_confirmation_title": "Usunąć zakładkę?"
+    }
   }
 }

@@ -17,6 +17,340 @@
     },
     "experimental": "Експериментальний",
     "search": "Пошук",
-    "something_went_wrong": "Щось пішло не так"
+    "something_went_wrong": "Щось пішло не так",
+    "bookmark_types": {
+      "title": "Тип закладки",
+      "link": "Посилання",
+      "text": "Текст",
+      "media": "Медіа"
+    },
+    "tags": "Теги",
+    "note": "Примітка",
+    "attachments": "Вкладення",
+    "highlights": "Основні моменти",
+    "source": "Джерело",
+    "screenshot": "Скріншот",
+    "video": "Відео",
+    "archive": "Архів",
+    "home": "Домашня сторінка"
+  },
+  "actions": {
+    "sign_out": "Вийти",
+    "change_layout": "Змінити макет",
+    "archive": "Архів",
+    "unarchive": "Розархівувати",
+    "favorite": "Улюблене",
+    "unfavorite": "Видалити з улюбленого",
+    "refresh": "Оновити",
+    "recrawl": "Повторне сканування",
+    "download_full_page_archive": "Завантажити повний архів сторінки",
+    "edit_tags": "Редагувати теги",
+    "add_to_list": "Додати до списку",
+    "select_all": "Вибрати все",
+    "unselect_all": "Зняти виділення з усіх",
+    "copy_link": "Копіювати посилання",
+    "close_bulk_edit": "Закрити масове редагування",
+    "bulk_edit": "Редагування декількох",
+    "manage_lists": "Керування списками",
+    "remove_from_list": "Видалити зі списку",
+    "add": "Додати",
+    "edit": "Редагувати",
+    "create": "Створити",
+    "fetch_now": "Отримати зараз",
+    "summarize_with_ai": "Підсумувати за допомогою ШІ",
+    "edit_title": "Редагувати заголовок",
+    "close": "Закрити",
+    "merge": "Злиття",
+    "cancel": "Скасувати",
+    "apply_all": "Застосувати все",
+    "ignore": "Ігнорувати",
+    "sort": {
+      "title": "Сортувати",
+      "newest_first": "Спочатку новіші",
+      "oldest_first": "Спочатку найстаріші"
+    },
+    "delete": "Видалити",
+    "save": "Зберегти"
+  },
+  "settings": {
+    "webhooks": {
+      "events": {
+        "title": "Події",
+        "crawled": "Проскановано",
+        "created": "Створено",
+        "edited": "Відредаговано"
+      },
+      "webhooks": "Вебхуки",
+      "description": "Ви можете використовувати вебхуки для запуску дій, коли закладки створюються, змінюються або скануються.",
+      "auth_token": "Токен автентифікації",
+      "add_auth_token": "Додати токен автентифікації",
+      "edit_auth_token": "Редагувати токен автентифікації",
+      "create_webhook": "Створити вебхук",
+      "delete_webhook_confirmation": "Ви впевнені, що хочете видалити цей вебхук?",
+      "edit_webhook": "Редагувати вебхук",
+      "webhook_url": "URL-адреса веб-перехоплювача",
+      "delete_webhook": "Видалити вебхук"
+    },
+    "back_to_app": "Назад до застосунку",
+    "user_settings": "Налаштування користувача",
+    "info": {
+      "user_info": "Інформація про користувача",
+      "basic_details": "Основні відомості",
+      "change_password": "Змінити пароль",
+      "current_password": "Поточний пароль",
+      "new_password": "Новий пароль",
+      "confirm_new_password": "Підтвердьте новий пароль",
+      "options": "Параметри",
+      "interface_lang": "Мова інтерфейсу"
+    },
+    "ai": {
+      "ai_settings": "Налаштування ШІ",
+      "tagging_rule_description": "Підказки, які ви додаєте тут, будуть включені як правила до моделі під час створення тегів. Ви можете переглянути остаточні підказки в розділі попереднього перегляду підказок.",
+      "text_prompt": "Текстова підказка",
+      "images_prompt": "Підказка для зображення",
+      "summarization_prompt": "Підказка для підсумовування",
+      "all_tagging": "Усі теги",
+      "text_tagging": "Текстові теги",
+      "image_tagging": "Тегування зображень",
+      "summarization": "Підсумовування",
+      "prompt_preview": "Попередній перегляд підказки",
+      "tagging_rules": "Правила тегів"
+    },
+    "feeds": {
+      "rss_subscriptions": "RSS-підписки",
+      "add_a_subscription": "Додати підписку"
+    },
+    "import": {
+      "import_export": "Імпорт / Експорт",
+      "import_export_bookmarks": "Імпорт / Експорт закладок",
+      "import_bookmarks_from_html_file": "Імпортувати закладки з HTML-файлу",
+      "import_bookmarks_from_pocket_export": "Імпортувати закладки з експорту Pocket",
+      "import_bookmarks_from_omnivore_export": "Імпорт закладок з експорту Omnivore",
+      "import_bookmarks_from_linkwarden_export": "Імпортувати закладки з експорту Linkwarden",
+      "import_bookmarks_from_hoarder_export": "Імпортувати закладки з експорту Hoarder",
+      "export_links_and_notes": "Експорт посилань і нотаток",
+      "imported_bookmarks": "Імпортовані закладки"
+    },
+    "api_keys": {
+      "api_keys": "Ключі API",
+      "new_api_key": "Новий ключ API",
+      "new_api_key_desc": "Дайте своєму API-ключу унікальне ім'я",
+      "key_success_please_copy": "Будь ласка, скопіюйте ключ і збережіть його в надійному місці. Після закриття діалогового вікна ви більше не зможете отримати до нього доступ.",
+      "key_success": "Ключ успішно створено"
+    },
+    "broken_links": {
+      "broken_links": "Неробочі посилання",
+      "last_crawled_at": "Останнє сканування",
+      "crawling_failed": "Помилка сканування",
+      "crawling_status": "Статус сканування"
+    },
+    "manage_assets": {
+      "manage_assets": "Керування ресурсами",
+      "no_assets": "У вас ще немає жодних ресурсів.",
+      "asset_type": "Тип активу",
+      "bookmark_link": "Посилання на закладку",
+      "asset_link": "Посилання на ресурс",
+      "delete_asset": "Видалити ресурс",
+      "delete_asset_confirmation": "Ви впевнені, що хочете видалити цей актив?"
+    }
+  },
+  "search": {
+    "or": "Або",
+    "is_favorited": "В обраних",
+    "is_not_favorited": "Не в обраних",
+    "is_not_archived": "Не заархівовано",
+    "has_no_tags": "Немає теґа",
+    "is_in_any_list": "Є в будь-якому списку",
+    "not_created_on_or_after": "Не створено після",
+    "created_on_or_before": "Створено або до",
+    "not_created_on_or_before": "Не створено до або раніше",
+    "is_in_list": "Є у списку",
+    "is_not_in_list": "Не в списку",
+    "full_text_search": "Повнотекстовий пошук",
+    "type_is": "Тип є",
+    "type_is_not": "Тип не є",
+    "and": "І",
+    "has_any_tag": "Має будь-який тег",
+    "is_archived": "В архіві",
+    "is_not_in_any_list": "Немає в жодному списку",
+    "created_on_or_after": "Створено або після",
+    "url_contains": "URL містить",
+    "url_does_not_contain": "URL не містить",
+    "has_tag": "Має тег",
+    "does_not_have_tag": "Не має теґа"
+  },
+  "preview": {
+    "cached_content": "Кешований вміст",
+    "view_original": "Переглянути оригінал"
+  },
+  "layouts": {
+    "masonry": "Кам'яна кладка",
+    "grid": "Сітка",
+    "list": "Список",
+    "compact": "Компактний"
+  },
+  "highlights": {
+    "no_highlights": "У вас ще немає виділень."
+  },
+  "admin": {
+    "admin_settings": "Налаштування адміністратора",
+    "server_stats": {
+      "server_stats": "Статистика сервера",
+      "total_users": "Всього користувачів",
+      "total_bookmarks": "Всього закладок",
+      "server_version": "Версія сервера"
+    },
+    "background_jobs": {
+      "video_jobs": "Завдання завантаження відео",
+      "feed_jobs": "Завдання для RSS-каналу",
+      "webhook_jobs": "Завдання вебхуків",
+      "asset_preprocessing_jobs": "Завдання попередньої обробки ресурсів",
+      "inference_jobs": "Завдання висновування",
+      "tidy_assets_jobs": "Завдання з очищення ресурсів",
+      "job": "Завдання",
+      "queued": "У черзі",
+      "background_jobs": "Фонові завдання",
+      "crawler_jobs": "Завдання сканування",
+      "indexing_jobs": "Завдання індексації",
+      "pending": "В очікуванні",
+      "failed": "Не вдалося"
+    },
+    "actions": {
+      "recrawl_all_links": "Повторно просканувати всі посилання",
+      "without_inference": "Без висновків",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Згенерувати теги ШІ тільки для невдалих закладок",
+      "reprocess_assets_fix_mode": "Переобробити ресурси (режим виправлення)",
+      "reindex_all_bookmarks": "Переіндексувати всі закладки",
+      "compact_assets": "Компактні активи",
+      "regenerate_ai_tags_for_all_bookmarks": "Відновити теги ШІ для всіх закладок",
+      "recrawl_failed_links_only": "Повторно просканувати лише пошкоджені посилання"
+    },
+    "users_list": {
+      "users_list": "Список користувачів",
+      "create_user": "Створити користувача",
+      "change_role": "Змінити роль",
+      "reset_password": "Скинути пароль",
+      "delete_user": "Видалити користувача",
+      "num_bookmarks": "Кількість закладок",
+      "asset_sizes": "Розміри ресурсів",
+      "local_user": "Локальний користувач",
+      "confirm_password": "Підтвердьте пароль"
+    }
+  },
+  "lists": {
+    "all_lists": "Усі списки",
+    "favourites": "Улюблене",
+    "new_list": "Новий список",
+    "edit_list": "Редагувати список",
+    "new_nested_list": "Новий вкладений список",
+    "list_type": "Тип списку",
+    "manual_list": "Список вручну",
+    "smart_list": "Розумний список",
+    "search_query_help": "Дізнайтеся більше про мову пошукових запитів.",
+    "search_query": "Пошуковий запит",
+    "parent_list": "Батьківський список",
+    "no_parent": "Немає батьківського елемента"
+  },
+  "tags": {
+    "your_tags": "Ваші теги",
+    "your_tags_info": "Теги, які ви прикріплювали хоча б один раз",
+    "ai_tags": "Теги AI",
+    "ai_tags_info": "Теги, які були додані лише автоматично (за допомогою AI)",
+    "unused_tags": "Невикористані теги",
+    "unused_tags_info": "Теги, які не прив'язані до жодної закладки",
+    "delete_all_unused_tags": "Видалити всі невикористані теги",
+    "drag_and_drop_merging": "Перетягування для об'єднання",
+    "drag_and_drop_merging_info": "Перетягніть теги один на одного, щоб об'єднати їх",
+    "sort_by_name": "Сортувати за назвою",
+    "all_tags": "Усі теги"
+  },
+  "editor": {
+    "multiple_urls_dialog_title": "Імпортувати URL-адреси як окремі закладки?",
+    "multiple_urls_dialog_desc": "Вхідні дані містять декілька URL-адрес в окремих рядках. Хочете імпортувати їх як окремі закладки?",
+    "text_toolbar": {
+      "markdown_shortcuts": {
+        "heading": {
+          "example": "# H1, ## H2, ### H3",
+          "label": "Заголовок"
+        },
+        "bold": {
+          "label": "Жирний",
+          "example": "**текст** або CTRL+b"
+        },
+        "blockquote": {
+          "example": "> Цитата",
+          "label": "Цитата"
+        },
+        "ordered_list": {
+          "label": "Упорядкований список",
+          "example": "1. Пункт списку"
+        },
+        "block_code": {
+          "example": "``` + space",
+          "label": "Блок коду"
+        },
+        "unordered_list": {
+          "example": "- Елемент списку",
+          "label": "Невпорядкований список"
+        },
+        "inline_code": {
+          "label": "Вбудований код",
+          "example": "`Код`"
+        },
+        "label": "Markdown-шорткати",
+        "italic": {
+          "label": "Курсив",
+          "example": "*Курсив* або _Курсив_ або CTRL+i"
+        }
+      },
+      "align_center": "Вирівняти по центру",
+      "align_right": "Вирівнювання по правому краю",
+      "bold": "Жирний",
+      "italic": "Курсив",
+      "underline": "Підкреслення",
+      "strikethrough": "Перекреслений",
+      "code": "Код",
+      "highlight": "Підсвічування",
+      "align_left": "Вирівняти по лівому краю",
+      "undo": "Скасувати",
+      "redo": "Повторити"
+    },
+    "quickly_focus": "Ви можете швидко зосередитися на цьому полі, натиснувши ⌘ + E",
+    "import_as_text": "Імпортувати як текстову закладку",
+    "import_as_separate_bookmarks": "Імпортувати як окремі закладки",
+    "placeholder": "Вставте посилання або зображення, напишіть нотатку або перетягніть зображення сюди…",
+    "new_item": "НОВИЙ ЕЛЕМЕНТ",
+    "disabled_submissions": "Надсилання вимкнено"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_title": "Видалити закладку?",
+      "delete_confirmation_description": "Ви впевнені, що хочете видалити цю закладку?"
+    }
+  },
+  "options": {
+    "dark_mode": "Темний режим",
+    "light_mode": "Світлий режим"
+  },
+  "toasts": {
+    "bookmarks": {
+      "refetch": "Повторне отримання поставлено в чергу!",
+      "full_page_archive": "Створення повного архіву сторінки було запущено",
+      "delete_from_list": "Закладку видалено зі списку",
+      "clipboard_copied": "Посилання додано до вашого буфера обміну!",
+      "updated": "Закладку оновлено!",
+      "deleted": "Закладку видалено!"
+    },
+    "lists": {
+      "created": "Список створено!",
+      "updated": "Список оновлено!"
+    }
+  },
+  "cleanups": {
+    "cleanups": "Очищення",
+    "duplicate_tags": {
+      "title": "Дублікати тегів",
+      "merge_all_suggestions": "Об'єднати всі пропозиції?"
+    }
   }
 }

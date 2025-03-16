@@ -23,7 +23,16 @@
     "password": "Wachtwoord",
     "action": "Actie",
     "key": "Sleutel",
-    "highlights": "Hoogtepunten"
+    "highlights": "Hoogtepunten",
+    "size": "Grootte",
+    "bookmark_types": {
+      "title": "Bladwijzertype",
+      "link": "Link",
+      "text": "Tekst",
+      "media": "Media"
+    },
+    "type": "Type",
+    "source": "Bron"
   },
   "layouts": {
     "list": "Lijst",
@@ -72,14 +81,27 @@
   "settings": {
     "ai": {
       "ai_settings": "AI Instellingen",
-      "tagging_rules": "Labels Regels"
+      "tagging_rules": "Labels Regels",
+      "text_prompt": "Tekstprompt",
+      "prompt_preview": "Prompt voorbeeld",
+      "images_prompt": "Afbeelding prompt",
+      "summarization": "Samenvatting",
+      "summarization_prompt": "Prompt voor samenvatting",
+      "all_tagging": "Alle tags",
+      "text_tagging": "Tekst taggen",
+      "image_tagging": "Afbeeldingen taggen",
+      "tagging_rule_description": "Prompts die je hier toevoegt, worden opgenomen als regels voor het model tijdens het genereren van tags. Je kunt de uiteindelijke prompts bekijken in het promptvoorbeeldgedeelte."
     },
     "import": {
       "import_export": "Importeren / Exporteren",
       "imported_bookmarks": "Geïmporteerde Bladwijzers",
       "import_export_bookmarks": "Importeer / Exporteer Bladwijzers",
       "import_bookmarks_from_html_file": "Importeer Bladwijzers van HTML bestand",
-      "import_bookmarks_from_pocket_export": "Importeer Bladwijzers van Pocket export"
+      "import_bookmarks_from_pocket_export": "Importeer Bladwijzers van Pocket export",
+      "import_bookmarks_from_omnivore_export": "Bladwijzers importeren uit Omnivore export",
+      "import_bookmarks_from_linkwarden_export": "Bladwijzers importeren uit Linkwarden-export",
+      "import_bookmarks_from_hoarder_export": "Bladwijzers importeren uit Hoarder-export",
+      "export_links_and_notes": "Links en notities exporteren"
     },
     "broken_links": {
       "broken_links": "Gebroken Links",
@@ -109,6 +131,33 @@
     "feeds": {
       "rss_subscriptions": "RSS Abonnementen",
       "add_a_subscription": "Abonnement Toevoegen"
+    },
+    "manage_assets": {
+      "manage_assets": "Activa beheren",
+      "no_assets": "Je hebt nog geen assets.",
+      "asset_type": "Type asset",
+      "delete_asset_confirmation": "Weet je zeker dat je dit item wilt verwijderen?",
+      "bookmark_link": "Bladwijzerlink",
+      "asset_link": "Asset-link",
+      "delete_asset": "Asset verwijderen"
+    },
+    "webhooks": {
+      "webhooks": "Webhooks",
+      "description": "Je kunt webhooks gebruiken om acties te activeren wanneer bladwijzers worden gemaakt, gewijzigd of gecrawld.",
+      "events": {
+        "title": "Evenementen",
+        "crawled": "Gecrawld",
+        "created": "Aangemaakt",
+        "edited": "Bewerkt"
+      },
+      "auth_token": "Auth-token",
+      "add_auth_token": "Auth-token toevoegen",
+      "edit_auth_token": "Authenticatietoken bewerken",
+      "create_webhook": "Webhook maken",
+      "delete_webhook": "Webhook verwijderen",
+      "delete_webhook_confirmation": "Weet je zeker dat je deze webhook wilt verwijderen?",
+      "edit_webhook": "Webhook bewerken",
+      "webhook_url": "Webhook URL"
     }
   },
   "admin": {
@@ -123,7 +172,15 @@
       "crawler_jobs": "Crawl Taken",
       "background_jobs": "Achtergrondtaken",
       "indexing_jobs": "Indexeer Taken",
-      "inference_jobs": "Inferentie Taken"
+      "inference_jobs": "Inferentie Taken",
+      "pending": "In behandeling",
+      "tidy_assets_jobs": "Tidy Assets-taken",
+      "asset_preprocessing_jobs": "Asset pre-processing taken",
+      "queued": "In de wachtrij",
+      "job": "Taak",
+      "video_jobs": "Taken voor het downloaden van video's",
+      "webhook_jobs": "Webhook-taken",
+      "feed_jobs": "RSS-feedtaken"
     },
     "users_list": {
       "users_list": "Gebruikerslijst",
@@ -132,9 +189,21 @@
       "local_user": "Lokale Gebruiker",
       "reset_password": "Reset Wachtwoord",
       "create_user": "Maak Gebruiker Aan",
-      "change_role": "Wijzig Rol"
+      "change_role": "Wijzig Rol",
+      "confirm_password": "Wachtwoord bevestigen",
+      "asset_sizes": "Assetformaten"
     },
-    "admin_settings": "Admin Instellingen"
+    "admin_settings": "Admin Instellingen",
+    "actions": {
+      "without_inference": "Zonder gevolgtrekking",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Alleen AI-tags opnieuw genereren voor mislukte bladwijzers",
+      "regenerate_ai_tags_for_all_bookmarks": "AI-tags voor alle bladwijzers opnieuw genereren",
+      "compact_assets": "Compacte assets",
+      "reprocess_assets_fix_mode": "Activa opnieuw verwerken (Fix-modus)",
+      "recrawl_failed_links_only": "Alleen mislukte links opnieuw crawlen",
+      "recrawl_all_links": "Alle links opnieuw crawlen",
+      "reindex_all_bookmarks": "Alle bladwijzers opnieuw indexeren"
+    }
   },
   "tags": {
     "ai_tags": "AI Labels",
@@ -150,12 +219,66 @@
     "delete_all_unused_tags": "Verwijder Alle Ongebruikte Labels"
   },
   "preview": {
-    "view_original": "Toon origineel"
+    "view_original": "Toon origineel",
+    "cached_content": "Inhoud in cache"
   },
   "editor": {
     "text_toolbar": {
-      "bold": "Vetgedrukt"
-    }
+      "bold": "Vetgedrukt",
+      "italic": "Cursief",
+      "underline": "Onderstrepen",
+      "markdown_shortcuts": {
+        "label": "Markdown sneltoetsen",
+        "italic": {
+          "label": "Cursief",
+          "example": "*Cursief* of _Cursief_ of CTRL+i"
+        },
+        "ordered_list": {
+          "label": "Geordende lijst",
+          "example": "1. Opsommingsteken"
+        },
+        "unordered_list": {
+          "label": "Ongeordende lijst",
+          "example": "- Lijstitem"
+        },
+        "inline_code": {
+          "example": "`Code`",
+          "label": "Inline code"
+        },
+        "block_code": {
+          "label": "Blokcode",
+          "example": "``` + spatie"
+        },
+        "heading": {
+          "example": "# H1, ## H2, ### H3",
+          "label": "Kop"
+        },
+        "blockquote": {
+          "label": "Blokcitaat",
+          "example": "> Citaat"
+        },
+        "bold": {
+          "example": "**tekst** of CTRL+b",
+          "label": "Vet"
+        }
+      },
+      "redo": "Opnieuw",
+      "code": "Code",
+      "highlight": "Markeren",
+      "align_left": "Links uitlijnen",
+      "strikethrough": "Doorstrepen",
+      "align_center": "Centraal uitlijnen",
+      "align_right": "Rechts uitlijnen",
+      "undo": "Ongedaan maken"
+    },
+    "quickly_focus": "Je kunt snel op dit veld focussen door op ⌘ + E te drukken",
+    "multiple_urls_dialog_title": "URL's importeren als afzonderlijke bladwijzers?",
+    "import_as_text": "Importeren als tekstbladwijzer",
+    "import_as_separate_bookmarks": "Importeren als afzonderlijke bladwijzers",
+    "new_item": "NIEUW ITEM",
+    "multiple_urls_dialog_desc": "De invoer bevat meerdere URL's op afzonderlijke regels. Wil je ze als afzonderlijke bladwijzers importeren?",
+    "disabled_submissions": "Inzendingen zijn uitgeschakeld",
+    "placeholder": "Plak hier een link of een afbeelding, schrijf een notitie of sleep een afbeelding hierheen…"
   },
   "options": {
     "dark_mode": "Donkere Modus",
@@ -164,6 +287,70 @@
   "lists": {
     "all_lists": "Alle Lijsten",
     "favourites": "Favorieten",
-    "new_list": "Nieuwe Lijst"
+    "new_list": "Nieuwe Lijst",
+    "search_query_help": "Lees meer over de zoekopdrachttaal.",
+    "no_parent": "Geen bovenliggend item",
+    "smart_list": "Slimme lijst",
+    "search_query": "Zoekopdracht",
+    "edit_list": "Lijst bewerken",
+    "parent_list": "Bovenliggende lijst",
+    "list_type": "Type lijst",
+    "manual_list": "Handmatige lijst",
+    "new_nested_list": "Nieuwe geneste lijst"
+  },
+  "search": {
+    "full_text_search": "Volledige tekst zoeken",
+    "is_favorited": "Is favoriet",
+    "is_not_favorited": "Is geen favoriet",
+    "is_archived": "Is gearchiveerd",
+    "is_not_in_any_list": "Staat niet in een lijst",
+    "type_is_not": "Type is niet",
+    "and": "En",
+    "not_created_on_or_after": "Niet gemaakt op of na",
+    "created_on_or_before": "Gemaakt op of voor",
+    "not_created_on_or_before": "Niet gemaakt op of voor",
+    "url_contains": "URL bevat",
+    "url_does_not_contain": "URL bevat niet",
+    "is_in_list": "Staat in lijst",
+    "is_not_in_list": "Staat niet in de lijst",
+    "has_tag": "Heeft tag",
+    "does_not_have_tag": "Heeft geen tag",
+    "or": "Of",
+    "is_not_archived": "Is niet gearchiveerd",
+    "has_any_tag": "Heeft een tag",
+    "has_no_tags": "Heeft geen tag",
+    "is_in_any_list": "Staat in een lijst",
+    "created_on_or_after": "Gemaakt op of na",
+    "type_is": "Type is"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_description": "Weet je zeker dat je dit bladwijzer wilt verwijderen?",
+      "delete_confirmation_title": "Bladwijzer verwijderen?"
+    }
+  },
+  "toasts": {
+    "bookmarks": {
+      "refetch": "Opnieuw ophalen is in de wachtrij geplaatst!",
+      "full_page_archive": "Het aanmaken van een volledig pagina-archief is gestart",
+      "updated": "De bladwijzer is bijgewerkt!",
+      "deleted": "De bladwijzer is verwijderd!",
+      "delete_from_list": "De bladwijzer is uit de lijst verwijderd",
+      "clipboard_copied": "Link is naar je klembord gekopieerd!"
+    },
+    "lists": {
+      "updated": "Lijst is bijgewerkt!",
+      "created": "Lijst is aangemaakt!"
+    }
+  },
+  "cleanups": {
+    "cleanups": "Opschonen",
+    "duplicate_tags": {
+      "title": "Dubbele tags",
+      "merge_all_suggestions": "Alle suggesties samenvoegen?"
+    }
+  },
+  "highlights": {
+    "no_highlights": "Je hebt nog geen markeringen."
   }
 }

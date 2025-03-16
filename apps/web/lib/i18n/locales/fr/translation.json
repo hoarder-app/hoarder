@@ -30,7 +30,9 @@
       "title": "Type de signets",
       "media": "Médias"
     },
-    "highlights": "points saillants"
+    "highlights": "points saillants",
+    "type": "Tapez",
+    "size": "Taille"
   },
   "layouts": {
     "masonry": "Mosaïque",
@@ -95,7 +97,12 @@
       "tagging_rule_description": "Les invites que vous ajoutez ici seront incluses comme règles pour le modèle lors de la génération des tags. Vous pouvez voir les invites finales dans la section de prévisualisation des invites.",
       "prompt_preview": "Aperçu de l'invite",
       "text_prompt": "Invite de texte",
-      "images_prompt": "Invite d'image"
+      "images_prompt": "Invite d'image",
+      "summarization_prompt": "Invite de résumé",
+      "all_tagging": "Tout l’étiquetage",
+      "text_tagging": "Balises de texte",
+      "image_tagging": "Marquage d'image",
+      "summarization": "Résumer"
     },
     "feeds": {
       "rss_subscriptions": "Abonnements RSS",
@@ -109,7 +116,8 @@
       "import_bookmarks_from_omnivore_export": "Importer des favoris depuis une exportation Omnivore",
       "import_bookmarks_from_hoarder_export": "Importer des favoris depuis une exportation Hoarder",
       "export_links_and_notes": "Exporter les liens et les notes",
-      "imported_bookmarks": "Favoris importés"
+      "imported_bookmarks": "Favoris importés",
+      "import_bookmarks_from_linkwarden_export": "Importer des marque-pages depuis l'export Linkwarden"
     },
     "api_keys": {
       "api_keys": "Clés API",
@@ -120,8 +128,36 @@
     },
     "webhooks": {
       "auth_token": "Jeton d'authentification",
-      "webhooks": "",
-      "add_auth_token": "Ajouter un jeton d'authentification"
+      "webhooks": "Webhooks",
+      "add_auth_token": "Ajouter un jeton d'authentification",
+      "edit_webhook": "Modifier le webhook",
+      "webhook_url": "URL du webhook",
+      "description": "Vous pouvez utiliser des webhooks pour déclencher des actions lorsque des signets sont créés, modifiés ou explorés.",
+      "events": {
+        "title": "Événements",
+        "crawled": "Exploré",
+        "created": "Créé",
+        "edited": "Modifié"
+      },
+      "edit_auth_token": "Modifier le jeton d'authentification",
+      "create_webhook": "Créer un webhook",
+      "delete_webhook": "Supprimer le Webhook",
+      "delete_webhook_confirmation": "Êtes-vous sûr de vouloir supprimer ce webhook ?"
+    },
+    "broken_links": {
+      "crawling_status": "État de l'exploration",
+      "last_crawled_at": "Dernier crawlé à",
+      "crawling_failed": "Exploration échouée",
+      "broken_links": "Liens brisés"
+    },
+    "manage_assets": {
+      "manage_assets": "Gérer les ressources",
+      "no_assets": "Vous n'avez pas encore d'actifs.",
+      "asset_type": "Type d'actif",
+      "bookmark_link": "Lien de signet",
+      "asset_link": "Lien de l'actif",
+      "delete_asset": "Supprimer l'actif",
+      "delete_asset_confirmation": "Êtes-vous sûr de vouloir supprimer cet actif ?"
     }
   },
   "admin": {
@@ -141,7 +177,11 @@
       "job": "Tâche",
       "queued": "En file d'attente",
       "pending": "En attente",
-      "failed": "Échoué"
+      "failed": "Échoué",
+      "video_jobs": "Tâches de téléchargement de vidéos",
+      "webhook_jobs": "Tâches Webhook",
+      "asset_preprocessing_jobs": "Tâches de prétraitement des ressources",
+      "feed_jobs": "Tâches de flux RSS"
     },
     "actions": {
       "recrawl_failed_links_only": "Recrawler uniquement les liens échoués",
@@ -173,7 +213,15 @@
     "all_lists": "Toutes les listes",
     "favourites": "Favoris",
     "new_list": "Nouvelle liste",
-    "new_nested_list": "Nouvelle liste imbriquée"
+    "new_nested_list": "Nouvelle liste imbriquée",
+    "search_query_help": "En savoir plus sur le langage de requête de recherche.",
+    "edit_list": "Modifier la liste",
+    "manual_list": "Liste manuelle",
+    "smart_list": "Liste intelligente",
+    "search_query": "Requête de recherche",
+    "parent_list": "Liste parente",
+    "no_parent": "Pas de parent",
+    "list_type": "Type de liste"
   },
   "tags": {
     "all_tags": "Tous les tags",
@@ -212,7 +260,42 @@
       "highlight": "Surligner",
       "align_left": "Aligner à gauche",
       "align_center": "Aligner au centre",
-      "align_right": "Aligner à droite"
+      "align_right": "Aligner à droite",
+      "markdown_shortcuts": {
+        "inline_code": {
+          "label": "Code en ligne",
+          "example": "`Code`"
+        },
+        "unordered_list": {
+          "example": "- Élément de liste",
+          "label": "Liste non ordonnée"
+        },
+        "block_code": {
+          "label": "Bloc de code",
+          "example": "``` + espace"
+        },
+        "blockquote": {
+          "example": "> Citation",
+          "label": "Citation"
+        },
+        "ordered_list": {
+          "label": "Liste ordonnée",
+          "example": "1. Élément de la liste"
+        },
+        "label": "Raccourcis Markdown",
+        "heading": {
+          "label": "En-tête",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "bold": {
+          "label": "Gras",
+          "example": "**texte** ou CTRL+b"
+        },
+        "italic": {
+          "label": "Italique",
+          "example": "*Italique* ou _Italique_ ou CTRL+i"
+        }
+      }
     }
   },
   "toasts": {
@@ -235,5 +318,39 @@
       "title": "Tags en double",
       "merge_all_suggestions": "Fusionner toutes les suggestions ?"
     }
+  },
+  "search": {
+    "has_tag": "A une balise",
+    "is_in_any_list": "Est dans n'importe quelle liste",
+    "is_not_in_any_list": "N'est dans aucune liste",
+    "created_on_or_before": "Créé le ou avant le",
+    "url_does_not_contain": "L’URL ne contient pas",
+    "does_not_have_tag": "N'a pas de tag",
+    "type_is_not": "Le type n'est pas",
+    "or": "Ou",
+    "is_favorited": "Est mis en favoris",
+    "is_not_favorited": "N'est pas mis en favori",
+    "is_not_archived": "N'est pas archivé",
+    "created_on_or_after": "Créé le ou après le",
+    "not_created_on_or_after": "Pas créé le ou après le",
+    "is_in_list": "Est dans la liste",
+    "is_not_in_list": "N'est pas dans la liste",
+    "has_any_tag": "A n'importe quelle étiquette",
+    "has_no_tags": "N'a pas de tag",
+    "not_created_on_or_before": "Pas créé avant ou le",
+    "url_contains": "L'URL contient",
+    "full_text_search": "Recherche en texte intégral",
+    "type_is": "Le type est",
+    "is_archived": "Est archivé",
+    "and": "Et"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_title": "Supprimer le signet ?",
+      "delete_confirmation_description": "T'es sûr de vouloir supprimer ce marque-page ?"
+    }
+  },
+  "highlights": {
+    "no_highlights": "Vous n'avez pas encore de surlignages."
   }
 }

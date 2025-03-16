@@ -315,7 +315,11 @@
       "job": "작업",
       "queued": "큐에 추가됨",
       "pending": "대기중",
-      "failed": "실패함"
+      "failed": "실패함",
+      "asset_preprocessing_jobs": "에셋 전처리 작업",
+      "feed_jobs": "RSS 피드 작업",
+      "video_jobs": "비디오 다운로드 작업",
+      "webhook_jobs": "웹훅 작업"
     },
     "actions": {
       "recrawl_failed_links_only": "실패한 링크만 다시 가져오기",

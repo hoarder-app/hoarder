@@ -25,7 +25,8 @@
       "change_password": "Spremeni geslo",
       "new_password": "Novo geslo",
       "confirm_new_password": "Potrdite novo geslo",
-      "interface_lang": "Jezik vmesnika"
+      "interface_lang": "Jezik vmesnika",
+      "user_info": "Informacije o uporabniku"
     },
     "ai": {
       "text_prompt": "Besedilni ukaz",
@@ -36,21 +37,49 @@
       "ai_settings": "AI Nastavitve",
       "prompt_preview": "Predogled ukaza",
       "summarization_prompt": "Povzemni ukaz",
-      "all_tagging": "Vse oznake"
+      "all_tagging": "Vse oznake",
+      "tagging_rules": "Pravila za označevanje",
+      "tagging_rule_description": "Pozivi, ki jih dodaš tukaj, bodo vključeni kot pravila za model med ustvarjanjem oznak. Končne pozive si lahko ogledaš v razdelku za predogled pozivov."
     },
     "back_to_app": "Nazaj v aplikacijo",
     "webhooks": {
       "events": {
         "created": "Ustvarjeno",
         "title": "Dogodki",
-        "edited": "Urejeno"
-      }
+        "edited": "Urejeno",
+        "crawled": "Preverjeno"
+      },
+      "webhooks": "Spletne kljuke",
+      "description": "Spletne kljuke lahko uporabiš za sprožitev dejanj, ko so zaznamki ustvarjeni, spremenjeni ali prebrskani.",
+      "auth_token": "Žeton za preverjanje pristnosti",
+      "add_auth_token": "Dodaj žeton za preverjanje pristnosti",
+      "edit_auth_token": "Uredi overitveni žeton",
+      "create_webhook": "Ustvari spletno kljuko",
+      "edit_webhook": "Uredi spletno kljuko",
+      "webhook_url": "URL spletne kljuke",
+      "delete_webhook": "Izbriši spletno kljuko",
+      "delete_webhook_confirmation": "Ali ste prepričani, da želite izbrisati to spletno kljuko?"
     },
     "feeds": {
       "add_a_subscription": "Dodaj naročnino",
       "rss_subscriptions": "RSS Naročnine"
     },
-    "user_settings": "Uporabniške nastavitve"
+    "user_settings": "Uporabniške nastavitve",
+    "broken_links": {
+      "broken_links": "Pokvarjene povezave",
+      "last_crawled_at": "Zadnjič preverjeno ob",
+      "crawling_status": "Stanje indeksiranja",
+      "crawling_failed": "Iskanje ni uspelo"
+    },
+    "manage_assets": {
+      "asset_type": "Vrsta sredstva",
+      "bookmark_link": "Povezava zaznamka",
+      "manage_assets": "Upravljanje sredstev",
+      "no_assets": "Še nimaš nobenih sredstev.",
+      "delete_asset": "Izbriši sredstvo",
+      "delete_asset_confirmation": "Ali si prepričan, da želiš izbrisati to sredstvo?",
+      "asset_link": "Povezava do sredstva"
+    }
   },
   "admin": {
     "server_stats": {
@@ -66,19 +95,35 @@
       "create_user": "Ustvari uporabnika",
       "local_user": "Lokalni uporabnik",
       "change_role": "Spremeni vlogo",
-      "delete_user": "Izbriši uporabnika"
+      "delete_user": "Izbriši uporabnika",
+      "num_bookmarks": "Št. zaznamkov",
+      "asset_sizes": "Velikosti sredstev"
     },
     "background_jobs": {
       "failed": "Neuspešno",
       "background_jobs": "Oprabila v ozadju",
       "queued": "V vrsti",
       "pending": "Čakajoče",
-      "job": "Opravilo"
+      "job": "Opravilo",
+      "crawler_jobs": "Iskalna opravila",
+      "webhook_jobs": "Opravila spletne kljuke",
+      "indexing_jobs": "Opravila indeksiranja",
+      "tidy_assets_jobs": "Opravila za urejanje sredstev",
+      "video_jobs": "Opravila za prenos videoposnetkov",
+      "asset_preprocessing_jobs": "Opravila za predobdelavo sredstev",
+      "feed_jobs": "Opravila za vire RSS",
+      "inference_jobs": "Opravila za sklepanje"
     },
     "admin_settings": "Administratorske nastavitve",
     "actions": {
       "regenerate_ai_tags_for_failed_bookmarks_only": "Regeneriraj AI oznake samo za neuspešne zaznamke",
-      "regenerate_ai_tags_for_all_bookmarks": "Regeneriraj AI oznake za vse zaznamke"
+      "regenerate_ai_tags_for_all_bookmarks": "Regeneriraj AI oznake za vse zaznamke",
+      "recrawl_failed_links_only": "Ponovno preveri samo povezave, ki niso uspele",
+      "recrawl_all_links": "Ponovno poišči vse povezave",
+      "without_inference": "Brez sklepanja",
+      "reindex_all_bookmarks": "Ponovno indeksiraj vse zaznamke",
+      "compact_assets": "Kompaktna sredstva",
+      "reprocess_assets_fix_mode": "Ponovno obdelaj sredstva (način popravljanja)"
     }
   },
   "search": {
@@ -99,7 +144,12 @@
     "has_tag": "Ima oznake",
     "type_is": "Vrsta je",
     "or": "Ali",
-    "is_not_in_list": "Ni v seznamu"
+    "is_not_in_list": "Ni v seznamu",
+    "is_favorited": "Je med priljubljenimi",
+    "is_not_favorited": "Ni med priljubljenimi",
+    "has_any_tag": "Ima katero koli oznako",
+    "has_no_tags": "Nima oznake",
+    "full_text_search": "Iskanje po celotnem besedilu"
   },
   "tags": {
     "your_tags_info": "Oznake, ki si jih dodelil/a vsaj enkrat",
@@ -111,7 +161,8 @@
     "sort_by_name": "Uredi po imenu",
     "your_tags": "Tvoje oznake",
     "unused_tags": "Nsuporabljene oznake",
-    "delete_all_unused_tags": "Izbriši vse neuporabljene oznake"
+    "delete_all_unused_tags": "Izbriši vse neuporabljene oznake",
+    "drag_and_drop_merging_info": "Povlecite in spustite oznake drug na drugo, da jih združite"
   },
   "common": {
     "archive": "Arhiv",
@@ -135,10 +186,18 @@
     "size": "Velikost",
     "bookmark_types": {
       "text": "Besedilo",
-      "link": "Povezava"
+      "link": "Povezava",
+      "title": "Vrsta zaznamka",
+      "media": "Mediji"
     },
     "search": "Iskanje",
-    "source": "Vir"
+    "source": "Vir",
+    "action": "Dejanje",
+    "actions": "Dejanja",
+    "key": "Ključ",
+    "tags": "Oznake",
+    "note": "Opomba",
+    "highlights": "Poudarki"
   },
   "actions": {
     "close_bulk_edit": "Zapri množično urejanje",
@@ -170,11 +229,19 @@
     "refresh": "Osveži",
     "save": "Shrani",
     "ignore": "Ignoriraj",
-    "bulk_edit": "Množično urejanje"
+    "bulk_edit": "Množično urejanje",
+    "change_layout": "Spremeni postavitev",
+    "unfavorite": "Odstrani iz priljubljenih",
+    "recrawl": "Ponovno prebrskaj",
+    "edit_tags": "Uredi oznake",
+    "fetch_now": "Poberi zdaj",
+    "apply_all": "Uporabi vse"
   },
   "layouts": {
     "compact": "Kompaktno",
-    "list": "Seznam"
+    "list": "Seznam",
+    "masonry": "Zidarska vezava",
+    "grid": "Mreža"
   },
   "lists": {
     "list_type": "Vrsta seznama",
@@ -184,7 +251,11 @@
     "search_query": "Iskalna poizvedba",
     "all_lists": "Vsi seznami",
     "manual_list": "Ročni seznam",
-    "new_list": "Nov seznam"
+    "new_list": "Nov seznam",
+    "favourites": "Priljubljene",
+    "parent_list": "Seznam staršev",
+    "no_parent": "Brez starša",
+    "search_query_help": "Izvedi več o jeziku iskalnih poizvedb."
   },
   "options": {
     "dark_mode": "Temni način",
@@ -244,14 +315,18 @@
     "placeholder": "Prilepi povezavo ali sliko, napiši zapisek ali potegni in spusti sliko tukaj…",
     "multiple_urls_dialog_title": "Uvoz URL-jev, kot ločene zaznamke?",
     "import_as_text": "Uvozi kot besedilni zaznamek",
-    "disabled_submissions": "Oddaje so onemogočene"
+    "disabled_submissions": "Oddaje so onemogočene",
+    "quickly_focus": "Na to polje se lahko hitro osredotočiš s pritiskom na ⌘ + E",
+    "multiple_urls_dialog_desc": "Vnos vsebuje več URL-jev v ločenih vrsticah. Ali jih želite uvoziti kot ločene zaznamke?"
   },
   "toasts": {
     "bookmarks": {
       "deleted": "Zaznamek je bil izbrisan!",
       "delete_from_list": "Ta zaznamek je bil izbrisan iz seznama",
       "clipboard_copied": "Povezava je bila kopirana v odložišče!",
-      "updated": "Zaznamek je bil posodobljen!"
+      "updated": "Zaznamek je bil posodobljen!",
+      "refetch": "Ponovno pridobivanje je bilo dodano v čakalno vrsto!",
+      "full_page_archive": "Ustvarjanje arhiva celotne strani je bilo sproženo"
     },
     "lists": {
       "created": "Seznam je bil ustvarjen!",
@@ -268,9 +343,14 @@
     "duplicate_tags": {
       "merge_all_suggestions": "Združi vse predloge?",
       "title": "Podvojene oznake"
-    }
+    },
+    "cleanups": "Čiščenja"
   },
   "preview": {
-    "view_original": "Ogled izvirnika"
+    "view_original": "Ogled izvirnika",
+    "cached_content": "Predpomnjena vsebina"
+  },
+  "highlights": {
+    "no_highlights": "Še nimaš nobenih poudarkov."
   }
 }

@@ -60,7 +60,17 @@
     "screenshot": "Screenshot",
     "archive": "Archivio",
     "home": "Home",
-    "url": "URL"
+    "url": "URL",
+    "type": "Digita",
+    "bookmark_types": {
+      "link": "Collegamento",
+      "text": "Testo",
+      "media": "Media",
+      "title": "Tipo di segnalibro"
+    },
+    "size": "Dimensione",
+    "highlights": "Evidenziazioni",
+    "source": "Origine"
   },
   "settings": {
     "broken_links": {
@@ -87,7 +97,12 @@
       "prompt_preview": "Anteprima prompt",
       "text_prompt": "Prompt testo",
       "images_prompt": "Prompt immagini",
-      "tagging_rule_description": "Il testo che scriverai qui verrà incluso come regole al modello AI durante la generazione dei tag. Puoi vedere il prompt finale nella sezione anteprima."
+      "tagging_rule_description": "Il testo che scriverai qui verrà incluso come regole al modello AI durante la generazione dei tag. Puoi vedere il prompt finale nella sezione anteprima.",
+      "summarization_prompt": "Prompt di riepilogo",
+      "image_tagging": "Tagging immagini",
+      "text_tagging": "Tagging testo",
+      "all_tagging": "Tutte le etichette",
+      "summarization": "Riassunto"
     },
     "feeds": {
       "rss_subscriptions": "Iscrizione RSS",
@@ -101,7 +116,8 @@
       "imported_bookmarks": "Segnalibri importati",
       "import_bookmarks_from_html_file": "Importa segnalibri da file HTML",
       "import_export_bookmarks": "Importa / Esporta segnalibri",
-      "import_bookmarks_from_omnivore_export": "Importa segnalibri da esportazione Omnivore"
+      "import_bookmarks_from_omnivore_export": "Importa segnalibri da esportazione Omnivore",
+      "import_bookmarks_from_linkwarden_export": "Importa i segnalibri dall'esportazione di Linkwarden"
     },
     "api_keys": {
       "api_keys": "Chiavi API",
@@ -109,6 +125,33 @@
       "key_success": "Chiave creata con successo",
       "key_success_please_copy": "Copia la chiave e salvala in modo sicuro. Una volta chiuso questo messaggio, non potrai accederci di nuovo.",
       "new_api_key": "Nuova chiave API"
+    },
+    "manage_assets": {
+      "no_assets": "Non hai ancora nessun asset.",
+      "asset_type": "Tipo di risorsa",
+      "bookmark_link": "Collegamento segnalibro",
+      "asset_link": "Link risorsa",
+      "delete_asset": "Elimina risorsa",
+      "delete_asset_confirmation": "Sei sicuro di voler eliminare questa risorsa?",
+      "manage_assets": "Gestisci risorse"
+    },
+    "webhooks": {
+      "description": "Puoi usare i webhook per attivare azioni quando i segnalibri vengono creati, modificati o scansionati.",
+      "events": {
+        "crawled": "Scansionato",
+        "created": "Creato",
+        "title": "Eventi",
+        "edited": "Modificato"
+      },
+      "auth_token": "Token di autenticazione",
+      "add_auth_token": "Aggiungi token di autenticazione",
+      "edit_auth_token": "Modifica token di autenticazione",
+      "create_webhook": "Crea Webhook",
+      "delete_webhook": "Elimina webhook",
+      "edit_webhook": "Modifica Webhook",
+      "webhook_url": "URL del webhook",
+      "delete_webhook_confirmation": "Sei sicuro di voler eliminare questo webhook?",
+      "webhooks": "Webhook"
     }
   },
   "editor": {
@@ -192,7 +235,11 @@
       "pending": "In attesa",
       "failed": "Fallito",
       "tidy_assets_jobs": "Lavori di pulizia Asset",
-      "inference_jobs": "Lavori di generazione testo"
+      "inference_jobs": "Lavori di generazione testo",
+      "feed_jobs": "Lavori feed RSS",
+      "webhook_jobs": "Lavori Webhook",
+      "asset_preprocessing_jobs": "Processi di pre-elaborazione asset",
+      "video_jobs": "Lavori di download video"
     },
     "actions": {
       "recrawl_failed_links_only": "Recupera solo link falliti",
@@ -224,7 +271,15 @@
     "all_lists": "Tutte le liste",
     "favourites": "Preferiti",
     "new_list": "Nuova lista",
-    "new_nested_list": "Nuova sottolista"
+    "new_nested_list": "Nuova sottolista",
+    "search_query_help": "Ulteriori informazioni sul linguaggio delle query di ricerca.",
+    "manual_list": "Lista manuale",
+    "smart_list": "Lista intelligente",
+    "search_query": "Query di ricerca",
+    "parent_list": "Elenco elementi principali",
+    "no_parent": "Nessun elemento principale",
+    "list_type": "Tipo di elenco",
+    "edit_list": "Modifica elenco"
   },
   "tags": {
     "your_tags": "I tuoi tag",
@@ -263,5 +318,39 @@
       "title": "Tag duplicati",
       "merge_all_suggestions": "Unire tutti i suggerimenti?"
     }
+  },
+  "search": {
+    "or": "Oppure",
+    "and": "E",
+    "is_in_any_list": "È in qualsiasi lista",
+    "is_not_in_any_list": "Non è in nessun elenco",
+    "not_created_on_or_after": "Non creato in o dopo",
+    "has_tag": "Ha tag",
+    "full_text_search": "Ricerca di testo completo",
+    "does_not_have_tag": "Non ha il tag",
+    "has_any_tag": "Ha qualsiasi tag",
+    "not_created_on_or_before": "Non creato in o prima di",
+    "url_contains": "L'URL contiene",
+    "is_in_list": "È in elenco",
+    "is_not_in_list": "Non è nella lista",
+    "type_is": "Il tipo è",
+    "is_not_favorited": "Non è tra i preferiti",
+    "is_archived": "È archiviato",
+    "is_not_archived": "Non è archiviato",
+    "has_no_tags": "Non ha tag",
+    "created_on_or_after": "Creato il o dopo il",
+    "is_favorited": "È tra i preferiti",
+    "created_on_or_before": "Creato in data o prima del",
+    "type_is_not": "Il tipo non è",
+    "url_does_not_contain": "L'URL non contiene"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_description": "Sei sicuro di voler eliminare questo segnalibro?",
+      "delete_confirmation_title": "Eliminare il segnalibro?"
+    }
+  },
+  "highlights": {
+    "no_highlights": "Non hai ancora nessun evidenziatore."
   }
 }

@@ -53,7 +53,11 @@
       "import_bookmarks_from_html_file": "Nhập đánh dấu trang từ file HTML",
       "import_export": "Nhập / Xuất dữ liệu",
       "export_links_and_notes": "Xuất liên kết và ghi chú",
-      "import_export_bookmarks": "Nhập / Xuất đánh dấu trang"
+      "import_export_bookmarks": "Nhập / Xuất đánh dấu trang",
+      "import_bookmarks_from_linkwarden_export": "Nhập dấu trang từ bản xuất Linkwarden",
+      "import_bookmarks_from_pocket_export": "Nhập dấu trang từ bản xuất Pocket",
+      "import_bookmarks_from_omnivore_export": "Nhập dấu trang từ xuất Omnivore",
+      "import_bookmarks_from_hoarder_export": "Nhập dấu trang từ bản xuất Hoarder"
     },
     "webhooks": {
       "edit_auth_token": "Sửa mã xác thực",
@@ -110,6 +114,15 @@
       "last_crawled_at": "Lần quét cuối lúc",
       "crawling_status": "Tình trạng quét",
       "crawling_failed": "Quét thất bại"
+    },
+    "manage_assets": {
+      "asset_type": "Loại tài sản",
+      "bookmark_link": "Liên kết dấu trang",
+      "asset_link": "Liên kết tài sản",
+      "delete_asset": "Xóa tài sản",
+      "delete_asset_confirmation": "Bạn có chắc chắn muốn xóa tài sản này không?",
+      "manage_assets": "Quản lý tài sản",
+      "no_assets": "Mày chưa có tài sản mẹ gì cả."
     }
   },
   "admin": {
@@ -121,7 +134,18 @@
     },
     "background_jobs": {
       "background_jobs": "Tiến trình chạy nền",
-      "failed": "Thất bại"
+      "failed": "Thất bại",
+      "inference_jobs": "Việc suy luận",
+      "video_jobs": "Công việc tải video xuống",
+      "webhook_jobs": "Công việc webhook",
+      "asset_preprocessing_jobs": "Công việc tiền xử lý tài sản",
+      "feed_jobs": "Việc làm RSS Feed",
+      "tidy_assets_jobs": "Công việc sắp xếp tài sản",
+      "job": "Việc làm",
+      "queued": "Đã xếp hàng",
+      "pending": "Đang chờ xử lý",
+      "crawler_jobs": "Việc làm của trình thu thập dữ liệu",
+      "indexing_jobs": "Đang lập chỉ mục công việc"
     },
     "admin_settings": "Cài đặt quản trị viên",
     "users_list": {
@@ -130,11 +154,20 @@
       "create_user": "Tạo người dùng",
       "change_role": "Đổi vai trò",
       "reset_password": "Đặt lại mật khẩu",
-      "confirm_password": "Xác nhận mật khẩu"
+      "confirm_password": "Xác nhận mật khẩu",
+      "num_bookmarks": "Số lượng dấu trang",
+      "asset_sizes": "Kích thước tài sản",
+      "local_user": "Người dùng cục bộ"
     },
     "actions": {
       "recrawl_failed_links_only": "Chỉ quét lại liên kết hỏng",
-      "recrawl_all_links": "Quét lại mọi liên kết"
+      "recrawl_all_links": "Quét lại mọi liên kết",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Tạo lại thẻ AI chỉ cho các dấu trang bị lỗi",
+      "regenerate_ai_tags_for_all_bookmarks": "Tạo lại thẻ AI cho tất cả dấu trang",
+      "reindex_all_bookmarks": "Lập chỉ mục lại tất cả dấu trang",
+      "compact_assets": "Gộp tài sản",
+      "reprocess_assets_fix_mode": "Xử lý lại tài sản (Chế độ sửa lỗi)",
+      "without_inference": "Không có suy luận"
     }
   },
   "common": {
@@ -168,7 +201,9 @@
     },
     "video": "Video",
     "archive": "Lưu trữ",
-    "actions": "Các hành động"
+    "actions": "Các hành động",
+    "type": "Loại",
+    "size": "Kích thước"
   },
   "highlights": {
     "no_highlights": "Bạn chưa có đánh dấu nào."
@@ -180,7 +215,12 @@
     "list_type": "Loại danh sách",
     "manual_list": "Danh sách thủ công",
     "smart_list": "Danh sách thông minh",
-    "favourites": "Ưa thích"
+    "favourites": "Ưa thích",
+    "parent_list": "Danh sách gốc",
+    "no_parent": "Không có thư mục gốc",
+    "search_query": "Truy vấn tìm kiếm",
+    "new_nested_list": "Danh sách lồng nhau mới",
+    "search_query_help": "Tìm hiểu thêm về ngôn ngữ truy vấn tìm kiếm."
   },
   "search": {
     "is_favorited": "Được ưa thích",
@@ -202,17 +242,115 @@
     "is_not_in_list": "Không ở trong danh sách",
     "does_not_have_tag": "Không được gán nhãn",
     "type_is": "Thể loại là",
-    "type_is_not": "Thể loại không phải là"
+    "type_is_not": "Thể loại không phải là",
+    "full_text_search": "Tìm kiếm toàn văn bản",
+    "and": "Và",
+    "or": "Hoặc"
   },
   "tags": {
     "all_tags": "Tất cả nhãn",
     "your_tags": "Nhãn của bạn",
     "delete_all_unused_tags": "Xóa những nhãn không được sử dụng",
     "unused_tags": "Nhãn không được sử dụng",
-    "sort_by_name": "Sắp xếp theo Tên"
+    "sort_by_name": "Sắp xếp theo Tên",
+    "unused_tags_info": "Các thẻ không được đính kèm vào bất kỳ dấu trang nào",
+    "drag_and_drop_merging": "Kéo & Thả để Gộp",
+    "drag_and_drop_merging_info": "Kéo và thả các thẻ lên nhau để hợp nhất chúng",
+    "your_tags_info": "Các thẻ đã được bạn đính kèm ít nhất một lần",
+    "ai_tags": "Thẻ AI",
+    "ai_tags_info": "Các thẻ chỉ được đính kèm tự động (bởi AI)"
   },
   "options": {
     "dark_mode": "Chế độ tối",
     "light_mode": "Chế độ sáng"
+  },
+  "editor": {
+    "text_toolbar": {
+      "italic": "In nghiêng",
+      "redo": "Làm lại",
+      "undo": "Hoàn tác",
+      "bold": "In đậm",
+      "underline": "Gạch dưới",
+      "highlight": "Đánh dấu nổi bật",
+      "align_left": "Căn trái",
+      "align_center": "Căn giữa",
+      "align_right": "Căn phải",
+      "markdown_shortcuts": {
+        "label": "Phím tắt Markdown",
+        "heading": {
+          "label": "Tiêu đề",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "italic": {
+          "example": "*In nghiêng* hoặc _In nghiêng_ hoặc CTRL+i",
+          "label": "In nghiêng"
+        },
+        "blockquote": {
+          "label": "Trích dẫn",
+          "example": "> Trích dẫn khối"
+        },
+        "ordered_list": {
+          "label": "Danh sách có thứ tự",
+          "example": "1. Mục danh sách"
+        },
+        "unordered_list": {
+          "label": "Danh sách không có thứ tự",
+          "example": "- Mục danh sách"
+        },
+        "bold": {
+          "example": "**text** hoặc CTRL+b",
+          "label": "In đậm"
+        },
+        "inline_code": {
+          "label": "Mã nội dòng",
+          "example": "`Mã`"
+        },
+        "block_code": {
+          "label": "Chặn mã",
+          "example": "``` + space"
+        }
+      },
+      "strikethrough": "Gạch ngang",
+      "code": "Mã"
+    },
+    "quickly_focus": "Bạn có thể nhanh chóng tập trung vào trường này bằng cách nhấn ⌘ + E",
+    "disabled_submissions": "Đã tắt tính năng gửi",
+    "multiple_urls_dialog_desc": "Đầu vào chứa nhiều URL trên các dòng riêng biệt. Bạn có muốn nhập chúng dưới dạng các dấu trang riêng biệt không?",
+    "import_as_separate_bookmarks": "Nhập dưới dạng Dấu trang riêng biệt",
+    "multiple_urls_dialog_title": "Nhập URL dưới dạng Dấu trang riêng biệt?",
+    "import_as_text": "Nhập dưới dạng Dấu trang văn bản",
+    "placeholder": "Dán một liên kết hoặc một hình ảnh, viết một ghi chú hoặc kéo và thả một hình ảnh vào đây…",
+    "new_item": "MỤC MỚI"
+  },
+  "cleanups": {
+    "duplicate_tags": {
+      "title": "Thẻ trùng lặp",
+      "merge_all_suggestions": "Hợp nhất tất cả các đề xuất?"
+    },
+    "cleanups": "Dọn dẹp"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_title": "Xóa dấu trang?",
+      "delete_confirmation_description": "Bạn có chắc chắn muốn xóa dấu trang này không?"
+    }
+  },
+  "toasts": {
+    "bookmarks": {
+      "updated": "Đã cập nhật dấu trang!",
+      "deleted": "Đã xóa dấu trang!",
+      "refetch": "Đã xếp hàng tìm nạp lại!",
+      "full_page_archive": "Đã kích hoạt tạo bản lưu trữ toàn trang",
+      "delete_from_list": "Đã xóa dấu trang khỏi danh sách",
+      "clipboard_copied": "Liên kết đã được thêm vào bảng nhớ tạm của bạn!"
+    },
+    "lists": {
+      "created": "Đã tạo danh sách!",
+      "updated": "Danh sách đã được cập nhật!"
+    }
+  },
+  "preview": {
+    "view_original": "Xem bản gốc",
+    "cached_content": "Nội dung được lưu trong bộ nhớ cache"
   }
 }
