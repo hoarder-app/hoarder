@@ -1,11 +1,11 @@
 export const langNameMappings: Record<string, string> = {
-  en: "English",
   ar: "Arabic",
   zh: "Simplified Chinese",
   zhtw: "Traditional Chinese",
   hr: "Croatian",
   da: "Danish",
   nl: "Dutch",
+  en: "English",
   fr: "French",
   gl: "Galician",
   de: "German",
@@ -13,10 +13,14 @@ export const langNameMappings: Record<string, string> = {
   it: "Italian",
   ja: "Japanese",
   pl: "Polish",
+  pt_BR: "Portuguese (Brazil)",
   ru: "Russian",
+  sk: "Slovak",
+  sl: "Slovenian",
   es: "Spanish",
   sv: "Swedish",
   tr: "Turkish",
+  vi: "Vietnamese",
 };
 
 export const supportedLangs = Object.keys(langNameMappings);
