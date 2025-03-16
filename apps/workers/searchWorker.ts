@@ -85,6 +85,10 @@ async function runIndex(
               linkTitle: bookmark.link.title,
               description: bookmark.link.description,
               content: bookmark.link.content,
+              publisher: bookmark.link.publisher,
+              author: bookmark.link.author,
+              datePublished: bookmark.link.datePublished,
+              dateModified: bookmark.link.dateModified,
             }
           : undefined),
         ...(bookmark.asset
