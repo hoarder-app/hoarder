@@ -23,14 +23,16 @@
     "video": "Video",
     "archive": "Archiv",
     "home": "Startseite",
-    "highlights": "Höhepunkte",
+    "highlights": "Textmarkierungen",
     "source": "Quelle",
     "bookmark_types": {
       "title": "Lesezeichen Kategorie",
       "link": "Link",
       "media": "Medium",
       "text": "Text"
-    }
+    },
+    "type": "Typ",
+    "size": "Größe"
   },
   "layouts": {
     "masonry": "Mauerwerk",
@@ -80,7 +82,7 @@
     "back_to_app": "Zurück zur App",
     "user_settings": "Benutzereinstellungen",
     "info": {
-      "user_info": "Benutzerinformationen",
+      "user_info": "Benutzerinformation",
       "basic_details": "Grundlegende Details",
       "change_password": "Passwort ändern",
       "current_password": "Aktuelles Passwort",
@@ -170,7 +172,7 @@
     },
     "actions": {
       "recrawl_failed_links_only": "Nur fehlgeschlagene Links erneut durchsuchen",
-      "recrawl_all_links": "Alle Links erneut durchsuchen",
+      "recrawl_all_links": "Alle Links erneut aktualisieren",
       "without_inference": "Ohne Inferenz",
       "regenerate_ai_tags_for_failed_bookmarks_only": "KI-Tags nur für fehlgeschlagene Lesezeichen neu generieren",
       "regenerate_ai_tags_for_all_bookmarks": "KI-Tags für alle Lesezeichen neu generieren",
@@ -205,7 +207,8 @@
     "smart_list": "Smart Liste",
     "search_query": "Suchanfrage",
     "list_type": "Listentyp",
-    "no_parent": "ohne übergeordnete Liste"
+    "no_parent": "ohne übergeordnete Liste",
+    "search_query_help": "Lerne mehr über die Suchanfragen."
   },
   "tags": {
     "all_tags": "Alle Tags",
@@ -334,7 +337,7 @@
     "type_is": "vom Typ",
     "type_is_not": "nicht vom Typ",
     "has_any_tag": "hat irgendein Tag",
-    "created_on_or_before": "erstellt am oder danach",
+    "created_on_or_before": "erstellt am oder vor",
     "not_created_on_or_before": "erstellt vor"
   }
 }

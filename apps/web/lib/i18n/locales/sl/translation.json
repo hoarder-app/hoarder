@@ -1,0 +1,276 @@
+{
+  "settings": {
+    "api_keys": {
+      "key_success_please_copy": "Prosimo, kopirajte ključ in ga shranite na varno mesto. Ko zaprete pogovorno okno, ključa ne boste mogli več dostopati.",
+      "new_api_key": "Nov API ključ",
+      "new_api_key_desc": "Izberite edinstveno ime za svoj API ključ",
+      "api_keys": "API Ključi",
+      "key_success": "Ključ je bil uspešno ustvarjen"
+    },
+    "import": {
+      "import_bookmarks_from_hoarder_export": "Uvozi zaznamke iz Hoarder izvoza",
+      "import_bookmarks_from_linkwarden_export": "Uvozi zaznamke iz Linkwarden izvoza",
+      "imported_bookmarks": "Uvoženi zaznamki",
+      "import_bookmarks_from_pocket_export": "Uvozi zaznamke iz Pocket izvoza",
+      "import_export_bookmarks": "Uvoz / Izvoz zaznamkov",
+      "import_bookmarks_from_omnivore_export": "Uvozi zaznamke iz Omnivore izvoza",
+      "export_links_and_notes": "Izvozi povezave in zapiske",
+      "import_export": "Uvoz / Izvoz",
+      "import_bookmarks_from_html_file": "Uvozi zaznamke iz datoteke HTML"
+    },
+    "info": {
+      "options": "Možnosti",
+      "current_password": "Trenutno geslo",
+      "basic_details": "Osnovni podatki",
+      "change_password": "Spremeni geslo",
+      "new_password": "Novo geslo",
+      "confirm_new_password": "Potrdite novo geslo",
+      "interface_lang": "Jezik vmesnika"
+    },
+    "ai": {
+      "text_prompt": "Besedilni ukaz",
+      "image_tagging": "Slikovne oznake",
+      "summarization": "Povzemanje",
+      "images_prompt": "Slikovni ukaz",
+      "text_tagging": "Besedilne oznake",
+      "ai_settings": "AI Nastavitve",
+      "prompt_preview": "Predogled ukaza",
+      "summarization_prompt": "Povzemni ukaz",
+      "all_tagging": "Vse oznake"
+    },
+    "back_to_app": "Nazaj v aplikacijo",
+    "webhooks": {
+      "events": {
+        "created": "Ustvarjeno",
+        "title": "Dogodki",
+        "edited": "Urejeno"
+      }
+    },
+    "feeds": {
+      "add_a_subscription": "Dodaj naročnino",
+      "rss_subscriptions": "RSS Naročnine"
+    },
+    "user_settings": "Uporabniške nastavitve"
+  },
+  "admin": {
+    "server_stats": {
+      "server_stats": "Statistika strežnika",
+      "total_users": "Skupno število uporabnikov",
+      "total_bookmarks": "Skupno število zaznamkov",
+      "server_version": "Različica strežnika"
+    },
+    "users_list": {
+      "users_list": "Seznam uporabnikov",
+      "confirm_password": "Potrdite geslo",
+      "reset_password": "Ponastavi geslo",
+      "create_user": "Ustvari uporabnika",
+      "local_user": "Lokalni uporabnik",
+      "change_role": "Spremeni vlogo",
+      "delete_user": "Izbriši uporabnika"
+    },
+    "background_jobs": {
+      "failed": "Neuspešno",
+      "background_jobs": "Oprabila v ozadju",
+      "queued": "V vrsti",
+      "pending": "Čakajoče",
+      "job": "Opravilo"
+    },
+    "admin_settings": "Administratorske nastavitve",
+    "actions": {
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Regeneriraj AI oznake samo za neuspešne zaznamke",
+      "regenerate_ai_tags_for_all_bookmarks": "Regeneriraj AI oznake za vse zaznamke"
+    }
+  },
+  "search": {
+    "is_not_archived": "Ni arhivirano",
+    "is_archived": "Je arhivirano",
+    "created_on_or_after": "Ustvarjeno na ali po",
+    "is_in_any_list": "Je v seznamu",
+    "is_not_in_any_list": "Ni v seznamu",
+    "created_on_or_before": "Ustvarjeno na ali prej",
+    "and": "In",
+    "url_contains": "URL Vsebuje",
+    "url_does_not_contain": "URL Ne vsebuje",
+    "not_created_on_or_before": "Ni ustvarjeno na ali pred",
+    "is_in_list": "Je v seznamu",
+    "does_not_have_tag": "Nima oznak",
+    "type_is_not": "Vrsta ni",
+    "not_created_on_or_after": "Ni ustvatjeno na ali po",
+    "has_tag": "Ima oznake",
+    "type_is": "Vrsta je",
+    "or": "Ali",
+    "is_not_in_list": "Ni v seznamu"
+  },
+  "tags": {
+    "your_tags_info": "Oznake, ki si jih dodelil/a vsaj enkrat",
+    "ai_tags_info": "Oznake, ki so bile dodeljene samo avtomatsko (AI)",
+    "drag_and_drop_merging": "Združevanje Potegni & Spusti",
+    "ai_tags": "AI Oznake",
+    "unused_tags_info": "Oznake, ki niso dodeljene nobenemu zaznamku",
+    "all_tags": "Vse oznake",
+    "sort_by_name": "Uredi po imenu",
+    "your_tags": "Tvoje oznake",
+    "unused_tags": "Nsuporabljene oznake",
+    "delete_all_unused_tags": "Izbriši vse neuporabljene oznake"
+  },
+  "common": {
+    "archive": "Arhiv",
+    "role": "Vloga",
+    "video": "Video",
+    "email": "E-pošta",
+    "password": "Geslo",
+    "experimental": "Eksperimentalno",
+    "attachments": "Priponke",
+    "home": "Dom",
+    "something_went_wrong": "Nekaj je šlo narobe",
+    "screenshot": "Posnetek zaslona",
+    "roles": {
+      "user": "Uporabnik",
+      "admin": "Admin"
+    },
+    "url": "URL",
+    "name": "Ime",
+    "created_at": "Ustvarjeno",
+    "type": "Tip",
+    "size": "Velikost",
+    "bookmark_types": {
+      "text": "Besedilo",
+      "link": "Povezava"
+    },
+    "search": "Iskanje",
+    "source": "Vir"
+  },
+  "actions": {
+    "close_bulk_edit": "Zapri množično urejanje",
+    "favorite": "Priljubljeno",
+    "copy_link": "Kopiraj povezavo",
+    "close": "Zapri",
+    "sort": {
+      "oldest_first": "Najstarejše najprej",
+      "title": "Sortiraj",
+      "newest_first": "Najnovejše najprej"
+    },
+    "unselect_all": "Od-izberi vse",
+    "create": "Ustvari",
+    "merge": "Združi",
+    "select_all": "Izberi vse",
+    "add": "Dodaj",
+    "unarchive": "Od-arhiviraj",
+    "remove_from_list": "Odstrani iz seznama",
+    "summarize_with_ai": "Povzami z AI",
+    "edit": "Uredi",
+    "cancel": "Prekliči",
+    "edit_title": "Uredi naslov",
+    "sign_out": "Odjava",
+    "delete": "Izbriši",
+    "manage_lists": "Uredi sezname",
+    "add_to_list": "Dodaj na seznam",
+    "archive": "Arhiviraj",
+    "download_full_page_archive": "Prenesi arhiv",
+    "refresh": "Osveži",
+    "save": "Shrani",
+    "ignore": "Ignoriraj",
+    "bulk_edit": "Množično urejanje"
+  },
+  "layouts": {
+    "compact": "Kompaktno",
+    "list": "Seznam"
+  },
+  "lists": {
+    "list_type": "Vrsta seznama",
+    "smart_list": "Pametni seznam",
+    "new_nested_list": "Nov gnezden seznam",
+    "edit_list": "Uredi seznam",
+    "search_query": "Iskalna poizvedba",
+    "all_lists": "Vsi seznami",
+    "manual_list": "Ročni seznam",
+    "new_list": "Nov seznam"
+  },
+  "options": {
+    "dark_mode": "Temni način",
+    "light_mode": "Svetli način"
+  },
+  "editor": {
+    "text_toolbar": {
+      "align_left": "Poravnano levo",
+      "undo": "Razveljavi",
+      "redo": "Uveljavi",
+      "highlight": "Poudari",
+      "markdown_shortcuts": {
+        "ordered_list": {
+          "example": "1. Element seznama",
+          "label": "Urejen seznam"
+        },
+        "unordered_list": {
+          "label": "Neurejen seznam",
+          "example": "- Element seznama"
+        },
+        "block_code": {
+          "example": "``` + presledek",
+          "label": "Koda v bloku"
+        },
+        "label": "Markdown bližnjice",
+        "blockquote": {
+          "example": "> Citat",
+          "label": "Citat"
+        },
+        "bold": {
+          "label": "Krepko",
+          "example": "**besedilo** ali CTRL+b"
+        },
+        "italic": {
+          "label": "Poševno",
+          "example": "*poševno* ali _poševno_ ali CTRL+i"
+        },
+        "heading": {
+          "example": "# H1, ## H2, ### H3",
+          "label": "Naslov"
+        },
+        "inline_code": {
+          "label": "Koda v vrstici",
+          "example": "`Koda`"
+        }
+      },
+      "align_right": "Poravnano desno",
+      "align_center": "Srednisko poravnano",
+      "bold": "Krepko",
+      "italic": "Poševno",
+      "underline": "Podčrtaj",
+      "strikethrough": "Prečrtaj",
+      "code": "Koda"
+    },
+    "new_item": "NOV ELEMENT",
+    "import_as_separate_bookmarks": "Uvozi kot ločene zaznamke",
+    "placeholder": "Prilepi povezavo ali sliko, napiši zapisek ali potegni in spusti sliko tukaj…",
+    "multiple_urls_dialog_title": "Uvoz URL-jev, kot ločene zaznamke?",
+    "import_as_text": "Uvozi kot besedilni zaznamek",
+    "disabled_submissions": "Oddaje so onemogočene"
+  },
+  "toasts": {
+    "bookmarks": {
+      "deleted": "Zaznamek je bil izbrisan!",
+      "delete_from_list": "Ta zaznamek je bil izbrisan iz seznama",
+      "clipboard_copied": "Povezava je bila kopirana v odložišče!",
+      "updated": "Zaznamek je bil posodobljen!"
+    },
+    "lists": {
+      "created": "Seznam je bil ustvarjen!",
+      "updated": "Seznam je bil posodobljen!"
+    }
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_description": "Si prepričan, sa želiš izbrisati ta zaznamek?",
+      "delete_confirmation_title": "Izbriši zaznamek?"
+    }
+  },
+  "cleanups": {
+    "duplicate_tags": {
+      "merge_all_suggestions": "Združi vse predloge?",
+      "title": "Podvojene oznake"
+    }
+  },
+  "preview": {
+    "view_original": "Ogled izvirnika"
+  }
+}

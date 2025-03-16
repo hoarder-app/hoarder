@@ -108,7 +108,16 @@
       "broken_links": "Hibás hivatkozások",
       "crawling_failed": "Feltérképezési hiba"
     },
-    "back_to_app": "Vissza az alkalmazáshoz"
+    "back_to_app": "Vissza az alkalmazáshoz",
+    "manage_assets": {
+      "no_assets": "Még nincs semmilyen elemed.",
+      "asset_type": "Elem Típus",
+      "asset_link": "Elem Hivatkozás",
+      "delete_asset_confirmation": "Biztosan törölni akarod ezt az elemet?",
+      "delete_asset": "Elem Törlése",
+      "manage_assets": "Elemek Kezelése",
+      "bookmark_link": "Könyvjelző Hivatkozás"
+    }
   },
   "common": {
     "archive": "Archívum",
@@ -141,7 +150,9 @@
     "video": "Videó",
     "home": "Otthon",
     "key": "Kulcs",
-    "search": "Keresés"
+    "search": "Keresés",
+    "type": "Típus",
+    "size": "Méret"
   },
   "editor": {
     "import_as_text": "Importálás szöveges könyvjelzőként",
@@ -237,7 +248,8 @@
     "no_parent": "Nincs szülő",
     "list_type": "Lista típusa",
     "smart_list": "Okos lista",
-    "search_query": "Kereső lekérdezés"
+    "search_query": "Kereső lekérdezés",
+    "search_query_help": "Tudj meg többet a keresési lekérdező nyelvről."
   },
   "admin": {
     "background_jobs": {

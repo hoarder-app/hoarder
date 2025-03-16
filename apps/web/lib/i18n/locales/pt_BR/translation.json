@@ -1,1 +1,340 @@
-{}
+{
+  "common": {
+    "bookmark_types": {
+      "media": "Mídia",
+      "title": "Tipo de marcador",
+      "text": "Texto",
+      "link": "Link"
+    },
+    "url": "URL",
+    "name": "Nome",
+    "email": "Email",
+    "password": "Senha",
+    "action": "Ação",
+    "actions": "Ações",
+    "created_at": "Criado Em",
+    "key": "Chave",
+    "role": "Função",
+    "roles": {
+      "user": "Usuário",
+      "admin": "Administrador"
+    },
+    "something_went_wrong": "Algo deu errado",
+    "experimental": "Experimental",
+    "search": "Busca",
+    "tags": "Tags",
+    "note": "Nota",
+    "attachments": "Anexos",
+    "highlights": "Destaques",
+    "source": "Fonte",
+    "screenshot": "Captura de tela",
+    "video": "Vídeo",
+    "archive": "Arquivo",
+    "home": "Home"
+  },
+  "actions": {
+    "unarchive": "Desarquivar",
+    "download_full_page_archive": "Baixar Página Completa",
+    "manage_lists": "Gerenciar Listas",
+    "change_layout": "Mudar Layout",
+    "archive": "Arquivo",
+    "favorite": "Favorito",
+    "unfavorite": "Remover dos favoritos",
+    "delete": "Deletar",
+    "refresh": "Atualizar",
+    "recrawl": "Recrawl",
+    "edit_tags": "Editar Tags",
+    "add_to_list": "Adicionar à Lista",
+    "select_all": "Selecionar Todos",
+    "unselect_all": "Desmarcar Todos",
+    "copy_link": "Copiar Link",
+    "close_bulk_edit": "Fechar Edição em Massa",
+    "bulk_edit": "Edição em Massa",
+    "remove_from_list": "Remover da Lista",
+    "save": "Salvar",
+    "add": "Adicionar",
+    "edit": "Editar",
+    "create": "Criar",
+    "fetch_now": "Buscar Agora",
+    "summarize_with_ai": "Resumir com IA",
+    "edit_title": "Editar Título",
+    "sign_out": "Sair",
+    "close": "Fechar",
+    "merge": "Mesclar",
+    "cancel": "Cancelar",
+    "apply_all": "Aplicar Todos",
+    "ignore": "Ignorar",
+    "sort": {
+      "title": "Ordenar",
+      "newest_first": "Mais Recente Primeiro",
+      "oldest_first": "Mais Antigo Primeiro"
+    }
+  },
+  "settings": {
+    "info": {
+      "change_password": "Mudar Senha",
+      "basic_details": "Detalhes Básicos",
+      "user_info": "Informações do Usuário",
+      "current_password": "Senha Atual",
+      "new_password": "Nova Senha",
+      "confirm_new_password": "Confirmar Nova Senha",
+      "options": "Opções",
+      "interface_lang": "Idioma da Interface"
+    },
+    "back_to_app": "Voltar ao App",
+    "user_settings": "Configurações do Usuário",
+    "ai": {
+      "ai_settings": "Configurações de IA",
+      "tagging_rules": "Regras de Tags",
+      "tagging_rule_description": "Os prompts que você adicionar aqui serão incluídos como regras para o modelo durante a geração de tags. Você pode visualizar os prompts finais na seção de visualização de prompts.",
+      "prompt_preview": "Pré-visualização do Prompt",
+      "text_prompt": "Prompt de Texto",
+      "images_prompt": "Prompt de Imagem",
+      "summarization_prompt": "Prompt de Resumo",
+      "all_tagging": "Todas as Tags",
+      "text_tagging": "Tags de Texto",
+      "image_tagging": "Tags de Imagem",
+      "summarization": "Resumo"
+    },
+    "feeds": {
+      "rss_subscriptions": "Assinaturas de RSS",
+      "add_a_subscription": "Adicionar uma Assinatura"
+    },
+    "webhooks": {
+      "webhooks": "Webhooks",
+      "description": "Você pode usar webhooks para acionar ações quando os marcadores forem criados, alterados ou rastreados.",
+      "events": {
+        "title": "Eventos",
+        "crawled": "Rastreados",
+        "created": "Criado",
+        "edited": "Editado"
+      },
+      "auth_token": "Token de Autenticação",
+      "add_auth_token": "Adicionar Token de Autenticação",
+      "edit_auth_token": "Editar Token de Autenticação",
+      "create_webhook": "Criar Webhook",
+      "delete_webhook": "Deletar Webhook",
+      "delete_webhook_confirmation": "Tem certeza de que deseja excluir este webhook?",
+      "edit_webhook": "Editar Webhook",
+      "webhook_url": "Webhook URL"
+    },
+    "import": {
+      "import_export": "Importar / Exportar",
+      "import_export_bookmarks": "Importar / Exportar Favoritos",
+      "import_bookmarks_from_html_file": "Importar Favoritos de arquivo HTML",
+      "import_bookmarks_from_pocket_export": "Importar Favoritos de exportação do Pocket",
+      "import_bookmarks_from_omnivore_export": "Importar Favoritos de exportação do Omnivore",
+      "import_bookmarks_from_linkwarden_export": "Importar Favoritos de exportação do Linkwarden",
+      "import_bookmarks_from_hoarder_export": "Importar Favoritos de exportação do Hoarder",
+      "export_links_and_notes": "Exportar Links e Notas",
+      "imported_bookmarks": "Favoritos Importados"
+    },
+    "api_keys": {
+      "api_keys": "Chaves API",
+      "new_api_key": "Nova Chave API",
+      "new_api_key_desc": "Dê um nome único para sua chave de API",
+      "key_success": "A Chave foi criada com sucesso",
+      "key_success_please_copy": "Por favor, copie a chave e armazene em um local seguro. Após fechar, você não poderá acessá-la novamente."
+    },
+    "broken_links": {
+      "broken_links": "Links Quebrados",
+      "last_crawled_at": "Último Rastreamento em",
+      "crawling_status": "Status de Rastreamento",
+      "crawling_failed": "Falha no Rastreamento"
+    }
+  },
+  "layouts": {
+    "masonry": "Alvenaria",
+    "grid": "Grade",
+    "list": "Lista",
+    "compact": "Compacto"
+  },
+  "highlights": {
+    "no_highlights": "Você ainda não tem nenhum destaque."
+  },
+  "admin": {
+    "admin_settings": "Configurações de Administrador",
+    "server_stats": {
+      "server_stats": "Status do Servidor",
+      "total_users": "Total de Usuários",
+      "total_bookmarks": "Total de Favoritos",
+      "server_version": "Versão do Servidor"
+    },
+    "background_jobs": {
+      "background_jobs": "Tarefas em Segundo Plano",
+      "crawler_jobs": "Tarefas de Rastreamento",
+      "indexing_jobs": "Tarefas de Indexação",
+      "inference_jobs": "Tarefas de Inferência",
+      "tidy_assets_jobs": "Tarefas de Organização de Recursos",
+      "job": "Tarefas",
+      "queued": "Na Fila",
+      "pending": "Pendentes",
+      "failed": "Falhou"
+    },
+    "actions": {
+      "recrawl_failed_links_only": "Rastrear Novamente Somente os Links que Falharam",
+      "recrawl_all_links": "Rastrear Novamente Todos os Links",
+      "without_inference": "Sem Inferência",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Regenerar Tags de IA apenas para Favoritos que Falharam",
+      "regenerate_ai_tags_for_all_bookmarks": "Regenerar Tags de IA para Todos os Favoritos",
+      "reindex_all_bookmarks": "Reindexar Todos os Favoritos",
+      "compact_assets": "Compactar Ativos"
+    },
+    "users_list": {
+      "users_list": "Lista de Usuários",
+      "create_user": "Criar Usuário",
+      "change_role": "Mudar Função",
+      "reset_password": "Resetar Senha",
+      "delete_user": "Deletar Usuário",
+      "num_bookmarks": "Número de Favoritos",
+      "asset_sizes": "Tamanhos dos Ativos",
+      "local_user": "Usuário Local",
+      "confirm_password": "Confirmar Senha"
+    }
+  },
+  "options": {
+    "dark_mode": "Modo Escuro",
+    "light_mode": "Modo Claro"
+  },
+  "lists": {
+    "all_lists": "Todas as Listas",
+    "favourites": "Favoritos",
+    "new_list": "Nova Lista",
+    "edit_list": "Editar Lista",
+    "new_nested_list": "Nova Lista Aninhada",
+    "parent_list": "Lista Pai",
+    "no_parent": "Sem Pai",
+    "list_type": "Tipo de Lista",
+    "manual_list": "Lista Manual",
+    "smart_list": "Lista Inteligente",
+    "search_query": "Consulta de Pesquisa",
+    "search_query_help": "Saiba mais sobre a linguagem de consulta de pesquisa."
+  },
+  "tags": {
+    "all_tags": "Todas Tags",
+    "your_tags": "Suas Tags",
+    "your_tags_info": "Tags que foram anexadas pelo menos uma vez por você",
+    "ai_tags": "Tags IA",
+    "ai_tags_info": "Tags que foram anexadas automaticamente (por IA)",
+    "unused_tags": "Tags Não Utilizadas",
+    "unused_tags_info": "Tags que não estão anexadas a nenhum favorito",
+    "delete_all_unused_tags": "Excluir Todas as Tags Não Utilizadas",
+    "drag_and_drop_merging": "Arrastar e Soltar para Mesclagem",
+    "drag_and_drop_merging_info": "Arraste e solte tags uma sobre a outra para mesclá-las",
+    "sort_by_name": "Ordenar por Nome"
+  },
+  "search": {
+    "is_not_archived": "Não Está Arquivado",
+    "is_archived": "Está Arquivado",
+    "is_favorited": "Está Favoritado",
+    "is_not_favorited": "Não Está Favoritado",
+    "has_any_tag": "Possui Alguma Tag",
+    "has_no_tags": "Não Possui Tag",
+    "is_in_any_list": "Está em Alguma Lista",
+    "is_not_in_any_list": "Não Está em Nehuma Lista",
+    "created_on_or_after": "Criado em ou Após",
+    "not_created_on_or_after": "Não Criado em ou Após",
+    "created_on_or_before": "Criado em ou Antes",
+    "not_created_on_or_before": "Não Criado em ou Antes",
+    "url_contains": "A URL Contém",
+    "url_does_not_contain": "A URL Não Contém",
+    "is_in_list": "Está na Lista",
+    "is_not_in_list": "Não está na Lista",
+    "has_tag": "Possui Tag",
+    "full_text_search": "Pesquisar Todo o Texto",
+    "type_is": "O Tipo é",
+    "type_is_not": "O Tipo não é",
+    "does_not_have_tag": "Não Tem Tag",
+    "and": "E",
+    "or": "Ou"
+  },
+  "preview": {
+    "view_original": "Ver Original",
+    "cached_content": "Conteúdo em Cache"
+  },
+  "editor": {
+    "quickly_focus": "Você pode acessar rapidamente este campo pressionando ⌘ + E",
+    "multiple_urls_dialog_title": "Importando URLs como favoritos separados?",
+    "multiple_urls_dialog_desc": "A entrada contém vários URLs em linhas separadas. Deseja importá-los como favoritos separados?",
+    "import_as_text": "Importar como favoritos de texto",
+    "import_as_separate_bookmarks": "Importar como favoritos separados",
+    "placeholder": "Cole um link ou uma imagem, escreva uma nota ou arraste e solte uma imagem aqui…",
+    "new_item": "NOVO ITEM",
+    "text_toolbar": {
+      "undo": "Desfazer",
+      "redo": "Refazer",
+      "bold": "Negrito",
+      "italic": "Itálico",
+      "underline": "Sublinhado",
+      "strikethrough": "Tachado",
+      "code": "Código",
+      "highlight": "Destaque",
+      "align_left": "Alinhar à esquerda",
+      "align_center": "Alinhamento Central",
+      "align_right": "Alinhar à direita",
+      "markdown_shortcuts": {
+        "label": "Atalhos de Markdown",
+        "heading": {
+          "label": "Cabeçalho",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "bold": {
+          "label": "Negrito",
+          "example": "**texto** ou CTRL+b"
+        },
+        "italic": {
+          "label": "Itálico",
+          "example": "*Itálico* ou _Itálico_ ou CTRL+i"
+        },
+        "blockquote": {
+          "label": "Citação em bloco",
+          "example": "> Citação em bloco"
+        },
+        "ordered_list": {
+          "label": "Lista ordenada",
+          "example": "1. Item da lista"
+        },
+        "unordered_list": {
+          "label": "Lista não ordenada",
+          "example": "- Item da lista"
+        },
+        "inline_code": {
+          "label": "Código embutido",
+          "example": "`Código`"
+        },
+        "block_code": {
+          "label": "Bloco de Código",
+          "example": "``` + espaço"
+        }
+      }
+    },
+    "disabled_submissions": "Os envios estão desativados"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_title": "Excluir favorito?",
+      "delete_confirmation_description": "Tem certeza de que deseja excluir este favorito?"
+    }
+  },
+  "toasts": {
+    "bookmarks": {
+      "deleted": "O favorito foi excluído!",
+      "updated": "O favorito foi atualizado!",
+      "refetch": "A nova busca foi enfileirada!",
+      "full_page_archive": "A criação do arquivo de página inteira foi acionada",
+      "delete_from_list": "O favorito foi excluído da lista",
+      "clipboard_copied": "O link foi adicionado à sua área de transferência!"
+    },
+    "lists": {
+      "created": "A lista foi criada!",
+      "updated": "A lista foi atualizada!"
+    }
+  },
+  "cleanups": {
+    "cleanups": "Limpezas",
+    "duplicate_tags": {
+      "title": "Tags duplicadas",
+      "merge_all_suggestions": "Mesclar todas as sugestões?"
+    }
+  }
+}

@@ -23,7 +23,7 @@
     "video": "影片",
     "archive": "封存",
     "home": "首頁",
-    "highlights": "突出顯示",
+    "highlights": "標記重點",
     "source": "來源",
     "bookmark_types": {
       "title": "書籤類型",
@@ -60,7 +60,7 @@
     "add": "新增",
     "edit": "編輯",
     "create": "建立",
-    "fetch_now": "立即擷取",
+    "fetch_now": "立即抓取",
     "summarize_with_ai": "使用 AI 摘要",
     "edit_title": "編輯標題",
     "sign_out": "登出",
@@ -71,8 +71,8 @@
     "ignore": "忽略",
     "sort": {
       "title": "排序",
-      "newest_first": "最新優先",
-      "oldest_first": "最舊優先"
+      "newest_first": "最新在前",
+      "oldest_first": "最舊在前"
     },
     "recrawl": "重新抓取"
   },
@@ -92,13 +92,15 @@
     "ai": {
       "ai_settings": "AI 設定",
       "tagging_rules": "標籤規則",
-      "tagging_rule_description": "您在此處新增的提示詞將作為規則提供給模型用於產生標籤。您可以在提示詞預覽區塊檢視最終提示詞。",
+      "tagging_rule_description": "您在此處新增的提示詞將作為規則提供給模型用於產生標籤。您可以在提示詞預覽區域檢視最終提示詞。",
       "prompt_preview": "提示詞預覽",
       "text_prompt": "文字提示詞",
       "images_prompt": "圖片提示詞",
-      "all_tagging": "全部標記",
-      "text_tagging": "文字標記",
-      "image_tagging": "圖片標記"
+      "all_tagging": "所有標籤",
+      "text_tagging": "文字標籤",
+      "image_tagging": "圖片標籤",
+      "summarization": "摘要",
+      "summarization_prompt": "摘要提示詞"
     },
     "feeds": {
       "rss_subscriptions": "RSS 訂閱",
@@ -112,7 +114,8 @@
       "import_bookmarks_from_omnivore_export": "從 Omnivore 匯出檔案匯入書籤",
       "import_bookmarks_from_hoarder_export": "從 Hoarder 匯出檔案匯入書籤",
       "export_links_and_notes": "匯出連結和筆記",
-      "imported_bookmarks": "已匯入的書籤"
+      "imported_bookmarks": "已匯入的書籤",
+      "import_bookmarks_from_linkwarden_export": "從 Linkwarden 匯出檔案匯入書籤"
     },
     "api_keys": {
       "api_keys": "API 金鑰",
@@ -122,12 +125,28 @@
       "key_success_please_copy": "請複製金鑰並儲存至安全的位置。關閉對話框後，您將無法再次存取此金鑰。"
     },
     "webhooks": {
-      "webhooks": "網路鈎子",
+      "webhooks": "Webhook",
       "events": {
         "title": "事件",
         "created": "已建立",
-        "edited": "已編輯"
-      }
+        "edited": "已編輯",
+        "crawled": "已抓取"
+      },
+      "delete_webhook_confirmation": "您確定要刪除這個 Webhook 嗎？",
+      "edit_webhook": "編輯 Webhook",
+      "webhook_url": "Webhook 網址",
+      "description": "您可以使用 Webhook 在建立、變更或抓取書籤時觸發操作。",
+      "auth_token": "驗證權杖",
+      "add_auth_token": "新增驗證權杖",
+      "edit_auth_token": "編輯驗證權杖",
+      "create_webhook": "建立 Webhook",
+      "delete_webhook": "刪除 Webhook"
+    },
+    "broken_links": {
+      "broken_links": "失效連結",
+      "last_crawled_at": "最後抓取時間",
+      "crawling_status": "抓取狀態",
+      "crawling_failed": "抓取失敗"
     }
   },
   "admin": {
@@ -140,7 +159,7 @@
     },
     "background_jobs": {
       "background_jobs": "背景作業",
-      "crawler_jobs": "網頁爬蟲作業",
+      "crawler_jobs": "網頁抓取作業",
       "indexing_jobs": "索引作業",
       "inference_jobs": "推論作業",
       "tidy_assets_jobs": "資源整理作業",
@@ -150,8 +169,8 @@
       "failed": "失敗"
     },
     "actions": {
-      "recrawl_failed_links_only": "僅重新爬取失敗的連結",
-      "recrawl_all_links": "重新爬取所有連結",
+      "recrawl_failed_links_only": "僅重新抓取失敗的連結",
+      "recrawl_all_links": "重新抓取所有連結",
       "without_inference": "不進行推論",
       "regenerate_ai_tags_for_failed_bookmarks_only": "僅重新產生失敗書籤的 AI 標籤",
       "regenerate_ai_tags_for_all_bookmarks": "重新產生所有書籤的 AI 標籤",
@@ -179,23 +198,31 @@
     "all_lists": "所有清單",
     "favourites": "最愛",
     "new_list": "新增清單",
-    "new_nested_list": "新增巢狀清單"
+    "new_nested_list": "新增巢狀清單",
+    "search_query_help": "了解更多關於搜尋查詢語言的資訊。",
+    "edit_list": "編輯清單",
+    "no_parent": "無上層",
+    "list_type": "清單類型",
+    "manual_list": "手動清單",
+    "smart_list": "智慧清單",
+    "search_query": "搜尋查詢",
+    "parent_list": "上層清單"
   },
   "tags": {
     "all_tags": "所有標籤",
     "your_tags": "您的標籤",
-    "your_tags_info": "您至少附加過一次的標籤",
+    "your_tags_info": "您至少使用過一次的標籤",
     "ai_tags": "AI 標籤",
-    "ai_tags_info": "僅由 AI 自動附加的標籤",
+    "ai_tags_info": "僅由 AI 自動加入的標籤",
     "unused_tags": "未使用的標籤",
     "unused_tags_info": "未附加至任何書籤的標籤",
     "delete_all_unused_tags": "刪除所有未使用的標籤",
     "drag_and_drop_merging": "拖曳合併",
-    "drag_and_drop_merging_info": "將標籤拖曳至彼此上方即可合併",
+    "drag_and_drop_merging_info": "將標籤拖曳到其他標籤上即可合併",
     "sort_by_name": "依名稱排序"
   },
   "preview": {
-    "view_original": "檢視原始網頁",
+    "view_original": "檢視原始內容",
     "cached_content": "快取內容"
   },
   "editor": {
@@ -206,15 +233,63 @@
     "import_as_separate_bookmarks": "匯入為個別書籤",
     "placeholder": "貼上連結、圖片、撰寫筆記，或將圖片拖曳至此處…",
     "new_item": "新增項目",
-    "disabled_submissions": "提交功能已停用"
+    "disabled_submissions": "提交功能已停用",
+    "text_toolbar": {
+      "align_center": "置中對齊",
+      "align_right": "靠右對齊",
+      "markdown_shortcuts": {
+        "label": "Markdown 快捷鍵",
+        "bold": {
+          "example": "**text** 或 CTRL+b",
+          "label": "粗體"
+        },
+        "italic": {
+          "label": "斜體",
+          "example": "*Italic* 或 _Italic_ 或 CTRL+i"
+        },
+        "ordered_list": {
+          "label": "有序清單",
+          "example": "1. 清單項目"
+        },
+        "inline_code": {
+          "example": "`程式碼`",
+          "label": "行內程式碼"
+        },
+        "block_code": {
+          "label": "程式碼區塊",
+          "example": "``` + 空白鍵"
+        },
+        "blockquote": {
+          "example": "> 引用區塊",
+          "label": "引用區塊"
+        },
+        "unordered_list": {
+          "label": "無序清單",
+          "example": "- 清單項目"
+        },
+        "heading": {
+          "label": "標題",
+          "example": "# H1, ## H2, ### H3"
+        }
+      },
+      "undo": "復原",
+      "redo": "重做",
+      "bold": "粗體",
+      "italic": "斜體",
+      "underline": "底線",
+      "strikethrough": "刪除線",
+      "code": "程式碼",
+      "highlight": "醒目標示",
+      "align_left": "靠左對齊"
+    }
   },
   "toasts": {
     "bookmarks": {
       "updated": "書籤已更新！",
       "deleted": "書籤已刪除！",
-      "refetch": "已將重新擷取加入佇列！",
+      "refetch": "已將重新抓取加入佇列！",
       "full_page_archive": "已觸發完整網頁封存建立",
-      "delete_from_list": "已從清單中刪除書籤",
+      "delete_from_list": "已從清單中移除書籤",
       "clipboard_copied": "連結已複製到剪貼簿！"
     },
     "lists": {
@@ -228,5 +303,39 @@
       "title": "重複的標籤",
       "merge_all_suggestions": "要合併所有建議嗎？"
     }
+  },
+  "search": {
+    "is_not_favorited": "未加入最愛",
+    "is_archived": "已封存",
+    "is_not_archived": "未封存",
+    "has_any_tag": "有任何標籤",
+    "does_not_have_tag": "無此標籤",
+    "type_is_not": "類型不為",
+    "is_favorited": "已加入最愛",
+    "has_no_tags": "無標籤",
+    "is_in_any_list": "在任何清單中",
+    "is_not_in_any_list": "不在任何清單中",
+    "created_on_or_after": "建立於此日期或之後",
+    "not_created_on_or_after": "未建立於此日期或之後",
+    "full_text_search": "全文搜尋",
+    "and": "且",
+    "or": "或",
+    "created_on_or_before": "建立於此日期或之前",
+    "not_created_on_or_before": "未建立於此日期或之前",
+    "url_contains": "網址包含",
+    "url_does_not_contain": "網址不包含",
+    "has_tag": "有標籤",
+    "is_in_list": "在清單中",
+    "is_not_in_list": "不在清單中",
+    "type_is": "類型為"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_title": "刪除書籤？",
+      "delete_confirmation_description": "您確定要刪除這個書籤嗎？"
+    }
+  },
+  "highlights": {
+    "no_highlights": "您目前尚未有任何標記重點。"
   }
 }

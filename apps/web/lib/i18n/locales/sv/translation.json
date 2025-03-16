@@ -22,7 +22,13 @@
     "something_went_wrong": "Något gick fel",
     "search": "Sök",
     "tags": "Taggar",
-    "home": "Hem"
+    "home": "Hem",
+    "highlights": "Höjdpunkter",
+    "source": "Källa",
+    "bookmark_types": {
+      "title": "Bokmärkestyp",
+      "link": "Länk"
+    }
   },
   "layouts": {
     "grid": "Rutnät",

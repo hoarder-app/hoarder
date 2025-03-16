@@ -26,8 +26,11 @@
     "source": "Source",
     "bookmark_types": {
       "link": "Lien",
-      "text": "Texte"
-    }
+      "text": "Texte",
+      "title": "Type de signets",
+      "media": "Médias"
+    },
+    "highlights": "points saillants"
   },
   "layouts": {
     "masonry": "Mosaïque",
@@ -70,7 +73,8 @@
       "title": "Trier",
       "newest_first": "Plus récents d'abord",
       "oldest_first": "Plus anciens d'abord"
-    }
+    },
+    "recrawl": "Réexplorer"
   },
   "settings": {
     "back_to_app": "Retour à l'application",

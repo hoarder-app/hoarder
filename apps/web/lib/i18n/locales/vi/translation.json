@@ -1,0 +1,218 @@
+{
+  "actions": {
+    "save": "Lưu",
+    "manage_lists": "Quản lý danh sách",
+    "edit": "Sửa",
+    "unselect_all": "Bỏ chọn tất cả",
+    "bulk_edit": "Sửa hàng loạt",
+    "create": "Tạo mới",
+    "copy_link": "Sao chép liên kết",
+    "favorite": "Ưa thích",
+    "unfavorite": "Bỏ ưa thích",
+    "change_layout": "Thay đổi cách sắp xếp",
+    "delete": "Xóa",
+    "archive": "Lưu trữ",
+    "unarchive": "Bỏ lưu trữ",
+    "edit_tags": "Sửa nhãn",
+    "refresh": "Làm mới",
+    "select_all": "Chọn tất cả",
+    "add_to_list": "Thêm vào danh sách",
+    "download_full_page_archive": "Tải xuống toàn bộ trang lưu trữ",
+    "recrawl": "Quét lại",
+    "close_bulk_edit": "Đóng sửa hàng loạt",
+    "remove_from_list": "Xóa khỏi danh sách",
+    "cancel": "Hủy",
+    "close": "Đóng",
+    "sign_out": "Đăng xuất",
+    "summarize_with_ai": "Tóm tắt bằng AI",
+    "sort": {
+      "title": "Sắp xếp",
+      "newest_first": "Sắp xếp theo mới nhất",
+      "oldest_first": "Sắp xếp theo cũ nhất"
+    },
+    "ignore": "Bỏ qua",
+    "apply_all": "Áp dụng cho tất cả",
+    "merge": "Hợp nhất",
+    "edit_title": "Sửa tiêu đề",
+    "add": "Thêm",
+    "fetch_now": "Lấy dữ liệu ngay"
+  },
+  "layouts": {
+    "list": "Danh sách",
+    "grid": "Lưới",
+    "masonry": "Masonry",
+    "compact": "Gọn"
+  },
+  "settings": {
+    "feeds": {
+      "add_a_subscription": "Thêm đăng kí",
+      "rss_subscriptions": "Đăng kí RSS"
+    },
+    "import": {
+      "imported_bookmarks": "Đánh dấu trang đã được nhập",
+      "import_bookmarks_from_html_file": "Nhập đánh dấu trang từ file HTML",
+      "import_export": "Nhập / Xuất dữ liệu",
+      "export_links_and_notes": "Xuất liên kết và ghi chú",
+      "import_export_bookmarks": "Nhập / Xuất đánh dấu trang"
+    },
+    "webhooks": {
+      "edit_auth_token": "Sửa mã xác thực",
+      "description": "Bạn có thể sử dụng webhooks để kích hoạt hành động khi các dấu trang được tạo, thay đổi hoặc quét.",
+      "delete_webhook": "Xóa Webhook",
+      "create_webhook": "Tạo Webhook",
+      "delete_webhook_confirmation": "Bạn có chắc là muốn xóa webhook này không?",
+      "events": {
+        "created": "Đã tạo mới",
+        "edited": "Đã chỉnh sửa",
+        "crawled": "Đã quét",
+        "title": "Sự kiện"
+      },
+      "webhooks": "Webhooks",
+      "auth_token": "Mã xác thực",
+      "add_auth_token": "Thêm mã xác thực",
+      "edit_webhook": "Sửa Webhook",
+      "webhook_url": "Webhook URL"
+    },
+    "api_keys": {
+      "key_success_please_copy": "Vui lòng sao chép khóa và lưu trữ nó ở nơi an toàn. Sau khi bạn đóng hộp thoại, bạn sẽ không thể truy cập lại nó.",
+      "api_keys": "Khóa API",
+      "key_success": "Khóa đã được tạo thành công",
+      "new_api_key": "Khóa API mới",
+      "new_api_key_desc": "Đặt 1 tên độc nhất cho khóa API"
+    },
+    "ai": {
+      "tagging_rule_description": "Các gợi ý mà bạn thêm vào đây sẽ được đưa vào làm quy tắc cho mô hình trong quá trình tạo nhãn. Bạn có thể xem các gợi ý cuối cùng trong phần xem trước gợi ý.",
+      "ai_settings": "Cài đặt AI",
+      "prompt_preview": "Xem trước lệnh gợi ý",
+      "tagging_rules": "Các quy tắc dán nhãn",
+      "text_prompt": "Lệnh gợi ý văn bản",
+      "images_prompt": "Lệnh gợi ý hình ảnh",
+      "summarization_prompt": "Lệnh gợi ý tóm tắt",
+      "summarization": "Tóm tắt",
+      "all_tagging": "Tất cả nhãn",
+      "image_tagging": "Nhãn cho hình ảnh",
+      "text_tagging": "Nhãn cho văn bản"
+    },
+    "info": {
+      "basic_details": "Thông tin cơ bản",
+      "user_info": "Thông tin người dùng",
+      "change_password": "Thay đổi mật khẩu",
+      "current_password": "Mật khẩu hiện tại",
+      "new_password": "Mật khẩu mới",
+      "confirm_new_password": "Xác nhận mật khẩu mới",
+      "options": "Tùy chọn",
+      "interface_lang": "Ngôn ngữ giao diện"
+    },
+    "user_settings": "Cài đặt người dùng",
+    "back_to_app": "Quay lại ứng dụng",
+    "broken_links": {
+      "broken_links": "Liên kết hỏng",
+      "last_crawled_at": "Lần quét cuối lúc",
+      "crawling_status": "Tình trạng quét",
+      "crawling_failed": "Quét thất bại"
+    }
+  },
+  "admin": {
+    "server_stats": {
+      "total_users": "Tất cả người dùng",
+      "total_bookmarks": "Tất cả đánh dấu trang",
+      "server_version": "Phiên bản máy chủ",
+      "server_stats": "Thông số máy chủ"
+    },
+    "background_jobs": {
+      "background_jobs": "Tiến trình chạy nền",
+      "failed": "Thất bại"
+    },
+    "admin_settings": "Cài đặt quản trị viên",
+    "users_list": {
+      "delete_user": "Xóa người dùng",
+      "users_list": "Danh sách người dùng",
+      "create_user": "Tạo người dùng",
+      "change_role": "Đổi vai trò",
+      "reset_password": "Đặt lại mật khẩu",
+      "confirm_password": "Xác nhận mật khẩu"
+    },
+    "actions": {
+      "recrawl_failed_links_only": "Chỉ quét lại liên kết hỏng",
+      "recrawl_all_links": "Quét lại mọi liên kết"
+    }
+  },
+  "common": {
+    "screenshot": "Ảnh chụp màn hình",
+    "action": "Hành động",
+    "url": "URL",
+    "name": "Họ Tên",
+    "email": "Địa chỉ Email",
+    "password": "Mật khẩu",
+    "search": "Tìm kiếm",
+    "experimental": "Thử nghiệm",
+    "note": "Ghi chú",
+    "tags": "Dán nhãn",
+    "something_went_wrong": "Đã có lỗi xảy ra",
+    "attachments": "Tệp đính kèm",
+    "source": "Nguồn",
+    "roles": {
+      "user": "Người dùng",
+      "admin": "Quản trị viên"
+    },
+    "role": "Quyền hạn",
+    "key": "Khóa",
+    "created_at": "Được tạo vào",
+    "highlights": "Đánh dấu",
+    "home": "Trang chủ",
+    "bookmark_types": {
+      "link": "Liên kết",
+      "title": "Loại đánh dấu",
+      "text": "Văn bản",
+      "media": "Phương tiện"
+    },
+    "video": "Video",
+    "archive": "Lưu trữ",
+    "actions": "Các hành động"
+  },
+  "highlights": {
+    "no_highlights": "Bạn chưa có đánh dấu nào."
+  },
+  "lists": {
+    "all_lists": "Tất cả danh sách",
+    "new_list": "Danh sách mới",
+    "edit_list": "Sửa danh sách",
+    "list_type": "Loại danh sách",
+    "manual_list": "Danh sách thủ công",
+    "smart_list": "Danh sách thông minh",
+    "favourites": "Ưa thích"
+  },
+  "search": {
+    "is_favorited": "Được ưa thích",
+    "created_on_or_before": "Được tạo vào hoặc trước lúc",
+    "has_tag": "Được gán nhãn",
+    "not_created_on_or_after": "Không được tạo vào hoặc sau lúc",
+    "is_archived": "Được lưu trữ",
+    "is_in_any_list": "Ở trong danh sách nào đó",
+    "created_on_or_after": "Được tạo vào hoặc sau lúc",
+    "url_contains": "URL chứa",
+    "is_not_favorited": "Không được ưa thích",
+    "is_not_archived": "Không được lưu trữ",
+    "is_not_in_any_list": "Không ở trong danh sách nào",
+    "has_any_tag": "Được gán nhãn",
+    "has_no_tags": "Không được gán nhãn",
+    "not_created_on_or_before": "Không được tạo vào hoặc trước lúc",
+    "url_does_not_contain": "URL không chứa",
+    "is_in_list": "Ở trong danh sách",
+    "is_not_in_list": "Không ở trong danh sách",
+    "does_not_have_tag": "Không được gán nhãn",
+    "type_is": "Thể loại là",
+    "type_is_not": "Thể loại không phải là"
+  },
+  "tags": {
+    "all_tags": "Tất cả nhãn",
+    "your_tags": "Nhãn của bạn",
+    "delete_all_unused_tags": "Xóa những nhãn không được sử dụng",
+    "unused_tags": "Nhãn không được sử dụng",
+    "sort_by_name": "Sắp xếp theo Tên"
+  },
+  "options": {
+    "dark_mode": "Chế độ tối",
+    "light_mode": "Chế độ sáng"
+  }
+}

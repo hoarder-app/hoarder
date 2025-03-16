@@ -25,10 +25,20 @@
     "note": "노트",
     "attachments": "첨부 파일",
     "highlights": "하이라이트",
-    "source": "출처"
+    "source": "출처",
+    "key": "키",
+    "action": "액션",
+    "actions": "액션",
+    "created_at": "생성됨",
+    "role": "역활",
+    "type": "타입",
+    "size": "크기"
   },
   "layouts": {
-    "list": "목록"
+    "list": "목록",
+    "masonry": "벽돌집",
+    "grid": "그리드",
+    "compact": "축소"
   },
   "actions": {
     "change_layout": "레이아웃 변경",
@@ -36,6 +46,307 @@
     "favorite": "즐겨찾기",
     "unfavorite": "즐겨찾기 해제",
     "delete": "삭제",
-    "refresh": "새로 고침"
+    "refresh": "새로 고침",
+    "add_to_list": "목록에 추가",
+    "unarchive": "보관해제",
+    "recrawl": "다시 가져오기",
+    "download_full_page_archive": "보관된 전체 페이지 다운로드",
+    "edit_tags": "태그 수정",
+    "select_all": "전체 선택",
+    "unselect_all": "전체 선택해제",
+    "copy_link": "링크 복사",
+    "close_bulk_edit": "다건 수정 닫기",
+    "bulk_edit": "다건 수정",
+    "manage_lists": "목록 관리",
+    "remove_from_list": "목록에서 제거",
+    "save": "저장",
+    "add": "추가",
+    "edit": "수정",
+    "create": "생성",
+    "fetch_now": "지금 가져오기",
+    "summarize_with_ai": "AI로 요약하기",
+    "edit_title": "제목 수정",
+    "sign_out": "로그아웃",
+    "close": "닫기",
+    "merge": "병합",
+    "cancel": "취소",
+    "apply_all": "모두 적용",
+    "ignore": "무시",
+    "sort": {
+      "title": "정렬",
+      "newest_first": "최근 우선",
+      "oldest_first": "오래된것 우선"
+    }
+  },
+  "tags": {
+    "unused_tags": "사용되지 않은 태그",
+    "unused_tags_info": "어떤 북마크에도 사용되지 않은 태그",
+    "delete_all_unused_tags": "사용되지 않은 태그 모두 삭제",
+    "drag_and_drop_merging": "드래그 앤 드랍으로 병합하기",
+    "drag_and_drop_merging_info": "태그를 드래그 앤 드랍해서 다른 태그에 병합합니다",
+    "sort_by_name": "이름으로 정렬",
+    "all_tags": "모든 태그",
+    "your_tags": "내 태그",
+    "your_tags_info": "한번이라도 사용된 태그",
+    "ai_tags": "모든 태그",
+    "ai_tags_info": "한번이라도 사용된 태그(AI에 의해)"
+  },
+  "search": {
+    "is_favorited": "즐겨찾기 추가됨",
+    "is_not_favorited": "즐겨찾기에 추가되지 않음",
+    "is_archived": "보관됨",
+    "is_not_archived": "보관되지 않음",
+    "has_any_tag": "태그를 가짐",
+    "has_no_tags": "태그를 가지지 않음",
+    "is_in_any_list": "목록에 포함됨",
+    "is_not_in_any_list": "목록에 포함되지 않음",
+    "created_on_or_after": "이후 생성됨",
+    "created_on_or_before": "이후에 생성됨",
+    "not_created_on_or_before": "이후에 생성되지 않음",
+    "url_contains": "포함된 URL",
+    "url_does_not_contain": "URL 포함하지 않음",
+    "is_in_list": "목록에 포함된",
+    "has_tag": "태그 가짐",
+    "does_not_have_tag": "태그를 가지지 않음",
+    "type_is": "종류는",
+    "type_is_not": "종류가 아닌",
+    "and": "그리고",
+    "not_created_on_or_after": "이후에 생성되지 않음",
+    "is_not_in_list": "목록에 포함되지 않음",
+    "full_text_search": "전문 검색",
+    "or": "또는"
+  },
+  "preview": {
+    "view_original": "원본 보기",
+    "cached_content": "캐싱된 컨텐츠"
+  },
+  "editor": {
+    "quickly_focus": "⌘ + E를 누르면 이 필드에 초점이 옮겨집니다",
+    "multiple_urls_dialog_title": "URL을 분리된 북마크로 가져올까요?",
+    "multiple_urls_dialog_desc": "입력에 별도의 줄에 여러 URL이 포함되어 있습니다. 별도의 북마크로 가져오시겠습니까?",
+    "import_as_text": "텍스트 북마크로 가져오기",
+    "import_as_separate_bookmarks": "분리된 북마크로 가져오기",
+    "placeholder": "링크나 이미지를 붙여넣거나, 메모를 작성하거나, 이미지를 끌어다 놓으세요…",
+    "new_item": "새로운 아이템",
+    "disabled_submissions": "저장이 비활성화 됨",
+    "text_toolbar": {
+      "undo": "되돌리기",
+      "align_left": "왼쪽 정렬",
+      "align_center": "가운데 정렬",
+      "align_right": "오른쪽 정렬",
+      "markdown_shortcuts": {
+        "label": "마크다운 단축키",
+        "heading": {
+          "label": "들여쓰기",
+          "example": "# H1, ## H2, ### H3"
+        },
+        "bold": {
+          "label": "굵게",
+          "example": "**text** 또는 CTRL+b"
+        },
+        "italic": {
+          "label": "기울이기",
+          "example": "*Italic* 또는 _Italic_ 또는 CTRL+i"
+        },
+        "blockquote": {
+          "label": "따옴표",
+          "example": "> 인용구"
+        },
+        "ordered_list": {
+          "label": "정렬된 목록",
+          "example": "1. 목록 아이템"
+        },
+        "unordered_list": {
+          "label": "순서 없는 목록",
+          "example": "- 목록 아이템"
+        },
+        "inline_code": {
+          "label": "인라인 코드",
+          "example": "`Code`"
+        },
+        "block_code": {
+          "label": "코드 블럭",
+          "example": "``` + 스페이스 키"
+        }
+      },
+      "redo": "다시하기",
+      "italic": "이탤릭",
+      "underline": "밑줄",
+      "strikethrough": "취소선",
+      "code": "코드",
+      "highlight": "강조하기",
+      "bold": "굵게"
+    }
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_description": "정말로 이 북마크를 삭제할까요?",
+      "delete_confirmation_title": "북마크를 삭제할까요?"
+    }
+  },
+  "toasts": {
+    "bookmarks": {
+      "updated": "북마크가 갱신 되었습니다!",
+      "deleted": "북마크가 삭제되었습니다!",
+      "refetch": "다시 가져오기가 큐에 추가 되었습니다!",
+      "full_page_archive": "전체 페이지 보관 생성이 요청되었습니다",
+      "delete_from_list": "북마크를 목록에서 삭제했습니다",
+      "clipboard_copied": "링크를 클립보드에 복사했습니다!"
+    },
+    "lists": {
+      "created": "목록이 생성 되었습니다!",
+      "updated": "목록이 갱신 되었습니다!"
+    }
+  },
+  "cleanups": {
+    "cleanups": "정리",
+    "duplicate_tags": {
+      "title": "태그 중복",
+      "merge_all_suggestions": "제안을 병합 하시겠습니까?"
+    }
+  },
+  "settings": {
+    "api_keys": {
+      "key_success": "키가 성공적으로 생성되었습니다",
+      "key_success_please_copy": "키를 복사해서 안전한 곳에 보관해 주세요. 대화 상자를 닫으면 다시 볼 수 없습니다.",
+      "api_keys": "API 키",
+      "new_api_key": "새로운 API 키",
+      "new_api_key_desc": "API 키에 고유한 이름을 주세요"
+    },
+    "webhooks": {
+      "events": {
+        "title": "이벤트",
+        "crawled": "가져옴",
+        "created": "생성됨",
+        "edited": "수정됨"
+      },
+      "edit_webhook": "웹훅 수정",
+      "webhooks": "웹훅",
+      "description": "북마크가 생성, 변경 또는 크롤링될 때 웹훅을 사용하여 작업을 트리거할 수 있습니다.",
+      "auth_token": "인증 토큰",
+      "add_auth_token": "인증 토큰 추가",
+      "edit_auth_token": "인증 토큰 수정",
+      "create_webhook": "웹훅 생성",
+      "delete_webhook": "웹훅 삭제",
+      "delete_webhook_confirmation": "이 웹훅을 삭제하시겠습니까?",
+      "webhook_url": "웹훅 URL"
+    },
+    "info": {
+      "change_password": "암호 변경",
+      "user_info": "사용자 정보",
+      "basic_details": "기본 정보",
+      "current_password": "현재 암호",
+      "new_password": "새로운 암호",
+      "confirm_new_password": "새로운 암호 확인",
+      "options": "옵션",
+      "interface_lang": "인터페이스 언어"
+    },
+    "ai": {
+      "ai_settings": "AI 설정",
+      "tagging_rule_description": "여기에 추가하는 프롬프트는 태그 생성 중에 모델에 규칙으로 포함됩니다. 프롬프트 미리보기 섹션에서 최종 프롬프트를 볼 수 있습니다.",
+      "tagging_rules": "태깅 규칙",
+      "prompt_preview": "프롬프트 미리보기",
+      "text_prompt": "텍스트 프롬프트",
+      "images_prompt": "이미지 프롬프트",
+      "summarization_prompt": "요약 프롬프트",
+      "all_tagging": "모든 태깅",
+      "text_tagging": "텍스트 태깅",
+      "image_tagging": "이미지 태깅",
+      "summarization": "요약"
+    },
+    "feeds": {
+      "add_a_subscription": "구독 추가",
+      "rss_subscriptions": "RSS 구독"
+    },
+    "import": {
+      "import_bookmarks_from_linkwarden_export": "Linkwarden 내보내기에서 북마크 가져오기",
+      "import_export": "가져오기 / 내보내기",
+      "import_export_bookmarks": "북마크 가져오기 / 내보내기",
+      "import_bookmarks_from_html_file": "HTML 파일에서 북마크 가져오기",
+      "import_bookmarks_from_pocket_export": "Pocket 내보내기에서 북마크 가져오기",
+      "import_bookmarks_from_omnivore_export": "Omnivore 내보내기에서 북마크 가져오기",
+      "import_bookmarks_from_hoarder_export": "Hoarder 내보내기에서 북마크 가져오기",
+      "export_links_and_notes": "링크와 주석 내보내기",
+      "imported_bookmarks": "가져온 북마크"
+    },
+    "back_to_app": "앱으로 돌아가기",
+    "user_settings": "사용자 설정",
+    "broken_links": {
+      "broken_links": "깨진 링크",
+      "last_crawled_at": "마지막 가져온 시간",
+      "crawling_status": "가져오기 상태",
+      "crawling_failed": "가져오기 실패함"
+    },
+    "manage_assets": {
+      "no_assets": "아직 자산이 없습니다.",
+      "asset_type": "자산 종류",
+      "asset_link": "자산 링크",
+      "delete_asset": "자산 삭제",
+      "delete_asset_confirmation": "정말 이 자산을 삭제 하시겠습니까?",
+      "manage_assets": "자산 관리",
+      "bookmark_link": "북마크 링크"
+    }
+  },
+  "admin": {
+    "users_list": {
+      "users_list": "사용자 목록",
+      "create_user": "사용자 생성",
+      "change_role": "역활 변경",
+      "reset_password": "암호 초기화",
+      "delete_user": "사용자 삭제",
+      "num_bookmarks": "북마크 갯수",
+      "asset_sizes": "애셋 크기",
+      "local_user": "로컬 사용자",
+      "confirm_password": "암호 확인"
+    },
+    "admin_settings": "관리자 설정",
+    "server_stats": {
+      "server_stats": "서버 상태",
+      "total_users": "총 사용자",
+      "total_bookmarks": "총 북마크",
+      "server_version": "서버 버전"
+    },
+    "background_jobs": {
+      "background_jobs": "백그라운드 작업",
+      "crawler_jobs": "가져오기 작업",
+      "indexing_jobs": "인덱싱 작업",
+      "inference_jobs": "추론 작업",
+      "tidy_assets_jobs": "정리 작업",
+      "job": "작업",
+      "queued": "큐에 추가됨",
+      "pending": "대기중",
+      "failed": "실패함"
+    },
+    "actions": {
+      "recrawl_failed_links_only": "실패한 링크만 다시 가져오기",
+      "recrawl_all_links": "모든 링크 다시 가져오기",
+      "without_inference": "추론하지 않기",
+      "regenerate_ai_tags_for_failed_bookmarks_only": "실패한 북마크만 AI 태그 재생성",
+      "regenerate_ai_tags_for_all_bookmarks": "모든 북마크 AI 태그 재생성",
+      "reindex_all_bookmarks": "모든 북마크 재 인덱싱",
+      "compact_assets": "애셋 압축",
+      "reprocess_assets_fix_mode": "재작업된 자산(수정 모드)"
+    }
+  },
+  "lists": {
+    "smart_list": "스마트 목록",
+    "search_query_help": "검색 질의어에 대해 더 알아보기.",
+    "all_lists": "모든 목록",
+    "favourites": "즐겨찾기",
+    "new_list": "새로운 목록",
+    "edit_list": "목록 수정",
+    "new_nested_list": "새로운 하위 목록",
+    "parent_list": "상위 목록",
+    "no_parent": "상위 목록 없음",
+    "list_type": "목록 종류",
+    "manual_list": "수동 목록",
+    "search_query": "검색 쿼리"
+  },
+  "options": {
+    "light_mode": "라이트 모드",
+    "dark_mode": "다크 모드"
+  },
+  "highlights": {
+    "no_highlights": "강조된 부분이 없습니다."
   }
 }

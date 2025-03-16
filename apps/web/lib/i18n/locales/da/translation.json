@@ -46,7 +46,8 @@
       "import_export_bookmarks": "Import / eksport bogmærker",
       "import_bookmarks_from_html_file": "Importer bogmærker fra HTML-fil",
       "import_bookmarks_from_pocket_export": "Importer bogmærker fra Pocket-eksport",
-      "imported_bookmarks": "Importerede bogmærker"
+      "imported_bookmarks": "Importerede bogmærker",
+      "import_bookmarks_from_linkwarden_export": "Importer bogmærker fra Linkwarden-eksport"
     },
     "back_to_app": "Tilbage til app",
     "info": {
@@ -69,7 +70,12 @@
       "ai_settings": "AI-indstillinger",
       "images_prompt": "Billede-prompt",
       "prompt_preview": "Forhåndsvisning af prompt",
-      "text_prompt": "Tekst-prompt"
+      "text_prompt": "Tekst-prompt",
+      "summarization_prompt": "Opsummeringsprompt",
+      "summarization": "Opsummering",
+      "all_tagging": "Tagging for alle typer",
+      "text_tagging": "Tekst-tagging",
+      "image_tagging": "Billede-tagging"
     },
     "broken_links": {
       "crawling_status": "Gennemsøgningsstatus",
@@ -84,7 +90,34 @@
       "key_success": "Nøglen blev succesfuldt oprettet",
       "key_success_please_copy": "Kopiér venligst nøglen og gem den et sikkert sted. Vær opmærksom på, at du ikke vil kunne få adgang til den igen, efter dialogboksen lukkes."
     },
-    "user_settings": "Brugerindstillinger"
+    "user_settings": "Brugerindstillinger",
+    "webhooks": {
+      "webhooks": "Webhooks",
+      "events": {
+        "title": "Begivenheder",
+        "created": "Oprettet",
+        "edited": "Redigeret",
+        "crawled": "Gennemgået"
+      },
+      "description": "Du kan bruge webhooks til at udløse handlinger, når bogmærker oprettes, ændres eller gennemgås.",
+      "auth_token": "Adgangstoken",
+      "add_auth_token": "Tilføj adgangstoken",
+      "edit_auth_token": "Rediger adgangstoken",
+      "create_webhook": "Opret webhook",
+      "delete_webhook": "Slet webhook",
+      "delete_webhook_confirmation": "Er du sikker på, at du vil slette denne webhook?",
+      "edit_webhook": "Rediger webhook",
+      "webhook_url": "Webhook URL"
+    },
+    "manage_assets": {
+      "manage_assets": "Administrér ressourcer",
+      "no_assets": "Du har ingen ressourcer endnu.",
+      "delete_asset": "Slet ressource",
+      "asset_link": "Ressourcelink",
+      "asset_type": "Ressourcetype",
+      "delete_asset_confirmation": "Er du sikker på, at du vil slette denne ressource?",
+      "bookmark_link": "Bogmærkelink"
+    }
   },
   "admin": {
     "actions": {
@@ -106,7 +139,11 @@
       "tidy_assets_jobs": "Oprydningsopgaver for ressourcer",
       "job": "Opgave",
       "queued": "I kø",
-      "pending": "Afventer"
+      "pending": "Afventer",
+      "webhook_jobs": "Webhook-opgaver",
+      "video_jobs": "Videonedehentningsopgaver",
+      "feed_jobs": "RSS-feed-opgaver",
+      "asset_preprocessing_jobs": "Forbehandlingsopgaver for ressourcer"
     },
     "server_stats": {
       "server_version": "Server-version",
@@ -225,7 +262,17 @@
     "email": "E-mail",
     "password": "Adganskode",
     "video": "Video",
-    "home": "Hjem"
+    "home": "Hjem",
+    "bookmark_types": {
+      "link": "Link",
+      "text": "Tekst",
+      "media": "Medie",
+      "title": "Bogmærketype"
+    },
+    "highlights": "Højdepunkter",
+    "source": "Kilde",
+    "type": "Type",
+    "size": "Størrelse"
   },
   "layouts": {
     "masonry": "Fliser",
@@ -237,7 +284,15 @@
     "all_lists": "Alle lister",
     "favourites": "Stjernemarkeringer",
     "new_list": "Ny liste",
-    "new_nested_list": "Ny underliste"
+    "new_nested_list": "Ny underliste",
+    "edit_list": "Rediger liste",
+    "list_type": "Liste Type",
+    "manual_list": "Manuel liste",
+    "parent_list": "Overordnet liste",
+    "no_parent": "Ingen overordnet",
+    "smart_list": "Smart liste",
+    "search_query": "Søgestreng",
+    "search_query_help": "Lær mere om sproget til søgeforespørgsler."
   },
   "preview": {
     "view_original": "Se original",
@@ -262,6 +317,40 @@
     "duplicate_tags": {
       "title": "Dublerede tags",
       "merge_all_suggestions": "Sammenflet alle forslag?"
+    }
+  },
+  "highlights": {
+    "no_highlights": "Du har ikke nogen højdepunkter endnu."
+  },
+  "search": {
+    "has_no_tags": "Har ingen tags",
+    "url_contains": "URL indeholder",
+    "is_not_in_any_list": "Er ikke i nogen liste",
+    "type_is": "Typen er",
+    "and": "og",
+    "does_not_have_tag": "Har ikke et tag",
+    "url_does_not_contain": "URL indeholder ikke",
+    "is_in_list": "Er i listen",
+    "is_archived": "Er arkiveret",
+    "is_not_favorited": "Er ikke stjernemarkeret",
+    "not_created_on_or_before": "Ikke oprettet den eller før",
+    "is_not_archived": "Er ikke arkiveret",
+    "has_tag": "Har tag",
+    "or": "eller",
+    "created_on_or_before": "Oprettet den eller før",
+    "is_favorited": "Er stjermarkeret",
+    "full_text_search": "Fuldtekstsøgning",
+    "not_created_on_or_after": "Ikke oprettet den eller efter",
+    "has_any_tag": "Har et tag",
+    "is_in_any_list": "Er i en liste",
+    "created_on_or_after": "Oprettet den eller efter",
+    "is_not_in_list": "Er ikke i listen",
+    "type_is_not": "Typen er ikke"
+  },
+  "dialogs": {
+    "bookmarks": {
+      "delete_confirmation_title": "Slet bogmærke?",
+      "delete_confirmation_description": "Er du sikker på, at du vil slette dette bogmærke?"
     }
   }
 }

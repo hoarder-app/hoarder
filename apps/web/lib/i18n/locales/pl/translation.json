@@ -22,7 +22,14 @@
     "screenshot": "Zrzut ekranu",
     "video": "Wideo",
     "archive": "Archiwum",
-    "home": "Strona główna"
+    "home": "Strona główna",
+    "bookmark_types": {
+      "title": "Typ zakładki",
+      "text": "Tekst"
+    },
+    "type": "Typ",
+    "size": "Rozmiar",
+    "source": "Źródło"
   },
   "actions": {
     "remove_from_list": "Usuń z listy",
@@ -91,7 +98,8 @@
       "tagging_rule_description": "Wpisane tutaj podpowiedzi będą uwzględniane jako zasady podczas generowania tagów. Możesz zobaczyć ostateczne podpowiedzi w sekcji podglądu.",
       "prompt_preview": "Podgląd podpowiedzi",
       "text_prompt": "Podpowiedź tekstowa",
-      "images_prompt": "Podpowiedź obrazowa"
+      "images_prompt": "Podpowiedź obrazowa",
+      "summarization": "Streszczanie"
     },
     "feeds": {
       "rss_subscriptions": "Subskrypcje RSS",

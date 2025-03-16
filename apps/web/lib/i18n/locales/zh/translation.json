@@ -30,7 +30,9 @@
       "link": "链接",
       "text": "文字",
       "media": "媒体"
-    }
+    },
+    "type": "类型",
+    "size": "大小"
   },
   "layouts": {
     "masonry": "砌体",
@@ -205,7 +207,8 @@
     "manual_list": "手动列表",
     "smart_list": "智能列表",
     "search_query": "搜索查询",
-    "edit_list": "修改列表"
+    "edit_list": "修改列表",
+    "search_query_help": "了解更多关于搜索查询语言。"
   },
   "tags": {
     "all_tags": "所有标签",

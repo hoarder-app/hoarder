@@ -1,0 +1,22 @@
+{
+  "common": {
+    "url": "URL",
+    "name": "Ім'я",
+    "email": "Email",
+    "password": "Пароль",
+    "action": "Дія",
+    "actions": "Дії",
+    "created_at": "Створено",
+    "key": "Ключ",
+    "role": "Роль",
+    "type": "Тип",
+    "size": "Розмір",
+    "roles": {
+      "user": "Користувач",
+      "admin": "Адміністратор"
+    },
+    "experimental": "Експериментальний",
+    "search": "Пошук",
+    "something_went_wrong": "Щось пішло не так"
+  }
+}
