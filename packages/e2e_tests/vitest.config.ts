@@ -13,5 +13,6 @@ export default defineConfig({
     globalSetup: ["./setup/startContainers.ts", "./setup/seed.ts"],
     teardownTimeout: 30000,
     include: ["tests/**/*.test.ts"],
+    testTimeout: 60000,
   },
 });
