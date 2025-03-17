@@ -15,7 +15,7 @@ const allEnv = z.object({
   OAUTH_WELLKNOWN_URL: z.string().url().optional(),
   OAUTH_CLIENT_SECRET: z.string().optional(),
   OAUTH_CLIENT_ID: z.string().optional(),
-  OAUTH_TIMEOUT: z.number().optional().default(3500),
+  OAUTH_TIMEOUT: z.coerce.number().optional().default(3500),
   OAUTH_SCOPE: z.string().default("openid email profile"),
   OAUTH_PROVIDER_NAME: z.string().default("Custom Provider"),
   OPENAI_API_KEY: z.string().optional(),
