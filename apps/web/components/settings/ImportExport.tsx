@@ -73,7 +73,7 @@ function ExportButton() {
         <Link
           href="/api/bookmarks/export"
           className={cn(
-            buttonVariants({ variant: "default" }),
+            buttonVariants({ variant: "default", size: "sm" }),
             "flex items-center gap-2",
           )}
         >
