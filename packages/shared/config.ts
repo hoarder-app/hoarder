@@ -15,6 +15,7 @@ const allEnv = z.object({
   OAUTH_WELLKNOWN_URL: z.string().url().optional(),
   OAUTH_CLIENT_SECRET: z.string().optional(),
   OAUTH_CLIENT_ID: z.string().optional(),
+  OAUTH_TIMEOUT: z.coerce.number().optional().default(3500),
   OAUTH_SCOPE: z.string().default("openid email profile"),
   OAUTH_PROVIDER_NAME: z.string().default("Custom Provider"),
   OPENAI_API_KEY: z.string().optional(),
@@ -86,6 +87,7 @@ const serverConfigSchema = allEnv.transform((val) => {
         clientId: val.OAUTH_CLIENT_ID,
         scope: val.OAUTH_SCOPE,
         name: val.OAUTH_PROVIDER_NAME,
+        timeout: val.OAUTH_TIMEOUT,
       },
     },
     inference: {

@@ -114,6 +114,9 @@ if (oauth.wellKnownUrl) {
     allowDangerousEmailAccountLinking: oauth.allowDangerousEmailAccountLinking,
     idToken: true,
     checks: ["pkce", "state"],
+    httpOptions: {
+      timeout: oauth.timeout,
+    },
     async profile(profile: Record<string, string>) {
       const [admin, firstUser] = await Promise.all([
         isAdmin(profile.email),
