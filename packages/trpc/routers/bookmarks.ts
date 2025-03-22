@@ -1083,6 +1083,8 @@ export const bookmarksAppRouter = router({
 Title: ${bookmark.title ?? ""}
 Description: ${bookmark.description ?? ""}
 Content: ${bookmark.content ?? ""}
+Publisher: ${bookmark.publisher ?? ""}
+Author: ${bookmark.author ?? ""}
 `;
 
       const prompts = await ctx.db.query.customPrompts.findMany({

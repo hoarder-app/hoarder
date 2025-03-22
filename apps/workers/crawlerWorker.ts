@@ -14,9 +14,12 @@ import { JSDOM } from "jsdom";
 import { DequeuedJob, Runner } from "liteque";
 import metascraper from "metascraper";
 import metascraperAmazon from "metascraper-amazon";
+import metascraperAuthor from "metascraper-author";
+import metascraperDate from "metascraper-date";
 import metascraperDescription from "metascraper-description";
 import metascraperImage from "metascraper-image";
 import metascraperLogo from "metascraper-logo-favicon";
+import metascraperPublisher from "metascraper-publisher";
 import metascraperReadability from "metascraper-readability";
 import metascraperTitle from "metascraper-title";
 import metascraperTwitter from "metascraper-twitter";
@@ -61,8 +64,14 @@ import {
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 const metascraperParser = metascraper([
+  metascraperDate({
+    dateModified: true,
+    datePublished: true,
+  }),
   metascraperAmazon(),
   metascraperReadability(),
+  metascraperAuthor(),
+  metascraperPublisher(),
   metascraperTitle(),
   metascraperDescription(),
   metascraperTwitter(),
@@ -677,6 +686,10 @@ async function crawlAndParseUrl(
         htmlContent: readableContent?.content,
         crawledAt: new Date(),
         crawlStatusCode: statusCode,
+        author: meta.author,
+        publisher: meta.publisher,
+        datePublished: meta.datePublished,
+        dateModified: meta.dateModified,
       })
       .where(eq(bookmarkLinks.id, bookmarkId));
 
