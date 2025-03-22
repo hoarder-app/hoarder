@@ -18,6 +18,10 @@ export const zBookmarkIdxSchema = z.object({
   note: z.string().nullish(),
   summary: z.string().nullish(),
   tags: z.array(z.string()).default([]),
+  publisher: z.string().nullish(),
+  author: z.string().nullish(),
+  datePublished: z.date().nullish(),
+  dateModified: z.date().nullish(),
 });
 
 export type ZBookmarkIdx = z.infer<typeof zBookmarkIdxSchema>;

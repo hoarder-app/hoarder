@@ -168,6 +168,22 @@
                   "crawledAt": {
                     "type": "string",
                     "nullable": true
+                  },
+                  "author": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "publisher": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "datePublished": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "dateModified": {
+                    "type": "string",
+                    "nullable": true
                   }
                 },
                 "required": [
