@@ -54,6 +54,7 @@ const allEnv = z.object({
     .string()
     .default("")
     .transform((t) => t.split("%%").filter((a) => a)),
+  CRAWLER_SCREENSHOT_TIMEOUT_SEC: z.coerce.number().default(5),
   MEILI_ADDR: z.string().optional(),
   MEILI_MASTER_KEY: z.string().default(""),
   LOG_LEVEL: z.string().default("debug"),
@@ -123,6 +124,7 @@ const serverConfigSchema = allEnv.transform((val) => {
       downloadVideoTimeout: val.CRAWLER_VIDEO_DOWNLOAD_TIMEOUT_SEC,
       enableAdblocker: val.CRAWLER_ENABLE_ADBLOCKER,
       ytDlpArguments: val.CRAWLER_YTDLP_ARGS,
+      screenshotTimeoutSec: val.CRAWLER_SCREENSHOT_TIMEOUT_SEC,
     },
     ocr: {
       langs: val.OCR_LANGS,
