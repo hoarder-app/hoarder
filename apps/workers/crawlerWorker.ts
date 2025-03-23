@@ -350,6 +350,9 @@ async function crawlPage(
     };
   } finally {
     await context.close();
+    if (serverConfig.crawler.browserConnectOnDemand) {
+      await browser.close();
+    }
   }
 }
 
