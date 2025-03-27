@@ -322,22 +322,30 @@ async function crawlPage(
 
     let screenshot: Buffer | undefined = undefined;
     if (serverConfig.crawler.storeScreenshot) {
-      screenshot = await Promise.race<Buffer | undefined>([
-        page
-          .screenshot({
+      try {
+        screenshot = await Promise.race<Buffer>([
+          page.screenshot({
             // If you change this, you need to change the asset type in the store function.
             type: "png",
             encoding: "binary",
             fullPage: serverConfig.crawler.fullPageScreenshot,
-          })
-          .catch(() => undefined),
-        new Promise((f) => setTimeout(f, 5000)),
-      ]);
-      if (!screenshot) {
-        logger.warn(`[Crawler][${jobId}] Failed to capture the screenshot.`);
-      } else {
+          }),
+          new Promise((_, reject) =>
+            setTimeout(
+              () =>
+                reject(
+                  "TIMED_OUT, consider increasing CRAWLER_SCREENSHOT_TIMEOUT_SEC",
+                ),
+              serverConfig.crawler.screenshotTimeoutSec * 1000,
+            ),
+          ),
+        ]);
         logger.info(
           `[Crawler][${jobId}] Finished capturing page content and a screenshot. FullPageScreenshot: ${serverConfig.crawler.fullPageScreenshot}`,
+        );
+      } catch (e) {
+        logger.warn(
+          `[Crawler][${jobId}] Failed to capture the screenshot. Reason: ${e}`,
         );
       }
     }
