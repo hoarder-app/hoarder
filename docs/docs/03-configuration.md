@@ -4,7 +4,8 @@ The app is mainly configured by environment variables. All the used environment 
 
 | Name                      | Required                              | Default | Description                                                                                                                                    |
 | ------------------------- | ------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| DATA_DIR                  | Yes                                   | Not set | The path for the persistent data directory. This is where the db and the uploaded assets live.                                                 |
+| DATA_DIR                  | Yes                                   | Not set | The path for the persistent data directory. This is where the db lives. Assets are stored here by default unless `ASSETS_DIR` is set.          |
+| ASSETS_DIR                | No                                    | Not set | The path where crawled assets will be stored. If not set, defaults to `${DATA_DIR}/assets`.                                                    |
 | NEXTAUTH_URL              | Yes                                   | Not set | Should point to the address of your server. The app will function without it, but will redirect you to wrong addresses on signout for example. |
 | NEXTAUTH_SECRET           | Yes                                   | Not set | Random string used to sign the JWT tokens. Generate one with `openssl rand -base64 36`.                                                        |
 | MEILI_ADDR                | No                                    | Not set | The address of meilisearch. If not set, Search will be disabled. E.g. (`http://meilisearch:7700`)                                              |
@@ -35,7 +36,7 @@ When setting up OAuth, the allowed redirect URLs configured at the provider shou
 | OAUTH_SCOPE                                 | No       | "openid email profile" | "Full list of scopes to request (space delimited)"                                                                                                                  |
 | OAUTH_PROVIDER_NAME                         | No       | "Custom Provider"      | The name of your provider. Will be shown on the signup page as "Sign in with `<name>`"                                                                              |
 | OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING | No       | false                  | Whether existing accounts in hoarder stored in the database should automatically be linked with your OAuth account. Only enable it if you trust the OAuth provider! |
-| OAUTH_TIMEOUT                               | No       | 3500                   | The wait time in milliseconds for the OAuth provider response. Increase this if you are having `outgoing request timed out` errors |
+| OAUTH_TIMEOUT                               | No       | 3500                   | The wait time in milliseconds for the OAuth provider response. Increase this if you are having `outgoing request timed out` errors                                  |
 
 For more information on `OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING`, check the [next-auth.js documentation](https://next-auth.js.org/configuration/providers/oauth#allowdangerousemailaccountlinking-option).
 
@@ -89,7 +90,7 @@ Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic taggin
 | CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE    | No       | 50      | The maximum file size for the downloaded video. The quality will be chosen accordingly. Use -1 to disable the limit.                                                                                                                                                                                                                                                          |
 | CRAWLER_VIDEO_DOWNLOAD_TIMEOUT_SEC | No       | 600     | How long to wait for the video download to finish                                                                                                                                                                                                                                                                                                                             |
 | CRAWLER_ENABLE_ADBLOCKER           | No       | true    | Whether to enable an adblocker in the crawler or not. If you're facing troubles downloading the adblocking lists on worker startup, you can disable this.                                                                                                                                                                                                                     |
-| CRAWLER_YTDLP_ARGS           | No       | []    | Include additional yt-dlp arguments to be passed at crawl time separated by %%: https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#general-options
+| CRAWLER_YTDLP_ARGS                 | No       | []      | Include additional yt-dlp arguments to be passed at crawl time separated by %%: https://github.com/yt-dlp/yt-dlp?tab=readme-ov-file#general-options                                                                                                                                                                                                                           |
 
 ## OCR Configs
 

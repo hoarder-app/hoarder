@@ -6,7 +6,7 @@ import { z } from "zod";
 import serverConfig from "./config";
 import logger from "./logger";
 
-const ROOT_PATH = path.join(serverConfig.dataDir, "assets");
+const ROOT_PATH = serverConfig.assetsDir;
 
 export const enum ASSET_TYPES {
   IMAGE_JPEG = "image/jpeg",

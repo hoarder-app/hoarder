@@ -1,3 +1,4 @@
+import path from "path";
 import { z } from "zod";
 
 const stringBool = (defaultValue: string) =>
@@ -62,6 +63,7 @@ const allEnv = z.object({
   DEMO_MODE_EMAIL: z.string().optional(),
   DEMO_MODE_PASSWORD: z.string().optional(),
   DATA_DIR: z.string().default(""),
+  ASSETS_DIR: z.string().optional(),
   MAX_ASSET_SIZE_MB: z.coerce.number().default(50),
   INFERENCE_LANG: z.string().default("english"),
   WEBHOOK_TIMEOUT_SEC: z.coerce.number().default(5),
@@ -145,6 +147,7 @@ const serverConfigSchema = allEnv.transform((val) => {
         }
       : undefined,
     dataDir: val.DATA_DIR,
+    assetsDir: val.ASSETS_DIR ?? path.join(val.DATA_DIR, "assets"),
     maxAssetSizeMb: val.MAX_ASSET_SIZE_MB,
     serverVersion: val.SERVER_VERSION,
     disableNewReleaseCheck: val.DISABLE_NEW_RELEASE_CHECK,
