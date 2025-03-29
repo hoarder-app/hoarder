@@ -1,3 +1,8 @@
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
+import { Readable } from "stream";
+import { pipeline } from "stream/promises";
 import { createContextFromRequest } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
@@ -5,7 +10,7 @@ import type { ZUploadResponse } from "@hoarder/shared/types/uploads";
 import { assets, AssetTypes } from "@hoarder/db/schema";
 import {
   newAssetId,
-  saveAsset,
+  saveAssetFromFile,
   SUPPORTED_UPLOAD_ASSET_TYPES,
 } from "@hoarder/shared/assetdb";
 import serverConfig from "@hoarder/shared/config";
@@ -14,6 +19,12 @@ import { AuthedContext } from "@hoarder/trpc";
 const MAX_UPLOAD_SIZE_BYTES = serverConfig.maxAssetSizeMb * 1024 * 1024;
 
 export const dynamic = "force-dynamic";
+
+// Helper to convert Web Stream to Node Stream (requires Node >= 16.5 / 14.18)
+function webStreamToNode(webStream: ReadableStream<Uint8Array>): Readable {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
+  return Readable.fromWeb(webStream as any); // Type assertion might be needed
+}
 
 export async function uploadFromPostData(
   user: AuthedContext["user"],
@@ -29,50 +40,61 @@ export async function uploadFromPostData(
     }
 > {
   const data = formData.get("file") ?? formData.get("image");
-  let buffer;
-  let contentType;
-  if (data instanceof File) {
-    contentType = data.type;
-    if (!SUPPORTED_UPLOAD_ASSET_TYPES.has(contentType)) {
-      return { error: "Unsupported asset type", status: 400 };
-    }
-    if (data.size > MAX_UPLOAD_SIZE_BYTES) {
-      return { error: "Asset is too big", status: 413 };
-    }
-    buffer = Buffer.from(await data.arrayBuffer());
-  } else {
+
+  if (!(data instanceof File)) {
     return { error: "Bad request", status: 400 };
   }
 
+  const contentType = data.type;
   const fileName = data.name;
-  const [assetDb] = await db
-    .insert(assets)
-    .values({
-      id: newAssetId(),
-      // Initially, uploads are uploaded for unknown purpose
-      // And without an attached bookmark.
-      assetType: AssetTypes.UNKNOWN,
-      bookmarkId: null,
+  if (!SUPPORTED_UPLOAD_ASSET_TYPES.has(contentType)) {
+    return { error: "Unsupported asset type", status: 400 };
+  }
+  if (data.size > MAX_UPLOAD_SIZE_BYTES) {
+    return { error: "Asset is too big", status: 413 };
+  }
+
+  let tempFilePath: string | undefined;
+
+  try {
+    tempFilePath = path.join(os.tmpdir(), `hoarder-upload-${Date.now()}`);
+    await pipeline(
+      webStreamToNode(data.stream()),
+      fs.createWriteStream(tempFilePath),
+    );
+    const [assetDb] = await db
+      .insert(assets)
+      .values({
+        id: newAssetId(),
+        // Initially, uploads are uploaded for unknown purpose
+        // And without an attached bookmark.
+        assetType: AssetTypes.UNKNOWN,
+        bookmarkId: null,
+        userId: user.id,
+        contentType,
+        size: data.size,
+        fileName,
+      })
+      .returning();
+
+    await saveAssetFromFile({
       userId: user.id,
+      assetId: assetDb.id,
+      assetPath: tempFilePath,
+      metadata: { contentType, fileName },
+    });
+
+    return {
+      assetId: assetDb.id,
       contentType,
       size: data.size,
       fileName,
-    })
-    .returning();
-
-  await saveAsset({
-    userId: user.id,
-    assetId: assetDb.id,
-    metadata: { contentType, fileName },
-    asset: buffer,
-  });
-
-  return {
-    assetId: assetDb.id,
-    contentType,
-    size: buffer.byteLength,
-    fileName,
-  };
+    };
+  } finally {
+    if (tempFilePath) {
+      await fs.promises.unlink(tempFilePath).catch(() => ({}));
+    }
+  }
 }
 
 export async function POST(request: Request) {
