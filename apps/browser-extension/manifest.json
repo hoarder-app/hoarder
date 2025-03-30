@@ -9,7 +9,24 @@
     "128": "public/logo-128.png"
   },
   "action": {
-    "default_popup": "index.html"
+    "default_popup": "index.html",
+    "theme_icons": [
+      {
+        "light": "public/logo-16-darkmode.png",
+        "dark": "public/logo-16.png",
+        "size": 16
+      },
+      {
+        "light": "public/logo-48-darkmode.png",
+        "dark": "public/logo-48.png",
+        "size": 48
+      },
+      {
+        "light": "public/logo-128-darkmode.png",
+        "dark": "public/logo-128.png",
+        "size": 128
+      }
+    ]
   },
   "background": {
     "service_worker": "src/background/background.ts",
