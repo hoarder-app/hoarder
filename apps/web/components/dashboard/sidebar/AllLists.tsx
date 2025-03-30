@@ -33,7 +33,7 @@ export default function AllLists({
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
 
   return (
-    <ul className="max-h-full gap-y-2 overflow-auto text-sm font-medium">
+    <ul className="max-h-full gap-y-2 overflow-auto text-sm">
       <li className="flex justify-between pb-2 font-bold">
         <p>Lists</p>
         <EditListModal>
@@ -99,7 +99,7 @@ export default function AllLists({
                     <Badge
                       variant="outline"
                       className={cn(
-                        "opacity-100 transition-opacity duration-100 group-hover:opacity-0",
+                        "font-normal opacity-100 transition-opacity duration-100 group-hover:opacity-0",
                         selectedListId == node.item.id ||
                           numBookmarks === undefined
                           ? "opacity-0"
