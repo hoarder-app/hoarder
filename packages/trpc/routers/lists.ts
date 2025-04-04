@@ -4,6 +4,7 @@ import { z } from "zod";
 import {
   zBookmarkListSchema,
   zEditBookmarkListSchemaWithValidation,
+  zMergeListSchema,
   zNewBookmarkListSchema,
 } from "@karakeep/shared/types/lists";
 
@@ -38,6 +39,13 @@ export const listsAppRouter = router({
     .use(ensureListOwnership)
     .mutation(async ({ input, ctx }) => {
       return await ctx.list.update(input);
+    }),
+  merge: authedProcedure
+    .input(zMergeListSchema)
+    .mutation(async ({ input, ctx }) => {
+      const sourceList = await List.fromId(ctx, input.sourceId);
+      const targetList = await List.fromId(ctx, input.targetId);
+      return await sourceList.mergeInto(targetList);
     }),
   delete: authedProcedure
     .input(

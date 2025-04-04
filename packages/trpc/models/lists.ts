@@ -144,7 +144,9 @@ export abstract class List implements PrivacyAware {
   abstract getBookmarkIds(ctx: AuthedContext): Promise<string[]>;
   abstract getSize(ctx: AuthedContext): Promise<number>;
   abstract addBookmark(bookmarkId: string): Promise<void>;
+  abstract batchAddBookmarks(bookmarkIds: string[]): Promise<void>;
   abstract removeBookmark(bookmarkId: string): Promise<void>;
+  abstract mergeInto(targetList: List): Promise<void>;
 }
 
 export class SmartList extends List {
@@ -194,10 +196,24 @@ export class SmartList extends List {
     });
   }
 
+  batchAddBookmarks(_bookmarkIds: string[]): Promise<void> {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Smart lists cannot be added to",
+    });
+  }
+
   removeBookmark(_bookmarkId: string): Promise<void> {
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Smart lists cannot be removed from",
+    });
+  }
+
+  mergeInto(_targetList: List): Promise<void> {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Smart lists cannot be merged",
     });
   }
 }
@@ -250,6 +266,28 @@ export class ManualList extends List {
     }
   }
 
+  async batchAddBookmarks(bookmarkIds: string[]): Promise<void> {
+    if (bookmarkIds.length === 0) {
+      return;
+    }
+    try {
+      await this.ctx.db
+        .insert(bookmarksInLists)
+        .values(
+          bookmarkIds.map((bookmarkId) => ({
+            listId: this.list.id,
+            bookmarkId,
+          })),
+        )
+        .onConflictDoNothing();
+    } catch (e) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to add bookmarks in batch",
+      });
+    }
+  }
+
   async removeBookmark(bookmarkId: string): Promise<void> {
     const deleted = await this.ctx.db
       .delete(bookmarksInLists)
@@ -275,5 +313,17 @@ export class ManualList extends List {
       });
     }
     return super.update(input);
+  }
+
+  async mergeInto(targetList: List): Promise<void> {
+    if (targetList.type !== "manual") {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Smart lists cannot merge content from other lists",
+      });
+    }
+
+    const srcBookmarks = await this.getBookmarkIds();
+    await targetList.batchAddBookmarks(srcBookmarks);
   }
 }
