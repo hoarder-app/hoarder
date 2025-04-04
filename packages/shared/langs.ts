@@ -20,6 +20,7 @@ export const langNameMappings: Record<string, string> = {
   es: "Spanish",
   sv: "Swedish",
   tr: "Turkish",
+  uk: "Ukrainian",
   vi: "Vietnamese",
 };
 
