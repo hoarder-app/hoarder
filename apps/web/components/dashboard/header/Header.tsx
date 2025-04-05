@@ -16,7 +16,7 @@ export default async function Header() {
     <header className="sticky left-0 right-0 top-0 z-50 flex h-16 items-center justify-between overflow-x-auto overflow-y-hidden bg-background p-4 shadow">
       <div className="hidden items-center sm:flex">
         <Link href={"/dashboard/bookmarks"} className="w-56">
-          <HoarderLogo height={20} gap="8px" />
+          <HoarderLogo height={38} />
         </Link>
       </div>
       <div className="flex flex-1 gap-2">

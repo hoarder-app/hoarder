@@ -95,7 +95,7 @@ const featuresList = [
 function NavBar() {
   return (
     <div className="flex justify-between px-3 py-4">
-      <HoarderLogo height={24} gap="8px" />
+      <HoarderLogo height={38} />
       <div className="hidden items-center gap-6 sm:flex">
         <Link
           href={DOCS_LINK}
