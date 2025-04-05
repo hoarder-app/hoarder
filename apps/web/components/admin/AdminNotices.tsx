@@ -38,23 +38,6 @@ function useAdminNotices() {
       title: "Legacy Container Images",
     });
   }
-  ret.push({
-    level: "warning",
-    message: (
-      <p>
-        You&apos;ll need to update your docker images to the new image otherwise
-        you won&apos;t be getting new updates. Please follow{" "}
-        <a
-          href="https://docs.karakeep.app/next/Guides/hoarder-to-karakeep-migration"
-          className="underline"
-        >
-          this guide
-        </a>{" "}
-        for instructions on how to update your docker images.
-      </p>
-    ),
-    title: "Hoarder is rebranding to Karakeep",
-  });
   return ret;
 }
 
