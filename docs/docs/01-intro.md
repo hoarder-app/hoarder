@@ -4,7 +4,7 @@ slug: /
 
 # Introduction
 
-Hoarder is an open source "Bookmark Everything" app that uses AI for automatically tagging the content you throw at it. The app is built with self-hosting as a first class citizen.
+Karakeep (previously Hoarder) is an open source "Bookmark Everything" app that uses AI for automatically tagging the content you throw at it. The app is built with self-hosting as a first class citizen.
 
 ![Screenshot](https://raw.githubusercontent.com/hoarder-app/hoarder/main/screenshots/homepage.png)
 
@@ -35,10 +35,10 @@ Hoarder is an open source "Bookmark Everything" app that uses AI for automatical
 
 ## Demo
 
-You can access the demo at [https://try.hoarder.app](https://try.hoarder.app). Login with the following creds:
+You can access the demo at [https://try.karakeep.app](https://try.karakeep.app). Login with the following creds:
 
 ```
-email: demo@hoarder.app
+email: demo@karakeep.app
 password: demodemo
 ```
 

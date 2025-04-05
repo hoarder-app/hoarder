@@ -15,9 +15,7 @@
 
 # <img height="50px" src="./screenshots/logo.png" />
 
-A self-hostable bookmark-everything app with a touch of AI for the data hoarders out there.
-
-> *Hoarder is an independent, non-commercial project. It is not affiliated with, endorsed by, or connected to Hordr.app or its owners.*
+Karakeep (previously Hoarder) self-hostable bookmark-everything app with a touch of AI for the data hoarders out there.
 
 ![homepage screenshot](https://github.com/hoarder-app/hoarder/blob/main/screenshots/homepage.png?raw=true)
 
@@ -54,14 +52,18 @@ A self-hostable bookmark-everything app with a touch of AI for the data hoarders
 
 ## Demo
 
-You can access the demo at [https://try.hoarder.app](https://try.hoarder.app). Login with the following creds:
+You can access the demo at [https://try.karakeep.app](https://try.karakeep.app). Login with the following creds:
 
 ```
-email: demo@hoarder.app
+email: demo@karakeep.app
 password: demodemo
 ```
 
 The demo is seeded with some content, but it's in read-only mode to prevent abuse.
+
+## About the name
+
+The name Karakeep is inspired by the Arabic word "كراكيب" (karakeeb), a colloquial term commonly used to refer to miscellaneous clutter, odds and ends, or items that may seem disorganized but often hold personal value or hidden usefulness. It evokes the image of a messy drawer or forgotten box, full of stuff you can't quite throw away—because somehow, it matters (or more likely, because you're a hoarder!).
 
 ## Stack
 
