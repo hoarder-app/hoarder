@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { useTranslation } from "@/lib/i18n/server";
 import { TFunction } from "i18next";
 
@@ -30,9 +31,14 @@ export default async function Sidebar({
         </ul>
       </div>
       {extraSections}
-      <div className="mt-auto flex items-center border-t pt-2 text-sm text-gray-400">
+      <Link
+        href={`https://github.com/hoarder-app/hoarder/releases/tag/v${serverConfig.serverVersion}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-auto flex items-center border-t pt-2 text-sm text-gray-400 hover:underline"
+      >
         Hoarder v{serverConfig.serverVersion}
-      </div>
+      </Link>
     </aside>
   );
 }
