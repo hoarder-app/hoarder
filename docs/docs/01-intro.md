@@ -43,3 +43,7 @@ password: demodemo
 ```
 
 The demo is seeded with some content, but it's in read-only mode to prevent abuse.
+
+## About the name
+
+The name Karakeep is inspired by the Arabic word "كراكيب" (karakeeb), a colloquial term commonly used to refer to miscellaneous clutter, odds and ends, or items that may seem disorganized but often hold personal value or hidden usefulness. It evokes the image of a messy drawer or forgotten box, full of stuff you can't quite throw away—because somehow, it matters (or more likely, because you're a hoarder!).

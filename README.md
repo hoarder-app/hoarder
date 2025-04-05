@@ -15,7 +15,7 @@
 
 # <img height="50px" src="./screenshots/logo.png" />
 
-Karakeep (previously Hoarder) self-hostable bookmark-everything app with a touch of AI for the data hoarders out there.
+Karakeep (previously Hoarder) is a self-hostable bookmark-everything app with a touch of AI for the data hoarders out there.
 
 ![homepage screenshot](https://github.com/hoarder-app/hoarder/blob/main/screenshots/homepage.png?raw=true)
 
