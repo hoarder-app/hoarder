@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   web:
-    image: ghcr.io/hoarder-app/hoarder:${HOARDER_VERSION:-release}
+    image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}
     restart: unless-stopped
     volumes:
       # By default, the data is stored in a docker volume called "data".
