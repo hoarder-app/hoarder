@@ -120,6 +120,7 @@ export default function BookmarkPreview({
           {sourceUrl && (
             <Link
               href={sourceUrl}
+              target="_blank"
               className="flex items-center gap-2 text-gray-400"
             >
               <span>{t("preview.view_original")}</span>
