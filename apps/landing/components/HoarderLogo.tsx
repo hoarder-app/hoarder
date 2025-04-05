@@ -1,20 +1,9 @@
-import HoarderLogoIcon from "@/public/icons/logo-icon.svg";
-import HoarderLogoText from "@/public/icons/logo-text.svg";
+import KarakeepFull from "@/public/icons/karakeep-full.svg";
 
-export default function HoarderLogo({
-  height,
-  gap,
-}: {
-  height: number;
-  gap: string;
-}) {
+export default function HoarderLogo({ height }: { height: number }) {
   return (
-    <span style={{ gap }} className="flex items-center">
-      <HoarderLogoIcon height={height} className={`fill-foreground`} />
-      <HoarderLogoText
-        height={(height * 2) / 3}
-        className={`fill-foreground`}
-      />
+    <span className="flex items-center">
+      <KarakeepFull height={height} className={`fill-foreground`} />
     </span>
   );
 }

@@ -11,8 +11,9 @@ export default async function SignInPage() {
 
   return (
     <div className="grid min-h-screen grid-rows-6 justify-center">
-      <div className="row-span-2 flex w-96 items-center justify-center space-x-2">
-        <HoarderLogo height={62} gap="12px" />
+      <span className="row-span-1" />
+      <div className="row-span-1 flex w-96 items-center justify-center space-x-2">
+        <HoarderLogo height={100} />
       </div>
       <div className="row-span-4 px-3">
         <SignInForm />

@@ -8,8 +8,8 @@ import React from "react";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Hoarder",
-  metadataBase: new URL("https://hoarder.app"),
+  title: "Karakeep",
+  metadataBase: new URL("https://karakeep.app"),
   description:
     "The Bookmark Everything app. Hoard links, notes, and images and they will get automatically tagged AI.",
 };

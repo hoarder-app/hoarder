@@ -19,14 +19,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Hoarder",
-  applicationName: "Hoarder",
+  title: "Karakeep",
+  applicationName: "Karakeep",
   description:
     "The Bookmark Everything app. Hoard links, notes, and images and they will get automatically tagged AI.",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    title: "Hoarder",
+    title: "Karakeep",
   },
   formatDetection: {
     telephone: false,
