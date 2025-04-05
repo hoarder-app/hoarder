@@ -27,7 +27,7 @@ function useAdminNotices() {
           You&apos;re using the legacy docker container images. Those will stop
           getting supported soon. Please follow{" "}
           <a
-            href="https://docs.hoarder.app/next/Guides/legacy-container-upgrade"
+            href="https://docs.karakeep.app/next/Guides/legacy-container-upgrade"
             className="underline"
           >
             this guide

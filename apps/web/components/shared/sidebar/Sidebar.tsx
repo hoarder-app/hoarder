@@ -37,7 +37,7 @@ export default async function Sidebar({
         rel="noopener noreferrer"
         className="mt-auto flex items-center border-t pt-2 text-sm text-gray-400 hover:underline"
       >
-        Hoarder v{serverConfig.serverVersion}
+        Karakeep v{serverConfig.serverVersion}
       </Link>
     </aside>
   );

@@ -21,8 +21,8 @@ import {
 } from "lucide-react";
 
 const GITHUB_LINK = "https://github.com/hoarder-app/hoarder";
-const DOCS_LINK = "https://docs.hoarder.app";
-const DEMO_LINK = "https://try.hoarder.app";
+const DOCS_LINK = "https://docs.karakeep.app";
+const DEMO_LINK = "https://try.karakeep.app";
 
 const platforms = [
   {
@@ -222,7 +222,7 @@ function Features() {
 function Footer() {
   return (
     <div className="flex items-center justify-between bg-black px-10 py-6 text-sm text-gray-300">
-      <div>© 2024 hoarder.app</div>
+      <div>© 2024 karakeep.app</div>
       <div className="flex items-center gap-6">
         <Link
           href={DOCS_LINK}

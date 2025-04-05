@@ -347,7 +347,7 @@ export function EditListModal({
                       </div>
                       <FormDescription>
                         <Link
-                          href="https://docs.hoarder.app/Guides/search-query-language"
+                          href="https://docs.karakeep.app/Guides/search-query-language"
                           className="italic"
                         >
                           {t("lists.search_query_help")}

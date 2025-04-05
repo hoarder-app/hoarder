@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Hoarder",
-  "description": "An extension to bookmark links to hoarder.app",
+  "name": "Karakeep",
+  "description": "An extension to bookmark links to karakeep.app",
   "version": "1.2.3",
   "icons": {
     "16": "public/logo-16.png",
@@ -21,7 +21,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "addon@hoarder.app"
+      "id": "addon@karakeep.app"
     }
   },
   "content_security_policy": {
