@@ -34,7 +34,7 @@ RUN (cd apps/cli && pnpm build)
 ################# The All-in-one builder ##############
 
 FROM node:22-alpine AS aio_builder
-LABEL org.opencontainers.image.source="https://github.com/hoarder-app/hoarder"
+LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
 WORKDIR /app
 
 # https://github.com/hoarder-app/hoarder/issues/967
@@ -134,7 +134,7 @@ ENV USING_LEGACY_SEPARATE_CONTAINERS=true
 ################# The cli ##############
 
 FROM node:22-alpine AS cli
-LABEL org.opencontainers.image.source="https://github.com/hoarder-app/hoarder"
+LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
 WORKDIR /app
 
 COPY --from=base /app/apps/cli/dist/index.mjs apps/cli/index.mjs
