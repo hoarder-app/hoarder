@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Karakeep App",
+    "name": "Karakeep",
     "slug": "karakeep",
     "scheme": "karakeep",
     "version": "1.6.9",
@@ -29,7 +29,7 @@
           "NSAllowsArbitraryLoads": true
         }
       },
-      "buildNumber": "22"
+      "buildNumber": "23"
     },
     "android": {
       "adaptiveIcon": {
@@ -47,7 +47,7 @@
         }
       },
       "package": "app.hoarder.hoardermobile",
-      "versionCode": 22
+      "versionCode": 23
     },
     "plugins": [
       "./plugins/trust-local-certs.js",
