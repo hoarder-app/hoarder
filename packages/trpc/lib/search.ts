@@ -20,6 +20,8 @@ import {
   bookmarks,
   bookmarksInLists,
   bookmarkTags,
+  rssFeedImportsTable,
+  rssFeedsTable,
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
 import { Matcher } from "@hoarder/shared/types/search";
@@ -173,6 +175,33 @@ async function getIds(
                 .select()
                 .from(bookmarksInLists)
                 .where(and(eq(bookmarksInLists.bookmarkId, bookmarks.id))),
+            ),
+          ),
+        );
+    }
+    case "rssFeedName": {
+      const comp = matcher.inverse ? notExists : exists;
+      return db
+        .selectDistinct({ id: bookmarks.id })
+        .from(bookmarks)
+        .where(
+          and(
+            eq(bookmarks.userId, userId),
+            comp(
+              db
+                .select()
+                .from(rssFeedImportsTable)
+                .innerJoin(
+                  rssFeedsTable,
+                  eq(rssFeedImportsTable.rssFeedId, rssFeedsTable.id),
+                )
+                .where(
+                  and(
+                    eq(rssFeedImportsTable.bookmarkId, bookmarks.id),
+                    eq(rssFeedsTable.userId, userId),
+                    eq(rssFeedsTable.name, matcher.feedName),
+                  ),
+                ),
             ),
           ),
         );

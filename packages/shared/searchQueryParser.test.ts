@@ -244,6 +244,42 @@ describe("Search Query Parser", () => {
         inverse: true,
       },
     });
+    expect(parseSearchQuery("feed:my-feed")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "rssFeedName",
+        feedName: "my-feed",
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery("-feed:my-feed")).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "rssFeedName",
+        feedName: "my-feed",
+        inverse: true,
+      },
+    });
+    expect(parseSearchQuery('feed:"my feed"')).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "rssFeedName",
+        feedName: "my feed",
+        inverse: false,
+      },
+    });
+    expect(parseSearchQuery('-feed:"my feed"')).toEqual({
+      result: "full",
+      text: "",
+      matcher: {
+        type: "rssFeedName",
+        feedName: "my feed",
+        inverse: true,
+      },
+    });
   });
   test("date queries", () => {
     expect(parseSearchQuery("after:2023-10-12")).toEqual({

@@ -14,6 +14,12 @@ const zListNameMatcher = z.object({
   inverse: z.boolean(),
 });
 
+const zRssFeedNameMatcher = z.object({
+  type: z.literal("rssFeedName"),
+  feedName: z.string(),
+  inverse: z.boolean(),
+});
+
 const zArchivedMatcher = z.object({
   type: z.literal("archived"),
   archived: z.boolean(),
@@ -73,6 +79,7 @@ const zNonRecursiveMatcher = z.union([
   zIsTaggedMatcher,
   zIsInListMatcher,
   zTypeMatcher,
+  zRssFeedNameMatcher,
 ]);
 
 type NonRecursiveMatcher = z.infer<typeof zNonRecursiveMatcher>;
@@ -93,6 +100,7 @@ export const zMatcherSchema: z.ZodType<Matcher> = z.lazy(() => {
     zIsTaggedMatcher,
     zIsInListMatcher,
     zTypeMatcher,
+    zRssFeedNameMatcher,
     z.object({
       type: z.literal("and"),
       matchers: z.array(zMatcherSchema),
