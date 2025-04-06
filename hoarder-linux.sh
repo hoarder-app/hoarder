@@ -5,7 +5,7 @@ set -Eeuo pipefail
 # v2.0
 # Copyright 2024-2025
 # Author: vhsdream
-# Adapted from: The Hoarder installation script from https://github.com/community-scripts/ProxmoxVE
+# Adapted from: The Karakeep installation script from https://github.com/community-scripts/ProxmoxVE
 # License: MIT
 
 # Basic error handling
@@ -26,7 +26,7 @@ LOG_DIR=/var/log/hoarder
 ENV_FILE=${CONFIG_DIR}/hoarder.env
 
 install() {
-  echo "Hoarder installation for Debian 12/Ubuntu 24.04" && sleep 4
+  echo "Karakeep installation for Debian 12/Ubuntu 24.04" && sleep 4
   echo "Installing Dependencies..." && sleep 1
   apt-get install --no-install-recommends -y \
     g++ \
@@ -64,17 +64,17 @@ install() {
   npm install -g corepack@0.31.0
   echo "Installed Node.js" && sleep 1
 
-  echo "Installing Hoarder..."
+  echo "Installing Karakeep..."
   mkdir -p $DATA_DIR
   mkdir -p $CONFIG_DIR
   mkdir -p $LOG_DIR
   M_DATA_DIR=/var/lib/meilisearch
   M_CONFIG_FILE=/etc/meilisearch.toml
-  RELEASE=$(curl -s https://api.github.com/repos/hoarder-app/hoarder/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
+  RELEASE=$(curl -s https://api.github.com/repos/karakeep-app/karakeep/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
   cd /tmp
-  wget -q "https://github.com/hoarder-app/hoarder/archive/refs/tags/v${RELEASE}.zip"
+  wget -q "https://github.com/karakeep-app/karakeep/archive/refs/tags/v${RELEASE}.zip"
   unzip -q v${RELEASE}.zip
-  mv hoarder-${RELEASE} ${INSTALL_DIR} && cd ${INSTALL_DIR}/apps/web
+  mv karakeep-${RELEASE} ${INSTALL_DIR} && cd ${INSTALL_DIR}/apps/web
   corepack enable
   export NEXT_TELEMETRY_DISABLED=1
   export PUPPETEER_SKIP_DOWNLOAD="true"
@@ -88,7 +88,7 @@ install() {
   pnpm build
   cd ${INSTALL_DIR}/packages/db
   pnpm migrate
-  echo "Installed Hoarder" && sleep 1
+  echo "Installed Karakeep" && sleep 1
 
   echo "Creating configuration files..."
   cd $INSTALL_DIR
@@ -103,11 +103,11 @@ no_analytics = true
 EOF
   chmod 600 $M_CONFIG_FILE
 
-  HOARDER_SECRET="$(openssl rand -base64 36 | cut -c1-24)"
+  KARAKEEP_SECRET="$(openssl rand -base64 36 | cut -c1-24)"
   cat <<EOF >${ENV_FILE}
 NODE_ENV=production
 SERVER_VERSION=${RELEASE}
-NEXTAUTH_SECRET="${HOARDER_SECRET}"
+NEXTAUTH_SECRET="${KARAKEEP_SECRET}"
 NEXTAUTH_URL="http://localhost:3000"
 DATA_DIR=${DATA_DIR}
 MEILI_ADDR="http://127.0.0.1:7700"
@@ -248,27 +248,27 @@ EOF
   apt -y autoclean
   echo "Cleaned" && sleep 1
 
-  echo "OK, Hoarder should be accessible on port 3000 of this device's IP address!" && sleep 4
+  echo "OK, Karakeep should be accessible on port 3000 of this device's IP address!" && sleep 4
   exit 0
 }
 
 update() {
   echo "Checking for an update..." && sleep 1
-  if [[ ! -d ${INSTALL_DIR} ]]; then echo "Is Hoarder even installed?"; exit 1; fi
-  RELEASE=$(curl -s https://api.github.com/repos/hoarder-app/hoarder/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
+  if [[ ! -d ${INSTALL_DIR} ]]; then echo "Is Karakeep even installed?"; exit 1; fi
+  RELEASE=$(curl -s https://api.github.com/repos/karakeep-app/karakeep/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
   PREV_RELEASE=$(cat ${INSTALL_DIR}/version.txt)
   if [[ "${RELEASE}" != "${PREV_RELEASE}" ]]; then
     echo "Stopping affected services..." && sleep 1
     systemctl stop hoarder-web hoarder-workers
     echo "Stopped services" && sleep 1
 
-    echo "Updating Hoarder to v${RELEASE}..." && sleep 1
+    echo "Updating Karakeep to v${RELEASE}..." && sleep 1
     sed -i "s|SERVER_VERSION=${PREV_RELEASE}|SERVER_VERSION=${RELEASE}|" ${ENV_FILE}
     rm -R ${INSTALL_DIR}
     cd /tmp
-    wget -q "https://github.com/hoarder-app/hoarder/archive/refs/tags/v${RELEASE}.zip"
+    wget -q "https://github.com/karakeep-app/karakeep/archive/refs/tags/v${RELEASE}.zip"
     unzip -q v${RELEASE}.zip
-    mv hoarder-${RELEASE} ${INSTALL_DIR}
+    mv karakeep-${RELEASE} ${INSTALL_DIR}
     # https://github.com/hoarder-app/hoarder/issues/967
     if [[ $(corepack -v) < "0.31.0" ]]; then
         npm install -g corepack@0.31.0
@@ -281,7 +281,7 @@ update() {
     cd ${INSTALL_DIR}/packages/db && pnpm migrate
     echo "${RELEASE}" >${INSTALL_DIR}/version.txt
     chown -R hoarder:hoarder ${INSTALL_DIR} ${DATA_DIR}
-    echo "Updated Hoarder to v${RELEASE}" && sleep 1
+    echo "Updated Karakeep to v${RELEASE}" && sleep 1
     echo "Restarting services and cleaning up..." && sleep 1
     systemctl start hoarder-workers hoarder-web
     rm /tmp/v${RELEASE}.zip
@@ -295,7 +295,7 @@ update() {
 [ "$(id -u)" -ne 0 ] && echo "This script requires root privileges. Please run with sudo or as the root user." && exit 1
 command="${1:-}"
 if [ -z "$command" ]; then
-    echo -e "Run script with 'install' to install Hoarder and 'update' to update Hoarder" && exit 1
+    echo -e "Run script with 'install' to install Karakeep and 'update' to update Karakeep" && exit 1
 fi
 
 case "$command" in
