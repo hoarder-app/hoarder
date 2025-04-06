@@ -1,13 +1,5 @@
-import Image from "next/image";
-import Link from "next/link";
-import HoarderLogo from "@/components/HoarderLogo";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import appStoreBadge from "@/public/app-store-badge.png";
-import chromeExtensionBadge from "@/public/chrome-extension-badge.png";
-import firefoxAddonBadge from "@/public/firefox-addon.png";
-import playStoreBadge from "@/public/google-play-badge.webp";
-import screenshot from "@/public/hero.webp";
 import {
   ArrowDownNarrowWide,
   Bookmark,
@@ -20,7 +12,14 @@ import {
   WalletCards,
 } from "lucide-react";
 
-const GITHUB_LINK = "https://github.com/hoarder-app/hoarder";
+import appStoreBadge from "/app-store-badge.png?url";
+import chromeExtensionBadge from "/chrome-extension-badge.png?url";
+import firefoxAddonBadge from "/firefox-addon.png?url";
+import playStoreBadge from "/google-play-badge.webp?url";
+import screenshot from "/hero.webp?url";
+import Logo from "/icons/karakeep-full.svg?url";
+
+const GITHUB_LINK = "https://github.com/karakeep-app/karakeep";
 const DOCS_LINK = "https://docs.karakeep.app";
 const DEMO_LINK = "https://try.karakeep.app";
 
@@ -88,37 +87,32 @@ const featuresList = [
   {
     icon: SunMoon,
     title: "Dark Mode",
-    description: "Hoarder supports dark mode for better reading experience.",
+    description: "Karakeep supports dark mode for better reading experience.",
   },
 ];
 
 function NavBar() {
   return (
     <div className="flex justify-between px-3 py-4">
-      <HoarderLogo height={38} />
+      <img src={Logo} alt="logo" className="w-36" />
       <div className="hidden items-center gap-6 sm:flex">
-        <Link
-          href={DOCS_LINK}
-          className="flex justify-center gap-2 text-center"
-        >
+        <a href={DOCS_LINK} className="flex justify-center gap-2 text-center">
           Docs
-        </Link>
-        <Link
-          href={GITHUB_LINK}
-          className="flex justify-center gap-2 text-center"
-        >
+        </a>
+        <a href={GITHUB_LINK} className="flex justify-center gap-2 text-center">
           GitHub
-        </Link>
-        <Link
+        </a>
+        <a
           href={DEMO_LINK}
           target="_blank"
           className={cn(
             "text flex h-full w-28 gap-2",
             buttonVariants({ variant: "default" }),
           )}
+          rel="noreferrer"
         >
           Try Demo
-        </Link>
+        </a>
       </div>
     </div>
   );
@@ -137,33 +131,35 @@ function Hero() {
         </h1>
         <div className="mx-auto w-full gap-2 text-base md:w-3/6">
           <p className="text-center text-gray-600">
-            Quickly save links, notes, and images and hoarder will automatically
-            tag them for you using AI for faster retrieval. Built for the data
-            hoarders out there!
+            Quickly save links, notes, and images and karakeep will
+            automatically tag them for you using AI for faster retrieval. Built
+            for the data hoarders out there!
           </p>
         </div>
       </div>
       <div className="flex h-10 gap-4">
-        <Link
+        <a
           href={DEMO_LINK}
           target="_blank"
           className={cn(
             "text flex w-28 gap-2",
             buttonVariants({ variant: "default", size: "lg" }),
           )}
+          rel="noreferrer"
         >
           Try Demo
-        </Link>
-        <Link
+        </a>
+        <a
           href={GITHUB_LINK}
           target="_blank"
           className={cn(
             "flex gap-2",
             buttonVariants({ variant: "outline", size: "lg" }),
           )}
+          rel="noreferrer"
         >
           <Github /> GitHub
-        </Link>
+        </a>
       </div>
     </div>
   );
@@ -181,17 +177,18 @@ function Platforms() {
       <div className="mt-6 flex flex-wrap items-center justify-center gap-6 px-6">
         {platforms.map((platform) => (
           <div key={platform.name}>
-            <Link
+            <a
               href={platform.url}
               target="_blank"
               className="flex items-center justify-center gap-2"
+              rel="noreferrer"
             >
-              <Image
+              <img
                 className="h-12 w-auto rounded-md"
                 alt={platform.name}
                 src={platform.badge}
               />
-            </Link>
+            </a>
           </div>
         ))}
       </div>
@@ -222,20 +219,14 @@ function Features() {
 function Footer() {
   return (
     <div className="flex items-center justify-between bg-black px-10 py-6 text-sm text-gray-300">
-      <div>© 2024 karakeep.app</div>
+      <div>© 2024-2025 karakeep.app</div>
       <div className="flex items-center gap-6">
-        <Link
-          href={DOCS_LINK}
-          className="flex justify-center gap-2 text-center"
-        >
+        <a href={DOCS_LINK} className="flex justify-center gap-2 text-center">
           Docs
-        </Link>
-        <Link
-          href={GITHUB_LINK}
-          className="flex justify-center gap-2 text-center"
-        >
+        </a>
+        <a href={GITHUB_LINK} className="flex justify-center gap-2 text-center">
           GitHub
-        </Link>
+        </a>
       </div>
     </div>
   );
@@ -244,12 +235,12 @@ function Footer() {
 function Screenshots() {
   return (
     <div className="mx-auto mt-6 w-10/12">
-      <Image alt="screenshot" src={screenshot} />
+      <img alt="screenshot" src={screenshot} />
     </div>
   );
 }
 
-export default function LandingPage() {
+export default function Homepage() {
   return (
     <div className="flex min-h-screen flex-col">
       <div className="container flex flex-col pb-10">

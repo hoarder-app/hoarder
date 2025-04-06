@@ -5,15 +5,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "clean": "git clean -xdf .next .turbo node_modules",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "typecheck": "tsc --noEmit",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
-    "lint:fix": "next lint --fix"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --ignore-path ../../.prettierignore",
+    "format:fix": "prettier . --ignore-path ../../.prettierignore --write",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.0.2",
@@ -21,7 +20,6 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "lucide-react": "^0.330.0",
-    "next": "14.2.25",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-select": "^5.8.0",
@@ -37,15 +35,17 @@
     "@tailwindcss/typography": "^0.5.10",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
+    "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.17",
     "postcss": "^8.4.35",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "vite": "^5.1.0",
+    "vite-plugin-svgr": "^4.3.0"
   },
   "eslintConfig": {
     "root": true,
     "extends": [
       "@hoarder/eslint-config/base",
-      "@hoarder/eslint-config/nextjs",
       "@hoarder/eslint-config/react"
     ]
   },
