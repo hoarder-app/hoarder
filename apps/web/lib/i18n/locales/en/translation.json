@@ -346,6 +346,12 @@
       "updated": "List has been updated!"
     }
   },
+  "banners": {
+    "no_bookmarks": {
+      "title": "No bookmarks yet",
+      "description": "Save interesting articles, links, and pages to access them quickly later."
+    }
+  },
   "cleanups": {
     "cleanups": "Cleanups",
     "duplicate_tags": {

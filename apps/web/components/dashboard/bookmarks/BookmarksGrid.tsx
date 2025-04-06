@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import NoBookmarksBanner from "@/components/dashboard/bookmarks/NoBookmarksBanner";
 import { ActionButton } from "@/components/ui/action-button";
 import useBulkActionsStore from "@/lib/bulkActions";
 import {
@@ -70,7 +71,7 @@ export default function BookmarksGrid({
   }, [loadMoreButtonInView]);
 
   if (bookmarks.length == 0 && !showEditorCard) {
-    return <p>No bookmarks</p>;
+    return <NoBookmarksBanner />;
   }
 
   const children = [
