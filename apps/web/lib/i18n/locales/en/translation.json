@@ -7,6 +7,7 @@
     "action": "Action",
     "actions": "Actions",
     "created_at": "Created At",
+    "updated_at": "Updated At",
     "key": "Key",
     "role": "Role",
     "type": "Type",
@@ -27,6 +28,9 @@
     "video": "Video",
     "archive": "Archive",
     "home": "Home",
+    "title": "Title",
+    "description": "Description",
+    "summary": "Summary",
     "bookmark_types": {
       "title": "Bookmark Type",
       "link": "Link",
@@ -62,6 +66,7 @@
     "save": "Save",
     "add": "Add",
     "edit": "Edit",
+    "open_editor": "Open Editor",
     "create": "Create",
     "fetch_now": "Fetch Now",
     "summarize_with_ai": "Summarize with AI",
@@ -360,5 +365,14 @@
       "title": "Duplicate Tags",
       "merge_all_suggestions": "Merge all suggestions?"
     }
+  },
+  "bookmark_editor": {
+    "title": "Edit Bookmark",
+    "subtitle": "Make changes to the bookmark details. Click save when you're done.",
+    "author": "Author",
+    "publisher": "Publisher",
+    "date_published": "Date Published",
+    "pick_a_date": "Pick a date",
+    "save_changes": "Save changes"
   }
 }

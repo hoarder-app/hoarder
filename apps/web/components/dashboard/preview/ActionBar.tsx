@@ -8,18 +8,21 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
-import { Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
 import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
 import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
 
 import DeleteBookmarkConfirmationDialog from "../bookmarks/DeleteBookmarkConfirmationDialog";
+import { EditBookmarkDialog } from "../bookmarks/EditBookmarkDialog";
 import { ArchivedActionIcon, FavouritedActionIcon } from "../bookmarks/icons";
 
 export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
   const { t } = useTranslation();
   const [deleteBookmarkDialogOpen, setDeleteBookmarkDialogOpen] =
     useState(false);
+
+  const [isEditBookmarkDialogOpen, setEditBookmarkDialogOpen] = useState(false);
 
   const onError = () => {
     toast({
@@ -48,6 +51,26 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
 
   return (
     <div className="flex items-center justify-center gap-3">
+      <Tooltip delayDuration={0}>
+        <EditBookmarkDialog
+          bookmark={bookmark}
+          open={isEditBookmarkDialogOpen}
+          setOpen={setEditBookmarkDialogOpen}
+        />
+
+        <TooltipTrigger asChild>
+          <Button
+            variant="none"
+            className="size-14 rounded-full bg-background"
+            onClick={() => {
+              setEditBookmarkDialogOpen(true);
+            }}
+          >
+            <Pencil />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom">{t("actions.edit")}</TooltipContent>
+      </Tooltip>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
           <ActionButton

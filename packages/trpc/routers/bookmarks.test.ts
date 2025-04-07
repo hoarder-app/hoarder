@@ -60,9 +60,70 @@ describe("Bookmark Routes", () => {
       favourited: true,
     });
 
-    const res = await api.getBookmark({ bookmarkId: bookmark.id });
+    let res = await api.getBookmark({ bookmarkId: bookmark.id });
     expect(res.archived).toBeTruthy();
     expect(res.favourited).toBeTruthy();
+
+    // Update other common fields
+    const newDate = new Date(Date.now() - 1000 * 60 * 60 * 24); // Yesterday
+    newDate.setMilliseconds(0);
+    await api.updateBookmark({
+      bookmarkId: bookmark.id,
+      title: "New Title",
+      note: "Test Note",
+      summary: "Test Summary",
+      createdAt: newDate,
+    });
+
+    res = await api.getBookmark({ bookmarkId: bookmark.id });
+    expect(res.title).toEqual("New Title");
+    expect(res.note).toEqual("Test Note");
+    expect(res.summary).toEqual("Test Summary");
+    expect(res.createdAt).toEqual(newDate);
+
+    // Update link-specific fields
+    const linkUpdateDate = new Date(Date.now() - 1000 * 60 * 60 * 48); // 2 days ago
+    linkUpdateDate.setMilliseconds(0);
+    await api.updateBookmark({
+      bookmarkId: bookmark.id,
+      url: "https://new-google.com",
+      description: "New Description",
+      author: "New Author",
+      publisher: "New Publisher",
+      datePublished: linkUpdateDate,
+      dateModified: linkUpdateDate,
+    });
+
+    res = await api.getBookmark({ bookmarkId: bookmark.id });
+    assert(res.content.type === BookmarkTypes.LINK);
+    expect(res.content.url).toEqual("https://new-google.com");
+    expect(res.content.description).toEqual("New Description");
+    expect(res.content.author).toEqual("New Author");
+    expect(res.content.publisher).toEqual("New Publisher");
+    expect(res.content.datePublished).toEqual(linkUpdateDate);
+    expect(res.content.dateModified).toEqual(linkUpdateDate);
+  });
+
+  test<CustomTestContext>("update bookmark - non-link type error", async ({
+    apiCallers,
+  }) => {
+    const api = apiCallers[0].bookmarks;
+
+    // Create a TEXT bookmark
+    const bookmark = await api.createBookmark({
+      text: "Initial text",
+      type: BookmarkTypes.TEXT,
+    });
+
+    // Attempt to update link-specific fields
+    await expect(() =>
+      api.updateBookmark({
+        bookmarkId: bookmark.id,
+        url: "https://should-fail.com", // Link-specific field
+      }),
+    ).rejects.toThrow(
+      /Attempting to set link attributes for non-link type bookmark/,
+    );
   });
 
   test<CustomTestContext>("list bookmarks", async ({ apiCallers }) => {

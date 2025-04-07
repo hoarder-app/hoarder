@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { ZBookmarkTypeLink } from "@hoarder/shared/types/bookmarks";
 import {
   getBookmarkLinkImageUrl,
+  getBookmarkTitle,
   getSourceUrl,
   isBookmarkStillCrawling,
 } from "@hoarder/shared-react/utils/bookmarkUtils";
@@ -18,7 +19,7 @@ function LinkTitle({ bookmark }: { bookmark: ZBookmarkTypeLink }) {
   const parsedUrl = new URL(link.url);
   return (
     <Link href={link.url} target="_blank" rel="noreferrer">
-      {bookmark.title ?? link?.title ?? parsedUrl.host}
+      {getBookmarkTitle(bookmark) ?? parsedUrl.host}
     </Link>
   );
 }

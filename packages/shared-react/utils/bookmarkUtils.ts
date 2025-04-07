@@ -51,3 +51,20 @@ export function getSourceUrl(bookmark: ZBookmark) {
   }
   return null;
 }
+
+export function getBookmarkTitle(bookmark: ZBookmark) {
+  let title: string | null = null;
+  switch (bookmark.content.type) {
+    case BookmarkTypes.LINK:
+      title = bookmark.content.title ?? bookmark.content.url;
+      break;
+    case BookmarkTypes.TEXT:
+      title = null;
+      break;
+    case BookmarkTypes.ASSET:
+      title = bookmark.content.fileName ?? null;
+      break;
+  }
+
+  return bookmark.title ? bookmark.title : title;
+}

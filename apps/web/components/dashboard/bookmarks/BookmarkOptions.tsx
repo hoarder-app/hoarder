@@ -19,7 +19,7 @@ import {
   MoreHorizontal,
   Pencil,
   RotateCw,
-  Tags,
+  SquarePen,
   Trash2,
 } from "lucide-react";
 
@@ -38,9 +38,9 @@ import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
 import DeleteBookmarkConfirmationDialog from "./DeleteBookmarkConfirmationDialog";
+import { EditBookmarkDialog } from "./EditBookmarkDialog";
 import { ArchivedActionIcon, FavouritedActionIcon } from "./icons";
 import { useManageListsModal } from "./ManageListsModal";
-import { useTagModel } from "./TagModal";
 
 export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const { t } = useTranslation();
@@ -49,14 +49,13 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
 
   const demoMode = !!useClientConfig().demoMode;
 
-  const { setOpen: setTagModalIsOpen, content: tagModal } =
-    useTagModel(bookmark);
   const { setOpen: setManageListsModalOpen, content: manageListsModal } =
     useManageListsModal(bookmark.id);
 
   const [deleteBookmarkDialogOpen, setDeleteBookmarkDialogOpen] =
     useState(false);
   const [isTextEditorOpen, setTextEditorOpen] = useState(false);
+  const [isEditBookmarkDialogOpen, setEditBookmarkDialogOpen] = useState(false);
 
   const { listId } = useBookmarkGridContext() ?? {};
   const withinListContext = useBookmarkListContext();
@@ -106,8 +105,12 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
 
   return (
     <>
-      {tagModal}
       {manageListsModal}
+      <EditBookmarkDialog
+        bookmark={bookmark}
+        open={isEditBookmarkDialogOpen}
+        setOpen={setEditBookmarkDialogOpen}
+      />
       <DeleteBookmarkConfirmationDialog
         bookmark={bookmark}
         open={deleteBookmarkDialogOpen}
@@ -128,10 +131,14 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-fit">
+          <DropdownMenuItem onClick={() => setEditBookmarkDialogOpen(true)}>
+            <Pencil className="mr-2 size-4" />
+            <span>{t("actions.edit")}</span>
+          </DropdownMenuItem>
           {bookmark.content.type === BookmarkTypes.TEXT && (
             <DropdownMenuItem onClick={() => setTextEditorOpen(true)}>
-              <Pencil className="mr-2 size-4" />
-              <span>Edit</span>
+              <SquarePen className="mr-2 size-4" />
+              <span>{t("actions.open_editor")}</span>
             </DropdownMenuItem>
           )}
           <DropdownMenuItem
@@ -202,10 +209,6 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
               <span>{t("actions.copy_link")}</span>
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem onClick={() => setTagModalIsOpen(true)}>
-            <Tags className="mr-2 size-4" />
-            <span>{t("actions.edit_tags")}</span>
-          </DropdownMenuItem>
 
           <DropdownMenuItem onClick={() => setManageListsModalOpen(true)}>
             <List className="mr-2 size-4" />
