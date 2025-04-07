@@ -176,3 +176,41 @@ export async function parseLinkwardenBookmarkFile(
     }));
   });
 }
+
+export function deduplicateBookmarks(
+  bookmarks: ParsedBookmark[],
+): ParsedBookmark[] {
+  const deduplicatedBookmarksMap = new Map<string, ParsedBookmark>();
+  const textBookmarks: ParsedBookmark[] = [];
+
+  for (const bookmark of bookmarks) {
+    if (bookmark.content?.type === BookmarkTypes.LINK) {
+      const url = bookmark.content.url;
+      if (deduplicatedBookmarksMap.has(url)) {
+        const existing = deduplicatedBookmarksMap.get(url)!;
+        // Merge tags
+        existing.tags = [...new Set([...existing.tags, ...bookmark.tags])];
+        // Keep earliest date
+        const existingDate = existing.addDate ?? Infinity;
+        const newDate = bookmark.addDate ?? Infinity;
+        if (newDate < existingDate) {
+          existing.addDate = bookmark.addDate;
+        }
+        // Append notes if both exist
+        if (existing.notes && bookmark.notes) {
+          existing.notes = `${existing.notes}\n---\n${bookmark.notes}`;
+        } else if (bookmark.notes) {
+          existing.notes = bookmark.notes;
+        }
+        // Title: keep existing one for simplicity
+      } else {
+        deduplicatedBookmarksMap.set(url, bookmark);
+      }
+    } else {
+      // Keep text bookmarks as they are (no URL to dedupe on)
+      textBookmarks.push(bookmark);
+    }
+  }
+
+  return [...deduplicatedBookmarksMap.values(), ...textBookmarks];
+}

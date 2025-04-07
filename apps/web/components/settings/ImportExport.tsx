@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
 import {
+  deduplicateBookmarks,
   ParsedBookmark,
   parseHoarderBookmarkFile,
   parseLinkwardenBookmarkFile,
@@ -29,6 +30,7 @@ import {
   useAddBookmarkToList,
   useCreateBookmarkList,
 } from "@hoarder/shared-react/hooks/lists";
+import { limitConcurrency } from "@hoarder/shared/concurrency";
 import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
 
 import { Card, CardContent } from "../ui/card";
@@ -175,47 +177,84 @@ export function ImportExportRow() {
         throw new Error("Unknown source");
       }
     },
-    onSuccess: async (resp) => {
+    onSuccess: async (parsedBookmarks) => {
+      if (parsedBookmarks.length === 0) {
+        toast({ description: "No bookmarks found in the file." });
+        return;
+      }
+
       const importList = await createList({
         name: t("settings.import.imported_bookmarks"),
         icon: "⬆️",
       });
-      setImportProgress({ done: 0, total: resp.length });
 
-      const successes = [];
-      const failed = [];
-      const alreadyExisted = [];
-      // Do the imports one by one
-      for (const parsedBookmark of resp) {
-        try {
-          const result = await parseAndCreateBookmark({
-            bookmark: parsedBookmark,
+      const finalBookmarksToImport = deduplicateBookmarks(parsedBookmarks);
+
+      setImportProgress({ done: 0, total: finalBookmarksToImport.length });
+
+      const importPromises = finalBookmarksToImport.map(
+        (bookmark) => () =>
+          parseAndCreateBookmark({
+            bookmark: bookmark,
             listId: importList.id,
-          });
-          if (result.alreadyExists) {
-            alreadyExisted.push(parsedBookmark);
+          }).then(
+            (value) => {
+              setImportProgress((prev) => {
+                const newDone = (prev?.done ?? 0) + 1;
+                return {
+                  done: newDone,
+                  total: finalBookmarksToImport.length,
+                };
+              });
+              return { status: "fulfilled" as const, value };
+            },
+            () => {
+              setImportProgress((prev) => {
+                const newDone = (prev?.done ?? 0) + 1;
+                return {
+                  done: newDone,
+                  total: finalBookmarksToImport.length,
+                };
+              });
+              return { status: "rejected" as const };
+            },
+          ),
+      );
+
+      const CONCURRENCY_LIMIT = 20;
+      const resultsPromises = limitConcurrency(
+        importPromises,
+        CONCURRENCY_LIMIT,
+      );
+
+      const results = await Promise.all(resultsPromises);
+
+      let successes = 0;
+      let failures = 0;
+      let alreadyExisted = 0;
+
+      for (const result of results) {
+        if (result.status === "fulfilled") {
+          if (result.value.alreadyExists) {
+            alreadyExisted++;
           } else {
-            successes.push(parsedBookmark);
+            successes++;
           }
-        } catch (e) {
-          failed.push(parsedBookmark);
+        } else {
+          failures++;
         }
-        setImportProgress((prev) => ({
-          done: (prev?.done ?? 0) + 1,
-          total: resp.length,
-        }));
       }
 
-      if (successes.length > 0 || alreadyExisted.length > 0) {
+      if (successes > 0 || alreadyExisted > 0) {
         toast({
-          description: `Imported ${successes.length} bookmarks and skipped ${alreadyExisted.length} bookmarks that already existed`,
+          description: `Imported ${successes} bookmarks and skipped ${alreadyExisted} bookmarks that already existed`,
           variant: "default",
         });
       }
 
-      if (failed.length > 0) {
+      if (failures > 0) {
         toast({
-          description: `Failed to import ${failed.length} bookmarks`,
+          description: `Failed to import ${failures} bookmarks. Check console for details.`,
           variant: "destructive",
         });
       }
@@ -223,6 +262,7 @@ export function ImportExportRow() {
       router.push(`/dashboard/lists/${importList.id}`);
     },
     onError: (error) => {
+      setImportProgress(null); // Clear progress on initial parsing error
       toast({
         description: error.message,
         variant: "destructive",
