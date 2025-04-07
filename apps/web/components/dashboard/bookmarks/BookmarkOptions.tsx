@@ -48,7 +48,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const linkId = bookmark.id;
 
   const demoMode = !!useClientConfig().demoMode;
-  const isClipboardAvailable = !!navigator.clipboard;
+  const isClipboardAvailable = navigator && !!navigator.clipboard;
 
   const { setOpen: setTagModalIsOpen, content: tagModal } =
     useTagModel(bookmark);
