@@ -54,7 +54,6 @@ import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
 import {
   BookmarkTypes,
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
-  zBareBookmarkSchema,
   zBookmarkSchema,
   zGetBookmarksRequestSchema,
   zGetBookmarksResponseSchema,
@@ -419,35 +418,116 @@ export const bookmarksAppRouter = router({
 
   updateBookmark: authedProcedure
     .input(zUpdateBookmarksRequestSchema)
-    .output(zBareBookmarkSchema)
+    .output(zBookmarkSchema)
     .use(ensureBookmarkOwnership)
     .mutation(async ({ input, ctx }) => {
-      const res = await ctx.db
-        .update(bookmarks)
-        .set({
-          title: input.title,
-          archived: input.archived,
-          favourited: input.favourited,
-          note: input.note,
-          summary: input.summary,
-          createdAt: input.createdAt,
-        })
-        .where(
-          and(
-            eq(bookmarks.userId, ctx.user.id),
-            eq(bookmarks.id, input.bookmarkId),
-          ),
-        )
-        .returning();
-      if (res.length == 0) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Bookmark not found",
-        });
-      }
+      await ctx.db.transaction(async (tx) => {
+        // Update common bookmark fields
+        const commonUpdateData: Partial<{
+          title: string | null;
+          archived: boolean;
+          favourited: boolean;
+          note: string | null;
+          summary: string | null;
+          createdAt: Date;
+          modifiedAt: Date; // Always update modifiedAt
+        }> = {
+          modifiedAt: new Date(),
+        };
+        if (input.title !== undefined) {
+          commonUpdateData.title = input.title;
+        }
+        if (input.archived !== undefined) {
+          commonUpdateData.archived = input.archived;
+        }
+        if (input.favourited !== undefined) {
+          commonUpdateData.favourited = input.favourited;
+        }
+        if (input.note !== undefined) {
+          commonUpdateData.note = input.note;
+        }
+        if (input.summary !== undefined) {
+          commonUpdateData.summary = input.summary;
+        }
+        if (input.createdAt !== undefined) {
+          commonUpdateData.createdAt = input.createdAt;
+        }
+
+        if (Object.keys(commonUpdateData).length > 1) {
+          // Only update if there's more than just modifiedAt
+          await tx
+            .update(bookmarks)
+            .set(commonUpdateData)
+            .where(
+              and(
+                eq(bookmarks.userId, ctx.user.id),
+                eq(bookmarks.id, input.bookmarkId),
+              ),
+            );
+        } else {
+          // If only modifiedAt needs updating (e.g., only link fields changed)
+          await tx
+            .update(bookmarks)
+            .set({ modifiedAt: new Date() })
+            .where(
+              and(
+                eq(bookmarks.userId, ctx.user.id),
+                eq(bookmarks.id, input.bookmarkId),
+              ),
+            );
+        }
+
+        // Update link-specific fields if any are provided
+        const linkUpdateData: Partial<{
+          url: string;
+          description: string | null;
+          author: string | null;
+          publisher: string | null;
+          datePublished: Date | null;
+          dateModified: Date | null;
+        }> = {};
+        if (input.url) {
+          linkUpdateData.url = input.url.trim();
+        }
+        if (input.description !== undefined) {
+          linkUpdateData.description = input.description;
+        }
+        if (input.author !== undefined) {
+          linkUpdateData.author = input.author;
+        }
+        if (input.publisher !== undefined) {
+          linkUpdateData.publisher = input.publisher;
+        }
+        if (input.datePublished !== undefined) {
+          linkUpdateData.datePublished = input.datePublished;
+        }
+        if (input.dateModified !== undefined) {
+          linkUpdateData.dateModified = input.dateModified;
+        }
+
+        if (Object.keys(linkUpdateData).length > 0) {
+          const result = await tx
+            .update(bookmarkLinks)
+            .set(linkUpdateData)
+            .where(eq(bookmarkLinks.id, input.bookmarkId));
+          if (result.changes == 0) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message:
+                "Attempting to set link attributes for non-link type bookmark",
+            });
+          }
+        }
+      });
+
+      // Refetch the updated bookmark data to return the full object
+      const updatedBookmark = await getBookmark(ctx, input.bookmarkId);
+
+      // Trigger re-indexing and webhooks
       await triggerSearchReindex(input.bookmarkId);
       await triggerWebhook(input.bookmarkId, "edited");
-      return res[0];
+
+      return updatedBookmark;
     }),
 
   updateBookmarkText: authedProcedure

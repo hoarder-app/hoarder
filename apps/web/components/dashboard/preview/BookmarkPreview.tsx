@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTagsEditor";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
@@ -17,6 +18,7 @@ import { api } from "@/lib/trpc";
 import { CalendarDays, ExternalLink } from "lucide-react";
 
 import {
+  getBookmarkTitle,
   getSourceUrl,
   isBookmarkStillCrawling,
   isBookmarkStillLoading,
@@ -27,7 +29,6 @@ import SummarizeBookmarkArea from "../bookmarks/SummarizeBookmarkArea";
 import ActionBar from "./ActionBar";
 import { AssetContentSection } from "./AssetContentSection";
 import AttachmentBox from "./AttachmentBox";
-import { EditableTitle } from "./EditableTitle";
 import HighlightsBox from "./HighlightsBox";
 import LinkContentSection from "./LinkContentSection";
 import { NoteEditor } from "./NoteEditor";
@@ -116,7 +117,11 @@ export default function BookmarkPreview({
       </div>
       <div className="row-span-1  flex flex-col gap-4 overflow-auto bg-accent p-4 md:col-span-2 lg:col-span-1 lg:row-auto">
         <div className="flex w-full flex-col items-center justify-center gap-y-2">
-          <EditableTitle bookmark={bookmark} />
+          <div className="flex w-full items-center justify-center gap-2">
+            <p className="line-clamp-2 text-ellipsis break-words text-lg">
+              {getBookmarkTitle(bookmark)}
+            </p>
+          </div>
           {sourceUrl && (
             <Link
               href={sourceUrl}

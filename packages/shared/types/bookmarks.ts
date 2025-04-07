@@ -196,6 +196,13 @@ export const zUpdateBookmarksRequestSchema = z.object({
   note: z.string().optional(),
   title: z.string().max(MAX_TITLE_LENGTH).nullish(),
   createdAt: z.coerce.date().optional(),
+  // Link specific fields (optional)
+  url: z.string().url().optional(),
+  description: z.string().nullish(),
+  author: z.string().nullish(),
+  publisher: z.string().nullish(),
+  datePublished: z.coerce.date().nullish(),
+  dateModified: z.coerce.date().nullish(),
 });
 export type ZUpdateBookmarksRequest = z.infer<
   typeof zUpdateBookmarksRequestSchema
