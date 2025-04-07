@@ -7,8 +7,8 @@ import { api } from "@/lib/trpc";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 const REPO_LATEST_RELEASE_API =
-  "https://api.github.com/repos/hoarder-app/hoarder/releases/latest";
-const REPO_RELEASE_PAGE = "https://github.com/hoarder-app/hoarder/releases";
+  "https://api.github.com/repos/karakeep-app/karakeep/releases/latest";
+const REPO_RELEASE_PAGE = "https://github.com/karakeep-app/karakeep/releases";
 
 function useLatestRelease() {
   const { data } = useQuery({
