@@ -261,6 +261,8 @@
     "full_text_search": "Full Text Search",
     "type_is": "Type is",
     "type_is_not": "Type is not",
+    "is_from_feed": "Is from RSS Feed",
+    "is_not_from_feed": "Is not from RSS Feed",
     "and": "And",
     "or": "Or"
   },
@@ -344,6 +346,12 @@
     "lists": {
       "created": "List has been created!",
       "updated": "List has been updated!"
+    }
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "No bookmarks yet",
+      "description": "Save interesting articles, links, and pages to access them quickly later."
     }
   },
   "cleanups": {

@@ -45,7 +45,9 @@ export default function SidebarItem({
         <div className="flex w-full justify-between">
           <div className="flex items-center gap-x-2">
             {logo}
-            <span>{name}</span>
+            <span title={name} className="line-clamp-1">
+              {name}
+            </span>
           </div>
           {right}
         </div>

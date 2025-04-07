@@ -9,6 +9,8 @@ import {
   bookmarksInLists,
   bookmarkTags,
   bookmarkTexts,
+  rssFeedImportsTable,
+  rssFeedsTable,
   tagsOnBookmarks,
   users,
 } from "@hoarder/db/schema";
@@ -149,6 +151,32 @@ beforeEach(async () => {
     { bookmarkId: "b4", listId: "l3" },
     { bookmarkId: "b5", listId: "l4" },
     { bookmarkId: "b6", listId: "l1" },
+  ]);
+
+  await db.insert(rssFeedsTable).values([
+    { id: "f1", userId: testUserId, name: "feed1", url: "url1" },
+    { id: "f2", userId: testUserId, name: "feed2", url: "url2" },
+  ]);
+
+  await db.insert(rssFeedImportsTable).values([
+    {
+      id: "imp1",
+      entryId: "entry1",
+      rssFeedId: "f1",
+      bookmarkId: "b1",
+    },
+    {
+      id: "imp2",
+      entryId: "entry2",
+      rssFeedId: "f2",
+      bookmarkId: "b3",
+    },
+    {
+      id: "imp3",
+      entryId: "entry3",
+      rssFeedId: "f1",
+      bookmarkId: "b5",
+    },
   ]);
 
   mockCtx = {
@@ -421,6 +449,26 @@ describe("getBookmarkIdsFromMatcher", () => {
     const matcher: Matcher = { type: "inlist", inList: false };
     const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
     expect(result).toEqual(["b3"]);
+  });
+
+  it("should handle rssFeedName matcher", async () => {
+    const matcher: Matcher = {
+      type: "rssFeedName",
+      feedName: "feed1",
+      inverse: false,
+    };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result.sort()).toEqual(["b1", "b5"]);
+  });
+
+  it("should handle rssFeedName matcher with inverse=true", async () => {
+    const matcher: Matcher = {
+      type: "rssFeedName",
+      feedName: "feed1",
+      inverse: true,
+    };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result.sort()).toEqual(["b2", "b3", "b4", "b6"]);
   });
 
   it("should throw error for unknown matcher type", async () => {

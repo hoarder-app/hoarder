@@ -135,6 +135,17 @@ export default function QueryExplainerTooltip({
             <TableCell>{matcher.url}</TableCell>
           </TableRow>
         );
+      case "rssFeedName":
+        return (
+          <TableRow>
+            <TableCell>
+              {matcher.inverse
+                ? t("search.is_not_from_feed")
+                : t("search.is_from_feed")}
+            </TableCell>
+            <TableCell>{matcher.feedName}</TableCell>
+          </TableRow>
+        );
       case "type":
         return (
           <TableRow>

@@ -121,7 +121,7 @@ export default function Signin() {
               comp={(styles) => (
                 <Logo
                   height={150}
-                  width={200}
+                  width={250}
                   fill={styles?.color?.toString()}
                 />
               )}

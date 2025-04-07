@@ -40,7 +40,7 @@ const lexerRules: [RegExp, TokenType][] = [
   [/^\s+or/i, TokenType.Or],
 
   [/^#/, TokenType.Hash],
-  [/^(is|url|list|after|before):/, TokenType.Qualifier],
+  [/^(is|url|list|after|before|feed):/, TokenType.Qualifier],
 
   [/^"([^"]+)"/, TokenType.StringLiteral],
 
@@ -203,6 +203,15 @@ MATCHER.setPattern(
             return {
               text: "",
               matcher: { type: "listName", listName: ident, inverse: !!minus },
+            };
+          case "feed:":
+            return {
+              text: "",
+              matcher: {
+                type: "rssFeedName",
+                feedName: ident,
+                inverse: !!minus,
+              },
             };
           case "after:":
             try {
