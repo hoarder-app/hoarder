@@ -91,6 +91,8 @@ const featuresList = [
   },
 ];
 
+const currentYear = new Date().getFullYear();
+
 function NavBar() {
   return (
     <div className="flex justify-between px-3 py-4">
@@ -219,7 +221,7 @@ function Features() {
 function Footer() {
   return (
     <div className="flex items-center justify-between bg-black px-10 py-6 text-sm text-gray-300">
-      <div>© 2024-2025 karakeep.app</div>
+      <div>© 2024-{currentYear} karakeep.app</div>
       <div className="flex items-center gap-6">
         <a href={DOCS_LINK} className="flex justify-center gap-2 text-center">
           Docs
