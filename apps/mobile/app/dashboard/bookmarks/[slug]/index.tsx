@@ -25,7 +25,7 @@ import { ClipboardList, Globe, Info, Tag, Trash2 } from "lucide-react-native";
 
 import {
   useDeleteBookmark,
-  useUpdateBookmarkText,
+  useUpdateBookmark,
 } from "@hoarder/shared-react/hooks/bookmarks";
 import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
 
@@ -174,7 +174,7 @@ function BookmarkTextView({ bookmark }: { bookmark: ZBookmark }) {
   const initialText = bookmark.content.text;
   const [content, setContent] = useState(initialText);
 
-  const { mutate, isPending } = useUpdateBookmarkText({
+  const { mutate, isPending } = useUpdateBookmark({
     onError: () => {
       toast({
         message: "Something went wrong",

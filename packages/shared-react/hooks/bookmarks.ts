@@ -84,21 +84,6 @@ export function useUpdateBookmark(
   });
 }
 
-export function useUpdateBookmarkText(
-  ...opts: Parameters<typeof api.bookmarks.updateBookmarkText.useMutation>
-) {
-  const apiUtils = api.useUtils();
-  return api.bookmarks.updateBookmarkText.useMutation({
-    ...opts[0],
-    onSuccess: (res, req, meta) => {
-      apiUtils.bookmarks.getBookmarks.invalidate();
-      apiUtils.bookmarks.searchBookmarks.invalidate();
-      apiUtils.bookmarks.getBookmark.invalidate({ bookmarkId: req.bookmarkId });
-      return opts[0]?.onSuccess?.(res, req, meta);
-    },
-  });
-}
-
 export function useSummarizeBookmark(
   ...opts: Parameters<typeof api.bookmarks.summarizeBookmark.useMutation>
 ) {

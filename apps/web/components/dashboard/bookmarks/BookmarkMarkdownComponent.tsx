@@ -3,7 +3,7 @@ import { MarkdownReadonly } from "@/components/ui/markdown/markdown-readonly";
 import { toast } from "@/components/ui/use-toast";
 
 import type { ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
-import { useUpdateBookmarkText } from "@hoarder/shared-react/hooks/bookmarks";
+import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
 
 export function BookmarkMarkdownComponent({
   children: bookmark,
@@ -12,7 +12,7 @@ export function BookmarkMarkdownComponent({
   children: ZBookmarkTypeText;
   readOnly?: boolean;
 }) {
-  const { mutate: updateBookmarkMutator, isPending } = useUpdateBookmarkText({
+  const { mutate: updateBookmarkMutator, isPending } = useUpdateBookmark({
     onSuccess: () => {
       toast({
         description: "Note updated!",

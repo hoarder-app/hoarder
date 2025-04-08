@@ -473,7 +473,7 @@ export const bookmarksAppRouter = router({
             .set({
               text: input.text,
             })
-            .where(eq(bookmarkLinks.id, input.bookmarkId));
+            .where(eq(bookmarkTexts.id, input.bookmarkId));
 
           if (result.changes == 0) {
             throw new TRPCError({
@@ -539,6 +539,7 @@ export const bookmarksAppRouter = router({
       return updatedBookmark;
     }),
 
+  // DEPRECATED: use updateBookmark instead
   updateBookmarkText: authedProcedure
     .input(
       z.object({
