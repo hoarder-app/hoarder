@@ -233,6 +233,14 @@ export interface paths {
             note?: string;
             title?: string | null;
             createdAt?: string | null;
+            /** Format: uri */
+            url?: string;
+            description?: string | null;
+            author?: string | null;
+            publisher?: string | null;
+            datePublished?: string | null;
+            dateModified?: string | null;
+            text?: string | null;
           };
         };
       };
@@ -1370,6 +1378,10 @@ export interface components {
             favicon?: string | null;
             htmlContent?: string | null;
             crawledAt?: string | null;
+            author?: string | null;
+            publisher?: string | null;
+            datePublished?: string | null;
+            dateModified?: string | null;
           }
         | {
             /** @enum {string} */
