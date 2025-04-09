@@ -4,20 +4,20 @@ import type * as Preset from '@docusaurus/preset-classic';
 import type * as OpenApiPlugin from "docusaurus-preset-openapi";
 
 const config: Config = {
-  title: 'Hoarder Docs',
+  title: 'Karakeep Docs',
   tagline: 'Dinosaurs are cool',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://docs.hoarder.app',
+  url: 'https://docs.karakeep.app',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'hoarder-app', // Usually your GitHub org/user name.
-  projectName: 'hoarder', // Usually your repo name.
+  organizationName: 'karakeep-app', // Usually your GitHub org/user name.
+  projectName: 'karakeep', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',
@@ -37,7 +37,7 @@ const config: Config = {
         docs: {
           sidebarPath: './sidebars.ts',
           editUrl:
-            'https://github.com/hoarder-app/hoarder/tree/main/docs/',
+            'https://github.com/karakeep-app/karakeep/tree/main/docs/',
           routeBasePath: "/",
         },
         api: {
@@ -57,7 +57,7 @@ const config: Config = {
     navbar: {
       title: '',
       logo: {
-        alt: 'Hoarder Logo',
+        alt: 'Karakeep Logo',
         src: 'img/logo-full.svg',
         srcDark: 'img/logo-full-white.svg',
         width: "120px",
@@ -73,12 +73,12 @@ const config: Config = {
           position: 'right',
         },
         {
-          href: 'https://hoarder.app',
+          href: 'https://karakeep.app',
           label: 'Homepage',
           position: 'right',
         },
         {
-          href: 'https://github.com/hoarder-app/hoarder',
+          href: 'https://github.com/karakeep-app/karakeep',
           label: 'GitHub',
           position: 'right',
         },
@@ -106,7 +106,7 @@ const config: Config = {
           items: [
             {
               label: 'GitHub',
-              href: 'https://github.com/hoarder-app/hoarder',
+              href: 'https://github.com/karakeep-app/karakeep',
             },
           ],
         },
@@ -115,20 +115,20 @@ const config: Config = {
           items: [
             {
               label: 'Homepage',
-              href: 'https://hoarder.app',
+              href: 'https://karakeep.app',
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/hoarder-app/hoarder',
+              href: 'https://github.com/karakeep-app/karakeep',
             },
             {
               label: 'Demo',
-              href: 'https://try.hoarder.app',
+              href: 'https://try.karakeep.app',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Hoarder App. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Karakeep App. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
