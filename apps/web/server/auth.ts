@@ -133,6 +133,13 @@ if (oauth.wellKnownUrl) {
   });
 }
 
+export const pages = {
+  signIn: "/signin",
+  signOut: "/signin",
+  error: "/signin",
+  newUser: "/signin",
+} as const;
+
 export const authOptions: NextAuthOptions = {
   // https://github.com/nextauthjs/next-auth/issues/9493
   adapter: DrizzleAdapter(db, {
@@ -145,12 +152,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  pages: {
-    signIn: "/signin",
-    signOut: "/signin",
-    error: "/signin",
-    newUser: "/signin",
-  },
+  pages,
   callbacks: {
     async signIn({ credentials, profile }) {
       if (credentials) {
