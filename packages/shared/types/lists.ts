@@ -8,6 +8,11 @@ export const zNewBookmarkListSchema = z
       .string()
       .min(1, "List name can't be empty")
       .max(40, "List name is at most 40 chars"),
+    description: z
+      .string()
+      .min(0, "Description can be empty")
+      .max(100, "Description can have at most 100 chars")
+      .optional(),
     icon: z.string(),
     type: z.enum(["manual", "smart"]).optional().default("manual"),
     query: z.string().min(1).optional(),
@@ -37,6 +42,7 @@ export const zNewBookmarkListSchema = z
 export const zBookmarkListSchema = z.object({
   id: z.string(),
   name: z.string(),
+  description: z.string().nullish(),
   icon: z.string(),
   parentId: z.string().nullable(),
   type: z.enum(["manual", "smart"]).default("manual"),
@@ -52,6 +58,11 @@ export const zEditBookmarkListSchema = z.object({
     .min(1, "List name can't be empty")
     .max(40, "List name is at most 40 chars")
     .optional(),
+  description: z
+    .string()
+    .min(0, "Description can be empty")
+    .max(100, "Description can have at most 100 chars")
+    .nullish(),
   icon: z.string().optional(),
   parentId: z.string().nullish(),
   query: z.string().min(1).optional(),

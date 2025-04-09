@@ -65,6 +65,7 @@ export abstract class List implements PrivacyAware {
       .insert(bookmarkLists)
       .values({
         name: input.name,
+        description: input.description,
         icon: input.icon,
         userId: ctx.user.id,
         parentId: input.parentId,
@@ -121,6 +122,7 @@ export abstract class List implements PrivacyAware {
       .update(bookmarkLists)
       .set({
         name: input.name,
+        description: input.description,
         icon: input.icon,
         parentId: input.parentId,
         query: input.query,
