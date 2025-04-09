@@ -16,3 +16,13 @@ index cdfc908..6297563 100644
 ```
 
 You can also change the `HOARDER_VERSION` environment variable but if you do so remember to change it in the `.env` file as well.
+
+## Migrating a Baremetal Installation
+
+If you previously used the [Debian/Ubuntu install script](https://docs.karakeep.app/Installation/debuntu) to install Hoarder, there is an option to migrate your installation to Karakeep.
+
+```bash
+bash karakeep-linux.sh migrate
+```
+
+This will migrate your installation with no user input required. After the migration, the script will also check for an update.
