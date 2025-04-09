@@ -82,6 +82,7 @@ export function EditListModal({
     resolver: zodResolver(zNewBookmarkListSchema),
     defaultValues: {
       name: list?.name ?? prefill?.name ?? "",
+      description: list?.description ?? prefill?.description ?? "",
       icon: list?.icon ?? prefill?.icon ?? "🚀",
       parentId: list?.parentId ?? prefill?.parentId,
       type: list?.type ?? prefill?.type ?? "manual",
@@ -96,6 +97,7 @@ export function EditListModal({
   useEffect(() => {
     form.reset({
       name: list?.name ?? prefill?.name ?? "",
+      description: list?.description ?? prefill?.description ?? "",
       icon: list?.icon ?? prefill?.icon ?? "🚀",
       parentId: list?.parentId ?? prefill?.parentId,
       type: list?.type ?? prefill?.type ?? "manual",
@@ -259,6 +261,26 @@ export function EditListModal({
                 }}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => {
+                return (
+                  <FormItem className="grow pb-4">
+                    <FormLabel>{t("lists.description")}</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        className="w-full"
+                        placeholder="Description"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
             <FormField
               control={form.control}
               name="parentId"

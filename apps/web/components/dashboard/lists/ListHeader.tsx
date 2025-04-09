@@ -48,6 +48,11 @@ export default function ListHeader({
       <div className="flex items-center gap-2">
         <span className="text-2xl">
           {list.icon} {list.name}
+          {list.description && (
+            <span className="mx-2 text-lg text-gray-400">
+              {`(${list.description})`}
+            </span>
+          )}
         </span>
       </div>
       <div className="flex items-center">

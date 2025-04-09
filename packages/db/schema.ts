@@ -317,6 +317,7 @@ export const bookmarkLists = sqliteTable(
       .primaryKey()
       .$defaultFn(() => createId()),
     name: text("name").notNull(),
+    description: text("description"),
     icon: text("icon").notNull(),
     createdAt: createdAtField(),
     userId: text("userId")
