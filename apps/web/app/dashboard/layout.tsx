@@ -1,11 +1,9 @@
-import { redirect } from "next/navigation";
 import AllLists from "@/components/dashboard/sidebar/AllLists";
 import MobileSidebar from "@/components/shared/sidebar/MobileSidebar";
 import Sidebar from "@/components/shared/sidebar/Sidebar";
 import SidebarLayout from "@/components/shared/sidebar/SidebarLayout";
 import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
-import { getServerAuthSession } from "@/server/auth";
 import { TFunction } from "i18next";
 import {
   Archive,
@@ -25,11 +23,6 @@ export default async function Dashboard({
   children: React.ReactNode;
   modal: React.ReactNode;
 }>) {
-  const session = await getServerAuthSession();
-  if (!session) {
-    redirect("/");
-  }
-
   const lists = await api.lists.list();
 
   const items = (t: TFunction) =>

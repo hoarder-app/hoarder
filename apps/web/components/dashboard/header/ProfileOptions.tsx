@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { useToggleTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import {
@@ -43,7 +42,6 @@ export default function SidebarProfileOptions() {
   const { t } = useTranslation();
   const toggleTheme = useToggleTheme();
   const { data: session } = useSession();
-  if (!session) return redirect("/");
 
   return (
     <DropdownMenu>
@@ -52,17 +50,17 @@ export default function SidebarProfileOptions() {
           className="border-new-gray-200 aspect-square rounded-full border-4 bg-black p-0 text-white"
           variant="ghost"
         >
-          {session.user.name?.charAt(0) ?? "U"}
+          {session?.user.name?.charAt(0) ?? "U"}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mr-2 min-w-64 p-2">
         <div className="flex gap-2">
           <div className="border-new-gray-200 flex aspect-square size-11 items-center justify-center rounded-full border-4 bg-black p-0 text-white">
-            {session.user.name?.charAt(0) ?? "U"}
+            {session?.user.name?.charAt(0) ?? "U"}
           </div>
           <div className="flex flex-col">
-            <p>{session.user.name}</p>
-            <p className="text-sm text-gray-400">{session.user.email}</p>
+            <p>{session?.user.name}</p>
+            <p className="text-sm text-gray-400">{session?.user.email}</p>
           </div>
         </div>
         <Separator className="my-2" />
@@ -72,7 +70,7 @@ export default function SidebarProfileOptions() {
             {t("settings.user_settings")}
           </Link>
         </DropdownMenuItem>
-        {session.user.role == "admin" && (
+        {session?.user.role == "admin" && (
           <DropdownMenuItem asChild>
             <Link href="/admin" className="flex justify-between">
               <div className="items-cente flex gap-2">

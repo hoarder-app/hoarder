@@ -1,4 +1,5 @@
 import type { Adapter } from "next-auth/adapters";
+import { pages } from "@/lib/pages";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { and, count, eq } from "drizzle-orm";
 import NextAuth, {
@@ -145,12 +146,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  pages: {
-    signIn: "/signin",
-    signOut: "/signin",
-    error: "/signin",
-    newUser: "/signin",
-  },
+  pages,
   callbacks: {
     async signIn({ credentials, profile }) {
       if (credentials) {
@@ -183,7 +179,7 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      session.user = { ...token.user };
+      session.user = { ...session.user, id: token.sub };
       return session;
     },
   },
