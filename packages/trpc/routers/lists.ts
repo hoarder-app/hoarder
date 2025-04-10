@@ -4,6 +4,8 @@ import { z } from "zod";
 import {
   zBookmarkListSchema,
   zEditBookmarkListSchemaWithValidation,
+  zMergeListResponseSchema,
+  zMergeListSchema,
   zNewBookmarkListSchema,
 } from "@hoarder/shared/types/lists";
 
@@ -38,6 +40,13 @@ export const listsAppRouter = router({
     .use(ensureListOwnership)
     .mutation(async ({ input, ctx }) => {
       return await ctx.list.update(input);
+    }),
+  merge: authedProcedure
+    .input(zMergeListSchema)
+    .output(zMergeListResponseSchema)
+    .use(ensureListOwnership)
+    .mutation(async ({ input, ctx }) => {
+      return await List.merge(ctx, input);
     }),
   delete: authedProcedure
     .input(

@@ -74,3 +74,26 @@ export const zEditBookmarkListSchemaWithValidation = zEditBookmarkListSchema
       "Smart lists cannot have unqualified terms (aka full text search terms) in the query",
     path: ["query"],
   });
+
+export const zMergeListSchema = z
+  .object({
+    sourceName: z.string(),
+    sourceIcon: z.string(),
+    listId: z.string().min(1, "Source list must be selected"),
+    targetId: z.string().min(1, "Destination list must be selected"),
+  })
+  .refine((val) => val.listId !== val.targetId, {
+    message: "Cannot merge a list into itself",
+    path: ["targetId"],
+  });
+
+export type ZMergeList = z.infer<typeof zMergeListSchema>;
+
+export const zMergeListResponseSchema = z.object({
+  totalItems: z.number(),
+  addedCount: z.number(),
+  duplicateCount: z.number(),
+  failedCount: z.number(),
+});
+
+export type ZMergeListResponse = z.infer<typeof zMergeListResponseSchema>;

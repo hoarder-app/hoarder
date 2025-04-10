@@ -6,12 +6,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTranslation } from "@/lib/i18n/client";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { FolderInput, Pencil, Plus, Trash2 } from "lucide-react";
 
 import { ZBookmarkList } from "@hoarder/shared/types/lists";
 
 import { EditListModal } from "../lists/EditListModal";
 import DeleteListConfirmationDialog from "./DeleteListConfirmationDialog";
+import { MergeListModal } from "./MergeListModal";
 
 export function ListOptions({
   list,
@@ -28,6 +29,7 @@ export function ListOptions({
 
   const [deleteListDialogOpen, setDeleteListDialogOpen] = useState(false);
   const [newNestedListModalOpen, setNewNestedListModalOpen] = useState(false);
+  const [mergeListModalOpen, setMergeListModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
 
   return (
@@ -42,6 +44,11 @@ export function ListOptions({
       <EditListModal
         open={editModalOpen}
         setOpen={setEditModalOpen}
+        list={list}
+      />
+      <MergeListModal
+        open={mergeListModalOpen}
+        setOpen={setMergeListModalOpen}
         list={list}
       />
       <DeleteListConfirmationDialog
@@ -64,6 +71,13 @@ export function ListOptions({
         >
           <Plus className="size-4" />
           <span>{t("lists.new_nested_list")}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="flex gap-2"
+          onClick={() => setMergeListModalOpen(true)}
+        >
+          <FolderInput className="size-4" />
+          <span>{t("lists.merge_list")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className="flex gap-2"

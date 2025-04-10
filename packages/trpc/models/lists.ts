@@ -9,6 +9,8 @@ import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
 import {
   ZBookmarkList,
   zEditBookmarkListSchemaWithValidation,
+  zMergeListResponseSchema,
+  zMergeListSchema,
   zNewBookmarkListSchema,
 } from "@hoarder/shared/types/lists";
 
@@ -73,6 +75,52 @@ export abstract class List implements PrivacyAware {
       })
       .returning();
     return this.fromData(ctx, result);
+  }
+
+  static async merge(
+    ctx: AuthedContext,
+    input: z.infer<typeof zMergeListSchema>,
+  ): Promise<z.infer<typeof zMergeListResponseSchema>> {
+    const sourceList = await List.fromId(ctx, input.listId);
+    const targetList = await List.fromId(ctx, input.targetId);
+    if (targetList.type !== "manual") {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Cannot merge a list into a smart list",
+      });
+    }
+    const bookmarks = await sourceList.getBookmarkIds();
+
+    let addedCount = 0;
+    let duplicateCount = 0;
+    let failedCount = 0;
+
+    await Promise.all(
+      bookmarks.map((bookmarkId) =>
+        targetList
+          .addBookmark(bookmarkId)
+          .then(() => {
+            addedCount++;
+          })
+          .catch((e) => {
+            if (
+              e instanceof TRPCError &&
+              e.message.includes("already in the list")
+            ) {
+              duplicateCount++;
+            } else {
+              failedCount++;
+            }
+          }),
+      ),
+    );
+
+    return {
+      totalItems: bookmarks.length,
+      addedCount,
+      duplicateCount,
+      failedCount,
+    };
   }
 
   static async getAll(ctx: AuthedContext): Promise<(ManualList | SmartList)[]> {
