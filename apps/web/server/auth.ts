@@ -178,8 +178,8 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    async session({ session, token }) {
-      session.user = { ...token.user };
+    session: ({ session, token }) => ({
+      session.user = { ...session.user, id: token.sub };
       return session;
     },
   },
