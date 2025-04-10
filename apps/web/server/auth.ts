@@ -178,7 +178,7 @@ export const authOptions: NextAuthOptions = {
       }
       return token;
     },
-    session: ({ session, token }) => ({
+    async session({ session, token }) {
       session.user = { ...session.user, id: token.sub };
       return session;
     },
