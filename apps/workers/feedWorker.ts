@@ -126,6 +126,94 @@ async function run(req: DequeuedJob<ZFeedRequestSchema>) {
   });
   const unparseFeedData = await parser.parseString(xmlData);
 
+  // Check if this is a Wallabag feed
+  const isWallabagFeed = unparseFeedData.items.some(
+    (item) =>
+      item.id && typeof item.id === "string" && item.id.includes("wallabag:"),
+  );
+
+  if (isWallabagFeed) {
+    logger.info(
+      `[feed][${jobId}] Detected Wallabag feed, extracting original URLs...`,
+    );
+
+    // Extract original URLs from the XML
+    const extractOriginalLinks = (
+      xmlContent: string,
+    ): Record<string, string> => {
+      const result: Record<string, string> = {};
+
+      try {
+        // Match each entry in the feed
+        const entryRegex = /<entry[\s\S]*?<\/entry>/g;
+        let entryMatch;
+
+        while ((entryMatch = entryRegex.exec(xmlContent)) !== null) {
+          const entry = entryMatch[0];
+
+          // Extract the entry ID
+          const idMatch = entry.match(/<id>(.*?)<\/id>/);
+          if (!idMatch || !idMatch[1]) continue;
+          const id = idMatch[1];
+
+          // Extract all links
+          const links: { href: string; rel: string | null }[] = [];
+          const linkRegex = /<link([^>]*)>/g;
+          let linkMatch;
+
+          while ((linkMatch = linkRegex.exec(entry)) !== null) {
+            const linkAttrs = linkMatch[1];
+            const hrefMatch = linkAttrs.match(/href="([^"]*)"/);
+
+            if (hrefMatch && hrefMatch[1]) {
+              // Check if it has a rel attribute
+              const relMatch = linkAttrs.match(/rel="([^"]*)"/);
+              const rel = relMatch ? relMatch[1] : null;
+
+              links.push({
+                href: hrefMatch[1],
+                rel: rel,
+              });
+            }
+          }
+
+          // Select the best link according to priority:
+          // 1. Link with no rel attribute (original content URL)
+          // 2. Link with rel="via" (also original content URL)
+
+          // First look for link with no rel
+          const noRelLink = links.find((link) => link.rel === null);
+          if (noRelLink) {
+            result[id] = noRelLink.href;
+            continue;
+          }
+
+          // Then look for link with rel="via"
+          const viaLink = links.find((link) => link.rel === "via");
+          if (viaLink) {
+            result[id] = viaLink.href;
+          }
+        }
+      } catch (error) {
+        logger.error(
+          `[feed][${jobId}] Error extracting original links: ${error}`,
+        );
+      }
+
+      return result;
+    };
+
+    const originalLinks = extractOriginalLinks(xmlData);
+
+    // Apply the original links to the parsed items
+    unparseFeedData.items.forEach((item) => {
+      if (item.id && typeof item.id === "string" && originalLinks[item.id]) {
+        // Replace the link with the original URL
+        item.link = originalLinks[item.id];
+      }
+    });
+  }
+
   // Apparently, we can't trust the output of the xml parser. So let's do our own type
   // validation.
   const feedItemsSchema = z.object({
