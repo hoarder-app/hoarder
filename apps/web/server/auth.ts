@@ -20,6 +20,8 @@ import {
 import serverConfig from "@hoarder/shared/config";
 import { logAuthenticationError, validatePassword } from "@hoarder/trpc/auth";
 
+import { pages } from "./pages";
+
 type UserRole = "admin" | "user";
 
 declare module "next-auth/jwt" {
@@ -132,13 +134,6 @@ if (oauth.wellKnownUrl) {
     },
   });
 }
-
-export const pages = {
-  signIn: "/signin",
-  signOut: "/signin",
-  error: "/signin",
-  newUser: "/signin",
-} as const;
 
 export const authOptions: NextAuthOptions = {
   // https://github.com/nextauthjs/next-auth/issues/9493
