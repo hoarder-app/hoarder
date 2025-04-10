@@ -66,6 +66,32 @@ export default function QueryExplainerTooltip({
             <TableCell>{matcher.dateBefore.toDateString()}</TableCell>
           </TableRow>
         );
+      case "age":
+        return (
+          <TableRow>
+            <TableCell>
+              {matcher.relativeDate.direction === "newer"
+                ? t("search.created_within")
+                : t("search.created_earlier_than")}
+            </TableCell>
+            <TableCell>
+              {matcher.relativeDate.amount.toString() +
+                (matcher.relativeDate.direction === "newer"
+                  ? {
+                      day: t("search.day_s"),
+                      week: t("search.week_s"),
+                      month: t("search.month_s"),
+                      year: t("search.year_s"),
+                    }[matcher.relativeDate.unit]
+                  : {
+                      day: t("search.day_s_ago"),
+                      week: t("search.week_s_ago"),
+                      month: t("search.month_s_ago"),
+                      year: t("search.year_s_ago"),
+                    }[matcher.relativeDate.unit])}
+            </TableCell>
+          </TableRow>
+        );
       case "favourited":
         return (
           <TableRow>

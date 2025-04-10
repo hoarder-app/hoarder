@@ -25,6 +25,7 @@ import {
   tagsOnBookmarks,
 } from "@hoarder/db/schema";
 import { Matcher } from "@hoarder/shared/types/search";
+import { toAbsoluteDate } from "@hoarder/shared/utils/relativeDateUtils";
 
 import { AuthedContext } from "..";
 
@@ -276,6 +277,18 @@ async function getIds(
           and(
             eq(bookmarks.userId, userId),
             comp(bookmarks.createdAt, matcher.dateBefore),
+          ),
+        );
+    }
+    case "age": {
+      const comp = matcher.relativeDate.direction === "newer" ? gte : lt;
+      return db
+        .select({ id: bookmarks.id })
+        .from(bookmarks)
+        .where(
+          and(
+            eq(bookmarks.userId, userId),
+            comp(bookmarks.createdAt, toAbsoluteDate(matcher.relativeDate)),
           ),
         );
     }

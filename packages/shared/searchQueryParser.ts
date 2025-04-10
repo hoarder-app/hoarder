@@ -18,6 +18,7 @@ import { z } from "zod";
 
 import { BookmarkTypes } from "./types/bookmarks";
 import { Matcher } from "./types/search";
+import { parseRelativeDate } from "./utils/relativeDateUtils";
 
 enum TokenType {
   And = "AND",
@@ -40,7 +41,7 @@ const lexerRules: [RegExp, TokenType][] = [
   [/^\s+or/i, TokenType.Or],
 
   [/^#/, TokenType.Hash],
-  [/^(is|url|list|after|before|feed):/, TokenType.Qualifier],
+  [/^(is|url|list|after|before|age|feed):/, TokenType.Qualifier],
 
   [/^"([^"]+)"/, TokenType.StringLiteral],
 
@@ -243,6 +244,23 @@ MATCHER.setPattern(
             } catch (e) {
               return {
                 // If parsing the date fails, emit it as pure text
+                text: (minus?.text ?? "") + qualifier.text + ident,
+                matcher: undefined,
+              };
+            }
+          case "age:":
+            try {
+              const { direction, amount, unit } = parseRelativeDate(ident);
+              return {
+                text: "",
+                matcher: {
+                  type: "age",
+                  relativeDate: { direction, amount, unit },
+                },
+              };
+            } catch (e) {
+              return {
+                // If parsing the relative time fails, emit it as pure text
                 text: (minus?.text ?? "") + qualifier.text + ident,
                 matcher: undefined,
               };
