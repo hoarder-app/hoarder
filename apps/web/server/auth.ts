@@ -1,4 +1,5 @@
 import type { Adapter } from "next-auth/adapters";
+import { pages } from "@/lib/pages";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { and, count, eq } from "drizzle-orm";
 import NextAuth, {
@@ -19,8 +20,6 @@ import {
 } from "@hoarder/db/schema";
 import serverConfig from "@hoarder/shared/config";
 import { logAuthenticationError, validatePassword } from "@hoarder/trpc/auth";
-
-import { pages } from "./pages";
 
 type UserRole = "admin" | "user";
 
