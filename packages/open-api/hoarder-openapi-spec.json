@@ -390,6 +390,10 @@
           "name": {
             "type": "string"
           },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
           "icon": {
             "type": "string"
           },
@@ -1429,6 +1433,11 @@
                     "minLength": 1,
                     "maxLength": 40
                   },
+                  "description": {
+                    "type": "string",
+                    "minLength": 0,
+                    "maxLength": 100
+                  },
                   "icon": {
                     "type": "string"
                   },
@@ -1550,6 +1559,12 @@
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 40
+                  },
+                  "description": {
+                    "type": "string",
+                    "nullable": true,
+                    "minLength": 0,
+                    "maxLength": 100
                   },
                   "icon": {
                     "type": "string"
