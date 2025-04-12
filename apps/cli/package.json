@@ -28,7 +28,7 @@
     "superjson": "^2.2.1",
     "table": "^6.8.2",
     "tsx": "^4.7.1",
-    "vite": "^5.1.0"
+    "vite": "^5.4.18"
   },
   "scripts": {
     "build": "vite build",
