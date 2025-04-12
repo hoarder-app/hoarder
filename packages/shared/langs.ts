@@ -12,6 +12,7 @@ export const langNameMappings: Record<string, string> = {
   hu: "Hungarian",
   it: "Italian",
   ja: "Japanese",
+  ko: "Korean",
   pl: "Polish",
   pt_BR: "Portuguese (Brazil)",
   ru: "Russian",
