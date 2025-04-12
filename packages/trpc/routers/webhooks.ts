@@ -2,12 +2,12 @@ import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { webhooksTable } from "@hoarder/db/schema";
+import { webhooksTable } from "@karakeep/db/schema";
 import {
   zNewWebhookSchema,
   zUpdateWebhookSchema,
   zWebhookSchema,
-} from "@hoarder/shared/types/webhooks";
+} from "@karakeep/shared/types/webhooks";
 
 import { authedProcedure, Context, router } from "../index";
 

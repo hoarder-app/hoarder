@@ -24,7 +24,7 @@ import {
   zNewWebhookSchema,
   zUpdateWebhookSchema,
   ZWebhook,
-} from "@hoarder/shared/types/webhooks";
+} from "@karakeep/shared/types/webhooks";
 
 import ActionConfirmingDialog from "../ui/action-confirming-dialog";
 import { Button } from "../ui/button";

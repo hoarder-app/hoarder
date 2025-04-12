@@ -31,12 +31,12 @@ import {
   buildImagePrompt,
   buildSummaryPrompt,
   buildTextPrompt,
-} from "@hoarder/shared/prompts";
+} from "@karakeep/shared/prompts";
 import {
   zNewPromptSchema,
   ZPrompt,
   zUpdatePromptSchema,
-} from "@hoarder/shared/types/prompts";
+} from "@karakeep/shared/types/prompts";
 
 export function PromptEditor() {
   const { t } = useTranslation();

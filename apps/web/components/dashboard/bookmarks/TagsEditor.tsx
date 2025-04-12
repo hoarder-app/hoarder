@@ -9,7 +9,7 @@ import CreateableSelect from "react-select/creatable";
 import type {
   ZAttachedByEnum,
   ZBookmarkTags,
-} from "@hoarder/shared/types/tags";
+} from "@karakeep/shared/types/tags";
 
 interface EditableTag {
   attachedBy: ZAttachedByEnum;

@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
 import { distance } from "fastest-levenshtein";
 import { Check, Combine, X } from "lucide-react";
 
-import { useMergeTag } from "@hoarder/shared-react/hooks/tags";
+import { useMergeTag } from "@karakeep/shared-react/hooks/tags";
 
 interface Suggestion {
   mergeIntoId: string;

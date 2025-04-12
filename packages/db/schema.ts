@@ -11,7 +11,7 @@ import {
   unique,
 } from "drizzle-orm/sqlite-core";
 
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 function createdAtField() {
   return integer("createdAt", { mode: "timestamp" })

@@ -2,15 +2,15 @@ import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
 import { and, desc, eq, lt, lte, or } from "drizzle-orm";
 import { z } from "zod";
 
-import { highlights } from "@hoarder/db/schema";
+import { highlights } from "@karakeep/db/schema";
 import {
   DEFAULT_NUM_HIGHLIGHTS_PER_PAGE,
   zGetAllHighlightsResponseSchema,
   zHighlightSchema,
   zNewHighlightSchema,
   zUpdateHighlightSchema,
-} from "@hoarder/shared/types/highlights";
-import { zCursorV2 } from "@hoarder/shared/types/pagination";
+} from "@karakeep/shared/types/highlights";
+import { zCursorV2 } from "@karakeep/shared/types/pagination";
 
 import { authedProcedure, Context, router } from "../index";
 import { ensureBookmarkOwnership } from "./bookmarks";

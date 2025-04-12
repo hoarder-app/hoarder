@@ -29,7 +29,7 @@ import {
   useAddBookmarkToList,
   useBookmarkLists,
   useRemoveBookmarkFromList,
-} from "@hoarder/shared-react/hooks/lists";
+} from "@karakeep/shared-react/hooks/lists";
 
 import { BookmarkListSelector } from "../lists/BookmarkListSelector";
 import ArchiveBookmarkButton from "./action-buttons/ArchiveBookmarkButton";

@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-import base from "@hoarder/tailwind-config/native";
+import base from "@karakeep/tailwind-config/native";
 
 const config = {
   content: base.content,

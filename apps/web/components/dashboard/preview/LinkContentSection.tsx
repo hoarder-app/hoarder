@@ -18,12 +18,12 @@ import {
   useCreateHighlight,
   useDeleteHighlight,
   useUpdateHighlight,
-} from "@hoarder/shared-react/hooks/highlights";
+} from "@karakeep/shared-react/hooks/highlights";
 import {
   BookmarkTypes,
   ZBookmark,
   ZBookmarkedLink,
-} from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/types/bookmarks";
 
 function FullPageArchiveSection({ link }: { link: ZBookmarkedLink }) {
   const archiveAssetId =

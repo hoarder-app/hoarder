@@ -22,8 +22,8 @@ import {
   getSourceUrl,
   isBookmarkStillCrawling,
   isBookmarkStillLoading,
-} from "@hoarder/shared-react/utils/bookmarkUtils";
-import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared-react/utils/bookmarkUtils";
+import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 import SummarizeBookmarkArea from "../bookmarks/SummarizeBookmarkArea";
 import ActionBar from "./ActionBar";

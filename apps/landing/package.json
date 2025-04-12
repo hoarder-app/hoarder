@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@hoarder/landing",
+  "name": "@karakeep/landing",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -28,10 +28,10 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@hoarder/eslint-config": "workspace:^0.2.0",
-    "@hoarder/prettier-config": "workspace:^0.1.0",
-    "@hoarder/tailwind-config": "workspace:^0.1.0",
-    "@hoarder/tsconfig": "workspace:^0.1.0",
+    "@karakeep/eslint-config": "workspace:^0.2.0",
+    "@karakeep/prettier-config": "workspace:^0.1.0",
+    "@karakeep/tailwind-config": "workspace:^0.1.0",
+    "@karakeep/tsconfig": "workspace:^0.1.0",
     "@tailwindcss/typography": "^0.5.10",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
@@ -45,9 +45,9 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@hoarder/eslint-config/base",
-      "@hoarder/eslint-config/react"
+      "@karakeep/eslint-config/base",
+      "@karakeep/eslint-config/react"
     ]
   },
-  "prettier": "@hoarder/prettier-config"
+  "prettier": "@karakeep/prettier-config"
 }

@@ -23,8 +23,8 @@ import {
   rssFeedImportsTable,
   rssFeedsTable,
   tagsOnBookmarks,
-} from "@hoarder/db/schema";
-import { Matcher } from "@hoarder/shared/types/search";
+} from "@karakeep/db/schema";
+import { Matcher } from "@karakeep/shared/types/search";
 
 import { AuthedContext } from "..";
 

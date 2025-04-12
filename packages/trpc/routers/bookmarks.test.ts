@@ -1,7 +1,7 @@
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
-import { bookmarks } from "@hoarder/db/schema";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+import { bookmarks } from "@karakeep/db/schema";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import type { CustomTestContext } from "../testUtils";
 import { defaultBeforeEach } from "../testUtils";

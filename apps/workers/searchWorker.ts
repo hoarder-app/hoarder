@@ -1,15 +1,15 @@
 import { eq } from "drizzle-orm";
 import { DequeuedJob, Runner } from "liteque";
 
-import type { ZSearchIndexingRequest } from "@hoarder/shared/queues";
-import { db } from "@hoarder/db";
-import { bookmarks } from "@hoarder/db/schema";
-import logger from "@hoarder/shared/logger";
+import type { ZSearchIndexingRequest } from "@karakeep/shared/queues";
+import { db } from "@karakeep/db";
+import { bookmarks } from "@karakeep/db/schema";
+import logger from "@karakeep/shared/logger";
 import {
   SearchIndexingQueue,
   zSearchIndexingRequestSchema,
-} from "@hoarder/shared/queues";
-import { getSearchIdxClient } from "@hoarder/shared/search";
+} from "@karakeep/shared/queues";
+import { getSearchIdxClient } from "@karakeep/shared/search";
 
 export class SearchIndexingWorker {
   static build() {

@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { buildHandler } from "@/app/api/v1/utils/handler";
 
-import { zUpdateTagRequestSchema } from "@hoarder/shared/types/tags";
+import { zUpdateTagRequestSchema } from "@karakeep/shared/types/tags";
 
 export const dynamic = "force-dynamic";
 

@@ -2,12 +2,12 @@ import { TRPCError } from "@trpc/server";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 
-import { assets, bookmarks } from "@hoarder/db/schema";
-import { deleteAsset } from "@hoarder/shared/assetdb";
+import { assets, bookmarks } from "@karakeep/db/schema";
+import { deleteAsset } from "@karakeep/shared/assetdb";
 import {
   zAssetSchema,
   zAssetTypesSchema,
-} from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/types/bookmarks";
 
 import { authedProcedure, Context, router } from "../index";
 import {

@@ -3,7 +3,7 @@ import * as cheerio from "cheerio";
 import { parse } from "csv-parse/sync";
 import { z } from "zod";
 
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import { zExportSchema } from "./exportBookmarks";
 

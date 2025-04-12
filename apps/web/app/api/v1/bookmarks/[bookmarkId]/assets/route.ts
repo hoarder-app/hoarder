@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { buildHandler } from "@/app/api/v1/utils/handler";
 
-import { zAssetSchema } from "@hoarder/shared/types/bookmarks";
+import { zAssetSchema } from "@karakeep/shared/types/bookmarks";
 
 export const dynamic = "force-dynamic";
 

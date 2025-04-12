@@ -11,8 +11,8 @@ import { api } from "@/lib/trpc";
 import { condProps } from "@/lib/utils";
 import { ChevronRight, Plus } from "lucide-react-native";
 
-import { useBookmarkLists } from "@hoarder/shared-react/hooks/lists";
-import { ZBookmarkListTreeNode } from "@hoarder/shared/utils/listUtils";
+import { useBookmarkLists } from "@karakeep/shared-react/hooks/lists";
+import { ZBookmarkListTreeNode } from "@karakeep/shared/utils/listUtils";
 
 function HeaderRight({ openNewListModal }: { openNewListModal: () => void }) {
   return (

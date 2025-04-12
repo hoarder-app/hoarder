@@ -5,7 +5,7 @@ WORKDIR /app
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-# https://github.com/hoarder-app/hoarder/issues/967
+# https://github.com/karakeep-app/karakeep/issues/967
 RUN npm install -g corepack@0.31.0 && corepack enable
 
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
@@ -26,7 +26,7 @@ RUN cd packages/db && \
 RUN (cd apps/web && pnpm exec next build --experimental-build-mode compile)
 
 # Build the worker code
-RUN pnpm deploy --node-linker=isolated --filter @hoarder/workers --prod /prod/workers
+RUN pnpm deploy --node-linker=isolated --filter @karakeep/workers --prod /prod/workers
 
 # Build the cli
 RUN (cd apps/cli && pnpm build)
@@ -37,7 +37,7 @@ FROM node:22-alpine AS aio_builder
 LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
 WORKDIR /app
 
-# https://github.com/hoarder-app/hoarder/issues/967
+# https://github.com/karakeep-app/karakeep/issues/967
 RUN npm install -g corepack@0.31.0
 
 ARG SERVER_VERSION=nightly

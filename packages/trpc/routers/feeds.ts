@@ -2,13 +2,13 @@ import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { rssFeedsTable } from "@hoarder/db/schema";
-import { FeedQueue } from "@hoarder/shared/queues";
+import { rssFeedsTable } from "@karakeep/db/schema";
+import { FeedQueue } from "@karakeep/shared/queues";
 import {
   zFeedSchema,
   zNewFeedSchema,
   zUpdateFeedSchema,
-} from "@hoarder/shared/types/feeds";
+} from "@karakeep/shared/types/feeds";
 
 import { authedProcedure, Context, router } from "../index";
 

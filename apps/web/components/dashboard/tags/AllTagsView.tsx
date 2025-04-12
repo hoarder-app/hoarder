@@ -18,8 +18,8 @@ import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { ArrowDownAZ, Combine } from "lucide-react";
 
-import type { ZGetTagResponse, ZTagBasic } from "@hoarder/shared/types/tags";
-import { useDeleteUnusedTags } from "@hoarder/shared-react/hooks/tags";
+import type { ZGetTagResponse, ZTagBasic } from "@karakeep/shared/types/tags";
+import { useDeleteUnusedTags } from "@karakeep/shared-react/hooks/tags";
 
 import BulkTagAction from "./BulkTagAction";
 import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";

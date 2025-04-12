@@ -6,8 +6,8 @@ import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 
-import { useCreateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+import { useCreateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 const NoteEditorPage = () => {
   const dismiss = () => {

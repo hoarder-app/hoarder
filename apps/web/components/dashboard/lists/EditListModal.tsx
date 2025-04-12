@@ -46,12 +46,12 @@ import { z } from "zod";
 import {
   useCreateBookmarkList,
   useEditBookmarkList,
-} from "@hoarder/shared-react/hooks/lists";
-import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
+} from "@karakeep/shared-react/hooks/lists";
+import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 import {
   ZBookmarkList,
   zNewBookmarkListSchema,
-} from "@hoarder/shared/types/lists";
+} from "@karakeep/shared/types/lists";
 
 import QueryExplainerTooltip from "../search/QueryExplainerTooltip";
 import { BookmarkListSelector } from "./BookmarkListSelector";

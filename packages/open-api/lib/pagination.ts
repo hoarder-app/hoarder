@@ -1,7 +1,7 @@
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
 
-import { zBookmarkSchema } from "@hoarder/shared/types/bookmarks";
+import { zBookmarkSchema } from "@karakeep/shared/types/bookmarks";
 
 extendZodWithOpenApi(z);
 

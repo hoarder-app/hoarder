@@ -4,7 +4,7 @@ import { useSortOrderStore } from "@/lib/store/useSortOrderStore";
 import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 
-import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
+import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 
 function useSearchQuery() {
   const searchParams = useSearchParams();

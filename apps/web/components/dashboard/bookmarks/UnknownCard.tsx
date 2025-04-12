@@ -3,7 +3,7 @@
 import { useTranslation } from "@/lib/i18n/client";
 import { AlertCircle } from "lucide-react";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 

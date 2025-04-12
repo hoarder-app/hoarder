@@ -1,6 +1,6 @@
 import { getProviders } from "next-auth/react";
 
-import serverConfig from "@hoarder/shared/config";
+import serverConfig from "@karakeep/shared/config";
 
 import CredentialsForm from "./CredentialsForm";
 import SignInProviderButton from "./SignInProviderButton";

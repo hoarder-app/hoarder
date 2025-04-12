@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { ToastProvider } from "@/components/ui/Toast";
 
-import { TRPCProvider } from "@hoarder/shared-react/providers/trpc-provider";
+import { TRPCProvider } from "@karakeep/shared-react/providers/trpc-provider";
 
 import useAppSettings from "./settings";
 

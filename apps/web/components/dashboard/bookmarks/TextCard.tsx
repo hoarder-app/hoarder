@@ -6,9 +6,9 @@ import { BookmarkMarkdownComponent } from "@/components/dashboard/bookmarks/Book
 import { bookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 
-import type { ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
-import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
-import { getSourceUrl } from "@hoarder/shared-react/utils/bookmarkUtils";
+import type { ZBookmarkTypeText } from "@karakeep/shared/types/bookmarks";
+import { getAssetUrl } from "@karakeep/shared-react/utils/assetUtils";
+import { getSourceUrl } from "@karakeep/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 import FooterLinkURL from "./FooterLinkURL";

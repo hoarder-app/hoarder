@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
-import { zNewBookmarkRequestSchema } from "@hoarder/shared/types/bookmarks";
+import { zNewBookmarkRequestSchema } from "@karakeep/shared/types/bookmarks";
 
 import { buildHandler } from "../utils/handler";
 import { adaptPagination, zPagination } from "../utils/pagination";

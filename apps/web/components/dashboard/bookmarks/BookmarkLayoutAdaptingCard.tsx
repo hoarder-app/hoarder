@@ -12,9 +12,9 @@ import dayjs from "dayjs";
 import { Check, Image as ImageIcon, NotebookPen } from "lucide-react";
 import { useTheme } from "next-themes";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
-import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
+import { isBookmarkStillTagging } from "@karakeep/shared-react/utils/bookmarkUtils";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import BookmarkActionBar from "./BookmarkActionBar";
 import TagList from "./TagList";

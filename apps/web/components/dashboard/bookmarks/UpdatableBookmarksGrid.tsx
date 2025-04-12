@@ -8,8 +8,8 @@ import { api } from "@/lib/trpc";
 import type {
   ZGetBookmarksRequest,
   ZGetBookmarksResponse,
-} from "@hoarder/shared/types/bookmarks";
-import { BookmarkGridContextProvider } from "@hoarder/shared-react/hooks/bookmark-grid-context";
+} from "@karakeep/shared/types/bookmarks";
+import { BookmarkGridContextProvider } from "@karakeep/shared-react/hooks/bookmark-grid-context";
 
 import BookmarksGrid from "./BookmarksGrid";
 

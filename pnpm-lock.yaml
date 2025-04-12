@@ -13,7 +13,7 @@ importers:
 
   .:
     devDependencies:
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:tooling/prettier
       '@tanstack/eslint-plugin-query':
@@ -46,13 +46,13 @@ importers:
 
   apps/browser-extension:
     dependencies:
-      '@hoarder/shared':
+      '@karakeep/shared':
         specifier: workspace:^0.1.0
         version: link:../../packages/shared
-      '@hoarder/shared-react':
+      '@karakeep/shared-react':
         specifier: workspace:^0.1.0
         version: link:../../packages/shared-react
-      '@hoarder/trpc':
+      '@karakeep/trpc':
         specifier: workspace:^0.1.0
         version: link:../../packages/trpc
       '@radix-ui/react-dialog':
@@ -122,16 +122,16 @@ importers:
       '@crxjs/vite-plugin':
         specifier: 2.0.0-beta.28
         version: 2.0.0-beta.28
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/tailwind-config':
+      '@karakeep/tailwind-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/tailwind
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/chrome':
@@ -176,19 +176,19 @@ importers:
       '@commander-js/extra-typings':
         specifier: ^12.0.1
         version: 12.0.1(commander@12.0.0)
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/shared':
+      '@karakeep/shared':
         specifier: workspace:^0.1.0
         version: link:../../packages/shared
-      '@hoarder/trpc':
+      '@karakeep/trpc':
         specifier: workspace:^0.1.0
         version: link:../../packages/trpc
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@trpc/client':
@@ -255,16 +255,16 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.1)
     devDependencies:
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/tailwind-config':
+      '@karakeep/tailwind-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/tailwind
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@tailwindcss/typography':
@@ -297,13 +297,13 @@ importers:
 
   apps/mobile:
     dependencies:
-      '@hoarder/shared':
+      '@karakeep/shared':
         specifier: workspace:^0.1.0
         version: link:../../packages/shared
-      '@hoarder/shared-react':
+      '@karakeep/shared-react':
         specifier: workspace:^0.1.0
         version: link:../../packages/shared-react
-      '@hoarder/trpc':
+      '@karakeep/trpc':
         specifier: workspace:^0.1.0
         version: link:../../packages/trpc
       '@react-native-menu/menu':
@@ -427,16 +427,16 @@ importers:
       '@babel/core':
         specifier: ^7.20.0
         version: 7.26.0
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/tailwind-config':
+      '@karakeep/tailwind-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/tailwind
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/react':
@@ -472,21 +472,21 @@ importers:
       '@emoji-mart/react':
         specifier: ^1.1.1
         version: 1.1.1(emoji-mart@5.5.2)(react@18.3.1)
-      '@hoarder/db':
-        specifier: workspace:^0.1.0
-        version: link:../../packages/db
-      '@hoarder/shared':
-        specifier: workspace:^0.1.0
-        version: link:../../packages/shared
-      '@hoarder/shared-react':
-        specifier: workspace:^0.1.0
-        version: link:../../packages/shared-react
-      '@hoarder/trpc':
-        specifier: workspace:^0.1.0
-        version: link:../../packages/trpc
       '@hookform/resolvers':
         specifier: ^3.3.4
         version: 3.3.4(react-hook-form@7.50.1(react@18.3.1))
+      '@karakeep/db':
+        specifier: workspace:^0.1.0
+        version: link:../../packages/db
+      '@karakeep/shared':
+        specifier: workspace:^0.1.0
+        version: link:../../packages/shared
+      '@karakeep/shared-react':
+        specifier: workspace:^0.1.0
+        version: link:../../packages/shared-react
+      '@karakeep/trpc':
+        specifier: workspace:^0.1.0
+        version: link:../../packages/trpc
       '@lexical/list':
         specifier: ^0.20.2
         version: 0.20.2
@@ -689,16 +689,16 @@ importers:
         specifier: ^4.5.1
         version: 4.5.1(@types/react@18.2.58)(react@18.3.1)
     devDependencies:
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/tailwind-config':
+      '@karakeep/tailwind-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/tailwind
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/csv-parse':
@@ -740,16 +740,16 @@ importers:
       '@ghostery/adblocker-puppeteer':
         specifier: ^2.1.1
         version: 2.1.1(puppeteer@22.3.0(typescript@5.7.3))
-      '@hoarder/db':
+      '@karakeep/db':
         specifier: workspace:^0.1.0
         version: link:../../packages/db
-      '@hoarder/shared':
+      '@karakeep/shared':
         specifier: workspace:^0.1.0
         version: link:../../packages/shared
-      '@hoarder/trpc':
+      '@karakeep/trpc':
         specifier: workspace:^0.1.0
         version: link:../../packages/trpc
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@mozilla/readability':
@@ -858,10 +858,10 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
       '@types/jsdom':
@@ -922,7 +922,7 @@ importers:
       '@auth/core':
         specifier: ^0.27.0
         version: 0.27.0
-      '@hoarder/shared':
+      '@karakeep/shared':
         specifier: workspace:*
         version: link:../shared
       '@paralleldrive/cuid2':
@@ -941,13 +941,13 @@ importers:
         specifier: ^4.7.1
         version: 4.7.1
     devDependencies:
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@tsconfig/node22':
@@ -962,23 +962,23 @@ importers:
 
   packages/e2e_tests:
     dependencies:
-      '@hoarder/trpc':
-        specifier: workspace:^0.1.0
-        version: link:../trpc
-      '@hoarderapp/sdk':
+      '@karakeep/sdk':
         specifier: workspace:*
         version: link:../sdk
+      '@karakeep/trpc':
+        specifier: workspace:^0.1.0
+        version: link:../trpc
       superjson:
         specifier: ^2.2.1
         version: 2.2.1
     devDependencies:
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       vite-tsconfig-paths:
@@ -993,20 +993,20 @@ importers:
       '@asteasolutions/zod-to-openapi':
         specifier: ^7.2.0
         version: 7.2.0(zod@3.22.4)
-      '@hoarder/shared':
+      '@karakeep/shared':
         specifier: workspace:^0.1.0
         version: link:../shared
       zod:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       tsx:
@@ -1019,13 +1019,13 @@ importers:
         specifier: ^0.13.3
         version: 0.13.3
     devDependencies:
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@tsconfig/node22':
@@ -1071,13 +1071,13 @@ importers:
         specifier: ^3.24.3
         version: 3.24.3(zod@3.22.4)
     devDependencies:
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       vitest:
@@ -1086,10 +1086,10 @@ importers:
 
   packages/shared-react:
     dependencies:
-      '@hoarder/shared':
+      '@karakeep/shared':
         specifier: workspace:^0.1.0
         version: link:../shared
-      '@hoarder/trpc':
+      '@karakeep/trpc':
         specifier: workspace:^0.1.0
         version: link:../trpc
       '@tanstack/react-query':
@@ -1108,22 +1108,22 @@ importers:
         specifier: ^2.2.1
         version: 2.2.1
     devDependencies:
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
 
   packages/trpc:
     dependencies:
-      '@hoarder/db':
+      '@karakeep/db':
         specifier: workspace:*
         version: link:../db
-      '@hoarder/shared':
+      '@karakeep/shared':
         specifier: workspace:*
         version: link:../shared
       '@trpc/server':
@@ -1145,13 +1145,13 @@ importers:
         specifier: ^3.22.4
         version: 3.22.4
     devDependencies:
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../../tooling/eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../../tooling/prettier
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../../tooling/typescript
       '@types/bcryptjs':
@@ -1191,10 +1191,10 @@ importers:
         specifier: ^4.6.0
         version: 4.6.0(eslint@8.57.0)
     devDependencies:
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../prettier
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../typescript
       '@types/eslint':
@@ -1224,7 +1224,7 @@ importers:
         specifier: ^0.5.11
         version: 0.5.11(@ianvs/prettier-plugin-sort-imports@4.2.0(prettier@3.4.2))(prettier@3.4.2)
     devDependencies:
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../typescript
       typescript:
@@ -1249,13 +1249,13 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.1)
     devDependencies:
-      '@hoarder/eslint-config':
+      '@karakeep/eslint-config':
         specifier: workspace:^0.2.0
         version: link:../eslint
-      '@hoarder/prettier-config':
+      '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
         version: link:../prettier
-      '@hoarder/tsconfig':
+      '@karakeep/tsconfig':
         specifier: workspace:^0.1.0
         version: link:../typescript
       eslint:

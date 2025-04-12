@@ -7,7 +7,7 @@ import { z } from "zod";
 import {
   zGetTagResponseSchema,
   zUpdateTagRequestSchema,
-} from "@hoarder/shared/types/tags";
+} from "@karakeep/shared/types/tags";
 
 import { BearerAuth } from "./common";
 import { PaginatedBookmarksSchema, PaginationSchema } from "./pagination";

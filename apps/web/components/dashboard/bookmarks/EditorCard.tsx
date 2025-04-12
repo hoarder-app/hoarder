@@ -19,8 +19,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+import { useCreateBookmarkWithPostHook } from "@karakeep/shared-react/hooks/bookmarks";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import { useUploadAsset } from "../UploadDropzone";
 

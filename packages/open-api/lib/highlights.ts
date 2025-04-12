@@ -8,7 +8,7 @@ import {
   zHighlightSchema,
   zNewHighlightSchema,
   zUpdateHighlightSchema,
-} from "@hoarder/shared/types/highlights";
+} from "@karakeep/shared/types/highlights";
 
 import { BearerAuth } from "./common";
 import { PaginationSchema } from "./pagination";

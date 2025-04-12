@@ -1,18 +1,18 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@hoarder/open-api",
+  "name": "@karakeep/open-api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^7.2.0",
-    "@hoarder/shared": "workspace:^0.1.0",
+    "@karakeep/shared": "workspace:^0.1.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@hoarder/eslint-config": "workspace:^0.2.0",
-    "@hoarder/prettier-config": "workspace:^0.1.0",
-    "@hoarder/tsconfig": "workspace:^0.1.0",
+    "@karakeep/eslint-config": "workspace:^0.2.0",
+    "@karakeep/prettier-config": "workspace:^0.1.0",
+    "@karakeep/tsconfig": "workspace:^0.1.0",
     "tsx": "^4.7.1"
   },
   "scripts": {
@@ -25,8 +25,8 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@hoarder/eslint-config/base"
+      "@karakeep/eslint-config/base"
     ]
   },
-  "prettier": "@hoarder/prettier-config"
+  "prettier": "@karakeep/prettier-config"
 }

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-import { ZSortOrder } from "@hoarder/shared/types/bookmarks";
+import { ZSortOrder } from "@karakeep/shared/types/bookmarks";
 
 interface SortOrderState {
   sortOrder: ZSortOrder;

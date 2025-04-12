@@ -18,9 +18,9 @@ import { z } from "zod";
 import type {
   ZBookmark,
   ZBookmarkContent,
-} from "@hoarder/shared/types/bookmarks";
-import type { ZBookmarkTags } from "@hoarder/shared/types/tags";
-import { db as DONT_USE_db } from "@hoarder/db";
+} from "@karakeep/shared/types/bookmarks";
+import type { ZBookmarkTags } from "@karakeep/shared/types/tags";
+import { db as DONT_USE_db } from "@karakeep/db";
 import {
   assets,
   AssetTypes,
@@ -33,14 +33,14 @@ import {
   customPrompts,
   rssFeedImportsTable,
   tagsOnBookmarks,
-} from "@hoarder/db/schema";
+} from "@karakeep/db/schema";
 import {
   deleteAsset,
   SUPPORTED_BOOKMARK_ASSET_TYPES,
-} from "@hoarder/shared/assetdb";
-import serverConfig from "@hoarder/shared/config";
-import { InferenceClientFactory } from "@hoarder/shared/inference";
-import { buildSummaryPrompt } from "@hoarder/shared/prompts";
+} from "@karakeep/shared/assetdb";
+import serverConfig from "@karakeep/shared/config";
+import { InferenceClientFactory } from "@karakeep/shared/inference";
+import { buildSummaryPrompt } from "@karakeep/shared/prompts";
 import {
   AssetPreprocessingQueue,
   LinkCrawlerQueue,
@@ -48,9 +48,9 @@ import {
   triggerSearchDeletion,
   triggerSearchReindex,
   triggerWebhook,
-} from "@hoarder/shared/queues";
-import { getSearchIdxClient } from "@hoarder/shared/search";
-import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
+} from "@karakeep/shared/queues";
+import { getSearchIdxClient } from "@karakeep/shared/search";
+import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 import {
   BookmarkTypes,
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
@@ -62,7 +62,7 @@ import {
   zSearchBookmarksCursor,
   zSearchBookmarksRequestSchema,
   zUpdateBookmarksRequestSchema,
-} from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/types/bookmarks";
 
 import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";

@@ -34,13 +34,13 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
-import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
+import { useUpdateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
 import {
   BookmarkTypes,
   ZBookmark,
   ZUpdateBookmarksRequest,
   zUpdateBookmarksRequestSchema,
-} from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/types/bookmarks";
 
 import { BookmarkTagsEditor } from "./BookmarkTagsEditor";
 

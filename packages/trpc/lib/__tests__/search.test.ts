@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { getInMemoryDB } from "@hoarder/db/drizzle";
+import { getInMemoryDB } from "@karakeep/db/drizzle";
 import {
   bookmarkAssets,
   bookmarkLinks,
@@ -13,9 +13,9 @@ import {
   rssFeedsTable,
   tagsOnBookmarks,
   users,
-} from "@hoarder/db/schema";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
-import { Matcher } from "@hoarder/shared/types/search";
+} from "@karakeep/db/schema";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
+import { Matcher } from "@karakeep/shared/types/search";
 
 import { AuthedContext } from "../..";
 import { getBookmarkIdsFromMatcher } from "../search";

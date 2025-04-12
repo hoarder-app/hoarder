@@ -3,7 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
 
-import type { ZGetBookmarksRequest } from "@hoarder/shared/types/bookmarks";
+import type { ZGetBookmarksRequest } from "@karakeep/shared/types/bookmarks";
 
 import UpdatableBookmarksGrid from "./UpdatableBookmarksGrid";
 

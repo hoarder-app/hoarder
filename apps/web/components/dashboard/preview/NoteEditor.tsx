@@ -2,8 +2,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { useClientConfig } from "@/lib/clientConfig";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
-import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
+import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
+import { useUpdateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
 
 export function NoteEditor({ bookmark }: { bookmark: ZBookmark }) {
   const demoMode = !!useClientConfig().demoMode;

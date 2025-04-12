@@ -8,7 +8,7 @@ import {
   zBookmarkListSchema,
   zEditBookmarkListSchema,
   zNewBookmarkListSchema,
-} from "@hoarder/shared/types/lists";
+} from "@karakeep/shared/types/lists";
 
 import { BookmarkIdSchema } from "./bookmarks";
 import { BearerAuth } from "./common";

@@ -8,7 +8,7 @@ import { api } from "@/lib/trpc";
 import { useUploadAsset } from "@/lib/upload";
 import { z } from "zod";
 
-import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 type Mode =
   | { type: "idle" }

@@ -3,8 +3,8 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { useTranslation } from "@/lib/i18n/client";
 import { match } from "@/lib/utils";
 
-import { TextAndMatcher } from "@hoarder/shared/searchQueryParser";
-import { Matcher } from "@hoarder/shared/types/search";
+import { TextAndMatcher } from "@karakeep/shared/searchQueryParser";
+import { Matcher } from "@karakeep/shared/types/search";
 
 export default function QueryExplainerTooltip({
   parsedSearchQuery,

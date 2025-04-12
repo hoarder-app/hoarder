@@ -3,7 +3,7 @@ import DemoModeBanner from "@/components/DemoModeBanner";
 import { Separator } from "@/components/ui/separator";
 import ValidAccountCheck from "@/components/utils/ValidAccountCheck";
 
-import serverConfig from "@hoarder/shared/config";
+import serverConfig from "@karakeep/shared/config";
 
 export default function SidebarLayout({
   children,

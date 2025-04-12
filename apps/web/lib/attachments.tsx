@@ -1,6 +1,6 @@
 import { Archive, Camera, Image, Paperclip, Video } from "lucide-react";
 
-import { ZAssetType } from "@hoarder/shared/types/bookmarks";
+import { ZAssetType } from "@karakeep/shared/types/bookmarks";
 
 export const ASSET_TYPE_TO_ICON: Record<ZAssetType, React.ReactNode> = {
   screenshot: <Camera className="size-4" />,

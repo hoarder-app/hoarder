@@ -2,7 +2,7 @@ import {
   BookmarkTypes,
   ZBookmark,
   ZBookmarkedLink,
-} from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/types/bookmarks";
 
 import { getAssetUrl } from "./assetUtils";
 

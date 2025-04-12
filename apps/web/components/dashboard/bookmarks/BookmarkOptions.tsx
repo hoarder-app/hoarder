@@ -26,15 +26,15 @@ import {
 import type {
   ZBookmark,
   ZBookmarkedLink,
-} from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/types/bookmarks";
 import {
   useRecrawlBookmark,
   useUpdateBookmark,
-} from "@hoarder/shared-react/hooks//bookmarks";
-import { useRemoveBookmarkFromList } from "@hoarder/shared-react/hooks//lists";
-import { useBookmarkGridContext } from "@hoarder/shared-react/hooks/bookmark-grid-context";
-import { useBookmarkListContext } from "@hoarder/shared-react/hooks/bookmark-list-context";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared-react/hooks//bookmarks";
+import { useRemoveBookmarkFromList } from "@karakeep/shared-react/hooks//lists";
+import { useBookmarkGridContext } from "@karakeep/shared-react/hooks/bookmark-grid-context";
+import { useBookmarkListContext } from "@karakeep/shared-react/hooks/bookmark-list-context";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import { BookmarkedTextEditor } from "./BookmarkedTextEditor";
 import DeleteBookmarkConfirmationDialog from "./DeleteBookmarkConfirmationDialog";

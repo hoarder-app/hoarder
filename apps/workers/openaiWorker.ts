@@ -3,26 +3,26 @@ import { DequeuedJob, Runner } from "liteque";
 import { buildImpersonatingTRPCClient } from "trpc";
 import { z } from "zod";
 
-import type { InferenceClient } from "@hoarder/shared/inference";
-import type { ZOpenAIRequest } from "@hoarder/shared/queues";
-import { db } from "@hoarder/db";
+import type { InferenceClient } from "@karakeep/shared/inference";
+import type { ZOpenAIRequest } from "@karakeep/shared/queues";
+import { db } from "@karakeep/db";
 import {
   bookmarks,
   bookmarkTags,
   customPrompts,
   tagsOnBookmarks,
-} from "@hoarder/db/schema";
-import { readAsset } from "@hoarder/shared/assetdb";
-import serverConfig from "@hoarder/shared/config";
-import { InferenceClientFactory } from "@hoarder/shared/inference";
-import logger from "@hoarder/shared/logger";
-import { buildImagePrompt, buildTextPrompt } from "@hoarder/shared/prompts";
+} from "@karakeep/db/schema";
+import { readAsset } from "@karakeep/shared/assetdb";
+import serverConfig from "@karakeep/shared/config";
+import { InferenceClientFactory } from "@karakeep/shared/inference";
+import logger from "@karakeep/shared/logger";
+import { buildImagePrompt, buildTextPrompt } from "@karakeep/shared/prompts";
 import {
   OpenAIQueue,
   triggerSearchReindex,
   triggerWebhook,
   zOpenAIRequestSchema,
-} from "@hoarder/shared/queues";
+} from "@karakeep/shared/queues";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),

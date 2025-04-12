@@ -2,14 +2,14 @@ import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
 import { and, eq, inArray, notExists } from "drizzle-orm";
 import { z } from "zod";
 
-import type { ZAttachedByEnum } from "@hoarder/shared/types/tags";
-import { SqliteError } from "@hoarder/db";
-import { bookmarkTags, tagsOnBookmarks } from "@hoarder/db/schema";
-import { triggerSearchReindex } from "@hoarder/shared/queues";
+import type { ZAttachedByEnum } from "@karakeep/shared/types/tags";
+import { SqliteError } from "@karakeep/db";
+import { bookmarkTags, tagsOnBookmarks } from "@karakeep/db/schema";
+import { triggerSearchReindex } from "@karakeep/shared/queues";
 import {
   zGetTagResponseSchema,
   zUpdateTagRequestSchema,
-} from "@hoarder/shared/types/tags";
+} from "@karakeep/shared/types/tags";
 
 import type { Context } from "../index";
 import { authedProcedure, router } from "../index";

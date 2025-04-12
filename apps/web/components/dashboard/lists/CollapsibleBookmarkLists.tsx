@@ -7,9 +7,9 @@ import { keepPreviousData } from "@tanstack/react-query";
 import {
   augmentBookmarkListsWithInitialData,
   useBookmarkLists,
-} from "@hoarder/shared-react/hooks/lists";
-import { ZBookmarkList } from "@hoarder/shared/types/lists";
-import { ZBookmarkListTreeNode } from "@hoarder/shared/utils/listUtils";
+} from "@karakeep/shared-react/hooks/lists";
+import { ZBookmarkList } from "@karakeep/shared/types/lists";
+import { ZBookmarkListTreeNode } from "@karakeep/shared/utils/listUtils";
 
 type RenderFunc = (params: {
   item: ZBookmarkListTreeNode;

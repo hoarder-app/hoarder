@@ -2,8 +2,8 @@ import { TRPCError } from "@trpc/server";
 import { count, eq, sum } from "drizzle-orm";
 import { z } from "zod";
 
-import { assets, bookmarkLinks, bookmarks, users } from "@hoarder/db/schema";
-import serverConfig from "@hoarder/shared/config";
+import { assets, bookmarkLinks, bookmarks, users } from "@karakeep/db/schema";
+import serverConfig from "@karakeep/shared/config";
 import {
   AssetPreprocessingQueue,
   FeedQueue,
@@ -15,12 +15,12 @@ import {
   triggerSearchReindex,
   VideoWorkerQueue,
   WebhookQueue,
-} from "@hoarder/shared/queues";
+} from "@karakeep/shared/queues";
 import {
   changeRoleSchema,
   resetPasswordSchema,
   zAdminCreateUserSchema,
-} from "@hoarder/shared/types/admin";
+} from "@karakeep/shared/types/admin";
 
 import { hashPassword } from "../auth";
 import { adminProcedure, router } from "../index";

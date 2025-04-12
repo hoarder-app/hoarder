@@ -1,7 +1,7 @@
 import { api } from "@/lib/trpc";
 
-import { isBookmarkStillLoading } from "@hoarder/shared-react/utils/bookmarkUtils";
-import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { isBookmarkStillLoading } from "@karakeep/shared-react/utils/bookmarkUtils";
+import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 import AssetCard from "./AssetCard";
 import LinkCard from "./LinkCard";

@@ -18,14 +18,14 @@ import {
   useAttachBookmarkAsset,
   useDetachBookmarkAsset,
   useReplaceBookmarkAsset,
-} from "@hoarder/shared-react/hooks/assets";
-import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
-import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared-react/hooks/assets";
+import { getAssetUrl } from "@karakeep/shared-react/utils/assetUtils";
+import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 import {
   humanFriendlyNameForAssertType,
   isAllowedToAttachAsset,
   isAllowedToDetachAsset,
-} from "@hoarder/trpc/lib/attachments";
+} from "@karakeep/trpc/lib/attachments";
 
 export default function AttachmentBox({ bookmark }: { bookmark: ZBookmark }) {
   const { t } = useTranslation();

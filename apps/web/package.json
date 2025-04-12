@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@hoarder/web",
+  "name": "@karakeep/web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -20,11 +20,11 @@
     "@auth/drizzle-adapter": "^1.4.2",
     "@emoji-mart/data": "^1.1.2",
     "@emoji-mart/react": "^1.1.1",
-    "@hoarder/db": "workspace:^0.1.0",
-    "@hoarder/shared": "workspace:^0.1.0",
-    "@hoarder/shared-react": "workspace:^0.1.0",
-    "@hoarder/trpc": "workspace:^0.1.0",
     "@hookform/resolvers": "^3.3.4",
+    "@karakeep/db": "workspace:^0.1.0",
+    "@karakeep/shared": "workspace:^0.1.0",
+    "@karakeep/shared-react": "workspace:^0.1.0",
+    "@karakeep/trpc": "workspace:^0.1.0",
     "@lexical/list": "^0.20.2",
     "@lexical/markdown": "^0.20.2",
     "@lexical/plain-text": "^0.20.2",
@@ -94,10 +94,10 @@
     "zustand": "^4.5.1"
   },
   "devDependencies": {
-    "@hoarder/eslint-config": "workspace:^0.2.0",
-    "@hoarder/prettier-config": "workspace:^0.1.0",
-    "@hoarder/tailwind-config": "workspace:^0.1.0",
-    "@hoarder/tsconfig": "workspace:^0.1.0",
+    "@karakeep/eslint-config": "workspace:^0.2.0",
+    "@karakeep/prettier-config": "workspace:^0.1.0",
+    "@karakeep/tailwind-config": "workspace:^0.1.0",
+    "@karakeep/tsconfig": "workspace:^0.1.0",
     "@types/csv-parse": "^1.2.5",
     "@types/emoji-mart": "^3.0.14",
     "@types/react": "^18.2.55",
@@ -113,10 +113,10 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@hoarder/eslint-config/base",
-      "@hoarder/eslint-config/nextjs",
-      "@hoarder/eslint-config/react"
+      "@karakeep/eslint-config/base",
+      "@karakeep/eslint-config/nextjs",
+      "@karakeep/eslint-config/react"
     ]
   },
-  "prettier": "@hoarder/prettier-config"
+  "prettier": "@karakeep/prettier-config"
 }

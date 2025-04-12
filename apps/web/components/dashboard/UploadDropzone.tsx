@@ -6,8 +6,8 @@ import { cn } from "@/lib/utils";
 import { TRPCClientError } from "@trpc/client";
 import DropZone from "react-dropzone";
 
-import { useCreateBookmarkWithPostHook } from "@hoarder/shared-react/hooks/bookmarks";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+import { useCreateBookmarkWithPostHook } from "@karakeep/shared-react/hooks/bookmarks";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import LoadingSpinner from "../ui/spinner";
 import { toast } from "../ui/use-toast";

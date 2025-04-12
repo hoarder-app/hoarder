@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@hoarder/e2e_tests",
+  "name": "@karakeep/e2e_tests",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,22 +14,22 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@hoarder/trpc": "workspace:^0.1.0",
-    "@hoarderapp/sdk": "workspace:*",
+    "@karakeep/sdk": "workspace:*",
+    "@karakeep/trpc": "workspace:^0.1.0",
     "superjson": "^2.2.1"
   },
   "devDependencies": {
-    "@hoarder/eslint-config": "workspace:^0.2.0",
-    "@hoarder/prettier-config": "workspace:^0.1.0",
-    "@hoarder/tsconfig": "workspace:^0.1.0",
+    "@karakeep/eslint-config": "workspace:^0.2.0",
+    "@karakeep/prettier-config": "workspace:^0.1.0",
+    "@karakeep/tsconfig": "workspace:^0.1.0",
     "vite-tsconfig-paths": "^4.3.1",
     "vitest": "^1.6.1"
   },
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@hoarder/eslint-config/base"
+      "@karakeep/eslint-config/base"
     ]
   },
-  "prettier": "@hoarder/prettier-config"
+  "prettier": "@karakeep/prettier-config"
 }

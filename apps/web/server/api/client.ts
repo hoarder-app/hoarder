@@ -2,10 +2,10 @@ import { headers } from "next/headers";
 import { getServerAuthSession } from "@/server/auth";
 import requestIp from "request-ip";
 
-import { db } from "@hoarder/db";
-import { Context, createCallerFactory } from "@hoarder/trpc";
-import { authenticateApiKey } from "@hoarder/trpc/auth";
-import { appRouter } from "@hoarder/trpc/routers/_app";
+import { db } from "@karakeep/db";
+import { Context, createCallerFactory } from "@karakeep/trpc";
+import { authenticateApiKey } from "@karakeep/trpc/auth";
+import { appRouter } from "@karakeep/trpc/routers/_app";
 
 export async function createContextFromRequest(req: Request) {
   // TODO: This is a hack until we offer a proper REST API instead of the trpc based one.

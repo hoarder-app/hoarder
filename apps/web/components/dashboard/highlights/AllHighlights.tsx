@@ -15,7 +15,7 @@ import { useInView } from "react-intersection-observer";
 import {
   ZGetAllHighlightsResponse,
   ZHighlight,
-} from "@hoarder/shared/types/highlights";
+} from "@karakeep/shared/types/highlights";
 
 import HighlightCard from "./HighlightCard";
 

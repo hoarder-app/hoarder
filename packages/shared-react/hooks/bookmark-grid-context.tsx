@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-import type { ZGetBookmarksRequest } from "@hoarder/shared/types/bookmarks";
+import type { ZGetBookmarksRequest } from "@karakeep/shared/types/bookmarks";
 
 export const BookmarkGridContext = createContext<
   ZGetBookmarksRequest | undefined

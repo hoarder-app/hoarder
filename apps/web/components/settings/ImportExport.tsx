@@ -25,13 +25,13 @@ import { Download, Upload } from "lucide-react";
 import {
   useCreateBookmarkWithPostHook,
   useUpdateBookmarkTags,
-} from "@hoarder/shared-react/hooks/bookmarks";
+} from "@karakeep/shared-react/hooks/bookmarks";
 import {
   useAddBookmarkToList,
   useCreateBookmarkList,
-} from "@hoarder/shared-react/hooks/lists";
-import { limitConcurrency } from "@hoarder/shared/concurrency";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared-react/hooks/lists";
+import { limitConcurrency } from "@karakeep/shared/concurrency";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import { Card, CardContent } from "../ui/card";
 

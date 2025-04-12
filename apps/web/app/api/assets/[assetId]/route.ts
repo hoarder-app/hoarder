@@ -1,12 +1,12 @@
 import { createContextFromRequest } from "@/server/api/client";
 import { and, eq } from "drizzle-orm";
 
-import { assets } from "@hoarder/db/schema";
+import { assets } from "@karakeep/db/schema";
 import {
   createAssetReadStream,
   getAssetSize,
   readAssetMetadata,
-} from "@hoarder/shared/assetdb";
+} from "@karakeep/shared/assetdb";
 
 export const dynamic = "force-dynamic";
 export async function GET(

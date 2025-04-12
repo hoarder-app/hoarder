@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import { Link } from "expo-router";
 
-import { ZBookmarkTags } from "@hoarder/shared/types/tags";
+import { ZBookmarkTags } from "@karakeep/shared/types/tags";
 
 export default function TagPill({ tag }: { tag: ZBookmarkTags }) {
   return (

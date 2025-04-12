@@ -5,7 +5,7 @@ import {
   BookmarkTypes,
   ZNewBookmarkRequest,
   zNewBookmarkRequestSchema,
-} from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/types/bookmarks";
 
 import { NEW_BOOKMARK_REQUEST_KEY_NAME } from "./background/protocol";
 import Spinner from "./Spinner";

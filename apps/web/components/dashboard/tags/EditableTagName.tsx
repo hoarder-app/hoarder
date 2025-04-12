@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 
-import { useUpdateTag } from "@hoarder/shared-react/hooks/tags";
+import { useUpdateTag } from "@karakeep/shared-react/hooks/tags";
 
 import { EditableText } from "../EditableText";
 

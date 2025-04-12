@@ -2,8 +2,8 @@ import MarkdownEditor from "@/components/ui/markdown/markdown-editor";
 import { MarkdownReadonly } from "@/components/ui/markdown/markdown-readonly";
 import { toast } from "@/components/ui/use-toast";
 
-import type { ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
-import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
+import type { ZBookmarkTypeText } from "@karakeep/shared/types/bookmarks";
+import { useUpdateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
 
 export function BookmarkMarkdownComponent({
   children: bookmark,

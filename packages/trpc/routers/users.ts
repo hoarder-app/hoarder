@@ -3,21 +3,21 @@ import { and, count, eq } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
-import { SqliteError } from "@hoarder/db";
+import { SqliteError } from "@karakeep/db";
 import {
   bookmarkLists,
   bookmarks,
   bookmarkTags,
   highlights,
   users,
-} from "@hoarder/db/schema";
-import { deleteUserAssets } from "@hoarder/shared/assetdb";
-import serverConfig from "@hoarder/shared/config";
+} from "@karakeep/db/schema";
+import { deleteUserAssets } from "@karakeep/shared/assetdb";
+import serverConfig from "@karakeep/shared/config";
 import {
   zSignUpSchema,
   zUserStatsResponseSchema,
   zWhoAmIResponseSchema,
-} from "@hoarder/shared/types/users";
+} from "@karakeep/shared/types/users";
 
 import { hashPassword, validatePassword } from "../auth";
 import {

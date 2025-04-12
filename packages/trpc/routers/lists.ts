@@ -5,7 +5,7 @@ import {
   zBookmarkListSchema,
   zEditBookmarkListSchemaWithValidation,
   zNewBookmarkListSchema,
-} from "@hoarder/shared/types/lists";
+} from "@karakeep/shared/types/lists";
 
 import type { AuthedContext } from "../index";
 import { authedProcedure, router } from "../index";

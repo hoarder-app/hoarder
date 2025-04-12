@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-import { ZBookmarkList } from "@hoarder/shared/types/lists";
+import { ZBookmarkList } from "@karakeep/shared/types/lists";
 
 export const BookmarkListContext = createContext<ZBookmarkList | undefined>(
   undefined,

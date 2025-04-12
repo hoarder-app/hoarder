@@ -16,17 +16,17 @@ import { api } from "@/lib/trpc";
 import { MenuView } from "@react-native-menu/menu";
 import { Ellipsis, Star } from "lucide-react-native";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
 import {
   useDeleteBookmark,
   useUpdateBookmark,
-} from "@hoarder/shared-react/hooks/bookmarks";
+} from "@karakeep/shared-react/hooks/bookmarks";
 import {
   getBookmarkLinkImageUrl,
   isBookmarkStillLoading,
   isBookmarkStillTagging,
-} from "@hoarder/shared-react/utils/bookmarkUtils";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared-react/utils/bookmarkUtils";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import { Divider } from "../ui/Divider";
 import { Skeleton } from "../ui/Skeleton";

@@ -1,5 +1,6 @@
-import { createHoarderClient } from "@hoarderapp/sdk";
 import { beforeEach, describe, expect, inject, it } from "vitest";
+
+import { createHoarderClient } from "@karakeep/sdk";
 
 import { createTestUser } from "../../utils/api";
 

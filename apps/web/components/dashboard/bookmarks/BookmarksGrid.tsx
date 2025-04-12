@@ -13,7 +13,7 @@ import { useInView } from "react-intersection-observer";
 import Masonry from "react-masonry-css";
 import resolveConfig from "tailwindcss/resolveConfig";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 import BookmarkCard from "./BookmarkCard";
 import EditorCard from "./EditorCard";

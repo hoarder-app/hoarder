@@ -14,9 +14,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@hoarder/shared": "workspace:^0.1.0",
-    "@hoarder/shared-react": "workspace:^0.1.0",
-    "@hoarder/trpc": "workspace:^0.1.0",
+    "@karakeep/shared": "workspace:^0.1.0",
+    "@karakeep/shared-react": "workspace:^0.1.0",
+    "@karakeep/trpc": "workspace:^0.1.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-popover": "^1.0.7",
     "@radix-ui/react-select": "^2.0.0",
@@ -41,10 +41,10 @@
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "2.0.0-beta.28",
-    "@hoarder/eslint-config": "workspace:^0.2.0",
-    "@hoarder/prettier-config": "workspace:^0.1.0",
-    "@hoarder/tailwind-config": "workspace:^0.1.0",
-    "@hoarder/tsconfig": "workspace:^0.1.0",
+    "@karakeep/eslint-config": "workspace:^0.2.0",
+    "@karakeep/prettier-config": "workspace:^0.1.0",
+    "@karakeep/tailwind-config": "workspace:^0.1.0",
+    "@karakeep/tsconfig": "workspace:^0.1.0",
     "@types/chrome": "^0.0.260",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
@@ -61,9 +61,9 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@hoarder/eslint-config/base",
-      "@hoarder/eslint-config/react"
+      "@karakeep/eslint-config/base",
+      "@karakeep/eslint-config/react"
     ]
   },
-  "prettier": "@hoarder/prettier-config"
+  "prettier": "@karakeep/prettier-config"
 }

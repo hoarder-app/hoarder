@@ -7,7 +7,7 @@ import { CollapsibleTriggerChevron } from "@/components/ui/collapsible";
 import { useTranslation } from "@/lib/i18n/client";
 import { MoreHorizontal, Plus } from "lucide-react";
 
-import type { ZBookmarkList } from "@hoarder/shared/types/lists";
+import type { ZBookmarkList } from "@karakeep/shared/types/lists";
 
 import { CollapsibleBookmarkLists } from "./CollapsibleBookmarkLists";
 import { ListOptions } from "./ListOptions";

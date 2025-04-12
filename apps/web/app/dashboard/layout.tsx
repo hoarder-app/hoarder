@@ -16,7 +16,7 @@ import {
   Tag,
 } from "lucide-react";
 
-import serverConfig from "@hoarder/shared/config";
+import serverConfig from "@karakeep/shared/config";
 
 export default async function Dashboard({
   children,

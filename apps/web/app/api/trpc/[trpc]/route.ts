@@ -1,7 +1,7 @@
 import { createContextFromRequest } from "@/server/api/client";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 
-import { appRouter } from "@hoarder/trpc/routers/_app";
+import { appRouter } from "@karakeep/trpc/routers/_app";
 
 const handler = (req: Request) =>
   fetchRequestHandler({

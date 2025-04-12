@@ -1,4 +1,4 @@
-import { TRPCProvider } from "@hoarder/shared-react/providers/trpc-provider";
+import { TRPCProvider } from "@karakeep/shared-react/providers/trpc-provider";
 
 import usePluginSettings from "./settings";
 import { ThemeProvider } from "./ThemeProvider";

@@ -11,8 +11,8 @@ import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 import { MoreHorizontal, Plus } from "lucide-react";
 
-import type { ZBookmarkList } from "@hoarder/shared/types/lists";
-import { ZBookmarkListTreeNode } from "@hoarder/shared/utils/listUtils";
+import type { ZBookmarkList } from "@karakeep/shared/types/lists";
+import { ZBookmarkListTreeNode } from "@karakeep/shared/utils/listUtils";
 
 import { CollapsibleBookmarkLists } from "../lists/CollapsibleBookmarkLists";
 import { EditListModal } from "../lists/EditListModal";

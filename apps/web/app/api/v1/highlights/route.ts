@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { buildHandler } from "@/app/api/v1/utils/handler";
 
-import { zNewHighlightSchema } from "@hoarder/shared/types/highlights";
+import { zNewHighlightSchema } from "@karakeep/shared/types/highlights";
 
 import { adaptPagination, zPagination } from "../utils/pagination";
 

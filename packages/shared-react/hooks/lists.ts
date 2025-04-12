@@ -1,8 +1,8 @@
-import { ZBookmarkList } from "@hoarder/shared/types/lists";
+import { ZBookmarkList } from "@karakeep/shared/types/lists";
 import {
   listsToTree,
   ZBookmarkListRoot,
-} from "@hoarder/shared/utils/listUtils";
+} from "@karakeep/shared/utils/listUtils";
 
 import { api } from "../trpc";
 

@@ -10,7 +10,7 @@ import {
   zManipulatedTagSchema,
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
-} from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/types/bookmarks";
 
 import { BearerAuth } from "./common";
 import { HighlightSchema } from "./highlights";

@@ -2,4 +2,4 @@
 
 ## Reporting a Vulnerability
 
-Please report security issues to `security@hoarder.app`
+Please report security issues to `security@karakeep.app`

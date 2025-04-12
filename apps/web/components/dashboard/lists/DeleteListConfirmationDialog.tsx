@@ -3,8 +3,8 @@ import { ActionButton } from "@/components/ui/action-button";
 import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { toast } from "@/components/ui/use-toast";
 
-import type { ZBookmarkList } from "@hoarder/shared/types/lists";
-import { useDeleteBookmarkList } from "@hoarder/shared-react/hooks/lists";
+import type { ZBookmarkList } from "@karakeep/shared/types/lists";
+import { useDeleteBookmarkList } from "@karakeep/shared-react/hooks/lists";
 
 export default function DeleteListConfirmationDialog({
   list,

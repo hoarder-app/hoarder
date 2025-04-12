@@ -26,9 +26,9 @@ import {
   useDeleteBookmark,
   useRecrawlBookmark,
   useUpdateBookmark,
-} from "@hoarder/shared-react/hooks/bookmarks";
-import { limitConcurrency } from "@hoarder/shared/concurrency";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared-react/hooks/bookmarks";
+import { limitConcurrency } from "@karakeep/shared/concurrency";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import BulkManageListsModal from "./bookmarks/BulkManageListsModal";
 import BulkTagModal from "./bookmarks/BulkTagModal";

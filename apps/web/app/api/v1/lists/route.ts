@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 
-import { zNewBookmarkListSchema } from "@hoarder/shared/types/lists";
+import { zNewBookmarkListSchema } from "@karakeep/shared/types/lists";
 
 import { buildHandler } from "../utils/handler";
 

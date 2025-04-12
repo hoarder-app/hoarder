@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import {
   useBookmarkLists,
   useRemoveBookmarkFromList,
-} from "@hoarder/shared-react/hooks/lists";
+} from "@karakeep/shared-react/hooks/lists";
 
 import { api } from "../utils/trpc";
 import { Button } from "./ui/button";

@@ -5,22 +5,22 @@ import PDFParser from "pdf2json";
 import { fromBuffer } from "pdf2pic";
 import { createWorker } from "tesseract.js";
 
-import type { AssetPreprocessingRequest } from "@hoarder/shared/queues";
-import { db } from "@hoarder/db";
+import type { AssetPreprocessingRequest } from "@karakeep/shared/queues";
+import { db } from "@karakeep/db";
 import {
   assets,
   AssetTypes,
   bookmarkAssets,
   bookmarks,
-} from "@hoarder/db/schema";
-import { newAssetId, readAsset, saveAsset } from "@hoarder/shared/assetdb";
-import serverConfig from "@hoarder/shared/config";
-import logger from "@hoarder/shared/logger";
+} from "@karakeep/db/schema";
+import { newAssetId, readAsset, saveAsset } from "@karakeep/shared/assetdb";
+import serverConfig from "@karakeep/shared/config";
+import logger from "@karakeep/shared/logger";
 import {
   AssetPreprocessingQueue,
   OpenAIQueue,
   triggerSearchReindex,
-} from "@hoarder/shared/queues";
+} from "@karakeep/shared/queues";
 
 export class AssetPreprocessingWorker {
   static build() {

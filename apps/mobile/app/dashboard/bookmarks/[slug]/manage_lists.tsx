@@ -9,8 +9,8 @@ import {
   useAddBookmarkToList,
   useBookmarkLists,
   useRemoveBookmarkFromList,
-} from "@hoarder/shared-react/hooks/lists";
-import { api } from "@hoarder/shared-react/trpc";
+} from "@karakeep/shared-react/hooks/lists";
+import { api } from "@karakeep/shared-react/trpc";
 
 const ListPickerPage = () => {
   const { slug: bookmarkId } = useLocalSearchParams();

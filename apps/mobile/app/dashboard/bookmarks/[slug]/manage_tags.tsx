@@ -10,8 +10,8 @@ import { Check, Plus } from "lucide-react-native";
 import {
   useAutoRefreshingBookmarkQuery,
   useUpdateBookmarkTags,
-} from "@hoarder/shared-react/hooks/bookmarks";
-import { api } from "@hoarder/shared-react/trpc";
+} from "@karakeep/shared-react/hooks/bookmarks";
+import { api } from "@karakeep/shared-react/trpc";
 
 const NEW_TAG_ID = "new-tag";
 

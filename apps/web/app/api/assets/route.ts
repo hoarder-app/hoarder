@@ -6,15 +6,15 @@ import { pipeline } from "stream/promises";
 import { createContextFromRequest } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
-import type { ZUploadResponse } from "@hoarder/shared/types/uploads";
-import { assets, AssetTypes } from "@hoarder/db/schema";
+import type { ZUploadResponse } from "@karakeep/shared/types/uploads";
+import { assets, AssetTypes } from "@karakeep/db/schema";
 import {
   newAssetId,
   saveAssetFromFile,
   SUPPORTED_UPLOAD_ASSET_TYPES,
-} from "@hoarder/shared/assetdb";
-import serverConfig from "@hoarder/shared/config";
-import { AuthedContext } from "@hoarder/trpc";
+} from "@karakeep/shared/assetdb";
+import serverConfig from "@karakeep/shared/config";
+import { AuthedContext } from "@karakeep/trpc";
 
 const MAX_UPLOAD_SIZE_BYTES = serverConfig.maxAssetSizeMb * 1024 * 1024;
 
@@ -57,7 +57,7 @@ export async function uploadFromPostData(
   let tempFilePath: string | undefined;
 
   try {
-    tempFilePath = path.join(os.tmpdir(), `hoarder-upload-${Date.now()}`);
+    tempFilePath = path.join(os.tmpdir(), `karakeep-upload-${Date.now()}`);
     await pipeline(
       webStreamToNode(data.stream()),
       fs.createWriteStream(tempFilePath),

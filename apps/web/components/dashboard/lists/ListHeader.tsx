@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n/client";
 import { MoreHorizontal, SearchIcon } from "lucide-react";
 
-import { api } from "@hoarder/shared-react/trpc";
-import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
-import { ZBookmarkList } from "@hoarder/shared/types/lists";
+import { api } from "@karakeep/shared-react/trpc";
+import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
+import { ZBookmarkList } from "@karakeep/shared/types/lists";
 
 import QueryExplainerTooltip from "../search/QueryExplainerTooltip";
 import { ListOptions } from "./ListOptions";

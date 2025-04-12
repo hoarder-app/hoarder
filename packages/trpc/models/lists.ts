@@ -3,14 +3,14 @@ import { and, count, eq } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
-import { SqliteError } from "@hoarder/db";
-import { bookmarkLists, bookmarksInLists } from "@hoarder/db/schema";
-import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
+import { SqliteError } from "@karakeep/db";
+import { bookmarkLists, bookmarksInLists } from "@karakeep/db/schema";
+import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 import {
   ZBookmarkList,
   zEditBookmarkListSchemaWithValidation,
   zNewBookmarkListSchema,
-} from "@hoarder/shared/types/lists";
+} from "@karakeep/shared/types/lists";
 
 import { AuthedContext } from "..";
 import { getBookmarkIdsFromMatcher } from "../lib/search";

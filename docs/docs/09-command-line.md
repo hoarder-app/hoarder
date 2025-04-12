@@ -1,6 +1,6 @@
 # Command Line Tool (CLI)
 
-Hoarder comes with a simple CLI for those users who want to do more advanced manipulation.
+Karakeep comes with a simple CLI for those users who want to do more advanced manipulation.
 
 ## Features
 
@@ -10,30 +10,30 @@ Hoarder comes with a simple CLI for those users who want to do more advanced man
 ## Installation (NPM)
 
 ```
-npm install -g @hoarderapp/cli
+npm install -g @karakeep/cli
 ```
 
 
 ## Installation (Docker)
 
 ```
-docker run --rm ghcr.io/hoarder-app/hoarder-cli:release --help
+docker run --rm ghcr.io/karakeep-app/karakeep-cli:release --help
 ```
 
 ## Usage
 
 ```
-hoarder
+karakeep
 ```
 
 ```
-Usage: hoarder [options] [command]
+Usage: karakeep [options] [command]
 
-A CLI interface to interact with the hoarder api
+A CLI interface to interact with the karakeep api
 
 Options:
-  --api-key <key>       the API key to interact with the API (env: HOARDER_API_KEY)
-  --server-addr <addr>  the address of the server to connect to (env: HOARDER_SERVER_ADDR)
+  --api-key <key>       the API key to interact with the API (env: KARAKEEP_API_KEY)
+  --server-addr <addr>  the address of the server to connect to (env: KARAKEEP_SERVER_ADDR)
   -V, --version         output the version number
   -h, --help            display help for command
 
@@ -48,11 +48,11 @@ Commands:
 And some of the subcommands:
 
 ```
-hoarder bookmarks
+karakeep bookmarks
 ```
 
 ```
-Usage: hoarder bookmarks [options] [command]
+Usage: karakeep bookmarks [options] [command]
 
 Manipulating bookmarks
 
@@ -70,11 +70,11 @@ Commands:
 ```
 
 ```
-hoarder lists
+karakeep lists
 ```
 
 ```
-Usage: hoarder lists [options] [command]
+Usage: karakeep lists [options] [command]
 
 Manipulating lists
 
@@ -91,16 +91,16 @@ Commands:
 
 ## Optaining an API Key
 
-To use the CLI, you'll need to get an API key from your hoarder settings. You can validate that it's working by running:
+To use the CLI, you'll need to get an API key from your karakeep settings. You can validate that it's working by running:
 
 ```
-hoarder --api-key <key> --server-addr <addr> whoami
+karakeep --api-key <key> --server-addr <addr> whoami
 ```
 
 For example:
 
 ```
-hoarder --api-key mysupersecretkey --server-addr https://try.hoarder.app whoami
+karakeep --api-key mysupersecretkey --server-addr https://try.karakeep.app whoami
 {
   id: 'j29gnbzxxd01q74j2lu88tnb',
   name: 'Test User',

@@ -50,7 +50,7 @@ const nextConfig = withPWA({
     ];
   },
 
-  // transpilePackages: ["@hoarder/shared", "@hoarder/db", "@hoarder/trpc"],
+  // transpilePackages: ["@karakeep/shared", "@karakeep/db", "@karakeep/trpc"],
 
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: true },

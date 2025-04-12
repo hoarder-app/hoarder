@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/select";
 import { useTranslation } from "@/lib/i18n/client";
 
-import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
-import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { getAssetUrl } from "@karakeep/shared-react/utils/assetUtils";
+import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 // 20 MB
 const BIG_FILE_SIZE = 20 * 1024 * 1024;

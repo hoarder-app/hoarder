@@ -17,8 +17,8 @@ import { useTranslation } from "react-i18next";
 import {
   useDeleteBookmark,
   useRecrawlBookmark,
-} from "@hoarder/shared-react/hooks/bookmarks";
-import { api } from "@hoarder/shared-react/trpc";
+} from "@karakeep/shared-react/hooks/bookmarks";
+import { api } from "@karakeep/shared-react/trpc";
 
 export default function BrokenLinksPage() {
   const { t } = useTranslation();

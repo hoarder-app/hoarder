@@ -8,7 +8,7 @@ import {
 import { useTranslation } from "@/lib/i18n/client";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 
-import { ZBookmarkList } from "@hoarder/shared/types/lists";
+import { ZBookmarkList } from "@karakeep/shared/types/lists";
 
 import { EditListModal } from "../lists/EditListModal";
 import DeleteListConfirmationDialog from "./DeleteListConfirmationDialog";
