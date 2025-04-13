@@ -277,6 +277,7 @@ export interface paths {
             datePublished?: string | null;
             dateModified?: string | null;
             text?: string | null;
+            assetContent?: string | null;
           };
         };
       };
@@ -1748,6 +1749,7 @@ export interface components {
             fileName?: string | null;
             sourceUrl?: string | null;
             size?: number | null;
+            content?: string | null;
           }
         | {
             /** @enum {string} */

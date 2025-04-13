@@ -225,6 +225,7 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
       fileName: asset.fileName,
       sourceUrl: asset.sourceUrl,
       size: assets.find((a) => a.id == asset.assetId)?.size,
+      content: asset.content,
     };
   }
 
@@ -480,6 +481,24 @@ export const bookmarksAppRouter = router({
               code: "BAD_REQUEST",
               message:
                 "Attempting to set link attributes for non-text type bookmark",
+            });
+          }
+          somethingChanged = true;
+        }
+
+        if (input.assetContent !== undefined) {
+          const result = await tx
+            .update(bookmarkAssets)
+            .set({
+              content: input.assetContent,
+            })
+            .where(and(eq(bookmarkAssets.id, input.bookmarkId)));
+
+          if (result.changes == 0) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message:
+                "Attempting to set asset content for non-asset type bookmark",
             });
           }
           somethingChanged = true;
@@ -861,6 +880,7 @@ export const bookmarksAppRouter = router({
                 fileName: row.bookmarkAssets.fileName,
                 sourceUrl: row.bookmarkAssets.sourceUrl ?? null,
                 size: null, // This will get filled in the asset loop
+                content: row.bookmarkAssets.content ?? null,
               };
             } else {
               content = {

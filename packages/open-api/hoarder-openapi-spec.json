@@ -243,6 +243,10 @@
                   "size": {
                     "type": "number",
                     "nullable": true
+                  },
+                  "content": {
+                    "type": "string",
+                    "nullable": true
                   }
                 },
                 "required": [
@@ -956,6 +960,10 @@
                     "nullable": true
                   },
                   "text": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "assetContent": {
                     "type": "string",
                     "nullable": true
                   }

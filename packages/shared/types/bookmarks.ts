@@ -67,6 +67,7 @@ export const zBookmarkedAssetSchema = z.object({
   fileName: z.string().nullish(),
   sourceUrl: z.string().nullish(),
   size: z.number().nullish(),
+  content: z.string().nullish(),
 });
 export type ZBookmarkedAsset = z.infer<typeof zBookmarkedAssetSchema>;
 
@@ -206,6 +207,9 @@ export const zUpdateBookmarksRequestSchema = z.object({
 
   // Text specific fields (optional)
   text: z.string().nullish(),
+
+  // Asset specific fields (optional)
+  assetContent: z.string().nullish(),
 });
 export type ZUpdateBookmarksRequest = z.infer<
   typeof zUpdateBookmarksRequestSchema

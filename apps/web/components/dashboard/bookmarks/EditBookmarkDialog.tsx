@@ -35,6 +35,7 @@ import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import { useUpdateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
+import { getBookmarkTitle } from "@karakeep/shared-react/utils/bookmarkUtils";
 import {
   BookmarkTypes,
   ZBookmark,
@@ -61,11 +62,7 @@ export function EditBookmarkDialog({
   const bookmarkToDefault = (bookmark: ZBookmark) => ({
     bookmarkId: bookmark.id,
     summary: bookmark.summary,
-    title: bookmark.title
-      ? bookmark.title
-      : bookmark.content.type === BookmarkTypes.LINK
-        ? bookmark.content.title
-        : undefined,
+    title: getBookmarkTitle(bookmark),
     createdAt: bookmark.createdAt ?? new Date(),
     // Link specific defaults (only if bookmark is a link)
     url:
@@ -87,6 +84,11 @@ export function EditBookmarkDialog({
     datePublished:
       bookmark.content.type === BookmarkTypes.LINK
         ? bookmark.content.datePublished
+        : undefined,
+    // Asset specific fields
+    assetContent:
+      bookmark.content.type === BookmarkTypes.ASSET
+        ? bookmark.content.content
         : undefined,
   });
 
@@ -130,6 +132,7 @@ export function EditBookmarkDialog({
   }, [bookmark, form, open]);
 
   const isLink = bookmark.content.type === BookmarkTypes.LINK;
+  const isAsset = bookmark.content.type === BookmarkTypes.ASSET;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -205,6 +208,28 @@ export function EditBookmarkDialog({
                     <FormControl>
                       <Textarea
                         placeholder="Bookmark summary"
+                        {...field}
+                        value={field.value ?? ""}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {isAsset && (
+              <FormField
+                control={form.control}
+                name="assetContent"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      {t("bookmark_editor.extracted_content")}
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Extracted Content"
                         {...field}
                         value={field.value ?? ""}
                       />

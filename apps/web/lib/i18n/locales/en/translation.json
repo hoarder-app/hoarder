@@ -374,6 +374,7 @@
     "publisher": "Publisher",
     "date_published": "Date Published",
     "pick_a_date": "Pick a date",
-    "save_changes": "Save changes"
+    "save_changes": "Save changes",
+    "extracted_content": "Extracted Content"
   }
 }
