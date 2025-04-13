@@ -10,6 +10,7 @@ import {
 } from "@karakeep/shared/types/tags";
 
 import { BearerAuth } from "./common";
+import { ErrorSchema } from "./errors";
 import { PaginatedBookmarksSchema, PaginationSchema } from "./pagination";
 
 export const registry = new OpenAPIRegistry();
@@ -69,6 +70,14 @@ registry.registerPath({
         },
       },
     },
+    404: {
+      description: "Tag not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -85,6 +94,14 @@ registry.registerPath({
   responses: {
     204: {
       description: "No content - the bookmark was deleted",
+    },
+    404: {
+      description: "Tag not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
     },
   },
 });
@@ -117,6 +134,14 @@ registry.registerPath({
         },
       },
     },
+    404: {
+      description: "Tag not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -137,6 +162,14 @@ registry.registerPath({
       content: {
         "application/json": {
           schema: PaginatedBookmarksSchema,
+        },
+      },
+    },
+    404: {
+      description: "Tag not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
         },
       },
     },

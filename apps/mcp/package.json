@@ -1,33 +1,29 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@karakeep/sdk",
-  "version": "0.23.2",
-  "description": "Typescript SDK for Karakeep",
+  "name": "@karakeep/mcp",
+  "version": "0.23.3",
+  "description": "MCP server for Karakeep",
   "license": "GNU Affero General Public License version 3",
+  "type": "module",
   "keywords": [
     "hoarder",
-    "sdk"
+    "karakeep",
+    "mcp"
   ],
-  "main": "./src/index.ts",
-  "type": "module",
-  "publishConfig": {
-    "main": "./dist/index.js",
-    "exports": "./dist/index.js",
-    "module": "./dist/index.mjs",
-    "types": "./dist/index.d.ts"
+  "bin": {
+    "karakeep-mcp": "dist/index.js"
   },
   "devDependencies": {
     "@karakeep/eslint-config": "workspace:^0.2.0",
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "@tsconfig/node22": "^22.0.0",
-    "openapi-typescript": "^7.6.1",
+    "shx": "^0.4.0",
     "tsx": "^4.7.1",
-    "vite": "^5.1.0",
-    "vite-plugin-dts": "^4.4.0"
+    "vite": "^5.1.0"
   },
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && shx chmod +x dist/index.js",
     "run": "tsx src/index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -38,19 +34,18 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/karakeep-app/karakeep.git",
-    "directory": "packages/sdk"
+    "directory": "apps/mcp"
   },
   "eslintConfig": {
     "root": true,
     "extends": [
       "@karakeep/eslint-config/base"
-    ],
-    "ignorePatterns": [
-      "src/hoarder-api.d.ts"
     ]
   },
   "prettier": "@karakeep/prettier-config",
   "dependencies": {
-    "openapi-fetch": "^0.13.3"
+    "@karakeep/sdk": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.9.0",
+    "zod": "^3.24.2"
   }
 }

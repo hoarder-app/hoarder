@@ -12,7 +12,7 @@
     "openai": "^4.86.1",
     "typescript-parsec": "^0.3.4",
     "winston": "^3.11.0",
-    "zod": "^3.22.4",
+    "zod": "^3.24.2",
     "zod-to-json-schema": "^3.24.3"
   },
   "devDependencies": {

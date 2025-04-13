@@ -41,6 +41,7 @@ describe("Bookmarks API", () => {
 
     if (error) {
       console.error("Error creating bookmark:", error);
+      throw error;
     }
 
     expect(createResponse.status).toBe(201);

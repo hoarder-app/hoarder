@@ -11,6 +11,7 @@ import {
 } from "@karakeep/shared/types/highlights";
 
 import { BearerAuth } from "./common";
+import { ErrorSchema } from "./errors";
 import { PaginationSchema } from "./pagination";
 
 export const registry = new OpenAPIRegistry();
@@ -84,6 +85,22 @@ registry.registerPath({
         },
       },
     },
+    400: {
+      description: "Bad highlight request",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
+    404: {
+      description: "Bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 registry.registerPath({
@@ -102,6 +119,14 @@ registry.registerPath({
       content: {
         "application/json": {
           schema: HighlightSchema,
+        },
+      },
+    },
+    404: {
+      description: "Highlight not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
         },
       },
     },
@@ -124,6 +149,14 @@ registry.registerPath({
       content: {
         "application/json": {
           schema: HighlightSchema,
+        },
+      },
+    },
+    404: {
+      description: "Highlight not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
         },
       },
     },
@@ -155,6 +188,14 @@ registry.registerPath({
       content: {
         "application/json": {
           schema: HighlightSchema,
+        },
+      },
+    },
+    404: {
+      description: "Highlight not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
         },
       },
     },
