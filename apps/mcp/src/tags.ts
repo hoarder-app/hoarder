@@ -1,7 +1,8 @@
 import { CallToolResult } from "@modelcontextprotocol/sdk/types";
 import { z } from "zod";
 
-import { karakeepClient, mcpServer, toMcpToolError } from "./shared";
+import { karakeepClient, mcpServer } from "./shared";
+import { toMcpToolError } from "./utils";
 
 mcpServer.tool(
   "attach-tag-to-bookmark",

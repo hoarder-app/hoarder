@@ -1,7 +1,8 @@
 import { CallToolResult } from "@modelcontextprotocol/sdk/types";
 import { z } from "zod";
 
-import { karakeepClient, mcpServer, toMcpToolError } from "./shared";
+import { karakeepClient, mcpServer } from "./shared";
+import { compactBookmark, toMcpToolError } from "./utils";
 
 mcpServer.tool(
   "get-lists",
@@ -40,7 +41,7 @@ mcpServer.tool(
     return {
       content: res.data.bookmarks.map((bookmark) => ({
         type: "text",
-        text: JSON.stringify(bookmark),
+        text: JSON.stringify(compactBookmark(bookmark)),
       })),
     };
   },
