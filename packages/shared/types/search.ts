@@ -48,6 +48,15 @@ const zDateBeforeMatcher = z.object({
   inverse: z.boolean(),
 });
 
+const zAgeMatcher = z.object({
+  type: z.literal("age"),
+  relativeDate: z.object({
+    direction: z.enum(["newer", "older"]),
+    amount: z.number(),
+    unit: z.enum(["day", "week", "month", "year"]),
+  }),
+});
+
 const zIsTaggedMatcher = z.object({
   type: z.literal("tagged"),
   tagged: z.boolean(),
@@ -76,6 +85,7 @@ const zNonRecursiveMatcher = z.union([
   zFavouritedMatcher,
   zDateAfterMatcher,
   zDateBeforeMatcher,
+  zAgeMatcher,
   zIsTaggedMatcher,
   zIsInListMatcher,
   zTypeMatcher,
@@ -97,6 +107,7 @@ export const zMatcherSchema: z.ZodType<Matcher> = z.lazy(() => {
     zFavouritedMatcher,
     zDateAfterMatcher,
     zDateBeforeMatcher,
+    zAgeMatcher,
     zIsTaggedMatcher,
     zIsInListMatcher,
     zTypeMatcher,
