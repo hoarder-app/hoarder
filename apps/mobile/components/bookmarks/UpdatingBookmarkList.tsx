@@ -1,7 +1,7 @@
 import { api } from "@/lib/trpc";
 
-import type { ZGetBookmarksRequest } from "@hoarder/shared/types/bookmarks";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+import type { ZGetBookmarksRequest } from "@karakeep/shared/types/bookmarks";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import FullPageError from "../FullPageError";
 import FullPageSpinner from "../ui/FullPageSpinner";

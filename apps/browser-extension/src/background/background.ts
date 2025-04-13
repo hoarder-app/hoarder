@@ -1,7 +1,7 @@
 import {
   BookmarkTypes,
   ZNewBookmarkRequest,
-} from "@hoarder/shared/types/bookmarks.ts";
+} from "@karakeep/shared/types/bookmarks.ts";
 
 import {
   getPluginSettings,

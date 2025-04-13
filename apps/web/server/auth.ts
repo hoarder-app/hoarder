@@ -10,15 +10,15 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { Provider } from "next-auth/providers/index";
 import requestIp from "request-ip";
 
-import { db } from "@hoarder/db";
+import { db } from "@karakeep/db";
 import {
   accounts,
   sessions,
   users,
   verificationTokens,
-} from "@hoarder/db/schema";
-import serverConfig from "@hoarder/shared/config";
-import { logAuthenticationError, validatePassword } from "@hoarder/trpc/auth";
+} from "@karakeep/db/schema";
+import serverConfig from "@karakeep/shared/config";
+import { logAuthenticationError, validatePassword } from "@karakeep/trpc/auth";
 
 type UserRole = "admin" | "user";
 

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { useTranslation } from "@/lib/i18n/client";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 import { BookmarkTagsEditor } from "./BookmarkTagsEditor";
 

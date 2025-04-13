@@ -28,7 +28,7 @@ services:
       - --remote-debugging-port=9222
       - --hide-scrollbars
   meilisearch:
-    image: getmeili/meilisearch:v1.11.1
+    image: getmeili/meilisearch:v1.13.3
     volumes:
       - meilisearch:/meili_data
   workers:

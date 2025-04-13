@@ -23,9 +23,9 @@ import {
   rssFeedImportsTable,
   rssFeedsTable,
   tagsOnBookmarks,
-} from "@hoarder/db/schema";
-import { Matcher } from "@hoarder/shared/types/search";
-import { toAbsoluteDate } from "@hoarder/shared/utils/relativeDateUtils";
+} from "@karakeep/db/schema";
+import { Matcher } from "@karakeep/shared/types/search";
+import { toAbsoluteDate } from "@karakeep/shared/utils/relativeDateUtils";
 
 import { AuthedContext } from "..";
 

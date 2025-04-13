@@ -5,7 +5,7 @@ import { Check, ChevronsUpDown, Plus } from "lucide-react";
 import {
   useAutoRefreshingBookmarkQuery,
   useUpdateBookmarkTags,
-} from "@hoarder/shared-react/hooks/bookmarks";
+} from "@karakeep/shared-react/hooks/bookmarks";
 
 import { cn } from "../utils/css";
 import { api } from "../utils/trpc";

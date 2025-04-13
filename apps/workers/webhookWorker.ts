@@ -2,15 +2,15 @@ import { eq } from "drizzle-orm";
 import { DequeuedJob, Runner } from "liteque";
 import fetch from "node-fetch";
 
-import { db } from "@hoarder/db";
-import { bookmarks } from "@hoarder/db/schema";
-import serverConfig from "@hoarder/shared/config";
-import logger from "@hoarder/shared/logger";
+import { db } from "@karakeep/db";
+import { bookmarks } from "@karakeep/db/schema";
+import serverConfig from "@karakeep/shared/config";
+import logger from "@karakeep/shared/logger";
 import {
   WebhookQueue,
   ZWebhookRequest,
   zWebhookRequestSchema,
-} from "@hoarder/shared/queues";
+} from "@karakeep/shared/queues";
 
 export class WebhookWorker {
   static build() {

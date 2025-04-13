@@ -2,8 +2,8 @@ import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { z } from "zod";
 
-import { apiKeys } from "@hoarder/db/schema";
-import serverConfig from "@hoarder/shared/config";
+import { apiKeys } from "@karakeep/db/schema";
+import serverConfig from "@karakeep/shared/config";
 
 import {
   authenticateApiKey,

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 
-import { db, HoarderDBTransaction } from "@hoarder/db";
-import { assets, AssetTypes, bookmarks } from "@hoarder/db/schema";
+import { db, HoarderDBTransaction } from "@karakeep/db";
+import { assets, AssetTypes, bookmarks } from "@karakeep/db/schema";
 
 type DBAssetType = typeof assets.$inferInsert;
 

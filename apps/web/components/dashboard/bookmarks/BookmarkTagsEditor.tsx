@@ -1,7 +1,7 @@
 import { toast } from "@/components/ui/use-toast";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
-import { useUpdateBookmarkTags } from "@hoarder/shared-react/hooks/bookmarks";
+import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
+import { useUpdateBookmarkTags } from "@karakeep/shared-react/hooks/bookmarks";
 
 import { TagsEditor } from "./TagsEditor";
 

@@ -2,7 +2,7 @@ import { toExportFormat, zExportSchema } from "@/lib/exportBookmarks";
 import { api, createContextFromRequest } from "@/server/api/client";
 import { z } from "zod";
 
-import { MAX_NUM_BOOKMARKS_PER_PAGE } from "@hoarder/shared/types/bookmarks";
+import { MAX_NUM_BOOKMARKS_PER_PAGE } from "@karakeep/shared/types/bookmarks";
 
 export const dynamic = "force-dynamic";
 export async function GET(request: Request) {

@@ -3,8 +3,8 @@ import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { Trash2 } from "lucide-react";
 
-import { useDeleteHighlight } from "@hoarder/shared-react/hooks/highlights";
-import { ZHighlight } from "@hoarder/shared/types/highlights";
+import { useDeleteHighlight } from "@karakeep/shared-react/hooks/highlights";
+import { ZHighlight } from "@karakeep/shared/types/highlights";
 
 import { HIGHLIGHT_COLOR_MAP } from "../preview/highlights";
 

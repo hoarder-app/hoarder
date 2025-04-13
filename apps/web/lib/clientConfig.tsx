@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 
-import type { ClientConfig } from "@hoarder/shared/config";
+import type { ClientConfig } from "@karakeep/shared/config";
 
 export const ClientConfigCtx = createContext<ClientConfig>({
   demoMode: undefined,

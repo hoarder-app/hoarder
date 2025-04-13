@@ -1,10 +1,10 @@
 import { randomBytes } from "crypto";
 import * as bcrypt from "bcryptjs";
 
-import { db } from "@hoarder/db";
-import { apiKeys } from "@hoarder/db/schema";
-import serverConfig from "@hoarder/shared/config";
-import { authFailureLogger } from "@hoarder/shared/logger";
+import { db } from "@karakeep/db";
+import { apiKeys } from "@karakeep/db/schema";
+import serverConfig from "@karakeep/shared/config";
+import { authFailureLogger } from "@karakeep/shared/logger";
 
 // API Keys
 

@@ -1,10 +1,10 @@
 import { createContextFromRequest } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
-import serverConfig from "@hoarder/shared/config";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
-import { createCallerFactory } from "@hoarder/trpc";
-import { appRouter } from "@hoarder/trpc/routers/_app";
+import serverConfig from "@karakeep/shared/config";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
+import { createCallerFactory } from "@karakeep/trpc";
+import { appRouter } from "@karakeep/trpc/routers/_app";
 
 import { uploadFromPostData } from "../../../assets/route";
 

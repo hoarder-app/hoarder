@@ -3,7 +3,7 @@ import { ActionButton, ActionButtonProps } from "@/components/ui/action-button";
 import { toast } from "@/components/ui/use-toast";
 import { api } from "@/lib/trpc";
 
-import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
+import { useUpdateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
 
 interface ArchiveBookmarkButtonProps
   extends Omit<ActionButtonProps, "loading" | "disabled"> {

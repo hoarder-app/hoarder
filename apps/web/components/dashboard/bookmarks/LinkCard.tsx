@@ -3,13 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import type { ZBookmarkTypeLink } from "@hoarder/shared/types/bookmarks";
+import type { ZBookmarkTypeLink } from "@karakeep/shared/types/bookmarks";
 import {
   getBookmarkLinkImageUrl,
   getBookmarkTitle,
   getSourceUrl,
   isBookmarkStillCrawling,
-} from "@hoarder/shared-react/utils/bookmarkUtils";
+} from "@karakeep/shared-react/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 import FooterLinkURL from "./FooterLinkURL";

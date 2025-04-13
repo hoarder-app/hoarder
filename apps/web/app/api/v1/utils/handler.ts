@@ -6,7 +6,7 @@ import {
 import { TRPCError } from "@trpc/server";
 import { z, ZodError } from "zod";
 
-import { Context } from "@hoarder/trpc";
+import { Context } from "@karakeep/trpc";
 
 function trpcCodeToHttpCode(code: TRPCError["code"]) {
   switch (code) {

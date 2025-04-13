@@ -2,9 +2,9 @@ import Image from "next/image";
 import { BookmarkMarkdownComponent } from "@/components/dashboard/bookmarks/BookmarkMarkdownComponent";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
-import type { ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
-import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
-import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
+import type { ZBookmarkTypeText } from "@karakeep/shared/types/bookmarks";
+import { getAssetUrl } from "@karakeep/shared-react/utils/assetUtils";
+import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 export function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
   if (bookmark.content.type != BookmarkTypes.TEXT) {

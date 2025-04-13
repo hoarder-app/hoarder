@@ -1,4 +1,4 @@
-import logger from "@hoarder/shared/logger";
+import logger from "@karakeep/shared/logger";
 
 export let isShuttingDown = false;
 

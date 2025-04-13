@@ -1,22 +1,22 @@
-# Hoarder SDK
+# Karakeep SDK
 
-This package contains the official typescript SDK for the hoarder API.
+This package contains the official typescript SDK for the karakeep API.
 
 ## Installation
 
 ```
-npm install @hoarderapp/sdk
+npm install @karakeep/sdk
 ```
 
 ## Usage
 
 ```typescript
-import { createHoarderClient } from "@hoarderapp/sdk";
+import { createKarakeepClient } from "@karakeep/sdk";
 
 // Create a client
 const apiKey = "my-super-secret-key";
-const addr = `https://hoarder.mydomain.com`;
-const client = createHoarderClient({
+const addr = `https://karakeep.mydomain.com`;
+const client = createKarakeepClient({
   baseUrl: `${addr}/api/v1/`,
   headers: {
     "Content-Type": "application/json",
@@ -56,9 +56,9 @@ console.log(searchResponse.status, searchResults, searchError);
 
 ## Docs
 
-API docs can be found [here](https://docs.hoarder.app/api).
+API docs can be found [here](https://docs.karakeep.app/api).
 
 ## Versioning
 
-- This package follows the minor version of the hoarder server. So new APIs introduced in Hoarder version `0.21.0` will be available in this package starting from version `0.21.0`.
-- Hoarder strives to maintain backward compatibility in its APIs, so older versions of this package should continue working with newer hoarder server versions.
+- This package follows the minor version of the karakeep server. So new APIs introduced in Karakeep version `0.21.0` will be available in this package starting from version `0.21.0`.
+- Karakeep strives to maintain backward compatibility in its APIs, so older versions of this package should continue working with newer karakeep server versions.

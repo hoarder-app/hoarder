@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "@karakeep/mcp",
+  "version": "0.23.4",
+  "description": "MCP server for Karakeep",
+  "license": "GNU Affero General Public License version 3",
+  "type": "module",
+  "keywords": [
+    "hoarder",
+    "karakeep",
+    "mcp"
+  ],
+  "bin": {
+    "karakeep-mcp": "dist/index.js"
+  },
+  "devDependencies": {
+    "@karakeep/eslint-config": "workspace:^0.2.0",
+    "@karakeep/prettier-config": "workspace:^0.1.0",
+    "@karakeep/tsconfig": "workspace:^0.1.0",
+    "@tsconfig/node22": "^22.0.0",
+    "@types/turndown": "^5.0.5",
+    "shx": "^0.4.0",
+    "tsx": "^4.7.1",
+    "vite": "^5.1.0"
+  },
+  "scripts": {
+    "build": "vite build && shx chmod +x dist/index.js",
+    "run": "tsx src/index.ts",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --ignore-path ../../.prettierignore",
+    "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
+    "typecheck": "tsc --noEmit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/karakeep-app/karakeep.git",
+    "directory": "apps/mcp"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@karakeep/eslint-config/base"
+    ]
+  },
+  "prettier": "@karakeep/prettier-config",
+  "dependencies": {
+    "@karakeep/sdk": "workspace:*",
+    "@modelcontextprotocol/sdk": "^1.9.0",
+    "turndown": "^7.2.0",
+    "zod": "^3.24.2"
+  }
+}

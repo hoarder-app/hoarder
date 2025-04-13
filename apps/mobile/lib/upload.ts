@@ -1,11 +1,11 @@
 import ReactNativeBlobUtil from "react-native-blob-util";
 import { useMutation } from "@tanstack/react-query";
 
-import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 import {
   zUploadErrorSchema,
   zUploadResponseSchema,
-} from "@hoarder/shared/types/uploads";
+} from "@karakeep/shared/types/uploads";
 
 import type { Settings } from "./settings";
 import { api } from "./trpc";

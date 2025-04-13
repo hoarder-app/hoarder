@@ -36,7 +36,7 @@ import {
   ZFeed,
   zNewFeedSchema,
   zUpdateFeedSchema,
-} from "@hoarder/shared/types/feeds";
+} from "@karakeep/shared/types/feeds";
 
 import ActionConfirmingDialog from "../ui/action-confirming-dialog";
 import { Button, buttonVariants } from "../ui/button";

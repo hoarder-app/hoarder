@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ArrowUpRightFromSquare, Trash } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { useDeleteBookmark } from "@hoarder/shared-react/hooks/bookmarks";
+import { useDeleteBookmark } from "@karakeep/shared-react/hooks/bookmarks";
 
 import BookmarkLists from "./components/BookmarkLists";
 import { ListsSelector } from "./components/ListsSelector";

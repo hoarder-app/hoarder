@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { buildHandler } from "@/app/api/v1/utils/handler";
 
-import { zUpdateHighlightSchema } from "@hoarder/shared/types/highlights";
+import { zUpdateHighlightSchema } from "@karakeep/shared/types/highlights";
 
 export const dynamic = "force-dynamic";
 

@@ -98,6 +98,18 @@ export interface paths {
             "application/json": components["schemas"]["Bookmark"];
           };
         };
+        /** @description Bad request */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
       };
     };
     delete?: never;
@@ -180,6 +192,18 @@ export interface paths {
             "application/json": components["schemas"]["Bookmark"];
           };
         };
+        /** @description Bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
       };
     };
     put?: never;
@@ -205,6 +229,18 @@ export interface paths {
             [name: string]: unknown;
           };
           content?: never;
+        };
+        /** @description Bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
         };
       };
     };
@@ -241,6 +277,7 @@ export interface paths {
             datePublished?: string | null;
             dateModified?: string | null;
             text?: string | null;
+            assetContent?: string | null;
           };
         };
       };
@@ -262,6 +299,18 @@ export interface paths {
               taggingStatus: "success" | "failure" | "pending" | null;
               note?: string | null;
               summary?: string | null;
+            };
+          };
+        };
+        /** @description Bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
             };
           };
         };
@@ -310,6 +359,18 @@ export interface paths {
               taggingStatus: "success" | "failure" | "pending" | null;
               note?: string | null;
               summary?: string | null;
+            };
+          };
+        };
+        /** @description Bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
             };
           };
         };
@@ -366,6 +427,18 @@ export interface paths {
             };
           };
         };
+        /** @description Bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
       };
     };
     /**
@@ -401,6 +474,18 @@ export interface paths {
           content: {
             "application/json": {
               detached: components["schemas"]["TagId"][];
+            };
+          };
+        };
+        /** @description Bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
             };
           };
         };
@@ -441,6 +526,18 @@ export interface paths {
           content: {
             "application/json": {
               highlights: components["schemas"]["Highlight"][];
+            };
+          };
+        };
+        /** @description Bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
             };
           };
         };
@@ -516,6 +613,18 @@ export interface paths {
             };
           };
         };
+        /** @description Bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
       };
     };
     delete?: never;
@@ -562,6 +671,18 @@ export interface paths {
           };
           content?: never;
         };
+        /** @description Bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
       };
     };
     post?: never;
@@ -587,6 +708,18 @@ export interface paths {
             [name: string]: unknown;
           };
           content?: never;
+        };
+        /** @description Bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
         };
       };
     };
@@ -645,6 +778,7 @@ export interface paths {
         content: {
           "application/json": {
             name: string;
+            description?: string;
             icon: string;
             /**
              * @default manual
@@ -664,6 +798,18 @@ export interface paths {
           };
           content: {
             "application/json": components["schemas"]["List"];
+          };
+        };
+        /** @description Bad request */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
           };
         };
       };
@@ -705,6 +851,18 @@ export interface paths {
             "application/json": components["schemas"]["List"];
           };
         };
+        /** @description List not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
       };
     };
     put?: never;
@@ -731,6 +889,18 @@ export interface paths {
           };
           content?: never;
         };
+        /** @description List not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
       };
     };
     options?: never;
@@ -753,6 +923,7 @@ export interface paths {
         content: {
           "application/json": {
             name?: string;
+            description?: string | null;
             icon?: string;
             parentId?: string | null;
             query?: string;
@@ -767,6 +938,18 @@ export interface paths {
           };
           content: {
             "application/json": components["schemas"]["List"];
+          };
+        };
+        /** @description List not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
           };
         };
       };
@@ -805,6 +988,18 @@ export interface paths {
           };
           content: {
             "application/json": components["schemas"]["PaginatedBookmarks"];
+          };
+        };
+        /** @description List not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
           };
         };
       };
@@ -848,6 +1043,30 @@ export interface paths {
           };
           content?: never;
         };
+        /** @description Bookmark already in list */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
+        /** @description List or bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
       };
     };
     post?: never;
@@ -873,6 +1092,30 @@ export interface paths {
             [name: string]: unknown;
           };
           content?: never;
+        };
+        /** @description Bookmark already not in list */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
+        /** @description List or bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
         };
       };
     };
@@ -953,6 +1196,18 @@ export interface paths {
             "application/json": components["schemas"]["Tag"];
           };
         };
+        /** @description Tag not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
       };
     };
     put?: never;
@@ -978,6 +1233,18 @@ export interface paths {
             [name: string]: unknown;
           };
           content?: never;
+        };
+        /** @description Tag not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
         };
       };
     };
@@ -1012,6 +1279,18 @@ export interface paths {
           };
           content: {
             "application/json": components["schemas"]["Tag"];
+          };
+        };
+        /** @description Tag not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
           };
         };
       };
@@ -1050,6 +1329,18 @@ export interface paths {
           };
           content: {
             "application/json": components["schemas"]["PaginatedBookmarks"];
+          };
+        };
+        /** @description Tag not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
           };
         };
       };
@@ -1135,6 +1426,30 @@ export interface paths {
             "application/json": components["schemas"]["Highlight"];
           };
         };
+        /** @description Bad highlight request */
+        400: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
+        /** @description Bookmark not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
       };
     };
     delete?: never;
@@ -1174,6 +1489,18 @@ export interface paths {
             "application/json": components["schemas"]["Highlight"];
           };
         };
+        /** @description Highlight not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
+          };
+        };
       };
     };
     put?: never;
@@ -1200,6 +1527,18 @@ export interface paths {
           };
           content: {
             "application/json": components["schemas"]["Highlight"];
+          };
+        };
+        /** @description Highlight not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
           };
         };
       };
@@ -1236,6 +1575,18 @@ export interface paths {
           };
           content: {
             "application/json": components["schemas"]["Highlight"];
+          };
+        };
+        /** @description Highlight not found */
+        404: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              code: string;
+              message: string;
+            };
           };
         };
       };
@@ -1398,6 +1749,7 @@ export interface components {
             fileName?: string | null;
             sourceUrl?: string | null;
             size?: number | null;
+            content?: string | null;
           }
         | {
             /** @enum {string} */
@@ -1440,6 +1792,7 @@ export interface components {
     List: {
       id: string;
       name: string;
+      description?: string | null;
       icon: string;
       parentId: string | null;
       /**

@@ -8,10 +8,11 @@ import {
   zBookmarkListSchema,
   zEditBookmarkListSchema,
   zNewBookmarkListSchema,
-} from "@hoarder/shared/types/lists";
+} from "@karakeep/shared/types/lists";
 
 import { BookmarkIdSchema } from "./bookmarks";
 import { BearerAuth } from "./common";
+import { ErrorSchema } from "./errors";
 import { PaginatedBookmarksSchema, PaginationSchema } from "./pagination";
 
 export const registry = new OpenAPIRegistry();
@@ -78,6 +79,14 @@ registry.registerPath({
         },
       },
     },
+    400: {
+      description: "Bad request",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 registry.registerPath({
@@ -99,6 +108,14 @@ registry.registerPath({
         },
       },
     },
+    404: {
+      description: "List not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -115,6 +132,14 @@ registry.registerPath({
   responses: {
     204: {
       description: "No content - the bookmark was deleted",
+    },
+    404: {
+      description: "List not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
     },
   },
 });
@@ -147,6 +172,14 @@ registry.registerPath({
         },
       },
     },
+    404: {
+      description: "List not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -170,6 +203,14 @@ registry.registerPath({
         },
       },
     },
+    404: {
+      description: "List not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -187,6 +228,22 @@ registry.registerPath({
     204: {
       description: "No content - the bookmark was added",
     },
+    400: {
+      description: "Bookmark already in list",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
+    404: {
+      description: "List or bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -203,6 +260,22 @@ registry.registerPath({
   responses: {
     204: {
       description: "No content - the bookmark was added",
+    },
+    400: {
+      description: "Bookmark already not in list",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
+    404: {
+      description: "List or bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
     },
   },
 });

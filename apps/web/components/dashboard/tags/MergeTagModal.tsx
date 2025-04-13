@@ -23,7 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { useMergeTag } from "@hoarder/shared-react/hooks/tags";
+import { useMergeTag } from "@karakeep/shared-react/hooks/tags";
 
 import { TagSelector } from "./TagSelector";
 

@@ -5,12 +5,12 @@ import Parser from "rss-parser";
 import { buildImpersonatingTRPCClient } from "trpc";
 import { z } from "zod";
 
-import type { ZFeedRequestSchema } from "@hoarder/shared/queues";
-import { db } from "@hoarder/db";
-import { rssFeedImportsTable, rssFeedsTable } from "@hoarder/db/schema";
-import logger from "@hoarder/shared/logger";
-import { FeedQueue } from "@hoarder/shared/queues";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+import type { ZFeedRequestSchema } from "@karakeep/shared/queues";
+import { db } from "@karakeep/db";
+import { rssFeedImportsTable, rssFeedsTable } from "@karakeep/db/schema";
+import logger from "@karakeep/shared/logger";
+import { FeedQueue } from "@karakeep/shared/queues";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 export const FeedRefreshingWorker = cron.schedule(
   "0 * * * *",

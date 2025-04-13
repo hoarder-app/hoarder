@@ -1,4 +1,4 @@
-import web from "@hoarder/tailwind-config/web";
+import web from "@karakeep/tailwind-config/web";
 
 const config = {
   darkMode: "media",

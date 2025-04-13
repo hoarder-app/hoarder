@@ -46,12 +46,12 @@ import { z } from "zod";
 import {
   useCreateBookmarkList,
   useEditBookmarkList,
-} from "@hoarder/shared-react/hooks/lists";
-import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
+} from "@karakeep/shared-react/hooks/lists";
+import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 import {
   ZBookmarkList,
   zNewBookmarkListSchema,
-} from "@hoarder/shared/types/lists";
+} from "@karakeep/shared/types/lists";
 
 import QueryExplainerTooltip from "../search/QueryExplainerTooltip";
 import { BookmarkListSelector } from "./BookmarkListSelector";
@@ -82,6 +82,7 @@ export function EditListModal({
     resolver: zodResolver(zNewBookmarkListSchema),
     defaultValues: {
       name: list?.name ?? prefill?.name ?? "",
+      description: list?.description ?? prefill?.description ?? "",
       icon: list?.icon ?? prefill?.icon ?? "🚀",
       parentId: list?.parentId ?? prefill?.parentId,
       type: list?.type ?? prefill?.type ?? "manual",
@@ -96,6 +97,7 @@ export function EditListModal({
   useEffect(() => {
     form.reset({
       name: list?.name ?? prefill?.name ?? "",
+      description: list?.description ?? prefill?.description ?? "",
       icon: list?.icon ?? prefill?.icon ?? "🚀",
       parentId: list?.parentId ?? prefill?.parentId,
       type: list?.type ?? prefill?.type ?? "manual",
@@ -223,7 +225,7 @@ export function EditListModal({
                           <PopoverTrigger className="h-full rounded border border-input px-2 text-2xl">
                             {field.value}
                           </PopoverTrigger>
-                          <PopoverContent>
+                          <PopoverContent className="w-auto">
                             <Picker
                               data={data}
                               onEmojiSelect={(e: { native: string }) =>
@@ -259,6 +261,26 @@ export function EditListModal({
                 }}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => {
+                return (
+                  <FormItem className="grow pb-4">
+                    <FormLabel>{t("lists.description")}</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="text"
+                        className="w-full"
+                        placeholder="Description"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                );
+              }}
+            />
             <FormField
               control={form.control}
               name="parentId"

@@ -4,9 +4,9 @@ import { AssetPreprocessingWorker } from "assetPreprocessingWorker";
 import { FeedRefreshingWorker, FeedWorker } from "feedWorker";
 import { TidyAssetsWorker } from "tidyAssetsWorker";
 
-import serverConfig from "@hoarder/shared/config";
-import logger from "@hoarder/shared/logger";
-import { runQueueDBMigrations } from "@hoarder/shared/queues";
+import serverConfig from "@karakeep/shared/config";
+import logger from "@karakeep/shared/logger";
+import { runQueueDBMigrations } from "@karakeep/shared/queues";
 
 import { CrawlerWorker } from "./crawlerWorker";
 import { shutdownPromise } from "./exit";

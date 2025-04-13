@@ -30,15 +30,15 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
 import { getBookmarkDetails, updateAsset } from "workerUtils";
 
-import type { ZCrawlLinkRequest } from "@hoarder/shared/queues";
-import { db } from "@hoarder/db";
+import type { ZCrawlLinkRequest } from "@karakeep/shared/queues";
+import { db } from "@karakeep/db";
 import {
   assets,
   AssetTypes,
   bookmarkAssets,
   bookmarkLinks,
   bookmarks,
-} from "@hoarder/db/schema";
+} from "@karakeep/db/schema";
 import {
   ASSET_TYPES,
   getAssetSize,
@@ -49,9 +49,9 @@ import {
   saveAssetFromFile,
   silentDeleteAsset,
   SUPPORTED_UPLOAD_ASSET_TYPES,
-} from "@hoarder/shared/assetdb";
-import serverConfig from "@hoarder/shared/config";
-import logger from "@hoarder/shared/logger";
+} from "@karakeep/shared/assetdb";
+import serverConfig from "@karakeep/shared/config";
+import logger from "@karakeep/shared/logger";
 import {
   AssetPreprocessingQueue,
   LinkCrawlerQueue,
@@ -60,8 +60,8 @@ import {
   triggerVideoWorker,
   triggerWebhook,
   zCrawlLinkRequestSchema,
-} from "@hoarder/shared/queues";
-import { BookmarkTypes } from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/queues";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 const metascraperParser = metascraper([
   metascraperDate({

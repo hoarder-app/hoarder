@@ -1,7 +1,7 @@
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import superjson from "superjson";
 
-import type { AppRouter } from "@hoarder/trpc/routers/_app";
+import type { AppRouter } from "@karakeep/trpc/routers/_app";
 
 export function getTrpcClient(apiKey?: string) {
   return createTRPCClient<AppRouter>({

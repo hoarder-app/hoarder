@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select";
 import LoadingSpinner from "@/components/ui/spinner";
 
-import { useBookmarkLists } from "@hoarder/shared-react/hooks/lists";
+import { useBookmarkLists } from "@karakeep/shared-react/hooks/lists";
 
 export function BookmarkListSelector({
   value,

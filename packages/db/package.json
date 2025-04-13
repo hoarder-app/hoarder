@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@hoarder/db",
+  "name": "@karakeep/db",
   "version": "0.1.0",
   "private": true,
   "main": "index.ts",
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@auth/core": "^0.27.0",
-    "@hoarder/shared": "workspace:*",
+    "@karakeep/shared": "workspace:*",
     "@paralleldrive/cuid2": "^2.2.2",
     "better-sqlite3": "^11.3.0",
     "dotenv": "^16.4.1",
@@ -19,9 +19,9 @@
     "tsx": "^4.7.1"
   },
   "devDependencies": {
-    "@hoarder/eslint-config": "workspace:^0.2.0",
-    "@hoarder/prettier-config": "workspace:^0.1.0",
-    "@hoarder/tsconfig": "workspace:^0.1.0",
+    "@karakeep/eslint-config": "workspace:^0.2.0",
+    "@karakeep/prettier-config": "workspace:^0.1.0",
+    "@karakeep/tsconfig": "workspace:^0.1.0",
     "@tsconfig/node22": "^22.0.0",
     "@types/better-sqlite3": "^7.6.11",
     "drizzle-kit": "^0.30.01"
@@ -29,8 +29,8 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@hoarder/eslint-config/base"
+      "@karakeep/eslint-config/base"
     ]
   },
-  "prettier": "@hoarder/prettier-config"
+  "prettier": "@karakeep/prettier-config"
 }

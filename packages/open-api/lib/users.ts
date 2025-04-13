@@ -7,7 +7,7 @@ import { z } from "zod";
 import {
   zUserStatsResponseSchema,
   zWhoAmIResponseSchema,
-} from "@hoarder/shared/types/users";
+} from "@karakeep/shared/types/users";
 
 import { BearerAuth } from "./common";
 

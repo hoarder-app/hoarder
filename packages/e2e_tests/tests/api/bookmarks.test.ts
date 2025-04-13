@@ -1,5 +1,6 @@
-import { createHoarderClient } from "@hoarderapp/sdk";
 import { assert, beforeEach, describe, expect, inject, it } from "vitest";
+
+import { createHoarderClient } from "@karakeep/sdk";
 
 import { createTestUser } from "../../utils/api";
 
@@ -40,6 +41,7 @@ describe("Bookmarks API", () => {
 
     if (error) {
       console.error("Error creating bookmark:", error);
+      throw error;
     }
 
     expect(createResponse.status).toBe(201);

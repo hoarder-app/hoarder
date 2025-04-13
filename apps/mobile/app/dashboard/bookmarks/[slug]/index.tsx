@@ -26,8 +26,8 @@ import { ClipboardList, Globe, Info, Tag, Trash2 } from "lucide-react-native";
 import {
   useDeleteBookmark,
   useUpdateBookmark,
-} from "@hoarder/shared-react/hooks/bookmarks";
-import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared-react/hooks/bookmarks";
+import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();

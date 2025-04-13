@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import "@hoarder/tailwind-config/globals.css";
+import "@karakeep/tailwind-config/globals.css";
 
 import type { Viewport } from "next";
 import React from "react";
@@ -11,7 +11,7 @@ import { getUserLocalSettings } from "@/lib/userLocalSettings/userLocalSettings"
 import { getServerAuthSession } from "@/server/auth";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import { clientConfig } from "@hoarder/shared/config";
+import { clientConfig } from "@karakeep/shared/config";
 
 const inter = Inter({
   subsets: ["latin"],

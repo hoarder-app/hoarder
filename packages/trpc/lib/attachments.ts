@@ -1,7 +1,10 @@
 import { z } from "zod";
 
-import { AssetTypes } from "@hoarder/db/schema";
-import { ZAssetType, zAssetTypesSchema } from "@hoarder/shared/types/bookmarks";
+import { AssetTypes } from "@karakeep/db/schema";
+import {
+  ZAssetType,
+  zAssetTypesSchema,
+} from "@karakeep/shared/types/bookmarks";
 
 export function mapDBAssetTypeToUserType(assetType: AssetTypes): ZAssetType {
   const map: Record<AssetTypes, z.infer<typeof zAssetTypesSchema>> = {

@@ -47,15 +47,15 @@ body:
     attributes:
       label: Device Details
       description: |
-        If this is an issue that occurs when using the Hoarder interface, please provide details of the device/browser used which presents the reported issue.
+        If this is an issue that occurs when using the Karakeep interface, please provide details of the device/browser used which presents the reported issue.
       placeholder: (eg. Firefox 97 (64-bit) on Windows 11)
     validations:
       required: false
   - type: input
     id: bsversion
     attributes:
-      label: Exact Hoarder Version
-      description: This can be found in the bottom left of the page (eg Hoarder v0.18.0)
+      label: Exact Karakeep Version
+      description: This can be found in the bottom left of the page (e.g. Karakeep v0.18.0)
       placeholder: (eg. v0.18.0)
     validations:
       required: true
@@ -65,7 +65,7 @@ body:
     attributes:
       label: Have you checked the troubleshooting guide?
       description: |
-        We have a troubleshooting guide that you can find [here](https://docs.hoarder.app/next/troubleshooting). Please check it out as you might find a solution to your problem.
+        We have a troubleshooting guide that you can find [here](https://docs.karakeep.app/next/troubleshooting). Please check it out as you might find a solution to your problem.
       options:
         - label: I have checked the troubleshooting guide and I haven't found a solution to my problem
           required: true

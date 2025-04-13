@@ -32,7 +32,7 @@ import { TRPCClientError } from "@trpc/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { changeRoleSchema } from "@hoarder/shared/types/admin";
+import { changeRoleSchema } from "@karakeep/shared/types/admin";
 
 type ChangeRoleSchema = z.infer<typeof changeRoleSchema>;
 

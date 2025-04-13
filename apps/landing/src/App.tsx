@@ -1,7 +1,7 @@
 import Homepage from "@/src/Homepage";
 import Privacy from "@/src/Privacy";
 
-import "@hoarder/tailwind-config/globals.css";
+import "@karakeep/tailwind-config/globals.css";
 
 export default function App() {
   // Poor man router

@@ -9,7 +9,7 @@ import { Check, Trash2 } from "lucide-react";
 import {
   SUPPORTED_HIGHLIGHT_COLORS,
   ZHighlightColor,
-} from "@hoarder/shared/types/highlights";
+} from "@karakeep/shared/types/highlights";
 
 import { HIGHLIGHT_COLOR_MAP } from "./highlights";
 

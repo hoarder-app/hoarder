@@ -10,9 +10,10 @@ import {
   zManipulatedTagSchema,
   zNewBookmarkRequestSchema,
   zUpdateBookmarksRequestSchema,
-} from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/types/bookmarks";
 
 import { BearerAuth } from "./common";
+import { ErrorSchema } from "./errors";
 import { HighlightSchema } from "./highlights";
 import {
   BookmarkSchema,
@@ -125,6 +126,14 @@ registry.registerPath({
         },
       },
     },
+    400: {
+      description: "Bad request",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 registry.registerPath({
@@ -146,6 +155,14 @@ registry.registerPath({
         },
       },
     },
+    404: {
+      description: "Bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -162,6 +179,14 @@ registry.registerPath({
   responses: {
     204: {
       description: "No content - the bookmark was deleted",
+    },
+    404: {
+      description: "Bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
     },
   },
 });
@@ -194,6 +219,14 @@ registry.registerPath({
         },
       },
     },
+    404: {
+      description: "Bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -214,6 +247,14 @@ registry.registerPath({
       content: {
         "application/json": {
           schema: zBareBookmarkSchema,
+        },
+      },
+    },
+    404: {
+      description: "Bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
         },
       },
     },
@@ -247,6 +288,14 @@ registry.registerPath({
         },
       },
     },
+    404: {
+      description: "Bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -277,6 +326,14 @@ registry.registerPath({
         },
       },
     },
+    404: {
+      description: "Bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -296,6 +353,14 @@ registry.registerPath({
       content: {
         "application/json": {
           schema: z.object({ highlights: z.array(HighlightSchema) }),
+        },
+      },
+    },
+    404: {
+      description: "Bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
         },
       },
     },
@@ -329,6 +394,14 @@ registry.registerPath({
         },
       },
     },
+    404: {
+      description: "Bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -359,6 +432,14 @@ registry.registerPath({
     204: {
       description: "No content - asset was replaced successfully",
     },
+    404: {
+      description: "Bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
+    },
   },
 });
 
@@ -378,6 +459,14 @@ registry.registerPath({
   responses: {
     204: {
       description: "No content - asset was detached successfully",
+    },
+    404: {
+      description: "Bookmark not found",
+      content: {
+        "application/json": {
+          schema: ErrorSchema,
+        },
+      },
     },
   },
 });

@@ -9,7 +9,7 @@ import { getAPIClient } from "@/lib/trpc";
 import { Command } from "@commander-js/extra-typings";
 import { getBorderCharacters, table } from "table";
 
-import { listsToTree } from "@hoarder/shared/utils/listUtils";
+import { listsToTree } from "@karakeep/shared/utils/listUtils";
 
 export const listsCmd = new Command()
   .name("lists")

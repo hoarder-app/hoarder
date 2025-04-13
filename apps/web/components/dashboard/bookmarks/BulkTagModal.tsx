@@ -9,10 +9,10 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/use-toast";
 
-import { useUpdateBookmarkTags } from "@hoarder/shared-react/hooks/bookmarks";
-import { api } from "@hoarder/shared-react/trpc";
-import { limitConcurrency } from "@hoarder/shared/concurrency";
-import { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import { useUpdateBookmarkTags } from "@karakeep/shared-react/hooks/bookmarks";
+import { api } from "@karakeep/shared-react/trpc";
+import { limitConcurrency } from "@karakeep/shared/concurrency";
+import { ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 import { TagsEditor } from "./TagsEditor";
 

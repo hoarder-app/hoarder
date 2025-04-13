@@ -17,7 +17,7 @@ import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 
-import { zChangePasswordSchema } from "@hoarder/shared/types/users";
+import { zChangePasswordSchema } from "@karakeep/shared/types/users";
 
 export function ChangePassword() {
   const { t } = useTranslation();

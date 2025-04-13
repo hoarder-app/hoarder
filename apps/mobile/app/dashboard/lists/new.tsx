@@ -6,7 +6,7 @@ import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 
-import { useCreateBookmarkList } from "@hoarder/shared-react/hooks/lists";
+import { useCreateBookmarkList } from "@karakeep/shared-react/hooks/lists";
 
 const NewListPage = () => {
   const dismiss = () => {

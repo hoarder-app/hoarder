@@ -1,15 +1,15 @@
 import { eq } from "drizzle-orm";
 import { DequeuedJob, Runner } from "liteque";
 
-import { db } from "@hoarder/db";
-import { assets } from "@hoarder/db/schema";
-import { deleteAsset, getAllAssets } from "@hoarder/shared/assetdb";
-import logger from "@hoarder/shared/logger";
+import { db } from "@karakeep/db";
+import { assets } from "@karakeep/db/schema";
+import { deleteAsset, getAllAssets } from "@karakeep/shared/assetdb";
+import logger from "@karakeep/shared/logger";
 import {
   TidyAssetsQueue,
   ZTidyAssetsRequest,
   zTidyAssetsRequestSchema,
-} from "@hoarder/shared/queues";
+} from "@karakeep/shared/queues";
 
 export class TidyAssetsWorker {
   static build() {

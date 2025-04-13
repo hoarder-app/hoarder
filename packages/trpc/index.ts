@@ -2,8 +2,8 @@ import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
-import type { db } from "@hoarder/db";
-import serverConfig from "@hoarder/shared/config";
+import type { db } from "@karakeep/db";
+import serverConfig from "@karakeep/shared/config";
 
 interface User {
   id: string;

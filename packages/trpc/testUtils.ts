@@ -1,5 +1,5 @@
-import { getInMemoryDB } from "@hoarder/db/drizzle";
-import { users } from "@hoarder/db/schema";
+import { getInMemoryDB } from "@karakeep/db/drizzle";
+import { users } from "@karakeep/db/schema";
 
 import { createCallerFactory } from "./index";
 import { appRouter } from "./routers/_app";

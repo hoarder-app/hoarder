@@ -21,7 +21,7 @@ import { signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { zSignUpSchema } from "@hoarder/shared/types/users";
+import { zSignUpSchema } from "@karakeep/shared/types/users";
 
 const signInSchema = z.object({
   email: z.string().email(),

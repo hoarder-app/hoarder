@@ -4,22 +4,22 @@ import path from "path";
 import { execa } from "execa";
 import { DequeuedJob, Runner } from "liteque";
 
-import { db } from "@hoarder/db";
-import { AssetTypes } from "@hoarder/db/schema";
+import { db } from "@karakeep/db";
+import { AssetTypes } from "@karakeep/db/schema";
 import {
   ASSET_TYPES,
   getAssetSize,
   newAssetId,
   saveAssetFromFile,
   silentDeleteAsset,
-} from "@hoarder/shared/assetdb";
-import serverConfig from "@hoarder/shared/config";
-import logger from "@hoarder/shared/logger";
+} from "@karakeep/shared/assetdb";
+import serverConfig from "@karakeep/shared/config";
+import logger from "@karakeep/shared/logger";
 import {
   VideoWorkerQueue,
   ZVideoRequest,
   zvideoRequestSchema,
-} from "@hoarder/shared/queues";
+} from "@karakeep/shared/queues";
 
 import { withTimeout } from "./utils";
 import { getBookmarkDetails, updateAsset } from "./workerUtils";

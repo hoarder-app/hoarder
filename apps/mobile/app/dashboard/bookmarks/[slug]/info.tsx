@@ -21,9 +21,9 @@ import { ChevronRight } from "lucide-react-native";
 import {
   useAutoRefreshingBookmarkQuery,
   useUpdateBookmark,
-} from "@hoarder/shared-react/hooks/bookmarks";
-import { isBookmarkStillTagging } from "@hoarder/shared-react/utils/bookmarkUtils";
-import { BookmarkTypes, ZBookmark } from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared-react/hooks/bookmarks";
+import { isBookmarkStillTagging } from "@karakeep/shared-react/utils/bookmarkUtils";
+import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 function TagList({ bookmark }: { bookmark: ZBookmark }) {
   return (

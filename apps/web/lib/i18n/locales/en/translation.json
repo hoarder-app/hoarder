@@ -229,7 +229,8 @@
     "manual_list": "Manual List",
     "smart_list": "Smart List",
     "search_query": "Search Query",
-    "search_query_help": "Learn more about the search query language."
+    "search_query_help": "Learn more about the search query language.",
+    "description": "Description (Optional)"
   },
   "tags": {
     "all_tags": "All Tags",
@@ -383,6 +384,7 @@
     "publisher": "Publisher",
     "date_published": "Date Published",
     "pick_a_date": "Pick a date",
-    "save_changes": "Save changes"
+    "save_changes": "Save changes",
+    "extracted_content": "Extracted Content"
   }
 }

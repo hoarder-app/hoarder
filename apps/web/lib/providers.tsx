@@ -11,7 +11,7 @@ import { httpBatchLink, loggerLink } from "@trpc/client";
 import { SessionProvider } from "next-auth/react";
 import superjson from "superjson";
 
-import type { ClientConfig } from "@hoarder/shared/config";
+import type { ClientConfig } from "@karakeep/shared/config";
 
 import { ClientConfigCtx } from "./clientConfig";
 import CustomI18nextProvider from "./i18n/provider";

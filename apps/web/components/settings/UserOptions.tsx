@@ -4,7 +4,7 @@ import { useTranslation } from "@/lib/i18n/client";
 import { useInterfaceLang } from "@/lib/userLocalSettings/bookmarksLayout";
 import { updateInterfaceLang } from "@/lib/userLocalSettings/userLocalSettings";
 
-import { langNameMappings } from "@hoarder/shared/langs";
+import { langNameMappings } from "@karakeep/shared/langs";
 
 import { Label } from "../ui/label";
 import {

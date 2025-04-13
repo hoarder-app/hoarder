@@ -10,8 +10,8 @@ import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
 import { Pencil, Trash2 } from "lucide-react";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
-import { useUpdateBookmark } from "@hoarder/shared-react/hooks/bookmarks";
+import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
+import { useUpdateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
 
 import DeleteBookmarkConfirmationDialog from "../bookmarks/DeleteBookmarkConfirmationDialog";
 import { EditBookmarkDialog } from "../bookmarks/EditBookmarkDialog";

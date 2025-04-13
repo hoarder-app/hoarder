@@ -9,11 +9,11 @@ import {
 import { getAPIClient } from "@/lib/trpc";
 import { Command } from "@commander-js/extra-typings";
 
-import type { ZBookmark } from "@hoarder/shared/types/bookmarks";
+import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
 import {
   BookmarkTypes,
   MAX_NUM_BOOKMARKS_PER_PAGE,
-} from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/types/bookmarks";
 
 export const bookmarkCmd = new Command()
   .name("bookmarks")

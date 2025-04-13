@@ -20,12 +20,12 @@ import { api } from "@/lib/trpc";
 import { formatBytes } from "@/lib/utils";
 import { ExternalLink, Trash2 } from "lucide-react";
 
-import { useDetachBookmarkAsset } from "@hoarder/shared-react/hooks/assets";
-import { getAssetUrl } from "@hoarder/shared-react/utils/assetUtils";
+import { useDetachBookmarkAsset } from "@karakeep/shared-react/hooks/assets";
+import { getAssetUrl } from "@karakeep/shared-react/utils/assetUtils";
 import {
   humanFriendlyNameForAssertType,
   isAllowedToDetachAsset,
-} from "@hoarder/trpc/lib/attachments";
+} from "@karakeep/trpc/lib/attachments";
 
 export default function AssetsSettingsPage() {
   const { t } = useTranslation();

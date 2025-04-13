@@ -18,9 +18,9 @@ import { z } from "zod";
 import type {
   ZBookmark,
   ZBookmarkContent,
-} from "@hoarder/shared/types/bookmarks";
-import type { ZBookmarkTags } from "@hoarder/shared/types/tags";
-import { db as DONT_USE_db } from "@hoarder/db";
+} from "@karakeep/shared/types/bookmarks";
+import type { ZBookmarkTags } from "@karakeep/shared/types/tags";
+import { db as DONT_USE_db } from "@karakeep/db";
 import {
   assets,
   AssetTypes,
@@ -33,14 +33,14 @@ import {
   customPrompts,
   rssFeedImportsTable,
   tagsOnBookmarks,
-} from "@hoarder/db/schema";
+} from "@karakeep/db/schema";
 import {
   deleteAsset,
   SUPPORTED_BOOKMARK_ASSET_TYPES,
-} from "@hoarder/shared/assetdb";
-import serverConfig from "@hoarder/shared/config";
-import { InferenceClientFactory } from "@hoarder/shared/inference";
-import { buildSummaryPrompt } from "@hoarder/shared/prompts";
+} from "@karakeep/shared/assetdb";
+import serverConfig from "@karakeep/shared/config";
+import { InferenceClientFactory } from "@karakeep/shared/inference";
+import { buildSummaryPrompt } from "@karakeep/shared/prompts";
 import {
   AssetPreprocessingQueue,
   LinkCrawlerQueue,
@@ -48,9 +48,9 @@ import {
   triggerSearchDeletion,
   triggerSearchReindex,
   triggerWebhook,
-} from "@hoarder/shared/queues";
-import { getSearchIdxClient } from "@hoarder/shared/search";
-import { parseSearchQuery } from "@hoarder/shared/searchQueryParser";
+} from "@karakeep/shared/queues";
+import { getSearchIdxClient } from "@karakeep/shared/search";
+import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 import {
   BookmarkTypes,
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
@@ -62,7 +62,7 @@ import {
   zSearchBookmarksCursor,
   zSearchBookmarksRequestSchema,
   zUpdateBookmarksRequestSchema,
-} from "@hoarder/shared/types/bookmarks";
+} from "@karakeep/shared/types/bookmarks";
 
 import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";
@@ -225,6 +225,7 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
       fileName: asset.fileName,
       sourceUrl: asset.sourceUrl,
       size: assets.find((a) => a.id == asset.assetId)?.size,
+      content: asset.content,
     };
   }
 
@@ -480,6 +481,24 @@ export const bookmarksAppRouter = router({
               code: "BAD_REQUEST",
               message:
                 "Attempting to set link attributes for non-text type bookmark",
+            });
+          }
+          somethingChanged = true;
+        }
+
+        if (input.assetContent !== undefined) {
+          const result = await tx
+            .update(bookmarkAssets)
+            .set({
+              content: input.assetContent,
+            })
+            .where(and(eq(bookmarkAssets.id, input.bookmarkId)));
+
+          if (result.changes == 0) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message:
+                "Attempting to set asset content for non-asset type bookmark",
             });
           }
           somethingChanged = true;
@@ -861,6 +880,7 @@ export const bookmarksAppRouter = router({
                 fileName: row.bookmarkAssets.fileName,
                 sourceUrl: row.bookmarkAssets.sourceUrl ?? null,
                 size: null, // This will get filled in the asset loop
+                content: row.bookmarkAssets.content ?? null,
               };
             } else {
               content = {

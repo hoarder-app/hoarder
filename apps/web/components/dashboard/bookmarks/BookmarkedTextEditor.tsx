@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { ZBookmark, ZBookmarkTypeText } from "@hoarder/shared/types/bookmarks";
+import { ZBookmark, ZBookmarkTypeText } from "@karakeep/shared/types/bookmarks";
 
 export function BookmarkedTextEditor({
   bookmark,

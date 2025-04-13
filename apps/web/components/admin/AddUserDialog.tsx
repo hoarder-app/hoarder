@@ -33,7 +33,7 @@ import { TRPCClientError } from "@trpc/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { zAdminCreateUserSchema } from "@hoarder/shared/types/admin";
+import { zAdminCreateUserSchema } from "@karakeep/shared/types/admin";
 
 type AdminCreateUserSchema = z.infer<typeof zAdminCreateUserSchema>;
 

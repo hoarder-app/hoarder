@@ -1,5 +1,5 @@
 {
-  "name": "@hoarder/docs",
+  "name": "@karakeep/docs",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -46,12 +46,12 @@
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@hoarder/eslint-config/base",
-      "@hoarder/eslint-config/nextjs",
-      "@hoarder/eslint-config/react"
+      "@karakeep/eslint-config/base",
+      "@karakeep/eslint-config/nextjs",
+      "@karakeep/eslint-config/react"
     ]
   },
-  "prettier": "@hoarder/prettier-config",
+  "prettier": "@karakeep/prettier-config",
   "engines": {
     "node": ">=18.0"
   }

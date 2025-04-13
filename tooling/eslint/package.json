@@ -1,5 +1,5 @@
 {
-  "name": "@hoarder/eslint-config",
+  "name": "@karakeep/eslint-config",
   "version": "0.2.0",
   "private": true,
   "license": "MIT",
@@ -25,8 +25,8 @@
     "eslint-plugin-react-hooks": "^4.6.0"
   },
   "devDependencies": {
-    "@hoarder/prettier-config": "workspace:^0.1.0",
-    "@hoarder/tsconfig": "workspace:^0.1.0",
+    "@karakeep/prettier-config": "workspace:^0.1.0",
+    "@karakeep/tsconfig": "workspace:^0.1.0",
     "@types/eslint": "^8.56.5",
     "eslint": "^8.57.0",
     "prettier": "^3.4.2",
@@ -38,5 +38,5 @@
       "./base.js"
     ]
   },
-  "prettier": "@hoarder/prettier-config"
+  "prettier": "@karakeep/prettier-config"
 }

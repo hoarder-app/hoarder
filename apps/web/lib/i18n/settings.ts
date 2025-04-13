@@ -1,4 +1,4 @@
-import { supportedLangs } from "@hoarder/shared/langs";
+import { supportedLangs } from "@karakeep/shared/langs";
 
 export const fallbackLng = "en";
 export const languages = supportedLangs;

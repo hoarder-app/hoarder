@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
-  "name": "@hoarderapp/sdk",
-  "version": "0.23.0",
-  "description": "Typescript SDK for Hoarder",
+  "name": "@karakeep/sdk",
+  "version": "0.23.2",
+  "description": "Typescript SDK for Karakeep",
   "license": "GNU Affero General Public License version 3",
   "keywords": [
     "hoarder",
@@ -17,10 +17,11 @@
     "types": "./dist/index.d.ts"
   },
   "devDependencies": {
-    "@hoarder/eslint-config": "workspace:^0.2.0",
-    "@hoarder/prettier-config": "workspace:^0.1.0",
-    "@hoarder/tsconfig": "workspace:^0.1.0",
+    "@karakeep/eslint-config": "workspace:^0.2.0",
+    "@karakeep/prettier-config": "workspace:^0.1.0",
+    "@karakeep/tsconfig": "workspace:^0.1.0",
     "@tsconfig/node22": "^22.0.0",
+    "openapi-typescript": "^7.6.1",
     "tsx": "^4.7.1",
     "vite": "^5.1.0",
     "vite-plugin-dts": "^4.4.0"
@@ -36,19 +37,19 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hoarder-app/hoarder.git",
+    "url": "git+https://github.com/karakeep-app/karakeep.git",
     "directory": "packages/sdk"
   },
   "eslintConfig": {
     "root": true,
     "extends": [
-      "@hoarder/eslint-config/base"
+      "@karakeep/eslint-config/base"
     ],
     "ignorePatterns": [
       "src/hoarder-api.d.ts"
     ]
   },
-  "prettier": "@hoarder/prettier-config",
+  "prettier": "@karakeep/prettier-config",
   "dependencies": {
     "openapi-fetch": "^0.13.3"
   }

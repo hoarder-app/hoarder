@@ -1,9 +1,9 @@
 import { eq } from "drizzle-orm";
 
-import { db } from "@hoarder/db";
-import { users } from "@hoarder/db/schema";
-import { createCallerFactory } from "@hoarder/trpc";
-import { appRouter } from "@hoarder/trpc/routers/_app";
+import { db } from "@karakeep/db";
+import { users } from "@karakeep/db/schema";
+import { createCallerFactory } from "@karakeep/trpc";
+import { appRouter } from "@karakeep/trpc/routers/_app";
 
 /**
  * This is only safe to use in the context of a worker.

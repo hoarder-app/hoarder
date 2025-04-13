@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@hoarder/tsconfig/node.json",
+  "extends": "@karakeep/tsconfig/node.json",
   "include": ["**/*.ts"],
   "exclude": ["node_modules"],
   "compilerOptions": {
