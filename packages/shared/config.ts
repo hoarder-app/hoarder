@@ -8,6 +8,13 @@ const stringBool = (defaultValue: string) =>
     .refine((s) => s === "true" || s === "false")
     .transform((s) => s === "true");
 
+const optionalStringBool = () =>
+  z
+    .string()
+    .refine((s) => s === "true" || s === "false")
+    .transform((s) => s === "true")
+    .optional();
+
 const allEnv = z.object({
   API_URL: z.string().url().default("http://localhost:3000"),
   DISABLE_SIGNUPS: stringBool("false"),
@@ -29,7 +36,10 @@ const allEnv = z.object({
   INFERENCE_IMAGE_MODEL: z.string().default("gpt-4o-mini"),
   EMBEDDING_TEXT_MODEL: z.string().default("text-embedding-3-small"),
   INFERENCE_CONTEXT_LENGTH: z.coerce.number().default(2048),
-  INFERENCE_SUPPORTS_STRUCTURED_OUTPUT: stringBool("true"),
+  INFERENCE_SUPPORTS_STRUCTURED_OUTPUT: optionalStringBool(),
+  INFERENCE_OUTPUT_SCHEMA: z
+    .enum(["structured", "json", "plain"])
+    .default("structured"),
   OCR_CACHE_DIR: z.string().optional(),
   OCR_LANGS: z
     .string()
@@ -104,7 +114,12 @@ const serverConfigSchema = allEnv.transform((val) => {
       imageModel: val.INFERENCE_IMAGE_MODEL,
       inferredTagLang: val.INFERENCE_LANG,
       contextLength: val.INFERENCE_CONTEXT_LENGTH,
-      supportsStructuredOutput: val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT,
+      outputSchema:
+        val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT !== undefined
+          ? val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT
+            ? ("structured" as const)
+            : ("plain" as const)
+          : val.INFERENCE_OUTPUT_SCHEMA,
     },
     embedding: {
       textModel: val.EMBEDDING_TEXT_MODEL,

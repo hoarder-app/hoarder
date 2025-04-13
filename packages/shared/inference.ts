@@ -41,6 +41,16 @@ export interface InferenceClient {
   generateEmbeddingFromText(inputs: string[]): Promise<EmbeddingResponse>;
 }
 
+const mapInferenceOutputSchema = <
+  T,
+  S extends typeof serverConfig.inference.outputSchema,
+>(
+  opts: Record<S, T>,
+  type: S,
+): T => {
+  return opts[type];
+};
+
 export class InferenceClientFactory {
   static build(): InferenceClient | null {
     if (serverConfig.inference.openAIApiKey) {
@@ -76,11 +86,16 @@ class OpenAIInferenceClient implements InferenceClient {
       {
         messages: [{ role: "user", content: prompt }],
         model: serverConfig.inference.textModel,
-        response_format:
-          optsWithDefaults.schema &&
-          serverConfig.inference.supportsStructuredOutput
-            ? zodResponseFormat(optsWithDefaults.schema, "schema")
-            : undefined,
+        response_format: mapInferenceOutputSchema(
+          {
+            structured: optsWithDefaults.schema
+              ? zodResponseFormat(optsWithDefaults.schema, "schema")
+              : undefined,
+            json: { type: "json_object" },
+            plain: undefined,
+          },
+          serverConfig.inference.outputSchema,
+        ),
       },
       {
         signal: optsWithDefaults.abortSignal,
@@ -107,11 +122,16 @@ class OpenAIInferenceClient implements InferenceClient {
     const chatCompletion = await this.openAI.chat.completions.create(
       {
         model: serverConfig.inference.imageModel,
-        response_format:
-          optsWithDefaults.schema &&
-          serverConfig.inference.supportsStructuredOutput
-            ? zodResponseFormat(optsWithDefaults.schema, "schema")
-            : undefined,
+        response_format: mapInferenceOutputSchema(
+          {
+            structured: optsWithDefaults.schema
+              ? zodResponseFormat(optsWithDefaults.schema, "schema")
+              : undefined,
+            json: { type: "json_object" },
+            plain: undefined,
+          },
+          serverConfig.inference.outputSchema,
+        ),
         messages: [
           {
             role: "user",
@@ -186,11 +206,16 @@ class OllamaInferenceClient implements InferenceClient {
     }
     const chatCompletion = await this.ollama.chat({
       model: model,
-      format:
-        optsWithDefaults.schema &&
-        serverConfig.inference.supportsStructuredOutput
-          ? zodToJsonSchema(optsWithDefaults.schema)
-          : undefined,
+      format: mapInferenceOutputSchema(
+        {
+          structured: optsWithDefaults.schema
+            ? zodToJsonSchema(optsWithDefaults.schema)
+            : undefined,
+          json: "json",
+          plain: undefined,
+        },
+        serverConfig.inference.outputSchema,
+      ),
       stream: true,
       keep_alive: serverConfig.inference.ollamaKeepAlive,
       options: {
