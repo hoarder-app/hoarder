@@ -161,7 +161,7 @@ mcpServer.tool(
     } else if (res.data.content.type === "text") {
       content = res.data.content.text;
     } else if (res.data.content.type === "asset") {
-      content = "";
+      content = res.data.content.content;
     }
     return {
       content: [
