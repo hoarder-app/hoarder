@@ -1,129 +1,148 @@
-import {themes as prismThemes} from 'prism-react-renderer';
-import type {Config} from '@docusaurus/types';
-import type * as Preset from '@docusaurus/preset-classic';
-import type * as OpenApiPlugin from "docusaurus-preset-openapi";
+import type * as Preset from "@docusaurus/preset-classic";
+import type { Config } from "@docusaurus/types";
+import type * as OpenApiPlugin from "docusaurus-plugin-openapi-docs";
+import { themes as prismThemes } from "prism-react-renderer";
 
 const config: Config = {
-  title: 'Karakeep Docs',
-  tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
+  title: "Karakeep Docs",
+  tagline: "Dinosaurs are cool",
+  favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: 'https://docs.karakeep.app',
+  url: "https://docs.karakeep.app",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: '/',
+  baseUrl: "/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'karakeep-app', // Usually your GitHub org/user name.
-  projectName: 'karakeep', // Usually your repo name.
+  organizationName: "karakeep-app", // Usually your GitHub org/user name.
+  projectName: "karakeep", // Usually your repo name.
 
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "warn",
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: "en",
+    locales: ["en"],
   },
 
   presets: [
     [
-      'docusaurus-preset-openapi',
-      ({
+      "classic",
+      {
         docs: {
-          sidebarPath: './sidebars.ts',
-          editUrl:
-            'https://github.com/karakeep-app/karakeep/tree/main/docs/',
+          sidebarPath: "./sidebars.ts",
+          sidebarItemsGenerator: async ({
+            defaultSidebarItemsGenerator,
+            ...args
+          }) => {
+            const sidebarItems = await defaultSidebarItemsGenerator(args);
+            return sidebarItems.filter(
+              (item) => !(item.type == "category" && item.label === "API"),
+            );
+          },
+          editUrl: "https://github.com/karakeep-app/karakeep/tree/main/docs/",
           routeBasePath: "/",
-        },
-        api: {
-          path: "../packages/open-api/hoarder-openapi-spec.json",
-          routeBasePath: '/api',
+          docItemComponent: "@theme/ApiItem",
         },
         blog: false,
         theme: {
-          customCss: './src/css/custom.css',
+          customCss: "./src/css/custom.css",
         },
-      }) satisfies OpenApiPlugin.Options,
+      } satisfies Preset.Options,
     ],
   ],
+  plugins: [
+    [
+      "docusaurus-plugin-openapi-docs",
+      {
+        id: "api",
+        docsPluginId: "classic",
+        config: {
+          karakeep: {
+            specPath: "../packages/open-api/hoarder-openapi-spec.json",
+            outputDir: "docs/API",
+            sidebarOptions: {
+              groupPathsBy: "tag",
+            },
+          } satisfies OpenApiPlugin.Options,
+        },
+      },
+    ],
+  ],
+  themes: ["docusaurus-theme-openapi-docs"],
 
   themeConfig: {
-    image: 'img/opengraph-image.png',
+    image: "img/opengraph-image.png",
     navbar: {
-      title: '',
+      title: "",
       logo: {
-        alt: 'Karakeep Logo',
-        src: 'img/logo-full.svg',
-        srcDark: 'img/logo-full-white.svg',
+        alt: "Karakeep Logo",
+        src: "img/logo-full.svg",
+        srcDark: "img/logo-full-white.svg",
         width: "120px",
       },
       items: [
         {
-          type: 'docsVersionDropdown',
-          position: 'right',
+          type: "docsVersionDropdown",
+          position: "right",
         },
         {
-          to: '/api',
-          label: 'API',
-          position: 'right',
+          href: "https://karakeep.app",
+          label: "Homepage",
+          position: "right",
         },
         {
-          href: 'https://karakeep.app',
-          label: 'Homepage',
-          position: 'right',
+          href: "https://github.com/karakeep-app/karakeep",
+          label: "GitHub",
+          position: "right",
         },
         {
-          href: 'https://github.com/karakeep-app/karakeep',
-          label: 'GitHub',
-          position: 'right',
-        },
-        {
-          href: 'https://discord.gg/NrgeYywsFh',
-          label: 'Discord',
-          position: 'right',
+          href: "https://discord.gg/NrgeYywsFh",
+          label: "Discord",
+          position: "right",
         },
       ],
     },
     footer: {
-      style: 'dark',
+      style: "dark",
       links: [
         {
-          title: 'Docs',
+          title: "Docs",
           items: [
             {
-              label: 'Introduction',
-              to: '/',
+              label: "Introduction",
+              to: "/",
             },
           ],
         },
         {
-          title: 'Community',
+          title: "Community",
           items: [
             {
-              label: 'GitHub',
-              href: 'https://github.com/karakeep-app/karakeep',
+              label: "GitHub",
+              href: "https://github.com/karakeep-app/karakeep",
             },
           ],
         },
         {
-          title: 'More',
+          title: "More",
           items: [
             {
-              label: 'Homepage',
-              href: 'https://karakeep.app',
+              label: "Homepage",
+              href: "https://karakeep.app",
             },
             {
-              label: 'GitHub',
-              href: 'https://github.com/karakeep-app/karakeep',
+              label: "GitHub",
+              href: "https://github.com/karakeep-app/karakeep",
             },
             {
-              label: 'Demo',
-              href: 'https://try.karakeep.app',
+              label: "Demo",
+              href: "https://try.karakeep.app",
             },
           ],
         },
