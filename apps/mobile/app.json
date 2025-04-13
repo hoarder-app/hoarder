@@ -34,7 +34,8 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#000000"
+        "backgroundColor": "#000000",
+        "monochromeImage": "./assets/adaptive-icon.png"
       },
       "splash": {
         "image": "./assets/splash.png",
