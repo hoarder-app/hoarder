@@ -11,12 +11,12 @@ npm install @karakeep/sdk
 ## Usage
 
 ```typescript
-import { createHoarderClient } from "@karakeep/sdk";
+import { createKarakeepClient } from "@karakeep/sdk";
 
 // Create a client
 const apiKey = "my-super-secret-key";
 const addr = `https://karakeep.mydomain.com`;
-const client = createHoarderClient({
+const client = createKarakeepClient({
   baseUrl: `${addr}/api/v1/`,
   headers: {
     "Content-Type": "application/json",

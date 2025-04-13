@@ -1,7 +1,89 @@
 import { CallToolResult } from "@modelcontextprotocol/sdk/types";
 import { z } from "zod";
 
-import { karakeepClient, mcpServer, toMcpToolError } from "./shared";
+import { KarakeepAPISchemas } from "@karakeep/sdk";
+
+import {
+  karakeepClient,
+  mcpServer,
+  toMcpToolError,
+  turndownService,
+} from "./shared";
+
+interface CompactBookmark {
+  id: string;
+  createdAt: string;
+  title: string;
+  summary: string;
+  note: string;
+  content:
+    | {
+        type: "link";
+        url: string;
+        description: string;
+        author: string;
+        publisher: string;
+      }
+    | {
+        type: "text";
+        sourceUrl: string;
+      }
+    | {
+        type: "media";
+        assetId: string;
+        assetType: string;
+        sourceUrl: string;
+      }
+    | {
+        type: "unknown";
+      };
+  tags: string[];
+}
+
+function compactBookmark(
+  bookmark: KarakeepAPISchemas["Bookmark"],
+): CompactBookmark {
+  let content: CompactBookmark["content"];
+  if (bookmark.content.type === "link") {
+    content = {
+      type: "link",
+      url: bookmark.content.url,
+      description: bookmark.content.description ?? "",
+      author: bookmark.content.author ?? "",
+      publisher: bookmark.content.publisher ?? "",
+    };
+  } else if (bookmark.content.type === "text") {
+    content = {
+      type: "text",
+      sourceUrl: bookmark.content.sourceUrl ?? "",
+    };
+  } else if (bookmark.content.type === "asset") {
+    content = {
+      type: "media",
+      assetId: bookmark.content.assetId,
+      assetType: bookmark.content.assetType,
+      sourceUrl: bookmark.content.sourceUrl ?? "",
+    };
+  } else {
+    content = {
+      type: "unknown",
+    };
+  }
+
+  return {
+    id: bookmark.id,
+    createdAt: bookmark.createdAt,
+    title: bookmark.title
+      ? bookmark.title
+      : ((bookmark.content.type === "link"
+          ? bookmark.content.title
+          : undefined) ?? ""),
+    summary: bookmark.summary ?? "",
+    note: bookmark.note ?? "",
+    content,
+    tags: bookmark.tags.map((t) => t.name),
+  };
+}
 
 // Tools
 mcpServer.tool(
@@ -44,7 +126,7 @@ machine learning is:fav`),
     return {
       content: res.data.bookmarks.map((bookmark) => ({
         type: "text",
-        text: JSON.stringify(bookmark),
+        text: JSON.stringify(compactBookmark(bookmark)),
       })),
     };
   },
@@ -71,7 +153,7 @@ mcpServer.tool(
       content: [
         {
           type: "text",
-          text: JSON.stringify(res.data),
+          text: JSON.stringify(compactBookmark(res.data)),
         },
       ],
     };
@@ -100,7 +182,7 @@ mcpServer.tool(
       content: [
         {
           type: "text",
-          text: JSON.stringify(res.data),
+          text: JSON.stringify(compactBookmark(res.data)),
         },
       ],
     };
@@ -129,7 +211,44 @@ mcpServer.tool(
       content: [
         {
           type: "text",
-          text: JSON.stringify(res.data),
+          text: JSON.stringify(compactBookmark(res.data)),
+        },
+      ],
+    };
+  },
+);
+
+mcpServer.tool(
+  "get-bookmark-content",
+  `Get a bookmark content.`,
+  {
+    bookmarkId: z.string().describe(`The bookmarkId to get content for.`),
+  },
+  async ({ bookmarkId }): Promise<CallToolResult> => {
+    const res = await karakeepClient.GET(`/bookmarks/{bookmarkId}`, {
+      params: {
+        path: {
+          bookmarkId,
+        },
+      },
+    });
+    if (res.error) {
+      return toMcpToolError(res.error);
+    }
+    let content;
+    if (res.data.content.type === "link") {
+      const htmlContent = res.data.content.htmlContent;
+      content = turndownService.turndown(htmlContent);
+    } else if (res.data.content.type === "text") {
+      content = res.data.content.text;
+    } else if (res.data.content.type === "asset") {
+      content = "";
+    }
+    return {
+      content: [
+        {
+          type: "text",
+          text: content ?? "",
         },
       ],
     };

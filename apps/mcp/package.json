@@ -18,6 +18,7 @@
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "@tsconfig/node22": "^22.0.0",
+    "@types/turndown": "^5.0.5",
     "shx": "^0.4.0",
     "tsx": "^4.7.1",
     "vite": "^5.1.0"
@@ -46,6 +47,7 @@
   "dependencies": {
     "@karakeep/sdk": "workspace:*",
     "@modelcontextprotocol/sdk": "^1.9.0",
+    "turndown": "^7.2.0",
     "zod": "^3.24.2"
   }
 }
