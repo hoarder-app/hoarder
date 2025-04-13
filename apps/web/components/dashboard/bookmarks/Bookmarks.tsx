@@ -13,7 +13,7 @@ export default async function Bookmarks({
   showDivider,
   showEditorCard = false,
 }: {
-  query: Omit<ZGetBookmarksRequest, "sortOrder">; // Sort order is handled by the store
+  query: Omit<ZGetBookmarksRequest, "sortOrder" | "includeContent">; // Sort order is handled by the store
   header?: React.ReactNode;
   showDivider?: boolean;
   showEditorCard?: boolean;
@@ -23,7 +23,9 @@ export default async function Bookmarks({
     redirect("/");
   }
 
-  const bookmarks = await api.bookmarks.getBookmarks(query);
+  const bookmarks = await api.bookmarks.getBookmarks({
+    ...query,
+  });
 
   return (
     <div className="flex flex-col gap-3">

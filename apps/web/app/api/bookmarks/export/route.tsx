@@ -13,6 +13,7 @@ export async function GET(request: Request) {
   const req = {
     limit: MAX_NUM_BOOKMARKS_PER_PAGE,
     useCursorV2: true,
+    includeContent: true,
   };
 
   let resp = await api.bookmarks.getBookmarks(req);

@@ -16,6 +16,8 @@ export const GET = (req: NextRequest) =>
       .object({
         favourited: zStringBool.optional(),
         archived: zStringBool.optional(),
+        // TODO: Change the default to false in a couple of releases.
+        includeContent: zStringBool.optional().default("true"),
       })
       .and(zPagination),
     handler: async ({ api, searchParams }) => {

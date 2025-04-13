@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import BookmarkHTMLHighlighter from "@/components/dashboard/preview/BookmarkHtmlHighlighter";
+import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import {
   Select,
   SelectContent,
@@ -52,16 +53,23 @@ function ScreenshotSection({ link }: { link: ZBookmarkedLink }) {
   );
 }
 
-function CachedContentSection({
-  bookmarkId,
-  link,
-}: {
-  bookmarkId: string;
-  link: ZBookmarkedLink;
-}) {
-  const { data } = api.highlights.getForBookmark.useQuery({
+function CachedContentSection({ bookmarkId }: { bookmarkId: string }) {
+  const { data: highlights } = api.highlights.getForBookmark.useQuery({
     bookmarkId,
   });
+  const { data: cachedContent, isPending: isCachedContentLoading } =
+    api.bookmarks.getBookmark.useQuery(
+      {
+        bookmarkId,
+        includeContent: true,
+      },
+      {
+        select: (data) =>
+          data.content.type == BookmarkTypes.LINK
+            ? data.content.htmlContent
+            : null,
+      },
+    );
 
   const { mutate: createHighlight } = useCreateHighlight({
     onSuccess: () => {
@@ -106,16 +114,18 @@ function CachedContentSection({
   });
 
   let content;
-  if (!link.htmlContent) {
+  if (isCachedContentLoading) {
+    content = <FullPageSpinner />;
+  } else if (!cachedContent) {
     content = (
       <div className="text-destructive">Failed to fetch link content ...</div>
     );
   } else {
     content = (
       <BookmarkHTMLHighlighter
-        htmlContent={link.htmlContent || ""}
+        htmlContent={cachedContent || ""}
         className="prose mx-auto dark:prose-invert"
-        highlights={data?.highlights ?? []}
+        highlights={highlights?.highlights ?? []}
         onDeleteHighlight={(h) =>
           deleteHighlight({
             highlightId: h.id,
@@ -171,9 +181,7 @@ export default function LinkContentSection({
 
   let content;
   if (section === "cached") {
-    content = (
-      <CachedContentSection bookmarkId={bookmark.id} link={bookmark.content} />
-    );
+    content = <CachedContentSection bookmarkId={bookmark.id} />;
   } else if (section === "archive") {
     content = <FullPageArchiveSection link={bookmark.content} />;
   } else if (section === "video") {

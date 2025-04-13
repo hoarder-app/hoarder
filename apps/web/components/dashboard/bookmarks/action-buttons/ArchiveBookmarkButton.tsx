@@ -15,7 +15,14 @@ const ArchiveBookmarkButton = React.forwardRef<
   HTMLButtonElement,
   ArchiveBookmarkButtonProps
 >(({ bookmarkId, onDone, ...props }, ref) => {
-  const { data } = api.bookmarks.getBookmark.useQuery({ bookmarkId });
+  const { data } = api.bookmarks.getBookmark.useQuery(
+    { bookmarkId },
+    {
+      select: (data) => ({
+        archived: data.archived,
+      }),
+    },
+  );
 
   const { mutate: updateBookmark, isPending: isArchivingBookmark } =
     useUpdateBookmark({

@@ -147,7 +147,9 @@ const ViewBookmarkPage = () => {
     data: bookmark,
     isPending,
     refetch,
-  } = useAutoRefreshingBookmarkQuery({ bookmarkId: slug });
+  } = useAutoRefreshingBookmarkQuery({
+    bookmarkId: slug,
+  });
 
   if (isPending) {
     return <FullPageSpinner />;

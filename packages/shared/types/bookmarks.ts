@@ -179,6 +179,7 @@ export const zGetBookmarksRequestSchema = z.object({
   // servers.
   useCursorV2: z.boolean().optional(),
   sortOrder: zSortOrder.optional().default("desc"),
+  includeContent: z.boolean().optional().default(false),
 });
 export type ZGetBookmarksRequest = z.infer<typeof zGetBookmarksRequestSchema>;
 

@@ -103,7 +103,11 @@ export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   return opts.next();
 });
 
-async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
+async function getBookmark(
+  ctx: AuthedContext,
+  bookmarkId: string,
+  includeContent: boolean,
+) {
   const bookmark = await ctx.db.query.bookmarks.findFirst({
     where: and(eq(bookmarks.userId, ctx.user.id), eq(bookmarks.id, bookmarkId)),
     with: {
@@ -125,7 +129,7 @@ async function getBookmark(ctx: AuthedContext, bookmarkId: string) {
     });
   }
 
-  return toZodSchema(bookmark);
+  return toZodSchema(bookmark, includeContent);
 }
 
 async function attemptToDedupLink(ctx: AuthedContext, url: string) {
@@ -140,7 +144,7 @@ async function attemptToDedupLink(ctx: AuthedContext, url: string) {
   if (result.length == 0) {
     return null;
   }
-  return getBookmark(ctx, result[0].id);
+  return getBookmark(ctx, result[0].id, /* includeContent: */ false);
 }
 
 async function dummyDrizzleReturnType() {
@@ -184,7 +188,10 @@ async function cleanupAssetForBookmark(
   );
 }
 
-function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
+function toZodSchema(
+  bookmark: BookmarkQueryReturnType,
+  includeContent: boolean,
+): ZBookmark {
   const { tagsOnBookmarks, link, text, asset, assets, ...rest } = bookmark;
 
   let content: ZBookmarkContent = {
@@ -207,12 +214,23 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
       )?.id,
       videoAssetId: assets.find((a) => a.assetType == AssetTypes.LINK_VIDEO)
         ?.id,
-      ...link,
+      url: link.url,
+      title: link.title,
+      description: link.description,
+      imageUrl: link.imageUrl,
+      favicon: link.favicon,
+      htmlContent: includeContent ? link.htmlContent : null,
+      crawledAt: link.crawledAt,
+      author: link.author,
+      publisher: link.publisher,
+      datePublished: link.datePublished,
+      dateModified: link.dateModified,
     };
   }
   if (bookmark.text) {
     content = {
       type: BookmarkTypes.TEXT,
+      // It's ok to include the text content as it's usually not big and is used to render the text bookmark card.
       text: text.text ?? "",
       sourceUrl: text.sourceUrl,
     };
@@ -225,7 +243,7 @@ function toZodSchema(bookmark: BookmarkQueryReturnType): ZBookmark {
       fileName: asset.fileName,
       sourceUrl: asset.sourceUrl,
       size: assets.find((a) => a.id == asset.assetId)?.size,
-      content: asset.content,
+      content: includeContent ? asset.content : null,
     };
   }
 
@@ -549,7 +567,11 @@ export const bookmarksAppRouter = router({
       });
 
       // Refetch the updated bookmark data to return the full object
-      const updatedBookmark = await getBookmark(ctx, input.bookmarkId);
+      const updatedBookmark = await getBookmark(
+        ctx,
+        input.bookmarkId,
+        /* includeContent: */ false,
+      );
 
       // Trigger re-indexing and webhooks
       await triggerSearchReindex(input.bookmarkId);
@@ -653,12 +675,13 @@ export const bookmarksAppRouter = router({
     .input(
       z.object({
         bookmarkId: z.string(),
+        includeContent: z.boolean().optional().default(false),
       }),
     )
     .output(zBookmarkSchema)
     .use(ensureBookmarkOwnership)
     .query(async ({ input, ctx }) => {
-      return await getBookmark(ctx, input.bookmarkId);
+      return await getBookmark(ctx, input.bookmarkId, input.includeContent);
     }),
   searchBookmarks: authedProcedure
     .input(zSearchBookmarksRequestSchema)
@@ -738,7 +761,9 @@ export const bookmarksAppRouter = router({
       results.sort((a, b) => idToRank[b.id] - idToRank[a.id]);
 
       return {
-        bookmarks: results.map(toZodSchema),
+        bookmarks: results.map((b) =>
+          toZodSchema(b, /* includeContent: */ false),
+        ),
         nextCursor:
           resp.hits.length + resp.offset >= resp.estimatedTotalHits
             ? null
@@ -865,7 +890,22 @@ export const bookmarksAppRouter = router({
           if (!acc[bookmarkId]) {
             let content: ZBookmarkContent;
             if (row.bookmarkLinks) {
-              content = { type: BookmarkTypes.LINK, ...row.bookmarkLinks };
+              content = {
+                type: BookmarkTypes.LINK,
+                url: row.bookmarkLinks.url,
+                title: row.bookmarkLinks.title,
+                description: row.bookmarkLinks.description,
+                imageUrl: row.bookmarkLinks.imageUrl,
+                favicon: row.bookmarkLinks.favicon,
+                htmlContent: input.includeContent
+                  ? row.bookmarkLinks.htmlContent
+                  : null,
+                crawledAt: row.bookmarkLinks.crawledAt,
+                author: row.bookmarkLinks.author,
+                publisher: row.bookmarkLinks.publisher,
+                datePublished: row.bookmarkLinks.datePublished,
+                dateModified: row.bookmarkLinks.dateModified,
+              };
             } else if (row.bookmarkTexts) {
               content = {
                 type: BookmarkTypes.TEXT,
@@ -880,7 +920,9 @@ export const bookmarksAppRouter = router({
                 fileName: row.bookmarkAssets.fileName,
                 sourceUrl: row.bookmarkAssets.sourceUrl ?? null,
                 size: null, // This will get filled in the asset loop
-                content: row.bookmarkAssets.content ?? null,
+                content: input.includeContent
+                  ? (row.bookmarkAssets.content ?? null)
+                  : null,
               };
             } else {
               content = {

@@ -11,7 +11,7 @@ export default function UpdatingBookmarkList({
   query,
   header,
 }: {
-  query: Omit<ZGetBookmarksRequest, "sortOrder">; // Sort order is not supported in mobile yet
+  query: Omit<ZGetBookmarksRequest, "sortOrder" | "includeContent">; // Sort order is not supported in mobile yet
   header?: React.ReactElement;
 }) {
   const apiUtils = api.useUtils();
@@ -24,7 +24,7 @@ export default function UpdatingBookmarkList({
     isFetchingNextPage,
     refetch,
   } = api.bookmarks.getBookmarks.useInfiniteQuery(
-    { ...query, useCursorV2: true },
+    { ...query, useCursorV2: true, includeContent: false },
     {
       initialCursor: null,
       getNextPageParam: (lastPage) => lastPage.nextCursor,

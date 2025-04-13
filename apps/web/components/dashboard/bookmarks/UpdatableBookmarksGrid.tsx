@@ -18,14 +18,14 @@ export default function UpdatableBookmarksGrid({
   bookmarks: initialBookmarks,
   showEditorCard = false,
 }: {
-  query: Omit<ZGetBookmarksRequest, "sortOrder">; // Sort order is handled by the store
+  query: Omit<ZGetBookmarksRequest, "sortOrder" | "includeContent">; // Sort order is handled by the store
   bookmarks: ZGetBookmarksResponse;
   showEditorCard?: boolean;
   itemsPerPage?: number;
 }) {
   const sortOrder = useSortOrderStore((state) => state.sortOrder);
 
-  const finalQuery = { ...query, sortOrder };
+  const finalQuery = { ...query, sortOrder, includeContent: false };
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } =
     api.bookmarks.getBookmarks.useInfiniteQuery(
