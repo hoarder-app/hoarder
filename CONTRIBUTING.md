@@ -1,4 +1,4 @@
-# Contributing to Hoarder
+# Contributing to Karakeep
 
 First off, thank you for considering contributing to our project! This document outlines our contribution process and guidelines to make it easy for you to help improve this project.
 
@@ -39,8 +39,8 @@ Before starting to work on an issue:
 
 * Prefer working on `status/approved` issues to make sure they get prioritized for the review
 * Comment on the issue to let others know you're working on it
-* Read the [development documentation](https://docs.hoarder.app/Development/setup) to get started
-* If you need help, you can find us in the #development channel in the [Hoarder Discord](https://discord.com/invite/NrgeYywsFh).
+* Read the [development documentation](https://docs.karakeep.app/Development/setup) to get started
+* If you need help, you can find us in the #development channel in the [Karakeep Discord](https://discord.com/invite/NrgeYywsFh).
 * Once you're done, open a PR and wait for review. Try to include a screenshot of the change in the PR description.
 
 Please note that we're all volunteers. We'll aim to review your PR within a week from when they are opened.
