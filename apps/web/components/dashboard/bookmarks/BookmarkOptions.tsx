@@ -48,6 +48,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const linkId = bookmark.id;
 
   const demoMode = !!useClientConfig().demoMode;
+  const isClipboardAvailable = navigator && !!navigator.clipboard;
 
   const { setOpen: setManageListsModalOpen, content: manageListsModal } =
     useManageListsModal(bookmark.id);
@@ -196,6 +197,7 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
 
           {bookmark.content.type === BookmarkTypes.LINK && (
             <DropdownMenuItem
+              disabled={!isClipboardAvailable}
               onClick={() => {
                 navigator.clipboard.writeText(
                   (bookmark.content as ZBookmarkedLink).url,
