@@ -2,7 +2,7 @@
 
 ## Manual Setup
 
-Hoarder uses `node` version 22. To install it, you can use `nvm` [^1]
+Karakeep uses `node` version 22. To install it, you can use `nvm` [^1]
 
 ```
 $ nvm install  22
@@ -14,7 +14,7 @@ $ node --version
 v22.14.0
 ```
 
-Hoarder also makes use of `corepack`[^2]. If you have `node` installed, then `corepack` should already be
+Karakeep also makes use of `corepack`[^2]. If you have `node` installed, then `corepack` should already be
 installed on your machine, and you don't need to do anything. To verify the `corepack` is installed run:
 
 ```
@@ -44,7 +44,7 @@ Packages: +3129
 Progress: resolved 0, reused 2699, downloaded 0, added 3129, done
 
 devDependencies:
-+ @hoarder/prettier-config 0.1.0 <- tooling/prettier
++ @karakeep/prettier-config 0.1.0 <- tooling/prettier
 
 . prepare$ husky
 └─ Done in 45ms
