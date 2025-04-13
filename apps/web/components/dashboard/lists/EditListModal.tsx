@@ -225,7 +225,7 @@ export function EditListModal({
                           <PopoverTrigger className="h-full rounded border border-input px-2 text-2xl">
                             {field.value}
                           </PopoverTrigger>
-                          <PopoverContent>
+                          <PopoverContent className="w-auto">
                             <Picker
                               data={data}
                               onEmojiSelect={(e: { native: string }) =>
