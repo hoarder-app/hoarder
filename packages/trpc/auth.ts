@@ -11,6 +11,10 @@ import { authFailureLogger } from "@karakeep/shared/logger";
 const BCRYPT_SALT_ROUNDS = 10;
 const API_KEY_PREFIX = "ak1";
 
+export function generatePasswordSalt() {
+  return randomBytes(32).toString("hex");
+}
+
 export async function generateApiKey(name: string, userId: string) {
   const id = randomBytes(10).toString("hex");
   const secret = randomBytes(10).toString("hex");
@@ -76,8 +80,8 @@ export async function authenticateApiKey(key: string) {
   return apiKey.user;
 }
 
-export async function hashPassword(password: string) {
-  return bcrypt.hash(password, BCRYPT_SALT_ROUNDS);
+export async function hashPassword(password: string, salt: string | null) {
+  return await bcrypt.hash(password + (salt ?? ""), BCRYPT_SALT_ROUNDS);
 }
 
 export async function validatePassword(email: string, password: string) {
@@ -96,7 +100,10 @@ export async function validatePassword(email: string, password: string) {
     throw new Error("This user doesn't have a password defined");
   }
 
-  const validation = await bcrypt.compare(password, user.password);
+  const validation = await bcrypt.compare(
+    password + (user.salt ?? ""),
+    user.password,
+  );
   if (!validation) {
     throw new Error("Wrong password");
   }

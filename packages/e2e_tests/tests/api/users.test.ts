@@ -25,14 +25,14 @@ describe("Users API", () => {
     });
   });
 
-  it("should response with user info", async () => {
+  it("should respond with user info", async () => {
     // Get the user info
     const { data: userInfo } = await client.GET("/users/me");
     expect(userInfo).toBeDefined();
     expect(userInfo?.name).toEqual("Test User");
   });
 
-  it("should response with user stats", async () => {
+  it("should respond with user stats", async () => {
     ////////////////////////////////////////////////////////////////////////////////////
     // Prepare some data
     ////////////////////////////////////////////////////////////////////////////////////

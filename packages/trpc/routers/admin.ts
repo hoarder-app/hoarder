@@ -22,7 +22,7 @@ import {
   zAdminCreateUserSchema,
 } from "@karakeep/shared/types/admin";
 
-import { hashPassword } from "../auth";
+import { generatePasswordSalt, hashPassword } from "../auth";
 import { adminProcedure, router } from "../index";
 import { createUser } from "./users";
 
@@ -338,10 +338,11 @@ export const adminAppRouter = router({
           message: "Cannot reset own password",
         });
       }
-      const hashedPassword = await hashPassword(input.newPassword);
+      const newSalt = generatePasswordSalt();
+      const hashedPassword = await hashPassword(input.newPassword, newSalt);
       const result = await ctx.db
         .update(users)
-        .set({ password: hashedPassword })
+        .set({ password: hashedPassword, salt: newSalt })
         .where(eq(users.id, input.userId));
 
       if (result.changes == 0) {

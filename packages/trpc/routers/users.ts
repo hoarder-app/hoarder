@@ -19,7 +19,7 @@ import {
   zWhoAmIResponseSchema,
 } from "@karakeep/shared/types/users";
 
-import { hashPassword, validatePassword } from "../auth";
+import { generatePasswordSalt, hashPassword, validatePassword } from "../auth";
 import {
   adminProcedure,
   authedProcedure,
@@ -42,13 +42,15 @@ export async function createUser(
       userRole = userCount == 0 ? "admin" : "user";
     }
 
+    const salt = generatePasswordSalt();
     try {
       const result = await trx
         .insert(users)
         .values({
           name: input.name,
           email: input.email,
-          password: await hashPassword(input.password),
+          password: await hashPassword(input.password, salt),
+          salt,
           role: userRole,
         })
         .returning({
@@ -149,10 +151,12 @@ export const usersAppRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       invariant(user.id, ctx.user.id);
+      const newSalt = generatePasswordSalt();
       await ctx.db
         .update(users)
         .set({
-          password: await hashPassword(input.newPassword),
+          password: await hashPassword(input.newPassword, newSalt),
+          salt: newSalt,
         })
         .where(eq(users.id, ctx.user.id));
     }),
