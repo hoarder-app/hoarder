@@ -1,8 +1,9 @@
 import { randomBytes } from "crypto";
 import * as bcrypt from "bcryptjs";
+import { sql } from "drizzle-orm";
 
 import { db } from "@karakeep/db";
-import { apiKeys } from "@karakeep/db/schema";
+import { apiKeys, users } from "@karakeep/db/schema";
 import serverConfig from "@karakeep/shared/config";
 import { authFailureLogger } from "@karakeep/shared/logger";
 
@@ -84,8 +85,11 @@ export async function validatePassword(email: string, password: string) {
   if (serverConfig.auth.disablePasswordAuth) {
     throw new Error("Password authentication is currently disabled");
   }
+
+  const normalizedEmail = email.toLowerCase();
   const user = await db.query.users.findFirst({
-    where: (u, { eq }) => eq(u.email, email),
+    //    where: (u, { eq }) => eq(u.email, email),
+    where: sql`LOWER(${users.email}) = ${normalizedEmail}`,
   });
 
   if (!user) {
