@@ -32,7 +32,7 @@ const allEnv = z.object({
   OLLAMA_KEEP_ALIVE: z.string().optional(),
   INFERENCE_JOB_TIMEOUT_SEC: z.coerce.number().default(30),
   INFERENCE_FETCH_TIMEOUT_SEC: z.coerce.number().default(300),
-  INFERENCE_TEXT_MODEL: z.string().default("gpt-4o-mini"),
+  INFERENCE_TEXT_MODEL: z.string().default("gpt-4.1-mini"),
   INFERENCE_IMAGE_MODEL: z.string().default("gpt-4o-mini"),
   EMBEDDING_TEXT_MODEL: z.string().default("text-embedding-3-small"),
   INFERENCE_CONTEXT_LENGTH: z.coerce.number().default(2048),
