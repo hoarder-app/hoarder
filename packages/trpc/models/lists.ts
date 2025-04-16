@@ -145,6 +145,10 @@ export abstract class List implements PrivacyAware {
   abstract getSize(ctx: AuthedContext): Promise<number>;
   abstract addBookmark(bookmarkId: string): Promise<void>;
   abstract removeBookmark(bookmarkId: string): Promise<void>;
+  abstract mergeInto(
+    targetList: List,
+    deleteSourceAfterMerge: boolean,
+  ): Promise<void>;
 }
 
 export class SmartList extends List {
@@ -198,6 +202,16 @@ export class SmartList extends List {
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Smart lists cannot be removed from",
+    });
+  }
+
+  mergeInto(
+    _targetList: List,
+    _deleteSourceAfterMerge: boolean,
+  ): Promise<void> {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "Smart lists cannot be merged",
     });
   }
 }
@@ -275,5 +289,37 @@ export class ManualList extends List {
       });
     }
     return super.update(input);
+  }
+
+  async mergeInto(
+    targetList: List,
+    deleteSourceAfterMerge: boolean,
+  ): Promise<void> {
+    if (targetList.type !== "manual") {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "You can only merge into a manual list",
+      });
+    }
+
+    const bookmarkIds = await this.getBookmarkIds();
+
+    await this.ctx.db.transaction(async (tx) => {
+      await tx
+        .insert(bookmarksInLists)
+        .values(
+          bookmarkIds.map((id) => ({
+            bookmarkId: id,
+            listId: targetList.list.id,
+          })),
+        )
+        .onConflictDoNothing();
+
+      if (deleteSourceAfterMerge) {
+        await tx
+          .delete(bookmarkLists)
+          .where(eq(bookmarkLists.id, this.list.id));
+      }
+    });
   }
 }

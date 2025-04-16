@@ -36,6 +36,21 @@ export function useEditBookmarkList(
   });
 }
 
+export function useMergeLists(
+  ...opts: Parameters<typeof api.lists.merge.useMutation>
+) {
+  const apiUtils = api.useUtils();
+  return api.lists.merge.useMutation({
+    ...opts[0],
+    onSuccess: (res, req, meta) => {
+      apiUtils.lists.list.invalidate();
+      apiUtils.bookmarks.getBookmarks.invalidate({ listId: req.targetId });
+      apiUtils.lists.stats.invalidate();
+      return opts[0]?.onSuccess?.(res, req, meta);
+    },
+  });
+}
+
 export function useAddBookmarkToList(
   ...opts: Parameters<typeof api.lists.addToList.useMutation>
 ) {
