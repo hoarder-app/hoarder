@@ -52,6 +52,42 @@ const ensureTagOwnership = experimental_trpcMiddleware<{
 });
 
 export const tagsAppRouter = router({
+  create: authedProcedure
+    .input(
+      z.object({
+        name: z.string().min(1), // Ensure the name is provided and not empty
+      }),
+    )
+    .output(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        userId: z.string(),
+        createdAt: z.date(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      try {
+        const [newTag] = await ctx.db
+          .insert(bookmarkTags)
+          .values({
+            name: input.name,
+            userId: ctx.user.id,
+          })
+          .returning();
+
+        return newTag;
+      } catch (e) {
+        if (e instanceof SqliteError && e.code === "SQLITE_CONSTRAINT_UNIQUE") {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Tag name already exists for this user.",
+          });
+        }
+        throw e;
+      }
+    }),
+
   get: authedProcedure
     .input(
       z.object({

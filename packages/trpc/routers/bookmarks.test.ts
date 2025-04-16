@@ -1,14 +1,34 @@
+import { eq } from "drizzle-orm";
 import { assert, beforeEach, describe, expect, test } from "vitest";
 
-import { bookmarks } from "@karakeep/db/schema";
+import {
+  bookmarkLinks,
+  bookmarks,
+  rssFeedImportsTable,
+} from "@karakeep/db/schema";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
-import type { CustomTestContext } from "../testUtils";
+import type { APICallerType, CustomTestContext } from "../testUtils";
 import { defaultBeforeEach } from "../testUtils";
 
 beforeEach<CustomTestContext>(defaultBeforeEach(true));
 
 describe("Bookmark Routes", () => {
+  async function createTestTag(api: APICallerType, tagName: string) {
+    const result = await api.tags.create({ name: tagName });
+    return result.id;
+  }
+
+  async function createTestFeed(
+    api: APICallerType,
+    feedName: string,
+    feedUrl: string,
+  ) {
+    // Create an RSS feed and return its ID
+    const feed = await api.feeds.create({ name: feedName, url: feedUrl });
+    return feed.id;
+  }
+
   test<CustomTestContext>("create bookmark", async ({ apiCallers }) => {
     const api = apiCallers[0].bookmarks;
     const bookmark = await api.createBookmark({
@@ -126,7 +146,7 @@ describe("Bookmark Routes", () => {
     );
   });
 
-  test<CustomTestContext>("list bookmarks", async ({ apiCallers }) => {
+  test<CustomTestContext>("list bookmarks", async ({ apiCallers, db }) => {
     const api = apiCallers[0].bookmarks;
     const emptyBookmarks = await api.getBookmarks({});
     expect(emptyBookmarks.bookmarks.length).toEqual(0);
@@ -175,6 +195,64 @@ describe("Bookmark Routes", () => {
       const bookmarks = await api.getBookmarks({ ids: [bookmark1.id] });
       expect(bookmarks.bookmarks.length).toEqual(1);
       expect(bookmarks.bookmarks[0].id).toEqual(bookmark1.id);
+    }
+
+    // Test tagId filter
+    {
+      const tagId = await createTestTag(apiCallers[0], "testTag");
+      await api.updateTags({
+        bookmarkId: bookmark1.id,
+        attach: [{ tagId }],
+        detach: [],
+      });
+      const tagResult = await api.getBookmarks({ tagId });
+      expect(tagResult.bookmarks.length).toBeGreaterThan(0);
+      expect(
+        tagResult.bookmarks.some((b) => b.id === bookmark1.id),
+      ).toBeTruthy();
+    }
+
+    // Test rssFeedId filter
+    {
+      const feedId = await createTestFeed(
+        apiCallers[0],
+        "Test Feed",
+        "https://rss-feed.com",
+      );
+      const rssBookmark = await api.createBookmark({
+        url: "https://rss-feed.com",
+        type: BookmarkTypes.LINK,
+      });
+      await db.insert(rssFeedImportsTable).values([
+        {
+          rssFeedId: feedId,
+          entryId: "entry-id",
+          bookmarkId: rssBookmark.id,
+        },
+      ]);
+      const rssResult = await api.getBookmarks({ rssFeedId: feedId });
+      expect(rssResult.bookmarks.length).toBeGreaterThan(0);
+      expect(
+        rssResult.bookmarks.some((b) => b.id === rssBookmark.id),
+      ).toBeTruthy();
+    }
+
+    // Test listId filter
+    {
+      const list = await apiCallers[0].lists.create({
+        name: "Test List",
+        type: "manual",
+        icon: "😂",
+      });
+      await apiCallers[0].lists.addToList({
+        listId: list.id,
+        bookmarkId: bookmark1.id,
+      });
+      const listResult = await api.getBookmarks({ listId: list.id });
+      expect(listResult.bookmarks.length).toBeGreaterThan(0);
+      expect(
+        listResult.bookmarks.some((b) => b.id === bookmark1.id),
+      ).toBeTruthy();
     }
   });
 
@@ -401,5 +479,71 @@ describe("Bookmark Routes", () => {
     await validateWithLimit(3);
     await validateWithLimit(10);
     await validateWithLimit(100);
+  });
+
+  test<CustomTestContext>("getBookmark", async ({ apiCallers }) => {
+    const api = apiCallers[0].bookmarks;
+    const createdBookmark = await api.createBookmark({
+      url: "https://example.com",
+      type: BookmarkTypes.LINK,
+    });
+
+    // Test successful getBookmark with includeContent false
+    const bookmarkWithoutContent = await api.getBookmark({
+      bookmarkId: createdBookmark.id,
+      includeContent: false,
+    });
+    expect(bookmarkWithoutContent.id).toEqual(createdBookmark.id);
+    expect(bookmarkWithoutContent.content).toBeDefined(); // Content should still be present but might be partial
+    expect(bookmarkWithoutContent.content.type).toEqual(BookmarkTypes.LINK);
+    assert(bookmarkWithoutContent.content.type == BookmarkTypes.LINK);
+    expect(bookmarkWithoutContent.content.url).toEqual("https://example.com");
+
+    // Test successful getBookmark with includeContent true
+    const bookmarkWithContent = await api.getBookmark({
+      bookmarkId: createdBookmark.id,
+      includeContent: true,
+    });
+    expect(bookmarkWithContent.id).toEqual(createdBookmark.id);
+    expect(bookmarkWithContent.content).toBeDefined();
+    expect(bookmarkWithContent.content.type).toEqual(BookmarkTypes.LINK);
+    assert(bookmarkWithContent.content.type == BookmarkTypes.LINK);
+    expect(bookmarkWithContent.content.url).toEqual("https://example.com");
+    // Additional checks if content includes more details, e.g., htmlContent if available
+
+    // Test non-existent bookmark
+    await expect(() =>
+      api.getBookmark({ bookmarkId: "non-existent-id" }),
+    ).rejects.toThrow(/Bookmark not found/);
+  });
+
+  test<CustomTestContext>("getBrokenLinks", async ({ apiCallers, db }) => {
+    const api = apiCallers[0].bookmarks;
+
+    // Create a broken link bookmark (simulate by setting crawlStatus to 'failure')
+    const brokenBookmark = await api.createBookmark({
+      url: "https://broken-link.com",
+      type: BookmarkTypes.LINK,
+    });
+    await db
+      .update(bookmarkLinks)
+      .set({ crawlStatus: "failure" })
+      .where(eq(bookmarkLinks.id, brokenBookmark.id));
+
+    const result = await api.getBrokenLinks();
+    expect(result.bookmarks.length).toBeGreaterThan(0);
+    expect(
+      result.bookmarks.some((b) => b.id === brokenBookmark.id),
+    ).toBeTruthy();
+    expect(result.bookmarks[0].url).toEqual("https://broken-link.com");
+    expect(result.bookmarks[0].isCrawlingFailure).toBeTruthy();
+
+    // Test with no broken links
+    await db
+      .update(bookmarkLinks)
+      .set({ crawlStatus: "success" })
+      .where(eq(bookmarkLinks.id, brokenBookmark.id));
+    const emptyResult = await api.getBrokenLinks();
+    expect(emptyResult.bookmarks.length).toEqual(0);
   });
 });

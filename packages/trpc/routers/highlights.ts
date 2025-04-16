@@ -34,7 +34,7 @@ const ensureHighlightOwnership = experimental_trpcMiddleware<{
   if (!highlight) {
     throw new TRPCError({
       code: "NOT_FOUND",
-      message: "Bookmark not found",
+      message: "Highlight not found",
     });
   }
   if (highlight.userId != opts.ctx.user.id) {
