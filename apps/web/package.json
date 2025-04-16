@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "next dev",
     "clean": "git clean -xdf .next .turbo node_modules",
-    "build": "next build",
+    "build": "next build --experimental-build-mode compile",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",

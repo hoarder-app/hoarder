@@ -79,7 +79,7 @@ install() {
   export PUPPETEER_SKIP_DOWNLOAD="true"
   export CI="true"
   pnpm i --frozen-lockfile
-  pnpm exec next build --experimental-build-mode compile
+  pnpm build
   cd "$INSTALL_DIR"/apps/workers
   pnpm i --frozen-lockfile
   cd "$INSTALL_DIR"/apps/cli
@@ -281,7 +281,7 @@ update() {
     export PUPPETEER_SKIP_DOWNLOAD="true"
     export CI="true"
     cd "$INSTALL_DIR"/apps/web && pnpm i --frozen-lockfile
-    pnpm exec next build --experimental-build-mode compile
+    pnpm build
     cd "$INSTALL_DIR"/apps/workers && pnpm i --frozen-lockfile
     cd "$INSTALL_DIR"/apps/cli && pnpm i --frozen-lockfile
     pnpm build
