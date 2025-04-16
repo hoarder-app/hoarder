@@ -4,6 +4,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import type { GlobalSetupContext } from "vitest/node";
 
+import { waitUntil } from "../utils/general";
+
 async function getRandomPort(): Promise<number> {
   const server = net.createServer();
   return new Promise<number>((resolve, reject) => {
@@ -17,21 +19,14 @@ async function getRandomPort(): Promise<number> {
 }
 
 async function waitForHealthy(port: number, timeout = 60000): Promise<void> {
-  const startTime = Date.now();
-
-  while (Date.now() - startTime < timeout) {
-    try {
+  return waitUntil(
+    async () => {
       const response = await fetch(`http://localhost:${port}/api/health`);
-      if (response.status === 200) {
-        return;
-      }
-    } catch (error) {
-      // Ignore errors and retry
-    }
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-  }
-
-  throw new Error(`Health check failed after ${timeout}ms`);
+      return response.status === 200;
+    },
+    "Container are healthy",
+    timeout,
+  );
 }
 
 export default async function ({ provide }: GlobalSetupContext) {
