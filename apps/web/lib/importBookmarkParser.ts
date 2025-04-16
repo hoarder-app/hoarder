@@ -183,67 +183,14 @@ export async function parseTabSessionManagerStateFile(
   const textContent = await file.text();
 
   const zTab = z.object({
-    id: z.number(),
-    index: z.number(),
-    windowId: z.number(),
-    highlighted: z.boolean(),
-    active: z.boolean(),
-    attention: z.boolean(),
-    pinned: z.boolean(),
-    status: z.string(),
-    hidden: z.boolean(),
-    discarded: z.boolean(),
-    incognito: z.boolean(),
-    width: z.number(),
-    height: z.number(),
-    lastAccessed: z.number(),
-    audible: z.boolean(),
-    autoDiscardable: z.boolean(),
-    mutedInfo: z.object({
-      muted: z.boolean(),
-    }),
-    isArticle: z.boolean().optional(),
-    isInReaderMode: z.boolean(),
-    sharingState: z.object({
-      camera: z.boolean(),
-      microphone: z.boolean(),
-    }),
-    successorTabId: z.number(),
-    cookieStoreId: z.string(),
     url: z.string(),
     title: z.string(),
-    favIconUrl: z.string().optional(),
-  });
-
-  const zWindow = z.record(z.string(), zTab);
-
-  const zWindows = z.record(z.string(), zWindow);
-
-  const zWindowInfo = z.object({
-    id: z.number(),
-    focused: z.boolean(),
-    top: z.number(),
-    left: z.number(),
-    width: z.number(),
-    height: z.number(),
-    incognito: z.boolean(),
-    type: z.string(),
-    state: z.string(),
-    alwaysOnTop: z.boolean(),
-    title: z.string(),
+    lastAccessed: z.number(),
   });
 
   const zSession = z.object({
-    windows: zWindows,
-    windowsNumber: z.number(),
-    windowsInfo: z.record(z.string(), zWindowInfo),
-    tabsNumber: z.number(),
-    name: z.string(),
+    windows: z.record(z.string(), z.record(z.string(), zTab)),
     date: z.number(),
-    lastEditedTime: z.number(),
-    tags: z.array(z.string()).optional(),
-    sessionStartTime: z.number(),
-    id: z.string(),
   });
 
   const zTabSessionManagerSchema = z.array(zSession);
