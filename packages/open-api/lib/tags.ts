@@ -11,7 +11,11 @@ import {
 
 import { BearerAuth } from "./common";
 import { ErrorSchema } from "./errors";
-import { PaginatedBookmarksSchema, PaginationSchema } from "./pagination";
+import {
+  IncludeContentSearchParamSchema,
+  PaginatedBookmarksSchema,
+  PaginationSchema,
+} from "./pagination";
 
 export const registry = new OpenAPIRegistry();
 extendZodWithOpenApi(z);
@@ -154,7 +158,7 @@ registry.registerPath({
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ tagId: TagIdSchema }),
-    query: PaginationSchema,
+    query: PaginationSchema.merge(IncludeContentSearchParamSchema),
   },
   responses: {
     200: {

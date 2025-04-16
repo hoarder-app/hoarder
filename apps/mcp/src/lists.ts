@@ -33,6 +33,9 @@ mcpServer.tool(
         path: {
           listId,
         },
+        query: {
+          includeContent: false,
+        },
       },
     });
     if (res.error) {

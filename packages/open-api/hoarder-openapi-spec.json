@@ -564,6 +564,17 @@
             "required": false,
             "name": "cursor",
             "in": "query"
+          },
+          {
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "description": "If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks."
+            },
+            "required": false,
+            "description": "If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks.",
+            "name": "includeContent",
+            "in": "query"
           }
         ],
         "responses": {
@@ -778,6 +789,17 @@
             "required": false,
             "name": "cursor",
             "in": "query"
+          },
+          {
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "description": "If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks."
+            },
+            "required": false,
+            "description": "If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks.",
+            "name": "includeContent",
+            "in": "query"
           }
         ],
         "responses": {
@@ -809,6 +831,17 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/BookmarkId"
+          },
+          {
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "description": "If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks."
+            },
+            "required": false,
+            "description": "If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks.",
+            "name": "includeContent",
+            "in": "query"
           }
         ],
         "responses": {
@@ -1965,6 +1998,17 @@
             "required": false,
             "name": "cursor",
             "in": "query"
+          },
+          {
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "description": "If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks."
+            },
+            "required": false,
+            "description": "If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks.",
+            "name": "includeContent",
+            "in": "query"
           }
         ],
         "responses": {
@@ -2373,6 +2417,17 @@
             },
             "required": false,
             "name": "cursor",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "description": "If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks."
+            },
+            "required": false,
+            "description": "If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks.",
+            "name": "includeContent",
             "in": "query"
           }
         ],

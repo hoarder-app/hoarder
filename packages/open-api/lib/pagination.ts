@@ -22,3 +22,12 @@ export const PaginationSchema = z
     cursor: CursorSchema.optional(),
   })
   .openapi("Pagination");
+
+export const IncludeContentSearchParamSchema = z.object({
+  includeContent: z
+    .boolean()
+    .default(true)
+    .describe(
+      "If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks.",
+    ),
+});

@@ -239,4 +239,5 @@ export const zSearchBookmarksRequestSchema = z.object({
   limit: z.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),
   cursor: zSearchBookmarksCursor.nullish(),
   sortOrder: zSortOrder.optional().default("desc"),
+  includeContent: z.boolean().optional().default(false),
 });

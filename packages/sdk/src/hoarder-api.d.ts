@@ -22,6 +22,8 @@ export interface paths {
           favourited?: boolean;
           limit?: number;
           cursor?: components["schemas"]["Cursor"];
+          /** @description If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks. */
+          includeContent?: boolean;
         };
         header?: never;
         path?: never;
@@ -135,6 +137,8 @@ export interface paths {
           q: string;
           limit?: number;
           cursor?: components["schemas"]["Cursor"];
+          /** @description If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks. */
+          includeContent?: boolean;
         };
         header?: never;
         path?: never;
@@ -174,7 +178,10 @@ export interface paths {
      */
     get: {
       parameters: {
-        query?: never;
+        query?: {
+          /** @description If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks. */
+          includeContent?: boolean;
+        };
         header?: never;
         path: {
           bookmarkId: components["parameters"]["BookmarkId"];
@@ -972,6 +979,8 @@ export interface paths {
         query?: {
           limit?: number;
           cursor?: components["schemas"]["Cursor"];
+          /** @description If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks. */
+          includeContent?: boolean;
         };
         header?: never;
         path: {
@@ -1313,6 +1322,8 @@ export interface paths {
         query?: {
           limit?: number;
           cursor?: components["schemas"]["Cursor"];
+          /** @description If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks. */
+          includeContent?: boolean;
         };
         header?: never;
         path: {

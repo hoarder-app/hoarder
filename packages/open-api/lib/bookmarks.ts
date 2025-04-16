@@ -17,6 +17,7 @@ import { ErrorSchema } from "./errors";
 import { HighlightSchema } from "./highlights";
 import {
   BookmarkSchema,
+  IncludeContentSearchParamSchema,
   PaginatedBookmarksSchema,
   PaginationSchema,
 } from "./pagination";
@@ -60,7 +61,8 @@ registry.registerPath({
         archived: z.boolean().optional(),
         favourited: z.boolean().optional(),
       })
-      .merge(PaginationSchema),
+      .merge(PaginationSchema)
+      .merge(IncludeContentSearchParamSchema),
   },
   responses: {
     200: {
@@ -86,7 +88,8 @@ registry.registerPath({
       .object({
         q: z.string(),
       })
-      .merge(PaginationSchema),
+      .merge(PaginationSchema)
+      .merge(IncludeContentSearchParamSchema),
   },
   responses: {
     200: {
@@ -145,6 +148,7 @@ registry.registerPath({
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ bookmarkId: BookmarkIdSchema }),
+    query: IncludeContentSearchParamSchema,
   },
   responses: {
     200: {

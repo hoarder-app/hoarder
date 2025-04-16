@@ -761,9 +761,7 @@ export const bookmarksAppRouter = router({
       results.sort((a, b) => idToRank[b.id] - idToRank[a.id]);
 
       return {
-        bookmarks: results.map((b) =>
-          toZodSchema(b, /* includeContent: */ false),
-        ),
+        bookmarks: results.map((b) => toZodSchema(b, input.includeContent)),
         nextCursor:
           resp.hits.length + resp.offset >= resp.estimatedTotalHits
             ? null

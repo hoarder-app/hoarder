@@ -36,6 +36,7 @@ machine learning is:fav`),
         query: {
           q: query,
           limit: 10,
+          includeContent: false,
         },
       },
     });
@@ -62,6 +63,9 @@ mcpServer.tool(
       params: {
         path: {
           bookmarkId,
+        },
+        query: {
+          includeContent: false,
         },
       },
     });
@@ -148,6 +152,9 @@ mcpServer.tool(
       params: {
         path: {
           bookmarkId,
+        },
+        query: {
+          includeContent: true,
         },
       },
     });
