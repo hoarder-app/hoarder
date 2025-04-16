@@ -22,10 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
-import {
-  useDeleteBookmarkList,
-  useMergeLists,
-} from "@hoarder/shared-react/hooks/lists";
+import { useMergeLists } from "@hoarder/shared-react/hooks/lists";
 import { ZBookmarkList, zMergeListSchema } from "@hoarder/shared/types/lists";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
@@ -56,9 +53,9 @@ export function MergeListModal({
   const form = useForm<z.infer<typeof zMergeListSchema>>({
     resolver: zodResolver(zMergeListSchema),
     defaultValues: {
-      sourceId: list?.id ?? "",
+      sourceId: list.id,
       targetId: "",
-      deleteAfterMerge: true,
+      deleteSourceAfterMerge: true,
     },
   });
   const [open, setOpen] = [
@@ -68,9 +65,9 @@ export function MergeListModal({
 
   useEffect(() => {
     form.reset({
-      sourceId: list?.id ?? "",
+      sourceId: list.id,
       targetId: "",
-      deleteAfterMerge: true,
+      deleteSourceAfterMerge: true,
     });
   }, [open]);
 
@@ -106,29 +103,9 @@ export function MergeListModal({
     },
   });
 
-  const { mutate: deleteList, isPending: isDeleting } = useDeleteBookmarkList({
-    onSuccess: () => {
-      toast({
-        description: t("toasts.lists.deleted"),
-      });
-    },
-    onError: () => {
-      toast({
-        variant: "destructive",
-        description: t("common.something_went_wrong"),
-      });
-    },
-  });
-
   const onSubmit = form.handleSubmit(
     async (value: z.infer<typeof zMergeListSchema>) => {
-      mergeLists(value, {
-        onSuccess: () => {
-          if (value.deleteAfterMerge) {
-            deleteList({ listId: list.id });
-          }
-        },
-      });
+      mergeLists(value);
     },
   );
 
@@ -149,19 +126,19 @@ export function MergeListModal({
             </DialogHeader>
             <div className="flex w-full gap-2 py-4">
               <span className="inline-flex aspect-square h-10 items-center justify-center rounded border border-input bg-transparent px-2 text-2xl">
-                {list?.icon ?? "🚀"}
+                {list.icon}
               </span>
               <Input
                 type="text"
                 className="w-full"
-                value={list?.name ?? ""}
+                value={list.name}
                 disabled
               />
             </div>
 
             <FormField
               control={form.control}
-              name="deleteAfterMerge"
+              name="deleteSourceAfterMerge"
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between space-x-2 space-y-0 pb-4">
                   <label className="text-xs text-muted-foreground">
@@ -188,7 +165,7 @@ export function MergeListModal({
                   <div className="flex items-center gap-1">
                     <FormControl>
                       <BookmarkListSelector
-                        hideSubtreeOf={list ? list.id : undefined}
+                        hideSubtreeOf={list.id}
                         value={field.value}
                         onChange={field.onChange}
                         placeholder={t("lists.no_destination")}
@@ -198,7 +175,7 @@ export function MergeListModal({
                       type="button"
                       variant="ghost"
                       onClick={() => {
-                        form.reset({ targetId: "" });
+                        form.resetField("targetId");
                       }}
                     >
                       <X />
@@ -218,7 +195,7 @@ export function MergeListModal({
               <ActionButton
                 type="submit"
                 onClick={onSubmit}
-                loading={isMerging || isDeleting}
+                loading={isMerging}
               >
                 {t("actions.merge")}
               </ActionButton>

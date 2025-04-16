@@ -43,9 +43,14 @@ export const listsAppRouter = router({
   merge: authedProcedure
     .input(zMergeListSchema)
     .mutation(async ({ input, ctx }) => {
-      const sourceList = await List.fromId(ctx, input.sourceId);
-      const targetList = await List.fromId(ctx, input.targetId);
-      return await sourceList.mergeInto(targetList);
+      const [sourceList, targetList] = await Promise.all([
+        List.fromId(ctx, input.sourceId),
+        List.fromId(ctx, input.targetId),
+      ]);
+      return await sourceList.mergeInto(
+        targetList,
+        input.deleteSourceAfterMerge,
+      );
     }),
   delete: authedProcedure
     .input(

@@ -144,9 +144,11 @@ export abstract class List implements PrivacyAware {
   abstract getBookmarkIds(ctx: AuthedContext): Promise<string[]>;
   abstract getSize(ctx: AuthedContext): Promise<number>;
   abstract addBookmark(bookmarkId: string): Promise<void>;
-  abstract batchAddBookmarks(bookmarkIds: string[]): Promise<void>;
   abstract removeBookmark(bookmarkId: string): Promise<void>;
-  abstract mergeInto(targetList: List): Promise<void>;
+  abstract mergeInto(
+    targetList: List,
+    deleteSourceAfterMerge: boolean,
+  ): Promise<void>;
 }
 
 export class SmartList extends List {
@@ -196,13 +198,6 @@ export class SmartList extends List {
     });
   }
 
-  batchAddBookmarks(_bookmarkIds: string[]): Promise<void> {
-    throw new TRPCError({
-      code: "BAD_REQUEST",
-      message: "Smart lists cannot be added to",
-    });
-  }
-
   removeBookmark(_bookmarkId: string): Promise<void> {
     throw new TRPCError({
       code: "BAD_REQUEST",
@@ -210,7 +205,10 @@ export class SmartList extends List {
     });
   }
 
-  mergeInto(_targetList: List): Promise<void> {
+  mergeInto(
+    _targetList: List,
+    _deleteSourceAfterMerge: boolean,
+  ): Promise<void> {
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "Smart lists cannot be merged",
@@ -266,28 +264,6 @@ export class ManualList extends List {
     }
   }
 
-  async batchAddBookmarks(bookmarkIds: string[]): Promise<void> {
-    if (bookmarkIds.length === 0) {
-      return;
-    }
-    try {
-      await this.ctx.db
-        .insert(bookmarksInLists)
-        .values(
-          bookmarkIds.map((bookmarkId) => ({
-            listId: this.list.id,
-            bookmarkId,
-          })),
-        )
-        .onConflictDoNothing();
-    } catch (e) {
-      throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
-        message: "Failed to add bookmarks in batch",
-      });
-    }
-  }
-
   async removeBookmark(bookmarkId: string): Promise<void> {
     const deleted = await this.ctx.db
       .delete(bookmarksInLists)
@@ -315,15 +291,35 @@ export class ManualList extends List {
     return super.update(input);
   }
 
-  async mergeInto(targetList: List): Promise<void> {
+  async mergeInto(
+    targetList: List,
+    deleteSourceAfterMerge: boolean,
+  ): Promise<void> {
     if (targetList.type !== "manual") {
       throw new TRPCError({
         code: "BAD_REQUEST",
-        message: "Smart lists cannot merge content from other lists",
+        message: "You can only merge into a manual list",
       });
     }
 
-    const srcBookmarks = await this.getBookmarkIds();
-    await targetList.batchAddBookmarks(srcBookmarks);
+    const bookmarkIds = await this.getBookmarkIds();
+
+    await this.ctx.db.transaction(async (tx) => {
+      await tx
+        .insert(bookmarksInLists)
+        .values(
+          bookmarkIds.map((id) => ({
+            bookmarkId: id,
+            listId: targetList.list.id,
+          })),
+        )
+        .onConflictDoNothing();
+
+      if (deleteSourceAfterMerge) {
+        await tx
+          .delete(bookmarkLists)
+          .where(eq(bookmarkLists.id, this.list.id));
+      }
+    });
   }
 }
