@@ -22,12 +22,13 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
-import { useMergeLists } from "@hoarder/shared-react/hooks/lists";
-import { ZBookmarkList, zMergeListSchema } from "@hoarder/shared/types/lists";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+import { useMergeLists } from "@karakeep/shared-react/hooks/lists";
+import { ZBookmarkList, zMergeListSchema } from "@karakeep/shared/types/lists";
 
 import { BookmarkListSelector } from "./BookmarkListSelector";
 
