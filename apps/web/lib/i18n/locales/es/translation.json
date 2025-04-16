@@ -73,7 +73,8 @@
       "import_bookmarks_from_hoarder_export": "Importar marcadores desde exportación de Hoarder",
       "import_bookmarks_from_html_file": "Importar marcadores desde archivo HTML",
       "import_bookmarks_from_omnivore_export": "Importar marcadores desde exportación de Omnivore",
-      "import_bookmarks_from_linkwarden_export": "Importar marcadores desde Linkwarden"
+      "import_bookmarks_from_linkwarden_export": "Importar marcadores desde Linkwarden",
+      "import_bookmarks_from_tab_session_manager_export": "Importar marcadores desde Tab Session Manager"
     },
     "api_keys": {
       "api_keys": "Claves APIs",

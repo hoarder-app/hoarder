@@ -16,6 +16,7 @@ import {
   parseNetscapeBookmarkFile,
   parseOmnivoreBookmarkFile,
   parsePocketBookmarkFile,
+  parseTabSessionManagerStateFile,
 } from "@/lib/importBookmarkParser";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
@@ -161,7 +162,13 @@ export function ImportExportRow() {
       source,
     }: {
       file: File;
-      source: "html" | "pocket" | "omnivore" | "hoarder" | "linkwarden";
+      source:
+        | "html"
+        | "pocket"
+        | "omnivore"
+        | "hoarder"
+        | "linkwarden"
+        | "tab-session-manager";
     }) => {
       if (source === "html") {
         return await parseNetscapeBookmarkFile(file);
@@ -173,6 +180,8 @@ export function ImportExportRow() {
         return await parseOmnivoreBookmarkFile(file);
       } else if (source === "linkwarden") {
         return await parseLinkwardenBookmarkFile(file);
+      } else if (source === "tab-session-manager") {
+        return await parseTabSessionManagerStateFile(file);
       } else {
         throw new Error("Unknown source");
       }
@@ -340,6 +349,25 @@ export function ImportExportRow() {
             className="flex items-center gap-2"
             onFileSelect={(file) =>
               runUploadBookmarkFile({ file, source: "linkwarden" })
+            }
+          >
+            <p>Import</p>
+          </FilePickerButton>
+        </ImportCard>
+        <ImportCard
+          text="Tab Session Manager"
+          description={t(
+            "settings.import.import_bookmarks_from_tab_session_manager_export",
+          )}
+        >
+          <FilePickerButton
+            size={"sm"}
+            loading={false}
+            accept=".json"
+            multiple={false}
+            className="flex items-center gap-2"
+            onFileSelect={(file) =>
+              runUploadBookmarkFile({ file, source: "tab-session-manager" })
             }
           >
             <p>Import</p>

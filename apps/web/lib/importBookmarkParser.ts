@@ -177,6 +177,46 @@ export async function parseLinkwardenBookmarkFile(
   });
 }
 
+export async function parseTabSessionManagerStateFile(
+  file: File,
+): Promise<ParsedBookmark[]> {
+  const textContent = await file.text();
+
+  const zTab = z.object({
+    url: z.string(),
+    title: z.string(),
+    lastAccessed: z.number(),
+  });
+
+  const zSession = z.object({
+    windows: z.record(z.string(), z.record(z.string(), zTab)),
+    date: z.number(),
+  });
+
+  const zTabSessionManagerSchema = z.array(zSession);
+
+  const parsed = zTabSessionManagerSchema.safeParse(JSON.parse(textContent));
+  if (!parsed.success) {
+    throw new Error(
+      `The uploaded JSON file contains an invalid Tab Session Manager bookmark file: ${parsed.error.toString()}`,
+    );
+  }
+
+  // Get the object in data that has the most recent `date`
+  const { windows } = parsed.data.reduce((prev, curr) =>
+    prev.date > curr.date ? prev : curr,
+  );
+
+  return Object.values(windows).flatMap((window) =>
+    Object.values(window).map((tab) => ({
+      title: tab.title,
+      content: { type: BookmarkTypes.LINK as const, url: tab.url },
+      tags: [],
+      addDate: tab.lastAccessed,
+    })),
+  );
+}
+
 export function deduplicateBookmarks(
   bookmarks: ParsedBookmark[],
 ): ParsedBookmark[] {
