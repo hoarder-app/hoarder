@@ -11,6 +11,9 @@ export default defineConfig({
         dir: "dist",
       },
     },
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
     ssr: true,
   },
   ssr: {
