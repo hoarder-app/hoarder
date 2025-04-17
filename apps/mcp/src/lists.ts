@@ -2,7 +2,7 @@ import { CallToolResult } from "@modelcontextprotocol/sdk/types";
 import { z } from "zod";
 
 import { karakeepClient, mcpServer } from "./shared";
-import { compactBookmark, toMcpToolError } from "./utils";
+import { toMcpToolError } from "./utils";
 
 mcpServer.tool(
   "get-lists",
@@ -16,35 +16,6 @@ mcpServer.tool(
       content: res.data.lists.map((list) => ({
         type: "text",
         text: JSON.stringify(list),
-      })),
-    };
-  },
-);
-
-mcpServer.tool(
-  "get-bookmarks-in-list",
-  `Search for bookmarks matching a specific a query.`,
-  {
-    listId: z.string().describe(`The listId to search in.`),
-  },
-  async ({ listId }): Promise<CallToolResult> => {
-    const res = await karakeepClient.GET(`/lists/{listId}/bookmarks`, {
-      params: {
-        path: {
-          listId,
-        },
-        query: {
-          includeContent: false,
-        },
-      },
-    });
-    if (res.error) {
-      return toMcpToolError(res.error);
-    }
-    return {
-      content: res.data.bookmarks.map((bookmark) => ({
-        type: "text",
-        text: JSON.stringify(compactBookmark(bookmark)),
       })),
     };
   },

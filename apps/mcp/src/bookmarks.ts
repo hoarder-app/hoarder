@@ -16,7 +16,7 @@ You can search bookmarks using specific qualifiers. is:fav finds favorited bookm
 is:archived searches archived bookmarks, is:tagged finds those with tags,
 is:inlist finds those in lists, and is:link, is:text, and is:media filter by bookmark type.
 url:<value> searches for URL substrings, #<tag> searches for bookmarks with a specific tag,
-list:<name> searches for bookmarks in a specific list,
+list:<name> searches for bookmarks in a specific list given its name,
 after:<date> finds bookmarks created on or after a date (YYYY-MM-DD), and before:<date> finds bookmarks created on or before a date (YYYY-MM-DD).
 If you need to pass names with spaces, you can quote them with double quotes. If you want to negate a qualifier, prefix it with a minus sign.
 ## Examples:
@@ -29,14 +29,26 @@ is:archived and (list:reading or #work)
 
 ### Combine text search with qualifiers
 machine learning is:fav`),
+    limit: z
+      .number()
+      .optional()
+      .describe(`The number of results to return in a single query.`)
+      .default(10),
+    nextCursor: z
+      .string()
+      .optional()
+      .describe(
+        `The next cursor to use for pagination. The value for this is returned from a previous call to this tool.`,
+      ),
   },
-  async ({ query }): Promise<CallToolResult> => {
+  async ({ query, limit, nextCursor }): Promise<CallToolResult> => {
     const res = await karakeepClient.GET("/bookmarks/search", {
       params: {
         query: {
           q: query,
-          limit: 10,
+          limit: limit,
           includeContent: false,
+          cursor: nextCursor,
         },
       },
     });
@@ -44,10 +56,16 @@ machine learning is:fav`),
       return toMcpToolError(res.error);
     }
     return {
-      content: res.data.bookmarks.map((bookmark) => ({
-        type: "text",
-        text: JSON.stringify(compactBookmark(bookmark)),
-      })),
+      content: [
+        ...res.data.bookmarks.map((bookmark) => ({
+          type: "text" as const,
+          text: JSON.stringify(compactBookmark(bookmark)),
+        })),
+        {
+          type: "text",
+          text: `Next cursor: ${res.data.nextCursor ? `'${res.data.nextCursor}'` : "no more pages"}`,
+        },
+      ],
     };
   },
 );
@@ -84,48 +102,33 @@ mcpServer.tool(
 );
 
 mcpServer.tool(
-  "create-text-bookmark",
-  `Create a text bookmark`,
+  "create-bookmark",
+  `Create a link bookmark or a text bookmark`,
   {
+    type: z.enum(["link", "text"]).describe(`The type of bookmark to create.`),
     title: z.string().optional().describe(`The title of the bookmark`),
-    text: z.string().describe(`The text to be bookmarked`),
+    content: z
+      .string()
+      .describe(
+        "If type is text, the text to be bookmarked. If the type is link, then it's the URL to be bookmarked.",
+      ),
   },
-  async ({ title, text }): Promise<CallToolResult> => {
+  async ({ title, type, content }): Promise<CallToolResult> => {
     const res = await karakeepClient.POST(`/bookmarks`, {
-      body: {
-        type: "text",
-        title,
-        text,
-      },
-    });
-    if (res.error) {
-      return toMcpToolError(res.error);
-    }
-    return {
-      content: [
+      body: (
         {
-          type: "text",
-          text: JSON.stringify(compactBookmark(res.data)),
-        },
-      ],
-    };
-  },
-);
-
-mcpServer.tool(
-  "create-url-bookmark",
-  `Create a url bookmark`,
-  {
-    title: z.string().optional().describe(`The title of the bookmark`),
-    url: z.string().describe(`The url to be bookmarked`),
-  },
-  async ({ title, url }): Promise<CallToolResult> => {
-    const res = await karakeepClient.POST(`/bookmarks`, {
-      body: {
-        type: "link",
-        title,
-        url,
-      },
+          link: {
+            type: "link",
+            title,
+            url: content,
+          },
+          text: {
+            type: "text",
+            title,
+            text: content,
+          },
+        } as const
+      )[type],
     });
     if (res.error) {
       return toMcpToolError(res.error);
@@ -143,7 +146,7 @@ mcpServer.tool(
 
 mcpServer.tool(
   "get-bookmark-content",
-  `Get a bookmark content.`,
+  `Get the content of the bookmark in markdown`,
   {
     bookmarkId: z.string().describe(`The bookmarkId to get content for.`),
   },
