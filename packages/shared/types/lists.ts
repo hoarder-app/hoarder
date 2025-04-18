@@ -47,6 +47,7 @@ export const zBookmarkListSchema = z.object({
   parentId: z.string().nullable(),
   type: z.enum(["manual", "smart"]).default("manual"),
   query: z.string().nullish(),
+  public: z.boolean(),
 });
 
 export type ZBookmarkList = z.infer<typeof zBookmarkListSchema>;
@@ -66,6 +67,7 @@ export const zEditBookmarkListSchema = z.object({
   icon: z.string().optional(),
   parentId: z.string().nullish(),
   query: z.string().min(1).optional(),
+  public: z.boolean().optional(),
 });
 
 export const zEditBookmarkListSchemaWithValidation = zEditBookmarkListSchema

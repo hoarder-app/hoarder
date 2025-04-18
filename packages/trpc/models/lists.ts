@@ -8,11 +8,13 @@ import { SqliteError } from "@karakeep/db";
 import { bookmarkLists, bookmarksInLists } from "@karakeep/db/schema";
 import { triggerRuleEngineOnEvent } from "@karakeep/shared/queues";
 import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
+import { ZSortOrder } from "@karakeep/shared/types/bookmarks";
 import {
   ZBookmarkList,
   zEditBookmarkListSchemaWithValidation,
   zNewBookmarkListSchema,
 } from "@karakeep/shared/types/lists";
+import { ZCursor } from "@karakeep/shared/types/pagination";
 
 import { AuthedContext, Context } from "..";
 import { buildImpersonatingAuthedContext } from "../lib/impersonate";
@@ -85,7 +87,6 @@ export abstract class List implements PrivacyAware {
     // The token here acts as an authed context, so we can create
     // an impersonating context for the list owner as long as
     // we don't leak the context.
-
     const authedCtx = await buildImpersonatingAuthedContext(listdb.userId);
     const list = List.fromData(authedCtx, listdb);
     const bookmarkIds = await list.getBookmarkIds();
@@ -104,6 +105,51 @@ export abstract class List implements PrivacyAware {
         description: list.list.description,
       },
       bookmarks: bookmarks.bookmarks.map((b) => b.asPublicBookmark()),
+    };
+  }
+
+  static async getPublicListContents(
+    ctx: Context,
+    listId: string,
+    pagination: {
+      limit: number;
+      order: Exclude<ZSortOrder, "relevance">;
+      cursor: ZCursor | null | undefined;
+    },
+  ) {
+    const listdb = await ctx.db.query.bookmarkLists.findFirst({
+      where: and(eq(bookmarkLists.id, listId), eq(bookmarkLists.public, true)),
+    });
+    if (!listdb) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "List not found",
+      });
+    }
+
+    // The token here acts as an authed context, so we can create
+    // an impersonating context for the list owner as long as
+    // we don't leak the context.
+    const authedCtx = await buildImpersonatingAuthedContext(listdb.userId);
+    const list = List.fromData(authedCtx, listdb);
+    const bookmarkIds = await list.getBookmarkIds();
+
+    const bookmarks = await Bookmark.loadMulti(authedCtx, {
+      ids: bookmarkIds,
+      includeContent: false,
+      limit: pagination.limit,
+      sortOrder: pagination.order,
+      cursor: pagination.cursor,
+    });
+
+    return {
+      list: {
+        icon: list.list.icon,
+        name: list.list.name,
+        description: list.list.description,
+      },
+      bookmarks: bookmarks.bookmarks.map((b) => b.asPublicBookmark()),
+      nextCursor: bookmarks.nextCursor,
     };
   }
 
@@ -185,6 +231,7 @@ export abstract class List implements PrivacyAware {
         icon: input.icon,
         parentId: input.parentId,
         query: input.query,
+        public: input.public,
       })
       .where(
         and(

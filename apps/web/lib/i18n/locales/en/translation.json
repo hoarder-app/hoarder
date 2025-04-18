@@ -304,7 +304,8 @@
     "search_query": "Search Query",
     "search_query_help": "Learn more about the search query language.",
     "description": "Description (Optional)",
-    "generate_rss_feed": "Generate RSS Feed"
+    "generate_rss_feed": "Generate RSS Feed",
+    "public_list": "Public List"
   },
   "tags": {
     "all_tags": "All Tags",

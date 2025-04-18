@@ -8,15 +8,16 @@ import {
   useBookmarkLayout,
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
-import dayjs from "dayjs";
 import { Check, Image as ImageIcon, NotebookPen } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
+import { useBookmarkViewingMode } from "@karakeep/shared-react/hooks/bookmark-viewing-mode-context";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 import { isBookmarkStillTagging } from "@karakeep/shared/utils/bookmarkUtils";
 
 import BookmarkActionBar from "./BookmarkActionBar";
+import BookmarkFormattedCreatedAt from "./BookmarkFormattedCreatedAt";
 import TagList from "./TagList";
 
 interface Props {
@@ -30,13 +31,6 @@ interface Props {
   wrapTags: boolean;
 }
 
-function BookmarkFormattedCreatedAt({ bookmark }: { bookmark: ZBookmark }) {
-  const createdAt = dayjs(bookmark.createdAt);
-  const oneYearAgo = dayjs().subtract(1, "year");
-  const formatString = createdAt.isAfter(oneYearAgo) ? "MMM D" : "MMM D, YYYY";
-  return createdAt.format(formatString);
-}
-
 function BottomRow({
   footer,
   bookmark,
@@ -44,6 +38,7 @@ function BottomRow({
   footer?: React.ReactNode;
   bookmark: ZBookmark;
 }) {
+  const viewingMode = useBookmarkViewingMode();
   return (
     <div className="justify flex w-full shrink-0 justify-between text-gray-500">
       <div className="flex items-center gap-2 overflow-hidden text-nowrap font-light">
@@ -52,10 +47,10 @@ function BottomRow({
           href={`/dashboard/preview/${bookmark.id}`}
           suppressHydrationWarning
         >
-          <BookmarkFormattedCreatedAt bookmark={bookmark} />
+          <BookmarkFormattedCreatedAt createdAt={bookmark.createdAt} />
         </Link>
       </div>
-      <BookmarkActionBar bookmark={bookmark} />
+      {viewingMode !== "public" && <BookmarkActionBar bookmark={bookmark} />}
     </div>
   );
 }
@@ -239,7 +234,7 @@ function CompactView({ bookmark, title, footer, className }: Props) {
             suppressHydrationWarning
             className="shrink-0 gap-2 text-gray-500"
           >
-            <BookmarkFormattedCreatedAt bookmark={bookmark} />
+            <BookmarkFormattedCreatedAt createdAt={bookmark.createdAt} />
           </Link>
         </div>
         <BookmarkActionBar bookmark={bookmark} />

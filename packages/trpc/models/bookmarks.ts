@@ -27,6 +27,7 @@ import {
   rssFeedImportsTable,
   tagsOnBookmarks,
 } from "@karakeep/db/schema";
+import serverConfig from "@karakeep/shared/config";
 import {
   BookmarkTypes,
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
@@ -36,7 +37,11 @@ import {
   ZPublicBookmark,
 } from "@karakeep/shared/types/bookmarks";
 import { ZCursor } from "@karakeep/shared/types/pagination";
-import { getBookmarkTitle } from "@karakeep/shared/utils/bookmarkUtils";
+import { getAssetUrl } from "@karakeep/shared/utils/assetUtils";
+import {
+  getBookmarkLinkImageUrl,
+  getBookmarkTitle,
+} from "@karakeep/shared/utils/bookmarkUtils";
 
 import { AuthedContext } from "..";
 import { mapDBAssetTypeToUserType } from "../lib/attachments";
@@ -352,6 +357,31 @@ export class Bookmark implements PrivacyAware {
       }
     };
 
+    const getBannerImageUrl = (content: ZBookmarkContent): string | null => {
+      switch (content.type) {
+        case BookmarkTypes.LINK: {
+          const res = getBookmarkLinkImageUrl(content);
+          if (!res) {
+            return null;
+          }
+          if (res.localAsset) {
+            return `${serverConfig.publicUrl}${res.url}`;
+          } else {
+            return res.url;
+          }
+        }
+        case BookmarkTypes.TEXT: {
+          return null;
+        }
+        case BookmarkTypes.ASSET: {
+          return `${serverConfig.publicUrl}${getAssetUrl(content.assetId)}`;
+        }
+        default: {
+          throw new Error("Unknown bookmark content type");
+        }
+      }
+    };
+
     // WARNING: Everything below is exposed in the public APIs, don't use spreads!
     return {
       id: this.bookmark.id,
@@ -360,6 +390,7 @@ export class Bookmark implements PrivacyAware {
       title: getBookmarkTitle(this.bookmark),
       tags: this.bookmark.tags.map((t) => t.name),
       content: getContent(this.bookmark.content),
+      bannerImageUrl: getBannerImageUrl(this.bookmark.content),
     };
   }
 }

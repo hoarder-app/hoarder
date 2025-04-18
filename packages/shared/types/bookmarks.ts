@@ -250,6 +250,7 @@ export const zPublicBookmarkSchema = z.object({
   title: z.string().nullish(),
   tags: z.array(z.string()),
   description: z.string().nullish(),
+  bannerImageUrl: z.string().nullable(),
   content: z.discriminatedUnion("type", [
     z.object({
       type: z.literal(BookmarkTypes.LINK),

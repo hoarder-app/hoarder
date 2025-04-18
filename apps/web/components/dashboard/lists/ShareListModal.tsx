@@ -14,6 +14,7 @@ import { DialogDescription } from "@radix-ui/react-dialog";
 
 import { ZBookmarkList } from "@karakeep/shared/types/lists";
 
+import PublicListLink from "./PublicListLink";
 import RssLink from "./RssLink";
 
 export function ShareListModal({
@@ -53,6 +54,7 @@ export function ShareListModal({
           <DialogTitle>{t("lists.share_list")}</DialogTitle>
         </DialogHeader>
         <DialogDescription className="mt-4 flex flex-col gap-2">
+          <PublicListLink list={list} />
           <RssLink listId={list.id} />
         </DialogDescription>
         <DialogFooter className="sm:justify-end">
