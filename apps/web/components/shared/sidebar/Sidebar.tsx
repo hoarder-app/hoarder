@@ -32,7 +32,11 @@ export default async function Sidebar({
       </div>
       {extraSections}
       <Link
-        href={`https://github.com/karakeep-app/karakeep`}
+        href={
+          serverConfig.serverVersion === "nightly"
+            ? `https://github.com/karakeep-app/karakeep`
+            : `https://github.com/hoarder-app/hoarder/releases/tag/v${serverConfig.serverVersion}`
+        }
         target="_blank"
         rel="noopener noreferrer"
         className="mt-auto flex items-center border-t pt-2 text-sm text-gray-400 hover:underline"
