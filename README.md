@@ -17,6 +17,10 @@
 
 Karakeep (previously Hoarder) is a self-hostable bookmark-everything app with a touch of AI for the data hoarders out there.
 
+<a href="https://glama.ai/mcp/servers/@karakeep-app/karakeep">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@karakeep-app/karakeep/badge" alt="Karakeep server MCP server" />
+</a>
+
 ![homepage screenshot](https://github.com/hoarder-app/hoarder/blob/main/screenshots/homepage.png?raw=true)
 
 ## Features
