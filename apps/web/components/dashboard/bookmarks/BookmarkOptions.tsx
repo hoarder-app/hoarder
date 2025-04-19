@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -48,7 +48,17 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const linkId = bookmark.id;
 
   const demoMode = !!useClientConfig().demoMode;
-  const isClipboardAvailable = navigator && !!navigator.clipboard;
+
+  const [isClipboardAvailable, setIsClipboardAvailable] = useState(false);
+
+  useEffect(() => {
+    // This code only runs in the browser
+    setIsClipboardAvailable(
+      typeof window !== "undefined" &&
+        window.navigator &&
+        !!window.navigator.clipboard,
+    );
+  }, []);
 
   const { setOpen: setManageListsModalOpen, content: manageListsModal } =
     useManageListsModal(bookmark.id);
