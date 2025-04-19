@@ -64,7 +64,7 @@ const config: Config = {
         docsPluginId: "classic",
         config: {
           karakeep: {
-            specPath: "../packages/open-api/hoarder-openapi-spec.json",
+            specPath: "../packages/open-api/karakeep-openapi-spec.json",
             outputDir: "docs/API",
             sidebarOptions: {
               groupPathsBy: "tag",

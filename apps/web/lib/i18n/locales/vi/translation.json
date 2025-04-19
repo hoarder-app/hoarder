@@ -57,7 +57,7 @@
       "import_bookmarks_from_linkwarden_export": "Nhập dấu trang từ bản xuất Linkwarden",
       "import_bookmarks_from_pocket_export": "Nhập dấu trang từ bản xuất Pocket",
       "import_bookmarks_from_omnivore_export": "Nhập dấu trang từ xuất Omnivore",
-      "import_bookmarks_from_hoarder_export": "Nhập dấu trang từ bản xuất Hoarder"
+      "import_bookmarks_from_karakeep_export": "Nhập dấu trang từ bản xuất Karakeep"
     },
     "webhooks": {
       "edit_auth_token": "Sửa mã xác thực",

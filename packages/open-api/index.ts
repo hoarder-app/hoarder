@@ -27,16 +27,16 @@ function getOpenApiDocumentation() {
     openapi: "3.0.0",
     info: {
       version: "1.0.0",
-      title: "Hoarder API",
-      description: "The API for the Hoarder app",
+      title: "Karakeep API",
+      description: "The API for the Karakeep app",
     },
     servers: [
       {
         url: "{address}/api/v1",
         variables: {
           address: {
-            default: "https://try.hoarder.app",
-            description: "The address of the hoarder server",
+            default: "https://try.karakeep.app",
+            description: "The address of the Karakeep server",
           },
         },
       },
@@ -47,7 +47,7 @@ function getOpenApiDocumentation() {
 function writeDocumentation() {
   const docs = getOpenApiDocumentation();
   const fileContent = JSON.stringify(docs, null, 2);
-  fs.writeFileSync(`./hoarder-openapi-spec.json`, fileContent, {
+  fs.writeFileSync(`./karakeep-openapi-spec.json`, fileContent, {
     encoding: "utf-8",
   });
 }

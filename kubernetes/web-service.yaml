@@ -4,7 +4,7 @@ metadata:
   name: web
 spec:
   selector:
-    app: hoarder-web
+    app: karakeep-web
   ports:
     - protocol: TCP
       port: 3000

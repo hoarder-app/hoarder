@@ -1,6 +1,6 @@
 # Configuration
 
-The app is mainly configured by environment variables. All the used environment variables are listed in [packages/shared/config.ts](https://github.com/hoarder-app/hoarder/blob/main/packages/shared/config.ts). The most important ones are:
+The app is mainly configured by environment variables. All the used environment variables are listed in [packages/shared/config.ts](https://github.com/karakeep-app/karakeep/blob/main/packages/shared/config.ts). The most important ones are:
 
 | Name                      | Required                              | Default | Description                                                                                                                                    |
 | ------------------------- | ------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -15,7 +15,7 @@ The app is mainly configured by environment variables. All the used environment 
 
 ## Authentication / Signup
 
-By default, Hoarder uses the database to store users, but it is possible to also use OAuth.
+By default, Karakeep uses the database to store users, but it is possible to also use OAuth.
 The flags need to be provided to the `web` container.
 
 :::info
@@ -23,7 +23,7 @@ Only OIDC compliant OAuth providers are supported! For information on how to set
 :::
 
 :::info
-When setting up OAuth, the allowed redirect URLs configured at the provider should be set to `<HOARDER_ADDRESS>/api/auth/callback/custom` where `<HOARDER_ADDRESS>` is the address you configured in `NEXTAUTH_URL` (for example: `https://try.hoarder.app/api/auth/callback/custom`).
+When setting up OAuth, the allowed redirect URLs configured at the provider should be set to `<KARAKEEP_ADDRESS>/api/auth/callback/custom` where `<KARAKEEP_ADDRESS>` is the address you configured in `NEXTAUTH_URL` (for example: `https://try.karakeep.app/api/auth/callback/custom`).
 :::
 
 | Name                                        | Required | Default                | Description                                                                                                                                                         |
@@ -35,7 +35,7 @@ When setting up OAuth, the allowed redirect URLs configured at the provider shou
 | OAUTH_CLIENT_ID                             | No       | Not set                | The "Client ID" as provided by the OAuth provider                                                                                                                   |
 | OAUTH_SCOPE                                 | No       | "openid email profile" | "Full list of scopes to request (space delimited)"                                                                                                                  |
 | OAUTH_PROVIDER_NAME                         | No       | "Custom Provider"      | The name of your provider. Will be shown on the signup page as "Sign in with `<name>`"                                                                              |
-| OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING | No       | false                  | Whether existing accounts in hoarder stored in the database should automatically be linked with your OAuth account. Only enable it if you trust the OAuth provider! |
+| OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING | No       | false                  | Whether existing accounts in karakeep stored in the database should automatically be linked with your OAuth account. Only enable it if you trust the OAuth provider! |
 | OAUTH_TIMEOUT                               | No       | 3500                   | The wait time in milliseconds for the OAuth provider response. Increase this if you are having `outgoing request timed out` errors                                  |
 
 For more information on `OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING`, check the [next-auth.js documentation](https://next-auth.js.org/configuration/providers/oauth#allowdangerousemailaccountlinking-option).
@@ -69,7 +69,7 @@ Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic taggin
 :::info
 
 - You can append additional instructions to the prompt used for automatic tagging, in the `AI Settings` (in the `User Settings` screen)
-- You can use the placeholders `$tags`, `$aiTags`, `$userTags` in the prompt. These placeholders will be replaced with all tags, ai generated tags or human created tags when automatic tagging is performed (e.g. `[hoarder, computer, ai]`)
+- You can use the placeholders `$tags`, `$aiTags`, `$userTags` in the prompt. These placeholders will be replaced with all tags, ai generated tags or human created tags when automatic tagging is performed (e.g. `[karakeep, computer, ai]`)
   :::
 
 ## Crawler Configs
@@ -95,7 +95,7 @@ Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic taggin
 
 ## OCR Configs
 
-Hoarder uses [tesseract.js](https://github.com/naptha/tesseract.js) to extract text from images.
+Karakeep uses [tesseract.js](https://github.com/naptha/tesseract.js) to extract text from images.
 
 | Name                     | Required | Default   | Description                                                                                                                                                                                                                               |
 | ------------------------ | -------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

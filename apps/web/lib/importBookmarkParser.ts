@@ -76,7 +76,7 @@ export async function parsePocketBookmarkFile(
   });
 }
 
-export async function parseHoarderBookmarkFile(
+export async function parseKarakeepBookmarkFile(
   file: File,
 ): Promise<ParsedBookmark[]> {
   const textContent = await file.text();

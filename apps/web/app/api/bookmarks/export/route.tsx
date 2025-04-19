@@ -35,7 +35,7 @@ export async function GET(request: Request) {
     status: 200,
     headers: {
       "Content-type": "application/json",
-      "Content-disposition": `attachment; filename="hoarder-export-${new Date().toISOString()}.json"`,
+      "Content-disposition": `attachment; filename="karakeep-export-${new Date().toISOString()}.json"`,
     },
   });
 }

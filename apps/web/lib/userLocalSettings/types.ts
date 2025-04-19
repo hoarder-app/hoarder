@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const USER_LOCAL_SETTINGS_COOKIE_NAME = "hoarder-user-local-settings";
+export const USER_LOCAL_SETTINGS_COOKIE_NAME = "karakeep-user-local-settings";
 
 const zBookmarkGridLayout = z.enum(["grid", "list", "masonry", "compact"]);
 export type BookmarksLayoutTypes = z.infer<typeof zBookmarkGridLayout>;

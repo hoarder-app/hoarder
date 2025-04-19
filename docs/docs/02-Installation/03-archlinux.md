@@ -13,8 +13,8 @@
 2. (**Optional**) Install optional dependencies
 
     ```shell
-    # hoarder-cli: karakeep cli tool
-    paru -S hoarder-cli
+    # karakeep-cli: karakeep cli tool
+    paru -S karakeep-cli
 
     # ollama: for automatic tagging
     sudo pacman -S ollama
