@@ -1,12 +1,12 @@
 # PikaPods [Paid Hosting]
 
 :::info
-Note: PikaPods shares some of its revenue from hosting hoarder with the maintainer of this project.
+Note: PikaPods shares some of its revenue from hosting Karakeep with the maintainer of this project.
 :::
 
-[PikaPods](https://www.pikapods.com/) offers managed paid hosting for many open source apps, including Hoarder.
+[PikaPods](https://www.pikapods.com/) offers managed paid hosting for many open source apps, including Karakeep.
 Server administration, updates, migrations and backups are all taken care of, which makes it well suited
-for less technical users. As of Nov 2024, running Hoarder there will cost you ~$3 per month.
+for less technical users. As of Nov 2024, running Karakeep there will cost you ~$3 per month.
 
 ### Requirements
 
@@ -14,8 +14,8 @@ for less technical users. As of Nov 2024, running Hoarder there will cost you ~$
 
 ### 1. Choose app
 
-Choose _Hoarder_ from their [list of apps](https://www.pikapods.com/apps) or use this [direct link](https://www.pikapods.com/pods?run=hoarder). This will either
-open a new dialog to add a new _Hoarder_ pod or ask you to log in.
+Choose _Karakeep_ from their [list of apps](https://www.pikapods.com/apps) or use this [direct link](https://www.pikapods.com/pods?run=karakeep). This will either
+open a new dialog to add a new _Karakeep_ pod or ask you to log in.
 
 ### 2. Add settings
 
@@ -23,7 +23,7 @@ There are a few settings to configure in the dialog:
 
 - **Basics**: Give the pod a name and choose a region that's near you.
 - **Env Vars**: Here you can disable signups or set an OpenAI API key. All settings are optional.
-- **Resources**: The resources your _Hoarder_ pod can use. The defaults are fine, unless you have a very large collection.
+- **Resources**: The resources your _Karakeep_ pod can use. The defaults are fine, unless you have a very large collection.
 
 ### 3. Start pod and add user
 

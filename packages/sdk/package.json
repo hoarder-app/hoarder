@@ -6,6 +6,7 @@
   "license": "GNU Affero General Public License version 3",
   "keywords": [
     "hoarder",
+    "karakeep",
     "sdk"
   ],
   "main": "./src/index.ts",
@@ -46,7 +47,7 @@
       "@karakeep/eslint-config/base"
     ],
     "ignorePatterns": [
-      "src/hoarder-api.d.ts"
+      "src/karakeep-api.d.ts"
     ]
   },
   "prettier": "@karakeep/prettier-config",

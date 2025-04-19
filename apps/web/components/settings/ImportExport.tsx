@@ -11,7 +11,7 @@ import { useTranslation } from "@/lib/i18n/client";
 import {
   deduplicateBookmarks,
   ParsedBookmark,
-  parseHoarderBookmarkFile,
+  parseKarakeepBookmarkFile,
   parseLinkwardenBookmarkFile,
   parseNetscapeBookmarkFile,
   parseOmnivoreBookmarkFile,
@@ -166,7 +166,7 @@ export function ImportExportRow() {
         | "html"
         | "pocket"
         | "omnivore"
-        | "hoarder"
+        | "karakeep"
         | "linkwarden"
         | "tab-session-manager";
     }) => {
@@ -174,8 +174,8 @@ export function ImportExportRow() {
         return await parseNetscapeBookmarkFile(file);
       } else if (source === "pocket") {
         return await parsePocketBookmarkFile(file);
-      } else if (source === "hoarder") {
-        return await parseHoarderBookmarkFile(file);
+      } else if (source === "karakeep") {
+        return await parseKarakeepBookmarkFile(file);
       } else if (source === "omnivore") {
         return await parseOmnivoreBookmarkFile(file);
       } else if (source === "linkwarden") {
@@ -374,9 +374,9 @@ export function ImportExportRow() {
           </FilePickerButton>
         </ImportCard>
         <ImportCard
-          text="Hoarder"
+          text="Karakeep"
           description={t(
-            "settings.import.import_bookmarks_from_hoarder_export",
+            "settings.import.import_bookmarks_from_karakeep_export",
           )}
         >
           <FilePickerButton
@@ -386,7 +386,7 @@ export function ImportExportRow() {
             multiple={false}
             className="flex items-center gap-2"
             onFileSelect={(file) =>
-              runUploadBookmarkFile({ file, source: "hoarder" })
+              runUploadBookmarkFile({ file, source: "karakeep" })
             }
           >
             <p>Import</p>

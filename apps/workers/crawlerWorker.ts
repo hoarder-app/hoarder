@@ -160,7 +160,7 @@ export class CrawlerWorker {
       try {
         logger.info("[crawler] Loading adblocker ...");
         globalBlocker = await PuppeteerBlocker.fromPrebuiltFull(fetch, {
-          path: path.join(os.tmpdir(), "hoarder_adblocker.bin"),
+          path: path.join(os.tmpdir(), "karakeep_adblocker.bin"),
           read: fs.readFile,
           write: fs.writeFile,
         });

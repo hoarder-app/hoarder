@@ -23,9 +23,9 @@ spec:
               name: meilisearch
           envFrom:
             - secretRef:
-                name: hoarder-secrets
+                name: karakeep-secrets
             - configMapRef:
-                name: hoarder-configuration
+                name: karakeep-configuration
       volumes:
         - name: meilisearch
           persistentVolumeClaim:

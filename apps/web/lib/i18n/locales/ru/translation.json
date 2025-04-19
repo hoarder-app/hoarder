@@ -61,7 +61,7 @@
       "new_password": "Новый пароль"
     },
     "import": {
-      "import_bookmarks_from_hoarder_export": "Импортировать закладки из экспорта Hoarder",
+      "import_bookmarks_from_karakeep_export": "Импортировать закладки из экспорта Karakeep",
       "import_export": "Импорт / Экспорт",
       "import_export_bookmarks": "Импорт / Экспорт закладок",
       "import_bookmarks_from_pocket_export": "Импортировать закладки из экспорта Pocket",

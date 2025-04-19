@@ -10,8 +10,8 @@ import {
 } from "../utils/settings.ts";
 import { NEW_BOOKMARK_REQUEST_KEY_NAME } from "./protocol.ts";
 
-const OPEN_HOARDER_ID = "open-hoarder";
-const ADD_LINK_TO_HOARDER_ID = "add-link";
+const OPEN_KARAKEEP_ID = "open-karakeep";
+const ADD_LINK_TO_KARAKEEP_ID = "add-link";
 
 function checkSettingsState(settings: Settings) {
   if (settings?.address) {
@@ -22,39 +22,39 @@ function checkSettingsState(settings: Settings) {
 }
 
 function removeContextMenus() {
-  chrome.contextMenus.remove(OPEN_HOARDER_ID);
-  chrome.contextMenus.remove(ADD_LINK_TO_HOARDER_ID);
+  chrome.contextMenus.remove(OPEN_KARAKEEP_ID);
+  chrome.contextMenus.remove(ADD_LINK_TO_KARAKEEP_ID);
 }
 
 /**
  * Registers
- * * a context menu button to open a tab with the currently configured hoarder instance
- * * a context menu button to add a link to hoarder without loading the page
+ * * a context menu button to open a tab with the currently configured karakeep instance
+ * * a context menu button to add a link to karakeep without loading the page
  */
 function registerContextMenus() {
   chrome.contextMenus.create({
-    id: OPEN_HOARDER_ID,
-    title: "Open Hoarder",
+    id: OPEN_KARAKEEP_ID,
+    title: "Open Karakeep",
     contexts: ["action"],
   });
   chrome.contextMenus.create({
-    id: ADD_LINK_TO_HOARDER_ID,
-    title: "Add to Hoarder",
+    id: ADD_LINK_TO_KARAKEEP_ID,
+    title: "Add to Karakeep",
     contexts: ["link", "page", "selection", "image"],
   });
 }
 
 /**
- * Reads the current settings and opens a new tab with hoarder
+ * Reads the current settings and opens a new tab with karakeep
  * @param info the information about the click in the context menu
  */
 async function handleContextMenuClick(info: chrome.contextMenus.OnClickData) {
   const { menuItemId } = info;
-  if (menuItemId === OPEN_HOARDER_ID) {
+  if (menuItemId === OPEN_KARAKEEP_ID) {
     getPluginSettings().then((settings: Settings) => {
       chrome.tabs.create({ url: settings.address, active: true });
     });
-  } else if (menuItemId === ADD_LINK_TO_HOARDER_ID) {
+  } else if (menuItemId === ADD_LINK_TO_KARAKEEP_ID) {
     let newBookmark: ZNewBookmarkRequest | null = null;
     if (info.selectionText) {
       newBookmark = {

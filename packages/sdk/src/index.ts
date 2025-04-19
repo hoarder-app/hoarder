@@ -1,11 +1,11 @@
 import createClient from "openapi-fetch";
 
-import type { components, paths } from "./hoarder-api.d.ts";
+import type { components, paths } from "./karakeep-api.js";
 
 /**
  * @deprecated Use createKarakeepClient instead.
  */
-export const createHoarderClient = createClient<paths>;
+export const createKarakeepClient = createClient<paths>;
 
 export const createKarakeepClient = createClient<paths>;
 

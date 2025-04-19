@@ -1,21 +1,21 @@
 # Minimal Installation
 
 :::warning
-Unless necessary, prefer the [full installation](/Installation/docker) to leverage all the features of hoarder. You'll be sacrificing a lot of functionality if you go with the minimal installation route.
+Unless necessary, prefer the [full installation](/Installation/docker) to leverage all the features of Karakeep. You'll be sacrificing a lot of functionality if you go with the minimal installation route.
 :::
 
-Hoarder's default installation has a dependency on Meilisearch for the full text search, Chrome for crawling and OpenAI/Ollama for AI tagging. You can however run hoarder without those dependencies if you're willing to sacrifice those features.
+Karakeep's default installation has a dependency on Meilisearch for the full text search, Chrome for crawling and OpenAI/Ollama for AI tagging. You can however run Karakeep without those dependencies if you're willing to sacrifice those features.
 
 - If you run without meilisearch, the search functionality will be completely disabled.
 - If you run without chrome, crawling will still work, but you'll lose ability to take screenshots of websites and websites with javascript content won't get crawled correctly.
 - If you don't setup OpenAI/Ollama, AI tagging will be disabled.
 
-Those features are important for leveraging hoarder's full potential, but if you're running in constrained environments, you can use the following minimal docker compose to skip all those dependencies:
+Those features are important for leveraging Karakeep's full potential, but if you're running in constrained environments, you can use the following minimal docker compose to skip all those dependencies:
 
 ```yaml
 services:
   web:
-    image: ghcr.io/hoarder-app/hoarder:release
+    image: ghcr.io/karakeep-app/karakeep:release
     restart: unless-stopped
     volumes:
       - data:/data
@@ -37,7 +37,7 @@ docker run -d \
   -p 3000:3000 \
   -e DATA_DIR=/data \
   -e NEXTAUTH_SECRET=super_random_string \
-  ghcr.io/hoarder-app/hoarder:release
+  ghcr.io/karakeep-app/karakeep:release
 ```
 
 :::warning

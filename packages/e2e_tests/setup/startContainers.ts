@@ -39,7 +39,7 @@ export default async function ({ provide }: GlobalSetupContext) {
     stdio: "inherit",
     env: {
       ...process.env,
-      HOARDER_PORT: port.toString(),
+      KARAKEEP_PORT: port.toString(),
     },
   });
 
@@ -49,9 +49,9 @@ export default async function ({ provide }: GlobalSetupContext) {
   // Wait 5 seconds for the worker to start
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
-  provide("hoarderPort", port);
+  provide("karakeepPort", port);
 
-  process.env.HOARDER_PORT = port.toString();
+  process.env.KARAKEEP_PORT = port.toString();
 
   return async () => {
     console.log("Stopping docker compose...");
@@ -65,6 +65,6 @@ export default async function ({ provide }: GlobalSetupContext) {
 
 declare module "vitest" {
   export interface ProvidedContext {
-    hoarderPort: number;
+    karakeepPort: number;
   }
 }

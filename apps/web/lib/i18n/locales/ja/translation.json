@@ -109,7 +109,7 @@
     "import": {
       "import_export_bookmarks": "ブックマークのインポート/エクスポート",
       "import_bookmarks_from_html_file": "HTML ファイルからブックマークをインポートする",
-      "import_bookmarks_from_hoarder_export": "Hoarder エクスポートからブックマークをインポート",
+      "import_bookmarks_from_karakeep_export": "Karakeep エクスポートからブックマークをインポート",
       "imported_bookmarks": "インポートされたブックマーク",
       "import_bookmarks_from_pocket_export": "Pocketのエクスポートからブックマークをインポート",
       "import_bookmarks_from_omnivore_export": "Omnivoreエクスポートからブックマークをインポート",

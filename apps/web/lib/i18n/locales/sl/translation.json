@@ -8,7 +8,7 @@
       "key_success": "Ključ je bil uspešno ustvarjen"
     },
     "import": {
-      "import_bookmarks_from_hoarder_export": "Uvozi zaznamke iz Hoarder izvoza",
+      "import_bookmarks_from_karakeep_export": "Uvozi zaznamke iz Karakeep izvoza",
       "import_bookmarks_from_linkwarden_export": "Uvozi zaznamke iz Linkwarden izvoza",
       "imported_bookmarks": "Uvoženi zaznamki",
       "import_bookmarks_from_pocket_export": "Uvozi zaznamke iz Pocket izvoza",

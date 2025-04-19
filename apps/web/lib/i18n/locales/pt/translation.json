@@ -98,7 +98,7 @@
       "import_export_bookmarks": "Importar/Exportar Marcadores",
       "import_bookmarks_from_html_file": "Importar favoritos de arquivo HTML",
       "import_bookmarks_from_linkwarden_export": "Importar marcadores da exportação do Linkwarden",
-      "import_bookmarks_from_hoarder_export": "Importar marcadores da exportação do Hoarder",
+      "import_bookmarks_from_karakeep_export": "Importar marcadores da exportação do Karakeep",
       "export_links_and_notes": "Exportar Links e Notas",
       "imported_bookmarks": "Favoritos importados"
     },

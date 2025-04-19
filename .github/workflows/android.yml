@@ -38,5 +38,5 @@ jobs:
       - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hoarder-android
+          name: karakeep-android
           path: ${{ github.workspace }}/app-release.aab

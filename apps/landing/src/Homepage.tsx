@@ -26,7 +26,7 @@ const DEMO_LINK = "https://try.karakeep.app";
 const platforms = [
   {
     name: "iOS",
-    url: "https://apps.apple.com/us/app/hoarder-app/id6479258022",
+    url: "https://apps.apple.com/us/app/karakeep-app/id6479258022",
     badge: appStoreBadge,
   },
   {
@@ -36,12 +36,12 @@ const platforms = [
   },
   {
     name: "Chrome Extension",
-    url: "https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje",
+    url: "https://chromewebstore.google.com/detail/karakeep/kgcjekpmcjjogibpjebkhaanilehneje",
     badge: chromeExtensionBadge,
   },
   {
     name: "Firefox Addon",
-    url: "https://addons.mozilla.org/en-US/firefox/addon/hoarder/",
+    url: "https://addons.mozilla.org/en-US/firefox/addon/karakeep/",
     badge: firefoxAddonBadge,
   },
 ];

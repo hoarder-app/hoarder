@@ -1,22 +1,22 @@
 import { assert, beforeEach, describe, expect, inject, it } from "vitest";
 
-import { createHoarderClient } from "@karakeep/sdk";
+import { createKarakeepClient } from "@karakeep/sdk";
 
 import { createTestUser, uploadTestAsset } from "../../utils/api";
 
 describe("Assets API", () => {
-  const port = inject("hoarderPort");
+  const port = inject("karakeepPort");
 
   if (!port) {
     throw new Error("Missing required environment variables");
   }
 
-  let client: ReturnType<typeof createHoarderClient>;
+  let client: ReturnType<typeof createKarakeepClient>;
   let apiKey: string;
 
   beforeEach(async () => {
     apiKey = await createTestUser();
-    client = createHoarderClient({
+    client = createKarakeepClient({
       baseUrl: `http://localhost:${port}/api/v1/`,
       headers: {
         "Content-Type": "application/json",

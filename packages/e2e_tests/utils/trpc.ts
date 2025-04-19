@@ -8,7 +8,7 @@ export function getTrpcClient(apiKey?: string) {
     links: [
       httpBatchLink({
         transformer: superjson,
-        url: `http://localhost:${process.env.HOARDER_PORT}/api/trpc`,
+        url: `http://localhost:${process.env.KARAKEEP_PORT}/api/trpc`,
         headers() {
           return {
             authorization: apiKey ? `Bearer ${apiKey}` : undefined,

@@ -41,7 +41,7 @@
     "import": {
       "export_links_and_notes": "Eksporter links og noter",
       "import_bookmarks_from_omnivore_export": "Importer bogmærker fra Omnivore-eksport",
-      "import_bookmarks_from_hoarder_export": "Importer bogmærker fra Hoarder-eksport",
+      "import_bookmarks_from_karakeep_export": "Importer bogmærker fra Karakeep-eksport",
       "import_export": "Import / eksport",
       "import_export_bookmarks": "Import / eksport bogmærker",
       "import_bookmarks_from_html_file": "Importer bogmærker fra HTML-fil",
