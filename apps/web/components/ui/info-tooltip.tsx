@@ -23,7 +23,7 @@ export default function InfoTooltip({
         {variant === "tip" ? (
           <Info
             color="#494949"
-            className={cn("cursor-pointer", className)}
+            className={cn("z-10 cursor-pointer", className)}
             size={size}
           />
         ) : (

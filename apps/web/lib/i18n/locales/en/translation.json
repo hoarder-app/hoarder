@@ -298,6 +298,7 @@
     "import_as_text": "Import as Text Bookmark",
     "import_as_separate_bookmarks": "Import as separate Bookmarks",
     "placeholder": "Paste a link or an image, write a note or drag and drop an image in here…",
+    "placeholder_v2": "Paste a link, write a note or drop an image…",
     "new_item": "NEW ITEM",
     "disabled_submissions": "Submissions are disabled",
     "text_toolbar": {

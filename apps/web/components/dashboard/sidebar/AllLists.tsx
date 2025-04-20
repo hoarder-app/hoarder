@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CollapsibleTriggerTriangle } from "@/components/ui/collapsible";
 import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
-import { MoreHorizontal, Plus } from "lucide-react";
+import { CirclePlus, MoreHorizontal } from "lucide-react";
 
 import type { ZBookmarkList } from "@karakeep/shared/types/lists";
 import { ZBookmarkListTreeNode } from "@karakeep/shared/utils/listUtils";
@@ -34,11 +34,11 @@ export default function AllLists({
 
   return (
     <ul className="max-h-full gap-y-2 overflow-auto text-sm">
-      <li className="flex justify-between pb-2 font-bold">
+      <li className="flex justify-between pb-3 font-bold">
         <p>Lists</p>
         <EditListModal>
           <Link href="#">
-            <Plus />
+            <CirclePlus className="mr-4 size-5" strokeWidth={1.5} />
           </Link>
         </EditListModal>
       </li>

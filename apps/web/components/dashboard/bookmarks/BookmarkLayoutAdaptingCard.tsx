@@ -46,7 +46,7 @@ function BottomRow({
 }) {
   return (
     <div className="justify flex w-full shrink-0 justify-between text-gray-500">
-      <div className="flex items-center gap-2 overflow-hidden text-nowrap">
+      <div className="flex items-center gap-2 overflow-hidden text-nowrap font-light">
         {footer && <>{footer}•</>}
         <Link
           href={`/dashboard/preview/${bookmark.id}`}
@@ -122,7 +122,7 @@ function ListView({
   return (
     <div
       className={cn(
-        "relative flex max-h-96 gap-4 overflow-hidden rounded-lg p-2 shadow-md",
+        "relative flex max-h-96 gap-4 overflow-hidden rounded-lg p-2",
         className,
       )}
     >
@@ -167,7 +167,7 @@ function GridView({
   return (
     <div
       className={cn(
-        "relative flex flex-col overflow-hidden rounded-lg shadow-md",
+        "relative flex flex-col overflow-hidden rounded-lg",
         className,
         fitHeight && layout != "grid" ? "max-h-96" : "h-96",
       )}
@@ -200,7 +200,7 @@ function CompactView({ bookmark, title, footer, className }: Props) {
   return (
     <div
       className={cn(
-        "relative flex flex-col overflow-hidden rounded-lg shadow-md",
+        "relative flex flex-col overflow-hidden rounded-lg",
         className,
         "max-h-96",
       )}

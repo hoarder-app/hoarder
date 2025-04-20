@@ -64,7 +64,7 @@
     "i18next": "^23.16.5",
     "i18next-resources-to-backend": "^1.2.1",
     "lexical": "^0.20.2",
-    "lucide-react": "^0.330.0",
+    "lucide-react": "^0.501.0",
     "next": "14.2.25",
     "next-auth": "^4.24.5",
     "next-i18next": "^15.3.1",
