@@ -2,11 +2,14 @@
   "manifest_version": 3,
   "name": "Karakeep",
   "description": "An extension to bookmark links to karakeep.app",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "icons": {
     "16": "public/logo-16.png",
     "48": "public/logo-48.png",
-    "128": "public/logo-128.png"
+    "128": "public/logo-128.png",
+    "_16": "public/logo-16-darkmode.png",
+    "_48": "public/logo-48-darkmode.png",
+    "_128": "public/logo-128-darkmode.png"
   },
   "action": {
     "default_popup": "index.html",
