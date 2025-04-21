@@ -194,13 +194,13 @@ export default function LinkContentSection({
     <div className="flex h-full flex-col items-center gap-2">
       <Select onValueChange={setSection} value={section}>
         <SelectTrigger className="w-fit">
-          <SelectValue />
+          <span className="mr-2">
+            <SelectValue />
+          </span>
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectItem value="cached">
-              {t("preview.cached_content")}
-            </SelectItem>
+            <SelectItem value="cached">{t("preview.reader_view")}</SelectItem>
             <SelectItem
               value="screenshot"
               disabled={!bookmark.content.screenshotAssetId}
