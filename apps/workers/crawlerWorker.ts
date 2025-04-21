@@ -85,10 +85,6 @@ let globalBlocker: PlaywrightBlocker | undefined;
 const browserMutex = new Mutex();
 
 async function startBrowserInstance() {
-  const viewportSize = {
-    width: 1440,
-    height: 900,
-  };
   if (serverConfig.crawler.browserWebSocketUrl) {
     logger.info(
       `[Crawler] Connecting to existing browser websocket address: ${serverConfig.crawler.browserWebSocketUrl}`,
@@ -117,39 +113,6 @@ async function startBrowserInstance() {
   }
 }
 
-/**
- * Gets cookies from a context that can be used to initialize a new context
- * Useful for sharing authenticated sessions
- */
-async function getContextCookies(browser: Browser, domain?: string) {
-  try {
-    // Get the default context if available
-    const contexts = browser.contexts();
-    if (contexts.length === 0) {
-      logger.info(
-        "[Crawler] No browser contexts found to extract cookies from",
-      );
-      return [];
-    }
-
-    // Get cookies from the first context
-    const context = contexts[0];
-    const cookies = await context.cookies();
-
-    if (domain) {
-      return cookies.filter(
-        (cookie) =>
-          cookie.domain.includes(domain) ||
-          (domain.includes(cookie.domain) && cookie.domain !== ""),
-      );
-    }
-
-    return cookies;
-  } catch (e) {
-    logger.error(`[Crawler] Error extracting cookies: ${e}`);
-    return [];
-  }
-}
 
 async function launchBrowser() {
   globalBrowser = undefined;
@@ -354,7 +317,7 @@ async function crawlPage(
 
     // Get all pages from the default context
     // If there's no default context or no pages, we'll create a new context
-    let context =
+    const context =
       contexts.length > 0
         ? contexts[0]
         : await browser.newContext({
@@ -364,7 +327,7 @@ async function crawlPage(
           });
 
     // Get all pages
-    let pages = context.pages();
+    const pages = context.pages();
     logger.info(
       `[Crawler][${jobId}] Found ${pages.length} pages in the context`,
     );
