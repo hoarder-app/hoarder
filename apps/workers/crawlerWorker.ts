@@ -391,13 +391,21 @@ function extractReadableContent(
   logger.info(
     `[Crawler][${jobId}] Will attempt to extract readable content ...`,
   );
+  const dom = new JSDOM(htmlContent, { url });
+  const readableContent = new Readability(dom.window.document).parse();
+  if (!readableContent || typeof readableContent.content !== "string") {
+    return null;
+  }
+
   const window = new JSDOM("").window;
   const purify = DOMPurify(window);
-  const purifiedHTML = purify.sanitize(htmlContent);
-  const purifiedDOM = new JSDOM(purifiedHTML, { url });
-  const readableContent = new Readability(purifiedDOM.window.document).parse();
+  const purifiedHTML = purify.sanitize(readableContent.content);
+
   logger.info(`[Crawler][${jobId}] Done extracting readable content.`);
-  return readableContent;
+  return {
+    content: purifiedHTML,
+    textContent: readableContent.textContent,
+  };
 }
 
 async function storeScreenshot(
