@@ -16,7 +16,7 @@ To configure the app, copy the `.env_sample` to `.env` and change to your specif
 
 You should also change the `NEXTAUTH_URL` variable to point to your server address.
 
-Using `KARAKEEP_VERSION=release` will pull the latest stable version. You might want to pin the version instead to control the upgrades (e.g. `KARAKEEP_VERSION=0.10.0`). Check the latest versions [here](https://github.com/karakeep-app/karakeep/pkgs/container/karakeep-web).
+Using `KARAKEEP_VERSION=release` will pull the latest stable version. You might want to pin the version instead to control the upgrades (e.g. `KARAKEEP_VERSION=0.10.0`). Check the latest versions [here](https://github.com/karakeep-app/karakeep/pkgs/container/karakeep).
 
 To see all available configuration options check the [documentation](https://docs.karakeep.app/configuration).
 

@@ -17,7 +17,7 @@ index cdfc908..6297563 100644
  services:
    web:
 -    image: ghcr.io/hoarder-app/hoarder-web:${KARAKEEP_VERSION:-release}
-+    image: ghcr.io/hoarder-app/hoarder:${KARAKEEP_VERSION:-release}
++    image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}
      restart: unless-stopped
      volumes:
        - data:/data

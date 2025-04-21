@@ -4,11 +4,10 @@ export default function PrivacyPolicy() {
       <title>Karakeep - Privacy Policy</title>
       <strong>Privacy Policy</strong>
       <p>
-        This privacy policy applies to the Karakeep app (hereby referred to
-        as &quot;Application&quot;) for mobile devices that was created by
-        Mohamed Bassem (hereby referred to as &quot;Service Provider&quot;) as
-        an Open Source service. This service is intended for use &quot;AS
-        IS&quot;.
+        This privacy policy applies to the Karakeep app (hereby referred to as
+        &quot;Application&quot;) for mobile devices that was created by Mohamed
+        Bassem (hereby referred to as &quot;Service Provider&quot;) as an Open
+        Source service. This service is intended for use &quot;AS IS&quot;.
       </p>
       <br />
       <strong>Information Collection and Use</strong>
