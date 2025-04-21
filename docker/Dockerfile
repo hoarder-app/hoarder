@@ -13,7 +13,7 @@ RUN apk add --no-cache libc6-compat make g++ py3-pip linux-headers
 
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
-ENV PUPPETEER_SKIP_DOWNLOAD true
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 RUN pnpm install --frozen-lockfile
 
 # Build the db migration script
@@ -72,7 +72,18 @@ COPY --chmod=755 ./docker/root/etc/s6-overlay /etc/s6-overlay
 ######################
 # Install runtime deps
 ######################
-RUN apk add --no-cache monolith yt-dlp graphicsmagick ghostscript
+RUN apk add --no-cache monolith yt-dlp graphicsmagick ghostscript \
+    # Playwright dependencies
+    chromium \
+    ffmpeg \
+    freetype \
+    harfbuzz \
+    ca-certificates \
+    ttf-freefont \
+    font-noto-emoji \
+    nss
+
+ENV PLAYWRIGHT_BROWSERS_PATH=/usr/bin/chromium-browser
 
 ######################
 # Prepare the web app
