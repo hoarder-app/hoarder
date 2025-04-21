@@ -38,7 +38,7 @@ export default function AllLists({
         <p>Lists</p>
         <EditListModal>
           <Link href="#">
-            <CirclePlus className="mr-4 size-5" strokeWidth={1.5} />
+            <CirclePlus className="mr-2 size-5" strokeWidth={1.5} />
           </Link>
         </EditListModal>
       </li>
