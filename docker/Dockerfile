@@ -72,18 +72,7 @@ COPY --chmod=755 ./docker/root/etc/s6-overlay /etc/s6-overlay
 ######################
 # Install runtime deps
 ######################
-RUN apk add --no-cache monolith yt-dlp graphicsmagick ghostscript \
-    # Playwright dependencies
-    chromium \
-    ffmpeg \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
-    font-noto-emoji \
-    nss
-
-ENV PLAYWRIGHT_BROWSERS_PATH=/usr/bin/chromium-browser
+RUN apk add --no-cache monolith yt-dlp graphicsmagick ghostscript
 
 ######################
 # Prepare the web app
