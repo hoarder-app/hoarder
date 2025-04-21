@@ -47,12 +47,14 @@ export default function AllLists({
         name={t("lists.all_lists")}
         path={`/dashboard/lists`}
         linkClassName="py-0.5"
+        className="px-0.5"
       />
       <SidebarItem
         logo={<span className="text-lg">⭐️</span>}
         name={t("lists.favourites")}
         path={`/dashboard/favourites`}
         linkClassName="py-0.5"
+        className="px-0.5"
       />
       <CollapsibleBookmarkLists
         initialData={initialData.lists}
@@ -62,7 +64,7 @@ export default function AllLists({
             collapseButton={
               node.children.length > 0 && (
                 <CollapsibleTriggerTriangle
-                  className="absolute left-0 top-1/2 size-2 -translate-y-1/2"
+                  className="absolute left-0.5 top-1/2 size-2 -translate-y-1/2"
                   open={open}
                 />
               )
@@ -74,6 +76,7 @@ export default function AllLists({
             }
             name={node.item.name}
             path={`/dashboard/lists/${node.item.id}`}
+            className="px-0.5"
             right={
               <ListOptions
                 onOpenChange={(open) => {
