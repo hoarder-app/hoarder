@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Karakeep-dev",
+  "name": "Karakeep",
   "description": "An extension to bookmark links to karakeep.app",
   "version": "1.2.5",
   "icons": {
