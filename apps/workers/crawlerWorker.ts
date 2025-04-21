@@ -113,6 +113,40 @@ async function startBrowserInstance() {
   }
 }
 
+/**
+ * Gets cookies from a context that can be used to initialize a new context
+ * Useful for sharing authenticated sessions from the VNC browser instance
+ */
+async function getContextCookies(browser: Browser, domain?: string) {
+  try {
+    // Get the default context if available
+    const contexts = browser.contexts();
+    if (contexts.length === 0) {
+      logger.info(
+        "[Crawler] No browser contexts found to extract cookies from",
+      );
+      return [];
+    }
+
+    // Get cookies from the first context
+    const context = contexts[0];
+    const cookies = await context.cookies();
+
+    if (domain) {
+      return cookies.filter(
+        (cookie) =>
+          cookie.domain.includes(domain) ||
+          (domain.includes(cookie.domain) && cookie.domain !== ""),
+      );
+    }
+
+    return cookies;
+  } catch (e) {
+    logger.error(`[Crawler] Error extracting cookies: ${e}`);
+    return [];
+  }
+}
+
 
 async function launchBrowser() {
   globalBrowser = undefined;
@@ -315,39 +349,34 @@ async function crawlPage(
       `[Crawler][${jobId}] Found ${contexts.length} browser contexts`,
     );
 
-    // Get all pages from the default context
-    // If there's no default context or no pages, we'll create a new context
-    const context =
-      contexts.length > 0
-        ? contexts[0]
-        : await browser.newContext({
-            viewport: { width: 1440, height: 900 },
-            userAgent:
-              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-          });
-
-    // Get all pages
-    const pages = context.pages();
-    logger.info(
-      `[Crawler][${jobId}] Found ${pages.length} pages in the context`,
-    );
-
-    // Use an existing page or create a new one
-    let page;
-    let createdNewPage = false;
-
-    if (pages.length > 0) {
-      // Use the first page
-      page = pages[0];
-      logger.info(
-        `[Crawler][${jobId}] Using existing page with URL: ${page.url()}`,
-      );
-    } else {
-      // Create a new page in the context
-      page = await context.newPage();
-      createdNewPage = true;
-      logger.info(`[Crawler][${jobId}] Created a new page in the context`);
+    // Extract domain from the target URL to match cookies
+    const urlObj = new URL(url);
+    const domain = urlObj.hostname;
+    
+    // Try to get cookies from the existing shared context if available
+    let cookies = [];
+    if (contexts.length > 0) {
+      logger.info(`[Crawler][${jobId}] Extracting cookies for domain: ${domain}`);
+      cookies = await getContextCookies(browser, domain);
+      logger.info(`[Crawler][${jobId}] Found ${cookies.length} cookies for domain: ${domain}`);
     }
+    
+    // Create a new isolated context with cookies from the shared browser
+    const context = await browser.newContext({
+      viewport: { width: 1440, height: 900 },
+      userAgent:
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    });
+    
+    // Add any cookies we found from the shared context
+    if (cookies.length > 0) {
+      logger.info(`[Crawler][${jobId}] Adding ${cookies.length} cookies to the new context`);
+      await context.addCookies(cookies);
+    }
+
+    // We always create a new page in our context for the crawl job
+    logger.info(`[Crawler][${jobId}] Creating a new page for URL: ${url}`);
+    const page = await context.newPage();
 
     // Apply ad blocking
     if (globalBlocker) {
@@ -410,10 +439,9 @@ async function crawlPage(
     // Return the page data
     const pageUrl = page.url();
 
-    // If we created a new page, close it to keep the browser clean
-    if (createdNewPage) {
-      await page.close();
-    }
+    // Close the page when we're done
+    await page.close();
+    await context.close();
 
     return {
       htmlContent,
