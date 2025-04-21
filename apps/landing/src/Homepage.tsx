@@ -98,10 +98,20 @@ function NavBar() {
     <div className="flex justify-between px-3 py-4">
       <img src={Logo} alt="logo" className="w-36" />
       <div className="hidden items-center gap-6 sm:flex">
-        <a href={DOCS_LINK} className="flex justify-center gap-2 text-center">
+        <a
+          href={DOCS_LINK}
+          target="_blank"
+          className="flex justify-center gap-2 text-center"
+          rel="noreferrer"
+        >
           Docs
         </a>
-        <a href={GITHUB_LINK} className="flex justify-center gap-2 text-center">
+        <a
+          href={GITHUB_LINK}
+          target="_blank"
+          className="flex justify-center gap-2 text-center"
+          rel="noreferrer"
+        >
           GitHub
         </a>
         <a
@@ -223,10 +233,20 @@ function Footer() {
     <div className="flex items-center justify-between bg-black px-10 py-6 text-sm text-gray-300">
       <div>© 2024-{currentYear} karakeep.app</div>
       <div className="flex items-center gap-6">
-        <a href={DOCS_LINK} className="flex justify-center gap-2 text-center">
+        <a
+          href={DOCS_LINK}
+          target="_blank"
+          className="flex justify-center gap-2 text-center"
+          rel="noreferrer"
+        >
           Docs
         </a>
-        <a href={GITHUB_LINK} className="flex justify-center gap-2 text-center">
+        <a
+          href={GITHUB_LINK}
+          target="_blank"
+          className="flex justify-center gap-2 text-center"
+          rel="noreferrer"
+        >
           GitHub
         </a>
       </div>
