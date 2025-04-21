@@ -92,7 +92,7 @@
       "key_success": "A kulcs létrehozás sikeres"
     },
     "import": {
-      "import_bookmarks_from_hoarder_export": "Könyvjelző importálása Hoarder-ből",
+      "import_bookmarks_from_karakeep_export": "Könyvjelző importálása Karakeep-ből",
       "import_bookmarks_from_omnivore_export": "Könyvjelző importálása Omnivore-ból",
       "import_export": "Importálás / Exportálás",
       "import_export_bookmarks": "Könyvjelző importálása / exportálása",

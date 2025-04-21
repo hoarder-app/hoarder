@@ -22,9 +22,9 @@ Check the logs of the container and this will usually tell you what's wrong. Com
 Check the logs of the container and this will usually tell you what's wrong. Common problems are:
 1. Typo in the env variable `OLLAMA_BASE_URL` name resulting into logs saying something like "skipping inference as it's not configured".
 2. You forgot to call `docker compose up` after configuring ollama.
-3. You didn't change the `INFERENCE_TEXT_MODEL` env variable, resulting into hoarder attempting to use gpt models with ollama which won't work.
-4. Ollama server is not reachable by the hoarder container. This can be caused by:
-    1. Ollama server being in a different docker network than the hoarder container.
+3. You didn't change the `INFERENCE_TEXT_MODEL` env variable, resulting into karakeep attempting to use gpt models with ollama which won't work.
+4. Ollama server is not reachable by the karakeep container. This can be caused by:
+    1. Ollama server being in a different docker network than the karakeep container.
     2. You're using `localhost` as the `OLLAMA_BASE_URL` instead of the actual address of the ollama server. `localhost` points to the container itself, not the docker host. Check this [stackoverflow answer](https://stackoverflow.com/questions/24319662/from-inside-of-a-docker-container-how-do-i-connect-to-the-localhost-of-the-mach) to find how to correctly point to the docker host address instead.
 
 ## Crawling not working

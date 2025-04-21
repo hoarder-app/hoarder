@@ -28,11 +28,11 @@ jobs:
       - name: Upload Extension Archive (chrome)
         uses: actions/upload-artifact@v4
         with:
-          name: hoarder-extension-chrome
+          name: karakeep-extension-chrome
           path: apps/browser-extension/dist-chrome/*
 
       - name: Upload Extension Archive (firefox)
         uses: actions/upload-artifact@v4
         with:
-          name: hoarder-extension-firefox
+          name: karakeep-extension-firefox
           path: apps/browser-extension/dist-firefox/*

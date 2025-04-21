@@ -4,7 +4,7 @@ const sidebar: SidebarsConfig = {
   apisidebar: [
     {
       type: "doc",
-      id: "API/hoarder-api",
+      id: "API/karakeep-api",
     },
     {
       type: "category",

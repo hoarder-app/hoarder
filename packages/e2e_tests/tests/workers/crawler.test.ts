@@ -6,7 +6,7 @@ import { createTestUser } from "../../utils/api";
 import { waitUntil } from "../../utils/general";
 
 describe("Crawler Tests", () => {
-  const port = inject("hoarderPort");
+  const port = inject("karakeepPort");
 
   if (!port) {
     throw new Error("Missing required environment variables");

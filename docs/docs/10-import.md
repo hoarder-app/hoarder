@@ -1,7 +1,7 @@
 # Importing Bookmarks
 
 
-Hoarder supports importing bookmarks using the Netscape HTML Format, Pocket's new CSV format & Omnivore's JSONs. Titles, tags and addition date will be preserved during the import. An automatically created list will contain all the imported bookmarks.
+Karakeep supports importing bookmarks using the Netscape HTML Format, Pocket's new CSV format & Omnivore's JSONs. Titles, tags and addition date will be preserved during the import. An automatically created list will contain all the imported bookmarks.
 
 :::info
 All the URLs in the bookmarks file will be added automatically, you will not be able to pick and choose which bookmarks to import!
@@ -40,10 +40,10 @@ All the URLs in the bookmarks file will be added automatically, you will not be 
 Importing bookmarks using the CLI requires some technical knowledge and might not be very straightforward for non-technical users. Don't hesitate to ask questions in github discussions or discord though.
 :::
 
-If you can get your bookmarks in a text file with one link per line, you can use the following command to import them using the [hoarder cli](https://docs.hoarder.app/command-line):
+If you can get your bookmarks in a text file with one link per line, you can use the following command to import them using the [karakeep cli](https://docs.karakeep.app/command-line):
 
 ```
 while IFS= read -r url; do
-    hoarder --api-key "<KEY>" --server-addr "<SERVER_ADDR>" bookmarks add --link "$url"
+    karakeep --api-key "<KEY>" --server-addr "<SERVER_ADDR>" bookmarks add --link "$url"
 done < all_links.txt
 ```

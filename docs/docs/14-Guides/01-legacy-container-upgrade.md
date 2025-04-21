@@ -1,6 +1,6 @@
 # Legacy Container Upgrade
 
-Hoarder's 0.16 release consolidated the web and worker containers into a single container and also dropped the need for the redis container. The legacy containers will stop being supported soon, to upgrade to the new container do the following:
+Karakeep's 0.16 release consolidated the web and worker containers into a single container and also dropped the need for the redis container. The legacy containers will stop being supported soon, to upgrade to the new container do the following:
 
 1. Remove the redis container and its volume if it had one.
 2. Move the environment variables that you've set exclusively to the `workers` container to the `web` container.
@@ -16,8 +16,8 @@ index cdfc908..6297563 100644
  version: "3.8"
  services:
    web:
--    image: ghcr.io/hoarder-app/hoarder-web:${HOARDER_VERSION:-release}
-+    image: ghcr.io/hoarder-app/hoarder:${HOARDER_VERSION:-release}
+-    image: ghcr.io/hoarder-app/hoarder-web:${KARAKEEP_VERSION:-release}
++    image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}
      restart: unless-stopped
      volumes:
        - data:/data
@@ -43,7 +43,7 @@ index cdfc908..6297563 100644
      volumes:
        - meilisearch:/meili_data
 -  workers:
--    image: ghcr.io/hoarder-app/hoarder-workers:${HOARDER_VERSION:-release}
+-    image: ghcr.io/hoarder-app/hoarder-workers:${KARAKEEP_VERSION:-release}
 -    restart: unless-stopped
 -    volumes:
 -      - data:/data

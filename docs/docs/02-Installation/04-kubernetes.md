@@ -16,9 +16,9 @@ To configure the app, copy the `.env_sample` to `.env` and change to your specif
 
 You should also change the `NEXTAUTH_URL` variable to point to your server address.
 
-Using `HOARDER_VERSION=release` will pull the latest stable version. You might want to pin the version instead to control the upgrades (e.g. `HOARDER_VERSION=0.10.0`). Check the latest versions [here](https://github.com/hoarder-app/hoarder/pkgs/container/hoarder-web).
+Using `KARAKEEP_VERSION=release` will pull the latest stable version. You might want to pin the version instead to control the upgrades (e.g. `KARAKEEP_VERSION=0.10.0`). Check the latest versions [here](https://github.com/karakeep-app/karakeep/pkgs/container/karakeep).
 
-To see all available configuration options check the [documentation](https://docs.hoarder.app/configuration).
+To see all available configuration options check the [documentation](https://docs.karakeep.app/configuration).
 
 To configure the neccessary secrets for the application copy the `.secrets_sample` file to `.secrets` and change the sample secrets to your generated secrets.
 
@@ -77,17 +77,17 @@ After that you have to configure the web service to the type ClusterIP so it is 
 
 If you have already deployed the service you can patch the web service to the type ClusterIP with the following command:
 
-` kubectl -n hoarder patch service web -p '{"spec":{"type":"ClusterIP"}}' `
+` kubectl -n karakeep patch service web -p '{"spec":{"type":"ClusterIP"}}' `
 
 Afterwards you can apply the ingress and access the service via your chosen URL.
 
 #### Setting up HTTPS access to the Service
 
-To access hoarder securely you can configure the ingress to use a preconfigured TLS certificate. This requires that you already have the needed files, namely your .crt and .key file, on hand.
+To access karakeep securely you can configure the ingress to use a preconfigured TLS certificate. This requires that you already have the needed files, namely your .crt and .key file, on hand.
 
-After you have deployed the hoarder manifests you can deploy your certificate for hoarder in the `hoarder` namespace with this example command. You can name the secret however you want. But be aware that the secret name in the ingress definition has to match the secret name.
+After you have deployed the karakeep manifests you can deploy your certificate for karakeep in the `karakeep` namespace with this example command. You can name the secret however you want. But be aware that the secret name in the ingress definition has to match the secret name.
 
-` $ kubectl --namespace hoarder create secret tls hoarder-web-tls --cert=/path/to/crt --key=/path/to/key `
+` $ kubectl --namespace karakeep create secret tls karakeep-web-tls --cert=/path/to/crt --key=/path/to/key `
 
 If the secret is successfully created you can now configure the Ingress to use TLS via this changes to the spec:
 
@@ -95,8 +95,8 @@ If the secret is successfully created you can now configure the Ingress to use T
  spec:
   tls:
   - hosts:
-      - hoarder.example.com
-    secretName: hoarder-web-tls
+      - karakeep.example.com
+    secretName: karakeep-web-tls
 ````
 
 > Note: Be aware that the hosts have to match between the tls spec and the HTTP spec.
@@ -107,6 +107,6 @@ Go to the [quick sharing page](/quick-sharing) to install the mobile apps and th
 
 ## Updating
 
-Edit the `HOARDER_VERSION` variable in the `kustomization.yaml` file and run `make clean deploy`.
+Edit the `KARAKEEP_VERSION` variable in the `kustomization.yaml` file and run `make clean deploy`.
 
 If you have chosen `release` as the image tag you can also destroy the web pod, since the deployment has an ImagePullPolicy set to always the pod always pulls the image from the registry, this way we can ensure that the newest release image is pulled.

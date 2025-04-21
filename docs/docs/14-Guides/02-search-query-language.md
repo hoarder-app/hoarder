@@ -1,6 +1,6 @@
 # Search Query Language
 
-Hoarder provides a search query language to filter and find bookmarks. Here are all the supported qualifiers and how to use them:
+Karakeep provides a search query language to filter and find bookmarks. Here are all the supported qualifiers and how to use them:
 
 ## Basic Syntax
 

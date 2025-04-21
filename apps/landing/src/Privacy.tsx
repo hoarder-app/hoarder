@@ -1,14 +1,13 @@
 export default function PrivacyPolicy() {
   return (
     <div className="p-4">
-      <title>Hoarder - Privacy Policy</title>
+      <title>Karakeep - Privacy Policy</title>
       <strong>Privacy Policy</strong>
       <p>
-        This privacy policy applies to the Hoarder App app (hereby referred to
-        as &quot;Application&quot;) for mobile devices that was created by
-        Mohamed Bassem (hereby referred to as &quot;Service Provider&quot;) as
-        an Open Source service. This service is intended for use &quot;AS
-        IS&quot;.
+        This privacy policy applies to the Karakeep app (hereby referred to as
+        &quot;Application&quot;) for mobile devices that was created by Mohamed
+        Bassem (hereby referred to as &quot;Service Provider&quot;) as an Open
+        Source service. This service is intended for use &quot;AS IS&quot;.
       </p>
       <br />
       <strong>Information Collection and Use</strong>
