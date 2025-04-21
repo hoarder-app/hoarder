@@ -122,8 +122,7 @@ export default function SummarizeBookmarkArea({
         <ActionButton
           onClick={() => mutate({ bookmarkId: bookmark.id })}
           className={cn(
-            `relative w-full overflow-hidden bg-opacity-30 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 transition-all duration-300`,
-            isPending ? "text-transparent" : "text-gray-50",
+            `relative w-full overflow-hidden bg-opacity-30 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 text-gray-50 transition-all duration-300`,
           )}
           loading={isPending}
         >
