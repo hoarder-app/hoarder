@@ -2,8 +2,7 @@ import * as dns from "dns";
 import { promises as fs } from "fs";
 import * as path from "node:path";
 import * as os from "os";
-import type { Browser } from "puppeteer";
-import { PuppeteerBlocker } from "@ghostery/adblocker-puppeteer";
+import { PlaywrightBlocker } from "@ghostery/adblocker-playwright";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
 import DOMPurify from "dompurify";
@@ -25,8 +24,7 @@ import metascraperTitle from "metascraper-title";
 import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
 import fetch from "node-fetch";
-import puppeteer from "puppeteer-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { Browser, chromium } from "playwright";
 import { withTimeout } from "utils";
 import { getBookmarkDetails, updateAsset } from "workerUtils";
 
@@ -81,13 +79,13 @@ const metascraperParser = metascraper([
 ]);
 
 let globalBrowser: Browser | undefined;
-let globalBlocker: PuppeteerBlocker | undefined;
+let globalBlocker: PlaywrightBlocker | undefined;
 // Guards the interactions with the browser instance.
 // This is needed given that most of the browser APIs are async.
 const browserMutex = new Mutex();
 
 async function startBrowserInstance() {
-  const defaultViewport = {
+  const viewportSize = {
     width: 1440,
     height: 900,
   };
@@ -95,28 +93,61 @@ async function startBrowserInstance() {
     logger.info(
       `[Crawler] Connecting to existing browser websocket address: ${serverConfig.crawler.browserWebSocketUrl}`,
     );
-    return puppeteer.connect({
-      browserWSEndpoint: serverConfig.crawler.browserWebSocketUrl,
-      defaultViewport,
-    });
+    return chromium.connect(serverConfig.crawler.browserWebSocketUrl);
   } else if (serverConfig.crawler.browserWebUrl) {
     logger.info(
       `[Crawler] Connecting to existing browser instance: ${serverConfig.crawler.browserWebUrl}`,
     );
     const webUrl = new URL(serverConfig.crawler.browserWebUrl);
-    // We need to resolve the ip address as a workaround for https://github.com/puppeteer/puppeteer/issues/2242
-    const { address: address } = await dns.promises.lookup(webUrl.hostname);
+    // We need to resolve the ip address for compatibility
+    const { address } = await dns.promises.lookup(webUrl.hostname);
     webUrl.hostname = address;
     logger.info(
       `[Crawler] Successfully resolved IP address, new address: ${webUrl.toString()}`,
     );
-    return puppeteer.connect({
-      browserURL: webUrl.toString(),
-      defaultViewport,
+    // Connect using CDP which allows access to the shared browser context
+    return chromium.connectOverCDP({
+      endpointURL: webUrl.toString(),
+      // Important: using slowMo to ensure stability with remote browser
+      slowMo: 100,
     });
   } else {
     logger.info(`Running in browserless mode`);
     return undefined;
+  }
+}
+
+/**
+ * Gets cookies from a context that can be used to initialize a new context
+ * Useful for sharing authenticated sessions
+ */
+async function getContextCookies(browser: Browser, domain?: string) {
+  try {
+    // Get the default context if available
+    const contexts = browser.contexts();
+    if (contexts.length === 0) {
+      logger.info(
+        "[Crawler] No browser contexts found to extract cookies from",
+      );
+      return [];
+    }
+
+    // Get cookies from the first context
+    const context = contexts[0];
+    const cookies = await context.cookies();
+
+    if (domain) {
+      return cookies.filter(
+        (cookie) =>
+          cookie.domain.includes(domain) ||
+          (domain.includes(cookie.domain) && cookie.domain !== ""),
+      );
+    }
+
+    return cookies;
+  } catch (e) {
+    logger.error(`[Crawler] Error extracting cookies: ${e}`);
+    return [];
   }
 }
 
@@ -125,6 +156,25 @@ async function launchBrowser() {
   await browserMutex.runExclusive(async () => {
     try {
       globalBrowser = await startBrowserInstance();
+
+      // Log available contexts after connecting
+      if (globalBrowser) {
+        const contexts = globalBrowser.contexts();
+        logger.info(
+          `[Crawler] Connected to browser with ${contexts.length} contexts`,
+        );
+
+        // Log pages from first context if available
+        if (contexts.length > 0) {
+          const pages = contexts[0].pages();
+          logger.info(`[Crawler] First context has ${pages.length} pages`);
+
+          // Log URLs of pages
+          for (let i = 0; i < pages.length; i++) {
+            logger.info(`[Crawler] Page ${i + 1} URL: ${pages[i].url()}`);
+          }
+        }
+      }
     } catch (e) {
       logger.error(
         `[Crawler] Failed to connect to the browser instance, will retry in 5 secs: ${(e as Error).stack}`,
@@ -138,32 +188,36 @@ async function launchBrowser() {
       }, 5000);
       return;
     }
-    globalBrowser?.on("disconnected", () => {
-      if (isShuttingDown) {
+    if (globalBrowser) {
+      globalBrowser.on("disconnected", () => {
+        if (isShuttingDown) {
+          logger.info(
+            "[Crawler] The Playwright browser got disconnected. But we're shutting down so won't restart it.",
+          );
+          return;
+        }
         logger.info(
-          "[Crawler] The puppeteer browser got disconnected. But we're shutting down so won't restart it.",
+          "[Crawler] The Playwright browser got disconnected. Will attempt to launch it again.",
         );
-        return;
-      }
-      logger.info(
-        "[Crawler] The puppeteer browser got disconnected. Will attempt to launch it again.",
-      );
-      launchBrowser();
-    });
+        launchBrowser();
+      });
+    }
   });
 }
 
 export class CrawlerWorker {
   static async build() {
-    puppeteer.use(StealthPlugin());
     if (serverConfig.crawler.enableAdblocker) {
       try {
         logger.info("[crawler] Loading adblocker ...");
-        globalBlocker = await PuppeteerBlocker.fromPrebuiltFull(fetch, {
-          path: path.join(os.tmpdir(), "hoarder_adblocker.bin"),
-          read: fs.readFile,
-          write: fs.writeFile,
-        });
+        globalBlocker = await PlaywrightBlocker.fromPrebuiltAdsAndTracking(
+          fetch,
+          {
+            path: path.join(os.tmpdir(), "karakeep_adblocker.bin"),
+            read: fs.readFile,
+            write: fs.writeFile,
+          },
+        );
       } catch (e) {
         logger.error(
           `[crawler] Failed to load adblocker. Will not be blocking ads: ${e}`,
@@ -287,39 +341,80 @@ async function crawlPage(
   if (!browser) {
     return browserlessCrawlPage(jobId, url, abortSignal);
   }
-  const context = await browser.createBrowserContext();
 
   try {
-    const page = await context.newPage();
+    // When connecting to an existing Chrome instance, we need to use CDP and work
+    // with browser contexts differently to access existing cookies
+
+    // Get the list of existing browser contexts
+    const contexts = browser.contexts();
+    logger.info(
+      `[Crawler][${jobId}] Found ${contexts.length} browser contexts`,
+    );
+
+    // Get all pages from the default context
+    // If there's no default context or no pages, we'll create a new context
+    let context =
+      contexts.length > 0
+        ? contexts[0]
+        : await browser.newContext({
+            viewport: { width: 1440, height: 900 },
+            userAgent:
+              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+          });
+
+    // Get all pages
+    let pages = context.pages();
+    logger.info(
+      `[Crawler][${jobId}] Found ${pages.length} pages in the context`,
+    );
+
+    // Use an existing page or create a new one
+    let page;
+    let createdNewPage = false;
+
+    if (pages.length > 0) {
+      // Use the first page
+      page = pages[0];
+      logger.info(
+        `[Crawler][${jobId}] Using existing page with URL: ${page.url()}`,
+      );
+    } else {
+      // Create a new page in the context
+      page = await context.newPage();
+      createdNewPage = true;
+      logger.info(`[Crawler][${jobId}] Created a new page in the context`);
+    }
+
+    // Apply ad blocking
     if (globalBlocker) {
       await globalBlocker.enableBlockingInPage(page);
     }
-    await page.setUserAgent(
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    );
 
+    // Navigate to the target URL
+    logger.info(`[Crawler][${jobId}] Navigating to "${url}"`);
     const response = await page.goto(url, {
       timeout: serverConfig.crawler.navigateTimeoutSec * 1000,
+      waitUntil: "domcontentloaded",
     });
+
     logger.info(
       `[Crawler][${jobId}] Successfully navigated to "${url}". Waiting for the page to load ...`,
     );
 
-    // Wait until there's at most two connections for 2 seconds
-    // Attempt to wait only for 5 seconds
+    // Wait until network is relatively idle or timeout after 5 seconds
     await Promise.race([
-      page.waitForNetworkIdle({
-        idleTime: 1000, // 1 sec
-        concurrency: 2,
-      }),
-      new Promise((f) => setTimeout(f, 5000)),
+      page.waitForLoadState("networkidle", { timeout: 5000 }),
+      new Promise((resolve) => setTimeout(resolve, 5000)),
     ]);
 
     logger.info(`[Crawler][${jobId}] Finished waiting for the page to load.`);
 
+    // Extract content from the page
     const htmlContent = await page.content();
     logger.info(`[Crawler][${jobId}] Successfully fetched the page content.`);
 
+    // Take a screenshot if configured
     let screenshot: Buffer | undefined = undefined;
     if (serverConfig.crawler.storeScreenshot) {
       try {
@@ -327,7 +422,6 @@ async function crawlPage(
           page.screenshot({
             // If you change this, you need to change the asset type in the store function.
             type: "png",
-            encoding: "binary",
             fullPage: serverConfig.crawler.fullPageScreenshot,
           }),
           new Promise((_, reject) =>
@@ -350,15 +444,23 @@ async function crawlPage(
       }
     }
 
+    // Return the page data
+    const pageUrl = page.url();
+
+    // If we created a new page, close it to keep the browser clean
+    if (createdNewPage) {
+      await page.close();
+    }
+
     return {
       htmlContent,
       statusCode: response?.status() ?? 0,
       screenshot,
-      url: page.url(),
+      url: pageUrl,
     };
   } finally {
-    await context.close();
-    if (serverConfig.crawler.browserConnectOnDemand) {
+    // Only close the browser if it was created on demand
+    if (serverConfig.crawler.browserConnectOnDemand && browser) {
       await browser.close();
     }
   }

@@ -13,7 +13,7 @@ RUN apk add --no-cache libc6-compat make g++ py3-pip linux-headers
 
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
-ENV PUPPETEER_SKIP_DOWNLOAD true
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 RUN pnpm install --frozen-lockfile
 
 # Build the db migration script
