@@ -45,7 +45,7 @@ install() {
     ln -s /usr/bin/ungoogled-chromium /usr/bin/chromium
   else
     apt-get install --no-install-recommends -y chromium
-    wget -q https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp_linux -O /usr/bin/yt-dlp && chmod +x /usr/bin/yt-dlp
+    wget -q https://github.com/yt-dlp/yt-dlp-nightly-builds/releases/latest/download/yt-dlp_linux -O /usr/bin/yt-dlp && chmod +x /usr/bin/yt-dlp
   fi
 
   wget -q https://github.com/Y2Z/monolith/releases/latest/download/monolith-gnu-linux-x86_64 -O /usr/bin/monolith && chmod +x /usr/bin/monolith
@@ -264,6 +264,9 @@ update() {
       echo "Stopping affected services..." && sleep 1
       systemctl stop karakeep-web karakeep-workers
       echo "Stopped services" && sleep 1
+    fi
+    if [[ "$OS" == "bookworm" ]]; then
+      yt-dlp -U
     fi
     echo "Updating Karakeep to v${RELEASE}..." && sleep 1
     sed -i "s|SERVER_VERSION=${PREV_RELEASE}|SERVER_VERSION=${RELEASE}|" "$ENV_FILE"
