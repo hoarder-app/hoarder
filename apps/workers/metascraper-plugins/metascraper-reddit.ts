@@ -15,7 +15,7 @@ import logger from "@karakeep/shared/logger";
  * the HTML DOM, and selects the first one.
  *
  * In Reddit posts, the first image is typically
- * the profile picture of the OP, which Hoarder
+ * the profile picture of the OP, which Karakeep
  * is using for the thumbnail.
  *
  * This metascraper plugin instead looks for images
