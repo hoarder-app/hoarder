@@ -8,13 +8,11 @@ import {
   RuleEngineCondition,
   RuleEngineEvent,
   RuleEngineRule,
-  zRuleEngineActionSchema,
-  zRuleEngineConditionSchema,
-  zRuleEngineEventSchema,
 } from "@karakeep/shared/types/rules";
 
 import { AuthedContext } from "..";
 import { List } from "../models/lists";
+import { RuleEngineRuleModel } from "../models/rules";
 
 async function fetchBookmark(db: AuthedContext["db"], bookmarkId: string) {
   return await db.query.bookmarks.findFirst({
@@ -49,26 +47,6 @@ async function fetchBookmark(db: AuthedContext["db"], bookmarkId: string) {
 
 type ReturnedBookmark = NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>;
 
-// TODO: Use trpc list endpoint instead of fetching all rules
-function parseRules(
-  rawRules: ReturnedBookmark["user"]["rules"],
-): RuleEngineRule[] {
-  const parseRule = (rule: ReturnedBookmark["user"]["rules"][number]) => {
-    return {
-      id: rule.id,
-      name: rule.name,
-      description: rule.description,
-      enabled: rule.enabled,
-      event: zRuleEngineEventSchema.parse(JSON.parse(rule.event)),
-      condition: zRuleEngineConditionSchema.parse(JSON.parse(rule.condition)),
-      actions: rule.actions.map((a) =>
-        zRuleEngineActionSchema.parse(JSON.parse(a.action)),
-      ),
-    };
-  };
-  return rawRules.map(parseRule);
-}
-
 export interface RuleEngineEvaluationResult {
   type: "success" | "failure";
   ruleId: string;
@@ -83,12 +61,18 @@ export class RuleEngine {
   ) {}
 
   static async forBookmark(ctx: AuthedContext, bookmarkId: string) {
-    const bookmark = await fetchBookmark(ctx.db, bookmarkId);
+    const [bookmark, rules] = await Promise.all([
+      fetchBookmark(ctx.db, bookmarkId),
+      RuleEngineRuleModel.getAll(ctx),
+    ]);
     if (!bookmark) {
       throw new Error(`Bookmark ${bookmarkId} not found`);
     }
-    const rules = parseRules(bookmark.user.rules);
-    return new RuleEngine(ctx, bookmark, rules);
+    return new RuleEngine(
+      ctx,
+      bookmark,
+      rules.map((r) => r.rule),
+    );
   }
 
   doesBookmarkMatchConditions(condition: RuleEngineCondition): boolean {

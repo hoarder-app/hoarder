@@ -118,7 +118,9 @@ export abstract class List implements PrivacyAware {
     }
   }
 
-  async update(input: z.infer<typeof zEditBookmarkListSchemaWithValidation>) {
+  async update(
+    input: z.infer<typeof zEditBookmarkListSchemaWithValidation>,
+  ): Promise<void> {
     const result = await this.ctx.db
       .update(bookmarkLists)
       .set({
@@ -138,7 +140,7 @@ export abstract class List implements PrivacyAware {
     if (result.length == 0) {
       throw new TRPCError({ code: "NOT_FOUND" });
     }
-    return result[0];
+    this.list = result[0];
   }
 
   abstract get type(): "manual" | "smart";

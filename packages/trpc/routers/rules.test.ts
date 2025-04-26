@@ -277,7 +277,7 @@ describe("Rules Routes", () => {
       };
 
       await expect(() => apiUserB.update(updateInput)).rejects.toThrow(
-        /User is not allowed to access this rule/,
+        /Rule not found/,
       );
     });
 
