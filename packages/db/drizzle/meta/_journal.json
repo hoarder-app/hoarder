@@ -316,6 +316,13 @@
       "when": 1744744684677,
       "tag": "0044_add_password_salt",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "6",
+      "when": 1745016307053,
+      "tag": "0045_add_rule_engine",
+      "breakpoints": true
     }
   ]
 }

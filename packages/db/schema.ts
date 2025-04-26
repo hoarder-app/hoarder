@@ -444,12 +444,70 @@ export const config = sqliteTable("config", {
   value: text("value").notNull(),
 });
 
+export const ruleEngineRulesTable = sqliteTable(
+  "ruleEngineRules",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+    name: text("name").notNull(),
+    description: text("description"),
+    event: text("event").notNull(),
+    condition: text("condition").notNull(),
+
+    // References
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    listId: text("listId").references(() => bookmarkLists.id, {
+      onDelete: "cascade",
+    }),
+    tagId: text("tagId").references(() => bookmarkTags.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (rl) => [index("ruleEngine_userId_idx").on(rl.userId)],
+);
+
+export const ruleEngineActionsTable = sqliteTable(
+  "ruleEngineActions",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    ruleId: text("ruleId")
+      .notNull()
+      .references(() => ruleEngineRulesTable.id, { onDelete: "cascade" }),
+    action: text("action").notNull(),
+
+    // References
+    listId: text("listId").references(() => bookmarkLists.id, {
+      onDelete: "cascade",
+    }),
+    tagId: text("tagId").references(() => bookmarkTags.id, {
+      onDelete: "cascade",
+    }),
+  },
+  (rl) => [
+    index("ruleEngineActions_userId_idx").on(rl.userId),
+    index("ruleEngineActions_ruleId_idx").on(rl.ruleId),
+  ],
+);
+
 // Relations
 
 export const userRelations = relations(users, ({ many }) => ({
   tags: many(bookmarkTags),
   bookmarks: many(bookmarks),
   webhooks: many(webhooksTable),
+  rules: many(ruleEngineRulesTable),
 }));
 
 export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
@@ -472,6 +530,7 @@ export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
   tagsOnBookmarks: many(tagsOnBookmarks),
   bookmarksInLists: many(bookmarksInLists),
   assets: many(assets),
+  rssFeeds: many(rssFeedImportsTable),
 }));
 
 export const assetRelations = relations(assets, ({ one }) => ({
@@ -548,3 +607,38 @@ export const webhooksRelations = relations(webhooksTable, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export const ruleEngineRulesRelations = relations(
+  ruleEngineRulesTable,
+  ({ one, many }) => ({
+    user: one(users, {
+      fields: [ruleEngineRulesTable.userId],
+      references: [users.id],
+    }),
+    actions: many(ruleEngineActionsTable),
+  }),
+);
+
+export const ruleEngineActionsTableRelations = relations(
+  ruleEngineActionsTable,
+  ({ one }) => ({
+    rule: one(ruleEngineRulesTable, {
+      fields: [ruleEngineActionsTable.ruleId],
+      references: [ruleEngineRulesTable.id],
+    }),
+  }),
+);
+
+export const rssFeedImportsTableRelations  = relations(
+  rssFeedImportsTable,
+  ({ one }) => ({
+    rssFeed: one(rssFeedsTable, {
+      fields: [rssFeedImportsTable.rssFeedId],
+      references: [rssFeedsTable.id],
+    }),
+    bookmark: one(bookmarks, {
+      fields: [rssFeedImportsTable.bookmarkId],
+      references: [bookmarks.id],
+    }),
+  }),
+);
