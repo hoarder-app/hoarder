@@ -5,9 +5,50 @@ import { RuleEngineRule } from "@karakeep/shared/types/rules";
 import type { CustomTestContext } from "../testUtils";
 import { defaultBeforeEach } from "../testUtils";
 
-beforeEach<CustomTestContext>(defaultBeforeEach(true));
-
 describe("Rules Routes", () => {
+  let tagId1: string;
+  let tagId2: string;
+  let otherUserTagId: string;
+
+  let listId: string;
+  let otherUserListId: string;
+
+  beforeEach<CustomTestContext>(async (ctx) => {
+    await defaultBeforeEach(true)(ctx);
+
+    tagId1 = (
+      await ctx.apiCallers[0].tags.create({
+        name: "Tag 1",
+      })
+    ).id;
+
+    tagId2 = (
+      await ctx.apiCallers[0].tags.create({
+        name: "Tag 2",
+      })
+    ).id;
+
+    otherUserTagId = (
+      await ctx.apiCallers[1].tags.create({
+        name: "Tag 1",
+      })
+    ).id;
+
+    listId = (
+      await ctx.apiCallers[0].lists.create({
+        name: "List 1",
+        icon: "😘",
+      })
+    ).id;
+
+    otherUserListId = (
+      await ctx.apiCallers[1].lists.create({
+        name: "List 1",
+        icon: "😘",
+      })
+    ).id;
+  });
+
   test<CustomTestContext>("create rule with valid data", async ({
     apiCallers,
   }) => {
@@ -19,7 +60,10 @@ describe("Rules Routes", () => {
       enabled: true,
       event: { type: "bookmarkAdded" },
       condition: { type: "alwaysTrue" },
-      actions: [{ type: "addTag", tagId: "valid-tag-id" }],
+      actions: [
+        { type: "addTag", tagId: tagId1 },
+        { type: "addToList", listId: listId },
+      ],
     };
 
     const createdRule = await api.create(validRuleInput);
@@ -63,7 +107,7 @@ describe("Rules Routes", () => {
       enabled: true,
       event: { type: "tagAdded", tagId: "" }, // Empty tagId - should fail
       condition: { type: "alwaysTrue" },
-      actions: [{ type: "addTag", tagId: "valid-tag-id" }],
+      actions: [{ type: "addTag", tagId: tagId1 }],
     };
 
     await expect(() => api.create(invalidRuleInput)).rejects.toThrow(
@@ -82,7 +126,7 @@ describe("Rules Routes", () => {
       enabled: true,
       event: { type: "bookmarkAdded" },
       condition: { type: "hasTag", tagId: "" }, // Empty tagId - should fail
-      actions: [{ type: "addTag", tagId: "valid-tag-id" }],
+      actions: [{ type: "addTag", tagId: tagId1 }],
     };
 
     await expect(() => api.create(invalidRuleInput)).rejects.toThrow(
@@ -102,7 +146,7 @@ describe("Rules Routes", () => {
       enabled: true,
       event: { type: "bookmarkAdded" },
       condition: { type: "alwaysTrue" },
-      actions: [{ type: "addTag", tagId: "tag1" }],
+      actions: [{ type: "addTag", tagId: tagId1 }],
     });
 
     const validUpdateInput: RuleEngineRule = {
@@ -112,7 +156,7 @@ describe("Rules Routes", () => {
       enabled: false,
       event: { type: "bookmarkAdded" },
       condition: { type: "alwaysTrue" },
-      actions: [{ type: "removeTag", tagId: "tag2" }],
+      actions: [{ type: "removeTag", tagId: tagId2 }],
     };
 
     const updatedRule = await api.update(validUpdateInput);
@@ -139,7 +183,7 @@ describe("Rules Routes", () => {
       enabled: true,
       event: { type: "bookmarkAdded" },
       condition: { type: "alwaysTrue" },
-      actions: [{ type: "addTag", tagId: "tag1" }],
+      actions: [{ type: "addTag", tagId: tagId1 }],
     });
 
     const invalidUpdateInput: RuleEngineRule = {
@@ -166,7 +210,7 @@ describe("Rules Routes", () => {
       enabled: true,
       event: { type: "bookmarkAdded" },
       condition: { type: "alwaysTrue" },
-      actions: [{ type: "addTag", tagId: "tag1" }],
+      actions: [{ type: "addTag", tagId: tagId1 }],
     });
 
     await api.delete({ id: createdRule.id });
@@ -186,7 +230,7 @@ describe("Rules Routes", () => {
       enabled: true,
       event: { type: "bookmarkAdded" },
       condition: { type: "alwaysTrue" },
-      actions: [{ type: "addTag", tagId: "tag1" }],
+      actions: [{ type: "addTag", tagId: tagId1 }],
     });
 
     await api.create({
@@ -195,12 +239,141 @@ describe("Rules Routes", () => {
       enabled: true,
       event: { type: "bookmarkAdded" },
       condition: { type: "alwaysTrue" },
-      actions: [{ type: "addTag", tagId: "tag2" }],
+      actions: [{ type: "addTag", tagId: tagId2 }],
     });
 
     const rulesList = await api.list();
     expect(rulesList.rules.length).toBeGreaterThanOrEqual(2);
     expect(rulesList.rules.some((rule) => rule.name === "Rule 1")).toBeTruthy();
     expect(rulesList.rules.some((rule) => rule.name === "Rule 2")).toBeTruthy();
+  });
+
+  describe("privacy checks", () => {
+    test<CustomTestContext>("cannot access or manipulate another user's rule", async ({
+      apiCallers,
+    }) => {
+      const apiUserA = apiCallers[0].rules; // First user
+      const apiUserB = apiCallers[1].rules; // Second user
+
+      // User A creates a rule
+      const createdRule = await apiUserA.create({
+        name: "User A's Rule",
+        description: "A rule for User A",
+        enabled: true,
+        event: { type: "bookmarkAdded" },
+        condition: { type: "alwaysTrue" },
+        actions: [{ type: "addTag", tagId: tagId1 }],
+      });
+
+      // User B tries to update User A's rule
+      const updateInput: RuleEngineRule = {
+        id: createdRule.id,
+        name: "Trying to Update",
+        description: "Unauthorized update",
+        enabled: true,
+        event: createdRule.event,
+        condition: createdRule.condition,
+        actions: createdRule.actions,
+      };
+
+      await expect(() => apiUserB.update(updateInput)).rejects.toThrow(
+        /User is not allowed to access this rule/,
+      );
+    });
+
+    test<CustomTestContext>("cannot create rule with event on another user's tag", async ({
+      apiCallers,
+    }) => {
+      const api = apiCallers[0].rules; // First user trying to use second user's tag
+
+      const invalidRuleInput: Omit<RuleEngineRule, "id"> = {
+        name: "Invalid Rule",
+        description: "Event with other user's tag",
+        enabled: true,
+        event: { type: "tagAdded", tagId: otherUserTagId }, // Other user's tag
+        condition: { type: "alwaysTrue" },
+        actions: [{ type: "addTag", tagId: tagId1 }],
+      };
+
+      await expect(() => api.create(invalidRuleInput)).rejects.toThrow(
+        /Tag not found/, // Expect an error indicating lack of ownership
+      );
+    });
+
+    test<CustomTestContext>("cannot create rule with condition on another user's tag", async ({
+      apiCallers,
+    }) => {
+      const api = apiCallers[0].rules; // First user trying to use second user's tag
+
+      const invalidRuleInput: Omit<RuleEngineRule, "id"> = {
+        name: "Invalid Rule",
+        description: "Condition with other user's tag",
+        enabled: true,
+        event: { type: "bookmarkAdded" },
+        condition: { type: "hasTag", tagId: otherUserTagId }, // Other user's tag
+        actions: [{ type: "addTag", tagId: tagId1 }],
+      };
+
+      await expect(() => api.create(invalidRuleInput)).rejects.toThrow(
+        /Tag not found/,
+      );
+    });
+
+    test<CustomTestContext>("cannot create rule with action on another user's tag", async ({
+      apiCallers,
+    }) => {
+      const api = apiCallers[0].rules; // First user trying to use second user's tag
+
+      const invalidRuleInput: Omit<RuleEngineRule, "id"> = {
+        name: "Invalid Rule",
+        description: "Action with other user's tag",
+        enabled: true,
+        event: { type: "bookmarkAdded" },
+        condition: { type: "alwaysTrue" },
+        actions: [{ type: "addTag", tagId: otherUserTagId }], // Other user's tag
+      };
+
+      await expect(() => api.create(invalidRuleInput)).rejects.toThrow(
+        /Tag not found/,
+      );
+    });
+
+    test<CustomTestContext>("cannot create rule with event on another user's list", async ({
+      apiCallers,
+    }) => {
+      const api = apiCallers[0].rules; // First user trying to use second user's list
+
+      const invalidRuleInput: Omit<RuleEngineRule, "id"> = {
+        name: "Invalid Rule",
+        description: "Event with other user's list",
+        enabled: true,
+        event: { type: "addedToList", listId: otherUserListId }, // Other user's list
+        condition: { type: "alwaysTrue" },
+        actions: [{ type: "addTag", tagId: tagId1 }],
+      };
+
+      await expect(() => api.create(invalidRuleInput)).rejects.toThrow(
+        /List not found/,
+      );
+    });
+
+    test<CustomTestContext>("cannot create rule with action on another user's list", async ({
+      apiCallers,
+    }) => {
+      const api = apiCallers[0].rules; // First user trying to use second user's list
+
+      const invalidRuleInput: Omit<RuleEngineRule, "id"> = {
+        name: "Invalid Rule",
+        description: "Action with other user's list",
+        enabled: true,
+        event: { type: "bookmarkAdded" },
+        condition: { type: "alwaysTrue" },
+        actions: [{ type: "addToList", listId: otherUserListId }], // Other user's list
+      };
+
+      await expect(() => api.create(invalidRuleInput)).rejects.toThrow(
+        /List not found/,
+      );
+    });
   });
 });

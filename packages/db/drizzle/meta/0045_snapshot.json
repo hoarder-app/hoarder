@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "4534521d-f83b-4ddf-a5bd-bf6b54c714ef",
+  "id": "dce61b2b-d896-425a-a9cd-6a79f596d7b2",
   "prevId": "1592d5ec-1cbd-45f5-9061-fbaece6eb91e",
   "tables": {
     "account": {
@@ -590,6 +590,14 @@
             "userId"
           ],
           "isUnique": false
+        },
+        "bookmarkLists_userId_id_idx": {
+          "name": "bookmarkLists_userId_id_idx",
+          "columns": [
+            "userId",
+            "id"
+          ],
+          "isUnique": true
         }
       },
       "foreignKeys": {
@@ -676,6 +684,14 @@
           "columns": [
             "userId",
             "name"
+          ],
+          "isUnique": true
+        },
+        "bookmarkTags_userId_id_idx": {
+          "name": "bookmarkTags_userId_id_idx",
+          "columns": [
+            "userId",
+            "id"
           ],
           "isUnique": true
         }
@@ -1438,27 +1454,31 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "ruleEngineActions_listId_bookmarkLists_id_fk": {
-          "name": "ruleEngineActions_listId_bookmarkLists_id_fk",
+        "ruleEngineActions_userId_tagId_fk": {
+          "name": "ruleEngineActions_userId_tagId_fk",
           "tableFrom": "ruleEngineActions",
-          "tableTo": "bookmarkLists",
+          "tableTo": "bookmarkTags",
           "columnsFrom": [
-            "listId"
+            "userId",
+            "tagId"
           ],
           "columnsTo": [
+            "userId",
             "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "ruleEngineActions_tagId_bookmarkTags_id_fk": {
-          "name": "ruleEngineActions_tagId_bookmarkTags_id_fk",
+        "ruleEngineActions_userId_listId_fk": {
+          "name": "ruleEngineActions_userId_listId_fk",
           "tableFrom": "ruleEngineActions",
-          "tableTo": "bookmarkTags",
+          "tableTo": "bookmarkLists",
           "columnsFrom": [
-            "tagId"
+            "userId",
+            "listId"
           ],
           "columnsTo": [
+            "userId",
             "id"
           ],
           "onDelete": "cascade",
@@ -1560,27 +1580,31 @@
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "ruleEngineRules_listId_bookmarkLists_id_fk": {
-          "name": "ruleEngineRules_listId_bookmarkLists_id_fk",
+        "ruleEngineRules_userId_tagId_fk": {
+          "name": "ruleEngineRules_userId_tagId_fk",
           "tableFrom": "ruleEngineRules",
-          "tableTo": "bookmarkLists",
+          "tableTo": "bookmarkTags",
           "columnsFrom": [
-            "listId"
+            "userId",
+            "tagId"
           ],
           "columnsTo": [
+            "userId",
             "id"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "ruleEngineRules_tagId_bookmarkTags_id_fk": {
-          "name": "ruleEngineRules_tagId_bookmarkTags_id_fk",
+        "ruleEngineRules_userId_listId_fk": {
+          "name": "ruleEngineRules_userId_listId_fk",
           "tableFrom": "ruleEngineRules",
-          "tableTo": "bookmarkTags",
+          "tableTo": "bookmarkLists",
           "columnsFrom": [
-            "tagId"
+            "userId",
+            "listId"
           ],
           "columnsTo": [
+            "userId",
             "id"
           ],
           "onDelete": "cascade",

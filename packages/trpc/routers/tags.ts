@@ -18,7 +18,7 @@ function conditionFromInput(input: { tagId: string }, userId: string) {
   return and(eq(bookmarkTags.id, input.tagId), eq(bookmarkTags.userId, userId));
 }
 
-const ensureTagOwnership = experimental_trpcMiddleware<{
+export const ensureTagOwnership = experimental_trpcMiddleware<{
   ctx: Context;
   input: { tagId: string };
 }>().create(async (opts) => {

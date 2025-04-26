@@ -3,6 +3,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import {
   AnySQLiteColumn,
+  foreignKey,
   index,
   integer,
   primaryKey,
@@ -283,6 +284,7 @@ export const bookmarkTags = sqliteTable(
   },
   (bt) => [
     unique().on(bt.userId, bt.name),
+    unique("bookmarkTags_userId_id_idx").on(bt.userId, bt.id),
     index("bookmarkTags_name_idx").on(bt.name),
     index("bookmarkTags_userId_idx").on(bt.userId),
   ],
@@ -332,7 +334,10 @@ export const bookmarkLists = sqliteTable(
       { onDelete: "set null" },
     ),
   },
-  (bl) => [index("bookmarkLists_userId_idx").on(bl.userId)],
+  (bl) => [
+    index("bookmarkLists_userId_idx").on(bl.userId),
+    unique("bookmarkLists_userId_id_idx").on(bl.userId, bl.id),
+  ],
 );
 
 export const bookmarksInLists = sqliteTable(
@@ -462,14 +467,24 @@ export const ruleEngineRulesTable = sqliteTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
 
-    listId: text("listId").references(() => bookmarkLists.id, {
-      onDelete: "cascade",
-    }),
-    tagId: text("tagId").references(() => bookmarkTags.id, {
-      onDelete: "cascade",
-    }),
+    listId: text("listId"),
+    tagId: text("tagId"),
   },
-  (rl) => [index("ruleEngine_userId_idx").on(rl.userId)],
+  (rl) => [
+    index("ruleEngine_userId_idx").on(rl.userId),
+
+    // Ensures correct ownership
+    foreignKey({
+      columns: [rl.userId, rl.tagId],
+      foreignColumns: [bookmarkTags.userId, bookmarkTags.id],
+      name: "ruleEngineRules_userId_tagId_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [rl.userId, rl.listId],
+      foreignColumns: [bookmarkLists.userId, bookmarkLists.id],
+      name: "ruleEngineRules_userId_listId_fk",
+    }).onDelete("cascade"),
+  ],
 );
 
 export const ruleEngineActionsTable = sqliteTable(
@@ -488,16 +503,23 @@ export const ruleEngineActionsTable = sqliteTable(
     action: text("action").notNull(),
 
     // References
-    listId: text("listId").references(() => bookmarkLists.id, {
-      onDelete: "cascade",
-    }),
-    tagId: text("tagId").references(() => bookmarkTags.id, {
-      onDelete: "cascade",
-    }),
+    listId: text("listId"),
+    tagId: text("tagId"),
   },
   (rl) => [
     index("ruleEngineActions_userId_idx").on(rl.userId),
     index("ruleEngineActions_ruleId_idx").on(rl.ruleId),
+    // Ensures correct ownership
+    foreignKey({
+      columns: [rl.userId, rl.tagId],
+      foreignColumns: [bookmarkTags.userId, bookmarkTags.id],
+      name: "ruleEngineActions_userId_tagId_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [rl.userId, rl.listId],
+      foreignColumns: [bookmarkLists.userId, bookmarkLists.id],
+      name: "ruleEngineActions_userId_listId_fk",
+    }).onDelete("cascade"),
   ],
 );
 
@@ -629,7 +651,7 @@ export const ruleEngineActionsTableRelations = relations(
   }),
 );
 
-export const rssFeedImportsTableRelations  = relations(
+export const rssFeedImportsTableRelations = relations(
   rssFeedImportsTable,
   ({ one }) => ({
     rssFeed: one(rssFeedsTable, {

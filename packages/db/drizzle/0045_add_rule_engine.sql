@@ -7,8 +7,8 @@ CREATE TABLE `ruleEngineActions` (
 	`tagId` text,
 	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
 	FOREIGN KEY (`ruleId`) REFERENCES `ruleEngineRules`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`listId`) REFERENCES `bookmarkLists`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`tagId`) REFERENCES `bookmarkTags`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`userId`,`tagId`) REFERENCES `bookmarkTags`(`userId`,`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`userId`,`listId`) REFERENCES `bookmarkLists`(`userId`,`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
 CREATE INDEX `ruleEngineActions_userId_idx` ON `ruleEngineActions` (`userId`);--> statement-breakpoint
@@ -24,8 +24,10 @@ CREATE TABLE `ruleEngineRules` (
 	`listId` text,
 	`tagId` text,
 	FOREIGN KEY (`userId`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`listId`) REFERENCES `bookmarkLists`(`id`) ON UPDATE no action ON DELETE cascade,
-	FOREIGN KEY (`tagId`) REFERENCES `bookmarkTags`(`id`) ON UPDATE no action ON DELETE cascade
+	FOREIGN KEY (`userId`,`tagId`) REFERENCES `bookmarkTags`(`userId`,`id`) ON UPDATE no action ON DELETE cascade,
+	FOREIGN KEY (`userId`,`listId`) REFERENCES `bookmarkLists`(`userId`,`id`) ON UPDATE no action ON DELETE cascade
 );
 --> statement-breakpoint
-CREATE INDEX `ruleEngine_userId_idx` ON `ruleEngineRules` (`userId`);
+CREATE INDEX `ruleEngine_userId_idx` ON `ruleEngineRules` (`userId`);--> statement-breakpoint
+CREATE UNIQUE INDEX `bookmarkLists_userId_id_idx` ON `bookmarkLists` (`userId`,`id`);--> statement-breakpoint
+CREATE UNIQUE INDEX `bookmarkTags_userId_id_idx` ON `bookmarkTags` (`userId`,`id`);
