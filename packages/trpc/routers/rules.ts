@@ -57,6 +57,18 @@ export const rulesAppRouter = router({
             event: JSON.stringify(input.event),
             condition: JSON.stringify(input.condition),
             userId: ctx.user.id,
+
+            // Those references are there such that when the tag/list is removed, the rule is deleted
+            listId:
+              input.event.type === "addedToList" ||
+              input.event.type === "removedFromList"
+                ? input.event.listId
+                : null,
+            tagId:
+              input.event.type === "tagAdded" ||
+              input.event.type === "tagRemoved"
+                ? input.event.tagId
+                : null,
           })
           .returning();
 
@@ -66,6 +78,15 @@ export const rulesAppRouter = router({
               ruleId: newRule.id,
               userId: ctx.user.id,
               action: JSON.stringify(action),
+              // Those references are there such that when the list is removed, the action is deleted
+              listId:
+                action.type === "addToList" || action.type === "removeFromList"
+                  ? action.listId
+                  : null,
+              tagId:
+                action.type === "addTag" || action.type === "removeTag"
+                  ? action.tagId
+                  : null,
             })),
           );
         }
@@ -96,6 +117,18 @@ export const rulesAppRouter = router({
             enabled: input.enabled,
             event: JSON.stringify(input.event),
             condition: JSON.stringify(input.condition),
+
+            // Those references are there such that when the tag/list is removed, the rule is deleted
+            listId:
+              input.event.type === "addedToList" ||
+              input.event.type === "removedFromList"
+                ? input.event.listId
+                : null,
+            tagId:
+              input.event.type === "tagAdded" ||
+              input.event.type === "tagRemoved"
+                ? input.event.tagId
+                : null,
           })
           .where(
             and(
@@ -120,6 +153,15 @@ export const rulesAppRouter = router({
               ruleId: input.id,
               userId: ctx.user.id,
               action: JSON.stringify(action),
+              // Those references are there such that when the list is removed, the action is deleted
+              listId:
+                action.type === "addToList" || action.type === "removeFromList"
+                  ? action.listId
+                  : null,
+              tagId:
+                action.type === "addTag" || action.type === "removeTag"
+                  ? action.tagId
+                  : null,
             })),
           );
         }

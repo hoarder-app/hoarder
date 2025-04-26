@@ -17,7 +17,11 @@ export default function RulesSettingsPage() {
   const [editingRule, setEditingRule] = useState<
     (Omit<RuleEngineRule, "id"> & { id: string | null }) | null
   >(null);
-  const { data: rules, isLoading } = api.rules.list.useQuery();
+
+  const { data: rules, isLoading } = api.rules.list.useQuery(undefined, {
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
+  });
 
   const handleCreateRule = () => {
     const newRule = {
