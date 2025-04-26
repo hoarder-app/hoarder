@@ -95,6 +95,7 @@ export function EventSelector({ value, onChange }: EventSelectorProps) {
           {(value.type === "addedToList" ||
             value.type === "removedFromList") && (
             <BookmarkListSelector
+              listTypes={["manual"]}
               value={value.listId}
               onChange={(l) => onChange({ type: value.type, listId: l })}
             />
