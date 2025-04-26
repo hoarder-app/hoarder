@@ -19,6 +19,7 @@ import logger from "@karakeep/shared/logger";
 import { buildImagePrompt, buildTextPrompt } from "@karakeep/shared/prompts";
 import {
   OpenAIQueue,
+  triggerRuleEngineOnEvent,
   triggerSearchReindex,
   triggerWebhook,
   zOpenAIRequestSchema,
@@ -377,19 +378,20 @@ async function connectTags(
     }
 
     // Delete old AI tags
-    await tx
+    const detachedTags = await tx
       .delete(tagsOnBookmarks)
       .where(
         and(
           eq(tagsOnBookmarks.attachedBy, "ai"),
           eq(tagsOnBookmarks.bookmarkId, bookmarkId),
         ),
-      );
+      )
+      .returning();
 
     const allTagIds = new Set([...matchedTagIds, ...newTagIds]);
 
     // Attach new ones
-    await tx
+    const attachedTags = await tx
       .insert(tagsOnBookmarks)
       .values(
         [...allTagIds].map((tagId) => ({
@@ -398,7 +400,19 @@ async function connectTags(
           attachedBy: "ai" as const,
         })),
       )
-      .onConflictDoNothing();
+      .onConflictDoNothing()
+      .returning();
+
+    await triggerRuleEngineOnEvent(bookmarkId, [
+      ...detachedTags.map((t) => ({
+        type: "tagRemoved" as const,
+        tagId: t.tagId,
+      })),
+      ...attachedTags.map((t) => ({
+        type: "tagAdded" as const,
+        tagId: t.tagId,
+      })),
+    ]);
   });
 }
 

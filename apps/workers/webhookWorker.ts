@@ -47,14 +47,17 @@ export class WebhookWorker {
   }
 }
 
-async function fetchBookmark(linkId: string) {
+async function fetchBookmark(bookmarkId: string) {
   return await db.query.bookmarks.findFirst({
-    where: eq(bookmarks.id, linkId),
+    where: eq(bookmarks.id, bookmarkId),
     with: {
-      link: true,
-      text: true,
-      asset: true,
+      link: {
+        columns: {
+          url: true,
+        },
+      },
       user: {
+        columns: {},
         with: {
           webhooks: true,
         },

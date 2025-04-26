@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { SqliteError } from "@karakeep/db";
 import { bookmarkLists, bookmarksInLists } from "@karakeep/db/schema";
+import { triggerRuleEngineOnEvent } from "@karakeep/shared/queues";
 import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 import {
   ZBookmarkList,
@@ -248,6 +249,12 @@ export class ManualList extends List {
         listId: this.list.id,
         bookmarkId,
       });
+      await triggerRuleEngineOnEvent(bookmarkId, [
+        {
+          type: "addedToList",
+          listId: this.list.id,
+        },
+      ]);
     } catch (e) {
       if (e instanceof SqliteError) {
         if (e.code == "SQLITE_CONSTRAINT_PRIMARYKEY") {
@@ -279,6 +286,12 @@ export class ManualList extends List {
         message: `Bookmark ${bookmarkId} is already not in list ${this.list.id}`,
       });
     }
+    await triggerRuleEngineOnEvent(bookmarkId, [
+      {
+        type: "removedFromList",
+        listId: this.list.id,
+      },
+    ]);
   }
 
   async update(input: z.infer<typeof zEditBookmarkListSchemaWithValidation>) {

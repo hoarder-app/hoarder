@@ -45,6 +45,7 @@ import {
   AssetPreprocessingQueue,
   LinkCrawlerQueue,
   OpenAIQueue,
+  triggerRuleEngineOnEvent,
   triggerSearchDeletion,
   triggerSearchReindex,
   triggerWebhook,
@@ -430,6 +431,11 @@ export const bookmarksAppRouter = router({
           break;
         }
       }
+      await triggerRuleEngineOnEvent(bookmark.id, [
+        {
+          type: "bookmarkAdded",
+        },
+      ]);
       await triggerSearchReindex(bookmark.id);
       await triggerWebhook(bookmark.id, "created");
       return bookmark;
@@ -573,6 +579,17 @@ export const bookmarksAppRouter = router({
         /* includeContent: */ false,
       );
 
+      if (input.favourited === true || input.archived === true) {
+        await triggerRuleEngineOnEvent(
+          input.bookmarkId,
+          [
+            ...(input.favourited === true ? ["favourited" as const] : []),
+            ...(input.archived === true ? ["archived" as const] : []),
+          ].map((t) => ({
+            type: t,
+          })),
+        );
+      }
       // Trigger re-indexing and webhooks
       await triggerSearchReindex(input.bookmarkId);
       await triggerWebhook(input.bookmarkId, "edited");
@@ -1141,6 +1158,16 @@ export const bookmarksAppRouter = router({
             ),
           );
 
+        await triggerRuleEngineOnEvent(input.bookmarkId, [
+          ...idsToRemove.map((t) => ({
+            type: "tagRemoved" as const,
+            tagId: t,
+          })),
+          ...allIds.map((t) => ({
+            type: "tagAdded" as const,
+            tagId: t,
+          })),
+        ]);
         await triggerSearchReindex(input.bookmarkId);
         await triggerWebhook(input.bookmarkId, "edited");
         return {
