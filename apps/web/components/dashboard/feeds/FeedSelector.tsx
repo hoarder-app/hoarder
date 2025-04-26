@@ -10,24 +10,24 @@ import LoadingSpinner from "@/components/ui/spinner";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 
-export function TagSelector({
+export function FeedSelector({
   value,
   onChange,
-  placeholder = "Select a tag",
+  placeholder = "Select a feed",
   className,
 }: {
+  className?: string;
   value?: string | null;
   onChange: (value: string) => void;
   placeholder?: string;
-  className?: string;
 }) {
-  const { data: allTags, isPending } = api.tags.list.useQuery();
+  const { data, isPending } = api.feeds.list.useQuery(undefined, {
+    select: (data) => data.feeds,
+  });
 
-  if (isPending || !allTags) {
+  if (isPending) {
     return <LoadingSpinner />;
   }
-
-  allTags.tags = allTags.tags.sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <Select onValueChange={onChange} value={value ?? ""}>
@@ -36,16 +36,14 @@ export function TagSelector({
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {allTags?.tags.map((tag) => {
-            return (
-              <SelectItem key={tag.id} value={tag.id}>
-                {tag.name}
-              </SelectItem>
-            );
-          })}
-          {allTags && allTags.tags.length == 0 && (
-            <SelectItem value="notag" disabled>
-              You don&apos;t currently have any tags.
+          {data?.map((f) => (
+            <SelectItem key={f.id} value={f.id}>
+              {f.name}
+            </SelectItem>
+          ))}
+          {(data ?? []).length == 0 && (
+            <SelectItem value="nofeed" disabled>
+              You don&apos;t currently have any feeds.
             </SelectItem>
           )}
         </SelectGroup>
