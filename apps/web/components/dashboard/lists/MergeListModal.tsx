@@ -170,6 +170,7 @@ export function MergeListModal({
                         value={field.value}
                         onChange={field.onChange}
                         placeholder={t("lists.no_destination")}
+                        listTypes={["manual"]}
                       />
                     </FormControl>
                     <Button
