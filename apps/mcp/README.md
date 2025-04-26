@@ -14,8 +14,9 @@ Currently, the MCP server only exposes tools (no resources).
 
 ## Usage with Claude Desktop
 
+From NPM:
 
-```
+```json
 {
   "mcpServers": {
     "karakeep": {
@@ -32,3 +33,24 @@ Currently, the MCP server only exposes tools (no resources).
 }
 ```
 
+From Docker:
+
+```json
+{
+  "mcpServers": {
+    "karakeep": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-p",
+        "3000:3000",
+        "-e",
+        "KARAKEEP_API_ADDR=https://<YOUR_SERVER_ADDR>",
+        "-e",
+        "KARAKEEP_API_KEY=<YOUR_TOKEN>",
+        "ghcr.io/karakeep-app/karakeep-mcp:latest"
+      ]
+    }
+  }
+}
+```
