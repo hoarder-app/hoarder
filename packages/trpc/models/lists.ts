@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { SqliteError } from "@karakeep/db";
 import { bookmarkLists, bookmarksInLists } from "@karakeep/db/schema";
+import { triggerRuleEngineOnEvent } from "@karakeep/shared/queues";
 import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 import {
   ZBookmarkList,
@@ -117,7 +118,9 @@ export abstract class List implements PrivacyAware {
     }
   }
 
-  async update(input: z.infer<typeof zEditBookmarkListSchemaWithValidation>) {
+  async update(
+    input: z.infer<typeof zEditBookmarkListSchemaWithValidation>,
+  ): Promise<void> {
     const result = await this.ctx.db
       .update(bookmarkLists)
       .set({
@@ -137,7 +140,7 @@ export abstract class List implements PrivacyAware {
     if (result.length == 0) {
       throw new TRPCError({ code: "NOT_FOUND" });
     }
-    return result[0];
+    this.list = result[0];
   }
 
   abstract get type(): "manual" | "smart";
@@ -248,6 +251,12 @@ export class ManualList extends List {
         listId: this.list.id,
         bookmarkId,
       });
+      await triggerRuleEngineOnEvent(bookmarkId, [
+        {
+          type: "addedToList",
+          listId: this.list.id,
+        },
+      ]);
     } catch (e) {
       if (e instanceof SqliteError) {
         if (e.code == "SQLITE_CONSTRAINT_PRIMARYKEY") {
@@ -279,6 +288,12 @@ export class ManualList extends List {
         message: `Bookmark ${bookmarkId} is already not in list ${this.list.id}`,
       });
     }
+    await triggerRuleEngineOnEvent(bookmarkId, [
+      {
+        type: "removedFromList",
+        listId: this.list.id,
+      },
+    ]);
   }
 
   async update(input: z.infer<typeof zEditBookmarkListSchemaWithValidation>) {

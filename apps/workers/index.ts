@@ -2,6 +2,7 @@ import "dotenv/config";
 
 import { AssetPreprocessingWorker } from "assetPreprocessingWorker";
 import { FeedRefreshingWorker, FeedWorker } from "feedWorker";
+import { RuleEngineWorker } from "ruleEngineWorker";
 import { TidyAssetsWorker } from "tidyAssetsWorker";
 
 import serverConfig from "@karakeep/shared/config";
@@ -28,6 +29,7 @@ async function main() {
     feed,
     assetPreprocessing,
     webhook,
+    ruleEngine,
   ] = [
     await CrawlerWorker.build(),
     OpenAiWorker.build(),
@@ -37,6 +39,7 @@ async function main() {
     FeedWorker.build(),
     AssetPreprocessingWorker.build(),
     WebhookWorker.build(),
+    RuleEngineWorker.build(),
   ];
   FeedRefreshingWorker.start();
 
@@ -50,11 +53,12 @@ async function main() {
       feed.run(),
       assetPreprocessing.run(),
       webhook.run(),
+      ruleEngine.run(),
     ]),
     shutdownPromise,
   ]);
   logger.info(
-    "Shutting down crawler, openai, tidyAssets, video, feed, assetPreprocessing, webhook and search workers ...",
+    "Shutting down crawler, openai, tidyAssets, video, feed, assetPreprocessing, webhook, ruleEngine and search workers ...",
   );
 
   FeedRefreshingWorker.stop();
@@ -66,6 +70,7 @@ async function main() {
   feed.stop();
   assetPreprocessing.stop();
   webhook.stop();
+  ruleEngine.stop();
 }
 
 main();

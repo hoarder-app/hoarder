@@ -16,7 +16,15 @@ import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Edit, KeyRound, Plus, Save, Trash2, X } from "lucide-react";
+import {
+  Edit,
+  KeyRound,
+  Plus,
+  PlusCircle,
+  Save,
+  Trash2,
+  X,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -82,7 +90,7 @@ export function WebhooksEditorDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="mr-2 size-4" />
+          <PlusCircle className="mr-2 size-4" />
           {t("settings.webhooks.create_webhook")}
         </Button>
       </DialogTrigger>

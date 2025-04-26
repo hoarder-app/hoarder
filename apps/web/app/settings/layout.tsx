@@ -5,6 +5,7 @@ import { TFunction } from "i18next";
 import {
   ArrowLeft,
   Download,
+  GitBranch,
   Image,
   KeyRound,
   Link,
@@ -60,6 +61,11 @@ const settingsSidebarItems = (
     name: t("settings.webhooks.webhooks"),
     icon: <Webhook size={18} />,
     path: "/settings/webhooks",
+  },
+  {
+    name: t("settings.rules.rules"),
+    icon: <GitBranch size={18} />,
+    path: "/settings/rules",
   },
   {
     name: t("settings.manage_assets.manage_assets"),

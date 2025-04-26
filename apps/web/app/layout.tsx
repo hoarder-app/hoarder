@@ -49,7 +49,11 @@ export default async function RootLayout({
   const userSettings = await getUserLocalSettings();
   const isRTL = userSettings.lang === "ar";
   return (
-    <html lang={userSettings.lang} dir={isRTL ? "rtl" : "ltr"}>
+    <html
+      className="sm:overflow-hidden"
+      lang={userSettings.lang}
+      dir={isRTL ? "rtl" : "ltr"}
+    >
       <body className={inter.className}>
         <Providers
           session={session}

@@ -3,6 +3,7 @@ import { buildDBClient, migrateDB, SqliteQueue } from "liteque";
 import { z } from "zod";
 
 import serverConfig from "./config";
+import { zRuleEngineEventSchema } from "./types/rules";
 
 const QUEUE_DB_PATH = path.join(serverConfig.dataDir, "queue.db");
 
@@ -191,5 +192,32 @@ export async function triggerWebhook(
   await WebhookQueue.enqueue({
     bookmarkId,
     operation,
+  });
+}
+
+// RuleEgine worker
+export const zRuleEngineRequestSchema = z.object({
+  bookmarkId: z.string(),
+  events: z.array(zRuleEngineEventSchema),
+});
+export type ZRuleEngineRequest = z.infer<typeof zRuleEngineRequestSchema>;
+export const RuleEngineQueue = new SqliteQueue<ZRuleEngineRequest>(
+  "rule_engine_queue",
+  queueDB,
+  {
+    defaultJobArgs: {
+      numRetries: 1,
+    },
+    keepFailedJobs: false,
+  },
+);
+
+export async function triggerRuleEngineOnEvent(
+  bookmarkId: string,
+  events: z.infer<typeof zRuleEngineEventSchema>[],
+) {
+  await RuleEngineQueue.enqueue({
+    events,
+    bookmarkId,
   });
 }

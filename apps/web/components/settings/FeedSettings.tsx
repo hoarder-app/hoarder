@@ -22,6 +22,7 @@ import {
   ArrowDownToLine,
   CheckCircle,
   CircleDashed,
+  CirclePlus,
   Edit,
   FlaskConical,
   Plus,
@@ -93,7 +94,7 @@ export function FeedsEditorDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
-          <Plus className="mr-2 size-4" />
+          <CirclePlus className="mr-2 size-4" />
           {t("settings.feeds.add_a_subscription")}
         </Button>
       </DialogTrigger>

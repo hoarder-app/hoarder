@@ -38,7 +38,8 @@ export const listsAppRouter = router({
     .output(zBookmarkListSchema)
     .use(ensureListOwnership)
     .mutation(async ({ input, ctx }) => {
-      return await ctx.list.update(input);
+      await ctx.list.update(input);
+      return ctx.list.list;
     }),
   merge: authedProcedure
     .input(zMergeListSchema)
