@@ -25,8 +25,7 @@ export function compactBookmark(
 Bookmarked URL: ${bookmark.content.url}
 description: ${bookmark.content.description ?? ""}
 author: ${bookmark.content.author ?? ""}
-publisher: ${bookmark.content.publisher ?? ""}
-`;
+publisher: ${bookmark.content.publisher ?? ""}`;
   } else if (bookmark.content.type === "text") {
     content = `Bookmark type: text
   Source URL: ${bookmark.content.sourceUrl ?? ""}`;
