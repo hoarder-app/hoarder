@@ -4,21 +4,21 @@ import {
   exists,
   gt,
   gte,
+  inArray,
   isNotNull,
   like,
   lt,
   lte,
   ne,
   notExists,
+  notInArray,
   notLike,
 } from "drizzle-orm";
 
 import {
   bookmarkAssets,
   bookmarkLinks,
-  bookmarkLists,
   bookmarks,
-  bookmarksInLists,
   bookmarkTags,
   rssFeedImportsTable,
   rssFeedsTable,
@@ -28,6 +28,7 @@ import { Matcher } from "@karakeep/shared/types/search";
 import { toAbsoluteDate } from "@karakeep/shared/utils/relativeDateUtils";
 
 import { AuthedContext } from "..";
+import { List } from "../models/lists";
 
 interface BookmarkQueryReturnType {
   id: string;
@@ -87,21 +88,20 @@ function union(vals: BookmarkQueryReturnType[][]): BookmarkQueryReturnType[] {
 }
 
 async function getIds(
-  db: AuthedContext["db"],
-  userId: string,
+  ctx: AuthedContext,
   matcher: Matcher,
 ): Promise<BookmarkQueryReturnType[]> {
   switch (matcher.type) {
     case "tagName": {
       const comp = matcher.inverse ? notExists : exists;
-      return db
+      return ctx.db
         .selectDistinct({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            eq(bookmarks.userId, ctx.user.id),
             comp(
-              db
+              ctx.db
                 .select()
                 .from(tagsOnBookmarks)
                 .innerJoin(
@@ -111,7 +111,7 @@ async function getIds(
                 .where(
                   and(
                     eq(tagsOnBookmarks.bookmarkId, bookmarks.id),
-                    eq(bookmarkTags.userId, userId),
+                    eq(bookmarkTags.userId, ctx.user.id),
                     eq(bookmarkTags.name, matcher.tagName),
                   ),
                 ),
@@ -121,14 +121,14 @@ async function getIds(
     }
     case "tagged": {
       const comp = matcher.tagged ? exists : notExists;
-      return db
+      return ctx.db
         .select({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            eq(bookmarks.userId, ctx.user.id),
             comp(
-              db
+              ctx.db
                 .select()
                 .from(tagsOnBookmarks)
                 .where(and(eq(tagsOnBookmarks.bookmarkId, bookmarks.id))),
@@ -137,59 +137,43 @@ async function getIds(
         );
     }
     case "listName": {
-      const comp = matcher.inverse ? notExists : exists;
-      return db
-        .selectDistinct({ id: bookmarks.id })
-        .from(bookmarks)
-        .where(
-          and(
-            eq(bookmarks.userId, userId),
-            comp(
-              db
-                .select()
-                .from(bookmarksInLists)
-                .innerJoin(
-                  bookmarkLists,
-                  eq(bookmarksInLists.listId, bookmarkLists.id),
-                )
-                .where(
-                  and(
-                    eq(bookmarksInLists.bookmarkId, bookmarks.id),
-                    eq(bookmarkLists.userId, userId),
-                    eq(bookmarkLists.name, matcher.listName),
-                  ),
-                ),
-            ),
-          ),
-        );
-    }
-    case "inlist": {
-      const comp = matcher.inList ? exists : notExists;
-      return db
+      const lists = await List.fromName(ctx, matcher.listName);
+      const ids = await Promise.all(lists.map((l) => l.getBookmarkIds()));
+      const comp = matcher.inverse ? notInArray : inArray;
+      return ctx.db
         .select({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
-            comp(
-              db
-                .select()
-                .from(bookmarksInLists)
-                .where(and(eq(bookmarksInLists.bookmarkId, bookmarks.id))),
-            ),
+            eq(bookmarks.userId, ctx.user.id),
+            comp(bookmarks.id, ids.flat()),
+          ),
+        );
+    }
+    case "inlist": {
+      const lists = await List.getAll(ctx);
+      const ids = await Promise.all(lists.map((l) => l.getBookmarkIds()));
+      const comp = matcher.inList ? inArray : notInArray;
+      return ctx.db
+        .select({ id: bookmarks.id })
+        .from(bookmarks)
+        .where(
+          and(
+            eq(bookmarks.userId, ctx.user.id),
+            comp(bookmarks.id, ids.flat()),
           ),
         );
     }
     case "rssFeedName": {
       const comp = matcher.inverse ? notExists : exists;
-      return db
+      return ctx.db
         .selectDistinct({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            eq(bookmarks.userId, ctx.user.id),
             comp(
-              db
+              ctx.db
                 .select()
                 .from(rssFeedImportsTable)
                 .innerJoin(
@@ -199,7 +183,7 @@ async function getIds(
                 .where(
                   and(
                     eq(rssFeedImportsTable.bookmarkId, bookmarks.id),
-                    eq(rssFeedsTable.userId, userId),
+                    eq(rssFeedsTable.userId, ctx.user.id),
                     eq(rssFeedsTable.name, matcher.feedName),
                   ),
                 ),
@@ -208,36 +192,36 @@ async function getIds(
         );
     }
     case "archived": {
-      return db
+      return ctx.db
         .select({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            eq(bookmarks.userId, ctx.user.id),
             eq(bookmarks.archived, matcher.archived),
           ),
         );
     }
     case "url": {
       const comp = matcher.inverse ? notLike : like;
-      return db
+      return ctx.db
         .select({ id: bookmarkLinks.id })
         .from(bookmarkLinks)
         .leftJoin(bookmarks, eq(bookmarks.id, bookmarkLinks.id))
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            eq(bookmarks.userId, ctx.user.id),
             comp(bookmarkLinks.url, `%${matcher.url}%`),
           ),
         )
         .union(
-          db
+          ctx.db
             .select({ id: bookmarkAssets.id })
             .from(bookmarkAssets)
             .leftJoin(bookmarks, eq(bookmarks.id, bookmarkAssets.id))
             .where(
               and(
-                eq(bookmarks.userId, userId),
+                eq(bookmarks.userId, ctx.user.id),
                 // When a user is asking for a link, the inverse matcher should match only assets with URLs.
                 isNotNull(bookmarkAssets.sourceUrl),
                 comp(bookmarkAssets.sourceUrl, `%${matcher.url}%`),
@@ -246,73 +230,73 @@ async function getIds(
         );
     }
     case "favourited": {
-      return db
+      return ctx.db
         .select({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            eq(bookmarks.userId, ctx.user.id),
             eq(bookmarks.favourited, matcher.favourited),
           ),
         );
     }
     case "dateAfter": {
       const comp = matcher.inverse ? lt : gte;
-      return db
+      return ctx.db
         .select({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            eq(bookmarks.userId, ctx.user.id),
             comp(bookmarks.createdAt, matcher.dateAfter),
           ),
         );
     }
     case "dateBefore": {
       const comp = matcher.inverse ? gt : lte;
-      return db
+      return ctx.db
         .select({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            eq(bookmarks.userId, ctx.user.id),
             comp(bookmarks.createdAt, matcher.dateBefore),
           ),
         );
     }
     case "age": {
       const comp = matcher.relativeDate.direction === "newer" ? gte : lt;
-      return db
+      return ctx.db
         .select({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            eq(bookmarks.userId, ctx.user.id),
             comp(bookmarks.createdAt, toAbsoluteDate(matcher.relativeDate)),
           ),
         );
     }
     case "type": {
       const comp = matcher.inverse ? ne : eq;
-      return db
+      return ctx.db
         .select({ id: bookmarks.id })
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            eq(bookmarks.userId, ctx.user.id),
             comp(bookmarks.type, matcher.typeName),
           ),
         );
     }
     case "and": {
       const vals = await Promise.all(
-        matcher.matchers.map((m) => getIds(db, userId, m)),
+        matcher.matchers.map((m) => getIds(ctx, m)),
       );
       return intersect(vals);
     }
     case "or": {
       const vals = await Promise.all(
-        matcher.matchers.map((m) => getIds(db, userId, m)),
+        matcher.matchers.map((m) => getIds(ctx, m)),
       );
       return union(vals);
     }
@@ -327,6 +311,6 @@ export async function getBookmarkIdsFromMatcher(
   ctx: AuthedContext,
   matcher: Matcher,
 ): Promise<string[]> {
-  const results = await getIds(ctx.db, ctx.user.id, matcher);
+  const results = await getIds(ctx, matcher);
   return results.map((r) => r.id);
 }

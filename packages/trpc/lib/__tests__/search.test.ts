@@ -34,6 +34,12 @@ beforeEach(async () => {
       email: "test@example.com",
       role: "user",
     },
+    {
+      id: "another-user",
+      name: "Another User",
+      email: "another@example.com",
+      role: "user",
+    },
   ]);
 
   // Setup test data
@@ -82,6 +88,14 @@ beforeEach(async () => {
       id: "b6",
       type: BookmarkTypes.ASSET,
       userId: testUserId,
+      archived: true,
+      favourited: false,
+      createdAt: new Date("2024-01-06"),
+    },
+    {
+      id: "b7",
+      type: BookmarkTypes.ASSET,
+      userId: "another-user",
       archived: true,
       favourited: false,
       createdAt: new Date("2024-01-06"),
@@ -143,6 +157,21 @@ beforeEach(async () => {
       type: "manual",
     },
     { id: "l4", userId: testUserId, name: "work", icon: "💼", type: "manual" },
+    {
+      id: "l5",
+      userId: testUserId,
+      name: "smartlist",
+      icon: "🧠",
+      type: "smart",
+      query: "#tag1 or #tag2",
+    },
+    {
+      id: "l6",
+      userId: testUserId,
+      name: "emptylist",
+      icon: "∅",
+      type: "manual",
+    },
   ]);
 
   await db.insert(bookmarksInLists).values([
@@ -224,6 +253,26 @@ describe("getBookmarkIdsFromMatcher", () => {
     expect(result).toEqual(["b1", "b6"]);
   });
 
+  it("should handle listName matcher with smartList", async () => {
+    const matcher: Matcher = {
+      type: "listName",
+      listName: "smartlist",
+      inverse: false,
+    };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result).toEqual(["b1", "b2"]);
+  });
+
+  it("should handle listName matcher with empty list", async () => {
+    const matcher: Matcher = {
+      type: "listName",
+      listName: "emptylist",
+      inverse: false,
+    };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result).toEqual([]);
+  });
+
   it("should handle listName matcher with inverse=true", async () => {
     const matcher: Matcher = {
       type: "listName",
@@ -232,6 +281,26 @@ describe("getBookmarkIdsFromMatcher", () => {
     };
     const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
     expect(result.sort()).toEqual(["b2", "b3", "b4", "b5"]);
+  });
+
+  it("should handle listName matcher with smartList with inverse=true", async () => {
+    const matcher: Matcher = {
+      type: "listName",
+      listName: "smartlist",
+      inverse: true,
+    };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result).toEqual(["b3", "b4", "b5", "b6"]);
+  });
+
+  it("should handle listName matcher with empty list with inverse=true", async () => {
+    const matcher: Matcher = {
+      type: "listName",
+      listName: "emptylist",
+      inverse: true,
+    };
+    const result = await getBookmarkIdsFromMatcher(mockCtx, matcher);
+    expect(result).toEqual(["b1", "b2", "b3", "b4", "b5", "b6"]);
   });
 
   it("should handle archived matcher", async () => {
