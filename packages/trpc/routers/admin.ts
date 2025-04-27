@@ -16,6 +16,7 @@ import {
   VideoWorkerQueue,
   WebhookQueue,
 } from "@karakeep/shared/queues";
+import { getSearchIdxClient } from "@karakeep/shared/search";
 import {
   changeRoleSchema,
   resetPasswordSchema,
@@ -210,6 +211,8 @@ export const adminAppRouter = router({
       );
     }),
   reindexAllBookmarks: adminProcedure.mutation(async ({ ctx }) => {
+    const searchIdx = await getSearchIdxClient();
+    await searchIdx?.deleteAllDocuments();
     const bookmarkIds = await ctx.db.query.bookmarks.findMany({
       columns: {
         id: true,
