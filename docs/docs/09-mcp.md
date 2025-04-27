@@ -1,6 +1,6 @@
-# Karakeep MCP Server
+# Model Context Protocol Server (MCP)
 
-This is the Karakeep MCP server, which is a server that can be used to interact with Karakeep from other tools.
+Karakeep comes with a Model Context Protocol server that can be used to interact with it through LLMs.
 
 ## Supported Tools
 
@@ -10,7 +10,6 @@ This is the Karakeep MCP server, which is a server that can be used to interact 
 - Creating new lists
 - Creating text and URL bookmarks
 
-Currently, the MCP server only exposes tools (no resources).
 
 ## Usage with Claude Desktop
 
@@ -52,3 +51,15 @@ From Docker:
   }
 }
 ```
+
+
+### Demo
+
+#### Search
+![mcp-1](/img/mcp-1.gif)
+
+#### Adding Text Bookmarks
+![mcp-2](/img/mcp-2.gif)
+
+#### Adding URL Bookmarks
+![mcp-2](/img/mcp-3.gif)
