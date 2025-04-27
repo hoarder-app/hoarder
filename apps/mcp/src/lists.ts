@@ -18,9 +18,9 @@ mcpServer.tool(
           type: "text",
           text: res.data.lists
             .map(
-              (list) => `
-List ID: ${list.id}
-Name: ${list.icon} ${list.name}
+              (list) => `List ID: ${list.id}
+Name: ${list.name}
+Icon: ${list.icon}
 Description: ${list.description ?? ""}
 Parent ID: ${list.parentId}`,
             )

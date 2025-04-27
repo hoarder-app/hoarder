@@ -21,33 +21,25 @@ export function compactBookmark(
 ): string {
   let content: string;
   if (bookmark.content.type === "link") {
-    content = `
-Bookmark type: link
-urk: ${bookmark.content.url}
+    content = `Bookmark type: link
+Bookmarked URL: ${bookmark.content.url}
 description: ${bookmark.content.description ?? ""}
 author: ${bookmark.content.author ?? ""}
 publisher: ${bookmark.content.publisher ?? ""}
 `;
   } else if (bookmark.content.type === "text") {
-    content = `
-  Bookmark type: text
-  Source URL: ${bookmark.content.sourceUrl ?? ""}
-`;
+    content = `Bookmark type: text
+  Source URL: ${bookmark.content.sourceUrl ?? ""}`;
   } else if (bookmark.content.type === "asset") {
-    content = `
-Bookmark type: media
+    content = `Bookmark type: media
 Asset ID: ${bookmark.content.assetId}
 Asset type: ${bookmark.content.assetType}
-Source URL: ${bookmark.content.sourceUrl ?? ""}
-`;
+Source URL: ${bookmark.content.sourceUrl ?? ""}`;
   } else {
-    content = `
-Bookmark type: unknown
-`;
+    content = `Bookmark type: unknown`;
   }
 
-  return `
-  Bookmark ID: ${bookmark.id}
+  return `Bookmark ID: ${bookmark.id}
   Created at: ${bookmark.createdAt}
   Title: ${
     bookmark.title
@@ -57,6 +49,5 @@ Bookmark type: unknown
   Summary: ${bookmark.summary ?? ""}
   Note: ${bookmark.note ?? ""}
   ${content}
-  Tags: ${bookmark.tags.map((t) => t.name).join(", ")}
-  `;
+  Tags: ${bookmark.tags.map((t) => t.name).join(", ")}`;
 }
