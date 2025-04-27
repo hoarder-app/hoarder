@@ -57,13 +57,13 @@ machine learning is:fav`),
     }
     return {
       content: [
-        ...res.data.bookmarks.map((bookmark) => ({
-          type: "text" as const,
-          text: JSON.stringify(compactBookmark(bookmark)),
-        })),
         {
           type: "text",
-          text: `Next cursor: ${res.data.nextCursor ? `'${res.data.nextCursor}'` : "no more pages"}`,
+          text: `
+${res.data.bookmarks.map(compactBookmark).join("\n\n")}
+
+Next cursor: ${res.data.nextCursor ? `'${res.data.nextCursor}'` : "no more pages"}
+`,
         },
       ],
     };
@@ -94,7 +94,7 @@ mcpServer.tool(
       content: [
         {
           type: "text",
-          text: JSON.stringify(compactBookmark(res.data)),
+          text: compactBookmark(res.data),
         },
       ],
     };
@@ -137,7 +137,7 @@ mcpServer.tool(
       content: [
         {
           type: "text",
-          text: JSON.stringify(compactBookmark(res.data)),
+          text: compactBookmark(res.data),
         },
       ],
     };

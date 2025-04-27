@@ -13,10 +13,20 @@ mcpServer.tool(
       return toMcpToolError(res.error);
     }
     return {
-      content: res.data.lists.map((list) => ({
-        type: "text",
-        text: JSON.stringify(list),
-      })),
+      content: [
+        {
+          type: "text",
+          text: res.data.lists
+            .map(
+              (list) => `
+List ID: ${list.id}
+Name: ${list.icon} ${list.name}
+Description: ${list.description ?? ""}
+Parent ID: ${list.parentId}`,
+            )
+            .join("\n\n"),
+        },
+      ],
     };
   },
 );
