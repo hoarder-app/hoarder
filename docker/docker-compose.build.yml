@@ -1,7 +1,7 @@
 services:
   web:
     build:
-      dockerfile: docker/Dockerfile
+      dockerfile: Dockerfile
       context: ../
       target: aio
     restart: unless-stopped
