@@ -2,7 +2,7 @@ services:
   web:
     build:
       dockerfile: docker/Dockerfile
-      context: ../
+      context: ..
       target: aio
     restart: unless-stopped
     volumes:
