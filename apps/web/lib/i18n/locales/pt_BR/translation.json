@@ -32,7 +32,11 @@
     "archive": "Arquivo",
     "home": "Home",
     "type": "Tipo",
-    "size": "Tamanho"
+    "size": "Tamanho",
+    "updated_at": "Atualizado em",
+    "title": "Título",
+    "description": "Descrição",
+    "summary": "Resumo"
   },
   "actions": {
     "unarchive": "Desarquivar",
@@ -70,7 +74,8 @@
       "title": "Ordenar",
       "newest_first": "Mais Recente Primeiro",
       "oldest_first": "Mais Antigo Primeiro"
-    }
+    },
+    "open_editor": "Abrir editor"
   },
   "settings": {
     "info": {
@@ -129,7 +134,8 @@
       "import_bookmarks_from_linkwarden_export": "Importar Favoritos de exportação do Linkwarden",
       "import_bookmarks_from_karakeep_export": "Importar Favoritos de exportação do Karakeep",
       "export_links_and_notes": "Exportar Links e Notas",
-      "imported_bookmarks": "Favoritos Importados"
+      "imported_bookmarks": "Favoritos Importados",
+      "import_bookmarks_from_tab_session_manager_export": "Importar favoritos do Tab Session Manager"
     },
     "api_keys": {
       "api_keys": "Chaves API",
@@ -152,6 +158,54 @@
       "delete_asset_confirmation": "Tem certeza de que deseja excluir este recurso?",
       "manage_assets": "Gerenciar recursos",
       "no_assets": "Você ainda não tem nenhum recurso."
+    },
+    "rules": {
+      "rules": "Mecanismo de regras",
+      "if": "Se ...",
+      "events_types": {
+        "bookmark_added": "Um marcador é adicionado",
+        "tag_added": "Esta tag é adicionada a um marcador",
+        "tag_removed": "Esta tag é removida de um marcador",
+        "added_to_list": "Um marcador é adicionado a esta lista",
+        "removed_from_list": "Um marcador é removido desta lista",
+        "favourited": "Um marcador é favoritado",
+        "archived": "Um marcador é arquivado"
+      },
+      "rule_name": "Nome da regra",
+      "description": "Você pode usar regras para acionar ações quando um evento é disparado.",
+      "ceate_rule": "Criar regra",
+      "edit_rule": "Editar regra",
+      "save_rule": "Salvar regra",
+      "delete_rule": "Excluir regra",
+      "delete_rule_confirmation": "Tem certeza de que deseja excluir esta regra?",
+      "whenever": "Sempre que ...",
+      "enter_rule_name": "Insira o nome da regra",
+      "describe_what_this_rule_does": "Descreva o que esta regra faz",
+      "rule_has_been_created": "Regra foi criada!",
+      "rule_has_been_updated": "Regra foi atualizada!",
+      "rule_has_been_deleted": "Regra foi excluída!",
+      "no_rules_created_yet": "Nenhuma regra criada ainda",
+      "create_your_first_rule": "Crie sua primeira regra para automatizar seu fluxo de trabalho",
+      "conditions_types": {
+        "always": "Sempre",
+        "url_contains": "URL contém",
+        "imported_from_feed": "Importado do feed",
+        "bookmark_type_is": "Tipo de marcador é",
+        "has_tag": "Tem tag",
+        "is_favourited": "É favoritado",
+        "is_archived": "Arquivado",
+        "and": "Tudo o que segue é verdade",
+        "or": "Qualquer uma das seguintes opções for verdadeira"
+      },
+      "actions_types": {
+        "add_tag": "Adicionar tag",
+        "remove_tag": "Remover tag",
+        "add_to_list": "Adicionar à lista",
+        "remove_from_list": "Remover da lista",
+        "download_full_page_archive": "Baixar arquivo de página inteira",
+        "favourite_bookmark": "Favoritar marcador",
+        "archive_bookmark": "Arquivar marcador"
+      }
     }
   },
   "layouts": {
@@ -224,7 +278,12 @@
     "manual_list": "Lista Manual",
     "smart_list": "Lista Inteligente",
     "search_query": "Consulta de Pesquisa",
-    "search_query_help": "Saiba mais sobre a linguagem de consulta de pesquisa."
+    "search_query_help": "Saiba mais sobre a linguagem de consulta de pesquisa.",
+    "merge_list": "Mesclar lista",
+    "destination_list": "Lista de destino",
+    "delete_after_merge": "Excluir lista original após a mesclagem",
+    "no_destination": "Sem destino",
+    "description": "Descrição (Opcional)"
   },
   "tags": {
     "all_tags": "Todas Tags",
@@ -262,11 +321,24 @@
     "type_is_not": "O Tipo não é",
     "does_not_have_tag": "Não Tem Tag",
     "and": "E",
-    "or": "Ou"
+    "or": "Ou",
+    "is_from_feed": "É de um feed RSS",
+    "is_not_from_feed": "Não é de um feed RSS",
+    "month_s": " Mês(es)",
+    "created_within": "Criado dentro de",
+    "created_earlier_than": "Criado antes de",
+    "day_s": " Dia(s)",
+    "week_s": " Semana(s)",
+    "year_s": " Ano(s)",
+    "day_s_ago": " Dia(s) atrás",
+    "week_s_ago": " Semana(s) atrás",
+    "month_s_ago": " Mês(es) atrás",
+    "year_s_ago": " Ano(s) atrás"
   },
   "preview": {
     "view_original": "Ver Original",
-    "cached_content": "Conteúdo em Cache"
+    "cached_content": "Conteúdo em Cache",
+    "reader_view": "Modo Leitura"
   },
   "editor": {
     "quickly_focus": "Você pode acessar rapidamente este campo pressionando ⌘ + E",
@@ -324,7 +396,8 @@
         }
       }
     },
-    "disabled_submissions": "Os envios estão desativados"
+    "disabled_submissions": "Os envios estão desativados",
+    "placeholder_v2": "Cole um link, escreva uma nota ou solte uma imagem…"
   },
   "dialogs": {
     "bookmarks": {
@@ -343,7 +416,9 @@
     },
     "lists": {
       "created": "A lista foi criada!",
-      "updated": "A lista foi atualizada!"
+      "updated": "A lista foi atualizada!",
+      "merged": "Lista foi mesclada!",
+      "deleted": "Lista foi excluída!"
     }
   },
   "cleanups": {
@@ -352,5 +427,21 @@
       "title": "Tags duplicadas",
       "merge_all_suggestions": "Mesclar todas as sugestões?"
     }
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "Ainda não há marcadores",
+      "description": "Salve artigos, links e páginas interessantes para acessá-los rapidamente mais tarde."
+    }
+  },
+  "bookmark_editor": {
+    "title": "Editar marcador",
+    "subtitle": "Faça alterações nos detalhes do marcador. Clique em salvar quando terminar.",
+    "author": "Autor",
+    "publisher": "Editora",
+    "date_published": "Data de publicação",
+    "pick_a_date": "Escolha uma data",
+    "save_changes": "Salvar alterações",
+    "extracted_content": "Conteúdo extraído"
   }
 }

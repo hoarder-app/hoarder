@@ -32,7 +32,11 @@
       "media": "Medya",
       "title": "Yer İşareti Türü"
     },
-    "type": "Yaz"
+    "type": "Yaz",
+    "updated_at": "Güncellenme Zamanı",
+    "title": "Başlık",
+    "description": "Açıklama",
+    "summary": "Özet"
   },
   "layouts": {
     "masonry": "Döşeme",
@@ -76,7 +80,8 @@
       "title": "Sırala",
       "newest_first": "En yeni önce",
       "oldest_first": "En eski önce"
-    }
+    },
+    "open_editor": "Düzenleyiciyi Aç"
   },
   "highlights": {
     "no_highlights": "Henüz hiçbir öne çıkarılmış içeriğiniz yok."
@@ -120,7 +125,8 @@
       "import_bookmarks_from_karakeep_export": "Karakeep Dışa Aktarımından Yer İşaretlerini İçe Aktar",
       "export_links_and_notes": "Bağlantı ve Notları Dışa Aktar",
       "imported_bookmarks": "İçe Aktarılan Yer İşaretleri",
-      "import_bookmarks_from_linkwarden_export": "Linkwarden dışa aktarımından Yer İşaretlerini İçe Aktar"
+      "import_bookmarks_from_linkwarden_export": "Linkwarden dışa aktarımından Yer İşaretlerini İçe Aktar",
+      "import_bookmarks_from_tab_session_manager_export": "Sekme Oturum Yöneticisi'nden Yer İşaretlerini İçe Aktar"
     },
     "api_keys": {
       "api_keys": "API Anahtarları",
@@ -161,6 +167,54 @@
       "asset_link": "Varlık Bağlantısı",
       "delete_asset": "Varlığı Sil",
       "delete_asset_confirmation": "Bu varlığı silmek istediğinizden emin misiniz?"
+    },
+    "rules": {
+      "rules": "Kural Motoru",
+      "conditions_types": {
+        "is_archived": "Arşivlendi",
+        "always": "Her zaman",
+        "url_contains": "URL İçeriyor",
+        "imported_from_feed": "Beslemeden İçe Aktarıldı",
+        "bookmark_type_is": "Yer İşareti Türü Şudur",
+        "has_tag": "Etikete Sahip",
+        "is_favourited": "Favorilere Eklendi",
+        "and": "Aşağıdakilerin hepsi doğru",
+        "or": "Aşağıdakilerden herhangi biri doğruysa"
+      },
+      "actions_types": {
+        "add_tag": "Etiket Ekle",
+        "remove_tag": "Etiketi Kaldır",
+        "add_to_list": "Listeye Ekle",
+        "remove_from_list": "Listeden Kaldır",
+        "download_full_page_archive": "Tam Sayfa Arşivini İndir",
+        "favourite_bookmark": "Favori Yer İşareti",
+        "archive_bookmark": "Yer İşaretini Arşivle"
+      },
+      "rule_name": "Kural Adı",
+      "description": "Bir olay tetiklendiğinde eylemleri tetiklemek için kuralları kullanabilirsiniz.",
+      "ceate_rule": "Kural Oluştur",
+      "edit_rule": "Kuralı Düzenle",
+      "save_rule": "Kuralı Kaydet",
+      "delete_rule": "Kuralı Sil",
+      "delete_rule_confirmation": "Bu kuralı silmek istediğinden emin misin?",
+      "whenever": "Ne zaman ...",
+      "if": "Eğer ...",
+      "enter_rule_name": "Kural adı girin",
+      "describe_what_this_rule_does": "Bu kuralın ne yaptığını açıklayın",
+      "rule_has_been_created": "Kural oluşturuldu!",
+      "rule_has_been_updated": "Kural güncellendi!",
+      "rule_has_been_deleted": "Kural silindi!",
+      "no_rules_created_yet": "Henüz kural oluşturulmadı",
+      "create_your_first_rule": "İş akışınızı otomatikleştirmek için ilk kuralınızı oluşturun",
+      "events_types": {
+        "bookmark_added": "Bir yer işareti eklendi",
+        "tag_added": "Bu etiket bir yer işaretine eklendi",
+        "tag_removed": "Bu etiket bir yer işaretinden kaldırıldı",
+        "added_to_list": "Bu listeye bir yer işareti eklendi",
+        "removed_from_list": "Bir yer işareti bu listeden kaldırıldı",
+        "favourited": "Bir yer işareti favorilere eklendi",
+        "archived": "Bir yer işareti arşivlendi"
+      }
     }
   },
   "admin": {
@@ -224,7 +278,12 @@
     "search_query": "Arama Sorgusu",
     "search_query_help": "Arama sorgu dili hakkında daha fazla bilgi edinin.",
     "parent_list": "Üst Öğe Listesi",
-    "edit_list": "Listeyi Düzenle"
+    "edit_list": "Listeyi Düzenle",
+    "merge_list": "Listeyi Birleştir",
+    "destination_list": "Hedef Liste",
+    "delete_after_merge": "Birleştirmeden sonra orijinal listeyi sil",
+    "no_destination": "Hedef Yok",
+    "description": "Açıklama (İsteğe Bağlı)"
   },
   "tags": {
     "all_tags": "Tüm Etiketler",
@@ -241,7 +300,8 @@
   },
   "preview": {
     "view_original": "Orijinali Görüntüle",
-    "cached_content": "Önbelleğe Alınmış İçerik"
+    "cached_content": "Önbelleğe Alınmış İçerik",
+    "reader_view": "Okuyucu Görünümü"
   },
   "editor": {
     "quickly_focus": "Bu alana hızlıca odaklanmak için ⌘ + E tuşlarına basabilirsiniz",
@@ -299,7 +359,8 @@
           "example": "``` + boşluk"
         }
       }
-    }
+    },
+    "placeholder_v2": "Bir bağlantı yapıştırın, bir not yazın veya bir resim bırakın…"
   },
   "toasts": {
     "bookmarks": {
@@ -312,7 +373,9 @@
     },
     "lists": {
       "created": "Liste oluşturuldu!",
-      "updated": "Liste güncellendi!"
+      "updated": "Liste güncellendi!",
+      "merged": "Liste birleştirildi!",
+      "deleted": "Liste silindi!"
     }
   },
   "cleanups": {
@@ -345,12 +408,40 @@
     "is_not_archived": "Arşivlenmedi",
     "has_any_tag": "Herhangi Bir Etikete Sahip",
     "type_is": "Türü",
-    "type_is_not": "Tür şu değil"
+    "type_is_not": "Tür şu değil",
+    "is_from_feed": "RSS Beslemesinden mi?",
+    "is_not_from_feed": "RSS Beslemesinden değil",
+    "created_within": "Şu Zaman İçinde Oluşturuldu",
+    "year_s_ago": " Yıl Önce",
+    "created_earlier_than": "Şundan Daha Önce Oluşturuldu",
+    "day_s": " Gün(ler)",
+    "week_s": " Hafta(lar)",
+    "month_s": " Ay(lar)",
+    "year_s": " Yıl(lar)",
+    "day_s_ago": " Gün Önce",
+    "week_s_ago": " Hafta Önce",
+    "month_s_ago": " Ay Önce"
   },
   "dialogs": {
     "bookmarks": {
       "delete_confirmation_description": "Bu yer işaretini silmek istediğinden emin misin?",
       "delete_confirmation_title": "Yer İşaretini Silmek İstiyor Musun?"
     }
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "Henüz yer işareti yok",
+      "description": "İlgini çeken makaleleri, bağlantıları ve sayfaları kaydet ve daha sonra hızlıca eriş."
+    }
+  },
+  "bookmark_editor": {
+    "title": "Yer İşaretini Düzenle",
+    "subtitle": "Yer işareti ayrıntılarında değişiklik yap. İşin bitince kaydet'e tıkla.",
+    "author": "Yazar",
+    "publisher": "Yayımcı",
+    "date_published": "Yayınlanma Tarihi",
+    "pick_a_date": "Bir tarih seç",
+    "save_changes": "Değişiklikleri kaydet",
+    "extracted_content": "Çıkarılan İçerik"
   }
 }
