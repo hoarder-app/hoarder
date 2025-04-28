@@ -26,27 +26,12 @@ export abstract class List implements PrivacyAware {
   private static fromData(
     ctx: AuthedContext,
     data: ZBookmarkList & { userId: string },
-  ): ManualList | SmartList {
+  ) {
     if (data.type === "smart") {
       return new SmartList(ctx, data);
     } else {
       return new ManualList(ctx, data);
     }
-  }
-
-  static async fromName(
-    ctx: AuthedContext,
-    name: string,
-  ): Promise<(ManualList | SmartList)[]> {
-    // Names are not unique, so we need to find all lists with the same name
-    const lists = await ctx.db.query.bookmarkLists.findMany({
-      where: and(
-        eq(bookmarkLists.name, name),
-        eq(bookmarkLists.userId, ctx.user.id),
-      ),
-    });
-
-    return lists.map((l) => this.fromData(ctx, l));
   }
 
   static async fromId(
@@ -66,7 +51,11 @@ export abstract class List implements PrivacyAware {
         message: "List not found",
       });
     }
-    return this.fromData(ctx, list);
+    if (list.type === "smart") {
+      return new SmartList(ctx, list);
+    } else {
+      return new ManualList(ctx, list);
+    }
   }
 
   static async create(
