@@ -119,7 +119,9 @@ function BookmarkHTMLHighlighter({
     null,
   );
   const isMobile = useState(
-    () => typeof window !== 'undefined' && window.matchMedia("(pointer: coarse)").matches
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia("(pointer: coarse)").matches,
   )[0];
 
   // Apply existing highlights when component mounts or highlights change
