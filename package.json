@@ -38,5 +38,8 @@
     "patchedDependencies": {
       "xcode@3.0.1": "patches/xcode@3.0.1.patch"
     }
+  },
+  "dependencies": {
+    "uuid": "^11.1.0"
   }
 }
