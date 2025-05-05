@@ -13,9 +13,6 @@ importers:
 
   .:
     dependencies:
-      ulidx:
-        specifier: ^2.4.1
-        version: 2.4.1
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
@@ -1197,9 +1194,6 @@ importers:
       tiny-invariant:
         specifier: ^1.3.3
         version: 1.3.3
-      ulidx:
-        specifier: ^2.4.1
-        version: 2.4.1
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -14545,10 +14539,6 @@ packages:
 
   ufo@1.5.4:
     resolution: {integrity: sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ==}
-
-  ulidx@2.4.1:
-    resolution: {integrity: sha512-xY7c8LPyzvhvew0Fn+Ek3wBC9STZAuDI/Y5andCKi9AX6/jvfaX45PhsDX8oxgPL0YFp0Jhr8qWMbS/p9375Xg==}
-    engines: {node: '>=16'}
 
   unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
@@ -34101,11 +34091,6 @@ snapshots:
 
   ufo@1.5.4:
     dev: true
-
-  ulidx@2.4.1:
-    dependencies:
-      layerr: 3.0.0
-    dev: false
 
   unbox-primitive@1.0.2:
     dependencies:
