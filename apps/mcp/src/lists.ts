@@ -6,7 +6,7 @@ import { toMcpToolError } from "./utils";
 
 mcpServer.tool(
   "get-lists",
-  `Search for bookmarks matching a specific a query.`,
+  `Retrieves a list of lists.`,
   async (): Promise<CallToolResult> => {
     const res = await karakeepClient.GET("/lists");
     if (!res.data) {

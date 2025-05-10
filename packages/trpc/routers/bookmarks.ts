@@ -134,13 +134,19 @@ async function getBookmark(
 }
 
 async function attemptToDedupLink(ctx: AuthedContext, url: string) {
+  const normalizedUrl = url.endsWith("/") ? url.slice(0, -1) : url;
   const result = await ctx.db
     .select({
       id: bookmarkLinks.id,
     })
     .from(bookmarkLinks)
     .leftJoin(bookmarks, eq(bookmarks.id, bookmarkLinks.id))
-    .where(and(eq(bookmarkLinks.url, url), eq(bookmarks.userId, ctx.user.id)));
+    .where(
+      and(
+        eq(bookmarkLinks.url, normalizedUrl),
+        eq(bookmarks.userId, ctx.user.id),
+      ),
+    );
 
   if (result.length == 0) {
     return null;
