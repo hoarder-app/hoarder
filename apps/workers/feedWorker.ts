@@ -21,6 +21,7 @@ export const FeedRefreshingWorker = cron.schedule(
         columns: {
           id: true,
         },
+        where: eq(rssFeedsTable.enabled, true),
       })
       .then((feeds) => {
         for (const feed of feeds) {

@@ -114,7 +114,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS Subscriptions",
-      "add_a_subscription": "Add a Subscription"
+      "add_a_subscription": "Add a Subscription",
+      "feed_enabled": "RSS Feed enabled",
+      "feed_disabled": "RSS Feed disabled"
     },
     "webhooks": {
       "webhooks": "Webhooks",
