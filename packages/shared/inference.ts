@@ -71,6 +71,10 @@ class OpenAIInferenceClient implements InferenceClient {
     this.openAI = new OpenAI({
       apiKey: serverConfig.inference.openAIApiKey,
       baseURL: serverConfig.inference.openAIBaseUrl,
+      defaultHeaders: {
+        "X-Title": "Karakeep",
+        "HTTP-Referer": "https://karakeep.app",
+      },
     });
   }
 
