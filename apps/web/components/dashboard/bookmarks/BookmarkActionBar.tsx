@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Maximize2 } from "lucide-react";
+import { Archive, Maximize2 } from "lucide-react";
 
 import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
 
@@ -18,6 +18,7 @@ export default function BookmarkActionBar({
       {bookmark.favourited && (
         <FavouritedActionIcon className="m-1 size-8 rounded p-1" favourited />
       )}
+      {bookmark.archived && <Archive className="m-1 size-8 rounded p-1" />}
       <Link
         href={`/dashboard/preview/${bookmark.id}`}
         className={cn(buttonVariants({ variant: "ghost" }), "px-2")}
