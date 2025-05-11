@@ -8,6 +8,6 @@ interface SortOrderState {
 }
 
 export const useSortOrderStore = create<SortOrderState>((set) => ({
-  sortOrder: "desc", // default sort order
+  sortOrder: "relevance", // default sort order
   setSortOrder: (sortOrder) => set({ sortOrder }),
 }));
