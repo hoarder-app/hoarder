@@ -1,3 +1,4 @@
+import { NextRequest } from "next/server";
 import {
   toExportFormat,
   toNetscapeFormat,
@@ -9,14 +10,13 @@ import { z } from "zod";
 import { MAX_NUM_BOOKMARKS_PER_PAGE } from "@karakeep/shared/types/bookmarks";
 
 export const dynamic = "force-dynamic";
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   const ctx = await createContextFromRequest(request);
   if (!ctx.user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const url = new URL(request.url);
-  const format = url.searchParams.get("format") ?? "json";
+  const format = request.nextUrl.searchParams.get("format") ?? "json";
 
   const req = {
     limit: MAX_NUM_BOOKMARKS_PER_PAGE,
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
 
   while (resp.nextCursor) {
     resp = await api.bookmarks.getBookmarks({
-      ...request,
+      ...req,
       cursor: resp.nextCursor,
     });
     bookmarks = [...bookmarks, ...resp.bookmarks];
@@ -61,5 +61,7 @@ export async function GET(request: Request) {
         "Content-disposition": `attachment; filename="bookmarks-${new Date().toISOString()}.html"`,
       },
     });
+  } else {
+    return Response.json({ error: "Invalid format" }, { status: 400 });
   }
 }

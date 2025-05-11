@@ -73,18 +73,21 @@ export function toNetscapeFormat(bookmarks: ZBookmark[]): string {
 
   const bookmarkEntries = bookmarks
     .map((bookmark) => {
+      if (bookmark.content?.type !== BookmarkTypes.LINK) {
+        return "";
+      }
       const addDate = bookmark.createdAt
         ? `ADD_DATE="${Math.floor(bookmark.createdAt.getTime() / 1000)}"`
         : "";
 
-      if (bookmark.content?.type === BookmarkTypes.LINK) {
-        const encodedUrl = encodeURI(bookmark.content.url);
-        const displayTitle = bookmark.title ?? bookmark.content.url;
-        const encodedTitle = escapeHtml(displayTitle);
+      const tagNames = bookmark.tags.map((t) => t.name).join(",");
+      const tags = tagNames.length > 0 ? `TAGS="${tagNames}"` : "";
 
-        return `    <DT><A HREF="${encodedUrl}" ${addDate}>${encodedTitle}</A>`;
-      }
-      return "";
+      const encodedUrl = encodeURI(bookmark.content.url);
+      const displayTitle = bookmark.title ?? bookmark.content.url;
+      const encodedTitle = escapeHtml(displayTitle);
+
+      return `    <DT><A HREF="${encodedUrl}" ${addDate} ${tags}>${encodedTitle}</A>`;
     })
     .filter(Boolean)
     .join("\n");
