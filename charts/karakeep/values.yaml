@@ -68,7 +68,9 @@ controllers:
           - --remote-debugging-address=0.0.0.0
           - --remote-debugging-port=9222
           - --headless
+          - --hide-scrollbars
           - --disable-gpu
+          - --disable-dev-shm-usage
 
         probes:
           liveness:
@@ -134,6 +136,15 @@ ingress:
             service:
               identifier: karakeep
               port: http
+
+persistence:
+  chrome-tmp:
+    type: emptyDir
+    advancedMounts:
+      chrome:
+        chrome:
+          - path: /tmp
+            readonly: false
 
 meilisearch:
   auth:
