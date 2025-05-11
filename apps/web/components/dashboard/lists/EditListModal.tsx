@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
@@ -39,7 +39,7 @@ import { useTranslation } from "@/lib/i18n/client";
 import data from "@emoji-mart/data";
 import Picker from "@emoji-mart/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { X } from "lucide-react";
+import { Info, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -47,13 +47,11 @@ import {
   useCreateBookmarkList,
   useEditBookmarkList,
 } from "@karakeep/shared-react/hooks/lists";
-import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 import {
   ZBookmarkList,
   zNewBookmarkListSchema,
 } from "@karakeep/shared/types/lists";
 
-import QueryExplainerTooltip from "../search/QueryExplainerTooltip";
 import { BookmarkListSelector } from "./BookmarkListSelector";
 
 export function EditListModal({
@@ -104,14 +102,6 @@ export function EditListModal({
       query: list?.query ?? prefill?.query ?? undefined,
     });
   }, [open]);
-
-  const parsedSearchQuery = useMemo(() => {
-    const query = form.getValues().query;
-    if (!query) {
-      return undefined;
-    }
-    return parseSearchQuery(query);
-  }, [form.watch("query")]);
 
   const { mutate: createList, isPending: isCreating } = useCreateBookmarkList({
     onSuccess: (resp) => {
@@ -352,21 +342,14 @@ export function EditListModal({
                   return (
                     <FormItem className="grow pb-4">
                       <FormLabel>{t("lists.search_query")}</FormLabel>
-                      <div className="relative">
-                        <FormControl>
-                          <Input
-                            value={field.value}
-                            onChange={field.onChange}
-                            placeholder={t("lists.search_query")}
-                          />
-                        </FormControl>
-                        {parsedSearchQuery && (
-                          <QueryExplainerTooltip
-                            className="translate-1/2 absolute right-1.5 top-2 stroke-foreground p-0.5"
-                            parsedSearchQuery={parsedSearchQuery}
-                          />
-                        )}
-                      </div>
+                      <FormControl>
+                        <Input
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder={t("lists.search_query")}
+                          endIcon={Info}
+                        />
+                      </FormControl>
                       <FormDescription>
                         <Link
                           href="https://docs.karakeep.app/Guides/search-query-language"
