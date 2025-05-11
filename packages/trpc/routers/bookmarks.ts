@@ -822,12 +822,6 @@ export const bookmarksAppRouter = router({
         }
       }
 
-      /**
-       * preserve legacy behaviour
-       */
-      const createdAtSortOrder =
-        input.sortOrder === "relevance" ? "desc" : input.sortOrder;
-
       const sq = ctx.db.$with("bookmarksSq").as(
         ctx.db
           .select()
@@ -882,7 +876,7 @@ export const bookmarksAppRouter = router({
                   )
                 : undefined,
               input.cursor
-                ? createdAtSortOrder === "asc"
+                ? input.sortOrder === "asc"
                   ? or(
                       gt(bookmarks.createdAt, input.cursor.createdAt),
                       and(
