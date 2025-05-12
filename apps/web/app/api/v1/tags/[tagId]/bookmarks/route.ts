@@ -15,6 +15,7 @@ export const GET = (
     handler: async ({ api, searchParams }) => {
       const bookmarks = await api.bookmarks.getBookmarks({
         tagId: params.tagId,
+        sortOrder: searchParams.sortOrder,
         limit: searchParams.limit,
         cursor: searchParams.cursor,
       });

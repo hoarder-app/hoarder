@@ -5,5 +5,5 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
-  },
+  }
 }

@@ -10,6 +10,7 @@ dist
 .env
 .env.*
 **/migrations/**
+packages/open-api/karakeep-openapi-spec.json
 
 # Ignore files for PNPM, NPM and YARN
 pnpm-lock.yaml

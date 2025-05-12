@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
+import { zSortOrder } from "@karakeep/shared/types/bookmarks";
+
 import { buildHandler } from "../../utils/handler";
 import { zGetBookmarkSearchParamsSchema } from "../../utils/types";
 
@@ -12,6 +14,7 @@ export const GET = (req: NextRequest) =>
     searchParamsSchema: z
       .object({
         q: z.string(),
+        sortOrder: zSortOrder.optional().default(zSortOrder.Enum.relevance),
         limit: z.coerce.number().optional(),
         cursor: z
           .string()
