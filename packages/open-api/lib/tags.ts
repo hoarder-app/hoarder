@@ -4,6 +4,7 @@ import {
 } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
 
+import { zSortOrder } from "@karakeep/shared/types/bookmarks";
 import {
   zGetTagResponseSchema,
   zUpdateTagRequestSchema,
@@ -152,13 +153,21 @@ registry.registerPath({
 registry.registerPath({
   method: "get",
   path: "/tags/{tagId}/bookmarks",
-  description: "Get the bookmarks with the tag",
-  summary: "Get a bookmarks with the tag",
+  description: "Get bookmarks with the tag",
+  summary: "Get bookmarks with the tag",
   tags: ["Tags"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ tagId: TagIdSchema }),
-    query: PaginationSchema.merge(IncludeContentSearchParamSchema),
+    query: z
+      .object({
+        sortOrder: zSortOrder
+          .exclude(["relevance"])
+          .optional()
+          .default(zSortOrder.Enum.desc),
+      })
+      .merge(PaginationSchema)
+      .merge(IncludeContentSearchParamSchema),
   },
   responses: {
     200: {

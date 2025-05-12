@@ -4,6 +4,7 @@ import {
 } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
 
+import { zSortOrder } from "@karakeep/shared/types/bookmarks";
 import {
   zBookmarkListSchema,
   zEditBookmarkListSchema,
@@ -190,13 +191,21 @@ registry.registerPath({
 registry.registerPath({
   method: "get",
   path: "/lists/{listId}/bookmarks",
-  description: "Get the bookmarks in a list",
-  summary: "Get a bookmarks in a list",
+  description: "Get bookmarks in the list",
+  summary: "Get bookmarks in the list",
   tags: ["Lists"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ listId: ListIdSchema }),
-    query: PaginationSchema.merge(IncludeContentSearchParamSchema),
+    query: z
+      .object({
+        sortOrder: zSortOrder
+          .exclude(["relevance"])
+          .optional()
+          .default(zSortOrder.Enum.desc),
+      })
+      .merge(PaginationSchema)
+      .merge(IncludeContentSearchParamSchema),
   },
   responses: {
     200: {

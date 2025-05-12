@@ -71,11 +71,7 @@
           "taggingStatus": {
             "type": "string",
             "nullable": true,
-            "enum": [
-              "success",
-              "failure",
-              "pending"
-            ]
+            "enum": ["success", "failure", "pending"]
           },
           "note": {
             "type": "string",
@@ -98,17 +94,10 @@
                 },
                 "attachedBy": {
                   "type": "string",
-                  "enum": [
-                    "ai",
-                    "human"
-                  ]
+                  "enum": ["ai", "human"]
                 }
               },
-              "required": [
-                "id",
-                "name",
-                "attachedBy"
-              ]
+              "required": ["id", "name", "attachedBy"]
             }
           },
           "content": {
@@ -118,9 +107,7 @@
                 "properties": {
                   "type": {
                     "type": "string",
-                    "enum": [
-                      "link"
-                    ]
+                    "enum": ["link"]
                   },
                   "url": {
                     "type": "string"
@@ -186,19 +173,14 @@
                     "nullable": true
                   }
                 },
-                "required": [
-                  "type",
-                  "url"
-                ]
+                "required": ["type", "url"]
               },
               {
                 "type": "object",
                 "properties": {
                   "type": {
                     "type": "string",
-                    "enum": [
-                      "text"
-                    ]
+                    "enum": ["text"]
                   },
                   "text": {
                     "type": "string"
@@ -208,26 +190,18 @@
                     "nullable": true
                   }
                 },
-                "required": [
-                  "type",
-                  "text"
-                ]
+                "required": ["type", "text"]
               },
               {
                 "type": "object",
                 "properties": {
                   "type": {
                     "type": "string",
-                    "enum": [
-                      "asset"
-                    ]
+                    "enum": ["asset"]
                   },
                   "assetType": {
                     "type": "string",
-                    "enum": [
-                      "image",
-                      "pdf"
-                    ]
+                    "enum": ["image", "pdf"]
                   },
                   "assetId": {
                     "type": "string"
@@ -249,25 +223,17 @@
                     "nullable": true
                   }
                 },
-                "required": [
-                  "type",
-                  "assetType",
-                  "assetId"
-                ]
+                "required": ["type", "assetType", "assetId"]
               },
               {
                 "type": "object",
                 "properties": {
                   "type": {
                     "type": "string",
-                    "enum": [
-                      "unknown"
-                    ]
+                    "enum": ["unknown"]
                   }
                 },
-                "required": [
-                  "type"
-                ]
+                "required": ["type"]
               }
             ]
           },
@@ -293,10 +259,7 @@
                   ]
                 }
               },
-              "required": [
-                "id",
-                "assetType"
-              ]
+              "required": ["id", "assetType"]
             }
           }
         },
@@ -326,10 +289,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "bookmarks",
-          "nextCursor"
-        ]
+        "required": ["bookmarks", "nextCursor"]
       },
       "Cursor": {
         "type": "string"
@@ -348,12 +308,7 @@
           },
           "color": {
             "type": "string",
-            "enum": [
-              "yellow",
-              "red",
-              "green",
-              "blue"
-            ],
+            "enum": ["yellow", "red", "green", "blue"],
             "default": "yellow"
           },
           "text": {
@@ -407,10 +362,7 @@
           },
           "type": {
             "type": "string",
-            "enum": [
-              "manual",
-              "smart"
-            ],
+            "enum": ["manual", "smart"],
             "default": "manual"
           },
           "query": {
@@ -418,12 +370,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "id",
-          "name",
-          "icon",
-          "parentId"
-        ]
+        "required": ["id", "name", "icon", "parentId"]
       },
       "Tag": {
         "type": "object",
@@ -449,12 +396,7 @@
             }
           }
         },
-        "required": [
-          "id",
-          "name",
-          "numBookmarks",
-          "numBookmarksByAttachedType"
-        ]
+        "required": ["id", "name", "numBookmarks", "numBookmarksByAttachedType"]
       },
       "PaginatedHighlights": {
         "type": "object",
@@ -470,10 +412,7 @@
             "nullable": true
           }
         },
-        "required": [
-          "highlights",
-          "nextCursor"
-        ]
+        "required": ["highlights", "nextCursor"]
       }
     },
     "parameters": {
@@ -524,9 +463,7 @@
       "get": {
         "description": "Get all bookmarks",
         "summary": "Get all bookmarks",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -593,9 +530,7 @@
       "post": {
         "description": "Create a new bookmark",
         "summary": "Create a new bookmark",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -640,9 +575,7 @@
                         "properties": {
                           "type": {
                             "type": "string",
-                            "enum": [
-                              "link"
-                            ]
+                            "enum": ["link"]
                           },
                           "url": {
                             "type": "string",
@@ -652,19 +585,14 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "type",
-                          "url"
-                        ]
+                        "required": ["type", "url"]
                       },
                       {
                         "type": "object",
                         "properties": {
                           "type": {
                             "type": "string",
-                            "enum": [
-                              "text"
-                            ]
+                            "enum": ["text"]
                           },
                           "text": {
                             "type": "string"
@@ -673,26 +601,18 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "type",
-                          "text"
-                        ]
+                        "required": ["type", "text"]
                       },
                       {
                         "type": "object",
                         "properties": {
                           "type": {
                             "type": "string",
-                            "enum": [
-                              "asset"
-                            ]
+                            "enum": ["asset"]
                           },
                           "assetType": {
                             "type": "string",
-                            "enum": [
-                              "image",
-                              "pdf"
-                            ]
+                            "enum": ["image", "pdf"]
                           },
                           "assetId": {
                             "type": "string"
@@ -704,11 +624,7 @@
                             "type": "string"
                           }
                         },
-                        "required": [
-                          "type",
-                          "assetType",
-                          "assetId"
-                        ]
+                        "required": ["type", "assetType", "assetId"]
                       }
                     ]
                   }
@@ -742,10 +658,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -757,9 +670,7 @@
       "get": {
         "description": "Search bookmarks",
         "summary": "Search bookmarks",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -820,9 +731,7 @@
       "get": {
         "description": "Get bookmark by its id",
         "summary": "Get a single bookmark",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -869,10 +778,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -882,9 +788,7 @@
       "delete": {
         "description": "Delete bookmark by its id",
         "summary": "Delete a bookmark",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -913,10 +817,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -926,9 +827,7 @@
       "patch": {
         "description": "Update bookmark by its id",
         "summary": "Update a bookmark",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -1036,11 +935,7 @@
                     "taggingStatus": {
                       "type": "string",
                       "nullable": true,
-                      "enum": [
-                        "success",
-                        "failure",
-                        "pending"
-                      ]
+                      "enum": ["success", "failure", "pending"]
                     },
                     "note": {
                       "type": "string",
@@ -1077,10 +972,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1092,9 +984,7 @@
       "post": {
         "description": "Attaches a summary to the bookmark and returns the updated record.",
         "summary": "Summarize a bookmark",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -1136,11 +1026,7 @@
                     "taggingStatus": {
                       "type": "string",
                       "nullable": true,
-                      "enum": [
-                        "success",
-                        "failure",
-                        "pending"
-                      ]
+                      "enum": ["success", "failure", "pending"]
                     },
                     "note": {
                       "type": "string",
@@ -1177,10 +1063,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1192,9 +1075,7 @@
       "post": {
         "description": "Attach tags to a bookmark",
         "summary": "Attach tags to a bookmark",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -1227,9 +1108,7 @@
                     }
                   }
                 },
-                "required": [
-                  "tags"
-                ]
+                "required": ["tags"]
               }
             }
           }
@@ -1249,9 +1128,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "attached"
-                  ]
+                  "required": ["attached"]
                 }
               }
             }
@@ -1270,10 +1147,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1283,9 +1157,7 @@
       "delete": {
         "description": "Detach tags from a bookmark",
         "summary": "Detach tags from a bookmark",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -1318,9 +1190,7 @@
                     }
                   }
                 },
-                "required": [
-                  "tags"
-                ]
+                "required": ["tags"]
               }
             }
           }
@@ -1340,9 +1210,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "detached"
-                  ]
+                  "required": ["detached"]
                 }
               }
             }
@@ -1361,10 +1229,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1376,9 +1241,7 @@
       "get": {
         "description": "Get highlights of a bookmark",
         "summary": "Get highlights of a bookmark",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -1404,9 +1267,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "highlights"
-                  ]
+                  "required": ["highlights"]
                 }
               }
             }
@@ -1425,10 +1286,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1440,9 +1298,7 @@
       "post": {
         "description": "Attach a new asset to a bookmark",
         "summary": "Attach asset",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -1477,10 +1333,7 @@
                     ]
                   }
                 },
-                "required": [
-                  "id",
-                  "assetType"
-                ]
+                "required": ["id", "assetType"]
               }
             }
           }
@@ -1510,10 +1363,7 @@
                       ]
                     }
                   },
-                  "required": [
-                    "id",
-                    "assetType"
-                  ]
+                  "required": ["id", "assetType"]
                 }
               }
             }
@@ -1532,10 +1382,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1547,9 +1394,7 @@
       "put": {
         "description": "Replace an existing asset with a new one",
         "summary": "Replace asset",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -1574,9 +1419,7 @@
                     "type": "string"
                   }
                 },
-                "required": [
-                  "assetId"
-                ]
+                "required": ["assetId"]
               }
             }
           }
@@ -1599,10 +1442,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1612,9 +1452,7 @@
       "delete": {
         "description": "Detach an asset from a bookmark",
         "summary": "Detach asset",
-        "tags": [
-          "Bookmarks"
-        ],
+        "tags": ["Bookmarks"],
         "security": [
           {
             "bearerAuth": []
@@ -1646,10 +1484,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1661,9 +1496,7 @@
       "get": {
         "description": "Get all lists",
         "summary": "Get all lists",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1684,9 +1517,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "lists"
-                  ]
+                  "required": ["lists"]
                 }
               }
             }
@@ -1696,9 +1527,7 @@
       "post": {
         "description": "Create a new list",
         "summary": "Create a new list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1726,10 +1555,7 @@
                   },
                   "type": {
                     "type": "string",
-                    "enum": [
-                      "manual",
-                      "smart"
-                    ],
+                    "enum": ["manual", "smart"],
                     "default": "manual"
                   },
                   "query": {
@@ -1741,10 +1567,7 @@
                     "nullable": true
                   }
                 },
-                "required": [
-                  "name",
-                  "icon"
-                ]
+                "required": ["name", "icon"]
               }
             }
           }
@@ -1774,10 +1597,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1789,9 +1609,7 @@
       "get": {
         "description": "Get list by its id",
         "summary": "Get a single list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1827,10 +1645,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1840,9 +1655,7 @@
       "delete": {
         "description": "Delete list by its id",
         "summary": "Delete a list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1871,10 +1684,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1884,9 +1694,7 @@
       "patch": {
         "description": "Update list by its id",
         "summary": "Update a list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -1956,10 +1764,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -1971,9 +1776,7 @@
       "get": {
         "description": "Get the bookmarks in a list",
         "summary": "Get a bookmarks in a list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -2036,10 +1839,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2051,9 +1851,7 @@
       "put": {
         "description": "Add the bookmarks to a list",
         "summary": "Add a bookmark to a list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -2085,10 +1883,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2107,10 +1902,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2120,9 +1912,7 @@
       "delete": {
         "description": "Remove the bookmarks from a list",
         "summary": "Remove a bookmark from a list",
-        "tags": [
-          "Lists"
-        ],
+        "tags": ["Lists"],
         "security": [
           {
             "bearerAuth": []
@@ -2154,10 +1944,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2176,10 +1963,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2191,9 +1975,7 @@
       "get": {
         "description": "Get all tags",
         "summary": "Get all tags",
-        "tags": [
-          "Tags"
-        ],
+        "tags": ["Tags"],
         "security": [
           {
             "bearerAuth": []
@@ -2214,9 +1996,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "tags"
-                  ]
+                  "required": ["tags"]
                 }
               }
             }
@@ -2228,9 +2008,7 @@
       "get": {
         "description": "Get tag by its id",
         "summary": "Get a single tag",
-        "tags": [
-          "Tags"
-        ],
+        "tags": ["Tags"],
         "security": [
           {
             "bearerAuth": []
@@ -2266,10 +2044,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2279,9 +2054,7 @@
       "delete": {
         "description": "Delete tag by its id",
         "summary": "Delete a tag",
-        "tags": [
-          "Tags"
-        ],
+        "tags": ["Tags"],
         "security": [
           {
             "bearerAuth": []
@@ -2310,10 +2083,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2323,9 +2093,7 @@
       "patch": {
         "description": "Update tag by its id",
         "summary": "Update a tag",
-        "tags": [
-          "Tags"
-        ],
+        "tags": ["Tags"],
         "security": [
           {
             "bearerAuth": []
@@ -2376,10 +2144,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2391,9 +2156,7 @@
       "get": {
         "description": "Get the bookmarks with the tag",
         "summary": "Get a bookmarks with the tag",
-        "tags": [
-          "Tags"
-        ],
+        "tags": ["Tags"],
         "security": [
           {
             "bearerAuth": []
@@ -2456,10 +2219,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2471,9 +2231,7 @@
       "get": {
         "description": "Get all highlights",
         "summary": "Get all highlights",
-        "tags": [
-          "Highlights"
-        ],
+        "tags": ["Highlights"],
         "security": [
           {
             "bearerAuth": []
@@ -2513,9 +2271,7 @@
       "post": {
         "description": "Create a new highlight",
         "summary": "Create a new highlight",
-        "tags": [
-          "Highlights"
-        ],
+        "tags": ["Highlights"],
         "security": [
           {
             "bearerAuth": []
@@ -2539,12 +2295,7 @@
                   },
                   "color": {
                     "type": "string",
-                    "enum": [
-                      "yellow",
-                      "red",
-                      "green",
-                      "blue"
-                    ],
+                    "enum": ["yellow", "red", "green", "blue"],
                     "default": "yellow"
                   },
                   "text": {
@@ -2592,10 +2343,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2614,10 +2362,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2629,9 +2374,7 @@
       "get": {
         "description": "Get highlight by its id",
         "summary": "Get a single highlight",
-        "tags": [
-          "Highlights"
-        ],
+        "tags": ["Highlights"],
         "security": [
           {
             "bearerAuth": []
@@ -2667,10 +2410,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2680,9 +2420,7 @@
       "delete": {
         "description": "Delete highlight by its id",
         "summary": "Delete a highlight",
-        "tags": [
-          "Highlights"
-        ],
+        "tags": ["Highlights"],
         "security": [
           {
             "bearerAuth": []
@@ -2718,10 +2456,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2731,9 +2466,7 @@
       "patch": {
         "description": "Update highlight by its id",
         "summary": "Update a highlight",
-        "tags": [
-          "Highlights"
-        ],
+        "tags": ["Highlights"],
         "security": [
           {
             "bearerAuth": []
@@ -2753,12 +2486,7 @@
                 "properties": {
                   "color": {
                     "type": "string",
-                    "enum": [
-                      "yellow",
-                      "red",
-                      "green",
-                      "blue"
-                    ]
+                    "enum": ["yellow", "red", "green", "blue"]
                   }
                 }
               }
@@ -2790,10 +2518,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
+                  "required": ["code", "message"]
                 }
               }
             }
@@ -2805,9 +2530,7 @@
       "get": {
         "description": "Returns info about the current user",
         "summary": "Get current user info",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "security": [
           {
             "bearerAuth": []
@@ -2833,9 +2556,7 @@
                       "nullable": true
                     }
                   },
-                  "required": [
-                    "id"
-                  ]
+                  "required": ["id"]
                 }
               }
             }
@@ -2847,9 +2568,7 @@
       "get": {
         "description": "Returns stats about the current user",
         "summary": "Get current user stats",
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "security": [
           {
             "bearerAuth": []
