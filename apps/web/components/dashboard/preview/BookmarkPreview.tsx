@@ -6,6 +6,7 @@ import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTag
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
@@ -112,44 +113,63 @@ export default function BookmarkPreview({
   const title = getBookmarkTitle(bookmark);
 
   return (
-    <div className="grid h-full grid-rows-3 gap-2 overflow-hidden bg-background lg:grid-cols-3 lg:grid-rows-none">
-      <div className="row-span-2 h-full w-full overflow-auto p-2 md:col-span-2 lg:row-auto">
+    <Tabs
+      defaultValue="content"
+      className="flex h-full w-full flex-col overflow-hidden"
+    >
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="content">
+          {t("preview.tabs.content", "Content")}
+        </TabsTrigger>
+        <TabsTrigger value="details">
+          {t("preview.tabs.details", "Details")}
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent
+        value="content"
+        className="flex-1 overflow-y-auto p-2 data-[state=inactive]:hidden"
+      >
         {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
-      </div>
-      <div className="row-span-1  flex flex-col gap-4 overflow-auto bg-accent p-4 md:col-span-2 lg:col-span-1 lg:row-auto">
-        <div className="flex w-full flex-col items-center justify-center gap-y-2">
-          <div className="flex w-full items-center justify-center gap-2">
-            <p className="line-clamp-2 text-ellipsis break-words text-lg">
-              {title === undefined || title === "" ? "Untitled" : title}
-            </p>
+      </TabsContent>
+      <TabsContent
+        value="details"
+        className="flex-1 overflow-y-auto p-4 data-[state=inactive]:hidden"
+      >
+        <div className="flex flex-col gap-4">
+          <div className="flex w-full flex-col items-center justify-center gap-y-2">
+            <div className="flex w-full items-center justify-center gap-2">
+              <p className="line-clamp-2 text-ellipsis break-words text-lg">
+                {title === undefined || title === "" ? "Untitled" : title}
+              </p>
+            </div>
+            {sourceUrl && (
+              <Link
+                href={sourceUrl}
+                target="_blank"
+                className="flex items-center gap-2 text-gray-400"
+              >
+                <span>{t("preview.view_original")}</span>
+                <ExternalLink />
+              </Link>
+            )}
+            <Separator />
           </div>
-          {sourceUrl && (
-            <Link
-              href={sourceUrl}
-              target="_blank"
-              className="flex items-center gap-2 text-gray-400"
-            >
-              <span>{t("preview.view_original")}</span>
-              <ExternalLink />
-            </Link>
-          )}
-          <Separator />
-        </div>
 
-        <CreationTime createdAt={bookmark.createdAt} />
-        <SummarizeBookmarkArea bookmark={bookmark} />
-        <div className="flex items-center gap-4">
-          <p className="text-sm text-gray-400">{t("common.tags")}</p>
-          <BookmarkTagsEditor bookmark={bookmark} />
+          <CreationTime createdAt={bookmark.createdAt} />
+          <SummarizeBookmarkArea bookmark={bookmark} />
+          <div className="flex items-center gap-4">
+            <p className="text-sm text-gray-400">{t("common.tags")}</p>
+            <BookmarkTagsEditor bookmark={bookmark} />
+          </div>
+          <div className="flex gap-4">
+            <p className="pt-2 text-sm text-gray-400">{t("common.note")}</p>
+            <NoteEditor bookmark={bookmark} />
+          </div>
+          <AttachmentBox bookmark={bookmark} />
+          <HighlightsBox bookmarkId={bookmark.id} />
+          <ActionBar bookmark={bookmark} />
         </div>
-        <div className="flex gap-4">
-          <p className="pt-2 text-sm text-gray-400">{t("common.note")}</p>
-          <NoteEditor bookmark={bookmark} />
-        </div>
-        <AttachmentBox bookmark={bookmark} />
-        <HighlightsBox bookmarkId={bookmark.id} />
-        <ActionBar bookmark={bookmark} />
-      </div>
-    </div>
+      </TabsContent>
+    </Tabs>
   );
 }
