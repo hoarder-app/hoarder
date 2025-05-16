@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useSwipeable } from "react-swipeable";
 import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTagsEditor";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Separator } from "@/components/ui/separator";
@@ -69,6 +70,23 @@ export default function BookmarkPreview({
   initialData?: ZBookmark;
 }) {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState<string>("content");
+
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      if (activeTab === "content") {
+        setActiveTab("details");
+      }
+    },
+    onSwipedRight: () => {
+      if (activeTab === "details") {
+        setActiveTab("content");
+      }
+    },
+    trackMouse: true,
+    preventScrollOnSwipe: true,
+  });
+
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {
       bookmarkId,
@@ -114,7 +132,8 @@ export default function BookmarkPreview({
 
   return (
     <Tabs
-      defaultValue="content"
+      value={activeTab}
+      onValueChange={setActiveTab}
       className="flex h-full w-full flex-col overflow-hidden"
     >
       <TabsList className="grid w-full grid-cols-2">
@@ -125,18 +144,22 @@ export default function BookmarkPreview({
           {t("preview.tabs.details", "Details")}
         </TabsTrigger>
       </TabsList>
-      <TabsContent
-        value="content"
-        className="flex-1 overflow-y-auto p-2 data-[state=inactive]:hidden"
-      >
-        {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
-      </TabsContent>
-      <TabsContent
-        value="details"
-        className="flex-1 overflow-y-auto p-4 data-[state=inactive]:hidden"
-      >
-        <div className="flex flex-col gap-4">
-          <div className="flex w-full flex-col items-center justify-center gap-y-2">
+      <div {...swipeHandlers} className="flex-1 overflow-hidden">
+        {/* Changed: wrapper for swipe */}
+        <TabsContent
+          value="content"
+          className="h-full overflow-y-auto p-2 data-[state=inactive]:hidden"
+          /* Changed: h-full instead of flex-1 */
+        >
+          {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
+        </TabsContent>
+        <TabsContent
+          value="details"
+          className="h-full overflow-y-auto bg-accent p-4 data-[state=inactive]:hidden"
+          /* Changed: h-full instead of flex-1 */
+        >
+          <div className="flex flex-col gap-4">
+            <div className="flex w-full flex-col items-center justify-center gap-y-2">
             <div className="flex w-full items-center justify-center gap-2">
               <p className="line-clamp-2 text-ellipsis break-words text-lg">
                 {title === undefined || title === "" ? "Untitled" : title}
@@ -170,6 +193,8 @@ export default function BookmarkPreview({
           <ActionBar bookmark={bookmark} />
         </div>
       </TabsContent>
+      </div>
+      {/* Changed: closing tag for swipe wrapper */}
     </Tabs>
   );
 }
