@@ -3,9 +3,11 @@ services:
   web:
     build:
       dockerfile: Dockerfile.dev
+      args:
+        SOURCE_DIR: /appsource
     volumes:
       - data:/data
-      - ..:/app
+      - ..:/appsource
     ports:
       - 3000:3000
     env_file:
@@ -34,9 +36,11 @@ services:
   workers:
     build:
       dockerfile: Dockerfile.dev
+      args:
+        SOURCE_DIR: /appsource
     volumes:
       - data:/data
-      - ..:/app
+      - ..:/appsource
     env_file:
       - .env
     working_dir: /app
@@ -54,6 +58,8 @@ services:
   prep:
     build:
       dockerfile: Dockerfile.dev
+      args:
+        SOURCE_DIR: /appsource
     env_file:
       - .env
     working_dir: /app
@@ -61,7 +67,7 @@ services:
       DATA_DIR: /data
     volumes:
       - data:/data
-      - ..:/app
+      - ..:/appsource
     command:
      - /bin/sh
      - -c

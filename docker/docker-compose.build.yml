@@ -4,6 +4,8 @@ services:
       dockerfile: docker/Dockerfile
       context: ..
       target: aio
+      args:
+        SOURCE_DIR: /appsource
     restart: unless-stopped
     volumes:
       - data:/data
