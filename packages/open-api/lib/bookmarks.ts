@@ -9,6 +9,7 @@ import {
   zBareBookmarkSchema,
   zManipulatedTagSchema,
   zNewBookmarkRequestSchema,
+  zSortOrder,
   zUpdateBookmarksRequestSchema,
 } from "@karakeep/shared/types/bookmarks";
 
@@ -60,6 +61,10 @@ registry.registerPath({
       .object({
         archived: z.boolean().optional(),
         favourited: z.boolean().optional(),
+        sortOrder: zSortOrder
+          .exclude(["relevance"])
+          .optional()
+          .default(zSortOrder.Enum.desc),
       })
       .merge(PaginationSchema)
       .merge(IncludeContentSearchParamSchema),
@@ -87,6 +92,7 @@ registry.registerPath({
     query: z
       .object({
         q: z.string(),
+        sortOrder: zSortOrder.optional().default(zSortOrder.Enum.relevance),
       })
       .merge(PaginationSchema)
       .merge(IncludeContentSearchParamSchema),

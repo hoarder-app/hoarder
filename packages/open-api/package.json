@@ -18,7 +18,8 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "generate": "tsx index.ts",
-    "format": "prettier . --ignore-path ../../.prettierignore",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
     "lint": "eslint ."
   },
   "main": "index.ts",
