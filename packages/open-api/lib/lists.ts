@@ -232,14 +232,6 @@ registry.registerPath({
     204: {
       description: "No content - the bookmark was added",
     },
-    400: {
-      description: "Bookmark already in list",
-      content: {
-        "application/json": {
-          schema: ErrorSchema,
-        },
-      },
-    },
     404: {
       description: "List or bookmark not found",
       content: {

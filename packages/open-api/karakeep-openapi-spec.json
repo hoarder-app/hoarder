@@ -2071,28 +2071,6 @@
           "204": {
             "description": "No content - the bookmark was added"
           },
-          "400": {
-            "description": "Bookmark already in list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
-                }
-              }
-            }
-          },
           "404": {
             "description": "List or bookmark not found",
             "content": {
