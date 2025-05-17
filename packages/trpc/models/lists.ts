@@ -260,11 +260,10 @@ export class ManualList extends List {
     } catch (e) {
       if (e instanceof SqliteError) {
         if (e.code == "SQLITE_CONSTRAINT_PRIMARYKEY") {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `Bookmark ${bookmarkId} is already in the list ${this.list.id}`,
-          });
+          // this is fine, it just means the bookmark is already in the list
+          return;
         }
+        console.error("Unhandled SqliteError");
       }
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
