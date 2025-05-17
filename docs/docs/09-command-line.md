@@ -107,3 +107,8 @@ karakeep --api-key mysupersecretkey --server-addr https://try.karakeep.app whoam
   email: 'test@gmail.com'
 }
 ```
+
+
+## Other clients
+
+There also exists a **non-official**, community-maintained, python package called [karakeep-python-api](https://github.com/thiswillbeyourgithub/karakeep_python_api) that can be accessed from the CLI, but is **not** official.
