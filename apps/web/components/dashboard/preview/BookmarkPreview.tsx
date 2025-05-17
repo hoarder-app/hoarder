@@ -138,21 +138,26 @@ export default function BookmarkPreview({
       onValueChange={setActiveTab}
       className="flex h-full w-full flex-col overflow-hidden"
     >
-      <TabsList 
-        className={`grid w-full grid-cols-2 transition-transform duration-300 ${
-          showTabBar ? 'translate-y-0' : '-translate-y-full'
-        } sticky top-0 z-10`}
-      >
-        <TabsTrigger value="content">
-          {t("preview.tabs.content", "Content")}
-        </TabsTrigger>
-        <TabsTrigger value="details">
-          {t("preview.tabs.details", "Details")}
-        </TabsTrigger>
-      </TabsList>
+      <div className="sticky top-0 z-10 h-auto">
+        <TabsList 
+          className={`grid w-full grid-cols-2 transition-transform duration-300 ${
+            showTabBar ? 'translate-y-0' : '-translate-y-full'
+          }`}
+        >
+          <TabsTrigger value="content">
+            {t("preview.tabs.content", "Content")}
+          </TabsTrigger>
+          <TabsTrigger value="details">
+            {t("preview.tabs.details", "Details")}
+          </TabsTrigger>
+        </TabsList>
+      </div>
       <div 
         {...swipeHandlers} 
-        className="flex-1 overflow-hidden"
+        className={`flex-1 overflow-hidden transition-all duration-300 ${
+          showTabBar ? '' : '-mt-[var(--tab-height)]'
+        }`}
+        style={{ '--tab-height': '41px' } as React.CSSProperties}
       >
         {/* Changed: wrapper for swipe */}
         <TabsContent
