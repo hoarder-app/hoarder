@@ -1,11 +1,13 @@
 "use client";
 
-import React from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
+import { useSwipeable } from "react-swipeable";
 import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTagsEditor";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
@@ -68,6 +70,27 @@ export default function BookmarkPreview({
   initialData?: ZBookmark;
 }) {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState<string>("content");
+  const [showTabBar, setShowTabBar] = useState(true);
+  const lastScrollY = useRef<number>(0);
+  const isScrollingRef = useRef<boolean>(false);
+  const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      if (activeTab === "content") {
+        setActiveTab("details");
+      }
+    },
+    onSwipedRight: () => {
+      if (activeTab === "details") {
+        setActiveTab("content");
+      }
+    },
+    trackMouse: false,
+    preventScrollOnSwipe: true,
+  });
+
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {
       bookmarkId,
@@ -112,44 +135,146 @@ export default function BookmarkPreview({
   const title = getBookmarkTitle(bookmark);
 
   return (
-    <div className="grid h-full grid-rows-3 gap-2 overflow-hidden bg-background lg:grid-cols-3 lg:grid-rows-none">
-      <div className="row-span-2 h-full w-full overflow-auto p-2 md:col-span-2 lg:row-auto">
-        {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
+    <Tabs
+      value={activeTab}
+      onValueChange={setActiveTab}
+      className="flex h-full w-full flex-col overflow-hidden"
+    >
+      <div className="sticky top-0 z-10 h-auto">
+        <TabsList 
+          className={`grid w-full grid-cols-2 transition-transform duration-300 ${
+            showTabBar ? 'translate-y-0' : '-translate-y-full'
+          }`}
+        >
+          <TabsTrigger value="content">
+            {t("preview.tabs.content", "Content")}
+          </TabsTrigger>
+          <TabsTrigger value="details">
+            {t("preview.tabs.details", "Details")}
+          </TabsTrigger>
+        </TabsList>
       </div>
-      <div className="row-span-1  flex flex-col gap-4 overflow-auto bg-accent p-4 md:col-span-2 lg:col-span-1 lg:row-auto">
-        <div className="flex w-full flex-col items-center justify-center gap-y-2">
-          <div className="flex w-full items-center justify-center gap-2">
-            <p className="line-clamp-2 text-ellipsis break-words text-lg">
-              {title === undefined || title === "" ? "Untitled" : title}
-            </p>
+      <div 
+        {...swipeHandlers} 
+        className={`flex-1 overflow-hidden transition-all duration-300 ${
+          showTabBar ? '' : '-mt-[var(--tab-height)]'
+        }`}
+        style={{ '--tab-height': '41px' } as React.CSSProperties}
+      >
+        {/* Changed: wrapper for swipe */}
+        <TabsContent
+          value="content"
+          className="h-full overflow-y-auto p-2 data-[state=inactive]:hidden"
+          /* Changed: h-full instead of flex-1 */
+          onScroll={(e) => {
+            const currentScrollY = e.currentTarget.scrollTop;
+            const scrollHeight = e.currentTarget.scrollHeight;
+            const clientHeight = e.currentTarget.clientHeight;
+            const isAtBottom = scrollHeight - currentScrollY - clientHeight < 10;
+            
+            // Significant scroll distance to avoid micro-scrolls
+            const scrollDifference = Math.abs(currentScrollY - lastScrollY.current);
+            const isSignificantScroll = scrollDifference > 5;
+            
+            // Only process significant scrolls and ignore bounces at the bottom
+            if (isSignificantScroll && !isAtBottom) {
+              if (currentScrollY > lastScrollY.current && currentScrollY > 10) {
+                setShowTabBar(false);
+              } else {
+                setShowTabBar(true);
+              }
+            } else if (isAtBottom) {
+              // Keep tab bar hidden at the bottom to avoid bouncing
+              setShowTabBar(false);
+            }
+            
+            // Update the scroll position reference
+            lastScrollY.current = currentScrollY;
+            
+            // Set a debounce for scroll ending
+            isScrollingRef.current = true;
+            if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+            scrollTimerRef.current = setTimeout(() => {
+              isScrollingRef.current = false;
+            }, 150);
+          }}
+        >
+          {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
+        </TabsContent>
+        <TabsContent
+          value="details"
+          className="h-full overflow-y-auto bg-accent p-4 data-[state=inactive]:hidden"
+          /* Changed: h-full instead of flex-1 */
+          onScroll={(e) => {
+            const currentScrollY = e.currentTarget.scrollTop;
+            const scrollHeight = e.currentTarget.scrollHeight;
+            const clientHeight = e.currentTarget.clientHeight;
+            const isAtBottom = scrollHeight - currentScrollY - clientHeight < 10;
+            
+            // Significant scroll distance to avoid micro-scrolls
+            const scrollDifference = Math.abs(currentScrollY - lastScrollY.current);
+            const isSignificantScroll = scrollDifference > 5;
+            
+            // Only process significant scrolls and ignore bounces at the bottom
+            if (isSignificantScroll && !isAtBottom) {
+              if (currentScrollY > lastScrollY.current && currentScrollY > 10) {
+                setShowTabBar(false);
+              } else {
+                setShowTabBar(true);
+              }
+            } else if (isAtBottom) {
+              // Keep tab bar hidden at the bottom to avoid bouncing
+              setShowTabBar(false);
+            }
+            
+            // Update the scroll position reference
+            lastScrollY.current = currentScrollY;
+            
+            // Set a debounce for scroll ending
+            isScrollingRef.current = true;
+            if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+            scrollTimerRef.current = setTimeout(() => {
+              isScrollingRef.current = false;
+            }, 150);
+          }}
+        >
+          <div className="flex flex-col gap-4">
+            <div className="flex w-full flex-col items-center justify-center gap-y-2">
+            <div className="flex w-full items-center justify-center gap-2">
+              <p className="line-clamp-2 text-ellipsis break-words text-lg">
+                {title === undefined || title === "" ? "Untitled" : title}
+              </p>
+            </div>
+            {sourceUrl && (
+              <Link
+                href={sourceUrl}
+                target="_blank"
+                className="flex items-center gap-2 text-gray-400"
+              >
+                <span>{t("preview.view_original")}</span>
+                <ExternalLink />
+              </Link>
+            )}
+            <Separator />
           </div>
-          {sourceUrl && (
-            <Link
-              href={sourceUrl}
-              target="_blank"
-              className="flex items-center gap-2 text-gray-400"
-            >
-              <span>{t("preview.view_original")}</span>
-              <ExternalLink />
-            </Link>
-          )}
-          <Separator />
-        </div>
 
-        <CreationTime createdAt={bookmark.createdAt} />
-        <SummarizeBookmarkArea bookmark={bookmark} />
-        <div className="flex items-center gap-4">
-          <p className="text-sm text-gray-400">{t("common.tags")}</p>
-          <BookmarkTagsEditor bookmark={bookmark} />
+          <CreationTime createdAt={bookmark.createdAt} />
+          <SummarizeBookmarkArea bookmark={bookmark} />
+          <div className="flex items-center gap-4">
+            <p className="text-sm text-gray-400">{t("common.tags")}</p>
+            <BookmarkTagsEditor bookmark={bookmark} />
+          </div>
+          <div className="flex gap-4">
+            <p className="pt-2 text-sm text-gray-400">{t("common.note")}</p>
+            <NoteEditor bookmark={bookmark} />
+          </div>
+          <AttachmentBox bookmark={bookmark} />
+          <HighlightsBox bookmarkId={bookmark.id} />
+          <ActionBar bookmark={bookmark} />
         </div>
-        <div className="flex gap-4">
-          <p className="pt-2 text-sm text-gray-400">{t("common.note")}</p>
-          <NoteEditor bookmark={bookmark} />
-        </div>
-        <AttachmentBox bookmark={bookmark} />
-        <HighlightsBox bookmarkId={bookmark.id} />
-        <ActionBar bookmark={bookmark} />
+      </TabsContent>
       </div>
-    </div>
+      {/* Changed: closing tag for swipe wrapper */}
+    </Tabs>
   );
 }
