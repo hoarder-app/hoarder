@@ -71,7 +71,7 @@ export default function BookmarkPreview({
 }) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<string>("content");
-  const [showTabBar, setShowTabBar] = useState<boolean>(true);
+  const [showTabBar, setShowTabBar] = useState(true);
   const lastScrollY = useRef<number>(0);
   const isScrollingRef = useRef<boolean>(false);
   const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
