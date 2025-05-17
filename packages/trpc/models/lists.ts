@@ -263,7 +263,6 @@ export class ManualList extends List {
           // this is fine, it just means the bookmark is already in the list
           return;
         }
-        console.error("Unhandled SqliteError");
       }
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
