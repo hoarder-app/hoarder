@@ -12,7 +12,7 @@ export const enum BookmarkTypes {
   UNKNOWN = "unknown",
 }
 
-export const zSortOrder = z.enum(["asc", "desc"]);
+export const zSortOrder = z.enum(["asc", "desc", "relevance"]);
 export type ZSortOrder = z.infer<typeof zSortOrder>;
 
 export const zAssetTypesSchema = z.enum([

@@ -712,7 +712,7 @@ export const bookmarksAppRouter = router({
       if (!input.limit) {
         input.limit = DEFAULT_NUM_BOOKMARKS_PER_PAGE;
       }
-      const sortOrder = input.sortOrder || "desc";
+      const sortOrder = input.sortOrder || "relevance";
       const client = await getSearchIdxClient();
       if (!client) {
         throw new TRPCError({
@@ -735,11 +735,16 @@ export const bookmarksAppRouter = router({
         filter = [`userId = '${ctx.user.id}'`];
       }
 
+      /**
+       * preserve legacy behaviour
+       */
+      const createdAtSortOrder = sortOrder === "relevance" ? "desc" : sortOrder;
+
       const resp = await client.search(parsedQuery.text, {
         filter,
         showRankingScore: true,
         attributesToRetrieve: ["id"],
-        sort: [`createdAt:${sortOrder}`],
+        sort: [`createdAt:${createdAtSortOrder}`],
         limit: input.limit,
         ...(input.cursor
           ? {
@@ -775,7 +780,18 @@ export const bookmarksAppRouter = router({
           assets: true,
         },
       });
-      results.sort((a, b) => idToRank[b.id] - idToRank[a.id]);
+
+      switch (true) {
+        case sortOrder === "relevance":
+          results.sort((a, b) => idToRank[b.id] - idToRank[a.id]);
+          break;
+        case sortOrder === "desc":
+          results.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+          break;
+        case sortOrder === "asc":
+          results.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+          break;
+      }
 
       return {
         bookmarks: results.map((b) => toZodSchema(b, input.includeContent)),
