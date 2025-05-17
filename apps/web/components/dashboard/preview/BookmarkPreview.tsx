@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useSwipeable } from "react-swipeable";
 import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTagsEditor";
@@ -73,6 +73,8 @@ export default function BookmarkPreview({
   const [activeTab, setActiveTab] = useState<string>("content");
   const [showTabBar, setShowTabBar] = useState<boolean>(true);
   const lastScrollY = useRef<number>(0);
+  const isScrollingRef = useRef<boolean>(false);
+  const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => {
@@ -166,12 +168,35 @@ export default function BookmarkPreview({
           /* Changed: h-full instead of flex-1 */
           onScroll={(e) => {
             const currentScrollY = e.currentTarget.scrollTop;
-            if (currentScrollY > lastScrollY.current && currentScrollY > 10) {
+            const scrollHeight = e.currentTarget.scrollHeight;
+            const clientHeight = e.currentTarget.clientHeight;
+            const isAtBottom = scrollHeight - currentScrollY - clientHeight < 10;
+            
+            // Significant scroll distance to avoid micro-scrolls
+            const scrollDifference = Math.abs(currentScrollY - lastScrollY.current);
+            const isSignificantScroll = scrollDifference > 5;
+            
+            // Only process significant scrolls and ignore bounces at the bottom
+            if (isSignificantScroll && !isAtBottom) {
+              if (currentScrollY > lastScrollY.current && currentScrollY > 10) {
+                setShowTabBar(false);
+              } else {
+                setShowTabBar(true);
+              }
+            } else if (isAtBottom) {
+              // Keep tab bar hidden at the bottom to avoid bouncing
               setShowTabBar(false);
-            } else {
-              setShowTabBar(true);
             }
+            
+            // Update the scroll position reference
             lastScrollY.current = currentScrollY;
+            
+            // Set a debounce for scroll ending
+            isScrollingRef.current = true;
+            if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+            scrollTimerRef.current = setTimeout(() => {
+              isScrollingRef.current = false;
+            }, 150);
           }}
         >
           {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
@@ -182,12 +207,35 @@ export default function BookmarkPreview({
           /* Changed: h-full instead of flex-1 */
           onScroll={(e) => {
             const currentScrollY = e.currentTarget.scrollTop;
-            if (currentScrollY > lastScrollY.current && currentScrollY > 10) {
+            const scrollHeight = e.currentTarget.scrollHeight;
+            const clientHeight = e.currentTarget.clientHeight;
+            const isAtBottom = scrollHeight - currentScrollY - clientHeight < 10;
+            
+            // Significant scroll distance to avoid micro-scrolls
+            const scrollDifference = Math.abs(currentScrollY - lastScrollY.current);
+            const isSignificantScroll = scrollDifference > 5;
+            
+            // Only process significant scrolls and ignore bounces at the bottom
+            if (isSignificantScroll && !isAtBottom) {
+              if (currentScrollY > lastScrollY.current && currentScrollY > 10) {
+                setShowTabBar(false);
+              } else {
+                setShowTabBar(true);
+              }
+            } else if (isAtBottom) {
+              // Keep tab bar hidden at the bottom to avoid bouncing
               setShowTabBar(false);
-            } else {
-              setShowTabBar(true);
             }
+            
+            // Update the scroll position reference
             lastScrollY.current = currentScrollY;
+            
+            // Set a debounce for scroll ending
+            isScrollingRef.current = true;
+            if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+            scrollTimerRef.current = setTimeout(() => {
+              isScrollingRef.current = false;
+            }, 150);
           }}
         >
           <div className="flex flex-col gap-4">
