@@ -5,7 +5,7 @@ import allApp from "@karakeep/api";
 
 export const runtime = "nodejs";
 
-const app = new Hono().basePath("/api/v2").route("/", allApp);
+const app = new Hono().basePath("/api/v1").route("/", allApp);
 
 export const GET = handle(app);
 export const POST = handle(app);
