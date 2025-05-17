@@ -85,7 +85,7 @@ export default function BookmarkPreview({
         setActiveTab("content");
       }
     },
-    trackMouse: true,
+    trackMouse: false,
     preventScrollOnSwipe: true,
   });
 
