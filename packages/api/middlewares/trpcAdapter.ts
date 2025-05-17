@@ -26,18 +26,15 @@ function trpcCodeToHttpCode(code: TRPCError["code"]) {
   }
 }
 
-const trpcAdapter = createMiddleware(async (_c, next) => {
-  try {
-    await next();
-  } catch (e) {
-    if (e instanceof TRPCError) {
-      const code = trpcCodeToHttpCode(e.code);
-      throw new HTTPException(code, {
-        message: e.message,
-        cause: e.cause,
-      });
-    }
-    throw e;
+const trpcAdapter = createMiddleware(async (c, next) => {
+  await next();
+  const e = c.error;
+  if (e instanceof TRPCError) {
+    const code = trpcCodeToHttpCode(e.code);
+    throw new HTTPException(code, {
+      message: e.message,
+      cause: e.cause,
+    });
   }
 });
 
