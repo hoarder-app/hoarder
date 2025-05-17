@@ -39,7 +39,7 @@ const app = new Hono()
   .delete("/:listId", async (c) => {
     const listId = c.req.param("listId");
     await c.var.api.lists.delete({ listId });
-    return c.status(204);
+    return c.body(null, 204);
   })
   .get(
     "/:listId/bookmarks",
@@ -58,13 +58,13 @@ const app = new Hono()
     const listId = c.req.param("listId");
     const bookmarkId = c.req.param("bookmarkId");
     await c.var.api.lists.addToList({ listId, bookmarkId });
-    return c.status(204);
+    return c.body(null, 204);
   })
   .delete("/:listId/bookmarks/:bookmarkId", async (c) => {
     const listId = c.req.param("listId");
     const bookmarkId = c.req.param("bookmarkId");
     await c.var.api.lists.removeFromList({ listId, bookmarkId });
-    return c.status(204);
+    return c.body(null, 204);
   });
 
 export default app;

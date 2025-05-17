@@ -39,7 +39,7 @@ const app = new Hono()
   .delete("/:tagId", async (c) => {
     const tagId = c.req.param("tagId");
     await c.var.api.tags.delete({ tagId });
-    return c.status(204); // 204 No Content
+    return c.body(null, 204);
   })
 
   // GET /tags/[tagId]/bookmarks

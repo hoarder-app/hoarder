@@ -80,7 +80,7 @@ const app = new Hono()
   .delete("/:bookmarkId", async (c) => {
     const bookmarkId = c.req.param("bookmarkId");
     await c.var.api.bookmarks.deleteBookmark({ bookmarkId });
-    return c.status(204);
+    return c.body(null, 204);
   })
 
   // GET /bookmarks/[bookmarkId]/lists
@@ -121,7 +121,7 @@ const app = new Hono()
         oldAssetId: assetId,
         newAssetId: body.assetId,
       });
-      return c.status(204);
+      return c.body(null, 204);
     },
   )
 
@@ -130,7 +130,7 @@ const app = new Hono()
     const bookmarkId = c.req.param("bookmarkId");
     const assetId = c.req.param("assetId");
     await c.var.api.assets.detachAsset({ bookmarkId, assetId });
-    return c.status(204);
+    return c.body(null, 204);
   })
 
   // POST /bookmarks/[bookmarkId]/tags
