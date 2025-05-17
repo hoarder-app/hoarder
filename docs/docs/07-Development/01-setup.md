@@ -28,7 +28,7 @@ To enable `corepack` run the following command:
 $ corepack enable
 ```
 
-Then install the packages and dependencies using:
+Then, from the root of the repository, install the packages and dependencies using:
 
 ```
 $ pnpm install
