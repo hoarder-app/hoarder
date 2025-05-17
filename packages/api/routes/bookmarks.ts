@@ -43,6 +43,44 @@ const app = new Hono()
     return c.json(bookmark, 201);
   })
 
+  // GET /bookmarks/search
+  .get(
+    "/search",
+    zValidator(
+      "query",
+      z
+        .object({
+          q: z.string(),
+          limit: z.coerce.number().optional(),
+          cursor: z
+            .string()
+            .optional()
+            .transform((val) =>
+              val ? { ver: 1 as const, offset: parseInt(val) } : undefined,
+            ),
+        })
+        .and(zGetBookmarkSearchParamsSchema),
+    ),
+    async (c) => {
+      const searchParams = c.req.valid("query");
+      const bookmarks = await c.var.api.bookmarks.searchBookmarks({
+        text: searchParams.q,
+        cursor: searchParams.cursor,
+        limit: searchParams.limit,
+        includeContent: searchParams.includeContent,
+      });
+      return c.json(
+        {
+          bookmarks: bookmarks.bookmarks,
+          nextCursor: bookmarks.nextCursor
+            ? `${bookmarks.nextCursor.offset}`
+            : null,
+        },
+        200,
+      );
+    },
+  )
+
   // GET /bookmarks/[bookmarkId]
   .get(
     "/:bookmarkId",
@@ -179,44 +217,6 @@ const app = new Hono()
     const bookmarkId = c.req.param("bookmarkId");
     const resp = await c.var.api.highlights.getForBookmark({ bookmarkId });
     return c.json(resp, 200);
-  })
-
-  // GET /bookmarks/search
-  .get(
-    "/search",
-    zValidator(
-      "query",
-      z
-        .object({
-          q: z.string(),
-          limit: z.coerce.number().optional(),
-          cursor: z
-            .string()
-            .optional()
-            .transform((val) =>
-              val ? { ver: 1 as const, offset: parseInt(val) } : undefined,
-            ),
-        })
-        .and(zGetBookmarkSearchParamsSchema),
-    ),
-    async (c) => {
-      const searchParams = c.req.valid("query");
-      const bookmarks = await c.var.api.bookmarks.searchBookmarks({
-        text: searchParams.q,
-        cursor: searchParams.cursor,
-        limit: searchParams.limit,
-        includeContent: searchParams.includeContent,
-      });
-      return c.json(
-        {
-          bookmarks: bookmarks.bookmarks,
-          nextCursor: bookmarks.nextCursor
-            ? `${bookmarks.nextCursor.offset}`
-            : null,
-        },
-        200,
-      );
-    },
-  );
+  });
 
 export default app;
