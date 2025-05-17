@@ -21,7 +21,7 @@ From NPM:
     "karakeep": {
       "command": "npx",
       "args": [
-        "@karakeep/mcp",
+        "@karakeep/mcp"
       ],
       "env": {
         "KARAKEEP_API_ADDR": "https://<YOUR_SERVER_ADDR>",
