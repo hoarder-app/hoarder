@@ -85,9 +85,6 @@ install() {
   cd "$INSTALL_DIR"/apps/cli
   pnpm i --frozen-lockfile
   pnpm build
-  cd "$INSTALL_DIR"/apps/mcp
-  pnpm i --frozen-lockfile
-  pnpm build
   cd "$INSTALL_DIR"/packages/db
   pnpm migrate
   echo "Installed Karakeep" && sleep 1
@@ -286,8 +283,6 @@ update() {
     pnpm build
     cd "$INSTALL_DIR"/apps/workers && pnpm i --frozen-lockfile
     cd "$INSTALL_DIR"/apps/cli && pnpm i --frozen-lockfile
-    pnpm build
-    cd "$INSTALL_DIR"/apps/mcp && pnpm i --frozen-lockfile
     pnpm build
     cd "$INSTALL_DIR"/packages/db && pnpm migrate
     echo "$RELEASE" >"$INSTALL_DIR"/version.txt
