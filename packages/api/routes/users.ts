@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 
-import { authMiddleware } from "../auth";
+import { authMiddleware } from "../middlewares/auth";
 
 const app = new Hono()
   .use(authMiddleware)

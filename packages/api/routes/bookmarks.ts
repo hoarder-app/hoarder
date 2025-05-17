@@ -9,9 +9,9 @@ import {
   zUpdateBookmarksRequestSchema,
 } from "@karakeep/shared/types/bookmarks";
 
-import { authMiddleware } from "../auth";
-import { adaptPagination, zPagination } from "./utils/pagination";
-import { zGetBookmarkSearchParamsSchema, zStringBool } from "./utils/types";
+import { authMiddleware } from "../middlewares/auth";
+import { adaptPagination, zPagination } from "../utils/pagination";
+import { zGetBookmarkSearchParamsSchema, zStringBool } from "../utils/types";
 
 const app = new Hono()
   .use(authMiddleware)

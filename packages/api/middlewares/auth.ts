@@ -1,6 +1,6 @@
-import { getConnInfo } from "@hono/node-server/conninfo";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
+import requestIp from "request-ip";
 
 import { db } from "@karakeep/db";
 import { AuthedContext, createCallerFactory } from "@karakeep/trpc";
@@ -15,7 +15,9 @@ export const authMiddleware = createMiddleware<{
     api: ReturnType<typeof createCaller>;
   };
 }>(async (c, next) => {
-  const connInfo = getConnInfo(c);
+  const ip = requestIp.getClientIp({
+    headers: Object.fromEntries(c.req.raw.headers),
+  });
   const authorizationHeader = c.req.header("Authorization");
 
   if (!authorizationHeader) {
@@ -29,7 +31,7 @@ export const authMiddleware = createMiddleware<{
     user,
     db,
     req: {
-      ip: connInfo.remote.address ?? null,
+      ip,
     },
   });
   c.set("api", createCaller(c.get("ctx")));

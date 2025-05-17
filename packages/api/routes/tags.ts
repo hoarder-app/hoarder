@@ -3,9 +3,9 @@ import { Hono } from "hono";
 
 import { zUpdateTagRequestSchema } from "@karakeep/shared/types/tags";
 
-import { authMiddleware } from "../auth";
-import { adaptPagination, zPagination } from "./utils/pagination";
-import { zGetBookmarkSearchParamsSchema } from "./utils/types";
+import { authMiddleware } from "../middlewares/auth";
+import { adaptPagination, zPagination } from "../utils/pagination";
+import { zGetBookmarkSearchParamsSchema } from "../utils/types";
 
 const app = new Hono()
   .use(authMiddleware)

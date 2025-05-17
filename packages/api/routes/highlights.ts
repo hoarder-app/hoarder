@@ -6,8 +6,8 @@ import {
   zUpdateHighlightSchema,
 } from "@karakeep/shared/types/highlights";
 
-import { authMiddleware } from "../auth";
-import { adaptPagination, zPagination } from "./utils/pagination";
+import { authMiddleware } from "../middlewares/auth";
+import { adaptPagination, zPagination } from "../utils/pagination";
 
 const app = new Hono()
   .use(authMiddleware)

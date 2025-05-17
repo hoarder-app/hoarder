@@ -13,12 +13,12 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@hono/node-server": "^1.14.1",
     "@hono/zod-validator": "^0.5.0",
     "@karakeep/db": "workspace:*",
     "@karakeep/shared": "workspace:*",
     "@karakeep/trpc": "workspace:*",
     "hono": "^4.7.10",
+    "request-ip": "^3.3.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
@@ -27,6 +27,7 @@
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/deep-equal": "^1.0.4",
+    "@types/request-ip": "^0.0.41",
     "vite-tsconfig-paths": "^4.3.1",
     "vitest": "^1.6.1"
   },
