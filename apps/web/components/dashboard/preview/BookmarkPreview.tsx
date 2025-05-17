@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useSwipeable } from "react-swipeable";
 import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTagsEditor";
@@ -71,6 +71,8 @@ export default function BookmarkPreview({
 }) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<string>("content");
+  const [showTabBar, setShowTabBar] = useState<boolean>(true);
+  const lastScrollY = useRef<number>(0);
 
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => {
@@ -136,7 +138,11 @@ export default function BookmarkPreview({
       onValueChange={setActiveTab}
       className="flex h-full w-full flex-col overflow-hidden"
     >
-      <TabsList className="grid w-full grid-cols-2">
+      <TabsList 
+        className={`grid w-full grid-cols-2 transition-transform duration-300 ${
+          showTabBar ? 'translate-y-0' : '-translate-y-full'
+        } sticky top-0 z-10`}
+      >
         <TabsTrigger value="content">
           {t("preview.tabs.content", "Content")}
         </TabsTrigger>
@@ -144,12 +150,24 @@ export default function BookmarkPreview({
           {t("preview.tabs.details", "Details")}
         </TabsTrigger>
       </TabsList>
-      <div {...swipeHandlers} className="flex-1 overflow-hidden">
+      <div 
+        {...swipeHandlers} 
+        className="flex-1 overflow-hidden"
+      >
         {/* Changed: wrapper for swipe */}
         <TabsContent
           value="content"
           className="h-full overflow-y-auto p-2 data-[state=inactive]:hidden"
           /* Changed: h-full instead of flex-1 */
+          onScroll={(e) => {
+            const currentScrollY = e.currentTarget.scrollTop;
+            if (currentScrollY > lastScrollY.current && currentScrollY > 10) {
+              setShowTabBar(false);
+            } else {
+              setShowTabBar(true);
+            }
+            lastScrollY.current = currentScrollY;
+          }}
         >
           {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
         </TabsContent>
@@ -157,6 +175,15 @@ export default function BookmarkPreview({
           value="details"
           className="h-full overflow-y-auto bg-accent p-4 data-[state=inactive]:hidden"
           /* Changed: h-full instead of flex-1 */
+          onScroll={(e) => {
+            const currentScrollY = e.currentTarget.scrollTop;
+            if (currentScrollY > lastScrollY.current && currentScrollY > 10) {
+              setShowTabBar(false);
+            } else {
+              setShowTabBar(true);
+            }
+            lastScrollY.current = currentScrollY;
+          }}
         >
           <div className="flex flex-col gap-4">
             <div className="flex w-full flex-col items-center justify-center gap-y-2">
