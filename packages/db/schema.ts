@@ -1,6 +1,7 @@
 import type { AdapterAccount } from "@auth/core/adapters";
+import type { SQL } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   AnySQLiteColumn,
   foreignKey,
@@ -10,6 +11,7 @@ import {
   sqliteTable,
   text,
   unique,
+  uniqueIndex,
 } from "drizzle-orm/sqlite-core";
 
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
@@ -26,6 +28,29 @@ function modifiedAtField() {
     .$onUpdate(() => new Date());
 }
 
+export const users = sqliteTable(
+  "user",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    name: text("name").notNull(),
+    email: text("email").notNull(),
+    emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
+    image: text("image"),
+    password: text("password"),
+    role: text("role", { enum: ["admin", "user"] }).default("user"),
+  },
+  (table) => [uniqueIndex("emailUniqueIndex").on(lower(table.email))],
+);
+
+// Custom lower function for case-insensitive email uniqueness
+export function lower(email: AnySQLiteColumn): SQL {
+  return sql`lower(${email})`;
+}
+
+/******
 export const users = sqliteTable("user", {
   id: text("id")
     .notNull()
@@ -39,7 +64,7 @@ export const users = sqliteTable("user", {
   salt: text("salt").notNull().default(""),
   role: text("role", { enum: ["admin", "user"] }).default("user"),
 });
-
+*******/
 export const accounts = sqliteTable(
   "account",
   {
