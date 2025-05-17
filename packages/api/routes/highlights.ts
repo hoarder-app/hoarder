@@ -7,7 +7,7 @@ import {
 } from "@karakeep/shared/types/highlights";
 
 import { authMiddleware } from "../auth";
-import { adaptPagination, zPagination } from "./utils";
+import { adaptPagination, zPagination } from "./utils/pagination";
 
 const app = new Hono()
   .use(authMiddleware)
