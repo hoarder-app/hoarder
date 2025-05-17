@@ -26,14 +26,20 @@ export const authMiddleware = createMiddleware<{
     });
   }
   const token = authorizationHeader.split(" ")[1];
-  const user = await authenticateApiKey(token);
-  c.set("ctx", {
-    user,
-    db,
-    req: {
-      ip,
-    },
-  });
+  try {
+    const user = await authenticateApiKey(token);
+    c.set("ctx", {
+      user,
+      db,
+      req: {
+        ip,
+      },
+    });
+  } catch (e) {
+    throw new HTTPException(401, {
+      message: "Unauthorized",
+    });
+  }
   c.set("api", createCaller(c.get("ctx")));
   await next();
 });
