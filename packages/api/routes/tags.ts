@@ -5,7 +5,7 @@ import { zUpdateTagRequestSchema } from "@karakeep/shared/types/tags";
 
 import { authMiddleware } from "../middlewares/auth";
 import { adaptPagination, zPagination } from "../utils/pagination";
-import { zGetBookmarkSearchParamsSchema } from "../utils/types";
+import { zGetBookmarkQueryParamsSchema } from "../utils/types";
 
 const app = new Hono()
   .use(authMiddleware)
@@ -45,7 +45,7 @@ const app = new Hono()
   // GET /tags/[tagId]/bookmarks
   .get(
     "/:tagId/bookmarks",
-    zValidator("query", zPagination.and(zGetBookmarkSearchParamsSchema)),
+    zValidator("query", zPagination.and(zGetBookmarkQueryParamsSchema)),
     async (c) => {
       const tagId = c.req.param("tagId");
       const searchParams = c.req.valid("query");

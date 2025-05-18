@@ -1138,6 +1138,9 @@ importers:
       glob:
         specifier: ^11.0.0
         version: 11.0.0
+      js-tiktoken:
+        specifier: ^1.0.20
+        version: 1.0.20
       liteque:
         specifier: ^0.3.2
         version: 0.3.2(better-sqlite3@11.3.0)
@@ -10110,6 +10113,9 @@ packages:
   js-levenshtein@1.1.6:
     resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}
     engines: {node: '>=0.10.0'}
+
+  js-tiktoken@1.0.20:
+    resolution: {integrity: sha512-Xlaqhhs8VfCd6Sh7a1cFkZHQbYTLCwVJJWiHVxBYzLPxW0XsoxBy1hitmjkdIjD3Aon5BXLHFwU5O8WUx6HH+A==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -27605,6 +27611,11 @@ snapshots:
     dev: false
 
   js-levenshtein@1.1.6: {}
+
+  js-tiktoken@1.0.20:
+    dependencies:
+      base64-js: 1.5.1
+    dev: false
 
   js-tokens@4.0.0: {}
 

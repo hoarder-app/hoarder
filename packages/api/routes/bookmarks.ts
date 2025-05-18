@@ -12,7 +12,11 @@ import {
 
 import { authMiddleware } from "../middlewares/auth";
 import { adaptPagination, zPagination } from "../utils/pagination";
-import { zGetBookmarkSearchParamsSchema, zStringBool } from "../utils/types";
+import {
+  zGetBookmarkQueryParamsSchema,
+  zGetBookmarkSearchParamsSchema,
+  zStringBool,
+} from "../utils/types";
 import { uploadAsset } from "../utils/upload";
 
 const app = new Hono()
@@ -27,8 +31,8 @@ const app = new Hono()
         .object({
           favourited: zStringBool.optional(),
           archived: zStringBool.optional(),
-          includeContent: zStringBool.optional().default("true"),
         })
+        .and(zGetBookmarkQueryParamsSchema)
         .and(zPagination),
     ),
     async (c) => {
@@ -109,7 +113,7 @@ const app = new Hono()
   // GET /bookmarks/[bookmarkId]
   .get(
     "/:bookmarkId",
-    zValidator("query", zGetBookmarkSearchParamsSchema),
+    zValidator("query", z.object({ includeContent: zStringBool })),
     async (c) => {
       const bookmarkId = c.req.param("bookmarkId");
       const searchParams = c.req.valid("query");

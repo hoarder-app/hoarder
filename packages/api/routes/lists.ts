@@ -8,7 +8,7 @@ import {
 
 import { authMiddleware } from "../middlewares/auth";
 import { adaptPagination, zPagination } from "../utils/pagination";
-import { zGetBookmarkSearchParamsSchema } from "../utils/types";
+import { zGetBookmarkQueryParamsSchema } from "../utils/types";
 
 const app = new Hono()
   .use(authMiddleware)
@@ -43,7 +43,7 @@ const app = new Hono()
   })
   .get(
     "/:listId/bookmarks",
-    zValidator("query", zPagination.and(zGetBookmarkSearchParamsSchema)),
+    zValidator("query", zPagination.and(zGetBookmarkQueryParamsSchema)),
     async (c) => {
       const listId = c.req.param("listId");
       const searchParams = c.req.valid("query");

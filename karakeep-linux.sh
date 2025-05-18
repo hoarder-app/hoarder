@@ -2,7 +2,7 @@
 
 set -Eeuo pipefail
 
-# v2.1
+# v2.2
 # Copyright 2024-2025
 # Author: vhsdream
 # Adapted from: The Karakeep installation script from https://github.com/community-scripts/ProxmoxVE
@@ -237,22 +237,18 @@ WantedBy=multi-user.target
 EOF
   echo "Service files created" && sleep 1
 
-  echo "Enabling and starting services, please wait..." && sleep 3
-  systemctl enable -q --now meilisearch.service karakeep.target
-  echo "Done" && sleep 1
-
   echo "Cleaning up" && sleep 1
   rm /tmp/v"$RELEASE".zip
   apt -y autoremove
   apt -y autoclean
   echo "Cleaned" && sleep 1
 
-  echo "OK, Karakeep should be accessible on port 3000 of this device's IP address!" && sleep 4
-  exit 0
+  echo "Enabling and starting services, please wait..." && sleep 3
+  systemctl enable -q --now karakeep.target
+  service_check install
 }
 
 update() {
-  echo "Checking for an update..." && sleep 1
   if [[ ! -d ${INSTALL_DIR} ]]; then
     echo "Is Karakeep even installed?"
     exit 1
@@ -264,6 +260,9 @@ update() {
       echo "Stopping affected services..." && sleep 1
       systemctl stop karakeep-web karakeep-workers
       echo "Stopped services" && sleep 1
+    fi
+    if [[ "$OS" == "bookworm" ]]; then
+      yt-dlp -U
     fi
     echo "Updating Karakeep to v${RELEASE}..." && sleep 1
     sed -i "s|SERVER_VERSION=${PREV_RELEASE}|SERVER_VERSION=${RELEASE}|" "$ENV_FILE"
@@ -289,10 +288,10 @@ update() {
     echo "$RELEASE" >"$INSTALL_DIR"/version.txt
     chown -R karakeep:karakeep "$INSTALL_DIR" "$DATA_DIR"
     echo "Updated Karakeep to v${RELEASE}" && sleep 1
-    echo "Restarting services and cleaning up..." && sleep 1
-    systemctl start karakeep-workers karakeep-web
+    echo "Restarting services..." && sleep 1
     rm /tmp/v"$RELEASE".zip
-    echo "Ready!"
+    systemctl restart karakeep.target
+    service_check update
   else
     echo "No update required."
   fi
@@ -322,9 +321,37 @@ migrate() {
     chown -R karakeep:karakeep "$INSTALL_DIR" "$CONFIG_DIR" "$DATA_DIR" "$LOG_DIR"
     systemctl daemon-reload
     systemctl -q enable --now karakeep.target
-    echo "Migration complete!" && sleep 2
+    service_check migrate
   else
     echo "There is no need for a migration: Karakeep is already installed."
+    exit 1
+  fi
+}
+
+service_check() {
+  local services=("karakeep-browser" "karakeep-workers" "karakeep-web")
+  local status=""
+  readarray -t status < <(for service in "${services[@]}"; do
+    systemctl is-active "$service" | grep "^active" -
+  done)
+  if [[ "${#status[@]}" -eq 3 ]]; then
+    if [[ "$1" == "install" ]]; then
+      echo "Karakeep is running!"
+      sleep 1
+      LOCAL_IP="$(hostname -I | awk '{print $1}')"
+      echo "Go to http://$LOCAL_IP:3000 to create your account"
+      exit 0
+    elif [[ "$1" == "update" ]]; then
+      echo "Karakeep is updated and running!"
+      sleep 1
+      exit 0
+    elif [[ "$1" == "migrate" ]]; then
+      echo "Karakeep migration complete!"
+      sleep 1
+      exit 0
+    fi
+  else
+    echo "Some services have failed. Check 'journalctl -xeu <service-name>' to see what is going on"
     exit 1
   fi
 }

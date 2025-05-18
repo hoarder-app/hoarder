@@ -1,15 +1,15 @@
-// TODO: Use a proper tokenizer
+import { getEncoding } from "js-tiktoken";
+
+const encoding = getEncoding("o200k_base");
+
 function calculateNumTokens(text: string) {
-  return text.split(" ").length;
+  return encoding.encode(text).length;
 }
 
 function truncateContent(content: string, length: number) {
-  let words = content.split(" ");
-  if (words.length > length) {
-    words = words.slice(0, length);
-    content = words.join(" ");
-  }
-  return content;
+  const tokens = encoding.encode(content);
+  const truncatedTokens = tokens.slice(0, length);
+  return encoding.decode(truncatedTokens);
 }
 
 export function buildImagePrompt(lang: string, customPrompts: string[]) {
