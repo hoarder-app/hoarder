@@ -176,21 +176,16 @@ export default function BookmarkPreview({
         className="flex h-full w-full flex-col overflow-hidden bg-background lg:hidden"
       >
         <div className="sticky top-0 z-10 h-auto">
-          <TabsList
-            className={`grid w-full grid-cols-2 transition-transform duration-300`}
-          >
+          <TabsList className={`grid w-full grid-cols-2`}>
             <TabsTrigger value="content">
-              {t("preview.tabs.content", "Content")}
+              {t("preview.tabs.content")}
             </TabsTrigger>
             <TabsTrigger value="details">
-              {t("preview.tabs.details", "Details")}
+              {t("preview.tabs.details")}
             </TabsTrigger>
           </TabsList>
         </div>
-        <div
-          className={`flex-1 overflow-hidden transition-all duration-300`}
-          style={{ "--tab-height": "41px" } as React.CSSProperties}
-        >
+        <div className={`flex-1 overflow-hidden`}>
           <TabsContent
             value="content"
             className="h-full overflow-y-auto p-2 data-[state=inactive]:hidden"
