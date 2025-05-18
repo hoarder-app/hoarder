@@ -187,6 +187,9 @@ export const clientConfig = {
     disablePasswordAuth: serverConfig.auth.disablePasswordAuth,
   },
   inference: {
+    isConfigured:
+      !!serverConfig.inference.openAIApiKey ||
+      !!serverConfig.inference.ollamaBaseUrl,
     inferredTagLang: serverConfig.inference.inferredTagLang,
   },
   serverVersion: serverConfig.serverVersion,

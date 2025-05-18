@@ -9,6 +9,7 @@ export const ClientConfigCtx = createContext<ClientConfig>({
     disablePasswordAuth: false,
   },
   inference: {
+    isConfigured: false,
     inferredTagLang: "english",
   },
   serverVersion: undefined,
