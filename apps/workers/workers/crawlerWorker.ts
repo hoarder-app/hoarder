@@ -859,6 +859,11 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
     if (job.data.runInference !== false) {
       await OpenAIQueue.enqueue({
         bookmarkId,
+        type: "tag",
+      });
+      await OpenAIQueue.enqueue({
+        bookmarkId,
+        type: "summarize",
       });
     }
 

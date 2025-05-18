@@ -21,8 +21,8 @@ import {
   zvideoRequestSchema,
 } from "@karakeep/shared/queues";
 
-import { withTimeout } from "./utils";
-import { getBookmarkDetails, updateAsset } from "./workerUtils";
+import { withTimeout } from "../utils";
+import { getBookmarkDetails, updateAsset } from "../workerUtils";
 
 const TMP_FOLDER = path.join(os.tmpdir(), "video_downloads");
 

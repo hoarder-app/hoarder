@@ -330,6 +330,13 @@
       "when": 1746902541511,
       "tag": "0046_add_rss_feed_enabled_col",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "6",
+      "when": 1747598543992,
+      "tag": "0047_add_summarization_status",
+      "breakpoints": true
     }
   ]
 }

@@ -32,9 +32,10 @@ export const LinkCrawlerQueue = new SqliteQueue<ZCrawlLinkRequest>(
   },
 );
 
-// OpenAI Worker
+// Inference Worker
 export const zOpenAIRequestSchema = z.object({
   bookmarkId: z.string(),
+  type: z.enum(["summarize", "tag"]).default("tag"),
 });
 export type ZOpenAIRequest = z.infer<typeof zOpenAIRequestSchema>;
 
@@ -195,7 +196,7 @@ export async function triggerWebhook(
   });
 }
 
-// RuleEgine worker
+// RuleEngine worker
 export const zRuleEngineRequestSchema = z.object({
   bookmarkId: z.string(),
   events: z.array(zRuleEngineEventSchema),

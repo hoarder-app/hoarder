@@ -330,6 +330,7 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
   if (!isFixMode || anythingChanged) {
     await OpenAIQueue.enqueue({
       bookmarkId,
+      type: "tag",
     });
 
     // Update the search index

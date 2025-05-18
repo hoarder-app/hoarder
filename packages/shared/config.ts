@@ -40,6 +40,8 @@ const allEnv = z.object({
   INFERENCE_OUTPUT_SCHEMA: z
     .enum(["structured", "json", "plain"])
     .default("structured"),
+  INFERENCE_ENABLE_AUTO_TAGGING: stringBool("true"),
+  INFERENCE_ENABLE_AUTO_SUMMARIZATION: stringBool("false"),
   OCR_CACHE_DIR: z.string().optional(),
   OCR_LANGS: z
     .string()
@@ -120,6 +122,8 @@ const serverConfigSchema = allEnv.transform((val) => {
             ? ("structured" as const)
             : ("plain" as const)
           : val.INFERENCE_OUTPUT_SCHEMA,
+      enableAutoTagging: val.INFERENCE_ENABLE_AUTO_TAGGING,
+      enableAutoSummarization: val.INFERENCE_ENABLE_AUTO_SUMMARIZATION,
     },
     embedding: {
       textModel: val.EMBEDDING_TEXT_MODEL,

@@ -1,5 +1,5 @@
 import { and, Column, eq, inArray, sql } from "drizzle-orm";
-import { DequeuedJob, Runner } from "liteque";
+import { DequeuedJob } from "liteque";
 import { buildImpersonatingTRPCClient } from "trpc";
 import { z } from "zod";
 
@@ -14,15 +14,12 @@ import {
 } from "@karakeep/db/schema";
 import { readAsset } from "@karakeep/shared/assetdb";
 import serverConfig from "@karakeep/shared/config";
-import { InferenceClientFactory } from "@karakeep/shared/inference";
 import logger from "@karakeep/shared/logger";
 import { buildImagePrompt, buildTextPrompt } from "@karakeep/shared/prompts";
 import {
-  OpenAIQueue,
   triggerRuleEngineOnEvent,
   triggerSearchReindex,
   triggerWebhook,
-  zOpenAIRequestSchema,
 } from "@karakeep/shared/queues";
 
 const openAIResponseSchema = z.object({
@@ -39,60 +36,6 @@ function tagNormalizer(col: Column) {
     sql: sql`lower(replace(replace(replace(${col}, ' ', ''), '-', ''), '_', ''))`,
   };
 }
-
-async function attemptMarkTaggingStatus(
-  jobData: object | undefined,
-  status: "success" | "failure",
-) {
-  if (!jobData) {
-    return;
-  }
-  try {
-    const request = zOpenAIRequestSchema.parse(jobData);
-    await db
-      .update(bookmarks)
-      .set({
-        taggingStatus: status,
-      })
-      .where(eq(bookmarks.id, request.bookmarkId));
-  } catch (e) {
-    logger.error(`Something went wrong when marking the tagging status: ${e}`);
-  }
-}
-
-export class OpenAiWorker {
-  static build() {
-    logger.info("Starting inference worker ...");
-    const worker = new Runner<ZOpenAIRequest>(
-      OpenAIQueue,
-      {
-        run: runOpenAI,
-        onComplete: async (job) => {
-          const jobId = job.id;
-          logger.info(`[inference][${jobId}] Completed successfully`);
-          await attemptMarkTaggingStatus(job.data, "success");
-        },
-        onError: async (job) => {
-          const jobId = job.id;
-          logger.error(
-            `[inference][${jobId}] inference job failed: ${job.error}\n${job.error.stack}`,
-          );
-          if (job.numRetriesLeft == 0) {
-            await attemptMarkTaggingStatus(job?.data, "failure");
-          }
-        },
-      },
-      {
-        concurrency: 1,
-        pollIntervalMs: 1000,
-        timeoutSecs: serverConfig.inference.jobTimeoutSec,
-      },
-    );
-
-    return worker;
-  }
-}
-
 async function buildPrompt(
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
 ) {
@@ -126,17 +69,6 @@ Content: ${content ?? ""}`,
   }
 
   throw new Error("Unknown bookmark type");
-}
-
-async function fetchBookmark(linkId: string) {
-  return await db.query.bookmarks.findFirst({
-    where: eq(bookmarks.id, linkId),
-    with: {
-      link: true,
-      text: true,
-      asset: true,
-    },
-  });
 }
 
 async function inferTagsFromImage(
@@ -416,25 +348,29 @@ async function connectTags(
   });
 }
 
-async function runOpenAI(job: DequeuedJob<ZOpenAIRequest>) {
-  const jobId = job.id;
+async function fetchBookmark(linkId: string) {
+  return await db.query.bookmarks.findFirst({
+    where: eq(bookmarks.id, linkId),
+    with: {
+      link: true,
+      text: true,
+      asset: true,
+    },
+  });
+}
 
-  const inferenceClient = InferenceClientFactory.build();
-  if (!inferenceClient) {
-    logger.debug(
-      `[inference][${jobId}] No inference client configured, nothing to do now`,
+export async function runTagging(
+  bookmarkId: string,
+  job: DequeuedJob<ZOpenAIRequest>,
+  inferenceClient: InferenceClient,
+) {
+  if (!serverConfig.inference.enableAutoTagging) {
+    logger.info(
+      `[inference][${job.id}] Skipping tagging job for bookmark with id "${bookmarkId}" because it's disabled in the config.`,
     );
     return;
   }
-
-  const request = zOpenAIRequestSchema.safeParse(job.data);
-  if (!request.success) {
-    throw new Error(
-      `[inference][${jobId}] Got malformed job request: ${request.error.toString()}`,
-    );
-  }
-
-  const { bookmarkId } = request.data;
+  const jobId = job.id;
   const bookmark = await fetchBookmark(bookmarkId);
   if (!bookmark) {
     throw new Error(

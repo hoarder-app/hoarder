@@ -420,6 +420,7 @@ export const bookmarksAppRouter = router({
         case BookmarkTypes.TEXT: {
           await OpenAIQueue.enqueue({
             bookmarkId: bookmark.id,
+            type: "tag",
           });
           break;
         }

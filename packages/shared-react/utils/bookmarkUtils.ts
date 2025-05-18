@@ -35,8 +35,19 @@ export function isBookmarkStillTagging(bookmark: ZBookmark) {
   );
 }
 
+export function isBookmarkStillSummarizing(bookmark: ZBookmark) {
+  return (
+    bookmark.summarizationStatus == "pending" &&
+    Date.now().valueOf() - bookmark.createdAt.valueOf() < MAX_LOADING_MSEC
+  );
+}
+
 export function isBookmarkStillLoading(bookmark: ZBookmark) {
-  return isBookmarkStillTagging(bookmark) || isBookmarkStillCrawling(bookmark);
+  return (
+    isBookmarkStillTagging(bookmark) ||
+    isBookmarkStillCrawling(bookmark) ||
+    isBookmarkStillSummarizing(bookmark)
+  );
 }
 
 export function getSourceUrl(bookmark: ZBookmark) {
