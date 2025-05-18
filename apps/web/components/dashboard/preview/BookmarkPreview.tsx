@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useSwipeable } from "react-swipeable";
 import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTagsEditor";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Separator } from "@/components/ui/separator";
@@ -71,58 +70,6 @@ export default function BookmarkPreview({
 }) {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<string>("content");
-  const [showTabBar, setShowTabBar] = useState(true);
-  const [isWideScreen, setIsWideScreen] = useState(true);
-  const [isTouchDevice, setIsTouchDevice] = useState(false);
-  const lastScrollY = useRef<number>(0);
-  const isScrollingRef = useRef<boolean>(false);
-  const scrollTimerRef = useRef<NodeJS.Timeout | null>(null);
-
-  // Check screen width and touch capability on mount and resize
-  useEffect(() => {
-    const checkScreenLayout = () => {
-      // Consider wide screen if width > height (landscape) or width > certain threshold
-      const isWide = window.innerWidth > Math.max(window.innerHeight, 900);
-      setIsWideScreen(isWide);
-    };
-
-    const checkTouchDevice = () => {
-      // Check if device supports touch
-      setIsTouchDevice(
-        'ontouchstart' in window || 
-        navigator.maxTouchPoints > 0 || 
-        (navigator as any).msMaxTouchPoints > 0
-      );
-    };
-
-    // Initial check
-    checkScreenLayout();
-    checkTouchDevice();
-
-    // Set up resize listener
-    window.addEventListener('resize', checkScreenLayout);
-    
-    return () => {
-      window.removeEventListener('resize', checkScreenLayout);
-    };
-  }, []);
-
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => {
-      if (!isWideScreen && activeTab === "content") {
-        setActiveTab("details");
-      }
-    },
-    onSwipedRight: () => {
-      if (!isWideScreen && activeTab === "details") {
-        setActiveTab("content");
-      }
-    },
-    trackMouse: false,
-    preventScrollOnSwipe: true,
-    // Disable swipe completely if we're in wide screen layout
-    disabled: isWideScreen || !isTouchDevice,
-  });
 
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {
@@ -167,45 +114,13 @@ export default function BookmarkPreview({
   const sourceUrl = getSourceUrl(bookmark);
   const title = getBookmarkTitle(bookmark);
 
-  // Scroll handler for tabbed layout
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    if (isWideScreen) return;
-    
-    const currentScrollY = e.currentTarget.scrollTop;
-    const scrollHeight = e.currentTarget.scrollHeight;
-    const clientHeight = e.currentTarget.clientHeight;
-    const isAtBottom = scrollHeight - currentScrollY - clientHeight < 10;
-    
-    // Significant scroll distance to avoid micro-scrolls
-    const scrollDifference = Math.abs(currentScrollY - lastScrollY.current);
-    const isSignificantScroll = scrollDifference > 5;
-    
-    // Only process significant scrolls and ignore bounces at the bottom
-    if (isSignificantScroll && !isAtBottom) {
-      if (currentScrollY > lastScrollY.current && currentScrollY > 10) {
-        setShowTabBar(false);
-      } else {
-        setShowTabBar(true);
-      }
-    } else if (isAtBottom) {
-      // Keep tab bar hidden at the bottom to avoid bouncing
-      setShowTabBar(false);
-    }
-    
-    // Update the scroll position reference
-    lastScrollY.current = currentScrollY;
-    
-    // Set a debounce for scroll ending
-    isScrollingRef.current = true;
-    if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
-    scrollTimerRef.current = setTimeout(() => {
-      isScrollingRef.current = false;
-    }, 150);
-  };
-
   // Common content for both layouts
-  const contentSection = isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content;
-  
+  const contentSection = isBookmarkStillCrawling(bookmark) ? (
+    <ContentLoading />
+  ) : (
+    content
+  );
+
   const detailsSection = (
     <div className="flex flex-col gap-4">
       <div className="flex w-full flex-col items-center justify-center gap-y-2">
@@ -242,10 +157,10 @@ export default function BookmarkPreview({
     </div>
   );
 
-  // Render original layout for wide screens
-  if (isWideScreen) {
-    return (
-      <div className="grid h-full grid-cols-3 overflow-hidden bg-background">
+  return (
+    <>
+      {/* Render original layout for wide screens */}
+      <div className="hidden h-full grid-cols-3 overflow-hidden bg-background lg:grid">
         <div className="col-span-2 h-full w-full overflow-auto p-2">
           {contentSection}
         </div>
@@ -253,52 +168,43 @@ export default function BookmarkPreview({
           {detailsSection}
         </div>
       </div>
-    );
-  }
 
-  // Render tabbed layout for narrow/vertical screens
-  return (
-    <Tabs
-      value={activeTab}
-      onValueChange={setActiveTab}
-      className="flex h-full w-full flex-col overflow-hidden"
-    >
-      <div className="sticky top-0 z-10 h-auto">
-        <TabsList 
-          className={`grid w-full grid-cols-2 transition-transform duration-300 ${
-            showTabBar ? 'translate-y-0' : '-translate-y-full'
-          }`}
-        >
-          <TabsTrigger value="content">
-            {t("preview.tabs.content", "Content")}
-          </TabsTrigger>
-          <TabsTrigger value="details">
-            {t("preview.tabs.details", "Details")}
-          </TabsTrigger>
-        </TabsList>
-      </div>
-      <div 
-        {...swipeHandlers} 
-        className={`flex-1 overflow-hidden transition-all duration-300 ${
-          showTabBar ? '' : '-mt-[var(--tab-height)]'
-        }`}
-        style={{ '--tab-height': '41px' } as React.CSSProperties}
+      {/* Render tabbed layout for narrow/vertical screens */}
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="flex h-full w-full flex-col overflow-hidden lg:hidden"
       >
-        <TabsContent
-          value="content"
-          className="h-full overflow-y-auto p-2 data-[state=inactive]:hidden"
-          onScroll={handleScroll}
+        <div className="sticky top-0 z-10 h-auto">
+          <TabsList
+            className={`grid w-full grid-cols-2 transition-transform duration-300`}
+          >
+            <TabsTrigger value="content">
+              {t("preview.tabs.content", "Content")}
+            </TabsTrigger>
+            <TabsTrigger value="details">
+              {t("preview.tabs.details", "Details")}
+            </TabsTrigger>
+          </TabsList>
+        </div>
+        <div
+          className={`flex-1 overflow-hidden transition-all duration-300`}
+          style={{ "--tab-height": "41px" } as React.CSSProperties}
         >
-          {contentSection}
-        </TabsContent>
-        <TabsContent
-          value="details"
-          className="h-full overflow-y-auto bg-accent p-4 data-[state=inactive]:hidden"
-          onScroll={handleScroll}
-        >
-          {detailsSection}
-        </TabsContent>
-      </div>
-    </Tabs>
+          <TabsContent
+            value="content"
+            className="h-full overflow-y-auto p-2 data-[state=inactive]:hidden"
+          >
+            {contentSection}
+          </TabsContent>
+          <TabsContent
+            value="details"
+            className="h-full overflow-y-auto bg-accent p-4 data-[state=inactive]:hidden"
+          >
+            {detailsSection}
+          </TabsContent>
+        </div>
+      </Tabs>
+    </>
   );
 }
