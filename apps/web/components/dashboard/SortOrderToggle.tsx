@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { usePathname } from "next/navigation";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -9,26 +8,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useIsSearchPage } from "@/lib/hooks/bookmark-search";
 import { useTranslation } from "@/lib/i18n/client";
 import { useSortOrderStore } from "@/lib/store/useSortOrderStore";
 import { Check, ListFilter, SortAsc, SortDesc } from "lucide-react";
 
 export default function SortOrderToggle() {
   const { t } = useTranslation();
-
-  const pathname = usePathname();
-  const isDashboardSearchPage = pathname === "/dashboard/search";
+  const isInSearchPage = useIsSearchPage();
 
   const { sortOrder: currentSort, setSortOrder } = useSortOrderStore();
 
   // also see related on page enter sortOrder.relevance init
   // in apps/web/app/dashboard/search/page.tsx
   useEffect(() => {
-    if (!isDashboardSearchPage && currentSort === "relevance") {
+    if (!isInSearchPage && currentSort === "relevance") {
       // reset to default sort order
       setSortOrder("desc");
     }
-  }, [isDashboardSearchPage, currentSort]);
+  }, [isInSearchPage, currentSort]);
 
   return (
     <DropdownMenu>
@@ -44,7 +42,7 @@ export default function SortOrderToggle() {
         </ButtonWithTooltip>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
-        {isDashboardSearchPage && (
+        {isInSearchPage && (
           <DropdownMenuItem
             className="cursor-pointer justify-between"
             onClick={() => setSortOrder("relevance")}
