@@ -173,7 +173,7 @@ export default function BookmarkPreview({
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className="flex h-full w-full flex-col overflow-hidden lg:hidden"
+        className="flex h-full w-full flex-col overflow-hidden bg-background lg:hidden"
       >
         <div className="sticky top-0 z-10 h-auto">
           <TabsList
