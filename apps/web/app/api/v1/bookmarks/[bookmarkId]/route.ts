@@ -3,7 +3,7 @@ import { buildHandler } from "@/app/api/v1/utils/handler";
 
 import { zUpdateBookmarksRequestSchema } from "@karakeep/shared/types/bookmarks";
 
-import { zGetBookmarkSearchParamsSchema } from "../../utils/types";
+import { zGetBookmarkQueryParamsSchema } from "../../utils/types";
 
 export const dynamic = "force-dynamic";
 
@@ -13,7 +13,7 @@ export const GET = (
 ) =>
   buildHandler({
     req,
-    searchParamsSchema: zGetBookmarkSearchParamsSchema,
+    searchParamsSchema: zGetBookmarkQueryParamsSchema,
     handler: async ({ api, searchParams }) => {
       const bookmark = await api.bookmarks.getBookmark({
         bookmarkId: params.bookmarkId,

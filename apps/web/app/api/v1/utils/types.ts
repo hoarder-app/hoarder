@@ -7,11 +7,17 @@ export const zStringBool = z
   .refine((val) => val === "true" || val === "false", "Must be true or false")
   .transform((val) => val === "true");
 
-export const zGetBookmarkSearchParamsSchema = z.object({
+export const zGetBookmarkQueryParamsSchema = z.object({
   sortOrder: zSortOrder
-    .exclude(["relevance"])
+    .exclude([zSortOrder.Enum.relevance])
     .optional()
     .default(zSortOrder.Enum.desc),
+  // TODO: Change the default to false in a couple of releases.
+  includeContent: zStringBool.optional().default("true"),
+});
+
+export const zGetBookmarkSearchParamsSchema = z.object({
+  sortOrder: zSortOrder.optional().default(zSortOrder.Enum.relevance),
   // TODO: Change the default to false in a couple of releases.
   includeContent: zStringBool.optional().default("true"),
 });

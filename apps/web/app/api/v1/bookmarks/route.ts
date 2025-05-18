@@ -20,7 +20,7 @@ export const GET = (req: NextRequest) =>
         favourited: zStringBool.optional(),
         archived: zStringBool.optional(),
         sortOrder: zSortOrder
-          .exclude(["relevance"])
+          .exclude([zSortOrder.Enum.relevance])
           .optional()
           .default(zSortOrder.Enum.desc),
         // TODO: Change the default to false in a couple of releases.
