@@ -173,32 +173,26 @@ export default function BookmarkPreview({
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className="flex h-full w-full flex-col overflow-hidden bg-background lg:hidden"
+        className="flex h-full w-full flex-col overflow-hidden lg:hidden"
       >
-        <div className="sticky top-0 z-10 h-auto">
-          <TabsList className={`grid w-full grid-cols-2`}>
-            <TabsTrigger value="content">
-              {t("preview.tabs.content")}
-            </TabsTrigger>
-            <TabsTrigger value="details">
-              {t("preview.tabs.details")}
-            </TabsTrigger>
-          </TabsList>
-        </div>
-        <div className={`flex-1 overflow-hidden`}>
-          <TabsContent
-            value="content"
-            className="h-full overflow-y-auto p-2 data-[state=inactive]:hidden"
-          >
-            {contentSection}
-          </TabsContent>
-          <TabsContent
-            value="details"
-            className="h-full overflow-y-auto bg-accent p-4 data-[state=inactive]:hidden"
-          >
-            {detailsSection}
-          </TabsContent>
-        </div>
+        <TabsList
+          className={`sticky top-0 z-10 grid h-auto w-full grid-cols-2`}
+        >
+          <TabsTrigger value="content">{t("preview.tabs.content")}</TabsTrigger>
+          <TabsTrigger value="details">{t("preview.tabs.details")}</TabsTrigger>
+        </TabsList>
+        <TabsContent
+          value="content"
+          className="h-full flex-1 overflow-hidden overflow-y-auto bg-background p-2 data-[state=inactive]:hidden"
+        >
+          {contentSection}
+        </TabsContent>
+        <TabsContent
+          value="details"
+          className="h-full overflow-y-auto bg-accent p-4 data-[state=inactive]:hidden"
+        >
+          {detailsSection}
+        </TabsContent>
       </Tabs>
     </>
   );
