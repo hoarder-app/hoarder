@@ -15,6 +15,7 @@ import { adaptPagination, zPagination } from "../utils/pagination";
 import {
   zGetBookmarkQueryParamsSchema,
   zGetBookmarkSearchParamsSchema,
+  zIncludeContentSearchParamsSchema,
   zStringBool,
 } from "../utils/types";
 import { uploadAsset } from "../utils/upload";
@@ -113,7 +114,7 @@ const app = new Hono()
   // GET /bookmarks/[bookmarkId]
   .get(
     "/:bookmarkId",
-    zValidator("query", z.object({ includeContent: zStringBool })),
+    zValidator("query", zIncludeContentSearchParamsSchema),
     async (c) => {
       const bookmarkId = c.req.param("bookmarkId");
       const searchParams = c.req.valid("query");
