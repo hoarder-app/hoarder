@@ -42,3 +42,5 @@ Luckily we can easily workaround this:
 3. Launch Meilisearch again.
 4. Login to karakeep as administrator and go to (as of v0.24.1) `Admin Settings > Background Jobs` then click on `Reindex All Bookmarks`.
 5. When the reindexing has finished, Meilisearch should be working as usual.
+
+If you run into issues, the official documentation can be found [there](https://www.meilisearch.com/docs/learn/update_and_migration/updating).
