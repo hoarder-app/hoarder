@@ -6,13 +6,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useTranslation } from "@/lib/i18n/client";
-import { FolderInput, Pencil, Plus, Trash2 } from "lucide-react";
+import { FolderInput, Pencil, Plus, Share, Trash2 } from "lucide-react";
 
 import { ZBookmarkList } from "@karakeep/shared/types/lists";
 
 import { EditListModal } from "../lists/EditListModal";
 import DeleteListConfirmationDialog from "./DeleteListConfirmationDialog";
 import { MergeListModal } from "./MergeListModal";
+import { ShareListModal } from "./ShareListModal";
 
 export function ListOptions({
   list,
@@ -31,9 +32,15 @@ export function ListOptions({
   const [newNestedListModalOpen, setNewNestedListModalOpen] = useState(false);
   const [mergeListModalOpen, setMergeListModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
+      <ShareListModal
+        open={shareModalOpen}
+        setOpen={setShareModalOpen}
+        list={list}
+      />
       <EditListModal
         open={newNestedListModalOpen}
         setOpen={setNewNestedListModalOpen}
@@ -64,6 +71,13 @@ export function ListOptions({
         >
           <Pencil className="size-4" />
           <span>{t("actions.edit")}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="flex gap-2"
+          onClick={() => setShareModalOpen(true)}
+        >
+          <Share className="size-4" />
+          <span>{t("lists.share_list")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className="flex gap-2"
