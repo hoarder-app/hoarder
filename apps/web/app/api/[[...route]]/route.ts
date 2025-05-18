@@ -18,7 +18,7 @@ export const nextAuth = createMiddleware<{
   await next();
 });
 
-const app = new Hono().basePath("/api/v1").use(nextAuth).route("/", allApp);
+const app = new Hono().basePath("/api").use(nextAuth).route("/", allApp);
 
 export const GET = handle(app);
 export const POST = handle(app);

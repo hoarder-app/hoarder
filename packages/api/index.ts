@@ -12,6 +12,18 @@ import lists from "./routes/lists";
 import tags from "./routes/tags";
 import users from "./routes/users";
 
+const v1 = new Hono<{
+  Variables: {
+    ctx: Context;
+  };
+}>()
+  .route("/highlights", highlights)
+  .route("/bookmarks", bookmarks)
+  .route("/lists", lists)
+  .route("/tags", tags)
+  .route("/users", users)
+  .route("/assets", assets);
+
 const app = new Hono<{
   Variables: {
     // This is going to be coming from the web app
@@ -28,11 +40,7 @@ const app = new Hono<{
     await next();
   })
   .use(trpcAdapter)
-  .route("/highlights", highlights)
-  .route("/bookmarks", bookmarks)
-  .route("/lists", lists)
-  .route("/tags", tags)
-  .route("/users", users)
+  .route("/v1", v1)
   .route("/assets", assets);
 
 export default app;
