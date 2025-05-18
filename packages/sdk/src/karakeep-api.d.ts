@@ -20,6 +20,7 @@ export interface paths {
         query?: {
           archived?: boolean;
           favourited?: boolean;
+          sortOrder?: "asc" | "desc";
           limit?: number;
           cursor?: components["schemas"]["Cursor"];
           /** @description If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks. */
@@ -135,6 +136,7 @@ export interface paths {
       parameters: {
         query: {
           q: string;
+          sortOrder?: "asc" | "desc" | "relevance";
           limit?: number;
           cursor?: components["schemas"]["Cursor"];
           /** @description If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks. */
@@ -971,12 +973,13 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Get a bookmarks in a list
-     * @description Get the bookmarks in a list
+     * Get bookmarks in the list
+     * @description Get bookmarks in the list
      */
     get: {
       parameters: {
         query?: {
+          sortOrder?: "asc" | "desc";
           limit?: number;
           cursor?: components["schemas"]["Cursor"];
           /** @description If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks. */
@@ -1051,18 +1054,6 @@ export interface paths {
             [name: string]: unknown;
           };
           content?: never;
-        };
-        /** @description Bookmark already in list */
-        400: {
-          headers: {
-            [name: string]: unknown;
-          };
-          content: {
-            "application/json": {
-              code: string;
-              message: string;
-            };
-          };
         };
         /** @description List or bookmark not found */
         404: {
@@ -1314,12 +1305,13 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Get a bookmarks with the tag
-     * @description Get the bookmarks with the tag
+     * Get bookmarks with the tag
+     * @description Get bookmarks with the tag
      */
     get: {
       parameters: {
         query?: {
+          sortOrder?: "asc" | "desc";
           limit?: number;
           cursor?: components["schemas"]["Cursor"];
           /** @description If set to true, bookmark's content will be included in the response. Note, this content can be large for some bookmarks. */

@@ -79,6 +79,7 @@
     "ignore": "Ignore",
     "sort": {
       "title": "Sort",
+      "relevant_first": "Most Relevant First",
       "newest_first": "Newest First",
       "oldest_first": "Oldest First"
     }
@@ -114,7 +115,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS Subscriptions",
-      "add_a_subscription": "Add a Subscription"
+      "add_a_subscription": "Add a Subscription",
+      "feed_enabled": "RSS Feed enabled",
+      "feed_disabled": "RSS Feed disabled"
     },
     "webhooks": {
       "webhooks": "Webhooks",

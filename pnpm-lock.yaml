@@ -515,6 +515,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.3.4
         version: 3.3.4(react-hook-form@7.50.1(react@18.3.1))
+      '@karakeep/api':
+        specifier: workspace:^0.1.0
+        version: link:../../packages/api
       '@karakeep/db':
         specifier: workspace:^0.1.0
         version: link:../../packages/db
@@ -963,6 +966,49 @@ importers:
         specifier: ^5.7.3
         version: 5.7.3
 
+  packages/api:
+    dependencies:
+      '@hono/zod-validator':
+        specifier: ^0.5.0
+        version: 0.5.0(hono@4.7.10)(zod@3.24.2)
+      '@karakeep/db':
+        specifier: workspace:*
+        version: link:../db
+      '@karakeep/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@karakeep/trpc':
+        specifier: workspace:*
+        version: link:../trpc
+      hono:
+        specifier: ^4.7.10
+        version: 4.7.10
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
+    devDependencies:
+      '@karakeep/eslint-config':
+        specifier: workspace:^0.2.0
+        version: link:../../tooling/eslint
+      '@karakeep/prettier-config':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/prettier
+      '@karakeep/tsconfig':
+        specifier: workspace:^0.1.0
+        version: link:../../tooling/typescript
+      '@types/bcryptjs':
+        specifier: ^2.4.6
+        version: 2.4.6
+      '@types/deep-equal':
+        specifier: ^1.0.4
+        version: 1.0.4
+      vite-tsconfig-paths:
+        specifier: ^4.3.1
+        version: 4.3.1(typescript@5.7.3)
+      vitest:
+        specifier: ^1.6.1
+        version: 1.6.1(@types/node@22.13.0)
+
   packages/db:
     dependencies:
       '@auth/core':
@@ -1095,6 +1141,9 @@ importers:
       glob:
         specifier: ^11.0.0
         version: 11.0.0
+      js-tiktoken:
+        specifier: ^1.0.20
+        version: 1.0.20
       liteque:
         specifier: ^0.3.2
         version: 0.3.2(better-sqlite3@11.3.0)
@@ -3554,6 +3603,12 @@ packages:
 
   '@hapi/topo@5.1.0':
     resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
+
+  '@hono/zod-validator@0.5.0':
+    resolution: {integrity: sha512-ds5bW6DCgAnNHP33E3ieSbaZFd5dkV52ZjyaXtGoR06APFrCtzAsKZxTHwOrJNBdXsi0e5wNwo5L4nVEVnJUdg==}
+    peerDependencies:
+      hono: '>=3.9.0'
+      zod: ^3.19.1
 
   '@hookform/error-message@2.0.1':
     resolution: {integrity: sha512-U410sAr92xgxT1idlu9WWOVjndxLdgPUHEB8Schr27C9eh7/xUnITWpCMF93s+lGiG++D4JnbSnrb5A21AdSNg==}
@@ -9366,6 +9421,10 @@ packages:
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
 
+  hono@4.7.10:
+    resolution: {integrity: sha512-QkACju9MiN59CKSY5JsGZCYmPZkA6sIW6OFCUp7qDjZu6S6KHtJHhAc9Uy9mV9F8PJ1/HQ3ybZF2yjCa/73fvQ==}
+    engines: {node: '>=16.9.0'}
+
   hosted-git-info@7.0.2:
     resolution: {integrity: sha512-puUZAUKT5m8Zzvs72XWy3HtvVbTWljRE66cP60bxJzAqf2DgICo7lYTY2IHUmLnNpjYvw5bvmoHvPc0QO2a62w==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -10057,6 +10116,9 @@ packages:
   js-levenshtein@1.1.6:
     resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}
     engines: {node: '>=0.10.0'}
+
+  js-tiktoken@1.0.20:
+    resolution: {integrity: sha512-Xlaqhhs8VfCd6Sh7a1cFkZHQbYTLCwVJJWiHVxBYzLPxW0XsoxBy1hitmjkdIjD3Aon5BXLHFwU5O8WUx6HH+A==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -18694,7 +18756,7 @@ snapshots:
   '@eslint/eslintrc@2.1.4':
     dependencies:
       ajv: 6.12.6
-      debug: 4.3.7
+      debug: 4.4.0(supports-color@9.4.0)
       espree: 9.6.1
       globals: 13.24.0
       ignore: 5.3.1
@@ -19087,6 +19149,12 @@ snapshots:
     dependencies:
       '@hapi/hoek': 9.3.0
 
+  '@hono/zod-validator@0.5.0(hono@4.7.10)(zod@3.24.2)':
+    dependencies:
+      hono: 4.7.10
+      zod: 3.24.2
+    dev: false
+
   '@hookform/error-message@2.0.1(react-dom@18.3.1(react@18.3.1))(react-hook-form@7.50.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       react: 18.3.1
@@ -19102,7 +19170,7 @@ snapshots:
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
       '@humanwhocodes/object-schema': 2.0.2
-      debug: 4.3.7
+      debug: 4.4.0(supports-color@9.4.0)
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -21854,7 +21922,7 @@ snapshots:
 
   '@types/request-ip@0.0.41':
     dependencies:
-      '@types/node': 20.11.20
+      '@types/node': 22.13.0
     dev: true
 
   '@types/resolve@1.17.1':
@@ -26750,6 +26818,9 @@ snapshots:
       react-is: 16.13.1
     dev: false
 
+  hono@4.7.10:
+    dev: false
+
   hosted-git-info@7.0.2:
     dependencies:
       lru-cache: 10.4.3
@@ -27548,6 +27619,11 @@ snapshots:
     dev: false
 
   js-levenshtein@1.1.6: {}
+
+  js-tiktoken@1.0.20:
+    dependencies:
+      base64-js: 1.5.1
+    dev: false
 
   js-tokens@4.0.0: {}
 

@@ -31,3 +31,16 @@ Check the logs of the container and this will usually tell you what's wrong. Com
 
 Check the logs of the container and this will usually tell you what's wrong. Common problems are:
 1. You changed the name of the chrome container but didn't change the `BROWSER_WEB_URL` env variable.
+
+## Upgrading Meilisearch - Migrating the Meilisearch db version
+
+[Meilisearch](https://www.meilisearch.com/) is the database used by karakeep for searching in your bookmarks. The version used by karakeep is `1.13.3` and it is advised not to upgrade it without good reasons. If you do, you might see errors like `Your database version (1.11.1) is incompatible with your current engine version (1.13.3). To migrate data between Meilisearch versions, please follow our guide on https://www.meilisearch.com/docs/learn/update_and_migration/updating.`.
+
+Luckily we can easily workaround this:
+1. Stop the Meilisearch container.
+2. Inside the Meilisearch volume bound to `/meili_data`, erase/rename the folder called `data.ms`.
+3. Launch Meilisearch again.
+4. Login to karakeep as administrator and go to (as of v0.24.1) `Admin Settings > Background Jobs` then click on `Reindex All Bookmarks`.
+5. When the reindexing has finished, Meilisearch should be working as usual.
+
+If you run into issues, the official documentation can be found [there](https://www.meilisearch.com/docs/learn/update_and_migration/updating).

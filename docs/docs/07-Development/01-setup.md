@@ -28,7 +28,7 @@ To enable `corepack` run the following command:
 $ corepack enable
 ```
 
-Then install the packages and dependencies using:
+Then, from the root of the repository, install the packages and dependencies using:
 
 ```
 $ pnpm install
@@ -69,7 +69,7 @@ You can now continue with the rest of this documentation.
 
 #### Meilisearch
 
-Meilisearch is the provider for the full text search. You can get it running with `docker run -p 7700:7700 getmeili/meilisearch:v1.11.1`.
+Meilisearch is the provider for the full text search (and at some point embeddings search too). You can get it running with `docker run -p 7700:7700 getmeili/meilisearch:v1.13.3`.
 
 Mount persistent volume if you want to keep index data across restarts. You can trigger a re-index for the entire items collection in the admin panel in the web app.
 

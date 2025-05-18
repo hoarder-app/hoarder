@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/form";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
@@ -70,6 +71,7 @@ export function FeedsEditorDialog() {
     defaultValues: {
       name: "",
       url: "",
+      enabled: true,
     },
   });
 
@@ -199,12 +201,16 @@ export function EditFeedDialog({ feed }: { feed: ZFeed }) {
   });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="secondary">
-          <Edit className="mr-2 size-4" />
-          {t("actions.edit")}
-        </Button>
-      </DialogTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DialogTrigger asChild>
+            <Button variant="ghost">
+              <Edit className="size-4" />
+            </Button>
+          </DialogTrigger>
+        </TooltipTrigger>
+        <TooltipContent>{t("actions.edit")}</TooltipContent>
+      </Tooltip>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Feed</DialogTitle>
@@ -309,6 +315,27 @@ export function FeedRow({ feed }: { feed: ZFeed }) {
       },
     });
 
+  const { mutate: updateFeedEnabled } = api.feeds.update.useMutation({
+    onSuccess: () => {
+      toast({
+        description: feed.enabled
+          ? t("settings.feeds.feed_disabled")
+          : t("settings.feeds.feed_enabled"),
+      });
+      apiUtils.feeds.list.invalidate();
+    },
+    onError: (error) => {
+      toast({
+        description: `Error: ${error.message}`,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleToggle = (checked: boolean) => {
+    updateFeedEnabled({ feedId: feed.id, enabled: checked });
+  };
+
   return (
     <TableRow>
       <TableCell>
@@ -337,16 +364,21 @@ export function FeedRow({ feed }: { feed: ZFeed }) {
         )}
       </TableCell>
       <TableCell className="flex items-center gap-2">
+        <Switch checked={feed.enabled} onCheckedChange={handleToggle} />
         <EditFeedDialog feed={feed} />
-        <ActionButton
-          loading={isFetching}
-          variant="secondary"
-          className="items-center"
-          onClick={() => fetchNow({ feedId: feed.id })}
-        >
-          <ArrowDownToLine className="mr-2 size-4" />
-          {t("actions.fetch_now")}
-        </ActionButton>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <ActionButton
+              loading={isFetching}
+              variant="ghost"
+              className="items-center"
+              onClick={() => fetchNow({ feedId: feed.id })}
+            >
+              <ArrowDownToLine className="size-4" />
+            </ActionButton>
+          </TooltipTrigger>
+          <TooltipContent>{t("actions.fetch_now")}</TooltipContent>
+        </Tooltip>
         <ActionConfirmingDialog
           title={`Delete Feed "${feed.name}"?`}
           description={`Are you sure you want to delete the feed "${feed.name}"?`}
@@ -364,8 +396,7 @@ export function FeedRow({ feed }: { feed: ZFeed }) {
           )}
         >
           <Button variant="destructive" disabled={isDeleting}>
-            <Trash2 className="mr-2 size-4" />
-            {t("actions.delete")}
+            <Trash2 className="size-4" />
           </Button>
         </ActionConfirmingDialog>
       </TableCell>

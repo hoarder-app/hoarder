@@ -55,6 +55,7 @@ export const feedsAppRouter = router({
           name: input.name,
           url: input.url,
           userId: ctx.user.id,
+          enabled: input.enabled,
         })
         .returning();
       return feed;
@@ -69,6 +70,7 @@ export const feedsAppRouter = router({
         .set({
           name: input.name,
           url: input.url,
+          enabled: input.enabled,
         })
         .where(
           and(

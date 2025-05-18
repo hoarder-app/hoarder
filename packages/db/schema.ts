@@ -389,6 +389,7 @@ export const rssFeedsTable = sqliteTable(
       .$defaultFn(() => createId()),
     name: text("name").notNull(),
     url: text("url").notNull(),
+    enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
     createdAt: createdAtField(),
     lastFetchedAt: integer("lastFetchedAt", { mode: "timestamp" }),
     lastFetchedStatus: text("lastFetchedStatus", {
