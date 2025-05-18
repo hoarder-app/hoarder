@@ -6,6 +6,7 @@
   "type": "module",
   "dependencies": {
     "glob": "^11.0.0",
+    "js-tiktoken": "^1.0.20",
     "liteque": "^0.3.2",
     "meilisearch": "^0.37.0",
     "ollama": "^0.5.14",
