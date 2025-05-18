@@ -23,7 +23,11 @@ export default function UpdatableBookmarksGrid({
   showEditorCard?: boolean;
   itemsPerPage?: number;
 }) {
-  const sortOrder = useSortOrderStore((state) => state.sortOrder);
+  let sortOrder = useSortOrderStore((state) => state.sortOrder);
+  if (sortOrder === "relevance") {
+    // Relevance is not supported in the `getBookmarks` endpoint.
+    sortOrder = "desc";
+  }
 
   const finalQuery = { ...query, sortOrder, includeContent: false };
 
