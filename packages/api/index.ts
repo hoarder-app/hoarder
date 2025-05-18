@@ -3,6 +3,7 @@ import { logger } from "hono/logger";
 import { poweredBy } from "hono/powered-by";
 
 import trpcAdapter from "./middlewares/trpcAdapter";
+import assets from "./routes/assets";
 import bookmarks from "./routes/bookmarks";
 import highlights from "./routes/highlights";
 import lists from "./routes/lists";
@@ -17,6 +18,7 @@ const app = new Hono()
   .route("/bookmarks", bookmarks)
   .route("/lists", lists)
   .route("/tags", tags)
-  .route("/users", users);
+  .route("/users", users)
+  .route("/assets", assets);
 
 export default app;

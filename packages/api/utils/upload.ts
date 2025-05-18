@@ -16,9 +16,25 @@ import { AuthedContext } from "@karakeep/trpc";
 const MAX_UPLOAD_SIZE_BYTES = serverConfig.maxAssetSizeMb * 1024 * 1024;
 
 // Helper to convert Web Stream to Node Stream (requires Node >= 16.5 / 14.18)
-function webStreamToNode(webStream: ReadableStream<Uint8Array>): Readable {
+export function webStreamToNode(
+  webStream: ReadableStream<Uint8Array>,
+): Readable {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
   return Readable.fromWeb(webStream as any); // Type assertion might be needed
+}
+
+export function toWebReadableStream(
+  nodeStream: fs.ReadStream,
+): ReadableStream<Uint8Array> {
+  const reader = nodeStream as unknown as Readable;
+
+  return new ReadableStream({
+    start(controller) {
+      reader.on("data", (chunk) => controller.enqueue(new Uint8Array(chunk)));
+      reader.on("end", () => controller.close());
+      reader.on("error", (err) => controller.error(err));
+    },
+  });
 }
 
 export async function uploadAsset(
