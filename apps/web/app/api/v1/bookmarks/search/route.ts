@@ -27,6 +27,7 @@ export const GET = (req: NextRequest) =>
       const bookmarks = await api.bookmarks.searchBookmarks({
         text: searchParams.q,
         cursor: searchParams.cursor,
+        sortOrder: searchParams.sortOrder,
         limit: searchParams.limit,
         includeContent: searchParams.includeContent,
       });

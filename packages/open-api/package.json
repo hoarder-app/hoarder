@@ -19,6 +19,7 @@
     "typecheck": "tsc --noEmit",
     "generate": "tsx index.ts",
     "format": "prettier . --ignore-path ../../.prettierignore",
+    "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
     "lint": "eslint ."
   },
   "main": "index.ts",

@@ -1,7 +1,10 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
-import { zNewBookmarkRequestSchema } from "@karakeep/shared/types/bookmarks";
+import {
+  zNewBookmarkRequestSchema,
+  zSortOrder,
+} from "@karakeep/shared/types/bookmarks";
 
 import { buildHandler } from "../utils/handler";
 import { adaptPagination, zPagination } from "../utils/pagination";
@@ -16,6 +19,10 @@ export const GET = (req: NextRequest) =>
       .object({
         favourited: zStringBool.optional(),
         archived: zStringBool.optional(),
+        sortOrder: zSortOrder
+          .exclude([zSortOrder.Enum.relevance])
+          .optional()
+          .default(zSortOrder.Enum.desc),
         // TODO: Change the default to false in a couple of releases.
         includeContent: zStringBool.optional().default("true"),
       })
