@@ -3,10 +3,7 @@ import * as os from "os";
 import * as path from "path";
 import { Readable } from "stream";
 import { pipeline } from "stream/promises";
-import { createContextFromRequest } from "@/server/api/client";
-import { TRPCError } from "@trpc/server";
 
-import type { ZUploadResponse } from "@karakeep/shared/types/uploads";
 import { assets, AssetTypes } from "@karakeep/db/schema";
 import {
   newAssetId,
@@ -18,20 +15,34 @@ import { AuthedContext } from "@karakeep/trpc";
 
 const MAX_UPLOAD_SIZE_BYTES = serverConfig.maxAssetSizeMb * 1024 * 1024;
 
-export const dynamic = "force-dynamic";
-
 // Helper to convert Web Stream to Node Stream (requires Node >= 16.5 / 14.18)
-function webStreamToNode(webStream: ReadableStream<Uint8Array>): Readable {
+export function webStreamToNode(
+  webStream: ReadableStream<Uint8Array>,
+): Readable {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-explicit-any
   return Readable.fromWeb(webStream as any); // Type assertion might be needed
 }
 
-export async function uploadFromPostData(
+export function toWebReadableStream(
+  nodeStream: fs.ReadStream,
+): ReadableStream<Uint8Array> {
+  const reader = nodeStream as unknown as Readable;
+
+  return new ReadableStream({
+    start(controller) {
+      reader.on("data", (chunk) => controller.enqueue(new Uint8Array(chunk)));
+      reader.on("end", () => controller.close());
+      reader.on("error", (err) => controller.error(err));
+    },
+  });
+}
+
+export async function uploadAsset(
   user: AuthedContext["user"],
   db: AuthedContext["db"],
-  formData: FormData,
+  formData: { file: File } | { image: File },
 ): Promise<
-  | { error: string; status: number }
+  | { error: string; status: 400 | 413 }
   | {
       assetId: string;
       contentType: string;
@@ -39,10 +50,11 @@ export async function uploadFromPostData(
       size: number;
     }
 > {
-  const data = formData.get("file") ?? formData.get("image");
-
-  if (!(data instanceof File)) {
-    return { error: "Bad request", status: 400 };
+  let data: File;
+  if ("file" in formData) {
+    data = formData.file;
+  } else {
+    data = formData.image;
   }
 
   const contentType = data.type;
@@ -95,30 +107,4 @@ export async function uploadFromPostData(
       await fs.promises.unlink(tempFilePath).catch(() => ({}));
     }
   }
-}
-
-export async function POST(request: Request) {
-  const ctx = await createContextFromRequest(request);
-  if (ctx.user === null) {
-    return Response.json({ error: "Unauthorized" }, { status: 401 });
-  }
-  if (serverConfig.demoMode) {
-    throw new TRPCError({
-      message: "Mutations are not allowed in demo mode",
-      code: "FORBIDDEN",
-    });
-  }
-  const formData = await request.formData();
-
-  const resp = await uploadFromPostData(ctx.user, ctx.db, formData);
-  if ("error" in resp) {
-    return Response.json({ error: resp.error }, { status: resp.status });
-  }
-
-  return Response.json({
-    assetId: resp.assetId,
-    contentType: resp.contentType,
-    size: resp.size,
-    fileName: resp.fileName,
-  } satisfies ZUploadResponse);
 }
