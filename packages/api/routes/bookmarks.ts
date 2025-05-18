@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 
 import {
+  BookmarkTypes,
   zAssetSchema,
   zManipulatedTagSchema,
   zNewBookmarkRequestSchema,
@@ -12,6 +13,7 @@ import {
 import { authMiddleware } from "../middlewares/auth";
 import { adaptPagination, zPagination } from "../utils/pagination";
 import { zGetBookmarkSearchParamsSchema, zStringBool } from "../utils/types";
+import { uploadAsset } from "../utils/upload";
 
 const app = new Hono()
   .use(authMiddleware)
@@ -78,6 +80,29 @@ const app = new Hono()
         },
         200,
       );
+    },
+  )
+  .post(
+    "/singlefile",
+    zValidator(
+      "form",
+      z.object({
+        url: z.string(),
+        file: z.instanceof(File),
+      }),
+    ),
+    async (c) => {
+      const form = c.req.valid("form");
+      const up = await uploadAsset(c.var.ctx.user, c.var.ctx.db, form);
+      if ("error" in up) {
+        return c.json({ error: up.error }, up.status);
+      }
+      const bookmark = await c.var.api.bookmarks.createBookmark({
+        type: BookmarkTypes.LINK,
+        url: form.url,
+        precrawledArchiveId: up.assetId,
+      });
+      return c.json(bookmark, 201);
     },
   )
 
