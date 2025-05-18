@@ -768,9 +768,6 @@ importers:
       postcss:
         specifier: ^8.4.35
         version: 8.4.35
-      react-swipeable:
-        specifier: ^7.0.1
-        version: 7.0.2(react@18.3.1)
       tailwindcss:
         specifier: ^3.4.1
         version: 3.4.1
@@ -13157,11 +13154,6 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
-
-  react-swipeable@7.0.2:
-    resolution: {integrity: sha512-v1Qx1l+aC2fdxKa9aKJiaU/ZxmJ5o98RMoFwUqAAzVWUcxgfHFXDDruCKXhw6zIYXm6V64JiHgP9f6mlME5l8w==}
-    peerDependencies:
-      react: ^16.8.3 || ^17 || ^18 || ^19.0.0 || ^19.0.0-rc
 
   react-syntax-highlighter@15.5.0:
     resolution: {integrity: sha512-+zq2myprEnQmH5yw6Gqc8lD55QHnpKaU8TOcFeC/Lg/MQSs8UknEA0JC4nTZGFAXC2J2Hyj/ijJ7NlabyPi2gg==}
@@ -32194,11 +32186,6 @@ snapshots:
       react: 18.3.1
       tslib: 2.8.1
     dev: false
-
-  react-swipeable@7.0.2(react@18.3.1):
-    dependencies:
-      react: 18.3.1
-    dev: true
 
   react-syntax-highlighter@15.5.0(react@18.3.1):
     dependencies:
