@@ -1,7 +1,10 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 
-import { zUpdateTagRequestSchema } from "@karakeep/shared/types/tags";
+import {
+  zCreateTagRequestSchema,
+  zUpdateTagRequestSchema,
+} from "@karakeep/shared/types/tags";
 
 import { authMiddleware } from "../middlewares/auth";
 import { adaptPagination, zPagination } from "../utils/pagination";
@@ -14,6 +17,13 @@ const app = new Hono()
   .get("/", async (c) => {
     const tags = await c.var.api.tags.list();
     return c.json(tags, 200);
+  })
+
+  // POST /tags
+  .post("/", zValidator("json", zCreateTagRequestSchema), async (c) => {
+    const body = c.req.valid("json");
+    const tags = await c.var.api.tags.create(body);
+    return c.json(tags, 201);
   })
 
   // GET /tags/[tagId]

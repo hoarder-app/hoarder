@@ -6,7 +6,9 @@ import { z } from "zod";
 
 import { zSortOrder } from "@karakeep/shared/types/bookmarks";
 import {
+  zCreateTagRequestSchema,
   zGetTagResponseSchema,
+  zTagBasicSchema,
   zUpdateTagRequestSchema,
 } from "@karakeep/shared/types/tags";
 
@@ -50,6 +52,35 @@ registry.registerPath({
           schema: z.object({
             tags: z.array(TagSchema),
           }),
+        },
+      },
+    },
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/tags",
+  description: "Create a new tag",
+  summary: "Create a new tag",
+  tags: ["Tags"],
+  security: [{ [BearerAuth.name]: [] }],
+  request: {
+    body: {
+      description: "The data to create the tag with.",
+      content: {
+        "application/json": {
+          schema: zCreateTagRequestSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: "The created tag",
+      content: {
+        "application/json": {
+          schema: zTagBasicSchema,
         },
       },
     },
@@ -135,7 +166,7 @@ registry.registerPath({
       description: "The updated tag",
       content: {
         "application/json": {
-          schema: TagSchema,
+          schema: zTagBasicSchema,
         },
       },
     },

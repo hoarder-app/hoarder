@@ -1158,7 +1158,40 @@ export interface paths {
       };
     };
     put?: never;
-    post?: never;
+    /**
+     * Create a new tag
+     * @description Create a new tag
+     */
+    post: {
+      parameters: {
+        query?: never;
+        header?: never;
+        path?: never;
+        cookie?: never;
+      };
+      /** @description The data to create the tag with. */
+      requestBody?: {
+        content: {
+          "application/json": {
+            name: string;
+          };
+        };
+      };
+      responses: {
+        /** @description The created tag */
+        201: {
+          headers: {
+            [name: string]: unknown;
+          };
+          content: {
+            "application/json": {
+              id: string;
+              name: string;
+            };
+          };
+        };
+      };
+    };
     delete?: never;
     options?: never;
     head?: never;
@@ -1278,7 +1311,10 @@ export interface paths {
             [name: string]: unknown;
           };
           content: {
-            "application/json": components["schemas"]["Tag"];
+            "application/json": {
+              id: string;
+              name: string;
+            };
           };
         };
         /** @description Tag not found */
