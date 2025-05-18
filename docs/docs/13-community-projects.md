@@ -53,3 +53,11 @@ _By [@thiswillbeyourgithub](https://github.com/thiswillbeyourgithub/)_
 A python package to simplify access to the karakeep API. Can be used as a library or from the CLI. Aims for feature completeness and high test coverage but do check its feature matrix before relying too much on it.
 
 Get it [here](https://github.com/thiswillbeyourgithub/karakeep_python_api).
+
+### FreshRSS_to_Karakeep
+
+_By [@thiswillbeyourgithub](https://github.com/thiswillbeyourgithub/)_
+
+A python script to automatically create Karakeep bookmarks from your [FreshRSS](https://github.com/FreshRSS/FreshRSS) *favourites/saved* RSS item. Made to be called periodically. Based on the community project `Karakeep-Python-API` above, by the same author.
+
+Get it [here](https://github.com/thiswillbeyourgithub/freshrss_to_karakeep).
