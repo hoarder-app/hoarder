@@ -980,9 +980,6 @@ importers:
       hono:
         specifier: ^4.7.10
         version: 4.7.10
-      request-ip:
-        specifier: ^3.3.0
-        version: 3.3.0
       zod:
         specifier: ^3.24.2
         version: 3.24.2
@@ -1002,9 +999,6 @@ importers:
       '@types/deep-equal':
         specifier: ^1.0.4
         version: 1.0.4
-      '@types/request-ip':
-        specifier: ^0.0.41
-        version: 0.0.41
       vite-tsconfig-paths:
         specifier: ^4.3.1
         version: 4.3.1(typescript@5.7.3)
