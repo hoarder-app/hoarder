@@ -15,6 +15,7 @@ import {
 
 import type { Context } from "../index";
 import { authedProcedure, router } from "../index";
+import { normalizeTagName } from "../utils/tag";
 
 function conditionFromInput(input: { tagId: string }, userId: string) {
   return and(eq(bookmarkTags.id, input.tagId), eq(bookmarkTags.userId, userId));
@@ -62,7 +63,7 @@ export const tagsAppRouter = router({
         const [newTag] = await ctx.db
           .insert(bookmarkTags)
           .values({
-            name: input.name,
+            name: normalizeTagName(input.name),
             userId: ctx.user.id,
           })
           .returning();
@@ -196,7 +197,7 @@ export const tagsAppRouter = router({
         const res = await ctx.db
           .update(bookmarkTags)
           .set({
-            name: input.name,
+            ...(input.name ? { name: normalizeTagName(input.name) } : {}),
           })
           .where(
             and(
