@@ -56,7 +56,13 @@ async function handleContextMenuClick(info: chrome.contextMenus.OnClickData) {
     });
   } else if (menuItemId === ADD_LINK_TO_KARAKEEP_ID) {
     let newBookmark: ZNewBookmarkRequest | null = null;
-    if (info.selectionText) {
+    if (info.linkUrl) {
+      newBookmark = {
+        type: BookmarkTypes.LINK,
+        url: info.linkUrl,
+        title: info.selectionText ?? undefined,
+      };
+    } else if (info.selectionText) {
       newBookmark = {
         type: BookmarkTypes.TEXT,
         text: info.selectionText,
