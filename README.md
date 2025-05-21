@@ -39,6 +39,7 @@ Karakeep (previously Hoarder) is a self-hostable bookmark-everything app with a 
 - 🔐 SSO support.
 - 🌙 Dark mode support.
 - 💾 Self-hosting first.
+- ⬇️ Bookmark importers from [Pocket](https://getpocket.com/), [Linkwarden](https://github.com/linkwarden/linkwarden), [Omnivore](https://github.com/omnivore-app/omnivore), [Tab Session Manager](https://chromewebstore.google.com/detail/tab-session-manager/iaiomicjabeggjcfkbimgmglanimpnae).
 - [Planned] Offline reading on mobile, semantic search across bookmarks, ...
 
 **⚠️ This app is under heavy development and it's far from stable.**
