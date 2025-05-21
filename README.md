@@ -30,7 +30,7 @@ Karakeep (previously Hoarder) is a self-hostable bookmark-everything app with a 
 - 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/karakeep/kgcjekpmcjjogibpjebkhaanilehneje) and [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/karakeep/) for quick bookmarking.
 - 📱 An [iOS app](https://apps.apple.com/us/app/karakeep-app/id6479258022), and an [Android app](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
 - 📰 Auto hoarding from RSS feeds.
-- 🔌 REST API.
+- 🔌 REST API and multiple clients.
 - 🌐 Mutli-language support.
 - 🖍️ Mark and store highlights from your hoarded content.
 - 🗄️ Full page archival (using [monolith](https://github.com/Y2Z/monolith)) to protect against link rot.
