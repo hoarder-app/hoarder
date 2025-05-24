@@ -40,7 +40,7 @@ Output of a successful `pnpm install` run should look something like:
 Scope: all 20 workspace projects
 Lockfile is up to date, resolution step is skipped
 Packages: +3129
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Progress: resolved 0, reused 2699, downloaded 0, added 3129, done
 
 devDependencies:
