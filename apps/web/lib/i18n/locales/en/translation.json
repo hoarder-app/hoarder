@@ -98,7 +98,13 @@
       "new_password": "New Password",
       "confirm_new_password": "Confirm New Password",
       "options": "Options",
-      "interface_lang": "Interface Language"
+      "interface_lang": "Interface Language",
+      "user_settings": {
+        "user_settings_updated": "User settings have been updated!",
+        "boomark_click_action": "Bookmark Click Action",
+        "open_external_url": "Open Original URL",
+        "open_bookmark_details": "Open Bookmark Details"
+      }
     },
     "ai": {
       "ai_settings": "AI Settings",

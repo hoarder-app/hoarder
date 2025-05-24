@@ -527,13 +527,27 @@ export const ruleEngineActionsTable = sqliteTable(
   ],
 );
 
+export const userSettings = sqliteTable("userSettings", {
+  userId: text("userId")
+    .notNull()
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  bookmarkClickAction: text("bookmarkClickAction", {
+    enum: ["open_original_link", "expand_bookmark_preview"],
+  }).notNull().default("open_original_link"),
+});
+
 // Relations
 
-export const userRelations = relations(users, ({ many }) => ({
+export const userRelations = relations(users, ({ many, one }) => ({
   tags: many(bookmarkTags),
   bookmarks: many(bookmarks),
   webhooks: many(webhooksTable),
   rules: many(ruleEngineRulesTable),
+  settings: one(userSettings, {
+    fields: [users.id],
+    references: [userSettings.userId],
+  }),
 }));
 
 export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
@@ -668,3 +682,10 @@ export const rssFeedImportsTableRelations = relations(
     }),
   }),
 );
+
+export const userSettingsRelations = relations(userSettings, ({ one }) => ({
+  user: one(users, {
+    fields: [userSettings.userId],
+    references: [users.id],
+  }),
+}));

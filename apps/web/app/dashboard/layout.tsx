@@ -4,6 +4,7 @@ import MobileSidebar from "@/components/shared/sidebar/MobileSidebar";
 import Sidebar from "@/components/shared/sidebar/Sidebar";
 import SidebarLayout from "@/components/shared/sidebar/SidebarLayout";
 import { Separator } from "@/components/ui/separator";
+import { UserSettingsContextProvider } from "@/lib/userSettings";
 import { api } from "@/server/api/client";
 import { getServerAuthSession } from "@/server/auth";
 import { TFunction } from "i18next";
@@ -30,7 +31,10 @@ export default async function Dashboard({
     redirect("/");
   }
 
-  const lists = await api.lists.list();
+  const [lists, userSettings] = await Promise.all([
+    api.lists.list(),
+    api.users.settings(),
+  ]);
 
   const items = (t: TFunction) =>
     [
@@ -75,22 +79,24 @@ export default async function Dashboard({
   ];
 
   return (
-    <SidebarLayout
-      sidebar={
-        <Sidebar
-          items={items}
-          extraSections={
-            <>
-              <Separator />
-              <AllLists initialData={lists} />
-            </>
-          }
-        />
-      }
-      mobileSidebar={<MobileSidebar items={mobileSidebar} />}
-      modal={modal}
-    >
-      {children}
-    </SidebarLayout>
+    <UserSettingsContextProvider userSettings={userSettings}>
+      <SidebarLayout
+        sidebar={
+          <Sidebar
+            items={items}
+            extraSections={
+              <>
+                <Separator />
+                <AllLists initialData={lists} />
+              </>
+            }
+          />
+        }
+        mobileSidebar={<MobileSidebar items={mobileSidebar} />}
+        modal={modal}
+      >
+        {children}
+      </SidebarLayout>
+    </UserSettingsContextProvider>
   );
 }
