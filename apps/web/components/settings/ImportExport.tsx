@@ -137,6 +137,7 @@ export function ImportExportRow() {
           ? new Date(bookmark.addDate * 1000)
           : undefined,
         note: bookmark.notes,
+        archived: bookmark.archived,
         ...(bookmark.content.type === BookmarkTypes.LINK
           ? {
               type: BookmarkTypes.LINK,

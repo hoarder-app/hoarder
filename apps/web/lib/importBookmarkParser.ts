@@ -15,6 +15,7 @@ export interface ParsedBookmark {
   tags: string[];
   addDate?: number;
   notes?: string;
+  archived?: boolean;
 }
 
 export async function parseNetscapeBookmarkFile(
@@ -64,6 +65,7 @@ export async function parsePocketBookmarkFile(
     url: string;
     time_added: string;
     tags: string;
+    status?: string;
   }[];
 
   return records.map((record) => {
@@ -72,6 +74,7 @@ export async function parsePocketBookmarkFile(
       content: { type: BookmarkTypes.LINK as const, url: record.url },
       tags: record.tags.length > 0 ? record.tags.split("|") : [],
       addDate: parseInt(record.time_added),
+      archived: record.status === "archive",
     };
   });
 }
@@ -107,6 +110,7 @@ export async function parseKarakeepBookmarkFile(
       tags: bookmark.tags,
       addDate: bookmark.createdAt,
       notes: bookmark.note ?? undefined,
+      archived: bookmark.archived,
     };
   });
 }
@@ -121,6 +125,7 @@ export async function parseOmnivoreBookmarkFile(
       url: z.string(),
       labels: z.array(z.string()),
       savedAt: z.coerce.date(),
+      state: z.string().optional(),
     }),
   );
 
@@ -137,6 +142,7 @@ export async function parseOmnivoreBookmarkFile(
       content: { type: BookmarkTypes.LINK as const, url: bookmark.url },
       tags: bookmark.labels,
       addDate: bookmark.savedAt.getTime() / 1000,
+      archived: bookmark.state === "Archived",
     };
   });
 }
@@ -241,6 +247,10 @@ export function deduplicateBookmarks(
           existing.notes = `${existing.notes}\n---\n${bookmark.notes}`;
         } else if (bookmark.notes) {
           existing.notes = bookmark.notes;
+        }
+        // For archived status, prefer archived if either is archived
+        if (bookmark.archived === true) {
+          existing.archived = true;
         }
         // Title: keep existing one for simplicity
       } else {

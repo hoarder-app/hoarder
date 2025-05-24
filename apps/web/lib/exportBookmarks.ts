@@ -19,6 +19,7 @@ export const zExportBookmarkSchema = z.object({
     ])
     .nullable(),
   note: z.string().nullable(),
+  archived: z.boolean().optional().default(false),
 });
 
 export const zExportSchema = z.object({
@@ -56,6 +57,7 @@ export function toExportFormat(
     tags: bookmark.tags.map((t) => t.name),
     content,
     note: bookmark.note ?? null,
+    archived: bookmark.archived,
   };
 }
 
