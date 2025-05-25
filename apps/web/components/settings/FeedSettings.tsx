@@ -346,7 +346,12 @@ export function FeedRow({ feed }: { feed: ZFeed }) {
           {feed.name}
         </Link>
       </TableCell>
-      <TableCell>{feed.url}</TableCell>
+      <TableCell
+        className="max-w-64 overflow-clip text-ellipsis"
+        title={feed.url}
+      >
+        {feed.url}
+      </TableCell>
       <TableCell>{feed.lastFetchedAt?.toLocaleString()}</TableCell>
       <TableCell>
         {feed.lastFetchedStatus === "success" ? (
