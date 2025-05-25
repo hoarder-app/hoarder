@@ -1,3 +1,4 @@
+import React from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
@@ -33,13 +34,38 @@ export default function HighlightCard({
     },
   );
 
+  function waitForElementInView(element: Element): Promise<void> {
+    return new Promise((resolve) => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            observer.disconnect();
+            resolve();
+          }
+        },
+        {
+          root: null, // use viewport
+          threshold: 0.5, // Adjust as needed (e.g. 0.5 = half in view)
+        },
+      );
+
+      observer.observe(element);
+    });
+  }
+
   const onBookmarkClick = () => {
-    document
-      .querySelector(`[data-highlight-id="${highlight.id}"]`)
-      ?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
+    const el = document.querySelector(`[data-highlight-id="${highlight.id}"]`);
+    if (!el) return;
+
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+
+    waitForElementInView(el).then(() => {
+      el.classList.add("bg-orange-600", "transition-colors", "duration-1000");
+
+      setTimeout(() => {
+        el.classList.remove("bg-orange-600");
+      }, 1500);
+    });
   };
 
   const Wrapper = ({ children }: { children: React.ReactNode }) =>
@@ -65,10 +91,12 @@ export default function HighlightCard({
       <div className="flex gap-2">
         <ActionButton
           loading={isDeleting}
+          title="Delete highlight"
           variant="ghost"
+          className="rounded-full transition-all duration-200 hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-700"
           onClick={() => deleteHighlight({ highlightId: highlight.id })}
         >
-          <Trash2 className="size-4 text-destructive" />
+          <Trash2 className="size-5 text-destructive" />
         </ActionButton>
       </div>
     </div>
