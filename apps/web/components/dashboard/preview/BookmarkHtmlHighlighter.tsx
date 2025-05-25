@@ -146,6 +146,53 @@ function BookmarkHTMLHighlighter({
     setIsMobile(window.matchMedia("(pointer: coarse)").matches);
   }, []);
 
+  useEffect(() => {
+    if (!selectedHighlight) {
+      return;
+    }
+
+    const highlightSpan = document.querySelector(
+      `span[data-highlight-id="${selectedHighlight.id}"]`,
+    );
+    if (!highlightSpan) {
+      return;
+    }
+
+    const updatePosition = () => {
+      const rect = highlightSpan.getBoundingClientRect();
+
+      const isVisible =
+        rect.width > 0 &&
+        rect.height > 0 &&
+        rect.bottom >= 0 &&
+        rect.top <= window.innerHeight &&
+        rect.right >= 0 &&
+        rect.left <= window.innerWidth;
+
+      if (!isVisible) return;
+
+      setMenuPosition({
+        x: rect.left + rect.width / 2,
+        y: isMobile ? rect.bottom + 8 : rect.top - 8,
+      });
+      /*
+       fixme
+       jumps to 0,0 sometimes when fab is not visible
+       doesn't scroll when screen resizes
+       doesn't scroll when is windowed??
+       */
+    };
+
+    updatePosition();
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+
+    return () => {
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [selectedHighlight, isMobile]);
+
   const getCharacterOffsetOfNode = useCallback(
     (node: Node, parentElement: HTMLElement): number => {
       let offset = 0;
