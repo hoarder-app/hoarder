@@ -2,9 +2,10 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent } from "@/components/ui/popover";
+import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { PopoverAnchor } from "@radix-ui/react-popover";
-import { Check, Trash2 } from "lucide-react";
+import { Check, ClipboardCopy, Trash2 } from "lucide-react";
 
 import {
   SUPPORTED_HIGHLIGHT_COLORS,
@@ -20,6 +21,7 @@ interface ColorPickerMenuProps {
   selectedHighlight: Highlight | null;
   onClose: () => void;
   isMobile: boolean;
+  onCopy: () => void;
 }
 
 const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
@@ -29,6 +31,7 @@ const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
   selectedHighlight,
   onClose,
   isMobile,
+  onCopy,
 }) => {
   if (!position) {
     return null;
@@ -57,6 +60,18 @@ const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
         className="flex w-fit items-center gap-1 rounded-lg bg-white p-2 shadow-xl dark:bg-gray-800"
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
+        <div className="flex gap-2">
+          <ActionButton
+            loading={false}
+            size="none"
+            title="Copy to clipboard"
+            variant="ghost"
+            className="size-8 rounded-full transition-all duration-200 hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-700"
+            onClick={onCopy}
+          >
+            <ClipboardCopy className="size-5" />
+          </ActionButton>
+        </div>
         {SUPPORTED_HIGHLIGHT_COLORS.map((color) => (
           <Button
             key={color}
@@ -64,15 +79,13 @@ const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
             variant="none"
             title={`Highlight ${color}`}
             className={cn(
-              "size-8 rounded-full hover:ring-2 hover:ring-gray-400 hover:ring-offset-1 focus-visible:ring-0 focus-visible:ring-gray-500 focus-visible:ring-offset-2",
+              "relative size-8 rounded-full transition-all duration-200 ease-in-out hover:ring-2 hover:ring-gray-400 hover:ring-offset-1 focus-visible:ring-0 focus-visible:ring-gray-500 focus-visible:ring-offset-2",
               HIGHLIGHT_COLOR_MAP.bg[color],
-              selectedHighlight?.color === color &&
-                "ring-2 ring-gray-500 dark:ring-gray-300",
             )}
             onClick={() => onColorSelect(color)}
           >
             {selectedHighlight?.color === color && (
-              <Check className="size-5 text-gray-700 dark:text-gray-200" />
+              <Check className="absolute left-1/2 top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 text-black drop-shadow-sm" />
             )}
           </Button>
         ))}
@@ -82,7 +95,7 @@ const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
             size="none"
             title="Delete highlight"
             variant="ghost"
-            className="size-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="size-8 rounded-full transition-all duration-200 hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-700"
             onClick={onDelete}
           >
             <Trash2 className="size-5 text-destructive" />
@@ -585,6 +598,28 @@ function BookmarkHTMLHighlighter({
     setSelectedHighlight(null);
   };
 
+  const handleCopy = () => {
+    if (!selectedHighlight) {
+      toast({
+        description: "You don't have a highlight selected",
+      });
+      return;
+    }
+    if (!navigator.clipboard) {
+      toast({
+        description: "Clipboard API not supported.", // todo add a faq thing?
+      });
+      return;
+    }
+    try {
+      navigator.clipboard
+        ?.writeText(selectedHighlight.text ?? "")
+        .then(() => toast({ description: "Copied highlight to clipboard!" }));
+    } catch (e) {
+      toast({ description: "Could not copy text" });
+    }
+  };
+
   return (
     <div>
       <div
@@ -616,6 +651,7 @@ function BookmarkHTMLHighlighter({
           onDelete={
             selectedHighlight && onDeleteHighlight ? handleDelete : undefined
           }
+          onCopy={handleCopy}
         />
       )}
     </div>
