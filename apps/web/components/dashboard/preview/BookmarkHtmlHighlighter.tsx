@@ -37,11 +37,36 @@ const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
     return null;
   }
 
+  if (selectedHighlight) {
+    const el = document.querySelector(
+      `[data-highlight-id="${selectedHighlight.id}"]`,
+    );
+    if (!el) {
+      return;
+    }
+
+    el.classList.add(
+      HIGHLIGHT_COLOR_MAP.bg[selectedHighlight.color].dark,
+      "transition-colors",
+      "duration-1000",
+    );
+  }
+
   return (
     <Popover
       open={!!position}
       onOpenChange={(open) => {
-        if (!open) onClose();
+        if (!open) {
+          const el = document.querySelector(
+            `[data-highlight-id="${selectedHighlight?.id}"]`,
+          );
+          if (el && selectedHighlight) {
+            el.classList.remove(
+              HIGHLIGHT_COLOR_MAP.bg[selectedHighlight?.color].dark,
+            );
+          }
+          onClose();
+        }
       }}
     >
       <PopoverAnchor
@@ -171,11 +196,13 @@ function BookmarkHTMLHighlighter({
         rect.right >= 0 &&
         rect.left <= window.innerWidth;
 
-      if (!isVisible) return;
+      if (!isVisible) {
+        return;
+      }
 
       setMenuPosition({
         x: rect.left + rect.width / 2,
-        y: isMobile ? rect.bottom + 8 : rect.top - 8,
+        y: isMobile ? rect.bottom + 8 : rect.top - 12,
       });
       /*
        fixme
@@ -562,7 +589,7 @@ function BookmarkHTMLHighlighter({
 
           const newMenuPos = {
             x: clickX,
-            y: isMobile ? clickY + 8 : clickY - 8,
+            y: isMobile ? clickY + 8 : clickY - 12,
           };
 
           const rect = range.getBoundingClientRect();
@@ -607,7 +634,10 @@ function BookmarkHTMLHighlighter({
       if (foundHighlight) {
         setSelectedHighlight(foundHighlight);
         setPendingRange(null);
-        const clickPos = { x: e.clientX, y: e.clientY };
+        const clickPos = {
+          x: e.clientX,
+          y: isMobile ? e.clientY + 8 : e.clientY - 12,
+        };
         setMenuPosition(clickPos);
         e.stopPropagation();
       }

@@ -55,7 +55,9 @@ export default function HighlightCard({
 
   const onBookmarkClick = () => {
     const el = document.querySelector(`[data-highlight-id="${highlight.id}"]`);
-    if (!el) return;
+    if (!el) {
+      return;
+    }
 
     el.scrollIntoView({ behavior: "smooth", block: "center" });
 
