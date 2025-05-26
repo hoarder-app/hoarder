@@ -60,10 +60,13 @@ export default function HighlightCard({
     el.scrollIntoView({ behavior: "smooth", block: "center" });
 
     waitForElementInView(el).then(() => {
-      el.classList.add("bg-orange-600", "transition-colors", "duration-1000");
-      // can't seem to use the same background color because it's not !important
+      el.classList.add(
+        HIGHLIGHT_COLOR_MAP.bg[highlight.color].dark,
+        "transition-colors",
+        "duration-1000",
+      );
       setTimeout(() => {
-        el.classList.remove("bg-orange-600");
+        el.classList.remove(HIGHLIGHT_COLOR_MAP.bg[highlight.color].dark);
       }, 1500);
     });
   };

@@ -82,7 +82,7 @@ const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
             title={`Highlight ${color}`}
             className={cn(
               "relative size-8 rounded-full transition-all duration-200 ease-in-out hover:ring-2 hover:ring-gray-400 hover:ring-offset-1 focus-visible:ring-0 focus-visible:ring-gray-500 focus-visible:ring-offset-2",
-              HIGHLIGHT_COLOR_MAP.bg[color],
+              HIGHLIGHT_COLOR_MAP.bg[color].light,
             )}
             onClick={() => onColorSelect(color)}
           >
@@ -485,7 +485,7 @@ function BookmarkHTMLHighlighter({
         if (nodeToWrap.nodeValue && nodeToWrap.nodeValue.trim().length > 0) {
           const span = document.createElement("span");
           span.className = cn(
-            HIGHLIGHT_COLOR_MAP.bg[highlight.color],
+            HIGHLIGHT_COLOR_MAP.bg[highlight.color].light,
             "text-gray-600",
             "whitespace-normal",
             "break-words",
