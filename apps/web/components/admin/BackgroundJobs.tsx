@@ -96,7 +96,7 @@ function AdminActions() {
     });
 
   return (
-    <div className="flex flex-col gap-2 sm:w-1/2">
+    <div className="flex flex-col gap-2">
       <ActionButton
         variant="destructive"
         loading={isRecrawlPending}
@@ -203,7 +203,7 @@ export default function BackgroundJobs() {
       <div className="mb-2 text-xl font-medium">
         {t("admin.background_jobs.background_jobs")}
       </div>
-      <div className="sm:w-1/2">
+      <div>
         <Table className="rounded-md border">
           <TableHeader className="bg-gray-200">
             <TableHead>{t("admin.background_jobs.job")}</TableHead>
