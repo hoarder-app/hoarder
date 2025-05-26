@@ -1,7 +1,8 @@
 ################# Base Builder ##############
 FROM node:22-alpine AS base
 
-WORKDIR /app
+ARG SOURCE_DIR=/app  # Default value if not specified
+WORKDIR ${SOURCE_DIR}
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
@@ -11,7 +12,7 @@ RUN npm install -g corepack@0.31.0 && corepack enable
 # Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
 RUN apk add --no-cache libc6-compat make g++ py3-pip linux-headers
 
-COPY . .
+COPY . ${SOURCE_DIR}/
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV PUPPETEER_SKIP_DOWNLOAD true
 RUN pnpm install --frozen-lockfile
@@ -23,16 +24,22 @@ RUN cd packages/db && \
 
 
 # Compile the web app
-RUN (cd apps/web && pnpm exec next build --experimental-build-mode compile)
+RUN (cd ${SOURCE_DIR}/apps/web && pnpm exec next build --experimental-build-mode compile)
+
+# Then copy the built files from source_dir to /app for runtime
+RUN mkdir -p /app/apps/web && cp -r ${SOURCE_DIR}/apps/web/.next /app/apps/web/
+RUN cp -r ${SOURCE_DIR}/apps/web/public /app/apps/web/
 
 # Build the worker code
 RUN pnpm deploy --node-linker=isolated --filter @karakeep/workers --prod /prod/workers
 
 # Build the cli
-RUN (cd apps/cli && pnpm build)
+RUN (cd ${SOURCE_DIR}/apps/cli && pnpm build)
+RUN mkdir -p /app/apps/cli && cp -r ${SOURCE_DIR}/apps/cli/dist /app/apps/cli/
 
 # Build the mcp server
-RUN (cd apps/mcp && pnpm build)
+RUN (cd ${SOURCE_DIR}/apps/mcp && pnpm build)
+RUN mkdir -p /app/apps/mcp && cp -r ${SOURCE_DIR}/apps/mcp/dist /app/apps/mcp/
 
 ################# The All-in-one builder ##############
 
