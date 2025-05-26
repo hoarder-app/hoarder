@@ -61,7 +61,7 @@ export default function HighlightCard({
 
     waitForElementInView(el).then(() => {
       el.classList.add("bg-orange-600", "transition-colors", "duration-1000");
-
+      // can't seem to use the same background color because it's not !important
       setTimeout(() => {
         el.classList.remove("bg-orange-600");
       }, 1500);

@@ -61,16 +61,18 @@ const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         <div className="flex gap-2">
-          <ActionButton
-            loading={false}
-            size="none"
-            title="Copy to clipboard"
-            variant="ghost"
-            className="size-8 rounded-full transition-all duration-200 hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={onCopy}
-          >
-            <ClipboardCopy className="size-5" />
-          </ActionButton>
+          {selectedHighlight && onCopy && (
+            <ActionButton
+              loading={false}
+              size="none"
+              title="Copy to clipboard"
+              variant="ghost"
+              className="size-8 rounded-full transition-all duration-200 hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-700"
+              onClick={onCopy}
+            >
+              <ClipboardCopy className="size-5" />
+            </ActionButton>
+          )}
         </div>
         {SUPPORTED_HIGHLIGHT_COLORS.map((color) => (
           <Button
