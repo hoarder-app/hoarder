@@ -93,7 +93,7 @@ Go to the [quick sharing page](/quick-sharing) to install the mobile apps and th
 
 ## Updating
 
-Updating karakeep will depend on what you used for the `KARAKEEP_VERSION` env variable.
+Updating Karakeep will depend on what you used for the `KARAKEEP_VERSION` env variable.
 
 - If you pinned the app to a specific version, bump the version and re-run `docker compose up -d`. This should pull the new version for you.
 - If you used `KARAKEEP_VERSION=release`, you'll need to force docker to pull the latest version by running `docker compose up --pull always -d`.
