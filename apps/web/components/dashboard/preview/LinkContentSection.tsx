@@ -2,14 +2,7 @@ import { useState } from "react";
 import Image from "next/image";
 import BookmarkHTMLHighlighter from "@/components/dashboard/preview/BookmarkHtmlHighlighter";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
@@ -173,56 +166,67 @@ export default function LinkContentSection({
   bookmark: ZBookmark;
 }) {
   const { t } = useTranslation();
-  const [section, setSection] = useState<string>("cached");
+  const [activeTab, setActiveTab] = useState<string>("cached");
 
   if (bookmark.content.type != BookmarkTypes.LINK) {
     throw new Error("Invalid content type");
   }
 
-  let content;
-  if (section === "cached") {
-    content = <CachedContentSection bookmarkId={bookmark.id} />;
-  } else if (section === "archive") {
-    content = <FullPageArchiveSection link={bookmark.content} />;
-  } else if (section === "video") {
-    content = <VideoSection link={bookmark.content} />;
-  } else {
-    content = <ScreenshotSection link={bookmark.content} />;
-  }
-
   return (
-    <div className="flex h-full flex-col items-center gap-2">
-      <Select onValueChange={setSection} value={section}>
-        <SelectTrigger className="w-fit">
-          <span className="mr-2">
-            <SelectValue />
-          </span>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectGroup>
-            <SelectItem value="cached">{t("preview.reader_view")}</SelectItem>
-            <SelectItem
-              value="screenshot"
-              disabled={!bookmark.content.screenshotAssetId}
-            >
-              {t("common.screenshot")}
-            </SelectItem>
-            <SelectItem
-              value="archive"
-              disabled={
-                !bookmark.content.fullPageArchiveAssetId &&
-                !bookmark.content.precrawledArchiveAssetId
-              }
-            >
-              {t("common.archive")}
-            </SelectItem>
-            <SelectItem value="video" disabled={!bookmark.content.videoAssetId}>
-              {t("common.video")}
-            </SelectItem>
-          </SelectGroup>
-        </SelectContent>
-      </Select>
-      {content}
-    </div>
+    <Tabs
+      value={activeTab}
+      onValueChange={setActiveTab}
+      className="flex h-full w-full flex-col overflow-hidden"
+    >
+      <TabsList
+        className={`sticky top-0 z-10 grid h-auto w-full grid-cols-4`}
+      >
+        <TabsTrigger value="cached" className="overflow-hidden whitespace-nowrap text-ellipsis text-left">{t("preview.reader_view")}</TabsTrigger>
+        <TabsTrigger
+          value="screenshot"
+          disabled={!bookmark.content.screenshotAssetId}
+          className="overflow-hidden whitespace-nowrap text-ellipsis text-left"
+        >
+          {t("common.screenshot")}
+        </TabsTrigger>
+        <TabsTrigger
+          value="archive"
+          disabled={
+            !bookmark.content.fullPageArchiveAssetId &&
+            !bookmark.content.precrawledArchiveAssetId
+          }
+          className="overflow-hidden whitespace-nowrap text-ellipsis text-left"
+        >
+          {t("common.archive")}
+        </TabsTrigger>
+        <TabsTrigger value="video" disabled={!bookmark.content.videoAssetId} className="overflow-hidden whitespace-nowrap text-ellipsis text-left">
+          {t("common.video")}
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent
+        value="cached"
+        className="h-full flex-1 overflow-hidden overflow-y-auto data-[state=inactive]:hidden"
+      >
+        <CachedContentSection bookmarkId={bookmark.id} />
+      </TabsContent>
+      <TabsContent
+        value="screenshot"
+        className="h-full flex-1 overflow-hidden overflow-y-auto data-[state=inactive]:hidden"
+      >
+        <ScreenshotSection link={bookmark.content} />
+      </TabsContent>
+      <TabsContent
+        value="archive"
+        className="h-full flex-1 overflow-hidden overflow-y-auto data-[state=inactive]:hidden"
+      >
+        <FullPageArchiveSection link={bookmark.content} />
+      </TabsContent>
+      <TabsContent
+        value="video"
+        className="h-full flex-1 overflow-hidden overflow-y-auto data-[state=inactive]:hidden"
+      >
+        <VideoSection link={bookmark.content} />
+      </TabsContent>
+    </Tabs>
   );
 }

@@ -178,8 +178,8 @@ export default function BookmarkPreview({
         <TabsList
           className={`sticky top-0 z-10 grid h-auto w-full grid-cols-2`}
         >
-          <TabsTrigger value="content">{t("preview.tabs.content")}</TabsTrigger>
-          <TabsTrigger value="details">{t("preview.tabs.details")}</TabsTrigger>
+          <TabsTrigger value="content" className="overflow-hidden whitespace-nowrap text-ellipsis text-left">{t("preview.tabs.content")}</TabsTrigger>
+          <TabsTrigger value="details" className="overflow-hidden whitespace-nowrap text-ellipsis text-left">{t("preview.tabs.details")}</TabsTrigger>
         </TabsList>
         <TabsContent
           value="content"
