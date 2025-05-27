@@ -58,7 +58,7 @@ export function buildSummaryPrompt(
   contextLength: number,
 ) {
   const constructPrompt = (c: string) => `
-    Summarize the following content responding ONLY with the summary. You MUST follow the following rules:
+Summarize the following content responding ONLY with the summary. You MUST follow the following rules:
 - Summary must be in 3-4 sentences.
 - The summary language must be in ${lang}.
 ${customPrompts && customPrompts.map((p) => `- ${p}`).join("\n")}
