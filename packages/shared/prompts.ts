@@ -38,7 +38,7 @@ Please analyze the text_content below and suggest relevant tags that describe it
 - The tags must be in ${lang}.
 - The content can include text for cookie consent and privacy policy, ignore those while tagging.
 - Aim for 5 tags.
-- If there are no good tags, leave the array empty.
+- If anything goes wrong, use the tag 'tag_error' to let us know.
 ${customPrompts && customPrompts.map((p) => `- ${p}`).join("\n")}
 
 <text_content>
