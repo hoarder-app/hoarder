@@ -183,7 +183,7 @@ export default function BookmarkPreview({
         </TabsList>
         <TabsContent
           value="content"
-          className="h-full flex-1 overflow-hidden overflow-y-auto bg-background p-2 data-[state=inactive]:hidden"
+          className="h-full flex-1 overflow-hidden overflow-y-auto bg-background data-[state=inactive]:hidden"
         >
           {contentSection}
         </TabsContent>

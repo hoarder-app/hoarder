@@ -179,7 +179,7 @@ export default function LinkContentSection({
       className="flex h-full w-full flex-col overflow-hidden"
     >
       <TabsList
-        className={`sticky top-0 z-10 grid h-auto w-full grid-cols-4`}
+        className={`grid h-auto w-full grid-cols-4`}
       >
         <TabsTrigger value="cached" className="overflow-hidden whitespace-nowrap text-ellipsis text-left">{t("preview.reader_view")}</TabsTrigger>
         <TabsTrigger
@@ -205,25 +205,25 @@ export default function LinkContentSection({
       </TabsList>
       <TabsContent
         value="cached"
-        className="h-full flex-1 overflow-hidden overflow-y-auto data-[state=inactive]:hidden"
+        className="h-full flex-1 overflow-hidden overflow-y-auto px-2 data-[state=inactive]:hidden"
       >
         <CachedContentSection bookmarkId={bookmark.id} />
       </TabsContent>
       <TabsContent
         value="screenshot"
-        className="h-full flex-1 overflow-hidden overflow-y-auto data-[state=inactive]:hidden"
+        className="h-full flex-1 overflow-hidden overflow-y-auto px-2 data-[state=inactive]:hidden"
       >
         <ScreenshotSection link={bookmark.content} />
       </TabsContent>
       <TabsContent
         value="archive"
-        className="h-full flex-1 overflow-hidden overflow-y-auto data-[state=inactive]:hidden"
+        className="h-full flex-1 overflow-hidden overflow-y-auto px-2 data-[state=inactive]:hidden"
       >
         <FullPageArchiveSection link={bookmark.content} />
       </TabsContent>
       <TabsContent
         value="video"
-        className="h-full flex-1 overflow-hidden overflow-y-auto data-[state=inactive]:hidden"
+        className="h-full flex-1 overflow-hidden overflow-y-auto px-2 data-[state=inactive]:hidden"
       >
         <VideoSection link={bookmark.content} />
       </TabsContent>
