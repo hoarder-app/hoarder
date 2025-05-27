@@ -33,7 +33,7 @@ export function buildTextPrompt(
 ) {
   const constructPrompt = (c: string) => `
 You are a bot in a read-it-later app and your responsibility is to help with automatic tagging.
-Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT END HERE" and suggest relevant tags that describe its key themes, topics, and main ideas. The rules are:
+Please analyze the text_content below and suggest relevant tags that describe its key themes, topics, and main ideas. The rules are:
 - Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres.
 - The tags must be in ${lang}.
 - If it's a famous website you may also include a tag for the website. If the tag is not generic enough, don't include it.
@@ -41,9 +41,11 @@ Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT 
 - Aim for 3-5 tags.
 - If there are no good tags, leave the array empty.
 ${customPrompts && customPrompts.map((p) => `- ${p}`).join("\n")}
-CONTENT START HERE
+
+<text_content>
 ${c}
-CONTENT END HERE
+</text_content>
+
 You must respond in JSON with optional "thinking" key for your reasoning and required "tags" key with the value as an array of string tags.`;
 
   const promptSize = calculateNumTokens(constructPrompt(""));
