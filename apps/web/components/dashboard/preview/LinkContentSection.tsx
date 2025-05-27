@@ -181,11 +181,11 @@ export default function LinkContentSection({
       <TabsList
         className={`grid h-auto w-full grid-cols-4`}
       >
-        <TabsTrigger value="cached" className="overflow-hidden whitespace-nowrap text-ellipsis text-left">{t("preview.reader_view")}</TabsTrigger>
+        <TabsTrigger value="cached" className="select-none overflow-hidden whitespace-nowrap text-ellipsis text-left">{t("preview.reader_view")}</TabsTrigger>
         <TabsTrigger
           value="screenshot"
           disabled={!bookmark.content.screenshotAssetId}
-          className="overflow-hidden whitespace-nowrap text-ellipsis text-left"
+          className="select-none overflow-hidden whitespace-nowrap text-ellipsis text-left"
         >
           {t("common.screenshot")}
         </TabsTrigger>
@@ -195,11 +195,11 @@ export default function LinkContentSection({
             !bookmark.content.fullPageArchiveAssetId &&
             !bookmark.content.precrawledArchiveAssetId
           }
-          className="overflow-hidden whitespace-nowrap text-ellipsis text-left"
+          className="select-none overflow-hidden whitespace-nowrap text-ellipsis text-left"
         >
           {t("common.archive")}
         </TabsTrigger>
-        <TabsTrigger value="video" disabled={!bookmark.content.videoAssetId} className="overflow-hidden whitespace-nowrap text-ellipsis text-left">
+        <TabsTrigger value="video" disabled={!bookmark.content.videoAssetId} className="select-none overflow-hidden whitespace-nowrap text-ellipsis text-left">
           {t("common.video")}
         </TabsTrigger>
       </TabsList>
