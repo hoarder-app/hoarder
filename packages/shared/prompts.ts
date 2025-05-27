@@ -36,7 +36,6 @@ You are a bot in a read-it-later app and your responsibility is to help with aut
 Please analyze the text_content below and suggest relevant tags that describe its key themes, topics, and main ideas. The rules are:
 - Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres.
 - The tags must be in ${lang}.
-- If it's a famous website you may also include a tag for the website. If the tag is not generic enough, don't include it.
 - The content can include text for cookie consent and privacy policy, ignore those while tagging.
 - Aim for 3-5 tags.
 - If there are no good tags, leave the array empty.
