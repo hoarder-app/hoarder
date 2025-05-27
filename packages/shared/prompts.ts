@@ -37,7 +37,7 @@ Please analyze the text_content below and suggest relevant tags that describe it
 - Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres.
 - The tags must be in ${lang}.
 - The content can include text for cookie consent and privacy policy, ignore those while tagging.
-- Aim for 3-5 tags.
+- Aim for 5 tags.
 - If there are no good tags, leave the array empty.
 ${customPrompts && customPrompts.map((p) => `- ${p}`).join("\n")}
 
