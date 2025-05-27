@@ -50,7 +50,7 @@ Get it [here](https://dansnow.github.io/hoarder-pipette/guides/installation/).
 
 _By [@thiswillbeyourgithub](https://github.com/thiswillbeyourgithub/)_
 
-A python package to simplify access to the karakeep API. Can be used as a library or from the CLI. Aims for feature completeness and high test coverage but do check its feature matrix before relying too much on it.
+A python package to simplify access to the karakeep API. Can be used as a library or from the CLI. Aims for feature completeness and high test coverage but do check its feature matrix before relying too much on it. It includes a [list of scripts](https://github.com/thiswillbeyourgithub/karakeep_python_api/tree/main/examples) to deduplicate community efforts and easy onboarding.
 
 Get it [here](https://github.com/thiswillbeyourgithub/karakeep_python_api).
 
