@@ -141,6 +141,7 @@ export default function BookmarkPreview({
         )}
         <Separator />
       </div>
+      <ActionBar bookmark={bookmark} />
       <CreationTime createdAt={bookmark.createdAt} />
       <SummarizeBookmarkArea bookmark={bookmark} />
       <div className="flex items-center gap-4">
@@ -153,7 +154,6 @@ export default function BookmarkPreview({
       </div>
       <AttachmentBox bookmark={bookmark} />
       <HighlightsBox bookmarkId={bookmark.id} />
-      <ActionBar bookmark={bookmark} />
     </div>
   );
 
