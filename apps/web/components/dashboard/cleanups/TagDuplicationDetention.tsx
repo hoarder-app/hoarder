@@ -200,7 +200,7 @@ function SuggestionRow({
 
 export function TagDuplicationDetection() {
   const [expanded, setExpanded] = useState(false);
-  let { data: allTags } = api.tags.list.useQuery(undefined, {
+  const { data: allTags } = api.tags.list.useQuery(undefined, {
     refetchOnWindowFocus: false,
   });
 
@@ -208,8 +208,8 @@ export function TagDuplicationDetection() {
     useSuggestions();
 
   useEffect(() => {
-    allTags = allTags ?? { tags: [] };
-    const sortedTags = allTags.tags.sort((a, b) =>
+    const tagsData = allTags ?? { tags: [], total: 0, hasMore: false };
+    const sortedTags = tagsData.tags.sort((a, b) =>
       normalizeTag(a.name).localeCompare(normalizeTag(b.name)),
     );
 

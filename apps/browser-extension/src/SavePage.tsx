@@ -42,7 +42,7 @@ export default function SavePage() {
       if (!newBookmarkRequest) {
         const [currentTab] = await chrome.tabs.query({
           active: true,
-          lastFocusedWindow: true,
+          currentWindow: true,
         });
         if (currentTab?.url) {
           newBookmarkRequest = {

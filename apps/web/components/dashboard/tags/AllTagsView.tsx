@@ -10,13 +10,14 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import InfoTooltip from "@/components/ui/info-tooltip";
+import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Toggle } from "@/components/ui/toggle";
 import { toast } from "@/components/ui/use-toast";
 import useBulkTagActionsStore from "@/lib/bulkTagActions";
 import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
-import { ArrowDownAZ, Combine } from "lucide-react";
+import { ArrowDownAZ, Combine, Search } from "lucide-react";
 
 import type { ZGetTagResponse, ZTagBasic } from "@karakeep/shared/types/tags";
 import { useDeleteUnusedTags } from "@karakeep/shared-react/hooks/tags";
@@ -80,6 +81,7 @@ export default function AllTagsView({
   const { t } = useTranslation();
   const [draggingEnabled, setDraggingEnabled] = React.useState(false);
   const [sortByName, setSortByName] = React.useState(false);
+  const [searchQuery, setSearchQuery] = React.useState("");
 
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [selectedTag, setSelectedTag] = React.useState<ZTagBasic | null>(null);
@@ -100,29 +102,40 @@ export default function AllTagsView({
   }
 
   const { data } = api.tags.list.useQuery(undefined, {
-    initialData: { tags: initialData },
+    initialData: {
+      tags: initialData,
+      total: initialData.length,
+      hasMore: false,
+    },
   });
-
-  useEffect(() => {
-    const visibleTagIds = data.tags.map((tag) => tag.id);
-    setVisibleTagIds(visibleTagIds);
-    return () => {
-      setVisibleTagIds([]);
-    };
-  }, [data.tags]);
 
   // Sort tags by usage desc
   const allTags = data.tags.sort(sortByName ? byNameSorter : byUsageSorter);
 
-  const humanTags = allTags.filter(
+  // Filter tags by search query
+  const filteredTags = searchQuery
+    ? allTags.filter((tag) =>
+        tag.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      )
+    : allTags;
+
+  useEffect(() => {
+    const visibleTagIds = filteredTags.map((tag) => tag.id);
+    setVisibleTagIds(visibleTagIds);
+    return () => {
+      setVisibleTagIds([]);
+    };
+  }, [filteredTags, setVisibleTagIds]);
+
+  const humanTags = filteredTags.filter(
     (t) => (t.numBookmarksByAttachedType.human ?? 0) > 0,
   );
-  const aiTags = allTags.filter(
+  const aiTags = filteredTags.filter(
     (t) =>
       (t.numBookmarksByAttachedType.human ?? 0) == 0 &&
       (t.numBookmarksByAttachedType.ai ?? 0) > 0,
   );
-  const emptyTags = allTags.filter((t) => t.numBookmarks === 0);
+  const emptyTags = filteredTags.filter((t) => t.numBookmarks === 0);
 
   const tagsToPill = (tags: typeof allTags, bulkEditEnabled: boolean) => {
     let tagPill;
@@ -169,29 +182,40 @@ export default function AllTagsView({
           }}
         />
       )}
-      <div className="flex justify-end gap-x-2">
-        <BulkTagAction />
-        <Toggle
-          variant="outline"
-          aria-label="Toggle bold"
-          pressed={draggingEnabled}
-          onPressedChange={toggleDraggingEnabled}
-          disabled={isBulkEditEnabled}
-        >
-          <Combine className="mr-2 size-4" />
-          {t("tags.drag_and_drop_merging")}
-          <InfoTooltip size={15} className="my-auto ml-2" variant="explain">
-            <p>{t("tags.drag_and_drop_merging_info")}</p>
-          </InfoTooltip>
-        </Toggle>
-        <Toggle
-          variant="outline"
-          aria-label="Toggle bold"
-          pressed={sortByName}
-          onPressedChange={toggleSortByName}
-        >
-          <ArrowDownAZ className="mr-2 size-4" /> {t("tags.sort_by_name")}
-        </Toggle>
+      <div className="flex flex-col gap-4">
+        <div className="relative">
+          <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
+          <Input
+            placeholder="Search tags..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-8"
+          />
+        </div>
+        <div className="flex justify-end gap-x-2">
+          <BulkTagAction />
+          <Toggle
+            variant="outline"
+            aria-label="Toggle bold"
+            pressed={draggingEnabled}
+            onPressedChange={toggleDraggingEnabled}
+            disabled={isBulkEditEnabled}
+          >
+            <Combine className="mr-2 size-4" />
+            {t("tags.drag_and_drop_merging")}
+            <InfoTooltip size={15} className="my-auto ml-2" variant="explain">
+              <p>{t("tags.drag_and_drop_merging_info")}</p>
+            </InfoTooltip>
+          </Toggle>
+          <Toggle
+            variant="outline"
+            aria-label="Toggle bold"
+            pressed={sortByName}
+            onPressedChange={toggleSortByName}
+          >
+            <ArrowDownAZ className="mr-2 size-4" /> {t("tags.sort_by_name")}
+          </Toggle>
+        </div>
       </div>
       <span className="flex items-center gap-2">
         <p className="text-lg">{t("tags.your_tags")}</p>

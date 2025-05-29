@@ -1,5 +1,5 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, eq, inArray, notExists } from "drizzle-orm";
+import { and, count, eq, inArray, notExists } from "drizzle-orm";
 import { z } from "zod";
 
 import type { ZAttachedByEnum } from "@karakeep/shared/types/tags";
@@ -355,12 +355,34 @@ export const tagsAppRouter = router({
       };
     }),
   list: authedProcedure
+    .input(
+      z
+        .object({
+          limit: z.number().min(1).max(100).default(50).optional(),
+          offset: z.number().min(0).default(0).optional(),
+        })
+        .optional(),
+    )
     .output(
       z.object({
         tags: z.array(zGetTagResponseSchema),
+        total: z.number(),
+        hasMore: z.boolean(),
       }),
     )
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
+      const limit = input?.limit ?? 50;
+      const offset = input?.offset ?? 0;
+
+      // Get total count
+      const [{ value }] = await ctx.db
+        .select({ value: count() })
+        .from(bookmarkTags)
+        .where(eq(bookmarkTags.userId, ctx.user.id));
+
+      const total = value;
+
+      // Get paginated tags
       const tags = await ctx.db.query.bookmarkTags.findMany({
         where: eq(bookmarkTags.userId, ctx.user.id),
         with: {
@@ -370,6 +392,8 @@ export const tagsAppRouter = router({
             },
           },
         },
+        limit,
+        offset,
       });
 
       const resp = tags.map(({ tagsOnBookmarks, ...rest }) => ({
@@ -388,6 +412,10 @@ export const tagsAppRouter = router({
         ),
       }));
 
-      return { tags: resp };
+      return {
+        tags: resp,
+        total,
+        hasMore: offset + limit < total,
+      };
     }),
 });
