@@ -102,7 +102,7 @@ const MarkdownEditor = memo(
           ) : (
             <RichTextPlugin
               contentEditable={
-                <ContentEditable className="prose h-full w-full min-w-full overflow-auto p-2 dark:prose-invert prose-p:m-0" />
+                <ContentEditable className="prose dark:prose-invert prose-p:m-0 h-full w-full min-w-full overflow-auto p-2" />
               }
               ErrorBoundary={LexicalErrorBoundary}
             />
