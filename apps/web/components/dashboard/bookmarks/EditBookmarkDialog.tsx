@@ -124,11 +124,14 @@ export function EditBookmarkDialog({
     updateBookmarkMutate(payload);
   }
 
-  // Reset form when bookmark data changes externally or dialog reopens
+  // Reset form only when dialog is initially opened
+  const prevOpenRef = React.useRef(open);
   React.useEffect(() => {
-    if (open) {
+    // Only reset form when transitioning from closed to open
+    if (open && !prevOpenRef.current) {
       form.reset(bookmarkToDefault(bookmark));
     }
+    prevOpenRef.current = open;
   }, [bookmark, form, open]);
 
   const isLink = bookmark.content.type === BookmarkTypes.LINK;
