@@ -68,18 +68,6 @@ const test = ({ url }: { url: string }): boolean =>
   domainFromUrl(url).toLowerCase() === "reddit";
 
 const metascraperReddit = () => {
-  /**
-   * as of 5.46.11 (latest as of this msg), the typedef for Rules in the
-   * metascraper package is flawed.
-   *
-   * See issue https://github.com/microlinkhq/metascraper/issues/754 for details.
-   *
-   * Using @ts-expect-error below to make sure the comment is removed
-   * once the metascraper package has been updated.
-   *
-   **/
-
-  // @ts-expect-error TS2322: pkgName conflicts with index signature
   const rules: Rules = {
     pkgName: "metascraper-reddit",
     test,
