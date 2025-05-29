@@ -15,7 +15,7 @@ export async function uploadTestAsset(
   const formData = new FormData();
   formData.append("file", file);
 
-  const response = await fetch(`http://localhost:${port}/api/assets`, {
+  const response = await fetch(`http://localhost:${port}/api/v1/assets`, {
     method: "POST",
     headers: {
       authorization: `Bearer ${apiKey}`,

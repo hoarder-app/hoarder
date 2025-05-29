@@ -3,6 +3,7 @@ import { buildDBClient, migrateDB, SqliteQueue } from "liteque";
 import { z } from "zod";
 
 import serverConfig from "./config";
+import { zRuleEngineEventSchema } from "./types/rules";
 
 const QUEUE_DB_PATH = path.join(serverConfig.dataDir, "queue.db");
 
@@ -31,9 +32,10 @@ export const LinkCrawlerQueue = new SqliteQueue<ZCrawlLinkRequest>(
   },
 );
 
-// OpenAI Worker
+// Inference Worker
 export const zOpenAIRequestSchema = z.object({
   bookmarkId: z.string(),
+  type: z.enum(["summarize", "tag"]).default("tag"),
 });
 export type ZOpenAIRequest = z.infer<typeof zOpenAIRequestSchema>;
 
@@ -170,7 +172,7 @@ export const AssetPreprocessingQueue =
 // Webhook worker
 export const zWebhookRequestSchema = z.object({
   bookmarkId: z.string(),
-  operation: z.enum(["crawled", "created", "edited", "ai tagged"]),
+  operation: z.enum(["crawled", "created", "edited", "ai tagged", "deleted"]),
 });
 export type ZWebhookRequest = z.infer<typeof zWebhookRequestSchema>;
 export const WebhookQueue = new SqliteQueue<ZWebhookRequest>(
@@ -191,5 +193,32 @@ export async function triggerWebhook(
   await WebhookQueue.enqueue({
     bookmarkId,
     operation,
+  });
+}
+
+// RuleEngine worker
+export const zRuleEngineRequestSchema = z.object({
+  bookmarkId: z.string(),
+  events: z.array(zRuleEngineEventSchema),
+});
+export type ZRuleEngineRequest = z.infer<typeof zRuleEngineRequestSchema>;
+export const RuleEngineQueue = new SqliteQueue<ZRuleEngineRequest>(
+  "rule_engine_queue",
+  queueDB,
+  {
+    defaultJobArgs: {
+      numRetries: 1,
+    },
+    keepFailedJobs: false,
+  },
+);
+
+export async function triggerRuleEngineOnEvent(
+  bookmarkId: string,
+  events: z.infer<typeof zRuleEngineEventSchema>[],
+) {
+  await RuleEngineQueue.enqueue({
+    events,
+    bookmarkId,
   });
 }

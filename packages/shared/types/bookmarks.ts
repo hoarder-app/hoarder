@@ -12,7 +12,7 @@ export const enum BookmarkTypes {
   UNKNOWN = "unknown",
 }
 
-export const zSortOrder = z.enum(["asc", "desc"]);
+export const zSortOrder = z.enum(["asc", "desc", "relevance"]);
 export type ZSortOrder = z.infer<typeof zSortOrder>;
 
 export const zAssetTypesSchema = z.enum([
@@ -87,6 +87,7 @@ export const zBareBookmarkSchema = z.object({
   archived: z.boolean(),
   favourited: z.boolean(),
   taggingStatus: z.enum(["success", "failure", "pending"]).nullable(),
+  summarizationStatus: z.enum(["success", "failure", "pending"]).nullable(),
   note: z.string().nullish(),
   summary: z.string().nullish(),
 });
@@ -178,7 +179,7 @@ export const zGetBookmarksRequestSchema = z.object({
   // The value is currently not being used, but keeping it so that client can still set it to true for older
   // servers.
   useCursorV2: z.boolean().optional(),
-  sortOrder: zSortOrder.optional().default("desc"),
+  sortOrder: zSortOrder.exclude(["relevance"]).optional().default("desc"),
   includeContent: z.boolean().optional().default(false),
 });
 export type ZGetBookmarksRequest = z.infer<typeof zGetBookmarksRequestSchema>;
@@ -238,6 +239,6 @@ export const zSearchBookmarksRequestSchema = z.object({
   text: z.string(),
   limit: z.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),
   cursor: zSearchBookmarksCursor.nullish(),
-  sortOrder: zSortOrder.optional().default("desc"),
+  sortOrder: zSortOrder.optional().default("relevance"),
   includeContent: z.boolean().optional().default(false),
 });

@@ -16,7 +16,8 @@
       "import_bookmarks_from_omnivore_export": "Uvozi zaznamke iz Omnivore izvoza",
       "export_links_and_notes": "Izvozi povezave in zapiske",
       "import_export": "Uvoz / Izvoz",
-      "import_bookmarks_from_html_file": "Uvozi zaznamke iz datoteke HTML"
+      "import_bookmarks_from_html_file": "Uvozi zaznamke iz datoteke HTML",
+      "import_bookmarks_from_tab_session_manager_export": "Uvozi zaznamke iz upravitelja zavihkov"
     },
     "info": {
       "options": "Možnosti",
@@ -79,6 +80,54 @@
       "delete_asset": "Izbriši sredstvo",
       "delete_asset_confirmation": "Ali si prepričan, da želiš izbrisati to sredstvo?",
       "asset_link": "Povezava do sredstva"
+    },
+    "rules": {
+      "create_your_first_rule": "Ustvari svoje prvo pravilo za avtomatizacijo poteka dela",
+      "conditions_types": {
+        "always": "Vedno",
+        "url_contains": "URL vsebuje",
+        "imported_from_feed": "Uvoženo iz vira",
+        "bookmark_type_is": "Vrsta zaznamka je",
+        "has_tag": "Ima oznako",
+        "is_favourited": "Je med priljubljenimi",
+        "is_archived": "Je arhivirano",
+        "and": "Vse od naslednjega je resnično",
+        "or": "Katero koli od naslednjega je resnično"
+      },
+      "rules": "Mehanizem pravil",
+      "rule_name": "Ime pravila",
+      "description": "Uporabiš lahko pravila za sprožitev dejanj, ko se sproži dogodek.",
+      "ceate_rule": "Ustvari pravilo",
+      "edit_rule": "Uredi pravilo",
+      "save_rule": "Shrani pravilo",
+      "delete_rule": "Izbriši pravilo",
+      "delete_rule_confirmation": "Si prepričan, da želiš izbrisati to pravilo?",
+      "whenever": "Kadar ...",
+      "if": "Če ...",
+      "enter_rule_name": "Vnesite ime pravila",
+      "describe_what_this_rule_does": "Opiši, kaj to pravilo počne",
+      "rule_has_been_created": "Pravilo je bilo ustvarjeno!",
+      "rule_has_been_updated": "Pravilo je bilo posodobljeno!",
+      "rule_has_been_deleted": "Pravilo je bilo izbrisano!",
+      "no_rules_created_yet": "Še ni ustvarjenih pravil",
+      "actions_types": {
+        "add_tag": "Dodaj oznako",
+        "remove_tag": "Odstrani oznako",
+        "add_to_list": "Dodaj na seznam",
+        "remove_from_list": "Odstrani s seznama",
+        "download_full_page_archive": "Prenesi arhiv celotne strani",
+        "favourite_bookmark": "Priljubljeni zaznamek",
+        "archive_bookmark": "Arhiviraj zaznamek"
+      },
+      "events_types": {
+        "bookmark_added": "Zaznamek je dodan",
+        "tag_added": "Ta oznaka je dodana zaznamku",
+        "tag_removed": "Ta oznaka je odstranjena iz zaznamka",
+        "added_to_list": "Zaznamek je dodan na ta seznam",
+        "removed_from_list": "Zaznamek je odstranjen s tega seznama",
+        "favourited": "Zaznamek je med priljubljenimi",
+        "archived": "Zaznamek je arhiviran"
+      }
     }
   },
   "admin": {
@@ -149,7 +198,19 @@
     "is_not_favorited": "Ni med priljubljenimi",
     "has_any_tag": "Ima katero koli oznako",
     "has_no_tags": "Nima oznake",
-    "full_text_search": "Iskanje po celotnem besedilu"
+    "full_text_search": "Iskanje po celotnem besedilu",
+    "is_from_feed": "Je iz vira RSS",
+    "is_not_from_feed": "Ni iz vira RSS",
+    "created_within": "Ustvarjeno v",
+    "created_earlier_than": "Ustvarjeno prej kot",
+    "day_s": " Dnevi",
+    "week_s": " Tedni",
+    "month_s": " Meseci",
+    "year_s": " Let(a)",
+    "day_s_ago": " Dnevi nazaj",
+    "week_s_ago": " Tedni nazaj",
+    "month_s_ago": " Meseci nazaj",
+    "year_s_ago": " Let(a) nazaj"
   },
   "tags": {
     "your_tags_info": "Oznake, ki si jih dodelil/a vsaj enkrat",
@@ -197,7 +258,11 @@
     "key": "Ključ",
     "tags": "Oznake",
     "note": "Opomba",
-    "highlights": "Poudarki"
+    "highlights": "Poudarki",
+    "updated_at": "Posodobljeno ob",
+    "title": "Naslov",
+    "description": "Opis",
+    "summary": "Povzetek"
   },
   "actions": {
     "close_bulk_edit": "Zapri množično urejanje",
@@ -235,7 +300,8 @@
     "recrawl": "Ponovno prebrskaj",
     "edit_tags": "Uredi oznake",
     "fetch_now": "Poberi zdaj",
-    "apply_all": "Uporabi vse"
+    "apply_all": "Uporabi vse",
+    "open_editor": "Odpri urejevalnik"
   },
   "layouts": {
     "compact": "Kompaktno",
@@ -255,7 +321,12 @@
     "favourites": "Priljubljene",
     "parent_list": "Seznam staršev",
     "no_parent": "Brez starša",
-    "search_query_help": "Izvedi več o jeziku iskalnih poizvedb."
+    "search_query_help": "Izvedi več o jeziku iskalnih poizvedb.",
+    "delete_after_merge": "Izbriši izvirni seznam po združitvi",
+    "no_destination": "Ni cilja",
+    "description": "Opis (neobvezno)",
+    "merge_list": "Združi seznam",
+    "destination_list": "Ciljni seznam"
   },
   "options": {
     "dark_mode": "Temni način",
@@ -317,7 +388,8 @@
     "import_as_text": "Uvozi kot besedilni zaznamek",
     "disabled_submissions": "Oddaje so onemogočene",
     "quickly_focus": "Na to polje se lahko hitro osredotočiš s pritiskom na ⌘ + E",
-    "multiple_urls_dialog_desc": "Vnos vsebuje več URL-jev v ločenih vrsticah. Ali jih želite uvoziti kot ločene zaznamke?"
+    "multiple_urls_dialog_desc": "Vnos vsebuje več URL-jev v ločenih vrsticah. Ali jih želite uvoziti kot ločene zaznamke?",
+    "placeholder_v2": "Prilepite povezavo, napišite opombo ali spustite sliko …"
   },
   "toasts": {
     "bookmarks": {
@@ -330,7 +402,9 @@
     },
     "lists": {
       "created": "Seznam je bil ustvarjen!",
-      "updated": "Seznam je bil posodobljen!"
+      "updated": "Seznam je bil posodobljen!",
+      "merged": "Seznam je bil združen!",
+      "deleted": "Seznam je bil izbrisan!"
     }
   },
   "dialogs": {
@@ -348,9 +422,26 @@
   },
   "preview": {
     "view_original": "Ogled izvirnika",
-    "cached_content": "Predpomnjena vsebina"
+    "cached_content": "Predpomnjena vsebina",
+    "reader_view": "Pogled bralnika"
   },
   "highlights": {
     "no_highlights": "Še nimaš nobenih poudarkov."
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "Še ni zaznamkov",
+      "description": "Shrani zanimive članke, povezave in strani za hiter dostop pozneje."
+    }
+  },
+  "bookmark_editor": {
+    "save_changes": "Shrani spremembe",
+    "title": "Uredi zaznamek",
+    "subtitle": "Spremeni podrobnosti zaznamka. Ko končaš, klikni shrani.",
+    "author": "Avtor",
+    "publisher": "Založnik",
+    "date_published": "Datum objave",
+    "pick_a_date": "Izberi datum",
+    "extracted_content": "Izluščena vsebina"
   }
 }

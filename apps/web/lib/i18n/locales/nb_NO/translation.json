@@ -32,7 +32,11 @@
     "source": "Kilde",
     "screenshot": "Skjermbilde",
     "video": "Video",
-    "archive": "Arkiv"
+    "archive": "Arkiv",
+    "updated_at": "Oppdatert",
+    "description": "Beskrivelse",
+    "summary": "Sammendrag",
+    "title": "Tittel"
   },
   "admin": {
     "users_list": {
@@ -115,7 +119,8 @@
     "merge": "Slå sammen",
     "apply_all": "Bruk alle",
     "ignore": "Ignorer",
-    "favorite": "Favoritt"
+    "favorite": "Favoritt",
+    "open_editor": "Åpne redigeringsprogram"
   },
   "settings": {
     "info": {
@@ -150,7 +155,8 @@
       "import_bookmarks_from_linkwarden_export": "Importer bokmerker fra Linkwarden-eksport",
       "import_bookmarks_from_karakeep_export": "Importer bokmerker fra Karakeepp-eksport",
       "export_links_and_notes": "Eksporter lenker og notater",
-      "imported_bookmarks": "Importerte bokmerker"
+      "imported_bookmarks": "Importerte bokmerker",
+      "import_bookmarks_from_tab_session_manager_export": "Importer bokmerker fra Tab Session Manager"
     },
     "api_keys": {
       "new_api_key": "Ny API-nøkkel",
@@ -197,6 +203,54 @@
       "asset_type": "Ressurstype",
       "delete_asset": "Slett element",
       "delete_asset_confirmation": "Er du sikker på at du vil slette denne ressursen?"
+    },
+    "rules": {
+      "rule_has_been_updated": "Regelen er oppdatert!",
+      "rule_has_been_deleted": "Regelen er slettet!",
+      "no_rules_created_yet": "Ingen regler er opprettet ennå",
+      "conditions_types": {
+        "always": "Alltid",
+        "url_contains": "URL inneholder",
+        "imported_from_feed": "Importert fra feed",
+        "is_favourited": "Er favorittmerket",
+        "is_archived": "Er arkivert",
+        "and": "Alle de følgende er sanne",
+        "or": "Noe av det følgende er sant",
+        "bookmark_type_is": "Bokmerketype er",
+        "has_tag": "Har tagg"
+      },
+      "if": "Hvis ...",
+      "enter_rule_name": "Skriv inn regelnavn",
+      "describe_what_this_rule_does": "Beskriv hva denne regelen gjør",
+      "rule_has_been_created": "Regelen er opprettet!",
+      "rules": "Regelmotor",
+      "rule_name": "Regelnavn",
+      "description": "Du kan bruke regler til å utløse handlinger når en hendelse fyres av.",
+      "ceate_rule": "Lag regel",
+      "edit_rule": "Rediger regel",
+      "save_rule": "Lagre regel",
+      "delete_rule": "Slett regel",
+      "delete_rule_confirmation": "Er du sikker på at du vil slette denne regelen?",
+      "whenever": "Når som helst ...",
+      "create_your_first_rule": "Lag din første regel for å automatisere arbeidsflyten din",
+      "actions_types": {
+        "add_tag": "Legg til tagg",
+        "download_full_page_archive": "Last ned full sidearkiv",
+        "favourite_bookmark": "Favorittbokmerke",
+        "archive_bookmark": "Arkiver bokmerke",
+        "remove_tag": "Fjern tagg",
+        "add_to_list": "Legg til i liste",
+        "remove_from_list": "Fjern fra liste"
+      },
+      "events_types": {
+        "bookmark_added": "Et bokmerke er lagt til",
+        "tag_added": "Denne taggen er lagt til et bokmerke",
+        "tag_removed": "Denne taggen er fjernet fra et bokmerke",
+        "added_to_list": "Et bokmerke er lagt til i denne lista",
+        "removed_from_list": "Et bokmerke er fjernet fra denne lista",
+        "favourited": "Et bokmerke er favorittmerket",
+        "archived": "Et bokmerke er arkivert"
+      }
     }
   },
   "options": {
@@ -215,7 +269,12 @@
     "search_query": "Søkespørring",
     "parent_list": "Overordnet liste",
     "manual_list": "Manuell liste",
-    "smart_list": "Smartliste"
+    "smart_list": "Smartliste",
+    "merge_list": "Slå sammen liste",
+    "destination_list": "Destinasjonsliste",
+    "delete_after_merge": "Slett opprinnelig liste etter sammenslåing",
+    "no_destination": "Ingen destinasjon",
+    "description": "Beskrivelse (valgfritt)"
   },
   "tags": {
     "all_tags": "Alle tagger",
@@ -253,7 +312,19 @@
     "url_contains": "URL inneholder",
     "full_text_search": "Fulltekstsøk",
     "type_is_not": "Type er ikke",
-    "or": "Eller"
+    "or": "Eller",
+    "is_from_feed": "Er fra RSS-feed",
+    "is_not_from_feed": "Er ikke fra RSS-feed",
+    "created_within": "Opprettet innen",
+    "created_earlier_than": "Opprettet tidligere enn",
+    "day_s": " Dager",
+    "week_s": " Uker",
+    "month_s": " Måneder",
+    "year_s": " År",
+    "day_s_ago": " Dager siden",
+    "week_s_ago": " Uker siden",
+    "month_s_ago": " Måneder siden",
+    "year_s_ago": " År siden"
   },
   "editor": {
     "text_toolbar": {
@@ -311,7 +382,8 @@
     "import_as_separate_bookmarks": "Importer som separate bokmerker",
     "placeholder": "Lim inn en lenke eller et bilde, skriv et notat eller dra og slipp et bilde her…",
     "new_item": "NYTT ELEMENT",
-    "disabled_submissions": "Innsendinger er deaktivert"
+    "disabled_submissions": "Innsendinger er deaktivert",
+    "placeholder_v2": "Lim inn en lenke, skriv et notat eller slipp et bilde…"
   },
   "toasts": {
     "bookmarks": {
@@ -324,7 +396,9 @@
     },
     "lists": {
       "created": "Liste er opprettet!",
-      "updated": "Lista er oppdatert!"
+      "updated": "Lista er oppdatert!",
+      "merged": "Liste er slått sammen!",
+      "deleted": "Liste er slettet!"
     }
   },
   "cleanups": {
@@ -345,12 +419,29 @@
   },
   "preview": {
     "cached_content": "Cachet innhold",
-    "view_original": "Vis original"
+    "view_original": "Vis original",
+    "reader_view": "Lesevisning"
   },
   "dialogs": {
     "bookmarks": {
       "delete_confirmation_title": "Slette bokmerke?",
       "delete_confirmation_description": "Er du sikker på at du vil slette dette bokmerket?"
     }
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "Ingen bokmerker ennå",
+      "description": "Lagre interessante artikler, lenker og sider for å få rask tilgang til dem senere."
+    }
+  },
+  "bookmark_editor": {
+    "title": "Rediger bokmerke",
+    "subtitle": "Gjør endringer i bokmerkedetaljene. Klikk på lagre når du er ferdig.",
+    "author": "Forfatter",
+    "publisher": "Utgiver",
+    "date_published": "Publiseringsdato",
+    "pick_a_date": "Velg en dato",
+    "save_changes": "Lagre endringer",
+    "extracted_content": "Ekstrahert innhold"
   }
 }

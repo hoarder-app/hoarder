@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { count, eq, sum } from "drizzle-orm";
+import { count, eq, or, sum } from "drizzle-orm";
 import { z } from "zod";
 
 import { assets, bookmarkLinks, bookmarks, users } from "@karakeep/db/schema";
@@ -16,6 +16,7 @@ import {
   VideoWorkerQueue,
   WebhookQueue,
 } from "@karakeep/shared/queues";
+import { getSearchIdxClient } from "@karakeep/shared/search";
 import {
   changeRoleSchema,
   resetPasswordSchema,
@@ -128,11 +129,21 @@ export const adminAppRouter = router({
         ctx.db
           .select({ value: count() })
           .from(bookmarks)
-          .where(eq(bookmarks.taggingStatus, "pending")),
+          .where(
+            or(
+              eq(bookmarks.taggingStatus, "pending"),
+              eq(bookmarks.summarizationStatus, "pending"),
+            ),
+          ),
         ctx.db
           .select({ value: count() })
           .from(bookmarks)
-          .where(eq(bookmarks.taggingStatus, "failure")),
+          .where(
+            or(
+              eq(bookmarks.taggingStatus, "failure"),
+              eq(bookmarks.summarizationStatus, "failure"),
+            ),
+          ),
 
         // Tidy Assets
         TidyAssetsQueue.stats(),
@@ -210,6 +221,8 @@ export const adminAppRouter = router({
       );
     }),
   reindexAllBookmarks: adminProcedure.mutation(async ({ ctx }) => {
+    const searchIdx = await getSearchIdxClient();
+    await searchIdx?.deleteAllDocuments();
     const bookmarkIds = await ctx.db.query.bookmarks.findMany({
       columns: {
         id: true,
@@ -230,7 +243,8 @@ export const adminAppRouter = router({
   reRunInferenceOnAllBookmarks: adminProcedure
     .input(
       z.object({
-        taggingStatus: z.enum(["success", "failure", "all"]),
+        type: z.enum(["tag", "summarize"]),
+        status: z.enum(["success", "failure", "all"]),
       }),
     )
     .mutation(async ({ input, ctx }) => {
@@ -238,13 +252,22 @@ export const adminAppRouter = router({
         columns: {
           id: true,
         },
-        ...(input.taggingStatus === "all"
-          ? {}
-          : { where: eq(bookmarks.taggingStatus, input.taggingStatus) }),
+        ...{
+          tag:
+            input.status === "all"
+              ? {}
+              : { where: eq(bookmarks.taggingStatus, input.status) },
+          summarize:
+            input.status === "all"
+              ? {}
+              : { where: eq(bookmarks.summarizationStatus, input.status) },
+        }[input.type],
       });
 
       await Promise.all(
-        bookmarkIds.map((b) => OpenAIQueue.enqueue({ bookmarkId: b.id })),
+        bookmarkIds.map((b) =>
+          OpenAIQueue.enqueue({ bookmarkId: b.id, type: input.type }),
+        ),
       );
     }),
   tidyAssets: adminProcedure.mutation(async () => {

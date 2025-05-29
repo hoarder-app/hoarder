@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "@karakeep/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "format": "prettier . --ignore-path ../../.prettierignore",
+    "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "@hono/zod-validator": "^0.5.0",
+    "@karakeep/db": "workspace:*",
+    "@karakeep/shared": "workspace:*",
+    "@karakeep/trpc": "workspace:*",
+    "hono": "^4.7.10",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@karakeep/eslint-config": "workspace:^0.2.0",
+    "@karakeep/prettier-config": "workspace:^0.1.0",
+    "@karakeep/tsconfig": "workspace:^0.1.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/deep-equal": "^1.0.4",
+    "vite-tsconfig-paths": "^4.3.1",
+    "vitest": "^1.6.1"
+  },
+  "eslintConfig": {
+    "root": true,
+    "extends": [
+      "@karakeep/eslint-config/base"
+    ]
+  },
+  "prettier": "@karakeep/prettier-config"
+}

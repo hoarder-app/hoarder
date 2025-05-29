@@ -6,6 +6,7 @@ export const langNameMappings: Record<string, string> = {
   da: "Danish",
   nl: "Dutch",
   en: "English",
+  en_US: "English (US)",
   fr: "French",
   gl: "Galician",
   de: "German",

@@ -7,7 +7,9 @@ import { SqliteError } from "@karakeep/db";
 import { bookmarkTags, tagsOnBookmarks } from "@karakeep/db/schema";
 import { triggerSearchReindex } from "@karakeep/shared/queues";
 import {
+  zCreateTagRequestSchema,
   zGetTagResponseSchema,
+  zTagBasicSchema,
   zUpdateTagRequestSchema,
 } from "@karakeep/shared/types/tags";
 
@@ -18,7 +20,7 @@ function conditionFromInput(input: { tagId: string }, userId: string) {
   return and(eq(bookmarkTags.id, input.tagId), eq(bookmarkTags.userId, userId));
 }
 
-const ensureTagOwnership = experimental_trpcMiddleware<{
+export const ensureTagOwnership = experimental_trpcMiddleware<{
   ctx: Context;
   input: { tagId: string };
 }>().create(async (opts) => {
@@ -53,19 +55,8 @@ const ensureTagOwnership = experimental_trpcMiddleware<{
 
 export const tagsAppRouter = router({
   create: authedProcedure
-    .input(
-      z.object({
-        name: z.string().min(1), // Ensure the name is provided and not empty
-      }),
-    )
-    .output(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        userId: z.string(),
-        createdAt: z.date(),
-      }),
-    )
+    .input(zCreateTagRequestSchema)
+    .output(zTagBasicSchema)
     .mutation(async ({ input, ctx }) => {
       try {
         const [newTag] = await ctx.db
@@ -76,7 +67,10 @@ export const tagsAppRouter = router({
           })
           .returning();
 
-        return newTag;
+        return {
+          id: newTag.id,
+          name: newTag.name,
+        };
       } catch (e) {
         if (e instanceof SqliteError && e.code === "SQLITE_CONSTRAINT_UNIQUE") {
           throw new TRPCError({
@@ -195,14 +189,7 @@ export const tagsAppRouter = router({
     }),
   update: authedProcedure
     .input(zUpdateTagRequestSchema)
-    .output(
-      z.object({
-        id: z.string(),
-        name: z.string(),
-        userId: z.string(),
-        createdAt: z.date(),
-      }),
-    )
+    .output(zTagBasicSchema)
     .use(ensureTagOwnership)
     .mutation(async ({ input, ctx }) => {
       try {
@@ -242,7 +229,10 @@ export const tagsAppRouter = router({
           console.error("Failed to reindex affected bookmarks", e);
         }
 
-        return res[0];
+        return {
+          id: res[0].id,
+          name: res[0].name,
+        };
       } catch (e) {
         if (e instanceof SqliteError) {
           if (e.code == "SQLITE_CONSTRAINT_UNIQUE") {

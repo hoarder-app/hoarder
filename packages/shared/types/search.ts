@@ -25,7 +25,7 @@ const zArchivedMatcher = z.object({
   archived: z.boolean(),
 });
 
-const urlMatcher = z.object({
+const zUrlMatcher = z.object({
   type: z.literal("url"),
   url: z.string(),
   inverse: z.boolean(),
@@ -81,7 +81,7 @@ const zNonRecursiveMatcher = z.union([
   zTagNameMatcher,
   zListNameMatcher,
   zArchivedMatcher,
-  urlMatcher,
+  zUrlMatcher,
   zFavouritedMatcher,
   zDateAfterMatcher,
   zDateBeforeMatcher,
@@ -103,7 +103,7 @@ export const zMatcherSchema: z.ZodType<Matcher> = z.lazy(() => {
     zTagNameMatcher,
     zListNameMatcher,
     zArchivedMatcher,
-    urlMatcher,
+    zUrlMatcher,
     zFavouritedMatcher,
     zDateAfterMatcher,
     zDateBeforeMatcher,

@@ -26,31 +26,16 @@ describe("Tags API", () => {
   });
 
   it("should get, update and delete a tag", async () => {
-    // Create a bookmark first
-    const { data: createdBookmark } = await client.POST("/bookmarks", {
+    // Create a tag by attaching it to the bookmark
+    const { data: tag } = await client.POST("/tags", {
       body: {
-        type: "text",
-        title: "Test Bookmark",
-        text: "This is a test bookmark",
+        name: "Test Tag",
       },
     });
+    expect(tag).toBeDefined();
+    expect(tag!.name).toBe("Test Tag");
 
-    // Create a tag by attaching it to the bookmark
-    const { data: addTagResponse } = await client.POST(
-      "/bookmarks/{bookmarkId}/tags",
-      {
-        params: {
-          path: {
-            bookmarkId: createdBookmark!.id,
-          },
-        },
-        body: {
-          tags: [{ tagName: "Test Tag" }],
-        },
-      },
-    );
-
-    const tagId = addTagResponse!.attached[0];
+    const tagId = tag!.id;
 
     // Get the tag
     const { data: retrievedTag, response: getResponse } = await client.GET(

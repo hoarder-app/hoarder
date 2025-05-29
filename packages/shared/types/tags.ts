@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+export const zCreateTagRequestSchema = z.object({
+  name: z.string().min(1),
+});
+
 export const zAttachedByEnumSchema = z.enum(["ai", "human"]);
 export type ZAttachedByEnum = z.infer<typeof zAttachedByEnumSchema>;
 export const zBookmarkTagSchema = z.object({

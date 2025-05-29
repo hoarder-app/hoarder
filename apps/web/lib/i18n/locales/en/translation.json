@@ -79,6 +79,7 @@
     "ignore": "Ignore",
     "sort": {
       "title": "Sort",
+      "relevant_first": "Most Relevant First",
       "newest_first": "Newest First",
       "oldest_first": "Oldest First"
     }
@@ -97,7 +98,13 @@
       "new_password": "New Password",
       "confirm_new_password": "Confirm New Password",
       "options": "Options",
-      "interface_lang": "Interface Language"
+      "interface_lang": "Interface Language",
+      "user_settings": {
+        "user_settings_updated": "User settings have been updated!",
+        "boomark_click_action": "Bookmark Click Action",
+        "open_external_url": "Open Original URL",
+        "open_bookmark_details": "Open Bookmark Details"
+      }
     },
     "ai": {
       "ai_settings": "AI Settings",
@@ -114,7 +121,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS Subscriptions",
-      "add_a_subscription": "Add a Subscription"
+      "add_a_subscription": "Add a Subscription",
+      "feed_enabled": "RSS Feed enabled",
+      "feed_disabled": "RSS Feed disabled"
     },
     "webhooks": {
       "webhooks": "Webhooks",
@@ -167,6 +176,54 @@
       "asset_link": "Asset Link",
       "delete_asset": "Delete Asset",
       "delete_asset_confirmation": "Are you sure you want to delete this asset?"
+    },
+    "rules": {
+      "rules": "Rule Engine",
+      "rule_name": "Rule Name",
+      "description": "You can use rules to trigger actions when an event fires.",
+      "ceate_rule": "Create Rule",
+      "edit_rule": "Edit Rule",
+      "save_rule": "Save Rule",
+      "delete_rule": "Delete Rule",
+      "delete_rule_confirmation": "Are you sure you want to delete this rule?",
+      "whenever": "Whenever ...",
+      "if": "If ...",
+      "enter_rule_name": "Enter rule name",
+      "describe_what_this_rule_does": "Describe what this rule does",
+      "rule_has_been_created": "Rule has been created!",
+      "rule_has_been_updated": "Rule has been updated!",
+      "rule_has_been_deleted": "Rule has been deleted!",
+      "no_rules_created_yet": "No rules created yet",
+      "create_your_first_rule": "Create your first rule to automate your workflow",
+      "conditions_types": {
+        "always": "Always",
+        "url_contains": "URL Contains",
+        "imported_from_feed": "Imported From Feed",
+        "bookmark_type_is": "Bookmark Type Is",
+        "has_tag": "Has Tag",
+        "is_favourited": "Is Favourited",
+        "is_archived": "Is Archived",
+        "and": "All of the following are true",
+        "or": "Any of the following are true"
+      },
+      "actions_types": {
+        "add_tag": "Add Tag",
+        "remove_tag": "Remove Tag",
+        "add_to_list": "Add to List",
+        "remove_from_list": "Remove from List",
+        "download_full_page_archive": "Download Full Page Archive",
+        "favourite_bookmark": "Favourite Bookmark",
+        "archive_bookmark": "Archive Bookmark"
+      },
+      "events_types": {
+        "bookmark_added": "A bookmark is added",
+        "tag_added": "This tag is added to a bookmark",
+        "tag_removed": "This tag is removed from a bookmark",
+        "added_to_list": "A bookmark is added to this list",
+        "removed_from_list": "A bookmark is removed from this list",
+        "favourited": "A bookmark is favourited",
+        "archived": "A bookmark is archived"
+      }
     }
   },
   "admin": {
@@ -198,6 +255,8 @@
       "without_inference": "Without Inference",
       "regenerate_ai_tags_for_failed_bookmarks_only": "Regenerate AI Tags for Failed Bookmarks Only",
       "regenerate_ai_tags_for_all_bookmarks": "Regenerate AI Tags for All Bookmarks",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Regenerate AI Summaries for Failed Bookmarks Only",
+      "regenerate_ai_summaries_for_all_bookmarks": "Regenerate AI Summaries for All Bookmarks",
       "reindex_all_bookmarks": "Reindex All Bookmarks",
       "compact_assets": "Compact Assets",
       "reprocess_assets_fix_mode": "Reprocess Assets (Fix Mode)"
@@ -290,7 +349,11 @@
   "preview": {
     "view_original": "View Original",
     "cached_content": "Cached Content",
-    "reader_view": "Reader View"
+    "reader_view": "Reader View",
+    "tabs": {
+      "content": "Content",
+      "details": "Details"
+    }
   },
   "editor": {
     "quickly_focus": "You can quickly focus on this field by pressing ⌘ + E",

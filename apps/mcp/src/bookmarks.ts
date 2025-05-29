@@ -16,7 +16,7 @@ You can search bookmarks using specific qualifiers. is:fav finds favorited bookm
 is:archived searches archived bookmarks, is:tagged finds those with tags,
 is:inlist finds those in lists, and is:link, is:text, and is:media filter by bookmark type.
 url:<value> searches for URL substrings, #<tag> searches for bookmarks with a specific tag,
-list:<name> searches for bookmarks in a specific list given its name,
+list:<name> searches for bookmarks in a specific list given its name (without the icon),
 after:<date> finds bookmarks created on or after a date (YYYY-MM-DD), and before:<date> finds bookmarks created on or before a date (YYYY-MM-DD).
 If you need to pass names with spaces, you can quote them with double quotes. If you want to negate a qualifier, prefix it with a minus sign.
 ## Examples:
@@ -57,13 +57,13 @@ machine learning is:fav`),
     }
     return {
       content: [
-        ...res.data.bookmarks.map((bookmark) => ({
-          type: "text" as const,
-          text: JSON.stringify(compactBookmark(bookmark)),
-        })),
         {
           type: "text",
-          text: `Next cursor: ${res.data.nextCursor ? `'${res.data.nextCursor}'` : "no more pages"}`,
+          text: `
+${res.data.bookmarks.map(compactBookmark).join("\n\n")}
+
+Next cursor: ${res.data.nextCursor ? `'${res.data.nextCursor}'` : "no more pages"}
+`,
         },
       ],
     };
@@ -94,7 +94,7 @@ mcpServer.tool(
       content: [
         {
           type: "text",
-          text: JSON.stringify(compactBookmark(res.data)),
+          text: compactBookmark(res.data),
         },
       ],
     };
@@ -137,7 +137,7 @@ mcpServer.tool(
       content: [
         {
           type: "text",
-          text: JSON.stringify(compactBookmark(res.data)),
+          text: compactBookmark(res.data),
         },
       ],
     };

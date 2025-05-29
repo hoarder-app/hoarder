@@ -10,11 +10,14 @@ import {
   bookmarkTags,
   highlights,
   users,
+  userSettings,
 } from "@karakeep/db/schema";
 import { deleteUserAssets } from "@karakeep/shared/assetdb";
 import serverConfig from "@karakeep/shared/config";
 import {
   zSignUpSchema,
+  zUpdateUserSettingsSchema,
+  zUserSettingsSchema,
   zUserStatsResponseSchema,
   zWhoAmIResponseSchema,
 } from "@karakeep/shared/types/users";
@@ -59,6 +62,12 @@ export async function createUser(
           email: users.email,
           role: users.role,
         });
+
+      // Insert user settings for the new user
+      await trx.insert(userSettings).values({
+        userId: result[0].id,
+      });
+
       return result[0];
     } catch (e) {
       if (e instanceof SqliteError) {
@@ -241,5 +250,37 @@ export const usersAppRouter = router({
         numLists,
         numHighlights,
       };
+    }),
+  settings: authedProcedure
+    .output(zUserSettingsSchema)
+    .query(async ({ ctx }) => {
+      const settings = await ctx.db.query.userSettings.findFirst({
+        where: eq(userSettings.userId, ctx.user.id),
+      });
+      if (!settings) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User settings not found",
+        });
+      }
+      return {
+        bookmarkClickAction: settings.bookmarkClickAction,
+      };
+    }),
+  updateSettings: authedProcedure
+    .input(zUpdateUserSettingsSchema)
+    .mutation(async ({ input, ctx }) => {
+      if (Object.keys(input).length === 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No settings provided",
+        });
+      }
+      await ctx.db
+        .update(userSettings)
+        .set({
+          bookmarkClickAction: input.bookmarkClickAction,
+        })
+        .where(eq(userSettings.userId, ctx.user.id));
     }),
 });

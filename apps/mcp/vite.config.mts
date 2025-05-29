@@ -21,9 +21,4 @@ export default defineConfig({
     noExternal: /^(?!node:).*$/,
   },
   plugins: [tsconfigPaths()],
-  define: {
-    "import.meta.env.CLI_VERSION": JSON.stringify(
-      process.env.npm_package_version,
-    ),
-  },
 });

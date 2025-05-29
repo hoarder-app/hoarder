@@ -8,6 +8,7 @@
     "dev": "turbo --no-daemon dev --parallel",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo --no-daemon clean",
+    "db:generate": "pnpm --filter @karakeep/db run generate",
     "db:migrate": "pnpm --filter @karakeep/db run migrate",
     "db:studio": "pnpm --filter @karakeep/db studio",
     "workers": "pnpm --filter @karakeep/workers run start",

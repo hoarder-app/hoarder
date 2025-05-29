@@ -114,6 +114,7 @@ export default function BulkManageListsModal({
                       <BookmarkListSelector
                         value={field.value}
                         onChange={field.onChange}
+                        listTypes={["manual"]}
                       />
                     </FormControl>
                     <FormMessage />

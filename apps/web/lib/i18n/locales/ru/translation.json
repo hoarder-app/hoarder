@@ -32,7 +32,11 @@
       "media": "Медиа"
     },
     "type": "Тип",
-    "size": "Размер"
+    "size": "Размер",
+    "updated_at": "Обновлено",
+    "title": "Заголовок",
+    "description": "Описание",
+    "summary": "Краткое содержание"
   },
   "lists": {
     "new_list": "Новый список",
@@ -46,7 +50,12 @@
     "edit_list": "Редактировать список",
     "parent_list": "Список родителей",
     "list_type": "Тип списка",
-    "manual_list": "Список вручную"
+    "manual_list": "Список вручную",
+    "merge_list": "Объединить список",
+    "destination_list": "Список назначения",
+    "delete_after_merge": "Удалить исходный список после объединения",
+    "no_destination": "Нет назначения",
+    "description": "Описание (Необязательно)"
   },
   "settings": {
     "user_settings": "Настройки пользователя",
@@ -69,7 +78,8 @@
       "imported_bookmarks": "Импортировано закладок",
       "import_bookmarks_from_html_file": "Импортировать закладки из HTML файла",
       "export_links_and_notes": "Экспортировать ссылки и заметки",
-      "import_bookmarks_from_linkwarden_export": "Импортировать закладки из экспорта Linkwarden"
+      "import_bookmarks_from_linkwarden_export": "Импортировать закладки из экспорта Linkwarden",
+      "import_bookmarks_from_tab_session_manager_export": "Импортировать закладки из Tab Session Manager"
     },
     "api_keys": {
       "key_success": "Ключ был успешно создан",
@@ -128,6 +138,54 @@
       "manage_assets": "Управление ресурсами",
       "no_assets": "У вас пока нет ресурсов.",
       "asset_type": "Тип ресурса"
+    },
+    "rules": {
+      "rules": "Механизм правил",
+      "rule_name": "Название правила",
+      "description": "Ты можешь использовать правила для запуска действий при возникновении события.",
+      "ceate_rule": "Создать правило",
+      "edit_rule": "Редактировать правило",
+      "save_rule": "Сохранить правило",
+      "delete_rule": "Удалить правило",
+      "delete_rule_confirmation": "Ты уверен, что хочешь удалить это правило?",
+      "whenever": "Когда ...",
+      "if": "Если ...",
+      "enter_rule_name": "Введите имя правила",
+      "describe_what_this_rule_does": "Опиши, что делает это правило",
+      "rule_has_been_created": "Правило создано!",
+      "rule_has_been_updated": "Правило обновлено!",
+      "rule_has_been_deleted": "Правило удалено!",
+      "no_rules_created_yet": "Пока нет правил",
+      "create_your_first_rule": "Создай свое первое правило, чтобы автоматизировать рабочий процесс",
+      "conditions_types": {
+        "always": "Всегда",
+        "url_contains": "URL содержит",
+        "imported_from_feed": "Импортировано из ленты",
+        "bookmark_type_is": "Тип закладки:",
+        "has_tag": "Имеет тег",
+        "is_favourited": "В избранном",
+        "is_archived": "В архиве",
+        "and": "Все следующие утверждения верны",
+        "or": "Если что-то из этого правда"
+      },
+      "actions_types": {
+        "add_tag": "Добавить тег",
+        "remove_tag": "Удалить тег",
+        "add_to_list": "Добавить в список",
+        "remove_from_list": "Удалить из списка",
+        "download_full_page_archive": "Скачать полный архив страницы",
+        "favourite_bookmark": "Любимая закладка",
+        "archive_bookmark": "Архивировать закладку"
+      },
+      "events_types": {
+        "bookmark_added": "Закладка добавлена",
+        "tag_added": "Этот тег добавляется к закладке",
+        "tag_removed": "Этот тег удален из закладки",
+        "added_to_list": "Закладка добавлена в этот список",
+        "removed_from_list": "Закладка удалена из этого списка",
+        "favourited": "Закладка добавлена в избранное",
+        "archived": "Закладка архивирована"
+      }
     }
   },
   "actions": {
@@ -166,7 +224,8 @@
       "title": "Сортировка",
       "newest_first": "Сначала новые",
       "oldest_first": "Сначала старые"
-    }
+    },
+    "open_editor": "Открыть редактор"
   },
   "editor": {
     "text_toolbar": {
@@ -224,7 +283,8 @@
     "disabled_submissions": "Редактирование отключено",
     "multiple_urls_dialog_desc": "Ввод содержит несколько ссылок на разных строках. Вы хотите импортировать их как разные закладки?",
     "multiple_urls_dialog_title": "Импрортировать ссылки как отдельные закладки?",
-    "import_as_separate_bookmarks": "Импортировать как разные закладки"
+    "import_as_separate_bookmarks": "Импортировать как разные закладки",
+    "placeholder_v2": "Вставьте ссылку, напишите заметку или перетащите изображение…"
   },
   "admin": {
     "server_stats": {
@@ -296,7 +356,8 @@
   },
   "preview": {
     "view_original": "Посмотреть оригинал",
-    "cached_content": "Содержимое кеша"
+    "cached_content": "Содержимое кеша",
+    "reader_view": "Режим чтения"
   },
   "toasts": {
     "bookmarks": {
@@ -309,7 +370,9 @@
     },
     "lists": {
       "created": "Список был создан!",
-      "updated": "Список был обновлён!"
+      "updated": "Список был обновлён!",
+      "merged": "Список объединен!",
+      "deleted": "Список удален!"
     }
   },
   "cleanups": {
@@ -342,7 +405,19 @@
     "and": "И",
     "is_favorited": "В избранном",
     "url_contains": "URL содержит",
-    "full_text_search": "Полнотекстовый поиск"
+    "full_text_search": "Полнотекстовый поиск",
+    "is_from_feed": "Из RSS-ленты",
+    "is_not_from_feed": "Не из RSS-ленты",
+    "month_s": " Месяцев",
+    "created_within": "Создано в течение",
+    "created_earlier_than": "Создано раньше, чем",
+    "day_s": " Дней",
+    "week_s": " Недель",
+    "year_s": " Год(а)",
+    "day_s_ago": " Дней назад",
+    "week_s_ago": " Недель назад",
+    "month_s_ago": " Месяцев назад",
+    "year_s_ago": " Год(а) назад"
   },
   "dialogs": {
     "bookmarks": {
@@ -352,5 +427,21 @@
   },
   "highlights": {
     "no_highlights": "У вас пока нет выделенных фрагментов."
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "Пока нет закладок",
+      "description": "Сохраняй интересные статьи, ссылки и страницы, чтобы быстро получить к ним доступ позже."
+    }
+  },
+  "bookmark_editor": {
+    "title": "Редактировать закладку",
+    "subtitle": "Внеси изменения в детали закладки. Когда закончишь, нажми \"Сохранить\".",
+    "author": "Автор",
+    "publisher": "Издатель",
+    "date_published": "Дата публикации",
+    "pick_a_date": "Выбери дату",
+    "save_changes": "Сохранить изменения",
+    "extracted_content": "Извлеченное содержимое"
   }
 }
