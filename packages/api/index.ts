@@ -9,6 +9,7 @@ import assets from "./routes/assets";
 import bookmarks from "./routes/bookmarks";
 import highlights from "./routes/highlights";
 import lists from "./routes/lists";
+import rss from "./routes/rss";
 import tags from "./routes/tags";
 import users from "./routes/users";
 
@@ -22,7 +23,8 @@ const v1 = new Hono<{
   .route("/lists", lists)
   .route("/tags", tags)
   .route("/users", users)
-  .route("/assets", assets);
+  .route("/assets", assets)
+  .route("/rss", rss);
 
 const app = new Hono<{
   Variables: {

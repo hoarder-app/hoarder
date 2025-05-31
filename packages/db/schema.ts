@@ -336,6 +336,8 @@ export const bookmarkLists = sqliteTable(
       (): AnySQLiteColumn => bookmarkLists.id,
       { onDelete: "set null" },
     ),
+    // Whoever have access to this token can read the content of this list
+    rssToken: text("rssToken"),
   },
   (bl) => [
     index("bookmarkLists_userId_idx").on(bl.userId),
