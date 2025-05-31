@@ -61,7 +61,14 @@ export abstract class List implements PrivacyAware {
     }
   }
 
-  static async getForRss(ctx: Context, listId: string, token: string) {
+  static async getForRss(
+    ctx: Context,
+    listId: string,
+    token: string,
+    pagination: {
+      limit: number;
+    },
+  ) {
     const listdb = await ctx.db.query.bookmarkLists.findFirst({
       where: and(
         eq(bookmarkLists.id, listId),
@@ -86,7 +93,7 @@ export abstract class List implements PrivacyAware {
     const bookmarks = await Bookmark.loadMulti(authedCtx, {
       ids: bookmarkIds,
       includeContent: false,
-      limit: 20,
+      limit: pagination.limit,
       sortOrder: "desc",
     });
 
