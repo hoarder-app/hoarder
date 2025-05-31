@@ -1,5 +1,7 @@
 # Security Considerations
 
+## Crawler and networking
+
 If you're going to give app access to untrusted users, there's some security considerations that you'll need to be aware of given how the crawler works. The crawler is basically running a browser to fetch the content of the bookmarks. Any untrusted user can submit bookmarks to be crawled from your server and they'll be able to see the crawling result. This can be abused in multiple ways:
 
 1. Untrusted users can submit crawl requests to websites that you don't want to be coming out of your IPs.
@@ -12,3 +14,13 @@ To mitigate those risks, you can do one of the following:
 2. Let the browser traffic go through some VPN with restricted network policies.
 3. Host the browser container outside of your network.
 4. Use a hosted browser as a service (e.g. [browserless](https://browserless.io)). Note: I've never used them before.
+
+## Encryption
+
+As of May 2025, no encryption is done in Karakeep:
+- A person having access to the hardware containing Karakeep's docker volumes could inspect user data.
+- Although no tools are provided for the karakeep administrator account to access other user's data, it could still access them.
+
+This is partly because, even if Karakeep's db were to be encrypted, the service used for bookmark search, [Meilisearch](https://www.meilisearch.com/) [does not support](https://github.com/meilisearch/meilisearch/issues/5036) encryption anyway, and encrypting data without impact search performance is a non trivial task.
+
+Hence why it does not make sense to invest developer time to make Karakeep encrypted as of yet.
