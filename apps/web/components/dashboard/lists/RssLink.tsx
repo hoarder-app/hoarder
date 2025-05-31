@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import CopyBtn from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
@@ -41,10 +42,9 @@ export default function RssLink({ listId }: { listId: string }) {
 
   return (
     <div className="flex items-center gap-3 rounded-lg border bg-white p-3">
-      <div className="flex min-w-0 items-center gap-2">
-        <Rss className="h-4 w-4 flex-shrink-0 text-orange-500" />
-      </div>
-
+      <Badge variant="outline" className="text-xs">
+        RSS
+      </Badge>
       {!rssUrl ? (
         <div className="flex items-center gap-2">
           <Button
@@ -56,7 +56,10 @@ export default function RssLink({ listId }: { listId: string }) {
             {isLoading ? (
               <Loader2 className="h-3 w-3 animate-spin" />
             ) : (
-              t("lists.generate_rss_feed")
+              <span className="flex items-center">
+                <Rss className="mr-2 h-4 w-4 flex-shrink-0 text-orange-500" />
+                {t("lists.generate_rss_feed")}
+              </span>
             )}
           </Button>
         </div>
