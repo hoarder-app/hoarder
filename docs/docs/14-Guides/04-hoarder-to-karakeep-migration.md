@@ -12,7 +12,7 @@ index cdfc908..6297563 100644
  services:
    web:
 -    image: ghcr.io/hoarder-app/hoarder:${HOARDER_VERSION:-release}
-+    image: ghcr.io/karakeep-app/karakeep:${HOARDER_VERSION:-release}
++    image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}
 ```
 
 You can also change the `HOARDER_VERSION` environment variable but if you do so remember to change it in the `.env` file as well.
