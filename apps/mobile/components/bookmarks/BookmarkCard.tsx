@@ -21,12 +21,12 @@ import {
   useDeleteBookmark,
   useUpdateBookmark,
 } from "@karakeep/shared-react/hooks/bookmarks";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 import {
   getBookmarkLinkImageUrl,
   isBookmarkStillLoading,
   isBookmarkStillTagging,
-} from "@karakeep/shared-react/utils/bookmarkUtils";
-import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
+} from "@karakeep/shared/utils/bookmarkUtils";
 
 import { Divider } from "../ui/Divider";
 import { Skeleton } from "../ui/Skeleton";

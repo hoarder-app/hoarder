@@ -9,6 +9,6 @@
     },
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "../shared/utils/bookmarkUtils.ts", "../shared/utils/assetUtils.ts"],
   "exclude": ["node_modules"]
 }

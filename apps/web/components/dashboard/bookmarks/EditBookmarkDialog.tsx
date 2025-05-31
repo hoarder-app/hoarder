@@ -35,13 +35,13 @@ import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import { useUpdateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
-import { getBookmarkTitle } from "@karakeep/shared-react/utils/bookmarkUtils";
 import {
   BookmarkTypes,
   ZBookmark,
   ZUpdateBookmarksRequest,
   zUpdateBookmarksRequestSchema,
 } from "@karakeep/shared/types/bookmarks";
+import { getBookmarkTitle } from "@karakeep/shared/utils/bookmarkUtils";
 
 import { BookmarkTagsEditor } from "./BookmarkTagsEditor";
 
