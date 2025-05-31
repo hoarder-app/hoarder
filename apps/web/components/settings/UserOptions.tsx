@@ -97,7 +97,7 @@ export default function UserSettings() {
         render={({ field }) => (
           <div className="flex w-full flex-col gap-2">
             <Label>
-              {t("settings.info.user_settings.boomark_click_action")}
+              {t("settings.info.user_settings.bookmark_click_action")}
             </Label>
             <Select
               disabled={!!clientConfig.demoMode}
