@@ -51,6 +51,7 @@
     "favorite": "Favorite",
     "unfavorite": "Unfavorite",
     "delete": "Delete",
+    "toggle_show_archived": "Show Archived",
     "refresh": "Refresh",
     "recrawl": "Recrawl",
     "download_full_page_archive": "Download Full Page Archive",
