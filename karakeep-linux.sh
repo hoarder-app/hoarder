@@ -195,8 +195,8 @@ Restart=always
 EnvironmentFile=${ENV_FILE}
 WorkingDirectory=${INSTALL_DIR}/apps/workers
 ExecStart=/usr/bin/pnpm run start:prod
-StandardOutput=file:${LOG_DIR}/karakeep-workers.log
-StandardError=file:${LOG_DIR}/karakeep-workers.log
+StandardOutput=append:${LOG_DIR}/karakeep-workers.log
+StandardError=append:${LOG_DIR}/karakeep-workers.log
 TimeoutStopSec=5
 SyslogIdentifier=karakeep-workers
 
@@ -217,8 +217,8 @@ Restart=on-failure
 EnvironmentFile=${ENV_FILE}
 WorkingDirectory=${INSTALL_DIR}/apps/web
 ExecStart=/usr/bin/pnpm start
-StandardOutput=file:${LOG_DIR}/karakeep-web.log
-StandardError=file:${LOG_DIR}/karakeep-web.log
+StandardOutput=append:${LOG_DIR}/karakeep-web.log
+StandardError=append:${LOG_DIR}/karakeep-web.log
 TimeoutStopSec=5
 SyslogIdentifier=karakeep-web
 
