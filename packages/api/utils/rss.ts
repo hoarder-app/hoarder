@@ -24,25 +24,31 @@ export function toRSS(
     generator: "Karakeep",
   });
 
-  bookmarks.forEach((bookmark) => {
-    feed.item({
-      date: bookmark.createdAt,
-      title: bookmark.title ?? "",
-      url:
-        bookmark.content.type === BookmarkTypes.LINK
-          ? bookmark.content.url
-          : bookmark.content.type === BookmarkTypes.ASSET
-            ? `${serverConfig.publicUrl}${getAssetUrl(bookmark.content.assetId)}`
-            : "",
-      guid: bookmark.id,
-      author:
-        bookmark.content.type === BookmarkTypes.LINK
-          ? (bookmark.content.author ?? undefined)
-          : undefined,
-      categories: bookmark.tags,
-      description: bookmark.description ?? "",
+  bookmarks
+    .filter(
+      (b) =>
+        b.content.type === BookmarkTypes.LINK ||
+        b.content.type === BookmarkTypes.ASSET,
+    )
+    .forEach((bookmark) => {
+      feed.item({
+        date: bookmark.createdAt,
+        title: bookmark.title ?? "",
+        url:
+          bookmark.content.type === BookmarkTypes.LINK
+            ? bookmark.content.url
+            : bookmark.content.type === BookmarkTypes.ASSET
+              ? `${serverConfig.publicUrl}${getAssetUrl(bookmark.content.assetId)}`
+              : "",
+        guid: bookmark.id,
+        author:
+          bookmark.content.type === BookmarkTypes.LINK
+            ? (bookmark.content.author ?? undefined)
+            : undefined,
+        categories: bookmark.tags,
+        description: bookmark.description ?? "",
+      });
     });
-  });
 
   return feed.xml({ indent: true });
 }

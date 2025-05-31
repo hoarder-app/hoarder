@@ -86,7 +86,7 @@ export abstract class List implements PrivacyAware {
     const bookmarks = await Bookmark.loadMulti(authedCtx, {
       ids: bookmarkIds,
       includeContent: false,
-      limit: 10,
+      limit: 20,
       sortOrder: "desc",
     });
 
