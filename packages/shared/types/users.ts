@@ -45,10 +45,12 @@ export const zUserSettingsSchema = z.object({
     "open_original_link",
     "expand_bookmark_preview",
   ]),
+  archiveDisplayBehaviour: z.enum(["show", "hide"]),
 });
 
 export type ZUserSettings = z.infer<typeof zUserSettingsSchema>;
 
 export const zUpdateUserSettingsSchema = zUserSettingsSchema.partial().pick({
   bookmarkClickAction: true,
+  archiveDisplayBehaviour: true,
 });

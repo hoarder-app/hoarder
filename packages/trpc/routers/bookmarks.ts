@@ -824,6 +824,23 @@ export const bookmarksAppRouter = router({
         }
       }
 
+      // TODO maybe this needs a test too? ^^
+      /**
+       * if input.archived is undefined, we query all bookmarks
+       * if input.archived, we query either archived or not, exclusively
+       * if input.includeArchived is undefined, it means to query everything
+       * only when input.includeArchived is false,
+       * it effectively means input.archived === false
+       */
+      const archiveAndIncludeArchiveFilter =
+        input.archived !== undefined
+          ? eq(bookmarks.archived, input.archived)
+          : input.includeArchived !== undefined
+            ? input.includeArchived
+              ? undefined
+              : eq(bookmarks.archived, input.includeArchived)
+            : undefined;
+
       const sq = ctx.db.$with("bookmarksSq").as(
         ctx.db
           .select()
@@ -831,9 +848,7 @@ export const bookmarksAppRouter = router({
           .where(
             and(
               eq(bookmarks.userId, ctx.user.id),
-              input.archived !== undefined
-                ? eq(bookmarks.archived, input.archived)
-                : undefined,
+              archiveAndIncludeArchiveFilter,
               input.favourited !== undefined
                 ? eq(bookmarks.favourited, input.favourited)
                 : undefined,
