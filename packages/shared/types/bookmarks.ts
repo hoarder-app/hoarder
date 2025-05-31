@@ -166,22 +166,28 @@ export type ZNewBookmarkRequest = z.infer<typeof zNewBookmarkRequestSchema>;
 export const DEFAULT_NUM_BOOKMARKS_PER_PAGE = 20;
 export const MAX_NUM_BOOKMARKS_PER_PAGE = 100;
 
-export const zGetBookmarksRequestSchema = z.object({
-  ids: z.array(z.string()).optional(),
-  archived: z.boolean().optional(),
-  favourited: z.boolean().optional(),
-  tagId: z.string().optional(),
-  listId: z.string().optional(),
-  rssFeedId: z.string().optional(),
-  limit: z.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),
-  cursor: zCursorV2.nullish(),
-  // TODO: This was done for backward comptability. At this point, all clients should be settings this to true.
-  // The value is currently not being used, but keeping it so that client can still set it to true for older
-  // servers.
-  useCursorV2: z.boolean().optional(),
-  sortOrder: zSortOrder.exclude(["relevance"]).optional().default("desc"),
-  includeContent: z.boolean().optional().default(false),
-});
+export const zGetBookmarksRequestSchema = z
+  .object({
+    ids: z.array(z.string()).optional(),
+    archived: z.boolean().optional(),
+    includeArchived: z.boolean().optional(),
+    favourited: z.boolean().optional(),
+    tagId: z.string().optional(),
+    listId: z.string().optional(),
+    rssFeedId: z.string().optional(),
+    limit: z.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),
+    cursor: zCursorV2.nullish(),
+    // TODO: This was done for backward comptability. At this point, all clients should be settings this to true.
+    // The value is currently not being used, but keeping it so that client can still set it to true for older
+    // servers.
+    useCursorV2: z.boolean().optional(),
+    sortOrder: zSortOrder.exclude(["relevance"]).optional().default("desc"),
+    includeContent: z.boolean().optional().default(false),
+  })
+  .refine((val) => !(val.archived && val.includeArchived === false), {
+    message: "When archived is true, includeArchived cannot be false",
+    path: ["includeArchived"],
+  });
 export type ZGetBookmarksRequest = z.infer<typeof zGetBookmarksRequestSchema>;
 
 export const zGetBookmarksResponseSchema = z.object({

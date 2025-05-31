@@ -11,9 +11,13 @@ export default async function ListPage({
 }: {
   params: { listId: string };
 }) {
+  // TODO get value from search param later
+  const userSettings = await api.users.settings();
   let list;
   try {
-    list = await api.lists.get({ listId: params.listId });
+    list = await api.lists.get({
+      listId: params.listId,
+    });
   } catch (e) {
     if (e instanceof TRPCError) {
       if (e.code == "NOT_FOUND") {
@@ -26,7 +30,10 @@ export default async function ListPage({
   return (
     <BookmarkListContextProvider list={list}>
       <Bookmarks
-        query={{ listId: list.id }}
+        query={{
+          listId: list.id,
+          includeArchived: userSettings.archiveDisplayBehaviour === "show",
+        }}
         showDivider={true}
         showEditorCard={list.type === "manual"}
         header={<ListHeader initialData={list} />}
