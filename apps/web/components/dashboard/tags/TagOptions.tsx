@@ -1,13 +1,13 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useShowArchived } from "@/components/utils/useShowArchived";
 import { useTranslation } from "@/lib/i18n/client";
 import { Combine, Square, SquareCheck, Trash2 } from "lucide-react";
 
@@ -22,23 +22,10 @@ export function TagOptions({
   children?: React.ReactNode;
 }) {
   const { t } = useTranslation();
+  const { showArchived, onClickShowArchived } = useShowArchived();
+
   const [deleteTagDialogOpen, setDeleteTagDialogOpen] = useState(false);
   const [mergeTagDialogOpen, setMergeTagDialogOpen] = useState(false);
-
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams],
-  );
-
-  const includeArchived = searchParams.get("includeArchived");
 
   return (
     <DropdownMenu>
@@ -61,23 +48,8 @@ export function TagOptions({
           <Combine className="size-4" />
           <span>{t("actions.merge")}</span>
         </DropdownMenuItem>
-        <DropdownMenuItem
-          className="flex gap-2"
-          onClick={() => {
-            const newIncludeArchived = includeArchived
-              ? includeArchived !== "true"
-              : false;
-            router.replace(
-              pathname +
-                "?" +
-                createQueryString(
-                  "includeArchived",
-                  newIncludeArchived.toString(),
-                ),
-            );
-          }}
-        >
-          {includeArchived === null || includeArchived === "true" ? (
+        <DropdownMenuItem className="flex gap-2" onClick={onClickShowArchived}>
+          {showArchived ? (
             <SquareCheck className="size-4" />
           ) : (
             <Square className="size-4" />

@@ -5,8 +5,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useShowArchived } from "@/components/utils/useShowArchived";
 import { useTranslation } from "@/lib/i18n/client";
-import { FolderInput, Pencil, Plus, Share, Trash2 } from "lucide-react";
+import {
+  FolderInput,
+  Pencil,
+  Plus,
+  Share,
+  Square,
+  SquareCheck,
+  Trash2,
+} from "lucide-react";
 
 import { ZBookmarkList } from "@karakeep/shared/types/lists";
 
@@ -27,6 +36,7 @@ export function ListOptions({
   children?: React.ReactNode;
 }) {
   const { t } = useTranslation();
+  const { showArchived, onClickShowArchived } = useShowArchived();
 
   const [deleteListDialogOpen, setDeleteListDialogOpen] = useState(false);
   const [newNestedListModalOpen, setNewNestedListModalOpen] = useState(false);
@@ -92,6 +102,14 @@ export function ListOptions({
         >
           <FolderInput className="size-4" />
           <span>{t("lists.merge_list")}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="flex gap-2" onClick={onClickShowArchived}>
+          {showArchived ? (
+            <SquareCheck className="size-4" />
+          ) : (
+            <Square className="size-4" />
+          )}
+          <span>{t("actions.toggle_show_archived")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className="flex gap-2"

@@ -50,7 +50,10 @@ export default async function TagPage({
           </TagOptions>
         </div>
       }
-      query={{ tagId: tag.id, archived: !includeArchived ? false : undefined }}
+      query={{
+        tagId: tag.id,
+        archived: !includeArchived ? false : undefined,
+      }}
       showEditorCard={true}
     />
   );
