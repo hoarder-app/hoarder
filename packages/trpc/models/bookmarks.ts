@@ -356,6 +356,7 @@ export class Bookmark implements PrivacyAware {
             type: BookmarkTypes.ASSET,
             assetType: content.assetType,
             assetId: content.assetId,
+            assetUrl: getPublicSignedAssetUrl(content.assetId),
             fileName: content.fileName,
             sourceUrl: content.sourceUrl,
           };
@@ -383,7 +384,23 @@ export class Bookmark implements PrivacyAware {
           return null;
         }
         case BookmarkTypes.ASSET: {
-          return `${serverConfig.publicUrl}${getPublicSignedAssetUrl(content.assetId)}`;
+          switch (content.assetType) {
+            case "image":
+              return `${getPublicSignedAssetUrl(content.assetId)}`;
+            case "pdf": {
+              const screenshotAssetId = this.bookmark.assets.find(
+                (r) => r.assetType === "assetScreenshot",
+              )?.id;
+              if (!screenshotAssetId) {
+                return null;
+              }
+              return getPublicSignedAssetUrl(screenshotAssetId);
+            }
+            default: {
+              const _exhaustiveCheck: never = content.assetType;
+              return null;
+            }
+          }
         }
         default: {
           throw new Error("Unknown bookmark content type");

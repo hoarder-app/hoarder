@@ -88,11 +88,13 @@ function BookmarkCard({ bookmark }: { bookmark: ZPublicBookmark }) {
           <div className="space-y-2">
             {bookmark.bannerImageUrl ? (
               <div className="aspect-video w-full overflow-hidden rounded bg-gray-100">
-                <img
-                  src={bookmark.bannerImageUrl}
-                  alt={bookmark.title ?? "Link preview"}
-                  className="h-full w-full object-cover"
-                />
+                <Link href={bookmark.content.assetUrl}>
+                  <img
+                    src={bookmark.bannerImageUrl}
+                    alt={bookmark.title ?? "Asset preview"}
+                    className="h-full w-full object-cover"
+                  />
+                </Link>
               </div>
             ) : (
               <div className="flex aspect-video w-full items-center justify-center overflow-hidden rounded bg-gray-100">
@@ -104,14 +106,13 @@ function BookmarkCard({ bookmark }: { bookmark: ZPublicBookmark }) {
               </div>
             )}
             <div className="space-y-1">
-              <h3 className="text-sm font-medium leading-tight text-gray-900">
-                {bookmark.title ?? bookmark.content.fileName ?? "Asset"}
-              </h3>
-              {bookmark.description && (
-                <p className="line-clamp-2 text-xs leading-relaxed text-gray-600">
-                  {bookmark.description}
-                </p>
-              )}
+              <Link
+                href={bookmark.content.assetUrl}
+                target="_blank"
+                className="line-clamp-2 text-ellipsis text-lg font-medium leading-tight text-gray-900"
+              >
+                {bookmark.title}
+              </Link>
             </div>
           </div>
         );
