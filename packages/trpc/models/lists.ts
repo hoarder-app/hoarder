@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, or } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -8,11 +8,13 @@ import { SqliteError } from "@karakeep/db";
 import { bookmarkLists, bookmarksInLists } from "@karakeep/db/schema";
 import { triggerRuleEngineOnEvent } from "@karakeep/shared/queues";
 import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
+import { ZSortOrder } from "@karakeep/shared/types/bookmarks";
 import {
   ZBookmarkList,
   zEditBookmarkListSchemaWithValidation,
   zNewBookmarkListSchema,
 } from "@karakeep/shared/types/lists";
+import { ZCursor } from "@karakeep/shared/types/pagination";
 
 import { AuthedContext, Context } from "..";
 import { buildImpersonatingAuthedContext } from "../lib/impersonate";
@@ -61,18 +63,23 @@ export abstract class List implements PrivacyAware {
     }
   }
 
-  static async getForRss(
+  static async getPublicListContents(
     ctx: Context,
     listId: string,
-    token: string,
+    token: string | null,
     pagination: {
       limit: number;
+      order: Exclude<ZSortOrder, "relevance">;
+      cursor: ZCursor | null | undefined;
     },
   ) {
     const listdb = await ctx.db.query.bookmarkLists.findFirst({
       where: and(
         eq(bookmarkLists.id, listId),
-        eq(bookmarkLists.rssToken, token),
+        or(
+          eq(bookmarkLists.public, true),
+          token !== null ? eq(bookmarkLists.rssToken, token) : undefined,
+        ),
       ),
     });
     if (!listdb) {
@@ -85,7 +92,6 @@ export abstract class List implements PrivacyAware {
     // The token here acts as an authed context, so we can create
     // an impersonating context for the list owner as long as
     // we don't leak the context.
-
     const authedCtx = await buildImpersonatingAuthedContext(listdb.userId);
     const list = List.fromData(authedCtx, listdb);
     const bookmarkIds = await list.getBookmarkIds();
@@ -94,7 +100,8 @@ export abstract class List implements PrivacyAware {
       ids: bookmarkIds,
       includeContent: false,
       limit: pagination.limit,
-      sortOrder: "desc",
+      sortOrder: pagination.order,
+      cursor: pagination.cursor,
     });
 
     return {
@@ -102,8 +109,10 @@ export abstract class List implements PrivacyAware {
         icon: list.list.icon,
         name: list.list.name,
         description: list.list.description,
+        numItems: bookmarkIds.length,
       },
       bookmarks: bookmarks.bookmarks.map((b) => b.asPublicBookmark()),
+      nextCursor: bookmarks.nextCursor,
     };
   }
 
@@ -185,6 +194,7 @@ export abstract class List implements PrivacyAware {
         icon: input.icon,
         parentId: input.parentId,
         query: input.query,
+        public: input.public,
       })
       .where(
         and(

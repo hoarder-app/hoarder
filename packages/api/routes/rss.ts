@@ -28,8 +28,10 @@ const app = new Hono().get(
     const searchParams = c.req.valid("query");
     const token = searchParams.token;
 
-    const res = await List.getForRss(c.var.ctx, listId, token, {
+    const res = await List.getPublicListContents(c.var.ctx, listId, token, {
       limit: searchParams.limit ?? 20,
+      order: "desc",
+      cursor: null,
     });
     const list = res.list;
 

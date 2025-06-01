@@ -27,6 +27,9 @@ import {
   rssFeedImportsTable,
   tagsOnBookmarks,
 } from "@karakeep/db/schema";
+import serverConfig from "@karakeep/shared/config";
+import { createSignedToken } from "@karakeep/shared/signedTokens";
+import { zAssetSignedTokenSchema } from "@karakeep/shared/types/assets";
 import {
   BookmarkTypes,
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
@@ -36,7 +39,10 @@ import {
   ZPublicBookmark,
 } from "@karakeep/shared/types/bookmarks";
 import { ZCursor } from "@karakeep/shared/types/pagination";
-import { getBookmarkTitle } from "@karakeep/shared/utils/bookmarkUtils";
+import {
+  getBookmarkLinkAssetIdOrUrl,
+  getBookmarkTitle,
+} from "@karakeep/shared/utils/bookmarkUtils";
 
 import { AuthedContext } from "..";
 import { mapDBAssetTypeToUserType } from "../lib/attachments";
@@ -321,6 +327,14 @@ export class Bookmark implements PrivacyAware {
   }
 
   asPublicBookmark(): ZPublicBookmark {
+    const getPublicSignedAssetUrl = (assetId: string) => {
+      const payload: z.infer<typeof zAssetSignedTokenSchema> = {
+        assetId,
+        userId: this.ctx.user.id,
+      };
+      const signedToken = createSignedToken(payload);
+      return `${serverConfig.publicApiUrl}/public/assets/${assetId}?token=${signedToken}`;
+    };
     const getContent = (
       content: ZBookmarkContent,
     ): ZPublicBookmark["content"] => {
@@ -342,9 +356,51 @@ export class Bookmark implements PrivacyAware {
             type: BookmarkTypes.ASSET,
             assetType: content.assetType,
             assetId: content.assetId,
+            assetUrl: getPublicSignedAssetUrl(content.assetId),
             fileName: content.fileName,
             sourceUrl: content.sourceUrl,
           };
+        }
+        default: {
+          throw new Error("Unknown bookmark content type");
+        }
+      }
+    };
+
+    const getBannerImageUrl = (content: ZBookmarkContent): string | null => {
+      switch (content.type) {
+        case BookmarkTypes.LINK: {
+          const assetIdOrUrl = getBookmarkLinkAssetIdOrUrl(content);
+          if (!assetIdOrUrl) {
+            return null;
+          }
+          if (assetIdOrUrl.localAsset) {
+            return getPublicSignedAssetUrl(assetIdOrUrl.assetId);
+          } else {
+            return assetIdOrUrl.url;
+          }
+        }
+        case BookmarkTypes.TEXT: {
+          return null;
+        }
+        case BookmarkTypes.ASSET: {
+          switch (content.assetType) {
+            case "image":
+              return `${getPublicSignedAssetUrl(content.assetId)}`;
+            case "pdf": {
+              const screenshotAssetId = this.bookmark.assets.find(
+                (r) => r.assetType === "assetScreenshot",
+              )?.id;
+              if (!screenshotAssetId) {
+                return null;
+              }
+              return getPublicSignedAssetUrl(screenshotAssetId);
+            }
+            default: {
+              const _exhaustiveCheck: never = content.assetType;
+              return null;
+            }
+          }
         }
         default: {
           throw new Error("Unknown bookmark content type");
@@ -360,6 +416,7 @@ export class Bookmark implements PrivacyAware {
       title: getBookmarkTitle(this.bookmark),
       tags: this.bookmark.tags.map((t) => t.name),
       content: getContent(this.bookmark.content),
+      bannerImageUrl: getBannerImageUrl(this.bookmark.content),
     };
   }
 }

@@ -9,6 +9,7 @@ import assets from "./routes/assets";
 import bookmarks from "./routes/bookmarks";
 import highlights from "./routes/highlights";
 import lists from "./routes/lists";
+import publicRoute from "./routes/public";
 import rss from "./routes/rss";
 import tags from "./routes/tags";
 import users from "./routes/users";
@@ -43,6 +44,7 @@ const app = new Hono<{
   })
   .use(trpcAdapter)
   .route("/v1", v1)
-  .route("/assets", assets);
+  .route("/assets", assets)
+  .route("/public", publicRoute);
 
 export default app;
