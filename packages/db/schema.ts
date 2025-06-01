@@ -537,6 +537,9 @@ export const userSettings = sqliteTable("userSettings", {
   bookmarkClickAction: text("bookmarkClickAction", {
     enum: ["open_original_link", "expand_bookmark_preview"],
   }).notNull().default("open_original_link"),
+  archiveDisplayBehaviour: text("archiveDisplayBehaviour", {
+    enum: ["show", "hide"],
+  }).notNull().default("show"),
 });
 
 // Relations

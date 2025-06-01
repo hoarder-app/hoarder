@@ -265,6 +265,7 @@ export const usersAppRouter = router({
       }
       return {
         bookmarkClickAction: settings.bookmarkClickAction,
+        archiveDisplayBehaviour: settings.archiveDisplayBehaviour,
       };
     }),
   updateSettings: authedProcedure
@@ -280,6 +281,7 @@ export const usersAppRouter = router({
         .update(userSettings)
         .set({
           bookmarkClickAction: input.bookmarkClickAction,
+          archiveDisplayBehaviour: input.archiveDisplayBehaviour,
         })
         .where(eq(userSettings.userId, ctx.user.id));
     }),

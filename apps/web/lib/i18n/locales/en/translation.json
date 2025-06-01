@@ -51,6 +51,7 @@
     "favorite": "Favorite",
     "unfavorite": "Unfavorite",
     "delete": "Delete",
+    "toggle_show_archived": "Show Archived",
     "refresh": "Refresh",
     "recrawl": "Recrawl",
     "download_full_page_archive": "Download Full Page Archive",
@@ -101,9 +102,16 @@
       "interface_lang": "Interface Language",
       "user_settings": {
         "user_settings_updated": "User settings have been updated!",
-        "bookmark_click_action": "Bookmark Click Action",
-        "open_external_url": "Open Original URL",
-        "open_bookmark_details": "Open Bookmark Details"
+        "bookmark_click_action": {
+          "title": "Bookmark Click Action",
+          "open_external_url": "Open Original URL",
+          "open_bookmark_details": "Open Bookmark Details"
+        },
+        "archive_display_behaviour": {
+          "title": "Archive Display Mode",
+          "show": "Show up in tags and lists",
+          "hide": "Hide in tags and lists"
+        }
       }
     },
     "ai": {

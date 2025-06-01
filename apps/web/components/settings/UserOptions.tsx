@@ -73,10 +73,20 @@ export default function UserSettings() {
     ZUserSettings["bookmarkClickAction"],
     string
   > = {
-    open_original_link: t("settings.info.user_settings.open_external_url"),
-    expand_bookmark_preview: t(
-      "settings.info.user_settings.open_bookmark_details",
+    open_original_link: t(
+      "settings.info.user_settings.bookmark_click_action.open_external_url",
     ),
+    expand_bookmark_preview: t(
+      "settings.info.user_settings.bookmark_click_action.open_bookmark_details",
+    ),
+  };
+
+  const archiveDisplayBehaviourTranslation: Record<
+    ZUserSettings["archiveDisplayBehaviour"],
+    string
+  > = {
+    show: t("settings.info.user_settings.archive_display_behaviour.show"),
+    hide: t("settings.info.user_settings.archive_display_behaviour.hide"),
   };
 
   const form = useForm<z.infer<typeof zUserSettingsSchema>>({
@@ -97,7 +107,7 @@ export default function UserSettings() {
         render={({ field }) => (
           <div className="flex w-full flex-col gap-2">
             <Label>
-              {t("settings.info.user_settings.bookmark_click_action")}
+              {t("settings.info.user_settings.bookmark_click_action.title")}
             </Label>
             <Select
               disabled={!!clientConfig.demoMode}
@@ -116,6 +126,42 @@ export default function UserSettings() {
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(bookmarkClickActionTranslation).map(
+                  ([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ),
+                )}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+      />
+      <FormField
+        control={form.control}
+        name="archiveDisplayBehaviour"
+        render={({ field }) => (
+          <div className="flex w-full flex-col gap-2">
+            <Label>
+              {t("settings.info.user_settings.archive_display_behaviour.title")}
+            </Label>
+            <Select
+              disabled={!!clientConfig.demoMode}
+              value={field.value}
+              onValueChange={(value) => {
+                mutate({
+                  archiveDisplayBehaviour:
+                    value as ZUserSettings["archiveDisplayBehaviour"],
+                });
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue>
+                  {archiveDisplayBehaviourTranslation[field.value]}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(archiveDisplayBehaviourTranslation).map(
                   ([value, label]) => (
                     <SelectItem key={value} value={value}>
                       {label}

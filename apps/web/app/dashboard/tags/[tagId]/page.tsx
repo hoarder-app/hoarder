@@ -9,8 +9,12 @@ import { MoreHorizontal } from "lucide-react";
 
 export default async function TagPage({
   params,
+  searchParams,
 }: {
   params: { tagId: string };
+  searchParams?: {
+    includeArchived?: string;
+  };
 }) {
   let tag;
   try {
@@ -23,6 +27,12 @@ export default async function TagPage({
     }
     throw e;
   }
+  const userSettings = await api.users.settings();
+
+  const includeArchived =
+    searchParams?.includeArchived !== undefined
+      ? searchParams.includeArchived === "true"
+      : userSettings.archiveDisplayBehaviour === "show";
 
   return (
     <Bookmarks
@@ -40,7 +50,7 @@ export default async function TagPage({
           </TagOptions>
         </div>
       }
-      query={{ tagId: tag.id }}
+      query={{ tagId: tag.id, archived: !includeArchived ? false : undefined }}
       showEditorCard={true}
     />
   );
