@@ -304,8 +304,16 @@
     "search_query": "Search Query",
     "search_query_help": "Learn more about the search query language.",
     "description": "Description (Optional)",
-    "generate_rss_feed": "Generate RSS Feed",
-    "public_list": "Public List"
+    "rss": {
+      "title": "RSS Feed",
+      "description": "Enable an RSS feed for this list",
+      "feed_url": "RSS Feed URL"
+    },
+    "public_list": {
+      "title": "Public List",
+      "description": "Allow others to view this list",
+      "share_link": "Share Link"
+    }
   },
   "tags": {
     "all_tags": "All Tags",

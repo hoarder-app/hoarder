@@ -53,7 +53,7 @@ export function ShareListModal({
         <DialogHeader>
           <DialogTitle>{t("lists.share_list")}</DialogTitle>
         </DialogHeader>
-        <DialogDescription className="mt-4 flex flex-col gap-2">
+        <DialogDescription className="mt-4 space-y-6">
           <PublicListLink list={list} />
           <RssLink listId={list.id} />
         </DialogDescription>

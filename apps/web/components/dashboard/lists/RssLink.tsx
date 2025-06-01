@@ -1,14 +1,14 @@
 "use client";
 
 import { useMemo } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
-import CopyBtn from "@/components/ui/copy-button";
+import { Button } from "@/components/ui/button";
+import { CopyBtnV2 } from "@/components/ui/copy-button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { useClientConfig } from "@/lib/clientConfig";
 import { api } from "@/lib/trpc";
-import { cn } from "@/lib/utils";
-import { Loader2, RotateCcw, Rss, Trash2 } from "lucide-react";
+import { Loader2, RotateCcw } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export default function RssLink({ listId }: { listId: string }) {
@@ -38,77 +38,58 @@ export default function RssLink({ listId }: { listId: string }) {
     return `${clientConfig.publicApiUrl}/v1/rss/lists/${listId}?token=${rssToken.token}`;
   }, [rssToken]);
 
-  const isLoading = isRegenPending || isClearPending || isTokenLoading;
+  const rssEnabled = rssUrl !== null;
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border bg-white p-3">
-      <Badge variant="outline" className="text-xs">
-        RSS
-      </Badge>
-      {!rssUrl ? (
-        <div className="flex items-center gap-2">
-          <Button
-            size="sm"
-            variant="outline"
-            onClick={() => regenRssToken({ listId })}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <Loader2 className="h-3 w-3 animate-spin" />
-            ) : (
-              <span className="flex items-center">
-                <Rss className="mr-2 h-4 w-4 flex-shrink-0 text-orange-500" />
-                {t("lists.generate_rss_feed")}
-              </span>
-            )}
-          </Button>
+    <>
+      {/* RSS Feed Toggle */}
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <Label htmlFor="rss-toggle" className="text-sm font-medium">
+            {t("lists.rss.title")}
+          </Label>
+          <p className="text-xs text-muted-foreground">
+            {t("lists.rss.description")}
+          </p>
         </div>
-      ) : (
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <Input
-            value={rssUrl}
-            readOnly
-            className="h-8 min-w-0 flex-1 font-mono text-xs"
-          />
-          <div className="flex flex-shrink-0 gap-1">
-            <CopyBtn
-              getStringToCopy={() => {
-                return rssUrl;
-              }}
-              className={cn(
-                buttonVariants({ variant: "outline", size: "sm" }),
-                "h-8 w-8 p-0",
-              )}
-            />
+        <Switch
+          id="rss-toggle"
+          checked={rssEnabled}
+          onCheckedChange={(checked) =>
+            checked ? regenRssToken({ listId }) : clearRssToken({ listId })
+          }
+          disabled={
+            isTokenLoading ||
+            isClearPending ||
+            isRegenPending ||
+            !!clientConfig.demoMode
+          }
+        />
+      </div>
+      {/* RSS URL - only show when RSS is enabled */}
+      {rssEnabled && (
+        <div className="space-y-3">
+          <Label className="text-sm font-medium">
+            {t("lists.rss.feed_url")}
+          </Label>
+          <div className="flex items-center space-x-2">
+            <Input value={rssUrl} readOnly className="flex-1 text-sm" />
+            <CopyBtnV2 getStringToCopy={() => rssUrl} />
             <Button
               variant="outline"
               size="sm"
               onClick={() => regenRssToken({ listId })}
-              disabled={isLoading}
-              className="h-8 w-8 p-0"
+              disabled={isRegenPending}
             >
-              {isLoading ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
+              {isRegenPending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <RotateCcw className="h-3 w-3" />
-              )}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => clearRssToken({ listId })}
-              disabled={isLoading}
-              className="h-8 w-8 p-0 text-destructive hover:text-destructive"
-            >
-              {isLoading ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                <Trash2 className="h-3 w-3" />
+                <RotateCcw className="h-4 w-4" />
               )}
             </Button>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
