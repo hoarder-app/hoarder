@@ -12,7 +12,6 @@ import { Check, Image as ImageIcon, NotebookPen } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
-import { useBookmarkViewingMode } from "@karakeep/shared-react/hooks/bookmark-viewing-mode-context";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 import { isBookmarkStillTagging } from "@karakeep/shared/utils/bookmarkUtils";
 
@@ -38,7 +37,6 @@ function BottomRow({
   footer?: React.ReactNode;
   bookmark: ZBookmark;
 }) {
-  const viewingMode = useBookmarkViewingMode();
   return (
     <div className="justify flex w-full shrink-0 justify-between text-gray-500">
       <div className="flex items-center gap-2 overflow-hidden text-nowrap font-light">
@@ -50,7 +48,7 @@ function BottomRow({
           <BookmarkFormattedCreatedAt createdAt={bookmark.createdAt} />
         </Link>
       </div>
-      {viewingMode !== "public" && <BookmarkActionBar bookmark={bookmark} />}
+      <BookmarkActionBar bookmark={bookmark} />
     </div>
   );
 }

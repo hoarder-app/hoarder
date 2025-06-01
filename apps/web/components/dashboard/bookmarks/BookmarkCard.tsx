@@ -1,6 +1,5 @@
 import { api } from "@/lib/trpc";
 
-import { useBookmarkViewingMode } from "@karakeep/shared-react/hooks/bookmark-viewing-mode-context";
 import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 import { isBookmarkStillLoading } from "@karakeep/shared/utils/bookmarkUtils";
 
@@ -16,7 +15,6 @@ export default function BookmarkCard({
   bookmark: ZBookmark;
   className?: string;
 }) {
-  const viewingMode = useBookmarkViewingMode();
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {
       bookmarkId: initialData.id,
@@ -33,7 +31,6 @@ export default function BookmarkCard({
         }
         return false;
       },
-      enabled: viewingMode === "owned",
     },
   );
 
