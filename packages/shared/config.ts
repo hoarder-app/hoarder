@@ -18,7 +18,7 @@ const optionalStringBool = () =>
 const allEnv = z.object({
   API_URL: z.string().url().default("http://localhost:3000"),
   NEXTAUTH_URL: z.string().url().default("http://localhost:3000"),
-  NEXTAUTH_SECRET: z.string(),
+  NEXTAUTH_SECRET: z.string().optional(),
   DISABLE_SIGNUPS: stringBool("false"),
   DISABLE_PASSWORD_AUTH: stringBool("false"),
   OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING: stringBool("false"),
