@@ -111,6 +111,7 @@ describe("User Routes", () => {
     // The default settings
     expect(settings).toEqual({
       bookmarkClickAction: "open_original_link",
+      archiveDisplayBehaviour: "show",
     });
 
     // Update settings
@@ -122,6 +123,7 @@ describe("User Routes", () => {
     const updatedSettings = await caller.users.settings();
     expect(updatedSettings).toEqual({
       bookmarkClickAction: "expand_bookmark_preview",
+      archiveDisplayBehaviour: "show",
     });
 
     // Test invalid update (e.g., empty input, if schema enforces it)
