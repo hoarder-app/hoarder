@@ -28,7 +28,7 @@ export function createSignedToken(
 
   const payloadString = JSON.stringify(toBeSigned);
   const signature = crypto
-    .createHmac("sha256", serverConfig.signingSecret)
+    .createHmac("sha256", serverConfig.signingSecret())
     .update(payloadString)
     .digest("hex");
 
@@ -52,7 +52,7 @@ export function verifySignedToken<T>(
 
     // Verify signature
     const expectedSignature = crypto
-      .createHmac("sha256", serverConfig.signingSecret)
+      .createHmac("sha256", serverConfig.signingSecret())
       .update(JSON.stringify(payload))
       .digest("hex");
 

@@ -95,7 +95,12 @@ const serverConfigSchema = allEnv.transform((val) => {
     apiUrl: val.API_URL,
     publicUrl: val.NEXTAUTH_URL,
     publicApiUrl: `${val.NEXTAUTH_URL}/api`,
-    signingSecret: val.NEXTAUTH_SECRET,
+    signingSecret: () => {
+      if (!val.NEXTAUTH_SECRET) {
+        throw new Error("NEXTAUTH_SECRET is not set");
+      }
+      return val.NEXTAUTH_SECRET;
+    },
     auth: {
       disableSignups: val.DISABLE_SIGNUPS,
       disablePasswordAuth: val.DISABLE_PASSWORD_AUTH,
