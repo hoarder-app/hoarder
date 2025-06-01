@@ -166,7 +166,7 @@ describe("Public API", () => {
           assetId,
           userId,
         } as z.infer<typeof zAssetSignedTokenSchema>,
-        Date.now() + 60,
+        Date.now() + 60000,
       );
       const res = await fetch(
         `http://localhost:${port}/api/public/assets/${assetId}?token=${token}`,
@@ -195,7 +195,7 @@ describe("Public API", () => {
           assetId,
           userId,
         } as z.infer<typeof zAssetSignedTokenSchema>,
-        Date.now() + 5,
+        Date.now() + 5000,
       );
       let res = await fetch(
         `http://localhost:${port}/api/public/assets/${assetId}?token=${token}`,
@@ -225,7 +225,7 @@ describe("Public API", () => {
           assetId: anotherAsset.assetId,
           userId,
         } as z.infer<typeof zAssetSignedTokenSchema>,
-        Date.now() + 60,
+        Date.now() + 60000,
       );
       let res = await fetch(
         `http://localhost:${port}/api/public/assets/${anotherAsset.assetId}?token=${token}`,
