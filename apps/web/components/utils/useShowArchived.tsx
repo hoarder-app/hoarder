@@ -1,35 +1,21 @@
 import { useCallback } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { api } from "@/lib/trpc";
+import { useUserSettings } from "@/lib/userSettings";
+import { parseAsBoolean, useQueryState } from "nuqs";
 
 export function useShowArchived() {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const createQueryString = useCallback(
-    (name: string, value: string) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set(name, value);
-
-      return params.toString();
-    },
-    [searchParams],
+  const userSettings = useUserSettings();
+  const [showArchived, setShowArchived] = useQueryState(
+    "includeArchived",
+    parseAsBoolean
+      .withOptions({
+        shallow: false,
+      })
+      .withDefault(userSettings.archiveDisplayBehaviour === "show"),
   );
 
-  const { data } = api.users.settings.useQuery(undefined);
-  const includeArchived = searchParams.get("includeArchived");
-  const showArchived =
-    includeArchived !== undefined
-      ? includeArchived === "true"
-      : data?.archiveDisplayBehaviour === "show";
-
-  const onClickShowArchived = () => {
-    router.replace(
-      pathname +
-        "?" +
-        createQueryString("includeArchived", (!showArchived).toString()),
-    );
-  };
+  const onClickShowArchived = useCallback(() => {
+    setShowArchived((prev) => !prev);
+  }, [setShowArchived]);
 
   return {
     showArchived,

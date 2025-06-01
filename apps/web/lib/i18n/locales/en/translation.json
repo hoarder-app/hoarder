@@ -108,9 +108,9 @@
           "open_bookmark_details": "Open Bookmark Details"
         },
         "archive_display_behaviour": {
-          "title": "Archive Display Behaviour",
-          "show": "Show up in tags and lists",
-          "hide": "Hide in tags and lists"
+          "title": "Archived Bookmarks",
+          "show": "Show archived bookmarks in tags and lists",
+          "hide": "Hide archived bookmarks in tags and lists"
         }
       }
     },
