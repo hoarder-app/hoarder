@@ -73,9 +73,11 @@
     "sort": {
       "title": "Sortowanie",
       "newest_first": "Najnowsze pierwsze",
-      "oldest_first": "Najstarsze pierwsze"
+      "oldest_first": "Najstarsze pierwsze",
+      "relevant_first": "Najbardziej trafne na początku"
     },
-    "open_editor": "Otwórz edytor"
+    "open_editor": "Otwórz edytor",
+    "toggle_show_archived": "Pokaż zarchiwizowane"
   },
   "settings": {
     "info": {
@@ -86,7 +88,20 @@
       "current_password": "Obecne hasło",
       "new_password": "Nowe hasło",
       "options": "Opcje",
-      "interface_lang": "Język interfejsu"
+      "interface_lang": "Język interfejsu",
+      "user_settings": {
+        "archive_display_behaviour": {
+          "show": "Pokaż zarchiwizowane zakładki w tagach i listach",
+          "hide": "Ukryj zarchiwizowane zakładki w tagach i listach",
+          "title": "Zarchiwizowane zakładki"
+        },
+        "user_settings_updated": "Ustawienia użytkownika zostały zaktualizowane!",
+        "bookmark_click_action": {
+          "title": "Akcja po kliknięciu zakładki",
+          "open_external_url": "Otwórz oryginalny URL",
+          "open_bookmark_details": "Otwórz szczegóły zakładki"
+        }
+      }
     },
     "import": {
       "import_bookmarks_from_html_file": "Importuj zakładki z pliku HTML",
@@ -117,7 +132,9 @@
     },
     "feeds": {
       "rss_subscriptions": "Subskrypcje RSS",
-      "add_a_subscription": "Dodaj subskrypcję"
+      "add_a_subscription": "Dodaj subskrypcję",
+      "feed_enabled": "Włączono kanał RSS",
+      "feed_disabled": "Wyłączono kanał RSS"
     },
     "api_keys": {
       "api_keys": "Klucze API",
@@ -250,7 +267,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Regeneruj tagi AI dla wszystkich zakładek",
       "reindex_all_bookmarks": "Ponowne indeksowanie wszystkich zakładek",
       "compact_assets": "Kompaktuj zasoby",
-      "reprocess_assets_fix_mode": "Ponowne przetwarzanie zasobów (tryb fiksny)"
+      "reprocess_assets_fix_mode": "Ponowne przetwarzanie zasobów (tryb fiksny)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Wygeneruj ponownie podsumowania AI tylko dla nieudanych zakładek",
+      "regenerate_ai_summaries_for_all_bookmarks": "Wygeneruj ponownie podsumowania AI dla wszystkich zakładek"
     }
   },
   "tags": {
@@ -375,12 +394,27 @@
     "destination_list": "Lista docelowa",
     "delete_after_merge": "Usuń oryginalną listę po scaleniu",
     "no_destination": "Brak miejsca docelowego",
-    "description": "Opis (opcjonalny)"
+    "description": "Opis (opcjonalny)",
+    "public_list": {
+      "title": "Lista publiczna",
+      "description": "Zezwól innym na przeglądanie tej listy",
+      "share_link": "Udostępnij link"
+    },
+    "share_list": "Udostępnij listę",
+    "rss": {
+      "title": "Kanał RSS",
+      "description": "Włącz kanał RSS dla tej listy",
+      "feed_url": "Adres URL kanału RSS"
+    }
   },
   "preview": {
     "view_original": "Zobacz oryginał",
     "cached_content": "Zbuforowana zawartość",
-    "reader_view": "Widok czytnika"
+    "reader_view": "Widok czytnika",
+    "tabs": {
+      "content": "Treść",
+      "details": "Szczegóły"
+    }
   },
   "highlights": {
     "no_highlights": "Nie masz jeszcze żadnych wyróżnień."

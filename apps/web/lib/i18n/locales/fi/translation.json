@@ -80,8 +80,10 @@
     "sort": {
       "title": "Lajittele",
       "newest_first": "Uusin ensin",
-      "oldest_first": "Vanhin ensin"
-    }
+      "oldest_first": "Vanhin ensin",
+      "relevant_first": "Tärkein ensin"
+    },
+    "toggle_show_archived": "Näytä arkistoidut"
   },
   "highlights": {
     "no_highlights": "Sulla ei oo vielä yhtään korostusta."
@@ -97,7 +99,20 @@
       "new_password": "Uusi salasana",
       "confirm_new_password": "Vahvista uusi salasana",
       "options": "Valinnat",
-      "interface_lang": "Käyttöliittymän kieli"
+      "interface_lang": "Käyttöliittymän kieli",
+      "user_settings": {
+        "user_settings_updated": "Käyttäjäasetukset on päivitetty!",
+        "bookmark_click_action": {
+          "title": "Kirjanmerkin klikkaustoiminto",
+          "open_external_url": "Avaa alkuperäinen URL",
+          "open_bookmark_details": "Avaa kirjanmerkin tiedot"
+        },
+        "archive_display_behaviour": {
+          "title": "Arkistoidut kirjanmerkit",
+          "show": "Näytä arkistoidut kirjanmerkit tunnisteissa ja listoissa",
+          "hide": "Piilota arkistoidut kirjanmerkit tunnisteissa ja listoissa"
+        }
+      }
     },
     "ai": {
       "ai_settings": "Tekoälyasetukset",
@@ -114,7 +129,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS-tilaukset",
-      "add_a_subscription": "Lisää tilaus"
+      "add_a_subscription": "Lisää tilaus",
+      "feed_enabled": "RSS-syöte käytössä",
+      "feed_disabled": "RSS-syöte poistettu käytöstä"
     },
     "webhooks": {
       "webhooks": "Webhookit",
@@ -249,7 +266,9 @@
       "reindex_all_bookmarks": "Uudelleenindeksoi kaikki kirjanmerkit",
       "compact_assets": "Tiivistetyt resurssit",
       "reprocess_assets_fix_mode": "Käsittele resurssit uudelleen (korjaustila)",
-      "regenerate_ai_tags_for_failed_bookmarks_only": "Luo AI-tageja uudelleen vain epäonnistuneille kirjanmerkeille"
+      "regenerate_ai_tags_for_failed_bookmarks_only": "Luo AI-tageja uudelleen vain epäonnistuneille kirjanmerkeille",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Luo uudelleen tekoälyn yhteenvedot vain epäonnistuneille kirjanmerkeille",
+      "regenerate_ai_summaries_for_all_bookmarks": "Luo uudelleen tekoälyn yhteenvedot kaikille kirjanmerkeille"
     },
     "users_list": {
       "users_list": "Käyttäjäluettelo",
@@ -284,7 +303,18 @@
     "merge_list": "Yhdistä lista",
     "destination_list": "Kohdelista",
     "delete_after_merge": "Poista alkuperäinen luettelo yhdistämisen jälkeen",
-    "no_destination": "Ei kohdetta"
+    "no_destination": "Ei kohdetta",
+    "rss": {
+      "title": "RSS-syöte",
+      "description": "Ota RSS-syöte käyttöön tälle listalle",
+      "feed_url": "RSS-syötteen URL"
+    },
+    "public_list": {
+      "title": "Julkinen lista",
+      "description": "Salli muiden tarkastella tätä listaa",
+      "share_link": "Jaa linkki"
+    },
+    "share_list": "Jaa lista"
   },
   "tags": {
     "all_tags": "Kaikki tunnisteet",
@@ -339,7 +369,11 @@
   "preview": {
     "view_original": "Näytä alkuperäinen",
     "cached_content": "Välimuistissa oleva sisältö",
-    "reader_view": "Lukijanäkymä"
+    "reader_view": "Lukijanäkymä",
+    "tabs": {
+      "content": "Sisältö",
+      "details": "Tiedot"
+    }
   },
   "editor": {
     "quickly_focus": "Voit nopeasti kohdistaa tähän kenttään painamalla ⌘ + E",

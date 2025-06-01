@@ -79,9 +79,11 @@
     "sort": {
       "title": "排序",
       "newest_first": "最新优先",
-      "oldest_first": "最早优先"
+      "oldest_first": "最早优先",
+      "relevant_first": "最相关优先"
     },
-    "open_editor": "打开编辑器"
+    "open_editor": "打开编辑器",
+    "toggle_show_archived": "显示已存档"
   },
   "settings": {
     "back_to_app": "返回应用",
@@ -94,7 +96,20 @@
       "new_password": "新密码",
       "confirm_new_password": "确认新密码",
       "options": "选项",
-      "interface_lang": "界面语言"
+      "interface_lang": "界面语言",
+      "user_settings": {
+        "user_settings_updated": "用户设置已更新！",
+        "bookmark_click_action": {
+          "title": "书签点击操作",
+          "open_external_url": "打开原始 URL",
+          "open_bookmark_details": "打开书签详情"
+        },
+        "archive_display_behaviour": {
+          "title": "已存档的书签",
+          "show": "在标签和列表中显示已存档的书签",
+          "hide": "在标签和列表中隐藏已存档的书签"
+        }
+      }
     },
     "ai": {
       "ai_settings": "AI设置",
@@ -111,7 +126,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS订阅",
-      "add_a_subscription": "添加订阅"
+      "add_a_subscription": "添加订阅",
+      "feed_enabled": "RSS 订阅已启用",
+      "feed_disabled": "RSS 订阅已禁用"
     },
     "import": {
       "import_export": "导入/导出",
@@ -245,7 +262,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "为所有书签重新生成AI标签",
       "reindex_all_bookmarks": "重新索引所有书签",
       "compact_assets": "压缩资产",
-      "reprocess_assets_fix_mode": "重新处理资产(固定模式)"
+      "reprocess_assets_fix_mode": "重新处理资产(固定模式)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "仅为失败的书签重新生成 AI 摘要",
+      "regenerate_ai_summaries_for_all_bookmarks": "为所有书签重新生成 AI 摘要"
     },
     "users_list": {
       "users_list": "用户列表",
@@ -280,7 +299,18 @@
     "search_query": "搜索查询",
     "edit_list": "修改列表",
     "search_query_help": "了解更多关于搜索查询语言。",
-    "description": "描述（可选）"
+    "description": "描述（可选）",
+    "rss": {
+      "title": "RSS订阅",
+      "description": "为此列表启用 RSS 订阅",
+      "feed_url": "RSS 订阅 URL"
+    },
+    "share_list": "分享列表",
+    "public_list": {
+      "title": "公共列表",
+      "description": "允许其他人查看此列表",
+      "share_link": "分享链接"
+    }
   },
   "tags": {
     "all_tags": "所有标签",
@@ -298,7 +328,11 @@
   "preview": {
     "view_original": "查看原文",
     "cached_content": "缓存内容",
-    "reader_view": "阅读器视图"
+    "reader_view": "阅读器视图",
+    "tabs": {
+      "content": "内容",
+      "details": "详情"
+    }
   },
   "editor": {
     "quickly_focus": "您可以按⌘ + E快速聚焦到此字段",

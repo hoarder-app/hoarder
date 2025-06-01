@@ -71,11 +71,13 @@
     "sort": {
       "title": "Сортувати",
       "newest_first": "Спочатку новіші",
-      "oldest_first": "Спочатку найстаріші"
+      "oldest_first": "Спочатку найстаріші",
+      "relevant_first": "Спочатку найрелевантніші"
     },
     "delete": "Видалити",
     "save": "Зберегти",
-    "open_editor": "Відкрити редактор"
+    "open_editor": "Відкрити редактор",
+    "toggle_show_archived": "Показати заархівовані"
   },
   "settings": {
     "webhooks": {
@@ -106,7 +108,20 @@
       "new_password": "Новий пароль",
       "confirm_new_password": "Підтвердьте новий пароль",
       "options": "Параметри",
-      "interface_lang": "Мова інтерфейсу"
+      "interface_lang": "Мова інтерфейсу",
+      "user_settings": {
+        "user_settings_updated": "Налаштування користувача оновлено!",
+        "bookmark_click_action": {
+          "title": "Дія при кліку на закладку",
+          "open_external_url": "Відкрити оригінальний URL",
+          "open_bookmark_details": "Відкрити деталі закладки"
+        },
+        "archive_display_behaviour": {
+          "title": "Заархівовані закладки",
+          "show": "Показувати заархівовані закладки в тегах і списках",
+          "hide": "Приховувати заархівовані закладки в тегах і списках"
+        }
+      }
     },
     "ai": {
       "ai_settings": "Налаштування ШІ",
@@ -123,7 +138,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS-підписки",
-      "add_a_subscription": "Додати підписку"
+      "add_a_subscription": "Додати підписку",
+      "feed_enabled": "RSS-канал увімкнено",
+      "feed_disabled": "RSS-канал вимкнено"
     },
     "import": {
       "import_export": "Імпорт / Експорт",
@@ -248,7 +265,11 @@
   "preview": {
     "cached_content": "Кешований вміст",
     "view_original": "Переглянути оригінал",
-    "reader_view": "Режим читання"
+    "reader_view": "Режим читання",
+    "tabs": {
+      "details": "Деталі",
+      "content": "Вміст"
+    }
   },
   "layouts": {
     "masonry": "Кам'яна кладка",
@@ -290,7 +311,9 @@
       "reindex_all_bookmarks": "Переіндексувати всі закладки",
       "compact_assets": "Компактні активи",
       "regenerate_ai_tags_for_all_bookmarks": "Відновити теги ШІ для всіх закладок",
-      "recrawl_failed_links_only": "Повторно просканувати лише пошкоджені посилання"
+      "recrawl_failed_links_only": "Повторно просканувати лише пошкоджені посилання",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Згенерувати AI-резюме лише для невдалих закладок",
+      "regenerate_ai_summaries_for_all_bookmarks": "Згенерувати AI-резюме для всіх закладок"
     },
     "users_list": {
       "users_list": "Список користувачів",
@@ -321,7 +344,18 @@
     "destination_list": "Список призначення",
     "delete_after_merge": "Видалити оригінальний список після об'єднання",
     "no_destination": "Немає призначення",
-    "description": "Опис (Необов'язково)"
+    "description": "Опис (Необов'язково)",
+    "public_list": {
+      "share_link": "Поділитися посиланням",
+      "title": "Публічний список",
+      "description": "Дозволити іншим переглядати цей список"
+    },
+    "share_list": "Поділитися списком",
+    "rss": {
+      "title": "RSS-канал",
+      "description": "Увімкнути RSS-канал для цього списку",
+      "feed_url": "URL RSS-каналу"
+    }
   },
   "tags": {
     "your_tags": "Ваші теги",
