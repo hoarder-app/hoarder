@@ -4,11 +4,9 @@ import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import BookmarkFormattedCreatedAt from "@/components/dashboard/bookmarks/BookmarkFormattedCreatedAt";
 import FooterLinkURL from "@/components/dashboard/bookmarks/FooterLinkURL";
-import NoBookmarksBanner from "@/components/dashboard/bookmarks/NoBookmarksBanner";
 import { ActionButton } from "@/components/ui/action-button";
 import { badgeVariants } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import tailwindConfig from "@/tailwind.config";
@@ -163,11 +161,21 @@ function getBreakpointConfig() {
   return breakpointColumnsObj;
 }
 
-function BookmarkGrid({
+export default function PublicBookmarkGrid({
   bookmarks: initialBookmarks,
   nextCursor,
   list,
-}: PublicBookmarksProps) {
+}: {
+  list: {
+    id: string;
+    name: string;
+    description: string | null | undefined;
+    icon: string;
+    numItems: number;
+  };
+  bookmarks: ZPublicBookmark[];
+  nextCursor: ZCursor | null;
+}) {
   const { ref: loadMoreRef, inView: loadMoreButtonInView } = useInView();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     api.publicBookmarks.getPublicBookmarksInList.useInfiniteQuery(
@@ -215,60 +223,5 @@ function BookmarkGrid({
         </div>
       )}
     </>
-  );
-}
-
-function ListHeader({ list }: { list: PublicBookmarksProps["list"] }) {
-  return (
-    <div className="flex w-full justify-between">
-      <span />
-      <p className="text-sm font-light italic text-gray-500">
-        {list.numItems} bookmarks
-      </p>
-    </div>
-  );
-}
-
-interface PublicBookmarksProps {
-  list: {
-    id: string;
-    name: string;
-    description: string | null | undefined;
-    icon: string;
-    numItems: number;
-  };
-  bookmarks: ZPublicBookmark[];
-  nextCursor: ZCursor | null;
-}
-
-export default function PublicLists({
-  list,
-  bookmarks: initialBookmarks,
-  nextCursor,
-}: PublicBookmarksProps) {
-  return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-2">
-        <span className="text-2xl">
-          {list.icon} {list.name}
-          {list.description && (
-            <span className="mx-2 text-lg text-gray-400">
-              {`(${list.description})`}
-            </span>
-          )}
-        </span>
-      </div>
-      <Separator />
-      <ListHeader list={list} />
-      {list.numItems > 0 ? (
-        <BookmarkGrid
-          list={list}
-          bookmarks={initialBookmarks}
-          nextCursor={nextCursor}
-        />
-      ) : (
-        <NoBookmarksBanner />
-      )}
-    </div>
   );
 }
