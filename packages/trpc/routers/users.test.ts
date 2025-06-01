@@ -95,7 +95,6 @@ describe("User Routes", () => {
     await expect(() => user2Caller.users.list()).rejects.toThrow(/FORBIDDEN/);
   });
 
-  // TODO may want to add a test for `archiveDisplayBehaviour` as well
   test<CustomTestContext>("get/update user settings", async ({
     db,
     unauthedAPICaller,
