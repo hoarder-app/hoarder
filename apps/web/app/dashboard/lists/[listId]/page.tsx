@@ -8,9 +8,14 @@ import { BookmarkListContextProvider } from "@karakeep/shared-react/hooks/bookma
 
 export default async function ListPage({
   params,
+  searchParams,
 }: {
   params: { listId: string };
+  searchParams?: {
+    includeArchived?: string;
+  };
 }) {
+  const userSettings = await api.users.settings();
   let list;
   try {
     list = await api.lists.get({ listId: params.listId });
@@ -23,10 +28,18 @@ export default async function ListPage({
     throw e;
   }
 
+  const includeArchived =
+    searchParams?.includeArchived !== undefined
+      ? searchParams.includeArchived === "true"
+      : userSettings.archiveDisplayBehaviour === "show";
+
   return (
     <BookmarkListContextProvider list={list}>
       <Bookmarks
-        query={{ listId: list.id }}
+        query={{
+          listId: list.id,
+          archived: !includeArchived ? false : undefined,
+        }}
         showDivider={true}
         showEditorCard={list.type === "manual"}
         header={<ListHeader initialData={list} />}

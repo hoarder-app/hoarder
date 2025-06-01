@@ -351,6 +351,13 @@
       "when": 1748699971545,
       "tag": "0049_add_rss_token",
       "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "6",
+      "when": 1748795265779,
+      "tag": "0050_add_user_settings_archive_display_behaviour",
+      "breakpoints": true
     }
   ]
 }
