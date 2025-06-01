@@ -15,10 +15,10 @@ describe("Public API", () => {
     throw new Error("Missing required environment variables");
   }
 
-  let apiKey: string;
+  let apiKey: string; // For the primary test user
 
-  async function seedDatabase() {
-    const trpcClient = getTrpcClient(apiKey);
+  async function seedDatabase(currentApiKey: string) {
+    const trpcClient = getTrpcClient(currentApiKey);
 
     // Create two lists
     const publicList = await trpcClient.lists.create.mutate({
@@ -44,7 +44,7 @@ describe("Public API", () => {
       type: "application/pdf",
     });
 
-    const uploadResponse = await uploadTestAsset(apiKey, port, file);
+    const uploadResponse = await uploadTestAsset(currentApiKey, port, file);
     const createBookmark2 = await trpcClient.bookmarks.createBookmark.mutate({
       title: "Test Bookmark #2",
       type: BookmarkTypes.ASSET,
@@ -69,7 +69,7 @@ describe("Public API", () => {
   });
 
   it("should get public bookmarks", async () => {
-    const { publicList } = await seedDatabase();
+    const { publicList } = await seedDatabase(apiKey);
     const trpcClient = getTrpcClient(apiKey);
 
     const res = await trpcClient.publicBookmarks.getPublicBookmarksInList.query(
@@ -83,19 +83,21 @@ describe("Public API", () => {
 
   it("should be able to access the assets of the public bookmarks", async () => {
     const { publicList, createBookmark1, createBookmark2 } =
-      await seedDatabase();
+      await seedDatabase(apiKey);
 
     const trpcClient = getTrpcClient(apiKey);
+    // Wait for link bookmark to be crawled and have a banner image (screenshot)
     await waitUntil(
       async () => {
         const res = await trpcClient.bookmarks.getBookmark.query({
           bookmarkId: createBookmark1.id,
         });
         assert(res.content.type === BookmarkTypes.LINK);
-        return res.content.crawledAt !== null;
+        // Check for screenshotAssetId as bannerImageUrl might be derived from it or original imageUrl
+        return !!res.content.screenshotAssetId || !!res.content.imageUrl;
       },
-      "Bookmark is crawled",
-      10000,
+      "Bookmark is crawled and has banner info",
+      20000, // Increased timeout as crawling can take time
     );
 
     const res = await trpcClient.publicBookmarks.getPublicBookmarksInList.query(
@@ -113,14 +115,21 @@ describe("Public API", () => {
     assert(b2Resp!.content.type === BookmarkTypes.ASSET);
 
     {
-      // Banner image fetch
-      assert(b1Resp!.bannerImageUrl);
+      // Banner image fetch for link bookmark
+      assert(
+        b1Resp!.bannerImageUrl,
+        "Link bookmark should have a bannerImageUrl",
+      );
       const assetFetch = await fetch(b1Resp!.bannerImageUrl);
       expect(assetFetch.status).toBe(200);
     }
 
     {
-      // Actual asset fetch
+      // Actual asset fetch for asset bookmark
+      assert(
+        b2Resp!.content.assetUrl,
+        "Asset bookmark should have an assetUrl",
+      );
       const assetFetch = await fetch(b2Resp!.content.assetUrl);
       expect(assetFetch.status).toBe(200);
     }
@@ -134,7 +143,7 @@ describe("Public API", () => {
       type: "manual",
     });
 
-    expect(
+    await expect(
       trpcClient.publicBookmarks.getPublicBookmarksInList.query({
         listId: nonPublicList.id,
       }),
@@ -142,51 +151,72 @@ describe("Public API", () => {
   });
 
   describe("Public asset token validation", () => {
-    let assetId: string;
     let userId: string;
+    let assetId: string; // Asset belonging to the primary user (userId)
 
     beforeEach(async () => {
       const trpcClient = getTrpcClient(apiKey);
       const whoami = await trpcClient.users.whoami.query();
       userId = whoami.id;
-      const asset = await uploadTestAsset(
+      const assetUpload = await uploadTestAsset(
         apiKey,
         port,
-        new File(["test content"], "test.pdf", {
+        new File(["test content for token validation"], "token_test.pdf", {
           type: "application/pdf",
         }),
       );
-      assetId = asset.assetId;
+      assetId = assetUpload.assetId;
     });
 
     it("should succeed with a valid token", async () => {
-      // ASSUMPTION: The same nextauth secret is used for all tests (and the containers)
       const token = createSignedToken(
         {
           assetId,
           userId,
         } as z.infer<typeof zAssetSignedTokenSchema>,
-        Date.now() + 60000,
+        Date.now() + 60000, // Expires in 60 seconds
       );
       const res = await fetch(
         `http://localhost:${port}/api/public/assets/${assetId}?token=${token}`,
       );
       expect(res.status).toBe(200);
+      expect((await res.blob()).type).toBe("application/pdf");
     });
 
     it("should fail without a token", async () => {
       const res = await fetch(
         `http://localhost:${port}/api/public/assets/${assetId}`,
       );
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(400); // Bad Request due to missing token query param
     });
 
-    it("should fail with a bad token", async () => {
+    it("should fail with a malformed token string (e.g., not base64)", async () => {
       const res = await fetch(
-        `http://localhost:${port}/api/public/assets/${assetId}?token=invalid`,
+        `http://localhost:${port}/api/public/assets/${assetId}?token=thisIsNotValidBase64!@#`,
       );
       expect(res.status).toBe(403);
-      expect(await res.text()).toMatch(/Invalid or expired token/);
+      expect(await res.json()).toEqual(
+        expect.objectContaining({ error: "Invalid or expired token" }),
+      );
+    });
+
+    it("should fail with a token having a structurally invalid inner payload", async () => {
+      // Payload that doesn't conform to zAssetSignedTokenSchema (e.g. misspelled key)
+      const malformedInnerPayload = {
+        asset_id_mispelled: assetId,
+        userId: userId,
+      };
+      const token = createSignedToken(
+        malformedInnerPayload,
+        Date.now() + 60000,
+      );
+      const res = await fetch(
+        `http://localhost:${port}/api/public/assets/${assetId}?token=${token}`,
+      );
+      expect(res.status).toBe(403);
+      expect(await res.json()).toEqual(
+        expect.objectContaining({ error: "Invalid or expired token" }),
+      );
     });
 
     it("should fail after token expiry", async () => {
@@ -195,48 +225,98 @@ describe("Public API", () => {
           assetId,
           userId,
         } as z.infer<typeof zAssetSignedTokenSchema>,
-        Date.now() + 5000,
+        Date.now() + 1000, // Expires in 1 second
       );
-      let res = await fetch(
-        `http://localhost:${port}/api/public/assets/${assetId}?token=${token}`,
-      );
-      expect(res.status).toBe(200);
 
-      // Sleep for 10 seconds
-      await new Promise((resolve) => setTimeout(resolve, 10000));
+      // Wait for more than 1 second to ensure expiry
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      // Token should fail after expiry
-      res = await fetch(
+      const res = await fetch(
         `http://localhost:${port}/api/public/assets/${assetId}?token=${token}`,
       );
       expect(res.status).toBe(403);
+      expect(await res.json()).toEqual(
+        expect.objectContaining({ error: "Invalid or expired token" }),
+      );
     });
 
     it("should fail when using a valid token for a different asset", async () => {
-      const anotherAsset = await uploadTestAsset(
-        apiKey,
+      const anotherAssetUpload = await uploadTestAsset(
+        apiKey, // Same user
         port,
-        new File(["test content"], "test.pdf", {
+        new File(["other content"], "other_asset.pdf", {
           type: "application/pdf",
         }),
       );
-      const token = createSignedToken(
+      const anotherAssetId = anotherAssetUpload.assetId;
+
+      // Token is valid for 'anotherAssetId'
+      const tokenForAnotherAsset = createSignedToken(
         {
-          assetId: anotherAsset.assetId,
+          assetId: anotherAssetId,
           userId,
         } as z.infer<typeof zAssetSignedTokenSchema>,
         Date.now() + 60000,
       );
-      let res = await fetch(
-        `http://localhost:${port}/api/public/assets/${anotherAsset.assetId}?token=${token}`,
-      );
-      expect(res.status).toBe(200);
 
-      // Using a valid token for a different asset should fail
-      res = await fetch(
-        `http://localhost:${port}/api/public/assets/${assetId}?token=${token}`,
+      // Attempt to use this token to access the original 'assetId'
+      const res = await fetch(
+        `http://localhost:${port}/api/public/assets/${assetId}?token=${tokenForAnotherAsset}`,
       );
       expect(res.status).toBe(403);
+      expect(await res.json()).toEqual(
+        expect.objectContaining({ error: "Invalid or expired token" }),
+      );
+    });
+
+    it("should fail if token's userId does not own the requested assetId (expect 404)", async () => {
+      // User1 (primary, `apiKey`, `userId`) owns `assetId` (from beforeEach)
+
+      // Create User2 - ensure unique email for user creation
+      const apiKeyUser2 = await createTestUser();
+      const trpcClientUser2 = getTrpcClient(apiKeyUser2);
+      const whoamiUser2 = await trpcClientUser2.users.whoami.query();
+      const userIdUser2 = whoamiUser2.id;
+
+      // Generate a token where the payload claims assetId is being accessed by userIdUser2,
+      // but assetId actually belongs to the original userId.
+      const tokenForUser2AttemptingAsset1 = createSignedToken(
+        {
+          assetId: assetId, // assetId belongs to user1 (userId)
+          userId: userIdUser2, // token claims user2 is accessing it
+        } as z.infer<typeof zAssetSignedTokenSchema>,
+        Date.now() + 60000,
+      );
+
+      // User2 attempts to access assetId (owned by User1) using a token that has User2's ID in its payload.
+      // The API route will use userIdUser2 from the token to query the DB for assetId.
+      // Since assetId is not owned by userIdUser2, the DB query will find nothing.
+      const res = await fetch(
+        `http://localhost:${port}/api/public/assets/${assetId}?token=${tokenForUser2AttemptingAsset1}`,
+      );
+      expect(res.status).toBe(404);
+      expect(await res.json()).toEqual(
+        expect.objectContaining({ error: "Asset not found" }),
+      );
+    });
+
+    it("should fail for a token referencing a non-existent assetId (expect 404)", async () => {
+      const nonExistentAssetId = `nonexistent-asset-${Date.now()}`;
+      const token = createSignedToken(
+        {
+          assetId: nonExistentAssetId,
+          userId, // Valid userId from the primary user
+        } as z.infer<typeof zAssetSignedTokenSchema>,
+        Date.now() + 60000,
+      );
+
+      const res = await fetch(
+        `http://localhost:${port}/api/public/assets/${nonExistentAssetId}?token=${token}`,
+      );
+      expect(res.status).toBe(404);
+      expect(await res.json()).toEqual(
+        expect.objectContaining({ error: "Asset not found" }),
+      );
     });
   });
 });
