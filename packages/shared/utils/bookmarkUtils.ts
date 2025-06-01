@@ -3,16 +3,30 @@ import { getAssetUrl } from "./assetUtils";
 
 const MAX_LOADING_MSEC = 30 * 1000;
 
-export function getBookmarkLinkImageUrl(bookmark: ZBookmarkedLink) {
+export function getBookmarkLinkAssetIdOrUrl(bookmark: ZBookmarkedLink) {
   if (bookmark.imageAssetId) {
-    return { url: getAssetUrl(bookmark.imageAssetId), localAsset: true };
+    return { assetId: bookmark.imageAssetId, localAsset: true as const };
   }
   if (bookmark.screenshotAssetId) {
-    return { url: getAssetUrl(bookmark.screenshotAssetId), localAsset: true };
+    return { assetId: bookmark.screenshotAssetId, localAsset: true as const };
   }
   return bookmark.imageUrl
-    ? { url: bookmark.imageUrl, localAsset: false }
+    ? { url: bookmark.imageUrl, localAsset: false as const }
     : null;
+}
+
+export function getBookmarkLinkImageUrl(bookmark: ZBookmarkedLink) {
+  const assetOrUrl = getBookmarkLinkAssetIdOrUrl(bookmark);
+  if (!assetOrUrl) {
+    return null;
+  }
+  if (!assetOrUrl.localAsset) {
+    return assetOrUrl;
+  }
+  return {
+    url: getAssetUrl(assetOrUrl.assetId),
+    localAsset: true,
+  };
 }
 
 export function isBookmarkStillCrawling(bookmark: ZBookmark) {

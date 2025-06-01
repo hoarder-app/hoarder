@@ -28,6 +28,8 @@ import {
   tagsOnBookmarks,
 } from "@karakeep/db/schema";
 import serverConfig from "@karakeep/shared/config";
+import { createSignedToken } from "@karakeep/shared/signedTokens";
+import { zAssetSignedTokenSchema } from "@karakeep/shared/types/assets";
 import {
   BookmarkTypes,
   DEFAULT_NUM_BOOKMARKS_PER_PAGE,
@@ -37,9 +39,8 @@ import {
   ZPublicBookmark,
 } from "@karakeep/shared/types/bookmarks";
 import { ZCursor } from "@karakeep/shared/types/pagination";
-import { getAssetUrl } from "@karakeep/shared/utils/assetUtils";
 import {
-  getBookmarkLinkImageUrl,
+  getBookmarkLinkAssetIdOrUrl,
   getBookmarkTitle,
 } from "@karakeep/shared/utils/bookmarkUtils";
 
@@ -326,6 +327,14 @@ export class Bookmark implements PrivacyAware {
   }
 
   asPublicBookmark(): ZPublicBookmark {
+    const getPublicSignedAssetUrl = (assetId: string) => {
+      const payload: z.infer<typeof zAssetSignedTokenSchema> = {
+        assetId,
+        userId: this.ctx.user.id,
+      };
+      const signedToken = createSignedToken(payload);
+      return `${serverConfig.publicApiUrl}/public/assets/${assetId}?token=${signedToken}`;
+    };
     const getContent = (
       content: ZBookmarkContent,
     ): ZPublicBookmark["content"] => {
@@ -360,21 +369,21 @@ export class Bookmark implements PrivacyAware {
     const getBannerImageUrl = (content: ZBookmarkContent): string | null => {
       switch (content.type) {
         case BookmarkTypes.LINK: {
-          const res = getBookmarkLinkImageUrl(content);
-          if (!res) {
+          const assetIdOrUrl = getBookmarkLinkAssetIdOrUrl(content);
+          if (!assetIdOrUrl) {
             return null;
           }
-          if (res.localAsset) {
-            return `${serverConfig.publicUrl}${res.url}`;
+          if (assetIdOrUrl.localAsset) {
+            return getPublicSignedAssetUrl(assetIdOrUrl.assetId);
           } else {
-            return res.url;
+            return assetIdOrUrl.url;
           }
         }
         case BookmarkTypes.TEXT: {
           return null;
         }
         case BookmarkTypes.ASSET: {
-          return `${serverConfig.publicUrl}${getAssetUrl(content.assetId)}`;
+          return `${serverConfig.publicUrl}${getPublicSignedAssetUrl(content.assetId)}`;
         }
         default: {
           throw new Error("Unknown bookmark content type");
