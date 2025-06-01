@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import BookmarkFormattedCreatedAt from "@/components/dashboard/bookmarks/BookmarkFormattedCreatedAt";
 import FooterLinkURL from "@/components/dashboard/bookmarks/FooterLinkURL";
+import NoBookmarksBanner from "@/components/dashboard/bookmarks/NoBookmarksBanner";
 import { ActionButton } from "@/components/ui/action-button";
 import { badgeVariants } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -217,12 +218,24 @@ function BookmarkGrid({
   );
 }
 
+function ListHeader({ list }: { list: PublicBookmarksProps["list"] }) {
+  return (
+    <div className="flex w-full justify-between">
+      <span />
+      <p className="text-sm font-light italic text-gray-500">
+        {list.numItems} bookmarks
+      </p>
+    </div>
+  );
+}
+
 interface PublicBookmarksProps {
   list: {
     id: string;
     name: string;
     description: string | null | undefined;
     icon: string;
+    numItems: number;
   };
   bookmarks: ZPublicBookmark[];
   nextCursor: ZCursor | null;
@@ -246,11 +259,16 @@ export default function PublicLists({
         </span>
       </div>
       <Separator />
-      <BookmarkGrid
-        list={list}
-        bookmarks={initialBookmarks}
-        nextCursor={nextCursor}
-      />
+      <ListHeader list={list} />
+      {list.numItems > 0 ? (
+        <BookmarkGrid
+          list={list}
+          bookmarks={initialBookmarks}
+          nextCursor={nextCursor}
+        />
+      ) : (
+        <NoBookmarksBanner />
+      )}
     </div>
   );
 }

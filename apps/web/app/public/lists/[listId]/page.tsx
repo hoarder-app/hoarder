@@ -19,6 +19,7 @@ export default async function PublicListPage({
           name: resp.list.name,
           description: resp.list.description,
           icon: resp.list.icon,
+          numItems: resp.list.numItems,
         }}
         nextCursor={resp.nextCursor}
       />

@@ -23,11 +23,13 @@ export const publicBookmarks = router({
     )
     .output(
       z.object({
-        list: zBookmarkListSchema.pick({
-          name: true,
-          description: true,
-          icon: true,
-        }),
+        list: zBookmarkListSchema
+          .pick({
+            name: true,
+            description: true,
+            icon: true,
+          })
+          .merge(z.object({ numItems: z.number() })),
         bookmarks: z.array(zPublicBookmarkSchema),
         nextCursor: zCursorV2.nullable(),
       }),

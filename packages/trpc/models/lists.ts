@@ -103,6 +103,7 @@ export abstract class List implements PrivacyAware {
         icon: list.list.icon,
         name: list.list.name,
         description: list.list.description,
+        numItems: bookmarkIds.length,
       },
       bookmarks: bookmarks.bookmarks.map((b) => b.asPublicBookmark()),
     };
@@ -147,6 +148,7 @@ export abstract class List implements PrivacyAware {
         icon: list.list.icon,
         name: list.list.name,
         description: list.list.description,
+        numItems: bookmarkIds.length,
       },
       bookmarks: bookmarks.bookmarks.map((b) => b.asPublicBookmark()),
       nextCursor: bookmarks.nextCursor,
