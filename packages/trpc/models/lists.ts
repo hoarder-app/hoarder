@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, or } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -63,55 +63,10 @@ export abstract class List implements PrivacyAware {
     }
   }
 
-  static async getForRss(
-    ctx: Context,
-    listId: string,
-    token: string,
-    pagination: {
-      limit: number;
-    },
-  ) {
-    const listdb = await ctx.db.query.bookmarkLists.findFirst({
-      where: and(
-        eq(bookmarkLists.id, listId),
-        eq(bookmarkLists.rssToken, token),
-      ),
-    });
-    if (!listdb) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "List not found",
-      });
-    }
-
-    // The token here acts as an authed context, so we can create
-    // an impersonating context for the list owner as long as
-    // we don't leak the context.
-    const authedCtx = await buildImpersonatingAuthedContext(listdb.userId);
-    const list = List.fromData(authedCtx, listdb);
-    const bookmarkIds = await list.getBookmarkIds();
-
-    const bookmarks = await Bookmark.loadMulti(authedCtx, {
-      ids: bookmarkIds,
-      includeContent: false,
-      limit: pagination.limit,
-      sortOrder: "desc",
-    });
-
-    return {
-      list: {
-        icon: list.list.icon,
-        name: list.list.name,
-        description: list.list.description,
-        numItems: bookmarkIds.length,
-      },
-      bookmarks: bookmarks.bookmarks.map((b) => b.asPublicBookmark()),
-    };
-  }
-
   static async getPublicListContents(
     ctx: Context,
     listId: string,
+    token: string | null,
     pagination: {
       limit: number;
       order: Exclude<ZSortOrder, "relevance">;
@@ -119,7 +74,13 @@ export abstract class List implements PrivacyAware {
     },
   ) {
     const listdb = await ctx.db.query.bookmarkLists.findFirst({
-      where: and(eq(bookmarkLists.id, listId), eq(bookmarkLists.public, true)),
+      where: and(
+        eq(bookmarkLists.id, listId),
+        or(
+          eq(bookmarkLists.public, true),
+          token !== null ? eq(bookmarkLists.rssToken, token) : undefined,
+        ),
+      ),
     });
     if (!listdb) {
       throw new TRPCError({

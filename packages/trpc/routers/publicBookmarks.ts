@@ -35,10 +35,15 @@ export const publicBookmarks = router({
       }),
     )
     .query(async ({ input, ctx }) => {
-      return await List.getPublicListContents(ctx, input.listId, {
-        limit: input.limit,
-        order: input.sortOrder,
-        cursor: input.cursor,
-      });
+      return await List.getPublicListContents(
+        ctx,
+        input.listId,
+        /* token */ null,
+        {
+          limit: input.limit,
+          order: input.sortOrder,
+          cursor: input.cursor,
+        },
+      );
     }),
 });

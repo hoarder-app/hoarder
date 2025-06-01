@@ -9,7 +9,7 @@ export default function PublicListHeader({
   return (
     <div className="flex w-full justify-between">
       <span />
-      <p className="text-sm font-light italic text-gray-500">
+      <p className="text-xs font-light uppercase text-gray-500">
         {list.numItems} bookmarks
       </p>
     </div>
