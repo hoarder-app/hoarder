@@ -3,14 +3,16 @@
 import { useEffect, useMemo } from "react";
 import Link from "next/link";
 import BookmarkFormattedCreatedAt from "@/components/dashboard/bookmarks/BookmarkFormattedCreatedAt";
+import { BookmarkMarkdownComponent } from "@/components/dashboard/bookmarks/BookmarkMarkdownComponent";
 import FooterLinkURL from "@/components/dashboard/bookmarks/FooterLinkURL";
 import { ActionButton } from "@/components/ui/action-button";
 import { badgeVariants } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";
 import tailwindConfig from "@/tailwind.config";
-import { FileIcon, FileText, ImageIcon } from "lucide-react";
+import { Expand, FileIcon, ImageIcon } from "lucide-react";
 import { useInView } from "react-intersection-observer";
 import Masonry from "react-masonry-css";
 import resolveConfig from "tailwindcss/resolveConfig";
@@ -67,18 +69,36 @@ function BookmarkCard({ bookmark }: { bookmark: ZPublicBookmark }) {
       case BookmarkTypes.TEXT:
         return (
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-gray-500">
-              <FileText className="h-3 w-3" />
-              <span className="text-xs font-medium">Note</span>
-            </div>
             {bookmark.title && (
-              <h3 className="text-sm font-medium leading-tight text-gray-900">
+              <h3 className="line-clamp-2 text-ellipsis text-lg font-medium leading-tight text-gray-900">
                 {bookmark.title}
               </h3>
             )}
-            <p className="line-clamp-4 text-xs leading-relaxed text-gray-600">
-              {bookmark.content.text}
-            </p>
+            <div className="group relative max-h-64 overflow-hidden">
+              <BookmarkMarkdownComponent readOnly={true}>
+                {{
+                  id: bookmark.id,
+                  content: {
+                    text: bookmark.content.text,
+                  },
+                }}
+              </BookmarkMarkdownComponent>
+              <Dialog>
+                <DialogTrigger className="absolute bottom-2 right-2 z-50 h-4 w-4 opacity-0 group-hover:opacity-100">
+                  <Expand className="h-4 w-4" />
+                </DialogTrigger>
+                <DialogContent className="max-h-96 max-w-3xl overflow-auto">
+                  <BookmarkMarkdownComponent readOnly={true}>
+                    {{
+                      id: bookmark.id,
+                      content: {
+                        text: bookmark.content.text,
+                      },
+                    }}
+                  </BookmarkMarkdownComponent>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         );
 
