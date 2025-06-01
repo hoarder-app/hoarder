@@ -426,13 +426,17 @@
           "query": {
             "type": "string",
             "nullable": true
+          },
+          "public": {
+            "type": "boolean"
           }
         },
         "required": [
           "id",
           "name",
           "icon",
-          "parentId"
+          "parentId",
+          "public"
         ]
       },
       "Tag": {
@@ -1982,6 +1986,9 @@
                   "query": {
                     "type": "string",
                     "minLength": 1
+                  },
+                  "public": {
+                    "type": "boolean"
                   }
                 }
               }
