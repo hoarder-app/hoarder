@@ -55,7 +55,7 @@ export default function HighlightCard({
         <blockquote
           cite={highlight.bookmarkId}
           className={cn(
-            "prose border-l-[6px] p-2 pl-6 italic dark:prose-invert prose-p:text-sm",
+            "prose dark:prose-invert prose-p:text-sm border-l-[6px] p-2 pl-6 italic",
             HIGHLIGHT_COLOR_MAP["border-l"][highlight.color],
           )}
         >
