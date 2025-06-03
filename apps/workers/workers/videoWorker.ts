@@ -24,7 +24,10 @@ import {
 import { withTimeout } from "../utils";
 import { getBookmarkDetails, updateAsset } from "../workerUtils";
 
-const TMP_FOLDER = path.join(os.tmpdir(), "video_downloads");
+// Use the configured data directory if available, fallback to tmp directory otherwise
+const TMP_FOLDER = serverConfig.dataDir
+  ? path.join(serverConfig.dataDir, "video_downloads")
+  : path.join(os.tmpdir(), "video_downloads");
 
 export class VideoWorker {
   static build() {
@@ -111,7 +114,7 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
     const downloadPath = await findAssetFile(videoAssetId);
     if (!downloadPath) {
       logger.info(
-        "[VideoCrawler][${jobId}] yt-dlp didn't download anything. Skipping ...",
+        `[VideoCrawler][${jobId}] yt-dlp didn't download anything. Skipping ...`,
       );
       return;
     }
