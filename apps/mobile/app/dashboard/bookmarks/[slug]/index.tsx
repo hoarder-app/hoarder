@@ -22,6 +22,7 @@ import { useToast } from "@/components/ui/Toast";
 import { useAssetUrl } from "@/lib/hooks";
 import { api } from "@/lib/trpc";
 import { ClipboardList, Globe, Info, Tag, Trash2 } from "lucide-react-native";
+import { useColorScheme } from "nativewind";
 
 import {
   useDeleteBookmark,
@@ -152,11 +153,15 @@ function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
 }
 
 function BookmarkLinkView({ bookmark }: { bookmark: ZBookmark }) {
+  const { colorScheme } = useColorScheme();
+
   if (bookmark.content.type !== BookmarkTypes.LINK) {
     throw new Error("Wrong content type rendered");
   }
 
   if (bookmark.content.htmlContent) {
+    const isDark = colorScheme === "dark";
+
     return (
       <View className="flex-1 bg-background">
         <WebView
@@ -171,13 +176,10 @@ function BookmarkLinkView({ bookmark }: { bookmark: ZBookmark }) {
                     body {
                       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
                       line-height: 1.6;
-                      color: #374151;
+                      color: ${isDark ? "#e5e7eb" : "#374151"};
                       margin: 0;
                       padding: 16px;
-                      background: transparent;
-                    }
-                    @media (prefers-color-scheme: dark) {
-                      body { color: #e5e7eb; }
+                      background: ${isDark ? "#000000" : "#ffffff"};
                     }
                     p { margin: 0 0 1em 0; }
                     h1, h2, h3, h4, h5, h6 { margin: 1.5em 0 0.5em 0; line-height: 1.2; }
@@ -185,20 +187,16 @@ function BookmarkLinkView({ bookmark }: { bookmark: ZBookmark }) {
                     a { color: #3b82f6; text-decoration: none; }
                     a:hover { text-decoration: underline; }
                     blockquote { 
-                      border-left: 4px solid #e5e7eb; 
+                      border-left: 4px solid ${isDark ? "#374151" : "#e5e7eb"}; 
                       margin: 1em 0; 
                       padding-left: 1em; 
-                      color: #6b7280; 
+                      color: ${isDark ? "#9ca3af" : "#6b7280"}; 
                     }
                     pre { 
-                      background: #f3f4f6; 
+                      background: ${isDark ? "#1f2937" : "#f3f4f6"}; 
                       padding: 1em; 
                       border-radius: 6px; 
                       overflow-x: auto; 
-                    }
-                    @media (prefers-color-scheme: dark) {
-                      blockquote { border-left-color: #374151; color: #9ca3af; }
-                      pre { background: #1f2937; }
                     }
                   </style>
                 </head>
@@ -208,7 +206,10 @@ function BookmarkLinkView({ bookmark }: { bookmark: ZBookmark }) {
               </html>
             `,
           }}
-          style={{ flex: 1 }}
+          style={{
+            flex: 1,
+            backgroundColor: isDark ? "#000000" : "#ffffff",
+          }}
           showsVerticalScrollIndicator={false}
           showsHorizontalScrollIndicator={false}
         />
@@ -318,6 +319,8 @@ function BookmarkAssetView({ bookmark }: { bookmark: ZBookmark }) {
 
 export default function ListView() {
   const { slug } = useLocalSearchParams();
+  const { colorScheme } = useColorScheme();
+
   if (typeof slug !== "string") {
     throw new Error("Unexpected param type");
   }
@@ -362,6 +365,10 @@ export default function ListView() {
           headerTitle: title ?? "",
           headerBackTitle: "Back",
           headerTransparent: false,
+          headerTintColor: colorScheme === "dark" ? "#ffffff" : undefined,
+          headerStyle: {
+            backgroundColor: colorScheme === "dark" ? "#000000" : undefined,
+          },
         }}
       />
       <View className="flex h-full">
