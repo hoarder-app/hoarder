@@ -13,6 +13,7 @@ import { useTranslation } from "@/lib/i18n/client";
 
 import { getAssetUrl } from "@karakeep/shared-react/utils/assetUtils";
 import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
+import {PDFHighlighter} from "@/components/dashboard/preview/PDFHighlighter";
 
 // 20 MB
 const BIG_FILE_SIZE = 20 * 1024 * 1024;
@@ -110,7 +111,8 @@ export function AssetContentSection({ bookmark }: { bookmark: ZBookmark }) {
     case "image":
       return <ImageContentSection bookmark={bookmark} />;
     case "pdf":
-      return <PDFContentSection bookmark={bookmark} />;
+      return <PDFHighlighter pdfUrl={getAssetUrl(bookmark.content.assetId)} />
+      // return <PDFContentSection bookmark={bookmark} />;
     default:
       return <div>Unsupported asset type</div>;
   }
