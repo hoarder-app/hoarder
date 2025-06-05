@@ -90,7 +90,7 @@ export default function HighlightCard({
             HIGHLIGHT_COLOR_MAP["border-l"][highlight.color],
           )}
         >
-          <p>{highlight.text}</p>
+          <p className="whitespace-pre-line">{highlight.text}</p>
         </blockquote>
       </Wrapper>
       <div className="flex gap-2">
