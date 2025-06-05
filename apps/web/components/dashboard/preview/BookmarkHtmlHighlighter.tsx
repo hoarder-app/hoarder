@@ -38,18 +38,20 @@ const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
   }
 
   if (selectedHighlight) {
-    const el = document.querySelector(
+    const elements = document.querySelectorAll(
       `[data-highlight-id="${selectedHighlight.id}"]`,
     );
-    if (!el) {
+    if (elements.length === 0) {
       return;
     }
 
-    el.classList.add(
-      HIGHLIGHT_COLOR_MAP.bg[selectedHighlight.color].dark,
-      "transition-colors",
-      "duration-1000",
-    );
+    elements.forEach((el) => {
+      el.classList.add(
+        HIGHLIGHT_COLOR_MAP.bg[selectedHighlight.color].dark,
+        "transition-colors",
+        "duration-1000",
+      );
+    });
   }
 
   return (
@@ -57,13 +59,15 @@ const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
       open={!!position}
       onOpenChange={(open) => {
         if (!open) {
-          const el = document.querySelector(
+          const elements = document.querySelectorAll(
             `[data-highlight-id="${selectedHighlight?.id}"]`,
           );
-          if (el && selectedHighlight) {
-            el.classList.remove(
-              HIGHLIGHT_COLOR_MAP.bg[selectedHighlight?.color].dark,
-            );
+          if (elements.length !== 0 && selectedHighlight) {
+            elements.forEach((el) => {
+              el.classList.remove(
+                HIGHLIGHT_COLOR_MAP.bg[selectedHighlight?.color].dark,
+              );
+            });
           }
           onClose();
         }

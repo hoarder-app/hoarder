@@ -54,22 +54,27 @@ export default function HighlightCard({
   }
 
   const onBookmarkClick = () => {
-    const el = document.querySelector(`[data-highlight-id="${highlight.id}"]`);
-    if (!el) {
+    const elements = document.querySelectorAll(
+      `[data-highlight-id="${highlight.id}"]`,
+    );
+    if (elements.length === 0) {
       return;
     }
 
-    el.scrollIntoView({ behavior: "smooth", block: "center" });
+    elements[0].scrollIntoView({ behavior: "smooth", block: "center" });
 
-    waitForElementInView(el).then(() => {
-      el.classList.add(
-        HIGHLIGHT_COLOR_MAP.bg[highlight.color].dark,
-        "transition-colors",
-        "duration-1000",
-      );
-      setTimeout(() => {
-        el.classList.remove(HIGHLIGHT_COLOR_MAP.bg[highlight.color].dark);
-      }, 1500);
+    waitForElementInView(elements[0]).then(() => {
+      elements.forEach((el) => {
+        el.classList.add(
+          HIGHLIGHT_COLOR_MAP.bg[highlight.color].dark,
+          "transition-colors",
+          "duration-1000",
+        );
+
+        setTimeout(() => {
+          el.classList.remove(HIGHLIGHT_COLOR_MAP.bg[highlight.color].dark);
+        }, 1500);
+      });
     });
   };
 
@@ -90,7 +95,19 @@ export default function HighlightCard({
             HIGHLIGHT_COLOR_MAP["border-l"][highlight.color],
           )}
         >
-          <p className="whitespace-pre-line">{highlight.text}</p>
+          {highlight.text?.includes("<img") ? (
+            <div className="flex flex-col gap-2">
+              <p className="text-sm font-medium text-gray-500">
+                [Image highlight]
+              </p>
+              <div
+                className="whitespace-pre-line"
+                dangerouslySetInnerHTML={{ __html: highlight.text || "" }}
+              />
+            </div>
+          ) : (
+            <p className="whitespace-pre-line">{highlight.text}</p>
+          )}
         </blockquote>
       </Wrapper>
       <div className="flex gap-2">
