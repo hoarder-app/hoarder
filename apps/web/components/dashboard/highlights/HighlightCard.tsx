@@ -53,6 +53,35 @@ export default function HighlightCard({
     });
   }
 
+  function normalizeText(text: string | null): string {
+    if (!text) return "";
+
+    let normalized = text.trim();
+
+    normalized = normalized.replace(/\r\n/g, "\n"); // Convert CRLF to LF
+
+    normalized = normalized.replace(/\r/g, "\n"); // Convert CR to LF
+
+    // Replace various whitespace characters with a single space
+    normalized = normalized.replace(
+      /[\t\u00A0\u1680\u180E\u2000-\u200A\u202F\u205F\u3000]+/g,
+      " ",
+    );
+
+    // convert all sequences of whitespace (including newlines) between word boundaries to a single space
+    normalized = normalized.replace(/\b\s+\b/g, " ");
+
+    // handle any remaining consecutive newlines
+    normalized = normalized.replace(/\n{2,}/g, "\n");
+
+    // Collapse multiple spaces into a single space
+    normalized = normalized.replace(/ +/g, " ");
+
+    // Clean up spaces around newlines
+    normalized = normalized.replace(/ *\n */g, "\n\n");
+
+    return normalized;
+  }
   const onBookmarkClick = () => {
     const elements = document.querySelectorAll(
       `[data-highlight-id="${highlight.id}"]`,
@@ -102,11 +131,15 @@ export default function HighlightCard({
               </p>
               <div
                 className="whitespace-pre-line"
-                dangerouslySetInnerHTML={{ __html: highlight.text || "" }}
+                dangerouslySetInnerHTML={{
+                  __html: normalizeText(highlight.text) || "",
+                }}
               />
             </div>
           ) : (
-            <p className="whitespace-pre-line">{highlight.text}</p>
+            <p className="whitespace-pre-line">
+              {normalizeText(highlight.text)}
+            </p>
           )}
         </blockquote>
       </Wrapper>
