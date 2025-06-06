@@ -330,7 +330,58 @@ function BookmarkHTMLHighlighter({
       ) {
         return null;
       }
-      const textContent = range.toString();
+
+      let textContent = "";
+      const fragment = range.cloneContents();
+      const tempDiv = document.createElement("div");
+      tempDiv.appendChild(fragment);
+
+      const walkNodes = (node: Node, isFirstBlock = true) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          textContent += node.textContent ?? "";
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const element = node as HTMLElement;
+          const style = window.getComputedStyle(element);
+          const isBlock =
+            style.display === "block" ||
+            element.nodeName === "P" ||
+            element.nodeName === "DIV" ||
+            element.nodeName === "LI" ||
+            element.nodeName === "H1" ||
+            element.nodeName === "H2" ||
+            element.nodeName === "H3" ||
+            element.nodeName === "H4" ||
+            element.nodeName === "H5" ||
+            element.nodeName === "H6" ||
+            element.nodeName === "BLOCKQUOTE";
+
+          if (
+            isBlock &&
+            !isFirstBlock &&
+            textContent &&
+            !textContent.endsWith("\n")
+          ) {
+            textContent += "\n"; // adding a newline before blocks
+          }
+
+          if (element.nodeName === "BR") {
+            textContent += "\n";
+          }
+
+          let firstChildBlock = true;
+          for (const child of Array.from(element.childNodes)) {
+            walkNodes(child, firstChildBlock);
+            if (firstChildBlock) firstChildBlock = false;
+          }
+
+          if (isBlock && !textContent.endsWith("\n")) {
+            textContent += "\n"; // now add after blocks
+          }
+        }
+      };
+
+      walkNodes(tempDiv);
+
       if (!textContent.trim()) {
         // Ignore only whitespace
         return null;
