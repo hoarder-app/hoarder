@@ -31,7 +31,7 @@ Karakeep (previously Hoarder) is a self-hostable bookmark-everything app with a 
 - 📱 An [iOS app](https://apps.apple.com/us/app/karakeep-app/id6479258022), and an [Android app](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
 - 📰 Auto hoarding from RSS feeds.
 - 🔌 REST API.
-- 🌐 Mutli-language support.
+- 🌐 Multi-language support.
 - 🖍️ Mark and store highlights from your hoarded content.
 - 🗄️ Full page archival (using [monolith](https://github.com/Y2Z/monolith)) to protect against link rot. Auto video archiving using [youtube-dl](https://github.com/marado/youtube-dl).
 - 🔙 Fallback to the Wayback Machine when crawling fails.

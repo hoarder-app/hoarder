@@ -273,6 +273,9 @@ async function fetchFromWayback(
   jobId: string,
   abortSignal: AbortSignal,
 ): Promise<{ htmlContent: string; url: string; statusCode: number } | null> {
+  if (abortSignal.aborted) {
+    abortSignal.throwIfAborted();
+  }
   const base = "https://web.archive.org";
   const searchUrl = `${base}/web/*/${encodeURIComponent(url)}`;
   try {

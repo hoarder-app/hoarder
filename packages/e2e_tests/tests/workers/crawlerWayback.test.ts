@@ -15,7 +15,7 @@ describe("Crawler Wayback Fallback", () => {
   let client: ReturnType<typeof createKarakeepClient>;
   let apiKey: string;
 
-  async function getBookmark(bookmarkId: string) {
+  const getBookmark = async (bookmarkId: string) => {
     const { data } = await client.GET(`/bookmarks/{bookmarkId}`, {
       params: {
         path: { bookmarkId },
@@ -23,7 +23,7 @@ describe("Crawler Wayback Fallback", () => {
       },
     });
     return data;
-  }
+  };
 
   beforeEach(async () => {
     apiKey = await createTestUser();
@@ -40,7 +40,7 @@ describe("Crawler Wayback Fallback", () => {
     let { data: bookmark } = await client.POST("/bookmarks", {
       body: {
         type: "link",
-        url: "https://example.com/nonexistent-page",
+        url: "https://httpstat.us/404",
       },
     });
     assert(bookmark);
@@ -52,11 +52,12 @@ describe("Crawler Wayback Fallback", () => {
         return data.content.crawlStatusCode === 200;
       },
       "Bookmark crawled via wayback",
-      10000,
+      30000,
     );
 
     bookmark = await getBookmark(bookmark.id);
     assert(bookmark && bookmark.content.type === "link");
     expect(bookmark.content.url).toContain("web.archive.org");
+    expect(bookmark.content.title).toBeTruthy();
   });
 });
