@@ -63,6 +63,51 @@ export abstract class List implements PrivacyAware {
     }
   }
 
+  private static async getPublicList(
+    ctx: Context,
+    listId: string,
+    token: string | null,
+  ) {
+    const listdb = await ctx.db.query.bookmarkLists.findFirst({
+      where: and(
+        eq(bookmarkLists.id, listId),
+        or(
+          eq(bookmarkLists.public, true),
+          token !== null ? eq(bookmarkLists.rssToken, token) : undefined,
+        ),
+      ),
+      with: {
+        user: {
+          columns: {
+            name: true,
+          },
+        },
+      },
+    });
+    if (!listdb) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "List not found",
+      });
+    }
+    return listdb;
+  }
+
+  static async getPublicListMetadata(
+    ctx: Context,
+    listId: string,
+    token: string | null,
+  ) {
+    const listdb = await this.getPublicList(ctx, listId, token);
+    return {
+      userId: listdb.userId,
+      name: listdb.name,
+      description: listdb.description,
+      icon: listdb.icon,
+      ownerName: listdb.user.name,
+    };
+  }
+
   static async getPublicListContents(
     ctx: Context,
     listId: string,
@@ -73,21 +118,7 @@ export abstract class List implements PrivacyAware {
       cursor: ZCursor | null | undefined;
     },
   ) {
-    const listdb = await ctx.db.query.bookmarkLists.findFirst({
-      where: and(
-        eq(bookmarkLists.id, listId),
-        or(
-          eq(bookmarkLists.public, true),
-          token !== null ? eq(bookmarkLists.rssToken, token) : undefined,
-        ),
-      ),
-    });
-    if (!listdb) {
-      throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "List not found",
-      });
-    }
+    const listdb = await this.getPublicList(ctx, listId, token);
 
     // The token here acts as an authed context, so we can create
     // an impersonating context for the list owner as long as
@@ -109,6 +140,7 @@ export abstract class List implements PrivacyAware {
         icon: list.list.icon,
         name: list.list.name,
         description: list.list.description,
+        ownerName: listdb.user.name,
         numItems: bookmarkIds.length,
       },
       bookmarks: bookmarks.bookmarks.map((b) => b.asPublicBookmark()),

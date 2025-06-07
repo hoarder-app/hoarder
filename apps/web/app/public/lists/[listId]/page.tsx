@@ -12,13 +12,22 @@ export async function generateMetadata({
 }: {
   params: { listId: string };
 }): Promise<Metadata> {
-  // TODO: Don't load the entire list, just create an endpoint to get the list name
   try {
-    const resp = await api.publicBookmarks.getPublicBookmarksInList({
+    const resp = await api.publicBookmarks.getPublicListMetadata({
       listId: params.listId,
     });
     return {
-      title: `${resp.list.name} - Karakeep`,
+      title: `${resp.name} by ${resp.ownerName} - Karakeep`,
+      description:
+        resp.description && resp.description.length > 0
+          ? `${resp.description} by ${resp.ownerName} on Karakeep`
+          : undefined,
+      applicationName: "Karakeep",
+      authors: [
+        {
+          name: resp.ownerName,
+        },
+      ],
     };
   } catch (e) {
     if (e instanceof TRPCError && e.code === "NOT_FOUND") {
@@ -67,6 +76,7 @@ export default async function PublicListPage({
               description: list.description,
               icon: list.icon,
               numItems: list.numItems,
+              ownerName: list.ownerName,
             }}
             bookmarks={bookmarks}
             nextCursor={nextCursor}

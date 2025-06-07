@@ -192,6 +192,7 @@ export default function PublicBookmarkGrid({
     description: string | null | undefined;
     icon: string;
     numItems: number;
+    ownerName: string;
   };
   bookmarks: ZPublicBookmark[];
   nextCursor: ZCursor | null;
