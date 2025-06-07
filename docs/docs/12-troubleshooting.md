@@ -27,6 +27,10 @@ Check the logs of the container and this will usually tell you what's wrong. Com
     1. Ollama server being in a different docker network than the karakeep container.
     2. You're using `localhost` as the `OLLAMA_BASE_URL` instead of the actual address of the ollama server. `localhost` points to the container itself, not the docker host. Check this [stackoverflow answer](https://stackoverflow.com/questions/24319662/from-inside-of-a-docker-container-how-do-i-connect-to-the-localhost-of-the-mach) to find how to correctly point to the docker host address instead.
 
+## Dealing with too many tags
+
+Depending on your prompting rules and reading material diversity, you can end up with too many tags to be useful. In that case you can go to the `Cleanups` page to quickly merge some. Alternatively, as Karakeep makes a distinction between human-made and AI-made tags, you can edit your prompt then ask a user with `admin` rights to launch a `Regenerate AI Tags` background jobs (Note: this will affect all bookmarks of all users). As of version 0.24.1 of Karakeep, improvements are planned in that area.
+
 ## Crawling not working
 
 Check the logs of the container and this will usually tell you what's wrong. Common problems are:
