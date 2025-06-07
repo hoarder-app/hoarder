@@ -22,8 +22,8 @@ import metascraperLogo from "metascraper-logo-favicon";
 import metascraperPublisher from "metascraper-publisher";
 import metascraperReadability from "metascraper-readability";
 import metascraperTitle from "metascraper-title";
-import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
+import metascraperX from "metascraper-x";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
@@ -69,15 +69,16 @@ const metascraperParser = metascraper([
     datePublished: true,
   }),
   metascraperAmazon(),
-  metascraperReadability(),
+  // Can cause endless parsing and no relevant metadata extracted, avoid for now
+  // metascraperReadability(),
   metascraperAuthor(),
   metascraperPublisher(),
   metascraperTitle(),
   metascraperDescription(),
-  metascraperTwitter(),
   metascraperImage(),
   metascraperLogo(),
   metascraperUrl(),
+  metascraperX(),
 ]);
 
 let globalBrowser: Browser | undefined;
