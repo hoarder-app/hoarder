@@ -106,7 +106,7 @@ export default function UserOptions() {
     <Form {...form}>
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2  text-xl">
             <Globe className="h-5 w-5" />
             {t("settings.info.options")}
           </CardTitle>

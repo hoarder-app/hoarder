@@ -15,7 +15,7 @@ export default async function UserDetails() {
       <CardHeader>
         <div className="flex items-center space-x-4">
           <div className="space-y-1">
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-xl">
               <User className="h-5 w-5" />
               {t("settings.info.basic_details")}
             </CardTitle>
