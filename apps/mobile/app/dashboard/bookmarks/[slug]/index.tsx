@@ -8,9 +8,15 @@ import {
   View,
 } from "react-native";
 import ImageView from "react-native-image-viewing";
-import WebView from "react-native-webview";
+import * as Haptics from "expo-haptics";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import BookmarkAssetImage from "@/components/bookmarks/BookmarkAssetImage";
+import {
+  BookmarkLinkArchivePreview,
+  BookmarkLinkBrowserPreview,
+  BookmarkLinkReaderPreview,
+  BookmarkLinkScreenshotPreview,
+} from "@/components/bookmarks/BookmarkLinkPreview";
 import BookmarkTextMarkdown from "@/components/bookmarks/BookmarkTextMarkdown";
 import FullPageError from "@/components/FullPageError";
 import { TailwindResolver } from "@/components/TailwindResolver";
@@ -21,7 +27,15 @@ import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useAssetUrl } from "@/lib/hooks";
 import { api } from "@/lib/trpc";
-import { ClipboardList, Globe, Info, Tag, Trash2 } from "lucide-react-native";
+import { MenuView } from "@react-native-menu/menu";
+import {
+  ChevronDown,
+  ClipboardList,
+  Globe,
+  Info,
+  Tag,
+  Trash2,
+} from "lucide-react-native";
 import { useColorScheme } from "nativewind";
 
 import {
@@ -29,6 +43,50 @@ import {
   useUpdateBookmark,
 } from "@karakeep/shared-react/hooks/bookmarks";
 import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
+
+type BookmarkLinkType = "browser" | "reader" | "screenshot" | "archive";
+
+function BookmarkLinkTypeSelector({
+  type,
+  onChange,
+}: {
+  type: BookmarkLinkType;
+  onChange: (type: BookmarkLinkType) => void;
+}) {
+  return (
+    <MenuView
+      onPressAction={({ nativeEvent }) => {
+        Haptics.selectionAsync();
+        onChange(nativeEvent.event as BookmarkLinkType);
+      }}
+      actions={[
+        {
+          id: "reader",
+          title: "Reader",
+          state: type === "reader" ? "on" : undefined,
+        },
+        {
+          id: "browser",
+          title: "Browser",
+          state: type === "browser" ? "on" : undefined,
+        },
+        {
+          id: "screenshot",
+          title: "Screenshot",
+          state: type === "screenshot" ? "on" : undefined,
+        },
+        {
+          id: "archive",
+          title: "Archive",
+          state: type === "archive" ? "on" : undefined,
+        },
+      ]}
+      shouldOpenOnLongPress={false}
+    >
+      <ChevronDown onPress={() => Haptics.selectionAsync()} color="gray" />
+    </MenuView>
+  );
+}
 
 function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
@@ -152,78 +210,27 @@ function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
   );
 }
 
-function BookmarkLinkView({ bookmark }: { bookmark: ZBookmark }) {
-  const { colorScheme } = useColorScheme();
-
+function BookmarkLinkView({
+  bookmark,
+  bookmarkPreviewType,
+}: {
+  bookmark: ZBookmark;
+  bookmarkPreviewType: BookmarkLinkType;
+}) {
   if (bookmark.content.type !== BookmarkTypes.LINK) {
     throw new Error("Wrong content type rendered");
   }
 
-  if (bookmark.content.htmlContent) {
-    const isDark = colorScheme === "dark";
-
-    return (
-      <View className="flex-1 bg-background">
-        <WebView
-          originWhitelist={["*"]}
-          source={{
-            html: `
-              <!DOCTYPE html>
-              <html>
-                <head>
-                  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                  <style>
-                    body {
-                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-                      line-height: 1.6;
-                      color: ${isDark ? "#e5e7eb" : "#374151"};
-                      margin: 0;
-                      padding: 16px;
-                      background: ${isDark ? "#000000" : "#ffffff"};
-                    }
-                    p { margin: 0 0 1em 0; }
-                    h1, h2, h3, h4, h5, h6 { margin: 1.5em 0 0.5em 0; line-height: 1.2; }
-                    img { max-width: 100%; height: auto; border-radius: 8px; }
-                    a { color: #3b82f6; text-decoration: none; }
-                    a:hover { text-decoration: underline; }
-                    blockquote { 
-                      border-left: 4px solid ${isDark ? "#374151" : "#e5e7eb"}; 
-                      margin: 1em 0; 
-                      padding-left: 1em; 
-                      color: ${isDark ? "#9ca3af" : "#6b7280"}; 
-                    }
-                    pre { 
-                      background: ${isDark ? "#1f2937" : "#f3f4f6"}; 
-                      padding: 1em; 
-                      border-radius: 6px; 
-                      overflow-x: auto; 
-                    }
-                  </style>
-                </head>
-                <body>
-                  ${bookmark.content.htmlContent}
-                </body>
-              </html>
-            `,
-          }}
-          style={{
-            flex: 1,
-            backgroundColor: isDark ? "#000000" : "#ffffff",
-          }}
-          showsVerticalScrollIndicator={false}
-          showsHorizontalScrollIndicator={false}
-        />
-      </View>
-    );
+  switch (bookmarkPreviewType) {
+    case "browser":
+      return <BookmarkLinkBrowserPreview bookmark={bookmark} />;
+    case "reader":
+      return <BookmarkLinkReaderPreview bookmark={bookmark} />;
+    case "screenshot":
+      return <BookmarkLinkScreenshotPreview bookmark={bookmark} />;
+    case "archive":
+      return <BookmarkLinkArchivePreview bookmark={bookmark} />;
   }
-
-  return (
-    <WebView
-      startInLoadingState={true}
-      mediaPlaybackRequiresUserAction={true}
-      source={{ uri: bookmark.content.url }}
-    />
-  );
 }
 
 function BookmarkTextView({ bookmark }: { bookmark: ZBookmark }) {
@@ -321,6 +328,9 @@ export default function ListView() {
   const { slug } = useLocalSearchParams();
   const { colorScheme } = useColorScheme();
 
+  const [bookmarkLinkType, setBookmarkLinkType] =
+    useState<BookmarkLinkType>("reader");
+
   if (typeof slug !== "string") {
     throw new Error("Unexpected param type");
   }
@@ -331,7 +341,7 @@ export default function ListView() {
     refetch,
   } = api.bookmarks.getBookmark.useQuery({
     bookmarkId: slug,
-    includeContent: true,
+    includeContent: false,
   });
 
   if (error) {
@@ -347,7 +357,12 @@ export default function ListView() {
   switch (bookmark.content.type) {
     case BookmarkTypes.LINK:
       title = bookmark.title ?? bookmark.content.title;
-      comp = <BookmarkLinkView bookmark={bookmark} />;
+      comp = (
+        <BookmarkLinkView
+          bookmark={bookmark}
+          bookmarkPreviewType={bookmarkLinkType}
+        />
+      );
       break;
     case BookmarkTypes.TEXT:
       title = bookmark.title;
@@ -369,6 +384,13 @@ export default function ListView() {
           headerStyle: {
             backgroundColor: colorScheme === "dark" ? "#000000" : undefined,
           },
+          headerRight: () =>
+            bookmark.content.type === BookmarkTypes.LINK ? (
+              <BookmarkLinkTypeSelector
+                type={bookmarkLinkType}
+                onChange={(type) => setBookmarkLinkType(type)}
+              />
+            ) : undefined,
         }}
       />
       <View className="flex h-full">
