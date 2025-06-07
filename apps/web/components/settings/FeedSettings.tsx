@@ -25,7 +25,6 @@ import {
   CircleDashed,
   CirclePlus,
   Edit,
-  FlaskConical,
   Plus,
   Save,
   Trash2,
@@ -419,14 +418,6 @@ export default function FeedSettings() {
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-2 text-lg font-medium">
               {t("settings.feeds.rss_subscriptions")}
-              <Tooltip>
-                <TooltipTrigger className="text-muted-foreground">
-                  <FlaskConical size={15} />
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  {t("common.experimental")}
-                </TooltipContent>
-              </Tooltip>
             </span>
             <FeedsEditorDialog />
           </div>
