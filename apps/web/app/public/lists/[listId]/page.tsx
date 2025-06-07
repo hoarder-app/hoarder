@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import NoBookmarksBanner from "@/components/dashboard/bookmarks/NoBookmarksBanner";
 import PublicBookmarkGrid from "@/components/public/lists/PublicBookmarkGrid";
 import PublicListHeader from "@/components/public/lists/PublicListHeader";
-import { Separator } from "@/components/ui/separator";
 import { api } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 
@@ -50,22 +49,15 @@ export default async function PublicListPage({
         listId: params.listId,
       });
     return (
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">
-            {list.icon} {list.name}
-            {list.description && (
-              <span className="mx-2 text-lg text-gray-400">
-                {`(${list.description})`}
-              </span>
-            )}
-          </span>
-        </div>
-        <Separator />
+      <div className="space-y-3">
         <PublicListHeader
           list={{
             id: params.listId,
+            name: list.name,
+            description: list.description,
+            icon: list.icon,
             numItems: list.numItems,
+            ownerName: list.ownerName,
           }}
         />
         {list.numItems > 0 ? (
