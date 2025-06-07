@@ -17,7 +17,7 @@ importers:
         specifier: workspace:^0.1.0
         version: link:tooling/prettier
       '@tanstack/eslint-plugin-query':
-        specifier: 5.20.1
+        specifier: ^5.20.1
         version: 5.20.1(eslint@8.57.0)(typescript@5.8.2)
       '@types/node':
         specifier: ^22
@@ -41,7 +41,7 @@ importers:
         specifier: ^1.2.0
         version: 1.5.0
       turbo:
-        specifier: 2.1.2
+        specifier: ^2.1.2
         version: 2.1.2
 
   apps/browser-extension:
