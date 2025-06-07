@@ -78,10 +78,12 @@
     "sort": {
       "title": "排序",
       "newest_first": "最新在前",
-      "oldest_first": "最舊在前"
+      "oldest_first": "最舊在前",
+      "relevant_first": "最相關優先"
     },
     "recrawl": "重新抓取",
-    "open_editor": "開啟編輯器"
+    "open_editor": "開啟編輯器",
+    "toggle_show_archived": "顯示已封存"
   },
   "settings": {
     "back_to_app": "返回應用程式",
@@ -94,7 +96,20 @@
       "new_password": "新密碼",
       "confirm_new_password": "確認新密碼",
       "options": "選項",
-      "interface_lang": "介面語言"
+      "interface_lang": "介面語言",
+      "user_settings": {
+        "archive_display_behaviour": {
+          "hide": "在標籤和列表中隱藏已封存的書籤",
+          "title": "已封存的書籤",
+          "show": "在標籤和列表中顯示已封存的書籤"
+        },
+        "user_settings_updated": "使用者設定已更新！",
+        "bookmark_click_action": {
+          "title": "書籤點擊動作",
+          "open_external_url": "開啟原始網址",
+          "open_bookmark_details": "開啟書籤詳細資訊"
+        }
+      }
     },
     "ai": {
       "ai_settings": "AI 設定",
@@ -111,7 +126,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS 訂閱",
-      "add_a_subscription": "新增訂閱"
+      "add_a_subscription": "新增訂閱",
+      "feed_enabled": "已啟用 RSS 摘要",
+      "feed_disabled": "已停用 RSS 摘要"
     },
     "import": {
       "import_export": "匯入／匯出",
@@ -245,7 +262,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "重新產生所有書籤的 AI 標籤",
       "reindex_all_bookmarks": "重新索引所有書籤",
       "compact_assets": "壓縮資源",
-      "reprocess_assets_fix_mode": "重新處理資源(固定模式)"
+      "reprocess_assets_fix_mode": "重新處理資源(固定模式)",
+      "regenerate_ai_summaries_for_all_bookmarks": "為所有書籤重新產生 AI 摘要",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "僅為失敗的書籤重新產生 AI 摘要"
     },
     "users_list": {
       "users_list": "使用者清單",
@@ -280,7 +299,18 @@
     "merge_list": "合併清單",
     "destination_list": "目標清單",
     "delete_after_merge": "合併後刪除原始清單",
-    "no_destination": "無目標"
+    "no_destination": "無目標",
+    "rss": {
+      "description": "為此清單啟用 RSS 訂閱",
+      "feed_url": "RSS 訂閱網址",
+      "title": "RSS 訂閱"
+    },
+    "share_list": "分享清單",
+    "public_list": {
+      "title": "公開清單",
+      "description": "允許其他人檢視此清單",
+      "share_link": "分享連結"
+    }
   },
   "tags": {
     "all_tags": "所有標籤",
@@ -298,7 +328,11 @@
   "preview": {
     "view_original": "檢視原始內容",
     "cached_content": "快取內容",
-    "reader_view": "閱讀器檢視"
+    "reader_view": "閱讀器檢視",
+    "tabs": {
+      "content": "內容",
+      "details": "詳細資訊"
+    }
   },
   "editor": {
     "quickly_focus": "您可以按下 ⌘ + E 快速聚焦此欄位",

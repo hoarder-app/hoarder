@@ -52,6 +52,15 @@ _By [@thiswillbeyourgithub](https://github.com/thiswillbeyourgithub/)_
 
 A python package to simplify access to the karakeep API. Can be used as a library or from the CLI. Aims for feature completeness and high test coverage but do check its feature matrix before relying too much on it.
 
+Its repository also hosts the [Community Script](https://github.com/thiswillbeyourgithub/karakeep_python_api/tree/main/community_scripts), for example:
+
+| Community Script | Description | Documentation |
+|----------------|-------------|---------------|
+| **Karakeep-Time-Tagger** | Automatically adds time-to-read tags (`0-5m`, `5-10m`, etc.) to bookmarks based on content length analysis. Includes systemd service and timer files for automated periodic execution. | [`Link`](https://github.com/thiswillbeyourgithub/karakeep_python_api/tree/main/community_scripts/karakeep-time-tagger) |
+| **Karakeep-List-To-Tag** | Converts a Karakeep list into tags by adding a specified tag to all bookmarks within that list. | [`Link`](https://github.com/thiswillbeyourgithub/karakeep_python_api/tree/main/community_scripts/karakeep-list-to-tag) |
+| **Omnivore2Karakeep-Highlights** | Imports highlights from Omnivore export data to Karakeep, with intelligent position detection and bookmark matching. Supports dry-run mode for testing. | [`Link`](https://github.com/thiswillbeyourgithub/karakeep_python_api/tree/main/community_scripts/omnivore2karakeep-highlights) |
+
+
 Get it [here](https://github.com/thiswillbeyourgithub/karakeep_python_api).
 
 ### FreshRSS_to_Karakeep

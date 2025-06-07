@@ -79,9 +79,11 @@
     "sort": {
       "title": "Sorteren",
       "newest_first": "Nieuwste eerst",
-      "oldest_first": "Oudste eerst"
+      "oldest_first": "Oudste eerst",
+      "relevant_first": "Meest relevant eerst"
     },
-    "open_editor": "Editor openen"
+    "open_editor": "Editor openen",
+    "toggle_show_archived": "Gearchiveerde items weergeven"
   },
   "settings": {
     "ai": {
@@ -130,13 +132,28 @@
       "new_password": "Nieuwe Wachtwoord",
       "options": "Opties",
       "confirm_new_password": "Confirmeer Nieuwe Wachtwoord",
-      "interface_lang": "Interface Taal"
+      "interface_lang": "Interface Taal",
+      "user_settings": {
+        "user_settings_updated": "Gebruikersinstellingen zijn bijgewerkt!",
+        "bookmark_click_action": {
+          "title": "Actie bij klikken op bladwijzer",
+          "open_external_url": "Originele URL openen",
+          "open_bookmark_details": "Bladwijzerdetails openen"
+        },
+        "archive_display_behaviour": {
+          "title": "Gearchiveerde bladwijzers",
+          "show": "Gearchiveerde bladwijzers weergeven in tags en lijsten",
+          "hide": "Gearchiveerde bladwijzers verbergen in tags en lijsten"
+        }
+      }
     },
     "back_to_app": "Terug Naar App",
     "user_settings": "Gebruikersinstellingen",
     "feeds": {
       "rss_subscriptions": "RSS Abonnementen",
-      "add_a_subscription": "Abonnement Toevoegen"
+      "add_a_subscription": "Abonnement Toevoegen",
+      "feed_enabled": "RSS-feed ingeschakeld",
+      "feed_disabled": "RSS-feed uitgeschakeld"
     },
     "manage_assets": {
       "manage_assets": "Activa beheren",
@@ -256,7 +273,9 @@
       "reprocess_assets_fix_mode": "Activa opnieuw verwerken (Fix-modus)",
       "recrawl_failed_links_only": "Alleen mislukte links opnieuw crawlen",
       "recrawl_all_links": "Alle links opnieuw crawlen",
-      "reindex_all_bookmarks": "Alle bladwijzers opnieuw indexeren"
+      "reindex_all_bookmarks": "Alle bladwijzers opnieuw indexeren",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "AI-samenvattingen opnieuw genereren, alleen voor mislukte bladwijzers",
+      "regenerate_ai_summaries_for_all_bookmarks": "AI-samenvattingen opnieuw genereren voor alle bladwijzers"
     }
   },
   "tags": {
@@ -275,7 +294,11 @@
   "preview": {
     "view_original": "Toon origineel",
     "cached_content": "Inhoud in cache",
-    "reader_view": "Lezersweergave"
+    "reader_view": "Lezersweergave",
+    "tabs": {
+      "content": "Inhoud",
+      "details": "Details"
+    }
   },
   "editor": {
     "text_toolbar": {
@@ -357,7 +380,18 @@
     "destination_list": "Bestemmingslijst",
     "delete_after_merge": "Originele lijst verwijderen na samenvoegen",
     "no_destination": "Geen bestemming",
-    "description": "Beschrijving (Optioneel)"
+    "description": "Beschrijving (Optioneel)",
+    "public_list": {
+      "title": "Openbare lijst",
+      "description": "Anderen toestaan deze lijst te bekijken",
+      "share_link": "Link delen"
+    },
+    "share_list": "Lijst delen",
+    "rss": {
+      "title": "RSS-feed",
+      "description": "Een RSS-feed inschakelen voor deze lijst",
+      "feed_url": "RSS-feed URL"
+    }
   },
   "search": {
     "full_text_search": "Volledige tekst zoeken",

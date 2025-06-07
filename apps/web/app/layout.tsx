@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import "@karakeep/tailwind-config/globals.css";
 
@@ -55,15 +56,17 @@ export default async function RootLayout({
       dir={isRTL ? "rtl" : "ltr"}
     >
       <body className={inter.className}>
-        <Providers
-          session={session}
-          clientConfig={clientConfig}
-          userLocalSettings={await getUserLocalSettings()}
-        >
-          {children}
-          <ReactQueryDevtools initialIsOpen={false} />
-        </Providers>
-        <Toaster />
+        <NuqsAdapter>
+          <Providers
+            session={session}
+            clientConfig={clientConfig}
+            userLocalSettings={await getUserLocalSettings()}
+          >
+            {children}
+            <ReactQueryDevtools initialIsOpen={false} />
+          </Providers>
+          <Toaster />
+        </NuqsAdapter>
       </body>
     </html>
   );

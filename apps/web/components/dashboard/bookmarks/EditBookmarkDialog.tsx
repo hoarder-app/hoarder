@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
+import { useDialogFormReset } from "@/lib/hooks/useDialogFormReset";
 import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,13 +36,13 @@ import { CalendarIcon } from "lucide-react";
 import { useForm } from "react-hook-form";
 
 import { useUpdateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
-import { getBookmarkTitle } from "@karakeep/shared-react/utils/bookmarkUtils";
 import {
   BookmarkTypes,
   ZBookmark,
   ZUpdateBookmarksRequest,
   zUpdateBookmarksRequestSchema,
 } from "@karakeep/shared/types/bookmarks";
+import { getBookmarkTitle } from "@karakeep/shared/utils/bookmarkUtils";
 
 import { BookmarkTagsEditor } from "./BookmarkTagsEditor";
 
@@ -124,12 +125,10 @@ export function EditBookmarkDialog({
     updateBookmarkMutate(payload);
   }
 
-  // Reset form when bookmark data changes externally or dialog reopens
-  React.useEffect(() => {
-    if (open) {
-      form.reset(bookmarkToDefault(bookmark));
-    }
-  }, [bookmark, form, open]);
+  // Reset form only when dialog is initially opened to preserve unsaved changes
+  // This prevents losing unsaved title edits when tags are updated, which would
+  // cause the bookmark prop to change and trigger a form reset
+  useDialogFormReset(open, form, bookmarkToDefault(bookmark));
 
   const isLink = bookmark.content.type === BookmarkTypes.LINK;
   const isAsset = bookmark.content.type === BookmarkTypes.ASSET;

@@ -60,7 +60,8 @@
     "sort": {
       "title": "Zoradiť",
       "newest_first": "Od najnovších",
-      "oldest_first": "Od najstarších"
+      "oldest_first": "Od najstarších",
+      "relevant_first": "Najrelevantnejšie ako prvé"
     },
     "change_layout": "Zmena rozloženia",
     "archive": "Archivovať",
@@ -75,7 +76,8 @@
     "recrawl": "Znova prehľadať",
     "fetch_now": "Načítať teraz",
     "summarize_with_ai": "Zhrnúť pomocou AI",
-    "open_editor": "Otvoriť editor"
+    "open_editor": "Otvoriť editor",
+    "toggle_show_archived": "Zobraziť archivované"
   },
   "lists": {
     "favourites": "Obľúbené",
@@ -94,7 +96,18 @@
     "destination_list": "Cieľový zoznam",
     "delete_after_merge": "Po zlúčení odstrániť pôvodný zoznam",
     "no_destination": "Žiadny cieľ",
-    "description": "Popis (voliteľný)"
+    "description": "Popis (voliteľný)",
+    "rss": {
+      "title": "RSS kanál",
+      "description": "Povoliť RSS kanál pre tento zoznam",
+      "feed_url": "URL RSS kanála"
+    },
+    "public_list": {
+      "title": "Verejný zoznam",
+      "description": "Povoliť ostatným zobraziť tento zoznam",
+      "share_link": "Zdieľať odkaz"
+    },
+    "share_list": "Zdieľať zoznam"
   },
   "settings": {
     "import": {
@@ -119,7 +132,20 @@
       "current_password": "Súčasné heslo",
       "options": "Možnosti",
       "interface_lang": "Jazyk rozhrania",
-      "user_info": "Informácie o používateľovi"
+      "user_info": "Informácie o používateľovi",
+      "user_settings": {
+        "user_settings_updated": "Používateľské nastavenia boli aktualizované!",
+        "bookmark_click_action": {
+          "title": "Akcia po kliknutí na záložku",
+          "open_external_url": "Otvoriť pôvodnú URL",
+          "open_bookmark_details": "Otvoriť podrobnosti záložky"
+        },
+        "archive_display_behaviour": {
+          "title": "Archivované záložky",
+          "hide": "Skryť archivované záložky v tagoch a zoznamoch",
+          "show": "Zobraziť archivované záložky v tagoch a zoznamoch"
+        }
+      }
     },
     "ai": {
       "ai_settings": "Nastavenia AI",
@@ -170,7 +196,9 @@
     },
     "feeds": {
       "rss_subscriptions": "Odbery RSS",
-      "add_a_subscription": "Pridať odber"
+      "add_a_subscription": "Pridať odber",
+      "feed_enabled": "RSS kanál je zapnutý",
+      "feed_disabled": "RSS kanál je vypnutý"
     },
     "broken_links": {
       "broken_links": "Nefunkčné odkazy",
@@ -279,7 +307,9 @@
       "without_inference": "Bez odvodzovania",
       "reprocess_assets_fix_mode": "Spracovať aktíva znova (režim opravy)",
       "recrawl_all_links": "Znova prehľadať všetky odkazy",
-      "recrawl_failed_links_only": "Znova prehľadať iba nefunkčné odkazy"
+      "recrawl_failed_links_only": "Znova prehľadať iba nefunkčné odkazy",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Znova vygenerovať AI súhrny iba pre záložky, ktoré zlyhali",
+      "regenerate_ai_summaries_for_all_bookmarks": "Znova vygenerovať AI súhrny pre všetky záložky"
     },
     "users_list": {
       "users_list": "Zoznam používateľov",
@@ -394,7 +424,11 @@
   "preview": {
     "view_original": "Zobraziť originál",
     "cached_content": "Obsah uložený vo vyrovnávacej pamäti",
-    "reader_view": "Zobrazenie čítačky"
+    "reader_view": "Zobrazenie čítačky",
+    "tabs": {
+      "content": "Obsah",
+      "details": "Podrobnosti"
+    }
   },
   "toasts": {
     "bookmarks": {

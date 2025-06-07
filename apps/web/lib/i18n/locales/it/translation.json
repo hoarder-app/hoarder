@@ -34,9 +34,11 @@
     "sort": {
       "title": "Ordina",
       "newest_first": "Prima i più recenti",
-      "oldest_first": "Prima i più vecchi"
+      "oldest_first": "Prima i più vecchi",
+      "relevant_first": "Più rilevanti prima"
     },
-    "open_editor": "Apri editor"
+    "open_editor": "Apri editor",
+    "toggle_show_archived": "Mostra archiviati"
   },
   "common": {
     "attachments": "Allegati",
@@ -92,7 +94,20 @@
       "change_password": "Cambia password",
       "current_password": "Password attuale",
       "new_password": "Nuova password",
-      "options": "Opzioni"
+      "options": "Opzioni",
+      "user_settings": {
+        "user_settings_updated": "Le impostazioni utente sono state aggiornate!",
+        "bookmark_click_action": {
+          "title": "Azione al clic sul segnalibro",
+          "open_external_url": "Apri URL originale",
+          "open_bookmark_details": "Apri dettagli segnalibro"
+        },
+        "archive_display_behaviour": {
+          "title": "Segnalibri archiviati",
+          "show": "Mostra i segnalibri archiviati in tag e liste",
+          "hide": "Nascondi i segnalibri archiviati in tag e liste"
+        }
+      }
     },
     "back_to_app": "Torna all'App",
     "user_settings": "Impostazioni utente",
@@ -111,7 +126,9 @@
     },
     "feeds": {
       "rss_subscriptions": "Iscrizione RSS",
-      "add_a_subscription": "Aggiungi un'iscrizione"
+      "add_a_subscription": "Aggiungi un'iscrizione",
+      "feed_enabled": "Feed RSS abilitato",
+      "feed_disabled": "Feed RSS disabilitato"
     },
     "import": {
       "import_export": "Importa / Esporta",
@@ -304,7 +321,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Rigenera tag AI per tutti i segnalibri",
       "compact_assets": "Compatta asset",
       "reindex_all_bookmarks": "Reindicizza tutti i segnalibri",
-      "reprocess_assets_fix_mode": "Riprocessa asset (modalità fissa)"
+      "reprocess_assets_fix_mode": "Riprocessa asset (modalità fissa)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Rigenera i riassunti AI solo per i segnalibri falliti",
+      "regenerate_ai_summaries_for_all_bookmarks": "Rigenera i riassunti AI per tutti i segnalibri"
     },
     "users_list": {
       "users_list": "Lista utenti",
@@ -339,7 +358,18 @@
     "destination_list": "Elenco di destinazione",
     "delete_after_merge": "Elimina l'elenco originale dopo l'unione",
     "no_destination": "Nessuna destinazione",
-    "description": "Descrizione (facoltativa)"
+    "description": "Descrizione (facoltativa)",
+    "rss": {
+      "title": "Feed RSS",
+      "description": "Abilita un feed RSS per questa lista",
+      "feed_url": "URL del feed RSS"
+    },
+    "public_list": {
+      "description": "Consenti ad altri di visualizzare questa lista",
+      "title": "Lista pubblica",
+      "share_link": "Condividi link"
+    },
+    "share_list": "Condividi lista"
   },
   "tags": {
     "your_tags": "I tuoi tag",
@@ -357,7 +387,11 @@
   "preview": {
     "view_original": "Vedi originale",
     "cached_content": "Contenuto salvato in cache",
-    "reader_view": "Visualizzazione Reader"
+    "reader_view": "Visualizzazione Reader",
+    "tabs": {
+      "content": "Contenuto",
+      "details": "Dettagli"
+    }
   },
   "toasts": {
     "bookmarks": {

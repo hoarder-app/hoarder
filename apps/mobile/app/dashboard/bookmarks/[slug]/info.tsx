@@ -22,8 +22,8 @@ import {
   useAutoRefreshingBookmarkQuery,
   useUpdateBookmark,
 } from "@karakeep/shared-react/hooks/bookmarks";
-import { isBookmarkStillTagging } from "@karakeep/shared-react/utils/bookmarkUtils";
 import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
+import { isBookmarkStillTagging } from "@karakeep/shared/utils/bookmarkUtils";
 
 function TagList({ bookmark }: { bookmark: ZBookmark }) {
   return (

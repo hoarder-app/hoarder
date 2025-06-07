@@ -1,5 +1,6 @@
+import { isBookmarkStillLoading } from "@karakeep/shared/utils/bookmarkUtils";
+
 import { api } from "../trpc";
-import { isBookmarkStillLoading } from "../utils/bookmarkUtils";
 import { useBookmarkGridContext } from "./bookmark-grid-context";
 import { useAddBookmarkToList } from "./lists";
 

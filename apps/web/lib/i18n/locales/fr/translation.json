@@ -78,10 +78,12 @@
     "sort": {
       "title": "Trier",
       "newest_first": "Plus récents d'abord",
-      "oldest_first": "Plus anciens d'abord"
+      "oldest_first": "Plus anciens d'abord",
+      "relevant_first": "Les plus pertinents en premier"
     },
     "recrawl": "Réexplorer",
-    "open_editor": "Ouvrir l'éditeur"
+    "open_editor": "Ouvrir l'éditeur",
+    "toggle_show_archived": "Afficher les éléments archivés"
   },
   "settings": {
     "back_to_app": "Retour à l'application",
@@ -94,7 +96,20 @@
       "new_password": "Nouveau mot de passe",
       "confirm_new_password": "Confirmer le nouveau mot de passe",
       "options": "Options",
-      "interface_lang": "Langue de l'interface"
+      "interface_lang": "Langue de l'interface",
+      "user_settings": {
+        "archive_display_behaviour": {
+          "hide": "Masquer les marque-pages archivés dans les balises et les listes",
+          "title": "Marque-pages archivés",
+          "show": "Afficher les marque-pages archivés dans les balises et les listes"
+        },
+        "user_settings_updated": "Les paramètres utilisateur ont été mis à jour !",
+        "bookmark_click_action": {
+          "title": "Action au clic sur un marque-page",
+          "open_external_url": "Ouvrir l’URL d’origine",
+          "open_bookmark_details": "Ouvrir les détails du marque-page"
+        }
+      }
     },
     "ai": {
       "ai_settings": "Paramètres de l'IA",
@@ -111,7 +126,9 @@
     },
     "feeds": {
       "rss_subscriptions": "Abonnements RSS",
-      "add_a_subscription": "Ajouter un abonnement"
+      "add_a_subscription": "Ajouter un abonnement",
+      "feed_enabled": "Flux RSS activé",
+      "feed_disabled": "Flux RSS désactivé"
     },
     "import": {
       "import_export": "Importer / Exporter",
@@ -245,7 +262,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Régénérer les tags AI pour tous les favoris",
       "reindex_all_bookmarks": "Réindexer tous les favoris",
       "compact_assets": "Compacter les assets",
-      "reprocess_assets_fix_mode": "Reprocesser les assets (mode fix)"
+      "reprocess_assets_fix_mode": "Reprocesser les assets (mode fix)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Régénérer les résumés IA uniquement pour les marque-pages ayant échoué",
+      "regenerate_ai_summaries_for_all_bookmarks": "Régénérer les résumés IA pour tous les marque-pages"
     },
     "users_list": {
       "users_list": "Liste des utilisateurs",
@@ -280,7 +299,18 @@
     "destination_list": "Liste de destination",
     "delete_after_merge": "Supprimer la liste originale après la fusion",
     "no_destination": "Pas de destination",
-    "description": "Description (Optional)"
+    "description": "Description (Optional)",
+    "rss": {
+      "title": "Flux RSS",
+      "description": "Activer un flux RSS pour cette liste",
+      "feed_url": "URL du flux RSS"
+    },
+    "share_list": "Partager la liste",
+    "public_list": {
+      "title": "Liste publique",
+      "description": "Autoriser les autres à consulter cette liste",
+      "share_link": "Partager le lien"
+    }
   },
   "tags": {
     "all_tags": "Tous les tags",
@@ -298,7 +328,11 @@
   "preview": {
     "view_original": "Voir l'original",
     "cached_content": "Contenu en cache",
-    "reader_view": "Vue Lecteur"
+    "reader_view": "Vue Lecteur",
+    "tabs": {
+      "details": "Détails",
+      "content": "Contenu"
+    }
   },
   "editor": {
     "quickly_focus": "Vous pouvez rapidement vous concentrer sur ce champ en appuyant sur ⌘ + E",

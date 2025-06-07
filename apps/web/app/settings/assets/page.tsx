@@ -21,7 +21,7 @@ import { formatBytes } from "@/lib/utils";
 import { ExternalLink, Trash2 } from "lucide-react";
 
 import { useDetachBookmarkAsset } from "@karakeep/shared-react/hooks/assets";
-import { getAssetUrl } from "@karakeep/shared-react/utils/assetUtils";
+import { getAssetUrl } from "@karakeep/shared/utils/assetUtils";
 import {
   humanFriendlyNameForAssertType,
   isAllowedToDetachAsset,

@@ -79,9 +79,11 @@
     "sort": {
       "title": "Sırala",
       "newest_first": "En yeni önce",
-      "oldest_first": "En eski önce"
+      "oldest_first": "En eski önce",
+      "relevant_first": "En İlgili Olan Önce"
     },
-    "open_editor": "Düzenleyiciyi Aç"
+    "open_editor": "Düzenleyiciyi Aç",
+    "toggle_show_archived": "Arşivlenmiş Olanları Göster"
   },
   "highlights": {
     "no_highlights": "Henüz hiçbir öne çıkarılmış içeriğiniz yok."
@@ -97,7 +99,20 @@
       "new_password": "Yeni Şifre",
       "confirm_new_password": "Yeni Şifreyi Onaylayın",
       "options": "Seçenekler",
-      "interface_lang": "Arayüz Dili"
+      "interface_lang": "Arayüz Dili",
+      "user_settings": {
+        "user_settings_updated": "Kullanıcı ayarları güncellendi!",
+        "bookmark_click_action": {
+          "title": "Yer İşareti Tıklama Eylemi",
+          "open_external_url": "Orijinal URL'yi Aç",
+          "open_bookmark_details": "Yer İşareti Ayrıntılarını Aç"
+        },
+        "archive_display_behaviour": {
+          "title": "Arşivlenmiş Yer İmleri",
+          "show": "Arşivlenmiş yer imlerini etiketlerde ve listelerde göster",
+          "hide": "Arşivlenmiş yer imlerini etiketlerde ve listelerde gizle"
+        }
+      }
     },
     "ai": {
       "ai_settings": "Yapay Zeka Ayarları",
@@ -114,7 +129,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS Abonelikleri",
-      "add_a_subscription": "Bir Abonelik Ekle"
+      "add_a_subscription": "Bir Abonelik Ekle",
+      "feed_enabled": "RSS Beslemesi etkin",
+      "feed_disabled": "RSS Beslemesi devre dışı"
     },
     "import": {
       "import_export": "İçe Aktar / Dışa Aktar",
@@ -248,7 +265,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Tüm Yer İşaretleri için Yapay Zeka Etiketlerini Yeniden Oluştur",
       "reindex_all_bookmarks": "Tüm Yer İşaretlerini Yeniden Dizine Al",
       "compact_assets": "Varlıkları Sıkıştır",
-      "reprocess_assets_fix_mode": "Varlıkları Yeniden İşle (Fix Mod)"
+      "reprocess_assets_fix_mode": "Varlıkları Yeniden İşle (Fix Mod)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Yalnızca Başarısız Yer İmleri için Yapay Zeka Özetlerini Yeniden Oluştur",
+      "regenerate_ai_summaries_for_all_bookmarks": "Tüm Yer İmleri için Yapay Zeka Özetlerini Yeniden Oluştur"
     },
     "users_list": {
       "users_list": "Kullanıcı Listesi",
@@ -283,7 +302,18 @@
     "destination_list": "Hedef Liste",
     "delete_after_merge": "Birleştirmeden sonra orijinal listeyi sil",
     "no_destination": "Hedef Yok",
-    "description": "Açıklama (İsteğe Bağlı)"
+    "description": "Açıklama (İsteğe Bağlı)",
+    "share_list": "Listeyi Paylaş",
+    "rss": {
+      "title": "RSS Beslemesi",
+      "description": "Bu liste için bir RSS beslemesi etkinleştir",
+      "feed_url": "RSS Besleme URL'si"
+    },
+    "public_list": {
+      "title": "Herkese Açık Liste",
+      "description": "Başkalarının bu listeyi görüntülemesine izin ver",
+      "share_link": "Bağlantıyı Paylaş"
+    }
   },
   "tags": {
     "all_tags": "Tüm Etiketler",
@@ -301,7 +331,11 @@
   "preview": {
     "view_original": "Orijinali Görüntüle",
     "cached_content": "Önbelleğe Alınmış İçerik",
-    "reader_view": "Okuyucu Görünümü"
+    "reader_view": "Okuyucu Görünümü",
+    "tabs": {
+      "content": "İçerik",
+      "details": "Ayrıntılar"
+    }
   },
   "editor": {
     "quickly_focus": "Bu alana hızlıca odaklanmak için ⌘ + E tuşlarına basabilirsiniz",

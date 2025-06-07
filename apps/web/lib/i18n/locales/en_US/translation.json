@@ -48,7 +48,8 @@
     "sort": {
       "newest_first": "Newest First",
       "oldest_first": "Oldest First",
-      "title": "Sort"
+      "title": "Sort",
+      "relevant_first": "Most Relevant First"
     },
     "change_layout": "Change Layout",
     "archive": "Archive",
@@ -81,7 +82,8 @@
     "merge": "Merge",
     "cancel": "Cancel",
     "apply_all": "Apply All",
-    "ignore": "Ignore"
+    "ignore": "Ignore",
+    "toggle_show_archived": "Show Archived"
   },
   "highlights": {
     "no_highlights": "You don't have any highlights yet."
@@ -179,7 +181,20 @@
       "new_password": "New Password",
       "confirm_new_password": "Confirm New Password",
       "options": "Options",
-      "interface_lang": "Interface Language"
+      "interface_lang": "Interface Language",
+      "user_settings": {
+        "user_settings_updated": "User settings have been updated!",
+        "bookmark_click_action": {
+          "title": "Bookmark Click Action",
+          "open_external_url": "Open Original URL",
+          "open_bookmark_details": "Open Bookmark Details"
+        },
+        "archive_display_behaviour": {
+          "title": "Archived Bookmarks",
+          "show": "Show archived bookmarks in tags and lists",
+          "hide": "Hide archived bookmarks in tags and lists"
+        }
+      }
     },
     "ai": {
       "ai_settings": "AI Settings",
@@ -196,7 +211,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS Subscriptions",
-      "add_a_subscription": "Add a Subscription"
+      "add_a_subscription": "Add a Subscription",
+      "feed_enabled": "RSS Feed enabled, mate",
+      "feed_disabled": "RSS Feed disabled, mate"
     },
     "webhooks": {
       "webhooks": "Webhooks",
@@ -331,7 +348,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Regenerate AI Tags for All Bookmarks",
       "reindex_all_bookmarks": "Reindex All Bookmarks",
       "compact_assets": "Compact Assets",
-      "reprocess_assets_fix_mode": "Reprocess Assets (Fix Mode)"
+      "reprocess_assets_fix_mode": "Reprocess Assets (Fix Mode)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Regenerate AI Summaries for Failed Bookmarks Only",
+      "regenerate_ai_summaries_for_all_bookmarks": "Regenerate AI Summaries for All Bookmarks"
     },
     "users_list": {
       "users_list": "Users List",
@@ -366,7 +385,18 @@
     "smart_list": "Smart List",
     "search_query": "Search Query",
     "search_query_help": "Learn more about the search query language.",
-    "description": "Description (Optional)"
+    "description": "Description (Optional)",
+    "share_list": "Share List",
+    "rss": {
+      "title": "RSS Feed",
+      "description": "Enable an RSS feed for this list",
+      "feed_url": "RSS Feed URL"
+    },
+    "public_list": {
+      "title": "Public List",
+      "description": "Allow others to view this list",
+      "share_link": "Share Link"
+    }
   },
   "search": {
     "is_favorited": "Is Favorited",
@@ -408,7 +438,11 @@
   "preview": {
     "view_original": "View Original",
     "cached_content": "Cached Content",
-    "reader_view": "Reader View"
+    "reader_view": "Reader View",
+    "tabs": {
+      "content": "Content",
+      "details": "Details"
+    }
   },
   "toasts": {
     "bookmarks": {

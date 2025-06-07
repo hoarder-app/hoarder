@@ -21,12 +21,12 @@ import {
   useDeleteBookmark,
   useUpdateBookmark,
 } from "@karakeep/shared-react/hooks/bookmarks";
+import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 import {
   getBookmarkLinkImageUrl,
   isBookmarkStillLoading,
   isBookmarkStillTagging,
-} from "@karakeep/shared-react/utils/bookmarkUtils";
-import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
+} from "@karakeep/shared/utils/bookmarkUtils";
 
 import { Divider } from "../ui/Divider";
 import { Skeleton } from "../ui/Skeleton";
@@ -130,20 +130,10 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             }),
           },
           {
-            id: "delete",
-            title: "Delete",
-            attributes: {
-              destructive: true,
-            },
-            image: Platform.select({
-              ios: "trash",
-            }),
-          },
-          {
             id: "manage_list",
             title: "Manage Lists",
             image: Platform.select({
-              ios: "list",
+              ios: "list.bullet",
             }),
           },
           {
@@ -151,6 +141,16 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             title: "Manage Tags",
             image: Platform.select({
               ios: "tag",
+            }),
+          },
+          {
+            id: "delete",
+            title: "Delete",
+            attributes: {
+              destructive: true,
+            },
+            image: Platform.select({
+              ios: "trash",
             }),
           },
         ]}

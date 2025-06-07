@@ -3,8 +3,8 @@ import { BookmarkMarkdownComponent } from "@/components/dashboard/bookmarks/Book
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 
 import type { ZBookmarkTypeText } from "@karakeep/shared/types/bookmarks";
-import { getAssetUrl } from "@karakeep/shared-react/utils/assetUtils";
 import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
+import { getAssetUrl } from "@karakeep/shared/utils/assetUtils";
 
 export function TextContentSection({ bookmark }: { bookmark: ZBookmark }) {
   if (bookmark.content.type != BookmarkTypes.TEXT) {

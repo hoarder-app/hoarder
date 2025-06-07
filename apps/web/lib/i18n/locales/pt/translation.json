@@ -57,7 +57,8 @@
     "sort": {
       "newest_first": "Mais recente primeiro",
       "oldest_first": "Mais Antigo Primeiro",
-      "title": "Ordenar"
+      "title": "Ordenar",
+      "relevant_first": "Mais relevante primeiro"
     },
     "change_layout": "Mudar Layout",
     "archive": "Arquivo",
@@ -75,7 +76,8 @@
     "summarize_with_ai": "Resumir com IA",
     "edit_title": "Editar título",
     "sign_out": "Sair",
-    "open_editor": "Abrir editor"
+    "open_editor": "Abrir editor",
+    "toggle_show_archived": "Mostrar arquivados"
   },
   "settings": {
     "webhooks": {
@@ -116,7 +118,20 @@
       "current_password": "Senha Atual",
       "new_password": "Nova senha",
       "confirm_new_password": "Confirmar nova senha",
-      "options": "Opções"
+      "options": "Opções",
+      "user_settings": {
+        "user_settings_updated": "As configurações do usuário foram atualizadas!",
+        "bookmark_click_action": {
+          "title": "Ação de clique no marcador",
+          "open_external_url": "Abrir URL original",
+          "open_bookmark_details": "Abrir detalhes do marcador"
+        },
+        "archive_display_behaviour": {
+          "title": "Marcadores arquivados",
+          "show": "Mostrar marcadores arquivados em tags e listas",
+          "hide": "Ocultar marcadores arquivados em tags e listas"
+        }
+      }
     },
     "ai": {
       "tagging_rules": "Regras de marcação",
@@ -148,7 +163,9 @@
     "user_settings": "Configurações do usuário",
     "feeds": {
       "rss_subscriptions": "Assinaturas RSS",
-      "add_a_subscription": "Adicionar uma Assinatura"
+      "add_a_subscription": "Adicionar uma Assinatura",
+      "feed_enabled": "Feed RSS ativado",
+      "feed_disabled": "Feed RSS desativado"
     },
     "manage_assets": {
       "manage_assets": "Gerenciar Ativos",
@@ -232,7 +249,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Regenerar Tags de IA para Todos os Favoritos",
       "reindex_all_bookmarks": "Reindexar Todos os Marcadores",
       "compact_assets": "Ativos compactos",
-      "reprocess_assets_fix_mode": "Reprocessar Ativos (Modo de Correção)"
+      "reprocess_assets_fix_mode": "Reprocessar Ativos (Modo de Correção)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Regenerar resumos de IA apenas para marcadores com falha",
+      "regenerate_ai_summaries_for_all_bookmarks": "Regenerar resumos de IA para todos os marcadores"
     },
     "users_list": {
       "delete_user": "Excluir usuário",
@@ -274,7 +293,18 @@
     "destination_list": "Lista de destino",
     "delete_after_merge": "Excluir lista original após a mesclagem",
     "no_destination": "Sem destino",
-    "description": "Descrição (Opcional)"
+    "description": "Descrição (Opcional)",
+    "share_list": "Compartilhar lista",
+    "rss": {
+      "title": "Feed RSS",
+      "description": "Ativar um feed RSS para esta lista",
+      "feed_url": "URL do feed RSS"
+    },
+    "public_list": {
+      "title": "Lista pública",
+      "description": "Permitir que outros vejam esta lista",
+      "share_link": "Compartilhar link"
+    }
   },
   "tags": {
     "your_tags_info": "Tags que foram anexadas pelo menos uma vez por você",
@@ -329,7 +359,11 @@
   "preview": {
     "cached_content": "Conteúdo em cache",
     "view_original": "Ver original",
-    "reader_view": "Modo Leitura"
+    "reader_view": "Modo Leitura",
+    "tabs": {
+      "content": "Conteúdo",
+      "details": "Detalhes"
+    }
   },
   "editor": {
     "new_item": "NOVO ITEM",
