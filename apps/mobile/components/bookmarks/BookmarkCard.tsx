@@ -130,20 +130,10 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             }),
           },
           {
-            id: "delete",
-            title: "Delete",
-            attributes: {
-              destructive: true,
-            },
-            image: Platform.select({
-              ios: "trash",
-            }),
-          },
-          {
             id: "manage_list",
             title: "Manage Lists",
             image: Platform.select({
-              ios: "list",
+              ios: "list.bullet",
             }),
           },
           {
@@ -151,6 +141,16 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             title: "Manage Tags",
             image: Platform.select({
               ios: "tag",
+            }),
+          },
+          {
+            id: "delete",
+            title: "Delete",
+            attributes: {
+              destructive: true,
+            },
+            image: Platform.select({
+              ios: "trash",
             }),
           },
         ]}
