@@ -18,6 +18,7 @@ import {
   BookmarkLinkScreenshotPreview,
 } from "@/components/bookmarks/BookmarkLinkPreview";
 import BookmarkTextMarkdown from "@/components/bookmarks/BookmarkTextMarkdown";
+import { PDFViewer } from "@/components/bookmarks/PDFViewer";
 import FullPageError from "@/components/FullPageError";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import { Button } from "@/components/ui/Button";
@@ -91,6 +92,7 @@ function BookmarkLinkTypeSelector({
 function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const router = useRouter();
+
   const { mutate: deleteBookmark, isPending: isDeletionPending } =
     useDeleteBookmark({
       onSuccess: () => {
@@ -304,6 +306,20 @@ function BookmarkAssetView({ bookmark }: { bookmark: ZBookmark }) {
     throw new Error("Wrong content type rendered");
   }
   const assetSource = useAssetUrl(bookmark.content.assetId);
+
+  // Check if this is a PDF asset
+  if (bookmark.content.assetType === "pdf") {
+    return (
+      <View className="flex flex-1">
+        <PDFViewer
+          source={assetSource.uri ?? ""}
+          headers={assetSource.headers}
+        />
+      </View>
+    );
+  }
+
+  // Handle image assets as before
   return (
     <View className="flex flex-1 gap-2">
       <ImageView
@@ -327,6 +343,7 @@ function BookmarkAssetView({ bookmark }: { bookmark: ZBookmark }) {
 export default function ListView() {
   const { slug } = useLocalSearchParams();
   const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
 
   const [bookmarkLinkType, setBookmarkLinkType] =
     useState<BookmarkLinkType>("reader");
@@ -380,10 +397,11 @@ export default function ListView() {
           headerTitle: title ?? "",
           headerBackTitle: "Back",
           headerTransparent: false,
-          headerTintColor: colorScheme === "dark" ? "#ffffff" : undefined,
+          headerShown: true,
           headerStyle: {
-            backgroundColor: colorScheme === "dark" ? "#000000" : undefined,
+            backgroundColor: isDark ? "#000" : "#fff",
           },
+          headerTintColor: isDark ? "#fff" : "#000",
           headerRight: () =>
             bookmark.content.type === BookmarkTypes.LINK ? (
               <BookmarkLinkTypeSelector
