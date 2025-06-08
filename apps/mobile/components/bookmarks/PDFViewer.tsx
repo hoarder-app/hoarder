@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import ReactNativeBlobUtil from "react-native-blob-util";
 import Pdf from "react-native-pdf";
+import { useQuery } from "@tanstack/react-query";
 import { useColorScheme } from "nativewind";
 
 interface PDFViewerProps {
@@ -10,9 +11,7 @@ interface PDFViewerProps {
 }
 
 export function PDFViewer({ source, headers }: PDFViewerProps) {
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [localPath, setLocalPath] = useState<string | null>(null);
+  const [pdfRenderError, setPdfRenderError] = useState<string | null>(null);
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const colors = {
@@ -21,108 +20,57 @@ export function PDFViewer({ source, headers }: PDFViewerProps) {
     mutedForeground: isDark ? "#888" : "#666",
   };
 
-  useEffect(() => {
-    let isCancelled = false;
-    let downloadedPath: string | null = null;
+  const {
+    data: localPath,
+    isLoading,
+    error: downloadError,
+  } = useQuery({
+    queryKey: ["pdf", source],
+    queryFn: async () => {
+      // Create a temporary filename
+      const fileName = `temp_${Date.now()}.pdf`;
+      const { dirs } = ReactNativeBlobUtil.fs;
+      const path = `${dirs.DocumentDir}/${fileName}`;
 
-    // Download PDF to temporary location
-    const downloadPDF = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+      const response = await ReactNativeBlobUtil.config({
+        fileCache: true,
+        path,
+      }).fetch("GET", source, headers ?? {});
+      return response.path();
+    },
+    enabled: !!source,
+  });
 
-        // Create a temporary filename
-        const fileName = `temp_${Date.now()}.pdf`;
-        const { dirs } = ReactNativeBlobUtil.fs;
-        const path = `${dirs.DocumentDir}/${fileName}`;
-
-        // Download the PDF with authentication
-        const response = await ReactNativeBlobUtil.config({
-          fileCache: true,
-          path: path,
-        }).fetch("GET", source, headers ?? {});
-
-        downloadedPath = response.path();
-        const responseInfo = response.info() as {
-          headers?: Record<string, string>;
-          status?: number;
-        };
-        // Headers might be case-sensitive, check both variants
-        const contentType =
-          responseInfo?.headers?.["content-type"] ??
-          responseInfo?.headers?.["Content-Type"] ??
-          "";
-        const _status = responseInfo?.status; // Status captured for potential future use
-
-        // Check if response is actually a PDF
-        const validPDFTypes = ["application/pdf", "application/x-pdf"];
-        if (
-          !validPDFTypes.some((type) =>
-            contentType.toLowerCase().includes(type),
-          )
-        ) {
-          throw new Error(
-            `Expected PDF content type but got "${contentType}". The file might not be a PDF.`,
-          );
-        }
-
-        // Verify file exists
-        const exists = await ReactNativeBlobUtil.fs.exists(downloadedPath);
-
-        if (!exists) {
-          throw new Error("Downloaded file does not exist");
-        }
-
-        if (!isCancelled) {
-          setLocalPath(downloadedPath);
-          setLoading(false);
-        }
-      } catch (err) {
-        console.error("PDF Download Error:", err);
-        if (!isCancelled) {
-          let errorMessage = "Failed to download PDF";
-          if (err instanceof Error) {
-            if (err.message.includes("Network request failed")) {
-              errorMessage = "Network error. Please check your connection.";
-            } else if (
-              err.message.includes("401") ||
-              err.message.includes("403")
-            ) {
-              errorMessage = "Authentication failed. Please sign in again.";
-            } else if (err.message.includes("404")) {
-              errorMessage = "PDF not found.";
-            }
-          }
-          setError(errorMessage);
-          setLoading(false);
-        }
+  // Merge download and render errors
+  const error = useMemo(() => {
+    if (downloadError) {
+      let errorMessage = "Failed to download PDF";
+      if (downloadError.message.includes("Network request failed")) {
+        errorMessage = "Network error. Please check your connection.";
+      } else if (
+        downloadError.message.includes("401") ||
+        downloadError.message.includes("403")
+      ) {
+        errorMessage = "Authentication failed. Please sign in again.";
+      } else if (downloadError.message.includes("404")) {
+        errorMessage = "PDF not found.";
       }
-    };
-
-    if (source) {
-      downloadPDF();
+      return errorMessage;
     }
+    if (pdfRenderError) {
+      return pdfRenderError;
+    }
+    return null;
+  }, [downloadError, pdfRenderError]);
 
-    // Cleanup function to remove temporary file
+  // Cleanup function to remove temporary file on unmount
+  useEffect(() => {
     return () => {
-      isCancelled = true;
-      if (downloadedPath) {
-        ReactNativeBlobUtil.fs.unlink(downloadedPath).catch(() => {
-          // Ignore cleanup errors
-        });
+      if (localPath) {
+        ReactNativeBlobUtil.fs.unlink(localPath).catch(() => ({}));
       }
     };
   }, [source, headers]);
-
-  const handleError = (e: unknown) => {
-    console.error("PDF Render Error:", e);
-    setError("Failed to render PDF");
-    setLoading(false);
-  };
-
-  const handleLoad = () => {
-    // PDF loaded successfully
-  };
 
   if (error) {
     return (
@@ -134,7 +82,7 @@ export function PDFViewer({ source, headers }: PDFViewerProps) {
     );
   }
 
-  if (loading || !localPath) {
+  if (isLoading || !localPath) {
     return (
       <View style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.loadingContainer}>
@@ -147,32 +95,22 @@ export function PDFViewer({ source, headers }: PDFViewerProps) {
     );
   }
 
-  try {
-    return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Pdf
-          style={StyleSheet.absoluteFillObject}
-          source={{ uri: `file://${localPath}`, cache: true }}
-          spacing={16}
-          maxScale={3}
-          onLoadComplete={handleLoad}
-          onError={handleError}
-          trustAllCerts={false}
-          renderActivityIndicator={() => (
-            <ActivityIndicator size="large" color={colors.foreground} />
-          )}
-        />
-      </View>
-    );
-  } catch (err) {
-    return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        <Text style={[styles.errorText, { color: colors.foreground }]}>
-          PDF viewer not available. Please rebuild the app.
-        </Text>
-      </View>
-    );
-  }
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <Pdf
+        style={StyleSheet.absoluteFillObject}
+        source={{ uri: `file://${localPath}`, cache: true }}
+        spacing={16}
+        maxScale={3}
+        onLoadComplete={() => ({})}
+        onError={() => setPdfRenderError("Failed to render PDF")}
+        trustAllCerts={false}
+        renderActivityIndicator={() => (
+          <ActivityIndicator size="large" color={colors.foreground} />
+        )}
+      />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
