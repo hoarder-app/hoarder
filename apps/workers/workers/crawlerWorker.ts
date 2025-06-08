@@ -18,12 +18,12 @@ import metascraperAuthor from "metascraper-author";
 import metascraperDate from "metascraper-date";
 import metascraperDescription from "metascraper-description";
 import metascraperImage from "metascraper-image";
-import metascraperLogo from "metascraper-logo-favicon";
+import metascraperLogoFavicon from "metascraper-logo-favicon";
 import metascraperPublisher from "metascraper-publisher";
 import metascraperReadability from "metascraper-readability";
 import metascraperTitle from "metascraper-title";
-import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
+import metascraperX from "metascraper-x";
 import fetch from "node-fetch";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
@@ -63,21 +63,34 @@ import {
 } from "@karakeep/shared/queues";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
+const sendUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
+const sendHeaders = {
+  "User-Agent": sendUserAgent,
+  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/jpeg,image/png,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+  "Accept-Encoding": "gzip, deflate, br, zstd",
+  "Accept-Language": "*",
+  "Sec-CH-UA": "\"Google Chrome\";v=\"124\", \"Chromium\";v=\"124\"",
+  "Sec-CH-UA-mobile": "?0",
+  "Sec-CH-UA-platform": "\"Windows\"",
+  "Sec-Fetch-Site": "none"
+};
+
 const metascraperParser = metascraper([
   metascraperDate({
     dateModified: true,
     datePublished: true,
   }),
   metascraperAmazon(),
-  metascraperReadability(),
+  // Can cause endless parsing and no relevant metadata extracted, avoid for now
+  // metascraperReadability(),
   metascraperAuthor(),
   metascraperPublisher(),
   metascraperTitle(),
   metascraperDescription(),
-  metascraperTwitter(),
   metascraperImage(),
-  metascraperLogo(),
+  metascraperLogoFavicon({gotOpts: {headers: sendHeaders}}),
   metascraperUrl(),
+  metascraperX(),
 ]);
 
 let globalBrowser: Browser | undefined;
@@ -255,6 +268,7 @@ async function browserlessCrawlPage(
     `[Crawler][${jobId}] Running in browserless mode. Will do a plain http request to "${url}". Screenshots will be disabled.`,
   );
   const response = await fetch(url, {
+    headers: sendHeaders,
     signal: AbortSignal.any([AbortSignal.timeout(5000), abortSignal]),
   });
   logger.info(
@@ -294,9 +308,7 @@ async function crawlPage(
     if (globalBlocker) {
       await globalBlocker.enableBlockingInPage(page);
     }
-    await page.setUserAgent(
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    );
+    await page.setUserAgent(sendUserAgent);
 
     const response = await page.goto(url, {
       timeout: serverConfig.crawler.navigateTimeoutSec * 1000,
@@ -450,6 +462,7 @@ async function downloadAndStoreFile(
   try {
     logger.info(`[Crawler][${jobId}] Downloading ${fileType} from "${url}"`);
     const response = await fetch(url, {
+      headers: sendHeaders,
       signal: abortSignal,
     });
     if (!response.ok) {
@@ -547,6 +560,7 @@ async function getContentType(
     );
     const response = await fetch(url, {
       method: "HEAD",
+      headers: sendHeaders,
       signal: AbortSignal.any([AbortSignal.timeout(5000), abortSignal]),
     });
     const contentType = response.headers.get("content-type");
