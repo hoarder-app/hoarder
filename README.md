@@ -25,12 +25,14 @@ Karakeep (previously Hoarder) is a self-hostable bookmark-everything app with a 
 - ⬇️ Automatic fetching for link titles, descriptions and images.
 - 📋 Sort your bookmarks into lists.
 - 🔎 Full text search of all the content stored.
-- ✨ AI-based (aka chatgpt) automatic tagging. With supports for local models using ollama!
+- ✨ AI-based (aka chatgpt) automatic tagging and summarization. With supports for local models using ollama!
+- 🤖 Rule-based engine for customized management.
 - 🎆 OCR for extracting text from images.
 - 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/karakeep/kgcjekpmcjjogibpjebkhaanilehneje) and [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/karakeep/) for quick bookmarking.
 - 📱 An [iOS app](https://apps.apple.com/us/app/karakeep-app/id6479258022), and an [Android app](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
 - 📰 Auto hoarding from RSS feeds.
 - 🔌 REST API and multiple clients.
+- 🔌 REST API.
 - 🌐 Multi-language support.
 - 🖍️ Mark and store highlights from your hoarded content.
 - 🗄️ Full page archival (using [monolith](https://github.com/Y2Z/monolith)) to protect against link rot.
@@ -42,7 +44,7 @@ Karakeep (previously Hoarder) is a self-hostable bookmark-everything app with a 
 - ⬇️ Bookmark importers from [Pocket](https://getpocket.com/), [Linkwarden](https://github.com/linkwarden/linkwarden), [Omnivore](https://github.com/omnivore-app/omnivore), [Tab Session Manager](https://chromewebstore.google.com/detail/tab-session-manager/iaiomicjabeggjcfkbimgmglanimpnae).
 - [Planned] Offline reading on mobile, semantic search across bookmarks, ...
 
-**⚠️ This app is under heavy development and it's far from stable.**
+**⚠️ This app is under heavy development.**
 
 ## Documentation
 
@@ -104,6 +106,10 @@ Karakeep uses Weblate for managing translations. If you want to help translate K
 If you're enjoying using Karakeep, drop a ⭐️ on the repo!
 
 <a href="https://www.buymeacoffee.com/mbassem" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+
+## License
+
+Karakeep is licensed under [AGPL-3.0](https://github.com/karakeep-app/karakeep/blob/main/LICENSE) and owned by [Localhost Labs Ltd](https://localhostlabs.co.uk).
 
 ## Star History
 

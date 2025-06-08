@@ -5,14 +5,24 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useShowArchived } from "@/components/utils/useShowArchived";
 import { useTranslation } from "@/lib/i18n/client";
-import { FolderInput, Pencil, Plus, Trash2 } from "lucide-react";
+import {
+  FolderInput,
+  Pencil,
+  Plus,
+  Share,
+  Square,
+  SquareCheck,
+  Trash2,
+} from "lucide-react";
 
 import { ZBookmarkList } from "@karakeep/shared/types/lists";
 
 import { EditListModal } from "../lists/EditListModal";
 import DeleteListConfirmationDialog from "./DeleteListConfirmationDialog";
 import { MergeListModal } from "./MergeListModal";
+import { ShareListModal } from "./ShareListModal";
 
 export function ListOptions({
   list,
@@ -26,14 +36,21 @@ export function ListOptions({
   children?: React.ReactNode;
 }) {
   const { t } = useTranslation();
+  const { showArchived, onClickShowArchived } = useShowArchived();
 
   const [deleteListDialogOpen, setDeleteListDialogOpen] = useState(false);
   const [newNestedListModalOpen, setNewNestedListModalOpen] = useState(false);
   const [mergeListModalOpen, setMergeListModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
+      <ShareListModal
+        open={shareModalOpen}
+        setOpen={setShareModalOpen}
+        list={list}
+      />
       <EditListModal
         open={newNestedListModalOpen}
         setOpen={setNewNestedListModalOpen}
@@ -67,6 +84,13 @@ export function ListOptions({
         </DropdownMenuItem>
         <DropdownMenuItem
           className="flex gap-2"
+          onClick={() => setShareModalOpen(true)}
+        >
+          <Share className="size-4" />
+          <span>{t("lists.share_list")}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="flex gap-2"
           onClick={() => setNewNestedListModalOpen(true)}
         >
           <Plus className="size-4" />
@@ -78,6 +102,14 @@ export function ListOptions({
         >
           <FolderInput className="size-4" />
           <span>{t("lists.merge_list")}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="flex gap-2" onClick={onClickShowArchived}>
+          {showArchived ? (
+            <SquareCheck className="size-4" />
+          ) : (
+            <Square className="size-4" />
+          )}
+          <span>{t("actions.toggle_show_archived")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className="flex gap-2"

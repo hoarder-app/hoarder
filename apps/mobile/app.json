@@ -3,7 +3,7 @@
     "name": "Karakeep",
     "slug": "hoarder",
     "scheme": "karakeep",
-    "version": "1.6.9",
+    "version": "1.7.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -29,7 +29,7 @@
           "NSAllowsArbitraryLoads": true
         }
       },
-      "buildNumber": "23"
+      "buildNumber": "24"
     },
     "android": {
       "adaptiveIcon": {
@@ -48,7 +48,7 @@
         }
       },
       "package": "app.hoarder.hoardermobile",
-      "versionCode": 23
+      "versionCode": 24
     },
     "plugins": [
       "./plugins/trust-local-certs.js",
@@ -62,9 +62,11 @@
             "NSExtensionActivationSupportsWebPageWithMaxCount": 1,
             "NSExtensionActivationSupportsImageWithMaxCount": 1,
             "NSExtensionActivationSupportsMovieWithMaxCount": 0,
-            "NSExtensionActivationSupportsText": true
+            "NSExtensionActivationSupportsText": true,
+            "NSExtensionActivationSupportsFileWithMaxCount": 10,
+            "NSExtensionActivationRule": "SUBQUERY (extensionItems, $extensionItem, SUBQUERY ($extensionItem.attachments, $attachment, SUBQUERY ($attachment.registeredTypeIdentifiers, $uti, $uti UTI-CONFORMS-TO \"com.adobe.pdf\" || $uti UTI-CONFORMS-TO \"public.image\" || $uti UTI-CONFORMS-TO \"public.url\" || $uti UTI-CONFORMS-TO \"public.plain-text\").@count >= 1).@count >= 1).@count >= 1"
           },
-          "androidIntentFilters": ["text/*", "image/*"]
+          "androidIntentFilters": ["text/*", "image/*", "application/pdf"]
         }
       ],
       "expo-secure-store",

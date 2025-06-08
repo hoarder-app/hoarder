@@ -131,4 +131,47 @@ export const listsAppRouter = router({
       const sizes = await Promise.all(lists.map((l) => l.getSize()));
       return { stats: new Map(lists.map((l, i) => [l.list.id, sizes[i]])) };
     }),
+
+  // Rss endpoints
+  regenRssToken: authedProcedure
+    .input(
+      z.object({
+        listId: z.string(),
+      }),
+    )
+    .output(
+      z.object({
+        token: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const list = await List.fromId(ctx, input.listId);
+      const token = await list.regenRssToken();
+      return { token: token! };
+    }),
+  clearRssToken: authedProcedure
+    .input(
+      z.object({
+        listId: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const list = await List.fromId(ctx, input.listId);
+      await list.clearRssToken();
+    }),
+  getRssToken: authedProcedure
+    .input(
+      z.object({
+        listId: z.string(),
+      }),
+    )
+    .output(
+      z.object({
+        token: z.string().nullable(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const list = await List.fromId(ctx, input.listId);
+      return { token: await list.getRssToken() };
+    }),
 });

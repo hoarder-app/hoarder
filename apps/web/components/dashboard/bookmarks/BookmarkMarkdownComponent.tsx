@@ -2,14 +2,18 @@ import MarkdownEditor from "@/components/ui/markdown/markdown-editor";
 import { MarkdownReadonly } from "@/components/ui/markdown/markdown-readonly";
 import { toast } from "@/components/ui/use-toast";
 
-import type { ZBookmarkTypeText } from "@karakeep/shared/types/bookmarks";
 import { useUpdateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
 
 export function BookmarkMarkdownComponent({
   children: bookmark,
   readOnly = true,
 }: {
-  children: ZBookmarkTypeText;
+  children: {
+    id: string;
+    content: {
+      text: string;
+    };
+  };
   readOnly?: boolean;
 }) {
   const { mutate: updateBookmarkMutator, isPending } = useUpdateBookmark({

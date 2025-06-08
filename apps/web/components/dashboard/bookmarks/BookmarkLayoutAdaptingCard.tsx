@@ -8,15 +8,15 @@ import {
   useBookmarkLayout,
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
-import dayjs from "dayjs";
 import { Check, Image as ImageIcon, NotebookPen } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
-import { isBookmarkStillTagging } from "@karakeep/shared-react/utils/bookmarkUtils";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
+import { isBookmarkStillTagging } from "@karakeep/shared/utils/bookmarkUtils";
 
 import BookmarkActionBar from "./BookmarkActionBar";
+import BookmarkFormattedCreatedAt from "./BookmarkFormattedCreatedAt";
 import TagList from "./TagList";
 
 interface Props {
@@ -28,13 +28,6 @@ interface Props {
   className?: string;
   fitHeight?: boolean;
   wrapTags: boolean;
-}
-
-function BookmarkFormattedCreatedAt({ bookmark }: { bookmark: ZBookmark }) {
-  const createdAt = dayjs(bookmark.createdAt);
-  const oneYearAgo = dayjs().subtract(1, "year");
-  const formatString = createdAt.isAfter(oneYearAgo) ? "MMM D" : "MMM D, YYYY";
-  return createdAt.format(formatString);
 }
 
 function BottomRow({
@@ -52,7 +45,7 @@ function BottomRow({
           href={`/dashboard/preview/${bookmark.id}`}
           suppressHydrationWarning
         >
-          <BookmarkFormattedCreatedAt bookmark={bookmark} />
+          <BookmarkFormattedCreatedAt createdAt={bookmark.createdAt} />
         </Link>
       </div>
       <BookmarkActionBar bookmark={bookmark} />
@@ -239,7 +232,7 @@ function CompactView({ bookmark, title, footer, className }: Props) {
             suppressHydrationWarning
             className="shrink-0 gap-2 text-gray-500"
           >
-            <BookmarkFormattedCreatedAt bookmark={bookmark} />
+            <BookmarkFormattedCreatedAt createdAt={bookmark.createdAt} />
           </Link>
         </div>
         <BookmarkActionBar bookmark={bookmark} />

@@ -25,7 +25,6 @@ import {
   CircleDashed,
   CirclePlus,
   Edit,
-  FlaskConical,
   Plus,
   Save,
   Trash2,
@@ -346,7 +345,12 @@ export function FeedRow({ feed }: { feed: ZFeed }) {
           {feed.name}
         </Link>
       </TableCell>
-      <TableCell>{feed.url}</TableCell>
+      <TableCell
+        className="max-w-64 overflow-clip text-ellipsis"
+        title={feed.url}
+      >
+        {feed.url}
+      </TableCell>
       <TableCell>{feed.lastFetchedAt?.toLocaleString()}</TableCell>
       <TableCell>
         {feed.lastFetchedStatus === "success" ? (
@@ -414,14 +418,6 @@ export default function FeedSettings() {
           <div className="flex items-center justify-between">
             <span className="flex items-center gap-2 text-lg font-medium">
               {t("settings.feeds.rss_subscriptions")}
-              <Tooltip>
-                <TooltipTrigger className="text-muted-foreground">
-                  <FlaskConical size={15} />
-                </TooltipTrigger>
-                <TooltipContent side="bottom">
-                  {t("common.experimental")}
-                </TooltipContent>
-              </Tooltip>
             </span>
             <FeedsEditorDialog />
           </div>
