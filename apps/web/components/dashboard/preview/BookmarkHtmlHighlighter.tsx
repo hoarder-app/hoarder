@@ -177,54 +177,98 @@ function BookmarkHTMLHighlighter({
     setIsMobile(window.matchMedia("(pointer: coarse)").matches);
   }, []);
 
-  useEffect(() => {
-    if (!selectedHighlight) {
-      return;
-    }
-
-    const highlightSpan = document.querySelector(
-      `span[data-highlight-id="${selectedHighlight.id}"]`,
+  const isElementVisible = (rect: DOMRect) => {
+    return (
+      rect.width > 0 &&
+      rect.height > 0 &&
+      rect.bottom >= 0 &&
+      rect.top <= window.innerHeight &&
+      rect.right >= 0 &&
+      rect.left <= window.innerWidth
     );
-    if (!highlightSpan) {
-      return;
+  };
+
+  const getFirstVisibleHighlight = (
+    highlightId: string,
+  ): HTMLElement | null => {
+    const elements = document.querySelectorAll(
+      `span[data-highlight-id="${highlightId}"]`,
+    );
+    for (const el of Array.from(elements)) {
+      const rect = el.getBoundingClientRect();
+      if (isElementVisible(rect)) {
+        return el as HTMLElement;
+      }
     }
+    return null;
+  };
+
+  const calculateMenuPosition = (rect: DOMRect, isMobile: boolean) => ({
+    x: rect.left + rect.width / 2,
+    y: isMobile ? rect.bottom + 8 : rect.top - 12,
+  });
+
+  useEffect(() => {
+    if ((!pendingRange || !menuPosition) && !selectedHighlight) return;
+
+    let animationFrameId: number | null = null;
+    let lastKnownY = 0;
 
     const updatePosition = () => {
-      const rect = highlightSpan.getBoundingClientRect();
+      let targetElement: HTMLElement | Range | null = null;
 
-      const isVisible =
-        rect.width > 0 &&
-        rect.height > 0 &&
-        rect.bottom >= 0 &&
-        rect.top <= window.innerHeight &&
-        rect.right >= 0 &&
-        rect.left <= window.innerWidth;
+      if (selectedHighlight) {
+        targetElement = getFirstVisibleHighlight(selectedHighlight.id);
+      }
 
-      if (!isVisible) {
+      if (!targetElement && pendingRange) {
+        try {
+          const rect = pendingRange.getBoundingClientRect();
+          if (isElementVisible(rect)) {
+            targetElement = pendingRange;
+          }
+        } catch {
+
+        }
+      }
+
+      if (!targetElement) {
+        animationFrameId = requestAnimationFrame(updatePosition);
         return;
       }
 
-      setMenuPosition({
-        x: rect.left + rect.width / 2,
-        y: isMobile ? rect.bottom + 8 : rect.top - 12,
-      });
-      /*
-       fixme
-       jumps to 0,0 sometimes when fab is not visible
-       doesn't scroll when screen resizes
-       doesn't scroll when is windowed??
-       */
+      const rect = targetElement.getBoundingClientRect();
+
+      if (Math.abs(rect.top - lastKnownY) < 2) {
+        animationFrameId = requestAnimationFrame(updatePosition);
+        return;
+      }
+
+      lastKnownY = rect.top;
+      setMenuPosition(calculateMenuPosition(rect, isMobile));
+
+      animationFrameId = requestAnimationFrame(updatePosition);
     };
 
-    updatePosition();
-    window.addEventListener("scroll", updatePosition, true);
-    window.addEventListener("resize", updatePosition);
+    animationFrameId = requestAnimationFrame(updatePosition);
+
+    const handleResize = () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      animationFrameId = requestAnimationFrame(updatePosition);
+    };
+
+    window.addEventListener("resize", handleResize);
 
     return () => {
-      window.removeEventListener("scroll", updatePosition, true);
-      window.removeEventListener("resize", updatePosition);
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      window.removeEventListener("resize", handleResize);
     };
-  }, [selectedHighlight, isMobile]);
+  }, [pendingRange, selectedHighlight, isMobile]);
+
 
   const getCharacterOffsetOfNode = useCallback(
     (node: Node, parentElement: HTMLElement): number => {
