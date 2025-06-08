@@ -941,7 +941,7 @@ importers:
         specifier: ^4.3.7
         version: 4.4.0(@docusaurus/plugin-content-docs@3.7.0(@mdx-js/react@3.1.0(@types/react@19.1.6)(react@19.1.0))(acorn@8.14.1)(eslint@8.57.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(typescript@5.8.3))(@docusaurus/utils-validation@3.7.0(acorn@8.14.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(@docusaurus/utils@3.7.0(acorn@8.14.1)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(encoding@0.1.13)(react@19.1.0)
       docusaurus-theme-openapi-docs:
-        specifier: ^4.3.7
+        specifier: ^4.4.0
         version: 4.4.0(byu2z4zifdibghebqwtbuukjdq)
       prism-react-renderer:
         specifier: ^2.4.1
