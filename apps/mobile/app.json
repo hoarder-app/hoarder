@@ -3,7 +3,7 @@
     "name": "Karakeep",
     "slug": "hoarder",
     "scheme": "karakeep",
-    "version": "1.6.9",
+    "version": "1.7.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -29,7 +29,7 @@
           "NSAllowsArbitraryLoads": true
         }
       },
-      "buildNumber": "23"
+      "buildNumber": "24"
     },
     "android": {
       "adaptiveIcon": {
@@ -48,7 +48,7 @@
         }
       },
       "package": "app.hoarder.hoardermobile",
-      "versionCode": 23
+      "versionCode": 24
     },
     "plugins": [
       "./plugins/trust-local-certs.js",
