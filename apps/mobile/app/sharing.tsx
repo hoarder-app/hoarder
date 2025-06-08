@@ -83,7 +83,7 @@ export default function Sharing() {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>({ type: "idle" });
 
-  let autoCloseTimeoutId: NodeJS.Timeout | null = null;
+  let autoCloseTimeoutId: number | null = null;
 
   let comp;
   switch (mode.type) {
