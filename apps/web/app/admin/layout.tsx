@@ -7,12 +7,13 @@ import SidebarLayout from "@/components/shared/sidebar/SidebarLayout";
 import { getServerAuthSession } from "@/server/auth";
 import { TFunction } from "i18next";
 import { Activity, ArrowLeft, Settings, Users } from "lucide-react";
+import React from "react";
 
 const adminSidebarItems = (
   t: TFunction,
 ): {
   name: string;
-  icon: JSX.Element;
+  icon: React.ReactElement;
   path: string;
 }[] => [
   {
