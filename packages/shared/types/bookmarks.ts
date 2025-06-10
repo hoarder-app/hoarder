@@ -235,6 +235,7 @@ export const zSearchBookmarksCursor = z.discriminatedUnion("ver", [
     offset: z.number(),
   }),
 ]);
+export type ZSearchBookmarksCursor = z.infer<typeof zSearchBookmarksCursor>;
 export const zSearchBookmarksRequestSchema = z.object({
   text: z.string(),
   limit: z.number().max(MAX_NUM_BOOKMARKS_PER_PAGE).optional(),
@@ -242,6 +243,14 @@ export const zSearchBookmarksRequestSchema = z.object({
   sortOrder: zSortOrder.optional().default("relevance"),
   includeContent: z.boolean().optional().default(false),
 });
+
+export const zBookmarksSearchResultSchema = z.object({
+  bookmarks: z.array(zBookmarkSchema),
+  nextCursor: zSearchBookmarksCursor.nullable(),
+});
+export type ZBookmarksSearchResult = z.infer<
+  typeof zBookmarksSearchResultSchema
+>;
 
 export const zPublicBookmarkSchema = z.object({
   id: z.string(),

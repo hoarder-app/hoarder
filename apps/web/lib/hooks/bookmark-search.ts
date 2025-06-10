@@ -61,6 +61,31 @@ export function useDoBookmarkSearch() {
 export function useBookmarkSearch() {
   const { searchQuery } = useSearchQuery();
   const sortOrder = useSortOrderStore((state) => state.sortOrder);
+  const { setSearchState, getSearchState, clearOldSearchStates } =
+    useSortOrderStore();
+
+  // Clean up old search states periodically
+  useEffect(() => {
+    clearOldSearchStates();
+
+    // Also clean up on unmount
+    return () => {
+      clearOldSearchStates();
+    };
+  }, [clearOldSearchStates]);
+
+  // Create a unique key for this search configuration
+  // Include all search parameters that affect the results
+  const searchKey = useMemo(() => {
+    const searchParams = {
+      text: searchQuery,
+      sortOrder,
+    };
+    return JSON.stringify(searchParams);
+  }, [searchQuery, sortOrder]);
+
+  // Try to get existing search state
+  const existingState = getSearchState(searchKey);
 
   const {
     data,
@@ -81,8 +106,29 @@ export function useBookmarkSearch() {
       gcTime: 0,
       initialCursor: null,
       getNextPageParam: (lastPage) => lastPage.nextCursor,
+      // Try to restore from existing state if available
+      initialData: existingState
+        ? {
+            pages: existingState.pages,
+            pageParams: existingState.pageParams as (
+              | ({ ver: 1; offset: number } | null)
+              | undefined
+            )[],
+          }
+        : undefined,
     },
   );
+
+  // Save search state whenever data changes
+  useEffect(() => {
+    if (data && data.pages.length > 0) {
+      setSearchState(searchKey, {
+        pages: data.pages,
+        pageParams: data.pageParams as ({ ver: 1; offset: number } | null)[],
+        scrollPosition: window.scrollY,
+      });
+    }
+  }, [data, searchKey, setSearchState]);
 
   useEffect(() => {
     refetch();
@@ -100,5 +146,6 @@ export function useBookmarkSearch() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
+    searchKey, // Export for scroll position management
   };
 }
