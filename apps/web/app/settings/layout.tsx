@@ -21,7 +21,7 @@ const settingsSidebarItems = (
   t: TFunction,
 ): {
   name: string;
-  icon: JSX.Element;
+  icon: React.ReactElement;
   path: string;
 }[] => [
   {

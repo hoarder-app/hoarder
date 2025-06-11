@@ -12,7 +12,7 @@ import { EditListModal } from "../lists/EditListModal";
 import QueryExplainerTooltip from "./QueryExplainerTooltip";
 
 function useFocusSearchOnKeyPress(
-  inputRef: React.RefObject<HTMLInputElement>,
+  inputRef: React.RefObject<HTMLInputElement | null>,
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
 ) {
   useEffect(() => {
