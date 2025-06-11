@@ -24,11 +24,13 @@ import {
 import { withTimeout } from "../utils";
 import { getBookmarkDetails, updateAsset } from "../workerUtils";
 
-const TMP_FOLDER = path.join(os.tmpdir(), "video_downloads");
+const TMP_FOLDER = path.join(serverConfig.dataDir, "tmp_video_downloads");
 
 export class VideoWorker {
   static build() {
     logger.info("Starting video worker ...");
+    
+    cleanupTmpVideoDownloads();
 
     return new Runner<ZVideoRequest>(
       VideoWorkerQueue,
@@ -111,7 +113,7 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
     const downloadPath = await findAssetFile(videoAssetId);
     if (!downloadPath) {
       logger.info(
-        "[VideoCrawler][${jobId}] yt-dlp didn't download anything. Skipping ...",
+        `[VideoCrawler][${jobId}] yt-dlp didn't download anything. Skipping ...`,
       );
       return;
     }
@@ -211,4 +213,19 @@ async function findAssetFile(assetId: string): Promise<string | null> {
     }
   }
   return null;
+}
+
+function cleanupTmpVideoDownloads(): void {
+  try {
+    if (fs.existsSync(TMP_FOLDER)) {
+      const files = fs.readdirSync(TMP_FOLDER);
+      for (const file of files) {
+        const filePath = path.join(TMP_FOLDER, file);
+        fs.rmSync(filePath, { force: true });
+      }
+      logger.info(`[VideoWorker] Cleaned up ${files.length} files from tmp_video_downloads`);
+    }
+  } catch (error) {
+    logger.error(`[VideoWorker] Failed to cleanup tmp_video_downloads: ${error}`);
+  }
 }
