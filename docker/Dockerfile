@@ -70,7 +70,10 @@ COPY --chmod=755 ./docker/root/etc/s6-overlay /etc/s6-overlay
 ######################
 # Install runtime deps
 ######################
-RUN apk add --no-cache monolith yt-dlp graphicsmagick ghostscript
+# pipx needed to customize yt-dlp
+RUN apk add --no-cache monolith pipx graphicsmagick ghostscript
+# Install yt-dlp including curl-cffi in /usr/bin
+RUN PIPX_BIN_DIR=/usr/bin pipx install "yt-dlp[default,curl-cffi]"
 
 ######################
 # Prepare the web app

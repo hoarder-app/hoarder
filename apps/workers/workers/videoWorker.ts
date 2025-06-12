@@ -111,7 +111,7 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
     const downloadPath = await findAssetFile(videoAssetId);
     if (!downloadPath) {
       logger.info(
-        "[VideoCrawler][${jobId}] yt-dlp didn't download anything. Skipping ...",
+        `[VideoCrawler][${jobId}] yt-dlp didn't download anything. Skipping ...`,
       );
       return;
     }
@@ -130,6 +130,12 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
     logger.error(
       `[VideoCrawler][${jobId}] Failed to download a file from "${url}" to "${assetPath}"`,
     );
+    if ("command" in err) {
+      logger.debug(`[VideoCrawler][${jobId}] yt-dlp command: "${err.command}"`);
+    }
+    if ("stderr" in err) {
+      logger.debug(`[VideoCrawler][${jobId}] yt-dlp error: "${err.stderr}"`);
+    }
     await deleteLeftOverAssetFile(jobId, videoAssetId);
     return;
   }
