@@ -50,7 +50,7 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
     });
 
   return (
-    <div className="flex items-center justify-center gap-3">
+    <div className="flex items-center justify-center gap-6">
       <Tooltip delayDuration={0}>
         <EditBookmarkDialog
           bookmark={bookmark}
