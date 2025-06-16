@@ -28,7 +28,7 @@
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "eslint": "^8.57.0",
     "prettier": "^3.4.2",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.3"
   },
   "eslintConfig": {
     "root": true,
