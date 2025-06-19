@@ -1,6 +1,5 @@
 import type { Adapter } from "next-auth/adapters";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, sql } from "drizzle-orm";
 import NextAuth, {
   DefaultSession,
   getServerSession,
@@ -8,6 +7,7 @@ import NextAuth, {
 } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Provider } from "next-auth/providers/index";
+import fetch from "node-fetch";
 import requestIp from "request-ip";
 
 import { db } from "@karakeep/db";
@@ -19,6 +19,8 @@ import {
 } from "@karakeep/db/schema";
 import serverConfig from "@karakeep/shared/config";
 import { logAuthenticationError, validatePassword } from "@karakeep/trpc/auth";
+
+import { CustomDrizzleAdapter } from "./custom-adapter";
 
 type UserRole = "admin" | "user";
 
@@ -47,11 +49,34 @@ declare module "next-auth" {
   }
 }
 
+if (!serverConfig.auth.oauth.wellKnownUrl) {
+  throw new Error("Missing OAuth wellKnownUrl in server config");
+}
+const discoveryPromise = fetch(serverConfig.auth.oauth.wellKnownUrl).then(
+  (res) => res.json(),
+);
+
+async function getUserInfo(tokens: { access_token?: string }) {
+  const discovery = await discoveryPromise;
+  const userinfoEndpoint = discovery.userinfo_endpoint;
+  if (!tokens.access_token) {
+    throw new Error("Missing access token");
+  }
+  const response = await fetch(userinfoEndpoint, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${tokens.access_token}`,
+    },
+  });
+  return response.json();
+}
+
 /**
  * Returns true if the user table is empty, which indicates that this user is going to be
  * the first one. This can be racy if multiple users are created at the same time, but
  * that should be fine.
  */
+
 async function isFirstUser(): Promise<boolean> {
   const [{ count: userCount }] = await db
     .select({ count: count() })
@@ -117,16 +142,50 @@ if (oauth.wellKnownUrl) {
     httpOptions: {
       timeout: oauth.timeout,
     },
-    async profile(profile: Record<string, string>) {
+
+    profile: async (profile, tokens) => {
+      const userinfo = await getUserInfo(tokens);
+      const email = userinfo.email;
+      if (!email) {
+        throw new Error("Email is required but not provided by the provider");
+      }
+
       const [admin, firstUser] = await Promise.all([
-        isAdmin(profile.email),
+        isAdmin(email),
         isFirstUser(),
       ]);
+
+      const getUserName = (userinfo: any, email: string): string => {
+        const nameFields = [
+          "name",
+          "nickname",
+          "preferred_username",
+          "username",
+          "preferred_name",
+          "full_name",
+          "display_name",
+        ];
+
+        for (const field of nameFields) {
+          if (userinfo[field] && typeof userinfo[field] === "string") {
+            return userinfo[field].trim();
+          }
+        }
+
+        if (userinfo.given_name && userinfo.family_name) {
+          return `${userinfo.given_name} ${userinfo.family_name}`.trim();
+        }
+
+        return email.split("@")[0]?.trim() || "Unknown";
+      };
+
+      const name = getUserName(userinfo, email);
+
       return {
-        id: profile.sub,
-        name: profile.name || profile.email,
-        email: profile.email,
-        image: profile.picture,
+        id: userinfo.sub,
+        name,
+        email,
+        image: userinfo.picture,
         role: admin || firstUser ? "admin" : "user",
       };
     },
@@ -135,7 +194,7 @@ if (oauth.wellKnownUrl) {
 
 export const authOptions: NextAuthOptions = {
   // https://github.com/nextauthjs/next-auth/issues/9493
-  adapter: DrizzleAdapter(db, {
+  adapter: CustomDrizzleAdapter(db, {
     usersTable: users,
     accountsTable: accounts,
     sessionsTable: sessions,
@@ -151,6 +210,7 @@ export const authOptions: NextAuthOptions = {
     error: "/signin",
     newUser: "/signin",
   },
+
   callbacks: {
     async signIn({ credentials, profile }) {
       if (credentials) {
@@ -159,11 +219,11 @@ export const authOptions: NextAuthOptions = {
       if (!profile?.email) {
         throw new Error("No profile");
       }
+
       const [{ count: userCount }] = await db
         .select({ count: count() })
         .from(users)
-        .where(and(eq(users.email, profile.email)));
-
+        .where(sql`lower(${users.email}) = ${profile.email.toLowerCase()}`);
       // If it's a new user and signups are disabled, fail the sign in
       if (userCount === 0 && serverConfig.auth.disableSignups) {
         throw new Error("Signups are disabled in server config");
