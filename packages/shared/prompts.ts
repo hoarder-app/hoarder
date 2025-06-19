@@ -22,7 +22,7 @@ Please analyze the attached image and suggest relevant tags that describe its ke
 - Aim for 10-15 tags.
 - If there are no good tags, don't emit any.
 ${customPrompts && customPrompts.map((p) => `- ${p}`).join("\n")}
-You must respond in valid JSON with optional "thinking" key for your reasoning and required "tags" key with the value as list of tags. Don't wrap the response in a markdown code.`;
+You must respond in valid JSON with the key "tags" and the value is list of tags. Don't wrap the response in a markdown code.`;
 }
 
 export function buildTextPrompt(
@@ -45,8 +45,7 @@ ${customPrompts && customPrompts.map((p) => `- ${p}`).join("\n")}
 <text_content>
 ${c}
 </text_content>
-
-You must respond in JSON with optional "thinking" key for your reasoning and required "tags" key with the value as an array of string tags.`;
+You must respond in JSON with the key "tags" and the value is an array of string tags.`;
 
   const promptSize = calculateNumTokens(constructPrompt(""));
   const truncatedContent = truncateContent(content, contextLength - promptSize);
