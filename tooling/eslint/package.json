@@ -28,7 +28,7 @@
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "@types/eslint": "^8.56.5",
-    "eslint": "^8.57.0",
+    "eslint": "^9",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3"
   },

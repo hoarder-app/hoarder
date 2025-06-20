@@ -1,0 +1,14 @@
+{
+  "$schema": "../../node_modules/oxlint/configuration_schema.json",
+  "extends": [
+    "../../tooling/oxlint/oxlint-base.json",
+    "../../tooling/oxlint/oxlint-react.json"
+  ],
+  "categories": {
+    "correctness": "off"
+  },
+  "env": {
+    "builtin": true,
+    "commonjs": true
+  }
+}
