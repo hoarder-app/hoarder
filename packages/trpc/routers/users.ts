@@ -178,7 +178,7 @@ export const usersAppRouter = router({
       let user;
       try {
         user = await validatePassword(ctx.user.email, input.currentPassword);
-      } catch (e) {
+      } catch {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       invariant(user.id, ctx.user.id);

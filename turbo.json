@@ -32,12 +32,9 @@
       ],
       "outputLogs": "new-only"
     },
-    "lint": {
+    "oxlint": {
       "dependsOn": [
         "^topo"
-      ],
-      "outputs": [
-        "node_modules/.cache/.eslintcache"
       ]
     },
     "typecheck": {

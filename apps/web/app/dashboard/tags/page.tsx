@@ -4,6 +4,7 @@ import { useTranslation } from "@/lib/i18n/server";
 import { api } from "@/server/api/client";
 
 export default async function TagsPage() {
+  // oxlint-disable-next-line rules-of-hooks
   const { t } = await useTranslation();
   const allTags = (await api.tags.list()).tags;
 
