@@ -69,10 +69,10 @@ const SearchInput = React.forwardRef<
     parsedSearchQuery,
     isInSearchPage,
   } = useDoBookmarkSearch();
-  const { addTerm } = useSearchHistory();
+  const { addTerm, history } = useSearchHistory();
 
   const [value, setValue] = React.useState(searchQuery);
-  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const popoverRef = useRef(false);
@@ -82,15 +82,31 @@ const SearchInput = React.forwardRef<
     debounceSearch(e.target.value);
   };
 
+  const suggestions = history.filter((item) =>
+    item.toLowerCase().includes(value.toLowerCase()),
+  );
+
+  const isPopoverVisible = isPopoverOpen && suggestions.length > 0;
   const handleHistorySelect = (term: string) => {
     setValue(term);
     doSearch(term);
     addTerm(term);
-    setPopoverOpen(false);
+    setIsPopoverOpen(false);
     inputRef.current?.blur();
   };
 
-  useFocusSearchOnKeyPress(inputRef, onChange, setPopoverOpen);
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (value) {
+        addTerm(value);
+      }
+      setIsPopoverOpen(false);
+      inputRef.current?.blur();
+    }
+  };
+
+  useFocusSearchOnKeyPress(inputRef, onChange, setIsPopoverOpen);
   useImperativeHandle(ref, () => inputRef.current!);
   const [newNestedListModalOpen, setNewNestedListModalOpen] = useState(false);
 
@@ -108,17 +124,17 @@ const SearchInput = React.forwardRef<
     if (value) {
       addTerm(value);
     }
-    setPopoverOpen(false);
+    setIsPopoverOpen(false);
   };
 
   const handleFocus = () => {
     popoverRef.current = false;
-    setPopoverOpen(true);
+    setIsPopoverOpen(true);
   };
 
   return (
     <div className={cn("relative flex-1", className)}>
-      <Popover open={popoverOpen}>
+      <Popover open={isPopoverVisible}>
         <EditListModal
           open={newNestedListModalOpen}
           setOpen={setNewNestedListModalOpen}
@@ -153,6 +169,7 @@ const SearchInput = React.forwardRef<
             onChange={onChange}
             placeholder={t("common.search")}
             onFocus={handleFocus}
+            onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             {...props}
           />

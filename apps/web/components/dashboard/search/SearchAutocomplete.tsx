@@ -29,14 +29,6 @@ export function SearchAutocomplete({
       )
     : history;
 
-  if (history.length === 0) {
-    return (
-      <div className="p-4 text-center text-sm text-muted-foreground">
-        Search your bookmarks...
-      </div>
-    );
-  }
-
   return (
     <Command shouldFilter={false} className={cn(className)}>
       <CommandList>
