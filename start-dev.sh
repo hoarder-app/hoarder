@@ -30,6 +30,20 @@ else
     echo "Meilisearch is already running on port 7700"
 fi
 
+# Start Chrome if not already running
+if ! port_in_use 9222; then
+    echo "Starting headless Chrome..."
+    docker run -d -p 9222:9222 --name karakeep-chrome gcr.io/zenika-hub/alpine-chrome:123 \
+        --no-sandbox \
+        --disable-gpu \
+        --disable-dev-shm-usage \
+        --remote-debugging-address=0.0.0.0 \
+        --remote-debugging-port=9222 \
+        --hide-scrollbars
+else
+    echo "Chrome is already running on port 9222"
+fi
+
 # Install dependencies if node_modules doesn't exist
 if [ ! -d "node_modules" ]; then
     echo "Installing dependencies..."
@@ -45,8 +59,8 @@ pnpm workers & WORKERS_PID=$!
 cleanup() {
     echo "Shutting down services..."
     kill $WEB_PID $WORKERS_PID 2>/dev/null
-    docker stop karakeep-meilisearch 2>/dev/null
-    docker rm karakeep-meilisearch 2>/dev/null
+    docker stop karakeep-meilisearch karakeep-chrome 2>/dev/null
+    docker rm karakeep-meilisearch karakeep-chrome 2>/dev/null
     exit 0
 }
 
@@ -56,6 +70,7 @@ trap cleanup SIGINT SIGTERM
 echo "Development environment is running!"
 echo "Web app: http://localhost:3000"
 echo "Meilisearch: http://localhost:7700"
+echo "Chrome debugger: http://localhost:9222"
 echo "Press Ctrl+C to stop all services"
 
 # Wait for user interrupt
