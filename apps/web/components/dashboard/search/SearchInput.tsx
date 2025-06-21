@@ -214,7 +214,7 @@ const SearchInput = React.forwardRef<
           >
             <CommandList>
               <CommandGroup
-                heading="Recent Searches"
+                heading={t("search.history")}
                 className="max-h-60 overflow-y-auto"
               >
                 {suggestions.map((term) => (
