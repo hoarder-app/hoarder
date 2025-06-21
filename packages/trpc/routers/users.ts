@@ -31,13 +31,19 @@ import {
   router,
 } from "../index";
 
-export async function createUser(
-  input: z.infer<typeof zSignUpSchema>,
-  ctx: Context,
-  role?: "user" | "admin",
+export async function createUserRaw(
+  db: Context["db"],
+  input: {
+    name: string;
+    email: string;
+    password?: string;
+    salt?: string;
+    role?: "user" | "admin";
+    emailVerified?: Date | null;
+  },
 ) {
-  return ctx.db.transaction(async (trx) => {
-    let userRole = role;
+  return await db.transaction(async (trx) => {
+    let userRole = input.role;
     if (!userRole) {
       const [{ count: userCount }] = await trx
         .select({ count: count() })
@@ -45,30 +51,31 @@ export async function createUser(
       userRole = userCount == 0 ? "admin" : "user";
     }
 
-    const salt = generatePasswordSalt();
     try {
-      const result = await trx
+      const [result] = await trx
         .insert(users)
         .values({
           name: input.name,
           email: input.email,
-          password: await hashPassword(input.password, salt),
-          salt,
+          password: input.password,
+          salt: input.salt,
           role: userRole,
+          emailVerified: input.emailVerified,
         })
         .returning({
           id: users.id,
           name: users.name,
           email: users.email,
           role: users.role,
+          emailVerified: users.emailVerified,
         });
 
       // Insert user settings for the new user
       await trx.insert(userSettings).values({
-        userId: result[0].id,
+        userId: result.id,
       });
 
-      return result[0];
+      return result;
     } catch (e) {
       if (e instanceof SqliteError) {
         if (e.code == "SQLITE_CONSTRAINT_UNIQUE") {
@@ -83,6 +90,21 @@ export async function createUser(
         message: "Something went wrong",
       });
     }
+  });
+}
+
+export async function createUser(
+  input: z.infer<typeof zSignUpSchema>,
+  ctx: Context,
+  role?: "user" | "admin",
+) {
+  const salt = generatePasswordSalt();
+  return await createUserRaw(ctx.db, {
+    name: input.name,
+    email: input.email,
+    password: await hashPassword(input.password, salt),
+    salt,
+    role,
   });
 }
 

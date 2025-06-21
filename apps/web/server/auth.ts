@@ -1,4 +1,4 @@
-import type { Adapter } from "next-auth/adapters";
+import { Adapter, AdapterUser } from "@auth/core/adapters";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { and, count, eq } from "drizzle-orm";
 import NextAuth, {
@@ -6,6 +6,7 @@ import NextAuth, {
   getServerSession,
   NextAuthOptions,
 } from "next-auth";
+import { Adapter as NextAuthAdapater } from "next-auth/adapters";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Provider } from "next-auth/providers/index";
 import requestIp from "request-ip";
@@ -19,6 +20,7 @@ import {
 } from "@karakeep/db/schema";
 import serverConfig from "@karakeep/shared/config";
 import { logAuthenticationError, validatePassword } from "@karakeep/trpc/auth";
+import { createUserRaw } from "@karakeep/trpc/routers/users";
 
 type UserRole = "admin" | "user";
 
@@ -69,6 +71,26 @@ async function isAdmin(email: string): Promise<boolean> {
   });
   return res?.role == "admin";
 }
+
+const CustomProvider = (): Adapter => {
+  const adapter = DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens,
+  });
+
+  return {
+    ...adapter,
+    createUser: async (user: Omit<AdapterUser, "id">) => {
+      return await createUserRaw(db, {
+        name: user.name ?? "",
+        email: user.email,
+        emailVerified: user.emailVerified,
+      });
+    },
+  };
+};
 
 const providers: Provider[] = [
   CredentialsProvider({
@@ -135,12 +157,7 @@ if (oauth.wellKnownUrl) {
 
 export const authOptions: NextAuthOptions = {
   // https://github.com/nextauthjs/next-auth/issues/9493
-  adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }) as Adapter,
+  adapter: CustomProvider() as NextAuthAdapater,
   providers: providers,
   session: {
     strategy: "jwt",
