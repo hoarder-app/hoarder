@@ -28,7 +28,10 @@ import {
   tagsOnBookmarks,
 } from "@karakeep/db/schema";
 import serverConfig from "@karakeep/shared/config";
-import { createSignedToken } from "@karakeep/shared/signedTokens";
+import {
+  createSignedToken,
+  getAlignedExpiry,
+} from "@karakeep/shared/signedTokens";
 import { zAssetSignedTokenSchema } from "@karakeep/shared/types/assets";
 import {
   BookmarkTypes,
@@ -332,7 +335,12 @@ export class Bookmark implements PrivacyAware {
         assetId,
         userId: this.ctx.user.id,
       };
-      const signedToken = createSignedToken(payload);
+      const signedToken = createSignedToken(
+        payload,
+        serverConfig.signingSecret(),
+        // Tokens will expire in 1 hour and will have a grace period of 15mins
+        getAlignedExpiry(/* interval */ 3600, /* grace */ 900),
+      );
       return `${serverConfig.publicApiUrl}/public/assets/${assetId}?token=${signedToken}`;
     };
     const getContent = (
