@@ -1,8 +1,8 @@
 import * as dns from "dns";
-import { promises as fs } from "fs";
+import { existsSync, promises as fs, readFileSync } from "fs";
 import * as path from "node:path";
 import * as os from "os";
-import type { Browser } from "puppeteer";
+import type { Browser, CookieParam } from "puppeteer";
 import { PuppeteerBlocker } from "@ghostery/adblocker-puppeteer";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
@@ -82,6 +82,7 @@ const metascraperParser = metascraper([
 
 let globalBrowser: Browser | undefined;
 let globalBlocker: PuppeteerBlocker | undefined;
+let cookies: CookieParam[] | undefined;
 // Guards the interactions with the browser instance.
 // This is needed given that most of the browser APIs are async.
 const browserMutex = new Mutex();
@@ -212,7 +213,27 @@ export class CrawlerWorker {
       },
     );
 
+    cookies = getCookies();
     return worker;
+  }
+}
+
+function getCookies(): CookieParam[] {
+  const cookiePath = serverConfig.crawler.browserCookiePath;
+  if (!cookiePath) {
+    logger.info("[Crawler] No cookie path provided, will not set cookies");
+    return [];
+  }
+
+  if (!existsSync(cookiePath)) {
+    logger.warn(`[Crawler] Cookie file does not exist at path: ${cookiePath}`);
+    return [];
+  }
+  try {
+    return JSON.parse(readFileSync(cookiePath, "utf8")) as CookieParam[];
+  } catch (error) {
+    logger.warn(`[Crawler] Unable to read or parse cookies : ${error}`);
+    return [];
   }
 }
 
@@ -298,6 +319,10 @@ async function crawlPage(
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     );
 
+    if (cookies) {
+      logger.info(`[Crawler][${jobId}] Set up ${cookies.length} cookies`);
+      await page.setCookie(...cookies);
+    }
     const response = await page.goto(url, {
       timeout: serverConfig.crawler.navigateTimeoutSec * 1000,
     });
