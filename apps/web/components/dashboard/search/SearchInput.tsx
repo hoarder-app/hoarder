@@ -1,19 +1,40 @@
 "use client";
 
-import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  Command,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { useDoBookmarkSearch } from "@/lib/hooks/bookmark-search";
+import { useSearchHistory } from "@/lib/hooks/useSearchHistory";
 import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
-import { SearchIcon } from "lucide-react";
+import { History } from "lucide-react";
 
 import { EditListModal } from "../lists/EditListModal";
 import QueryExplainerTooltip from "./QueryExplainerTooltip";
 
 function useFocusSearchOnKeyPress(
   inputRef: React.RefObject<HTMLInputElement>,
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+  value: string,
+  setValue: (value: string) => void,
+  setPopoverOpen: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   useEffect(() => {
     function handleKeyPress(e: KeyboardEvent) {
@@ -26,18 +47,12 @@ function useFocusSearchOnKeyPress(
         // Move the cursor to the end of the input field, so you can continue typing
         const length = inputRef.current.value.length;
         inputRef.current.setSelectionRange(length, length);
+        setPopoverOpen(true);
       }
-      if (
-        e.code === "Escape" &&
-        e.target == inputRef.current &&
-        inputRef.current.value !== ""
-      ) {
+      if (e.code === "Escape" && e.target == inputRef.current && value !== "") {
         e.preventDefault();
         inputRef.current.blur();
-        inputRef.current.value = "";
-        onChange({
-          target: inputRef.current,
-        } as React.ChangeEvent<HTMLInputElement>);
+        setValue("");
       }
     }
 
@@ -45,7 +60,7 @@ function useFocusSearchOnKeyPress(
     return () => {
       document.removeEventListener("keydown", handleKeyPress);
     };
-  }, [inputRef, onChange]);
+  }, [inputRef, value, setValue, setPopoverOpen]);
 }
 
 const SearchInput = React.forwardRef<
@@ -53,26 +68,98 @@ const SearchInput = React.forwardRef<
   React.HTMLAttributes<HTMLInputElement> & { loading?: boolean }
 >(({ className, ...props }, ref) => {
   const { t } = useTranslation();
-  const { debounceSearch, searchQuery, parsedSearchQuery, isInSearchPage } =
-    useDoBookmarkSearch();
+  const {
+    debounceSearch,
+    searchQuery,
+    doSearch,
+    parsedSearchQuery,
+    isInSearchPage,
+  } = useDoBookmarkSearch();
+  const { addTerm, history } = useSearchHistory();
 
   const [value, setValue] = React.useState(searchQuery);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+  const [newNestedListModalOpen, setNewNestedListModalOpen] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-    debounceSearch(e.target.value);
-  };
+  const isPopoverMouseDown = useRef(false);
 
-  useFocusSearchOnKeyPress(inputRef, onChange);
+  const handleValueChange = useCallback(
+    (newValue: string) => {
+      setValue(newValue);
+      debounceSearch(newValue);
+    },
+    [debounceSearch],
+  );
+
+  const suggestions = useMemo(() => {
+    return history.filter((item) =>
+      item.toLowerCase().includes(value.toLowerCase()),
+    );
+  }, [history, value]);
+
+  const isPopoverVisible = isPopoverOpen && suggestions.length > 0;
+  const handleHistorySelect = useCallback(
+    (term: string) => {
+      setValue(term);
+      doSearch(term);
+      addTerm(term);
+      setIsPopoverOpen(false);
+      inputRef.current?.blur();
+    },
+    [doSearch, addTerm],
+  );
+
+  const handleCommandKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter") {
+        const commandElement = e.currentTarget as HTMLElement;
+        const selectedItem = commandElement.querySelector(
+          '[data-selected="true"]',
+        );
+        // if there is selected item, CommandInput will handle, skip
+        if (!selectedItem && value) {
+          // No matched history, finish search
+          e.preventDefault();
+          setIsPopoverOpen(false);
+          inputRef.current?.blur();
+        }
+      } else if (e.key === "Escape") {
+        e.preventDefault();
+        setIsPopoverOpen(false);
+        inputRef.current?.blur();
+      }
+    },
+    [value, addTerm],
+  );
+
+  useFocusSearchOnKeyPress(inputRef, value, setValue, setIsPopoverOpen);
   useImperativeHandle(ref, () => inputRef.current!);
-  const [newNestedListModalOpen, setNewNestedListModalOpen] = useState(false);
 
   useEffect(() => {
     if (!isInSearchPage) {
       setValue("");
     }
   }, [isInSearchPage]);
+
+  const handleFocus = useCallback(() => {
+    isPopoverMouseDown.current = false;
+    setIsPopoverOpen(true);
+  }, []);
+
+  const handleBlur = useCallback(() => {
+    // blur caused by click history, do nothing
+    if (isPopoverMouseDown.current) return;
+
+    if (value) {
+      addTerm(value);
+    }
+    setIsPopoverOpen(false);
+  }, [value, addTerm]);
+
+  const handlePopoverMouseDown = useCallback(() => {
+    isPopoverMouseDown.current = true;
+  }, []);
 
   return (
     <div className={cn("relative flex-1", className)}>
@@ -99,14 +186,53 @@ const SearchInput = React.forwardRef<
             {t("actions.save")}
           </Button>
         )}
-      <Input
-        startIcon={<SearchIcon size={18} className="text-muted-foreground" />}
-        ref={inputRef}
-        value={value}
-        onChange={onChange}
-        placeholder={t("common.search")}
-        {...props}
-      />
+      <Command
+        shouldFilter={false}
+        className="relative rounded-md bg-transparent"
+        onKeyDown={handleCommandKeyDown}
+      >
+        <Popover open={isPopoverVisible}>
+          <PopoverTrigger asChild>
+            <div className="relative">
+              <CommandInput
+                ref={inputRef}
+                placeholder={t("common.search")}
+                value={value}
+                onValueChange={handleValueChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                className={cn("h-10", className)}
+                {...props}
+              />
+            </div>
+          </PopoverTrigger>
+          <PopoverContent
+            className="w-[--radix-popover-trigger-width] p-0"
+            onOpenAutoFocus={(e) => e.preventDefault()}
+            onCloseAutoFocus={(e) => e.preventDefault()}
+            onMouseDown={handlePopoverMouseDown}
+          >
+            <CommandList>
+              <CommandGroup
+                heading={t("search.history")}
+                className="max-h-60 overflow-y-auto"
+              >
+                {suggestions.map((term) => (
+                  <CommandItem
+                    key={term}
+                    value={term}
+                    onSelect={() => handleHistorySelect(term)}
+                    className="cursor-pointer"
+                  >
+                    <History className="mr-2 h-4 w-4" />
+                    <span>{term}</span>
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
+          </PopoverContent>
+        </Popover>
+      </Command>
     </div>
   );
 });
