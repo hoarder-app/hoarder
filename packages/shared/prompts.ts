@@ -2,6 +2,13 @@ import { getEncoding } from "js-tiktoken";
 
 const encoding = getEncoding("o200k_base");
 
+/**
+ * Remove duplicate whitespaces to avoid tokenization issues
+ */
+function preprocessContent(content: string) {
+  return content.replace(/(\s){10,}/g, "$1");
+}
+
 function calculateNumTokens(text: string) {
   return encoding.encode(text).length;
 }
@@ -31,6 +38,7 @@ export function buildTextPrompt(
   content: string,
   contextLength: number,
 ) {
+  content = preprocessContent(content);
   const constructPrompt = (c: string) => `
 You are a bot in a read-it-later app and your responsibility is to help with automatic tagging.
 Please analyze the text between the sentences "CONTENT START HERE" and "CONTENT END HERE" and suggest relevant tags that describe its key themes, topics, and main ideas. The rules are:
@@ -57,6 +65,7 @@ export function buildSummaryPrompt(
   content: string,
   contextLength: number,
 ) {
+  content = preprocessContent(content);
   const constructPrompt = (c: string) => `
     Summarize the following content responding ONLY with the summary. You MUST follow the following rules:
 - Summary must be in 3-4 sentences.
