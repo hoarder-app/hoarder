@@ -275,6 +275,7 @@
       "change_role": "Change Role",
       "reset_password": "Reset Password",
       "delete_user": "Delete User",
+      "delete_user_confirm_description": "Are you sure you want to delete user \"{{name}}\"?",
       "num_bookmarks": "Num Bookmarks",
       "asset_sizes": "Asset Sizes",
       "local_user": "Local User",
