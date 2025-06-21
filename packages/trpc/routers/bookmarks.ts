@@ -646,7 +646,7 @@ export const bookmarksAppRouter = router({
           ),
         );
       await triggerSearchDeletion(input.bookmarkId);
-      await triggerWebhook(input.bookmarkId, "deleted");
+      await triggerWebhook(input.bookmarkId, "deleted", ctx.user.id);
       if (deleted.changes > 0 && bookmark) {
         await cleanupAssetForBookmark({
           asset: bookmark.asset,
