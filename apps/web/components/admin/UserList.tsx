@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { ActionButtonWithTooltip } from "@/components/ui/action-button";
-import { ButtonWithTooltip } from "@/components/ui/button";
+import { Button, ButtonWithTooltip } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/spinner";
 import {
   Table,
@@ -17,6 +18,7 @@ import { api } from "@/lib/trpc";
 import { Check, KeyRound, Pencil, Trash, UserPlus, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 
+import ActionConfirmingDialog from "../ui/action-confirming-dialog";
 import AddUserDialog from "./AddUserDialog";
 import ChangeRoleDialog from "./ChangeRoleDialog";
 import ResetPasswordDialog from "./ResetPasswordDialog";
@@ -30,6 +32,10 @@ function toHumanReadableSize(size: number) {
 
 export default function UsersSection() {
   const { t } = useTranslation();
+  const [userToDelete, setUserToDelete] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
   const { data: session } = useSession();
   const invalidateUserList = api.useUtils().users.list.invalidate;
   const { data: users } = api.users.list.useQuery();
@@ -93,15 +99,46 @@ export default function UsersSection() {
                 {u.localUser ? <Check /> : <X />}
               </TableCell>
               <TableCell className="flex gap-1 py-1">
-                <ActionButtonWithTooltip
-                  tooltip={t("admin.users_list.delete_user")}
-                  variant="outline"
-                  onClick={() => deleteUser({ userId: u.id })}
-                  loading={isDeletionPending}
-                  disabled={session!.user.id == u.id}
+                <ActionConfirmingDialog
+                  open={userToDelete?.id === u.id}
+                  setOpen={(open) => {
+                    if (open) {
+                      setUserToDelete({
+                        id: u.id,
+                        name: u.name ?? "this user",
+                      });
+                    } else {
+                      setUserToDelete(null);
+                    }
+                  }}
+                  title={t("admin.users_list.delete_user")}
+                  description={t(
+                    "admin.users_list.delete_user_confirm_description",
+                    {
+                      name: u.name ?? "this user",
+                    },
+                  )}
+                  actionButton={(setDialogOpen) => (
+                    <Button
+                      variant="destructive"
+                      onClick={() => {
+                        deleteUser({ userId: u.id });
+                        setDialogOpen(false);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  )}
                 >
-                  <Trash size={16} color="red" />
-                </ActionButtonWithTooltip>
+                  <ActionButtonWithTooltip
+                    tooltip={t("admin.users_list.delete_user")}
+                    variant="outline"
+                    loading={isDeletionPending && userToDelete?.id === u.id}
+                    disabled={session!.user.id == u.id}
+                  >
+                    <Trash size={16} color="red" />
+                  </ActionButtonWithTooltip>
+                </ActionConfirmingDialog>
                 <ResetPasswordDialog userId={u.id}>
                   <ButtonWithTooltip
                     tooltip={t("admin.users_list.reset_password")}
