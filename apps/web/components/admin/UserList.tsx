@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ActionButtonWithTooltip } from "@/components/ui/action-button";
-import { Button, ButtonWithTooltip } from "@/components/ui/button";
+import { ActionButton } from "@/components/ui/action-button";
+import { ButtonWithTooltip } from "@/components/ui/button";
 import LoadingSpinner from "@/components/ui/spinner";
 import {
   Table,
@@ -32,15 +31,11 @@ function toHumanReadableSize(size: number) {
 
 export default function UsersSection() {
   const { t } = useTranslation();
-  const [userToDelete, setUserToDelete] = useState<{
-    id: string;
-    name: string;
-  } | null>(null);
   const { data: session } = useSession();
   const invalidateUserList = api.useUtils().users.list.invalidate;
   const { data: users } = api.users.list.useQuery();
   const { data: userStats } = api.admin.userStats.useQuery();
-  const { mutate: deleteUser, isPending: isDeletionPending } =
+  const { mutateAsync: deleteUser, isPending: isDeletionPending } =
     api.users.delete.useMutation({
       onSuccess: () => {
         toast({
@@ -100,17 +95,6 @@ export default function UsersSection() {
               </TableCell>
               <TableCell className="flex gap-1 py-1">
                 <ActionConfirmingDialog
-                  open={userToDelete?.id === u.id}
-                  setOpen={(open) => {
-                    if (open) {
-                      setUserToDelete({
-                        id: u.id,
-                        name: u.name ?? "this user",
-                      });
-                    } else {
-                      setUserToDelete(null);
-                    }
-                  }}
                   title={t("admin.users_list.delete_user")}
                   description={t(
                     "admin.users_list.delete_user_confirm_description",
@@ -119,25 +103,25 @@ export default function UsersSection() {
                     },
                   )}
                   actionButton={(setDialogOpen) => (
-                    <Button
+                    <ActionButton
                       variant="destructive"
-                      onClick={() => {
-                        deleteUser({ userId: u.id });
+                      loading={isDeletionPending}
+                      onClick={async () => {
+                        await deleteUser({ userId: u.id });
                         setDialogOpen(false);
                       }}
                     >
                       Delete
-                    </Button>
+                    </ActionButton>
                   )}
                 >
-                  <ActionButtonWithTooltip
+                  <ButtonWithTooltip
                     tooltip={t("admin.users_list.delete_user")}
                     variant="outline"
-                    loading={isDeletionPending && userToDelete?.id === u.id}
                     disabled={session!.user.id == u.id}
                   >
                     <Trash size={16} color="red" />
-                  </ActionButtonWithTooltip>
+                  </ButtonWithTooltip>
                 </ActionConfirmingDialog>
                 <ResetPasswordDialog userId={u.id}>
                   <ButtonWithTooltip
