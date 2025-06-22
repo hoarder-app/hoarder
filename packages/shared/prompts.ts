@@ -33,17 +33,18 @@ export function buildTextPrompt(
 ) {
   const constructPrompt = (c: string) => `
 You are an expert who's your responsibility is to help with automatic tagging.
-Please analyze the text_content below and suggest relevant tags that describe its key themes, topics, and main ideas. The rules are:
+Please analyze the TEXT_CONTENT below and suggest relevant tags that describe its key themes, topics, and main ideas. The rules are:
 - Aim for a variety of tags, including broad categories, specific keywords, and potential sub-genres.
 - The tags must be in ${lang}.
+- If the tag is not generic enough, don't include it.
 - The content can include text for cookie consent and privacy policy, ignore those while tagging.
-- Aim for 5 tags.
+- Aim for 3-5 tags.
 - If there are no good tags, leave the array empty.
 ${customPrompts && customPrompts.map((p) => `- ${p}`).join("\n")}
 
-<text_content>
+<TEXT_CONTENT>
 ${c}
-</text_content>
+</TEXT_CONTENT>
 You must respond in JSON with the key "tags" and the value is an array of string tags.`;
 
   const promptSize = calculateNumTokens(constructPrompt(""));
