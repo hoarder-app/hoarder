@@ -32,7 +32,7 @@
       ],
       "outputLogs": "new-only"
     },
-    "oxlint": {
+    "lint": {
       "dependsOn": [
         "^topo"
       ]

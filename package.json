@@ -16,8 +16,8 @@
     "prepare": "husky",
     "format": "turbo --no-daemon format --continue -- --cache-location node_modules/.cache/.prettiercache",
     "format:fix": "turbo --no-daemon format --continue -- --write --cache-location node_modules/.cache/.prettiercache",
-    "lint": "turbo --no-daemon oxlint --continue --",
-    "lint:fix": "turbo --no-daemon oxlint --continue -- --fix",
+    "lint": "turbo --no-daemon lint --continue --",
+    "lint:fix": "turbo --no-daemon lint --continue -- --fix",
     "typecheck": "turbo --no-daemon typecheck"
   },
   "devDependencies": {
