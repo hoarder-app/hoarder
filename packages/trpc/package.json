@@ -15,7 +15,7 @@
   "dependencies": {
     "@karakeep/db": "workspace:*",
     "@karakeep/shared": "workspace:*",
-    "@trpc/server": "11.0.0",
+    "@trpc/server": "11.1.1",
     "bcryptjs": "^2.4.3",
     "deep-equal": "^2.2.3",
     "drizzle-orm": "^0.38.3",
