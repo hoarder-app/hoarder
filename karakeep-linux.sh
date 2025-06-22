@@ -223,7 +223,7 @@ install_karakeep() {
   mv karakeep-"$RELEASE" "$INSTALL_DIR" && cd "$APP_DIR"/web
   corepack enable
   export NEXT_TELEMETRY_DISABLED=1
-  export PUPPETEER_SKIP_DOWNLOAD="true"
+  export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD="true"
   export CI="true"
   $shh pnpm i --frozen-lockfile
   $shh pnpm build
@@ -433,7 +433,7 @@ update_karakeep() {
     fi
     corepack enable
     export NEXT_TELEMETRY_DISABLED=1
-    export PUPPETEER_SKIP_DOWNLOAD="true"
+    export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD="true"
     export CI="true"
     cd "$APP_DIR"/web && $shh pnpm i --frozen-lockfile
     $shh pnpm build
