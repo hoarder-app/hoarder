@@ -89,22 +89,27 @@ async function startBrowserInstance() {
     logger.info(
       `[Crawler] Connecting to existing browser websocket address: ${serverConfig.crawler.browserWebSocketUrl}`,
     );
-    return chromium.connect(serverConfig.crawler.browserWebSocketUrl);
+    return await chromium.connect(serverConfig.crawler.browserWebSocketUrl, {
+      // Important: using slowMo to ensure stability with remote browser
+      slowMo: 100,
+      timeout: 5000,
+    });
   } else if (serverConfig.crawler.browserWebUrl) {
     logger.info(
       `[Crawler] Connecting to existing browser instance: ${serverConfig.crawler.browserWebUrl}`,
     );
+
     const webUrl = new URL(serverConfig.crawler.browserWebUrl);
     const { address } = await dns.promises.lookup(webUrl.hostname);
     webUrl.hostname = address;
     logger.info(
       `[Crawler] Successfully resolved IP address, new address: ${webUrl.toString()}`,
     );
-    // Connect using CDP which allows access to the shared browser context
-    return chromium.connectOverCDP({
-      endpointURL: webUrl.toString(),
+
+    return await chromium.connectOverCDP(webUrl.toString(), {
       // Important: using slowMo to ensure stability with remote browser
       slowMo: 100,
+      timeout: 5000,
     });
   } else {
     logger.info(`Running in browserless mode`);
@@ -112,31 +117,11 @@ async function startBrowserInstance() {
   }
 }
 
-
 async function launchBrowser() {
   globalBrowser = undefined;
   await browserMutex.runExclusive(async () => {
     try {
       globalBrowser = await startBrowserInstance();
-
-      // Log available contexts after connecting
-      if (globalBrowser) {
-        const contexts = globalBrowser.contexts();
-        logger.info(
-          `[Crawler] Connected to browser with ${contexts.length} contexts`,
-        );
-
-        // Log pages from first context if available
-        if (contexts.length > 0) {
-          const pages = contexts[0].pages();
-          logger.info(`[Crawler] First context has ${pages.length} pages`);
-
-          // Log URLs of pages
-          for (let i = 0; i < pages.length; i++) {
-            logger.info(`[Crawler] Page ${i + 1} URL: ${pages[i].url()}`);
-          }
-        }
-      }
     } catch (e) {
       logger.error(
         `[Crawler] Failed to connect to the browser instance, will retry in 5 secs: ${(e as Error).stack}`,
@@ -150,20 +135,18 @@ async function launchBrowser() {
       }, 5000);
       return;
     }
-    if (globalBrowser) {
-      globalBrowser.on("disconnected", () => {
-        if (isShuttingDown) {
-          logger.info(
-            "[Crawler] The Playwright browser got disconnected. But we're shutting down so won't restart it.",
-          );
-          return;
-        }
+    globalBrowser?.on("disconnected", () => {
+      if (isShuttingDown) {
         logger.info(
-          "[Crawler] The Playwright browser got disconnected. Will attempt to launch it again.",
+          "[Crawler] The Playwright browser got disconnected. But we're shutting down so won't restart it.",
         );
-        launchBrowser();
-      });
-    }
+        return;
+      }
+      logger.info(
+        "[Crawler] The Playwright browser got disconnected. Will attempt to launch it again.",
+      );
+      launchBrowser();
+    });
   });
 }
 
@@ -172,14 +155,11 @@ export class CrawlerWorker {
     if (serverConfig.crawler.enableAdblocker) {
       try {
         logger.info("[crawler] Loading adblocker ...");
-        globalBlocker = await PlaywrightBlocker.fromPrebuiltFull(
-          fetch,
-          {
-            path: path.join(os.tmpdir(), "karakeep_adblocker.bin"),
-            read: fs.readFile,
-            write: fs.writeFile,
-          },
-        );
+        globalBlocker = await PlaywrightBlocker.fromPrebuiltFull(fetch, {
+          path: path.join(os.tmpdir(), "karakeep_adblocker.bin"),
+          read: fs.readFile,
+          write: fs.writeFile,
+        });
       } catch (e) {
         logger.error(
           `[crawler] Failed to load adblocker. Will not be blocking ads: ${e}`,
@@ -304,49 +284,14 @@ async function crawlPage(
     return browserlessCrawlPage(jobId, url, abortSignal);
   }
 
+  const context = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    userAgent:
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+  });
   try {
-    // When connecting to an existing Chrome instance, we need to use CDP and work
-    // with browser contexts differently to access existing cookies
-
-    // Get the list of existing browser contexts
-    const contexts = browser.contexts();
-    logger.info(
-      `[Crawler][${jobId}] Found ${contexts.length} browser contexts`,
-    );
-
-    // Get all pages from the default context
-    // If there's no default context or no pages, we'll create a new context
-    const context =
-      contexts.length > 0
-        ? contexts[0]
-        : await browser.newContext({
-            viewport: { width: 1440, height: 900 },
-            userAgent:
-              "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-          });
-
-    // Get all pages
-    const pages = context.pages();
-    logger.info(
-      `[Crawler][${jobId}] Found ${pages.length} pages in the context`,
-    );
-
-    // Use an existing page or create a new one
-    let page;
-    let createdNewPage = false;
-
-    if (pages.length > 0) {
-      // Use the first page
-      page = pages[0];
-      logger.info(
-        `[Crawler][${jobId}] Using existing page with URL: ${page.url()}`,
-      );
-    } else {
-      // Create a new page in the context
-      page = await context.newPage();
-      createdNewPage = true;
-      logger.info(`[Crawler][${jobId}] Created a new page in the context`);
-    }
+    // Create a new page in the context
+    const page = await context.newPage();
 
     // Apply ad blocking
     if (globalBlocker) {
@@ -406,23 +351,16 @@ async function crawlPage(
       }
     }
 
-    // Return the page data
-    const pageUrl = page.url();
-
-    // If we created a new page, close it to keep the browser clean
-    if (createdNewPage) {
-      await page.close();
-    }
-
     return {
       htmlContent,
       statusCode: response?.status() ?? 0,
       screenshot,
-      url: pageUrl,
+      url: page.url(),
     };
   } finally {
+    await context.close();
     // Only close the browser if it was created on demand
-    if (serverConfig.crawler.browserConnectOnDemand && browser) {
+    if (serverConfig.crawler.browserConnectOnDemand) {
       await browser.close();
     }
   }
