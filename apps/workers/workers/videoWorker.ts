@@ -193,7 +193,7 @@ async function deleteLeftOverAssetFile(
   );
   try {
     await fs.promises.rm(assetFile);
-  } catch (e) {
+  } catch {
     logger.error(
       `[VideoCrawler][${jobId}] Failed deleting leftover video asset "${assetFile}".`,
     );

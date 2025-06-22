@@ -9,12 +9,12 @@
     "clean": "git clean -xdf .next .turbo node_modules",
     "build": "next build --experimental-build-mode compile",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "format": "prettier --check . --ignore-path ../../.gitignore",
-    "format:fix": "prettier --write . --ignore-path ../../.gitignore",
-    "lint:fix": "next lint --fix"
+    "format:fix": "prettier --write . --ignore-path ../../.gitignore"
   },
   "dependencies": {
     "@auth/drizzle-adapter": "~1.5.0",
@@ -96,7 +96,6 @@
     "zustand": "^4.5.1"
   },
   "devDependencies": {
-    "@karakeep/eslint-config": "workspace:^0.2.0",
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tailwind-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
@@ -111,14 +110,6 @@
     "tailwindcss": "^3.4.1",
     "vite-tsconfig-paths": "^4.3.1",
     "vitest": "^1.6.1"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@karakeep/eslint-config/base",
-      "@karakeep/eslint-config/nextjs",
-      "@karakeep/eslint-config/react"
-    ]
   },
   "prettier": "@karakeep/prettier-config"
 }

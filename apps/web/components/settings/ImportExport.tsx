@@ -282,7 +282,7 @@ export function ImportExportRow() {
               };
             });
             return { status: "fulfilled" as const, value: created };
-          } catch (e) {
+          } catch {
             setImportProgress((prev) => {
               const newDone = (prev?.done ?? 0) + 1;
               return {

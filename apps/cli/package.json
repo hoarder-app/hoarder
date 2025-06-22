@@ -15,7 +15,6 @@
   },
   "devDependencies": {
     "@commander-js/extra-typings": "^12.0.1",
-    "@karakeep/eslint-config": "workspace:^0.2.0",
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/shared": "workspace:^0.1.0",
     "@karakeep/trpc": "workspace:^0.1.0",
@@ -33,8 +32,8 @@
   "scripts": {
     "build": "vite build",
     "run": "tsx src/index.ts",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
     "format": "prettier . --ignore-path ../../.prettierignore",
     "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
     "typecheck": "tsc --noEmit"
@@ -43,12 +42,6 @@
     "type": "git",
     "url": "git+https://github.com/karakeep-app/karakeep.git",
     "directory": "apps/cli"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@karakeep/eslint-config/base"
-    ]
   },
   "prettier": "@karakeep/prettier-config"
 }

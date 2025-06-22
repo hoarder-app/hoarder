@@ -46,7 +46,6 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@karakeep/eslint-config": "workspace:^0.2.0",
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@types/jsdom": "^21.1.6",
     "@types/metascraper": "^5.14.3",
@@ -55,17 +54,11 @@
   "scripts": {
     "start": "tsx watch index.ts",
     "start:prod": "tsx index.ts",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
     "format": "prettier . --ignore-path ../../.prettierignore",
     "format:fix": "prettier . --ignore-path ../../.prettierignore --write",
     "typecheck": "tsc --noEmit"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@karakeep/eslint-config/base"
-    ]
   },
   "prettier": "@karakeep/prettier-config"
 }

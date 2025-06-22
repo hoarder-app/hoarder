@@ -697,7 +697,7 @@ async function crawlAndParseUrl(
     }
     try {
       return new Date(date);
-    } catch (_e) {
+    } catch {
       return null;
     }
   };

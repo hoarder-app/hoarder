@@ -13,6 +13,7 @@ import AddApiKey from "./AddApiKey";
 import DeleteApiKey from "./DeleteApiKey";
 
 export default async function ApiKeys() {
+  // oxlint-disable-next-line rules-of-hooks
   const { t } = await useTranslation();
   const keys = await api.apiKeys.list();
   return (

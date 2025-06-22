@@ -25,7 +25,7 @@ export async function createContextFromRequest(req: Request) {
           ip,
         },
       };
-    } catch (e) {
+    } catch {
       // Fallthrough to cookie-based auth
     }
   }
