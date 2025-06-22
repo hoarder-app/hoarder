@@ -9,7 +9,7 @@ import DOMPurify from "dompurify";
 import { eq } from "drizzle-orm";
 import { execa } from "execa";
 import { isShuttingDown } from "exit";
-import { JSDOM } from "jsdom";
+import { JSDOM, VirtualConsole } from "jsdom";
 import { DequeuedJob, Runner } from "liteque";
 import metascraper from "metascraper";
 import metascraperAmazon from "metascraper-amazon";
@@ -399,7 +399,8 @@ function extractReadableContent(
   logger.info(
     `[Crawler][${jobId}] Will attempt to extract readable content ...`,
   );
-  const dom = new JSDOM(htmlContent, { url });
+  const virtualConsole = new VirtualConsole();
+  const dom = new JSDOM(htmlContent, { url, virtualConsole });
   const readableContent = new Readability(dom.window.document).parse();
   if (!readableContent || typeof readableContent.content !== "string") {
     return null;
