@@ -8,24 +8,6 @@
     "builtin": true,
     "commonjs": true
   },
-  "globals": {
-    "__dirname": "readonly",
-    "__filename": "readonly",
-    "Buffer": "readonly",
-    "clearImmediate": "readonly",
-    "clearInterval": "readonly",
-    "clearTimeout": "readonly",
-    "console": "readonly",
-    "process": "readonly",
-    "queueMicrotask": "readonly",
-    "setImmediate": "readonly",
-    "setInterval": "readonly",
-    "setTimeout": "readonly",
-    "TextDecoder": "readonly",
-    "TextEncoder": "readonly",
-    "URL": "readonly",
-    "URLSearchParams": "readonly"
-  },
   "ignorePatterns": [
     "**/*.config.js",
     "**/*.config.cjs",
