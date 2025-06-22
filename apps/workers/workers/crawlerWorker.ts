@@ -24,7 +24,9 @@ import metascraperTitle from "metascraper-title";
 import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
 import fetch from "node-fetch";
-import { Browser, chromium } from "playwright";
+import { Browser } from "playwright";
+import { chromium } from "playwright-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
 import { getBookmarkDetails, updateAsset } from "workerUtils";
 
@@ -152,6 +154,7 @@ async function launchBrowser() {
 
 export class CrawlerWorker {
   static async build() {
+    chromium.use(StealthPlugin());
     if (serverConfig.crawler.enableAdblocker) {
       try {
         logger.info("[crawler] Loading adblocker ...");
@@ -311,7 +314,7 @@ async function crawlPage(
 
     // Wait until network is relatively idle or timeout after 5 seconds
     await Promise.race([
-      page.waitForLoadState("networkidle", { timeout: 5000 }),
+      page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => ({})),
       new Promise((resolve) => setTimeout(resolve, 5000)),
     ]);
 
