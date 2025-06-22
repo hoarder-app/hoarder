@@ -32,9 +32,10 @@ export const LinkCrawlerQueue = new SqliteQueue<ZCrawlLinkRequest>(
   },
 );
 
-// OpenAI Worker
+// Inference Worker
 export const zOpenAIRequestSchema = z.object({
   bookmarkId: z.string(),
+  type: z.enum(["summarize", "tag"]).default("tag"),
 });
 export type ZOpenAIRequest = z.infer<typeof zOpenAIRequestSchema>;
 
@@ -171,7 +172,8 @@ export const AssetPreprocessingQueue =
 // Webhook worker
 export const zWebhookRequestSchema = z.object({
   bookmarkId: z.string(),
-  operation: z.enum(["crawled", "created", "edited", "ai tagged"]),
+  operation: z.enum(["crawled", "created", "edited", "ai tagged", "deleted"]),
+  userId: z.string().optional(),
 });
 export type ZWebhookRequest = z.infer<typeof zWebhookRequestSchema>;
 export const WebhookQueue = new SqliteQueue<ZWebhookRequest>(
@@ -188,14 +190,16 @@ export const WebhookQueue = new SqliteQueue<ZWebhookRequest>(
 export async function triggerWebhook(
   bookmarkId: string,
   operation: ZWebhookRequest["operation"],
+  userId?: string,
 ) {
   await WebhookQueue.enqueue({
     bookmarkId,
+    userId,
     operation,
   });
 }
 
-// RuleEgine worker
+// RuleEngine worker
 export const zRuleEngineRequestSchema = z.object({
   bookmarkId: z.string(),
   events: z.array(zRuleEngineEventSchema),

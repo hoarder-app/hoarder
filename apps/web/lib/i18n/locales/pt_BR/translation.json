@@ -73,9 +73,11 @@
     "sort": {
       "title": "Ordenar",
       "newest_first": "Mais Recente Primeiro",
-      "oldest_first": "Mais Antigo Primeiro"
+      "oldest_first": "Mais Antigo Primeiro",
+      "relevant_first": "Mais relevantes primeiro"
     },
-    "open_editor": "Abrir editor"
+    "open_editor": "Abrir editor",
+    "toggle_show_archived": "Mostrar arquivados"
   },
   "settings": {
     "info": {
@@ -86,7 +88,20 @@
       "new_password": "Nova Senha",
       "confirm_new_password": "Confirmar Nova Senha",
       "options": "Opções",
-      "interface_lang": "Idioma da Interface"
+      "interface_lang": "Idioma da Interface",
+      "user_settings": {
+        "archive_display_behaviour": {
+          "title": "Favoritos arquivados",
+          "show": "Mostrar favoritos arquivados em tags e listas",
+          "hide": "Ocultar favoritos arquivados em tags e listas"
+        },
+        "user_settings_updated": "As configurações do usuário foram atualizadas!",
+        "bookmark_click_action": {
+          "title": "Ação de clique do favorito",
+          "open_external_url": "Abrir URL original",
+          "open_bookmark_details": "Abrir detalhes do favorito"
+        }
+      }
     },
     "back_to_app": "Voltar ao App",
     "user_settings": "Configurações do Usuário",
@@ -105,7 +120,9 @@
     },
     "feeds": {
       "rss_subscriptions": "Assinaturas de RSS",
-      "add_a_subscription": "Adicionar uma Assinatura"
+      "add_a_subscription": "Adicionar uma Assinatura",
+      "feed_enabled": "Feed RSS ativado",
+      "feed_disabled": "Feed RSS desativado"
     },
     "webhooks": {
       "webhooks": "Webhooks",
@@ -248,7 +265,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Regenerar Tags de IA para Todos os Favoritos",
       "reindex_all_bookmarks": "Reindexar Todos os Favoritos",
       "compact_assets": "Compactar Ativos",
-      "reprocess_assets_fix_mode": "Reprocessar recursos (modo de correção)"
+      "reprocess_assets_fix_mode": "Reprocessar recursos (modo de correção)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Regenerar resumos de IA apenas para favoritos com falha",
+      "regenerate_ai_summaries_for_all_bookmarks": "Regenerar resumos de IA para todos os favoritos"
     },
     "users_list": {
       "users_list": "Lista de Usuários",
@@ -283,7 +302,18 @@
     "destination_list": "Lista de destino",
     "delete_after_merge": "Excluir lista original após a mesclagem",
     "no_destination": "Sem destino",
-    "description": "Descrição (Opcional)"
+    "description": "Descrição (Opcional)",
+    "share_list": "Compartilhar lista",
+    "rss": {
+      "title": "Feed RSS",
+      "description": "Ativar um feed RSS para esta lista",
+      "feed_url": "URL do feed RSS"
+    },
+    "public_list": {
+      "title": "Lista pública",
+      "description": "Permitir que outros vejam esta lista",
+      "share_link": "Compartilhar link"
+    }
   },
   "tags": {
     "all_tags": "Todas Tags",
@@ -338,7 +368,11 @@
   "preview": {
     "view_original": "Ver Original",
     "cached_content": "Conteúdo em Cache",
-    "reader_view": "Modo Leitura"
+    "reader_view": "Modo Leitura",
+    "tabs": {
+      "content": "Conteúdo",
+      "details": "Detalhes"
+    }
   },
   "editor": {
     "quickly_focus": "Você pode acessar rapidamente este campo pressionando ⌘ + E",

@@ -47,7 +47,20 @@
       "basic_details": "Detalles básicos",
       "current_password": "Contraseña actual",
       "confirm_new_password": "Confirmar nueva contraseña",
-      "options": "Ajustes"
+      "options": "Ajustes",
+      "user_settings": {
+        "user_settings_updated": "¡La configuración del usuario se ha actualizado!",
+        "bookmark_click_action": {
+          "title": "Acción al hacer clic en el marcador",
+          "open_external_url": "Abrir URL original",
+          "open_bookmark_details": "Abrir detalles del marcador"
+        },
+        "archive_display_behaviour": {
+          "title": "Marcadores archivados",
+          "show": "Mostrar marcadores archivados en etiquetas y listas",
+          "hide": "Ocultar marcadores archivados en etiquetas y listas"
+        }
+      }
     },
     "back_to_app": "Volver a la aplicación",
     "ai": {
@@ -66,7 +79,9 @@
     "user_settings": "Ajustes de usuario",
     "feeds": {
       "add_a_subscription": "Añadir subscripción",
-      "rss_subscriptions": "Subscripciones RSS"
+      "rss_subscriptions": "Subscripciones RSS",
+      "feed_enabled": "Fuente RSS activada",
+      "feed_disabled": "Fuente RSS desactivada"
     },
     "import": {
       "import_export": "Importar / Exportar",
@@ -204,9 +219,11 @@
     "sort": {
       "title": "Ordenar",
       "newest_first": "Más recientes primero",
-      "oldest_first": "Más antiguos primero"
+      "oldest_first": "Más antiguos primero",
+      "relevant_first": "Más relevantes primero"
     },
-    "open_editor": "Abrir editor"
+    "open_editor": "Abrir editor",
+    "toggle_show_archived": "Mostrar archivados"
   },
   "layouts": {
     "compact": "Compacto",
@@ -245,7 +262,9 @@
       "without_inference": "Sin inferencia",
       "recrawl_failed_links_only": "Recrawlear solo los enlaces fallidos",
       "recrawl_all_links": "Recrawlear todos los enlaces",
-      "reprocess_assets_fix_mode": "Reprocesar assets (modo fijo)"
+      "reprocess_assets_fix_mode": "Reprocesar assets (modo fijo)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Regenerar resúmenes de IA solo para marcadores fallidos",
+      "regenerate_ai_summaries_for_all_bookmarks": "Regenerar resúmenes de IA para todos los marcadores"
     },
     "users_list": {
       "users_list": "Lista de usuarios",
@@ -280,7 +299,18 @@
     "destination_list": "Lista de destino",
     "no_destination": "Sin destino",
     "description": "Descripción (opcional)",
-    "delete_after_merge": "Eliminar la lista original después de la fusión"
+    "delete_after_merge": "Eliminar la lista original después de la fusión",
+    "public_list": {
+      "share_link": "Compartir enlace",
+      "title": "Lista pública",
+      "description": "Permitir que otros vean esta lista"
+    },
+    "share_list": "Compartir lista",
+    "rss": {
+      "title": "Fuente RSS",
+      "description": "Activar una fuente RSS para esta lista",
+      "feed_url": "URL de la fuente RSS"
+    }
   },
   "tags": {
     "all_tags": "Todas las etiquetas",
@@ -298,7 +328,11 @@
   "preview": {
     "view_original": "Ver original",
     "cached_content": "Contenido cacheado",
-    "reader_view": "Vista de lectura"
+    "reader_view": "Vista de lectura",
+    "tabs": {
+      "content": "Contenido",
+      "details": "Detalles"
+    }
   },
   "editor": {
     "multiple_urls_dialog_title": "¿Importar URLs como marcadores independientes?",

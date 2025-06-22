@@ -34,9 +34,11 @@
     "sort": {
       "title": "並び替え",
       "newest_first": "新しい順",
-      "oldest_first": "古い順"
+      "oldest_first": "古い順",
+      "relevant_first": "関連性の高い順"
     },
-    "open_editor": "エディタを開く"
+    "open_editor": "エディタを開く",
+    "toggle_show_archived": "アーカイブを表示"
   },
   "admin": {
     "actions": {
@@ -47,7 +49,9 @@
       "recrawl_failed_links_only": "失敗したリンクのみ再クロール",
       "recrawl_all_links": "すべてのリンクを再クロール",
       "compact_assets": "コンパクトアセット",
-      "reprocess_assets_fix_mode": "アセットの再処理（修正モード）"
+      "reprocess_assets_fix_mode": "アセットの再処理（修正モード）",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "失敗したブックマークのみAI要約を再生成",
+      "regenerate_ai_summaries_for_all_bookmarks": "すべてのブックマークのAI要約を再生成"
     },
     "server_stats": {
       "server_version": "サーバーバージョン",
@@ -92,7 +96,20 @@
       "current_password": "現在のパスワード",
       "confirm_new_password": "新しいパスワードの確認",
       "options": "オプション",
-      "interface_lang": "インターフェース言語"
+      "interface_lang": "インターフェース言語",
+      "user_settings": {
+        "user_settings_updated": "ユーザー設定が更新されました！",
+        "bookmark_click_action": {
+          "title": "ブックマーククリック時の動作",
+          "open_external_url": "元のURLを開く",
+          "open_bookmark_details": "ブックマークの詳細を開く"
+        },
+        "archive_display_behaviour": {
+          "show": "タグとリストにアーカイブされたブックマークを表示する",
+          "title": "アーカイブされたブックマーク",
+          "hide": "タグとリストにアーカイブされたブックマークを非表示にする"
+        }
+      }
     },
     "ai": {
       "prompt_preview": "プロンプトプレビュー",
@@ -136,7 +153,9 @@
     "user_settings": "ユーザ設定",
     "feeds": {
       "add_a_subscription": "サブスクリプションを追加する",
-      "rss_subscriptions": "RSS 購読"
+      "rss_subscriptions": "RSS 購読",
+      "feed_enabled": "RSSフィードは有効です",
+      "feed_disabled": "RSSフィードは無効です"
     },
     "manage_assets": {
       "manage_assets": "アセットの管理",
@@ -276,7 +295,18 @@
     "destination_list": "マージ先リスト",
     "delete_after_merge": "マージ後に元のリストを削除",
     "no_destination": "マージ先なし",
-    "description": "説明（任意）"
+    "description": "説明（任意）",
+    "share_list": "リストを共有",
+    "rss": {
+      "title": "RSSフィード",
+      "description": "このリストのRSSフィードを有効にする",
+      "feed_url": "RSSフィードのURL"
+    },
+    "public_list": {
+      "title": "公開リスト",
+      "description": "他のユーザーにこのリストの表示を許可する",
+      "share_link": "リンクを共有"
+    }
   },
   "options": {
     "dark_mode": "ダークモード",
@@ -335,7 +365,11 @@
   "preview": {
     "cached_content": "キャッシュされたコンテンツ",
     "view_original": "オリジナルを見る",
-    "reader_view": "リーダー表示"
+    "reader_view": "リーダー表示",
+    "tabs": {
+      "content": "コンテンツ",
+      "details": "詳細"
+    }
   },
   "editor": {
     "quickly_focus": "⌘ + E を押すと、このフィールドにすばやくフォーカスできます",

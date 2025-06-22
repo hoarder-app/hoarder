@@ -14,5 +14,8 @@ export default defineConfig({
     teardownTimeout: 30000,
     include: ["tests/**/*.test.ts"],
     testTimeout: 60000,
+    env: {
+      NEXTAUTH_SECRET: "secret",
+    },
   },
 });

@@ -123,6 +123,9 @@ export const bookmarks = sqliteTable(
     taggingStatus: text("taggingStatus", {
       enum: ["pending", "failure", "success"],
     }).default("pending"),
+    summarizationStatus: text("summarizationStatus", {
+      enum: ["pending", "failure", "success"],
+    }).default("pending"),
     summary: text("summary"),
     note: text("note"),
     type: text("type", {
@@ -333,6 +336,9 @@ export const bookmarkLists = sqliteTable(
       (): AnySQLiteColumn => bookmarkLists.id,
       { onDelete: "set null" },
     ),
+    // Whoever have access to this token can read the content of this list
+    rssToken: text("rssToken"),
+    public: integer("public", { mode: "boolean" }).notNull().default(false),
   },
   (bl) => [
     index("bookmarkLists_userId_idx").on(bl.userId),
@@ -389,6 +395,7 @@ export const rssFeedsTable = sqliteTable(
       .$defaultFn(() => createId()),
     name: text("name").notNull(),
     url: text("url").notNull(),
+    enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
     createdAt: createdAtField(),
     lastFetchedAt: integer("lastFetchedAt", { mode: "timestamp" }),
     lastFetchedStatus: text("lastFetchedStatus", {
@@ -415,7 +422,7 @@ export const webhooksTable = sqliteTable(
       .references(() => users.id, { onDelete: "cascade" }),
     events: text("events", { mode: "json" })
       .notNull()
-      .$type<("created" | "edited" | "crawled" | "ai tagged")[]>(),
+      .$type<("created" | "edited" | "crawled" | "ai tagged" | "deleted")[]>(),
     token: text("token"),
   },
   (bl) => [index("webhooks_userId_idx").on(bl.userId)],
@@ -523,13 +530,34 @@ export const ruleEngineActionsTable = sqliteTable(
   ],
 );
 
+export const userSettings = sqliteTable("userSettings", {
+  userId: text("userId")
+    .notNull()
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  bookmarkClickAction: text("bookmarkClickAction", {
+    enum: ["open_original_link", "expand_bookmark_preview"],
+  })
+    .notNull()
+    .default("open_original_link"),
+  archiveDisplayBehaviour: text("archiveDisplayBehaviour", {
+    enum: ["show", "hide"],
+  })
+    .notNull()
+    .default("show"),
+});
+
 // Relations
 
-export const userRelations = relations(users, ({ many }) => ({
+export const userRelations = relations(users, ({ many, one }) => ({
   tags: many(bookmarkTags),
   bookmarks: many(bookmarks),
   webhooks: many(webhooksTable),
   rules: many(ruleEngineRulesTable),
+  settings: one(userSettings, {
+    fields: [users.id],
+    references: [userSettings.userId],
+  }),
 }));
 
 export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
@@ -664,3 +692,10 @@ export const rssFeedImportsTableRelations = relations(
     }),
   }),
 );
+
+export const userSettingsRelations = relations(userSettings, ({ one }) => ({
+  user: one(users, {
+    fields: [userSettings.userId],
+    references: [users.id],
+  }),
+}));

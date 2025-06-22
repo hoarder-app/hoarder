@@ -34,9 +34,11 @@
     "sort": {
       "title": "Sortér",
       "newest_first": "Nyeste først",
-      "oldest_first": "Ældste først"
+      "oldest_first": "Ældste først",
+      "relevant_first": "Mest relevant først"
     },
-    "open_editor": "Åbn editor"
+    "open_editor": "Åbn editor",
+    "toggle_show_archived": "Vis arkiverede"
   },
   "settings": {
     "import": {
@@ -60,11 +62,26 @@
       "new_password": "Ny adgangskode",
       "confirm_new_password": "Bekræft ny adgangskode",
       "change_password": "Skift adgangskode",
-      "options": "Indstillinger"
+      "options": "Indstillinger",
+      "user_settings": {
+        "user_settings_updated": "Brugerindstillinger er blevet opdateret!",
+        "bookmark_click_action": {
+          "title": "Bogmærke klik handling",
+          "open_external_url": "Åbn original URL",
+          "open_bookmark_details": "Åbn bogmærke detaljer"
+        },
+        "archive_display_behaviour": {
+          "title": "Arkiverede bogmærker",
+          "show": "Vis arkiverede bogmærker i tags og lister",
+          "hide": "Skjul arkiverede bogmærker i tags og lister"
+        }
+      }
     },
     "feeds": {
       "add_a_subscription": "Tilføj et abonnement",
-      "rss_subscriptions": "RSS-abonnementer"
+      "rss_subscriptions": "RSS-abonnementer",
+      "feed_enabled": "RSS-feed aktiveret",
+      "feed_disabled": "RSS-feed deaktiveret"
     },
     "ai": {
       "tagging_rules": "Regler for tagging",
@@ -178,7 +195,9 @@
       "without_inference": "Uden inferens",
       "regenerate_ai_tags_for_all_bookmarks": "Genopret AI-tags for alle bogmærker",
       "reindex_all_bookmarks": "Genindeksér alle bogmærker",
-      "reprocess_assets_fix_mode": "Genbehandling af aktiver (Fix Mode)"
+      "reprocess_assets_fix_mode": "Genbehandling af aktiver (Fix Mode)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Gendan AI-opsummeringer kun for mislykkede bogmærker",
+      "regenerate_ai_summaries_for_all_bookmarks": "Gendan AI-opsummeringer for alle bogmærker"
     },
     "background_jobs": {
       "inference_jobs": "Inferensopgaver",
@@ -352,12 +371,27 @@
     "destination_list": "Destinationsliste",
     "delete_after_merge": "Slet den oprindelige liste efter fletning",
     "no_destination": "Ingen destination",
-    "description": "Beskrivelse (Valgfrit)"
+    "description": "Beskrivelse (Valgfrit)",
+    "rss": {
+      "title": "RSS-feed",
+      "description": "Aktiver et RSS-feed for denne liste",
+      "feed_url": "RSS-feed URL"
+    },
+    "share_list": "Del liste",
+    "public_list": {
+      "title": "Offentlig liste",
+      "description": "Tillad andre at se denne liste",
+      "share_link": "Del link"
+    }
   },
   "preview": {
     "view_original": "Se original",
     "cached_content": "Cachelagret indhold",
-    "reader_view": "Læsevisning"
+    "reader_view": "Læsevisning",
+    "tabs": {
+      "content": "Indhold",
+      "details": "Detaljer"
+    }
   },
   "toasts": {
     "bookmarks": {

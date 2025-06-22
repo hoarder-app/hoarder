@@ -94,4 +94,41 @@ describe("User Routes", () => {
     // A normal user can't list all users
     await expect(() => user2Caller.users.list()).rejects.toThrow(/FORBIDDEN/);
   });
+
+  test<CustomTestContext>("get/update user settings", async ({
+    db,
+    unauthedAPICaller,
+  }) => {
+    const user = await unauthedAPICaller.users.create({
+      name: "Test User",
+      email: "testupdate@test.com",
+      password: "pass1234",
+      confirmPassword: "pass1234",
+    });
+    const caller = getApiCaller(db, user.id);
+
+    const settings = await caller.users.settings();
+    // The default settings
+    expect(settings).toEqual({
+      bookmarkClickAction: "open_original_link",
+      archiveDisplayBehaviour: "show",
+    });
+
+    // Update settings
+    await caller.users.updateSettings({
+      bookmarkClickAction: "expand_bookmark_preview",
+    });
+
+    // Verify updated settings
+    const updatedSettings = await caller.users.settings();
+    expect(updatedSettings).toEqual({
+      bookmarkClickAction: "expand_bookmark_preview",
+      archiveDisplayBehaviour: "show",
+    });
+
+    // Test invalid update (e.g., empty input, if schema enforces it)
+    await expect(() => caller.users.updateSettings({})).rejects.toThrow(
+      /No settings provided/,
+    );
+  });
 });

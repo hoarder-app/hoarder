@@ -4,7 +4,8 @@
     "sort": {
       "newest_first": "Legújabb elől",
       "oldest_first": "Legrégebbi elől",
-      "title": "Rendezés"
+      "title": "Rendezés",
+      "relevant_first": "Legrelevánsabb elöl"
     },
     "unfavorite": "Kedvencség visszavonása",
     "refresh": "Frissítés",
@@ -36,13 +37,16 @@
     "close": "Bezárás",
     "close_bulk_edit": "Tömeges szerkesztés bezárása",
     "save": "Mentés",
-    "open_editor": "Szerkesztő megnyitása"
+    "open_editor": "Szerkesztő megnyitása",
+    "toggle_show_archived": "Archiváltak megjelenítése"
   },
   "settings": {
     "user_settings": "Felhasználói beállítások",
     "feeds": {
       "rss_subscriptions": "RSS feliratkozások",
-      "add_a_subscription": "Feliratkozás hozzáadása"
+      "add_a_subscription": "Feliratkozás hozzáadása",
+      "feed_enabled": "RSS-hírfolyam engedélyezve",
+      "feed_disabled": "RSS-hírfolyam letiltva"
     },
     "info": {
       "confirm_new_password": "Új jelszó megerősítése",
@@ -52,7 +56,20 @@
       "current_password": "Aktuális jelszó",
       "new_password": "Új jelszó",
       "options": "Beállítások",
-      "interface_lang": "Felület nyelve"
+      "interface_lang": "Felület nyelve",
+      "user_settings": {
+        "user_settings_updated": "A felhasználói beállítások frissítve lettek!",
+        "bookmark_click_action": {
+          "title": "Könyvjelzőre kattintás művelete",
+          "open_external_url": "Eredeti URL megnyitása",
+          "open_bookmark_details": "Könyvjelző részleteinek megnyitása"
+        },
+        "archive_display_behaviour": {
+          "title": "Archivált könyvjelzők",
+          "show": "Archivált könyvjelzők megjelenítése címkékben és listákban",
+          "hide": "Archivált könyvjelzők elrejtése címkékben és listákban"
+        }
+      }
     },
     "webhooks": {
       "description": "A webhook-ok segítségével műveleteket indíthatsz a könyvjelzők létrehozásakor, módosításakor és újratérképezésekor.",
@@ -321,7 +338,18 @@
     "destination_list": "Céllista",
     "delete_after_merge": "Az eredeti lista törlése az egyesítés után",
     "no_destination": "Nincs cél",
-    "description": "Leírás (opcionális)"
+    "description": "Leírás (opcionális)",
+    "share_list": "Lista megosztása",
+    "rss": {
+      "title": "RSS-hírcsatorna",
+      "description": "RSS-hírcsatorna engedélyezése ehhez a listához",
+      "feed_url": "RSS-hírcsatorna URL-je"
+    },
+    "public_list": {
+      "title": "Nyilvános lista",
+      "description": "Mások megtekinthetik ezt a listát",
+      "share_link": "Link megosztása"
+    }
   },
   "admin": {
     "background_jobs": {
@@ -347,7 +375,9 @@
       "regenerate_ai_tags_for_failed_bookmarks_only": "Hibás könyvjelzők MI címkéjének lecserélése",
       "reindex_all_bookmarks": "Minden könyvjelző újraindexelése",
       "compact_assets": "Kompakt tulajdonok",
-      "reprocess_assets_fix_mode": "Tulajdonok függvényezése (Fix Mod)"
+      "reprocess_assets_fix_mode": "Tulajdonok függvényezése (Fix Mod)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "AI-összefoglalók újragenerálása csak a sikertelen könyvjelzőkhöz",
+      "regenerate_ai_summaries_for_all_bookmarks": "AI-összefoglalók újragenerálása az összes könyvjelzőhöz"
     },
     "users_list": {
       "asset_sizes": "Tulajdon méretek",
@@ -394,7 +424,11 @@
   "preview": {
     "view_original": "Eredeti megjelenítése",
     "cached_content": "Gyorsítótárazott tartalmak",
-    "reader_view": "Olvasó nézet"
+    "reader_view": "Olvasó nézet",
+    "tabs": {
+      "content": "Tartalom",
+      "details": "Részletek"
+    }
   },
   "dialogs": {
     "bookmarks": {

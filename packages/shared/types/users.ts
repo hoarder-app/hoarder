@@ -39,3 +39,18 @@ export const zUserStatsResponseSchema = z.object({
   numLists: z.number(),
   numHighlights: z.number(),
 });
+
+export const zUserSettingsSchema = z.object({
+  bookmarkClickAction: z.enum([
+    "open_original_link",
+    "expand_bookmark_preview",
+  ]),
+  archiveDisplayBehaviour: z.enum(["show", "hide"]),
+});
+
+export type ZUserSettings = z.infer<typeof zUserSettingsSchema>;
+
+export const zUpdateUserSettingsSchema = zUserSettingsSchema.partial().pick({
+  bookmarkClickAction: true,
+  archiveDisplayBehaviour: true,
+});

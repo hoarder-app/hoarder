@@ -25,10 +25,6 @@
       }
     },
     "schemas": {
-      "AssetId": {
-        "type": "string",
-        "example": "ieidlxygmwj87oxz5hxttoc8"
-      },
       "BookmarkId": {
         "type": "string",
         "example": "ieidlxygmwj87oxz5hxttoc8"
@@ -42,6 +38,10 @@
         "example": "ieidlxygmwj87oxz5hxttoc8"
       },
       "HighlightId": {
+        "type": "string",
+        "example": "ieidlxygmwj87oxz5hxttoc8"
+      },
+      "AssetId": {
         "type": "string",
         "example": "ieidlxygmwj87oxz5hxttoc8"
       },
@@ -69,6 +69,15 @@
             "type": "boolean"
           },
           "taggingStatus": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "success",
+              "failure",
+              "pending"
+            ]
+          },
+          "summarizationStatus": {
             "type": "string",
             "nullable": true,
             "enum": [
@@ -307,6 +316,7 @@
           "archived",
           "favourited",
           "taggingStatus",
+          "summarizationStatus",
           "tags",
           "content",
           "assets"
@@ -416,13 +426,17 @@
           "query": {
             "type": "string",
             "nullable": true
+          },
+          "public": {
+            "type": "boolean"
           }
         },
         "required": [
           "id",
           "name",
           "icon",
-          "parentId"
+          "parentId",
+          "public"
         ]
       },
       "Tag": {
@@ -474,17 +488,33 @@
           "highlights",
           "nextCursor"
         ]
-      }
+      },
+      "Asset": {
+        "type": "object",
+        "properties": {
+          "assetId": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "size": {
+            "type": "number"
+          },
+          "fileName": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "assetId",
+          "contentType",
+          "size",
+          "fileName"
+        ]
+      },
+      "File to be uploaded": {}
     },
     "parameters": {
-      "AssetId": {
-        "schema": {
-          "$ref": "#/components/schemas/AssetId"
-        },
-        "required": true,
-        "name": "assetId",
-        "in": "path"
-      },
       "BookmarkId": {
         "schema": {
           "$ref": "#/components/schemas/BookmarkId"
@@ -515,6 +545,14 @@
         },
         "required": true,
         "name": "highlightId",
+        "in": "path"
+      },
+      "AssetId": {
+        "schema": {
+          "$ref": "#/components/schemas/AssetId"
+        },
+        "required": true,
+        "name": "assetId",
         "in": "path"
       }
     }
@@ -547,6 +585,19 @@
             },
             "required": false,
             "name": "favourited",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            },
+            "required": false,
+            "name": "sortOrder",
             "in": "query"
           },
           {
@@ -772,6 +823,20 @@
             },
             "required": true,
             "name": "q",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc",
+                "relevance"
+              ],
+              "default": "relevance"
+            },
+            "required": false,
+            "name": "sortOrder",
             "in": "query"
           },
           {
@@ -1042,6 +1107,15 @@
                         "pending"
                       ]
                     },
+                    "summarizationStatus": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "success",
+                        "failure",
+                        "pending"
+                      ]
+                    },
                     "note": {
                       "type": "string",
                       "nullable": true
@@ -1057,7 +1131,8 @@
                     "modifiedAt",
                     "archived",
                     "favourited",
-                    "taggingStatus"
+                    "taggingStatus",
+                    "summarizationStatus"
                   ]
                 }
               }
@@ -1142,6 +1217,15 @@
                         "pending"
                       ]
                     },
+                    "summarizationStatus": {
+                      "type": "string",
+                      "nullable": true,
+                      "enum": [
+                        "success",
+                        "failure",
+                        "pending"
+                      ]
+                    },
                     "note": {
                       "type": "string",
                       "nullable": true
@@ -1157,7 +1241,8 @@
                     "modifiedAt",
                     "archived",
                     "favourited",
-                    "taggingStatus"
+                    "taggingStatus",
+                    "summarizationStatus"
                   ]
                 }
               }
@@ -1925,6 +2010,9 @@
                   "query": {
                     "type": "string",
                     "minLength": 1
+                  },
+                  "public": {
+                    "type": "boolean"
                   }
                 }
               }
@@ -1969,8 +2057,8 @@
     },
     "/lists/{listId}/bookmarks": {
       "get": {
-        "description": "Get the bookmarks in a list",
-        "summary": "Get a bookmarks in a list",
+        "description": "Get bookmarks in the list",
+        "summary": "Get bookmarks in the list",
         "tags": [
           "Lists"
         ],
@@ -1982,6 +2070,19 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/ListId"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            },
+            "required": false,
+            "name": "sortOrder",
+            "in": "query"
           },
           {
             "schema": {
@@ -2070,28 +2171,6 @@
         "responses": {
           "204": {
             "description": "No content - the bookmark was added"
-          },
-          "400": {
-            "description": "Bookmark already in list",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "string"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "code",
-                    "message"
-                  ]
-                }
-              }
-            }
           },
           "404": {
             "description": "List or bookmark not found",
@@ -2216,6 +2295,61 @@
                   },
                   "required": [
                     "tags"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "description": "Create a new tag",
+        "summary": "Create a new tag",
+        "tags": [
+          "Tags"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "The data to create the tag with.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created tag",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name"
                   ]
                 }
               }
@@ -2357,7 +2491,19 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Tag"
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "name"
+                  ]
                 }
               }
             }
@@ -2389,8 +2535,8 @@
     },
     "/tags/{tagId}/bookmarks": {
       "get": {
-        "description": "Get the bookmarks with the tag",
-        "summary": "Get a bookmarks with the tag",
+        "description": "Get bookmarks with the tag",
+        "summary": "Get bookmarks with the tag",
         "tags": [
           "Tags"
         ],
@@ -2402,6 +2548,19 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/TagId"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            },
+            "required": false,
+            "name": "sortOrder",
+            "in": "query"
           },
           {
             "schema": {
@@ -2893,6 +3052,74 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/assets": {
+      "post": {
+        "description": "Upload a new asset",
+        "summary": "Upload a new asset",
+        "tags": [
+          "Assets"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "The data to create the asset with.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/File to be uploaded"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Details about the created asset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Asset"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assets/{assetId}": {
+      "get": {
+        "description": "Get asset by its id",
+        "summary": "Get a single asset",
+        "tags": [
+          "Assets"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/AssetId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset content. Content type is determined by the asset type."
           }
         }
       }

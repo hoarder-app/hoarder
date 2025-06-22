@@ -1,11 +1,12 @@
 "use client";
 
-import React from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { BookmarkTagsEditor } from "@/components/dashboard/bookmarks/BookmarkTagsEditor";
 import { FullPageSpinner } from "@/components/ui/full-page-spinner";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipContent,
@@ -17,13 +18,13 @@ import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { CalendarDays, ExternalLink } from "lucide-react";
 
+import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 import {
   getBookmarkTitle,
   getSourceUrl,
   isBookmarkStillCrawling,
   isBookmarkStillLoading,
-} from "@karakeep/shared-react/utils/bookmarkUtils";
-import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
+} from "@karakeep/shared/utils/bookmarkUtils";
 
 import SummarizeBookmarkArea from "../bookmarks/SummarizeBookmarkArea";
 import ActionBar from "./ActionBar";
@@ -68,6 +69,8 @@ export default function BookmarkPreview({
   initialData?: ZBookmark;
 }) {
   const { t } = useTranslation();
+  const [activeTab, setActiveTab] = useState<string>("content");
+
   const { data: bookmark } = api.bookmarks.getBookmark.useQuery(
     {
       bookmarkId,
@@ -111,45 +114,86 @@ export default function BookmarkPreview({
   const sourceUrl = getSourceUrl(bookmark);
   const title = getBookmarkTitle(bookmark);
 
-  return (
-    <div className="grid h-full grid-rows-3 gap-2 overflow-hidden bg-background lg:grid-cols-3 lg:grid-rows-none">
-      <div className="row-span-2 h-full w-full overflow-auto p-2 md:col-span-2 lg:row-auto">
-        {isBookmarkStillCrawling(bookmark) ? <ContentLoading /> : content}
-      </div>
-      <div className="row-span-1  flex flex-col gap-4 overflow-auto bg-accent p-4 md:col-span-2 lg:col-span-1 lg:row-auto">
-        <div className="flex w-full flex-col items-center justify-center gap-y-2">
-          <div className="flex w-full items-center justify-center gap-2">
-            <p className="line-clamp-2 text-ellipsis break-words text-lg">
-              {title === undefined || title === "" ? "Untitled" : title}
-            </p>
-          </div>
-          {sourceUrl && (
-            <Link
-              href={sourceUrl}
-              target="_blank"
-              className="flex items-center gap-2 text-gray-400"
-            >
-              <span>{t("preview.view_original")}</span>
-              <ExternalLink />
-            </Link>
-          )}
-          <Separator />
-        </div>
+  // Common content for both layouts
+  const contentSection = isBookmarkStillCrawling(bookmark) ? (
+    <ContentLoading />
+  ) : (
+    content
+  );
 
-        <CreationTime createdAt={bookmark.createdAt} />
-        <SummarizeBookmarkArea bookmark={bookmark} />
-        <div className="flex items-center gap-4">
-          <p className="text-sm text-gray-400">{t("common.tags")}</p>
-          <BookmarkTagsEditor bookmark={bookmark} />
+  const detailsSection = (
+    <div className="flex flex-col gap-4">
+      <div className="flex w-full flex-col items-center justify-center gap-y-2">
+        <div className="flex w-full items-center justify-center gap-2">
+          <p className="line-clamp-2 text-ellipsis break-words text-lg">
+            {title === undefined || title === "" ? "Untitled" : title}
+          </p>
         </div>
-        <div className="flex gap-4">
-          <p className="pt-2 text-sm text-gray-400">{t("common.note")}</p>
-          <NoteEditor bookmark={bookmark} />
-        </div>
-        <AttachmentBox bookmark={bookmark} />
-        <HighlightsBox bookmarkId={bookmark.id} />
-        <ActionBar bookmark={bookmark} />
+        {sourceUrl && (
+          <Link
+            href={sourceUrl}
+            target="_blank"
+            className="flex items-center gap-2 text-gray-400"
+          >
+            <span>{t("preview.view_original")}</span>
+            <ExternalLink />
+          </Link>
+        )}
+        <Separator />
       </div>
+      <CreationTime createdAt={bookmark.createdAt} />
+      <SummarizeBookmarkArea bookmark={bookmark} />
+      <div className="flex items-center gap-4">
+        <p className="text-sm text-gray-400">{t("common.tags")}</p>
+        <BookmarkTagsEditor bookmark={bookmark} />
+      </div>
+      <div className="flex gap-4">
+        <p className="pt-2 text-sm text-gray-400">{t("common.note")}</p>
+        <NoteEditor bookmark={bookmark} />
+      </div>
+      <AttachmentBox bookmark={bookmark} />
+      <HighlightsBox bookmarkId={bookmark.id} />
+      <ActionBar bookmark={bookmark} />
     </div>
+  );
+
+  return (
+    <>
+      {/* Render original layout for wide screens */}
+      <div className="hidden h-full grid-cols-3 overflow-hidden bg-background lg:grid">
+        <div className="col-span-2 h-full w-full overflow-auto p-2">
+          {contentSection}
+        </div>
+        <div className="flex flex-col gap-4 overflow-auto bg-accent p-4">
+          {detailsSection}
+        </div>
+      </div>
+
+      {/* Render tabbed layout for narrow/vertical screens */}
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="flex h-full w-full flex-col overflow-hidden lg:hidden"
+      >
+        <TabsList
+          className={`sticky top-0 z-10 grid h-auto w-full grid-cols-2`}
+        >
+          <TabsTrigger value="content">{t("preview.tabs.content")}</TabsTrigger>
+          <TabsTrigger value="details">{t("preview.tabs.details")}</TabsTrigger>
+        </TabsList>
+        <TabsContent
+          value="content"
+          className="h-full flex-1 overflow-hidden overflow-y-auto bg-background p-2 data-[state=inactive]:hidden"
+        >
+          {contentSection}
+        </TabsContent>
+        <TabsContent
+          value="details"
+          className="h-full overflow-y-auto bg-accent p-4 data-[state=inactive]:hidden"
+        >
+          {detailsSection}
+        </TabsContent>
+      </Tabs>
+    </>
   );
 }

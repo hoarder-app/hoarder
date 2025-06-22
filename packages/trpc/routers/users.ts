@@ -10,11 +10,14 @@ import {
   bookmarkTags,
   highlights,
   users,
+  userSettings,
 } from "@karakeep/db/schema";
 import { deleteUserAssets } from "@karakeep/shared/assetdb";
 import serverConfig from "@karakeep/shared/config";
 import {
   zSignUpSchema,
+  zUpdateUserSettingsSchema,
+  zUserSettingsSchema,
   zUserStatsResponseSchema,
   zWhoAmIResponseSchema,
 } from "@karakeep/shared/types/users";
@@ -28,13 +31,19 @@ import {
   router,
 } from "../index";
 
-export async function createUser(
-  input: z.infer<typeof zSignUpSchema>,
-  ctx: Context,
-  role?: "user" | "admin",
+export async function createUserRaw(
+  db: Context["db"],
+  input: {
+    name: string;
+    email: string;
+    password?: string;
+    salt?: string;
+    role?: "user" | "admin";
+    emailVerified?: Date | null;
+  },
 ) {
-  return ctx.db.transaction(async (trx) => {
-    let userRole = role;
+  return await db.transaction(async (trx) => {
+    let userRole = input.role;
     if (!userRole) {
       const [{ count: userCount }] = await trx
         .select({ count: count() })
@@ -42,24 +51,31 @@ export async function createUser(
       userRole = userCount == 0 ? "admin" : "user";
     }
 
-    const salt = generatePasswordSalt();
     try {
-      const result = await trx
+      const [result] = await trx
         .insert(users)
         .values({
           name: input.name,
           email: input.email,
-          password: await hashPassword(input.password, salt),
-          salt,
+          password: input.password,
+          salt: input.salt,
           role: userRole,
+          emailVerified: input.emailVerified,
         })
         .returning({
           id: users.id,
           name: users.name,
           email: users.email,
           role: users.role,
+          emailVerified: users.emailVerified,
         });
-      return result[0];
+
+      // Insert user settings for the new user
+      await trx.insert(userSettings).values({
+        userId: result.id,
+      });
+
+      return result;
     } catch (e) {
       if (e instanceof SqliteError) {
         if (e.code == "SQLITE_CONSTRAINT_UNIQUE") {
@@ -74,6 +90,21 @@ export async function createUser(
         message: "Something went wrong",
       });
     }
+  });
+}
+
+export async function createUser(
+  input: z.infer<typeof zSignUpSchema>,
+  ctx: Context,
+  role?: "user" | "admin",
+) {
+  const salt = generatePasswordSalt();
+  return await createUserRaw(ctx.db, {
+    name: input.name,
+    email: input.email,
+    password: await hashPassword(input.password, salt),
+    salt,
+    role,
   });
 }
 
@@ -147,7 +178,7 @@ export const usersAppRouter = router({
       let user;
       try {
         user = await validatePassword(ctx.user.email, input.currentPassword);
-      } catch (e) {
+      } catch {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
       invariant(user.id, ctx.user.id);
@@ -241,5 +272,39 @@ export const usersAppRouter = router({
         numLists,
         numHighlights,
       };
+    }),
+  settings: authedProcedure
+    .output(zUserSettingsSchema)
+    .query(async ({ ctx }) => {
+      const settings = await ctx.db.query.userSettings.findFirst({
+        where: eq(userSettings.userId, ctx.user.id),
+      });
+      if (!settings) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User settings not found",
+        });
+      }
+      return {
+        bookmarkClickAction: settings.bookmarkClickAction,
+        archiveDisplayBehaviour: settings.archiveDisplayBehaviour,
+      };
+    }),
+  updateSettings: authedProcedure
+    .input(zUpdateUserSettingsSchema)
+    .mutation(async ({ input, ctx }) => {
+      if (Object.keys(input).length === 0) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "No settings provided",
+        });
+      }
+      await ctx.db
+        .update(userSettings)
+        .set({
+          bookmarkClickAction: input.bookmarkClickAction,
+          archiveDisplayBehaviour: input.archiveDisplayBehaviour,
+        })
+        .where(eq(userSettings.userId, ctx.user.id));
     }),
 });

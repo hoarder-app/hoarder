@@ -48,7 +48,8 @@
     "sort": {
       "newest_first": "Newest First",
       "oldest_first": "Oldest First",
-      "title": "Sort"
+      "title": "Sort",
+      "relevant_first": "Most Relevant First"
     },
     "change_layout": "Change Layout",
     "archive": "Archive",
@@ -81,7 +82,8 @@
     "merge": "Merge",
     "cancel": "Cancel",
     "apply_all": "Apply All",
-    "ignore": "Ignore"
+    "ignore": "Ignore",
+    "toggle_show_archived": "Show Archived"
   },
   "highlights": {
     "no_highlights": "You don't have any highlights yet."
@@ -149,10 +151,10 @@
       "align_right": "Right Align"
     },
     "quickly_focus": "You can quickly focus on this field by pressing ⌘ + E",
-    "multiple_urls_dialog_title": "Importing URLs as separate Bookmarks?",
+    "multiple_urls_dialog_title": "Importing URLs as separate bookmarks?",
     "multiple_urls_dialog_desc": "The input contains multiple URLs on separate lines. Do you want to import them as separate bookmarks?",
-    "import_as_text": "Import as Text Bookmark",
-    "import_as_separate_bookmarks": "Import as separate Bookmarks",
+    "import_as_text": "Import as text bookmark",
+    "import_as_separate_bookmarks": "Import as separate bookmarks",
     "placeholder": "Paste a link or an image, write a note, or drag and drop an image in here…",
     "placeholder_v2": "Paste a link, write a note, or drop an image…",
     "new_item": "NEW ITEM",
@@ -179,7 +181,20 @@
       "new_password": "New Password",
       "confirm_new_password": "Confirm New Password",
       "options": "Options",
-      "interface_lang": "Interface Language"
+      "interface_lang": "Interface Language",
+      "user_settings": {
+        "user_settings_updated": "User settings have been updated!",
+        "bookmark_click_action": {
+          "title": "Bookmark Click Action",
+          "open_external_url": "Open Original URL",
+          "open_bookmark_details": "Open Bookmark Details"
+        },
+        "archive_display_behaviour": {
+          "title": "Archived Bookmarks",
+          "show": "Show archived bookmarks in tags and lists",
+          "hide": "Hide archived bookmarks in tags and lists"
+        }
+      }
     },
     "ai": {
       "ai_settings": "AI Settings",
@@ -196,7 +211,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS Subscriptions",
-      "add_a_subscription": "Add a Subscription"
+      "add_a_subscription": "Add a Subscription",
+      "feed_enabled": "RSS Feed enabled, mate",
+      "feed_disabled": "RSS Feed disabled, mate"
     },
     "webhooks": {
       "webhooks": "Webhooks",
@@ -205,7 +222,8 @@
         "title": "Events",
         "crawled": "Crawled",
         "created": "Created",
-        "edited": "Edited"
+        "edited": "Edited",
+        "deleted": "Deleted"
       },
       "auth_token": "Auth Token",
       "delete_webhook": "Delete Webhook",
@@ -266,7 +284,7 @@
       "rule_has_been_created": "Rule's been created!",
       "rule_has_been_updated": "Rule has been updated!",
       "rule_has_been_deleted": "Rule's been deleted!",
-      "no_rules_created_yet": "No rules created yet, dude",
+      "no_rules_created_yet": "No rules have been created yet",
       "create_your_first_rule": "Create your first rule to automate your workflow",
       "conditions_types": {
         "always": "Always",
@@ -330,7 +348,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Regenerate AI Tags for All Bookmarks",
       "reindex_all_bookmarks": "Reindex All Bookmarks",
       "compact_assets": "Compact Assets",
-      "reprocess_assets_fix_mode": "Reprocess Assets (Fix Mode)"
+      "reprocess_assets_fix_mode": "Reprocess Assets (Fix Mode)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Regenerate AI Summaries for Failed Bookmarks Only",
+      "regenerate_ai_summaries_for_all_bookmarks": "Regenerate AI Summaries for All Bookmarks"
     },
     "users_list": {
       "users_list": "Users List",
@@ -365,7 +385,18 @@
     "smart_list": "Smart List",
     "search_query": "Search Query",
     "search_query_help": "Learn more about the search query language.",
-    "description": "Description (Optional)"
+    "description": "Description (Optional)",
+    "share_list": "Share List",
+    "rss": {
+      "title": "RSS Feed",
+      "description": "Enable an RSS feed for this list",
+      "feed_url": "RSS Feed URL"
+    },
+    "public_list": {
+      "title": "Public List",
+      "description": "Allow others to view this list",
+      "share_link": "Share Link"
+    }
   },
   "search": {
     "is_favorited": "Is Favorited",
@@ -381,7 +412,7 @@
     "created_on_or_before": "Created on or Before",
     "not_created_on_or_before": "Not Created on or Before",
     "created_within": "Created Within",
-    "created_earlier_than": "Created Earlier Than",
+    "created_earlier_than": "Created earlier than",
     "day_s": " Day(s)",
     "week_s": " Week(s)",
     "month_s": " Month(s)",
@@ -390,39 +421,43 @@
     "week_s_ago": " Week(s) Ago",
     "month_s_ago": " Month(s) Ago",
     "year_s_ago": " Year(s) Ago",
-    "url_contains": "URL Contains",
+    "url_contains": "URL contains",
     "is_in_list": "Is In List",
     "is_not_in_list": "Is not In List",
     "has_tag": "Has Tag",
-    "does_not_have_tag": "Does Not Have Tag",
-    "full_text_search": "Full Text Search",
+    "does_not_have_tag": "Does not have tag",
+    "full_text_search": "Full text search",
     "type_is": "Type is",
     "type_is_not": "Type is not",
-    "url_does_not_contain": "URL Does Not Contain",
-    "is_from_feed": "Is from RSS Feed",
-    "is_not_from_feed": "Is not from RSS Feed",
+    "url_does_not_contain": "URL does not contain",
+    "is_from_feed": "Is from RSS feed",
+    "is_not_from_feed": "Is not from RSS feed",
     "and": "And",
     "or": "Or"
   },
   "preview": {
     "view_original": "View Original",
     "cached_content": "Cached Content",
-    "reader_view": "Reader View"
+    "reader_view": "Reader View",
+    "tabs": {
+      "content": "Content",
+      "details": "Details"
+    }
   },
   "toasts": {
     "bookmarks": {
-      "deleted": "The bookmark has been deleted!",
-      "refetch": "Re-fetch has been added to the queue!",
+      "deleted": "The bookmark has been deleted",
+      "refetch": "Re-fetch has been added to the queue",
       "full_page_archive": "Full Page Archive creation has been triggered",
       "delete_from_list": "The bookmark has been deleted from the list",
-      "clipboard_copied": "Link has been added to your clipboard!",
-      "updated": "The bookmark has been updated!"
+      "clipboard_copied": "Link has been added to your clipboard",
+      "updated": "The bookmark has been updated"
     },
     "lists": {
-      "created": "List has been created!",
-      "updated": "List has been updated!",
-      "merged": "List has been merged!",
-      "deleted": "List has been deleted!"
+      "created": "List has been created",
+      "updated": "List has been updated",
+      "merged": "List has been merged",
+      "deleted": "List has been deleted"
     }
   },
   "dialogs": {

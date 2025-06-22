@@ -28,7 +28,8 @@
     "sort": {
       "title": "Sắp xếp",
       "newest_first": "Sắp xếp theo mới nhất",
-      "oldest_first": "Sắp xếp theo cũ nhất"
+      "oldest_first": "Sắp xếp theo cũ nhất",
+      "relevant_first": "Liên quan nhất trước"
     },
     "ignore": "Bỏ qua",
     "apply_all": "Áp dụng cho tất cả",
@@ -36,7 +37,8 @@
     "edit_title": "Sửa tiêu đề",
     "add": "Thêm",
     "fetch_now": "Lấy dữ liệu ngay",
-    "open_editor": "Mở trình chỉnh sửa"
+    "open_editor": "Mở trình chỉnh sửa",
+    "toggle_show_archived": "Hiển thị đã lưu trữ"
   },
   "layouts": {
     "list": "Danh sách",
@@ -47,7 +49,9 @@
   "settings": {
     "feeds": {
       "add_a_subscription": "Thêm đăng kí",
-      "rss_subscriptions": "Đăng kí RSS"
+      "rss_subscriptions": "Đăng kí RSS",
+      "feed_enabled": "Đã bật Nguồn cấp RSS",
+      "feed_disabled": "Đã tắt Nguồn cấp RSS"
     },
     "import": {
       "imported_bookmarks": "Đánh dấu trang đã được nhập",
@@ -107,7 +111,20 @@
       "new_password": "Mật khẩu mới",
       "confirm_new_password": "Xác nhận mật khẩu mới",
       "options": "Tùy chọn",
-      "interface_lang": "Ngôn ngữ giao diện"
+      "interface_lang": "Ngôn ngữ giao diện",
+      "user_settings": {
+        "user_settings_updated": "Đã cập nhật cài đặt người dùng!",
+        "bookmark_click_action": {
+          "title": "Hành động khi nhấp vào bookmark",
+          "open_external_url": "Mở URL gốc",
+          "open_bookmark_details": "Mở chi tiết bookmark"
+        },
+        "archive_display_behaviour": {
+          "title": "Bookmark đã lưu trữ",
+          "show": "Hiển thị các bookmark đã lưu trữ trong tag và danh sách",
+          "hide": "Ẩn các bookmark đã lưu trữ trong tag và danh sách"
+        }
+      }
     },
     "user_settings": "Cài đặt người dùng",
     "back_to_app": "Quay lại ứng dụng",
@@ -217,7 +234,9 @@
       "reindex_all_bookmarks": "Lập chỉ mục lại tất cả dấu trang",
       "compact_assets": "Gộp tài sản",
       "reprocess_assets_fix_mode": "Xử lý lại tài sản (Chế độ sửa lỗi)",
-      "without_inference": "Không có suy luận"
+      "without_inference": "Không có suy luận",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Tạo lại tóm tắt AI chỉ cho các bookmark bị lỗi",
+      "regenerate_ai_summaries_for_all_bookmarks": "Tạo lại tóm tắt AI cho tất cả các bookmark"
     }
   },
   "common": {
@@ -279,7 +298,18 @@
     "destination_list": "Danh sách đích",
     "delete_after_merge": "Xóa danh sách gốc sau khi hợp nhất",
     "no_destination": "Không có đích đến",
-    "description": "Mô tả (Tùy chọn)"
+    "description": "Mô tả (Tùy chọn)",
+    "share_list": "Chia sẻ danh sách",
+    "rss": {
+      "title": "Nguồn cấp RSS",
+      "description": "Bật nguồn cấp RSS cho danh sách này",
+      "feed_url": "URL nguồn cấp RSS"
+    },
+    "public_list": {
+      "title": "Danh sách công khai",
+      "description": "Cho phép người khác xem danh sách này",
+      "share_link": "Chia sẻ liên kết"
+    }
   },
   "search": {
     "is_favorited": "Được ưa thích",
@@ -426,7 +456,11 @@
   "preview": {
     "view_original": "Xem bản gốc",
     "cached_content": "Nội dung được lưu trong bộ nhớ cache",
-    "reader_view": "Chế độ đọc"
+    "reader_view": "Chế độ đọc",
+    "tabs": {
+      "content": "Nội dung",
+      "details": "Chi tiết"
+    }
   },
   "bookmark_editor": {
     "title": "Sửa dấu trang",

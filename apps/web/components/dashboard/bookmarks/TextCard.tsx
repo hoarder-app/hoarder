@@ -7,8 +7,8 @@ import { bookmarkLayoutSwitch } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
 
 import type { ZBookmarkTypeText } from "@karakeep/shared/types/bookmarks";
-import { getAssetUrl } from "@karakeep/shared-react/utils/assetUtils";
-import { getSourceUrl } from "@karakeep/shared-react/utils/bookmarkUtils";
+import { getAssetUrl } from "@karakeep/shared/utils/assetUtils";
+import { getSourceUrl } from "@karakeep/shared/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 import FooterLinkURL from "./FooterLinkURL";

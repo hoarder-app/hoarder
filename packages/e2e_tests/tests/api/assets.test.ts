@@ -39,7 +39,7 @@ describe("Assets API", () => {
 
     // Retrieve the asset
     const resp = await fetch(
-      `http://localhost:${port}/api/assets/${uploadResponse.assetId}`,
+      `http://localhost:${port}/api/v1/assets/${uploadResponse.assetId}`,
       {
         headers: {
           authorization: `Bearer ${apiKey}`,
@@ -123,7 +123,7 @@ describe("Assets API", () => {
 
     // Verify asset is deleted
     const assetResponse = await fetch(
-      `http://localhost:${port}/api/assets/${uploadResponse.assetId}`,
+      `http://localhost:${port}/api/v1/assets/${uploadResponse.assetId}`,
       {
         headers: {
           authorization: `Bearer ${apiKey}`,

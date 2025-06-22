@@ -127,7 +127,7 @@ function AdminActions() {
         variant="destructive"
         loading={isInferencePending}
         onClick={() =>
-          reRunInferenceOnAllBookmarks({ taggingStatus: "failure" })
+          reRunInferenceOnAllBookmarks({ type: "tag", status: "failure" })
         }
       >
         {t("admin.actions.regenerate_ai_tags_for_failed_bookmarks_only")}
@@ -135,9 +135,29 @@ function AdminActions() {
       <ActionButton
         variant="destructive"
         loading={isInferencePending}
-        onClick={() => reRunInferenceOnAllBookmarks({ taggingStatus: "all" })}
+        onClick={() =>
+          reRunInferenceOnAllBookmarks({ type: "tag", status: "all" })
+        }
       >
         {t("admin.actions.regenerate_ai_tags_for_all_bookmarks")}
+      </ActionButton>
+      <ActionButton
+        variant="destructive"
+        loading={isInferencePending}
+        onClick={() =>
+          reRunInferenceOnAllBookmarks({ type: "summarize", status: "failure" })
+        }
+      >
+        {t("admin.actions.regenerate_ai_summaries_for_failed_bookmarks_only")}
+      </ActionButton>
+      <ActionButton
+        variant="destructive"
+        loading={isInferencePending}
+        onClick={() =>
+          reRunInferenceOnAllBookmarks({ type: "summarize", status: "all" })
+        }
+      >
+        {t("admin.actions.regenerate_ai_summaries_for_all_bookmarks")}
       </ActionButton>
       <ActionButton
         variant="destructive"

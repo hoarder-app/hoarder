@@ -7,8 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useShowArchived } from "@/components/utils/useShowArchived";
 import { useTranslation } from "@/lib/i18n/client";
-import { Combine, Trash2 } from "lucide-react";
+import { Combine, Square, SquareCheck, Trash2 } from "lucide-react";
 
 import DeleteTagConfirmationDialog from "./DeleteTagConfirmationDialog";
 import { MergeTagModal } from "./MergeTagModal";
@@ -21,6 +22,8 @@ export function TagOptions({
   children?: React.ReactNode;
 }) {
   const { t } = useTranslation();
+  const { showArchived, onClickShowArchived } = useShowArchived();
+
   const [deleteTagDialogOpen, setDeleteTagDialogOpen] = useState(false);
   const [mergeTagDialogOpen, setMergeTagDialogOpen] = useState(false);
 
@@ -45,7 +48,14 @@ export function TagOptions({
           <Combine className="size-4" />
           <span>{t("actions.merge")}</span>
         </DropdownMenuItem>
-
+        <DropdownMenuItem className="flex gap-2" onClick={onClickShowArchived}>
+          {showArchived ? (
+            <SquareCheck className="size-4" />
+          ) : (
+            <Square className="size-4" />
+          )}
+          <span>{t("actions.toggle_show_archived")}</span>
+        </DropdownMenuItem>
         <DropdownMenuItem
           className="flex gap-2"
           onClick={() => setDeleteTagDialogOpen(true)}

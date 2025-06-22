@@ -1,20 +1,19 @@
 import "dotenv/config";
 
-import { AssetPreprocessingWorker } from "assetPreprocessingWorker";
-import { FeedRefreshingWorker, FeedWorker } from "feedWorker";
-import { RuleEngineWorker } from "ruleEngineWorker";
-import { TidyAssetsWorker } from "tidyAssetsWorker";
-
 import serverConfig from "@karakeep/shared/config";
 import logger from "@karakeep/shared/logger";
 import { runQueueDBMigrations } from "@karakeep/shared/queues";
 
-import { CrawlerWorker } from "./crawlerWorker";
 import { shutdownPromise } from "./exit";
-import { OpenAiWorker } from "./openaiWorker";
-import { SearchIndexingWorker } from "./searchWorker";
-import { VideoWorker } from "./videoWorker";
-import { WebhookWorker } from "./webhookWorker";
+import { AssetPreprocessingWorker } from "./workers/assetPreprocessingWorker";
+import { CrawlerWorker } from "./workers/crawlerWorker";
+import { FeedRefreshingWorker, FeedWorker } from "./workers/feedWorker";
+import { OpenAiWorker } from "./workers/inference/inferenceWorker";
+import { RuleEngineWorker } from "./workers/ruleEngineWorker";
+import { SearchIndexingWorker } from "./workers/searchWorker";
+import { TidyAssetsWorker } from "./workers/tidyAssetsWorker";
+import { VideoWorker } from "./workers/videoWorker";
+import { WebhookWorker } from "./workers/webhookWorker";
 
 async function main() {
   logger.info(`Workers version: ${serverConfig.serverVersion ?? "not set"}`);
@@ -22,7 +21,7 @@ async function main() {
 
   const [
     crawler,
-    openai,
+    inference,
     search,
     tidyAssets,
     video,
@@ -46,7 +45,7 @@ async function main() {
   await Promise.any([
     Promise.all([
       crawler.run(),
-      openai.run(),
+      inference.run(),
       search.run(),
       tidyAssets.run(),
       video.run(),
@@ -58,12 +57,12 @@ async function main() {
     shutdownPromise,
   ]);
   logger.info(
-    "Shutting down crawler, openai, tidyAssets, video, feed, assetPreprocessing, webhook, ruleEngine and search workers ...",
+    "Shutting down crawler, inference, tidyAssets, video, feed, assetPreprocessing, webhook, ruleEngine and search workers ...",
   );
 
   FeedRefreshingWorker.stop();
   crawler.stop();
-  openai.stop();
+  inference.stop();
   search.stop();
   tidyAssets.stop();
   video.stop();
