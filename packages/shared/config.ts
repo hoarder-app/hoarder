@@ -17,6 +17,8 @@ const optionalStringBool = () =>
 
 const allEnv = z.object({
   API_URL: z.string().url().default("http://localhost:3000"),
+  NEXTAUTH_URL: z.string().url().default("http://localhost:3000"),
+  NEXTAUTH_SECRET: z.string().optional(),
   DISABLE_SIGNUPS: stringBool("false"),
   DISABLE_PASSWORD_AUTH: stringBool("false"),
   OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING: stringBool("false"),
@@ -40,6 +42,8 @@ const allEnv = z.object({
   INFERENCE_OUTPUT_SCHEMA: z
     .enum(["structured", "json", "plain"])
     .default("structured"),
+  INFERENCE_ENABLE_AUTO_TAGGING: stringBool("true"),
+  INFERENCE_ENABLE_AUTO_SUMMARIZATION: stringBool("false"),
   OCR_CACHE_DIR: z.string().optional(),
   OCR_LANGS: z
     .string()
@@ -89,6 +93,14 @@ const allEnv = z.object({
 const serverConfigSchema = allEnv.transform((val) => {
   return {
     apiUrl: val.API_URL,
+    publicUrl: val.NEXTAUTH_URL,
+    publicApiUrl: `${val.NEXTAUTH_URL}/api`,
+    signingSecret: () => {
+      if (!val.NEXTAUTH_SECRET) {
+        throw new Error("NEXTAUTH_SECRET is not set");
+      }
+      return val.NEXTAUTH_SECRET;
+    },
     auth: {
       disableSignups: val.DISABLE_SIGNUPS,
       disablePasswordAuth: val.DISABLE_PASSWORD_AUTH,
@@ -120,6 +132,8 @@ const serverConfigSchema = allEnv.transform((val) => {
             ? ("structured" as const)
             : ("plain" as const)
           : val.INFERENCE_OUTPUT_SCHEMA,
+      enableAutoTagging: val.INFERENCE_ENABLE_AUTO_TAGGING,
+      enableAutoSummarization: val.INFERENCE_ENABLE_AUTO_SUMMARIZATION,
     },
     embedding: {
       textModel: val.EMBEDDING_TEXT_MODEL,
@@ -177,12 +191,17 @@ const serverConfigSchema = allEnv.transform((val) => {
 const serverConfig = serverConfigSchema.parse(process.env);
 // Always explicitly pick up stuff from server config to avoid accidentally leaking stuff
 export const clientConfig = {
+  publicUrl: serverConfig.publicUrl,
+  publicApiUrl: serverConfig.publicApiUrl,
   demoMode: serverConfig.demoMode,
   auth: {
     disableSignups: serverConfig.auth.disableSignups,
     disablePasswordAuth: serverConfig.auth.disablePasswordAuth,
   },
   inference: {
+    isConfigured:
+      !!serverConfig.inference.openAIApiKey ||
+      !!serverConfig.inference.ollamaBaseUrl,
     inferredTagLang: serverConfig.inference.inferredTagLang,
   },
   serverVersion: serverConfig.serverVersion,

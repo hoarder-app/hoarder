@@ -29,8 +29,8 @@ export default function TagList({
           <Link
             key={t.id}
             className={cn(
-              badgeVariants({ variant: "outline" }),
-              "text-nowrap font-normal hover:bg-foreground hover:text-secondary",
+              badgeVariants({ variant: "secondary" }),
+              "text-nowrap font-light text-gray-700 hover:bg-foreground hover:text-secondary dark:text-gray-400",
             )}
             href={`/dashboard/tags/${t.id}`}
           >

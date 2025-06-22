@@ -32,7 +32,11 @@
       "text": "Text"
     },
     "type": "Typ",
-    "size": "Größe"
+    "size": "Größe",
+    "updated_at": "Aktualisiert am",
+    "title": "Titel",
+    "description": "Beschreibung",
+    "summary": "Zusammenfassung"
   },
   "layouts": {
     "masonry": "Mauerwerk",
@@ -71,12 +75,15 @@
     "cancel": "Abbrechen",
     "apply_all": "Alle anwenden",
     "ignore": "Ignorieren",
-    "recrawl": "Erneutes Crawlen",
+    "recrawl": "Erneutes abrufen",
     "sort": {
       "title": "Sortieren",
       "newest_first": "Neueste zuerst",
-      "oldest_first": "Älteste zuerst"
-    }
+      "oldest_first": "Älteste zuerst",
+      "relevant_first": "Zuerst das Relevanteste"
+    },
+    "open_editor": "Editor öffnen",
+    "toggle_show_archived": "Archivierte anzeigen"
   },
   "settings": {
     "back_to_app": "Zurück zur App",
@@ -89,7 +96,20 @@
       "new_password": "Neues Passwort",
       "confirm_new_password": "Neues Passwort bestätigen",
       "options": "Optionen",
-      "interface_lang": "Oberflächensprache"
+      "interface_lang": "Oberflächensprache",
+      "user_settings": {
+        "user_settings_updated": "Benutzereinstellungen wurden aktualisiert!",
+        "bookmark_click_action": {
+          "open_bookmark_details": "Lesezeichen-Details öffnen",
+          "title": "Aktion bei Lesezeichen-Klick",
+          "open_external_url": "Original-URL öffnen"
+        },
+        "archive_display_behaviour": {
+          "title": "Archivierte Lesezeichen",
+          "show": "Archivierte Lesezeichen in Tags und Listen anzeigen",
+          "hide": "Archivierte Lesezeichen in Tags und Listen ausblenden"
+        }
+      }
     },
     "ai": {
       "ai_settings": "KI-Einstellungen",
@@ -99,14 +119,16 @@
       "text_prompt": "Text-Aufforderung",
       "images_prompt": "Bild-Aufforderung",
       "summarization_prompt": "Zusammenfassung des Prompts",
-      "all_tagging": "Benutzerinformationen",
-      "text_tagging": "Textverschlagwortung",
-      "image_tagging": "Bildverschlagwortung",
+      "all_tagging": "Gesamtes Tagging",
+      "text_tagging": "Text-Tagging",
+      "image_tagging": "Bild-Tagging",
       "summarization": "Zusammenfassung"
     },
     "feeds": {
       "rss_subscriptions": "RSS-Abonnements",
-      "add_a_subscription": "Ein Abonnement hinzufügen"
+      "add_a_subscription": "Ein Abonnement hinzufügen",
+      "feed_enabled": "RSS-Feed aktiviert",
+      "feed_disabled": "RSS-Feed deaktiviert"
     },
     "import": {
       "import_export": "Import / Export",
@@ -114,10 +136,11 @@
       "import_bookmarks_from_html_file": "Lesezeichen aus HTML-Datei importieren",
       "import_bookmarks_from_pocket_export": "Lesezeichen aus Pocket-Export importieren",
       "import_bookmarks_from_omnivore_export": "Lesezeichen aus Omnivore-Export importieren",
-      "import_bookmarks_from_hoarder_export": "Lesezeichen aus Hoarder-Export importieren",
+      "import_bookmarks_from_karakeep_export": "Lesezeichen aus Karakeep-Export importieren",
       "export_links_and_notes": "Links und Notizen exportieren",
       "imported_bookmarks": "Importierte Lesezeichen",
-      "import_bookmarks_from_linkwarden_export": "Importieren Sie Lesezeichen aus dem Linkwarden-Export"
+      "import_bookmarks_from_linkwarden_export": "Importieren Sie Lesezeichen aus dem Linkwarden-Export",
+      "import_bookmarks_from_tab_session_manager_export": "Lesezeichen aus Tab Session Manager importieren"
     },
     "api_keys": {
       "api_keys": "API-Schlüssel",
@@ -127,19 +150,19 @@
       "key_success_please_copy": "Bitte kopieren Sie den Schlüssel und speichern Sie ihn an einem sicheren Ort. Sobald Sie das Dialogfeld schließen, können Sie nicht mehr darauf zugreifen."
     },
     "broken_links": {
-      "broken_links": "Defekter Link",
-      "last_crawled_at": "Zuletzt gecrawlt am",
+      "broken_links": "Defekte Links",
+      "last_crawled_at": "Zuletzt abgerufen am",
       "crawling_status": "Crawling-Status",
-      "crawling_failed": "Crawling fehlgeschlagen"
+      "crawling_failed": "Abrufen fehlgeschlagen"
     },
     "webhooks": {
       "webhook_url": "Webhook URL",
       "edit_auth_token": "Auth Token bearbeiten",
       "webhooks": "Webhooks",
-      "description": "Du kannst Webhooks nutzen, um Aktionen auszulösen wenn Lesezeichen erstellt, geändert oder gecrawled werden.",
+      "description": "Du kannst Webhooks nutzen, um Aktionen auszulösen wenn Lesezeichen erstellt, geändert oder abgerufen werden sollen.",
       "events": {
         "title": "Vorgänge",
-        "crawled": "Crawled",
+        "crawled": "Abgerufen",
         "created": "erstellt",
         "edited": "bearbeitet"
       },
@@ -155,9 +178,57 @@
       "delete_asset_confirmation": "Bist du sicher, dass du dieses Asset löschen möchtest?",
       "manage_assets": "Assets verwalten",
       "no_assets": "Du hast noch keine Assets.",
-      "asset_type": "Asset-Typ",
-      "bookmark_link": "Lesezeichen-Link",
-      "asset_link": "Asset-Link"
+      "asset_type": "Art",
+      "bookmark_link": "Lesezeichen",
+      "asset_link": "Link"
+    },
+    "rules": {
+      "conditions_types": {
+        "and": "Alle folgenden Bedingungen sind erfüllt",
+        "or": "Eine der folgenden Bedingungen ist erfüllt",
+        "always": "Immer",
+        "url_contains": "URL enthält",
+        "imported_from_feed": "Aus Feed importiert",
+        "bookmark_type_is": "Lesezeichen-Typ ist",
+        "has_tag": "Hat Tag",
+        "is_favourited": "Ist Favorit",
+        "is_archived": "Ist archiviert"
+      },
+      "rule_name": "Regelname",
+      "rules": "Regel-Engine",
+      "description": "Du kannst Regeln verwenden, um Aktionen auszulösen, wenn ein Ereignis eintritt.",
+      "ceate_rule": "Regel erstellen",
+      "edit_rule": "Regel bearbeiten",
+      "save_rule": "Regel speichern",
+      "delete_rule": "Regel löschen",
+      "delete_rule_confirmation": "Bist du sicher, dass du diese Regel löschen möchtest?",
+      "whenever": "Immer wenn ...",
+      "if": "Wenn ...",
+      "enter_rule_name": "Regelnamen eingeben",
+      "describe_what_this_rule_does": "Beschreibe, was diese Regel bewirkt",
+      "rule_has_been_created": "Regel wurde erstellt!",
+      "rule_has_been_updated": "Regel wurde aktualisiert!",
+      "rule_has_been_deleted": "Regel wurde gelöscht!",
+      "no_rules_created_yet": "Noch keine Regeln erstellt",
+      "create_your_first_rule": "Erstelle deine erste Regel, um deinen Workflow zu automatisieren",
+      "actions_types": {
+        "add_tag": "Tag hinzufügen",
+        "remove_tag": "Tag entfernen",
+        "add_to_list": "Zur Liste hinzufügen",
+        "remove_from_list": "Aus Liste entfernen",
+        "download_full_page_archive": "Vollständige Seitenarchivierung herunterladen",
+        "favourite_bookmark": "Lesezeichen favorisieren",
+        "archive_bookmark": "Lesezeichen archivieren"
+      },
+      "events_types": {
+        "bookmark_added": "Ein Lesezeichen wird hinzugefügt",
+        "tag_added": "Dieses Tag wird einem Lesezeichen hinzugefügt",
+        "tag_removed": "Dieses Tag wird von einem Lesezeichen entfernt",
+        "added_to_list": "Ein Lesezeichen wird zu dieser Liste hinzugefügt",
+        "removed_from_list": "Ein Lesezeichen wird aus dieser Liste entfernt",
+        "favourited": "Ein Lesezeichen wird favorisiert",
+        "archived": "Ein Lesezeichen wird archiviert"
+      }
     }
   },
   "admin": {
@@ -184,14 +255,16 @@
       "feed_jobs": "RSS-Feed-Aufträge"
     },
     "actions": {
-      "recrawl_failed_links_only": "Nur fehlgeschlagene Links erneut durchsuchen",
-      "recrawl_all_links": "Alle Links erneut aktualisieren",
+      "recrawl_failed_links_only": "Nur fehlgeschlagene Links erneut abrufen",
+      "recrawl_all_links": "Alle Links erneut abrufen",
       "without_inference": "Ohne Inferenz",
       "regenerate_ai_tags_for_failed_bookmarks_only": "KI-Tags nur für fehlgeschlagene Lesezeichen neu generieren",
       "regenerate_ai_tags_for_all_bookmarks": "KI-Tags für alle Lesezeichen neu generieren",
       "reindex_all_bookmarks": "Alle Lesezeichen neu indizieren",
       "compact_assets": "Assets komprimieren",
-      "reprocess_assets_fix_mode": "Assets neu verarbeiten (Fix-Modus)"
+      "reprocess_assets_fix_mode": "Assets neu verarbeiten (Fix-Modus)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "KI-Zusammenfassungen nur für fehlgeschlagene Lesezeichen neu generieren",
+      "regenerate_ai_summaries_for_all_bookmarks": "KI-Zusammenfassungen für alle Lesezeichen neu generieren"
     },
     "users_list": {
       "users_list": "Benutzerliste",
@@ -221,7 +294,23 @@
     "search_query": "Suchanfrage",
     "list_type": "Listentyp",
     "no_parent": "ohne übergeordnete Liste",
-    "search_query_help": "Lerne mehr über die Suchanfragen."
+    "search_query_help": "Lerne mehr über die Suchanfragen.",
+    "merge_list": "Liste zusammenführen",
+    "destination_list": "Zielliste",
+    "delete_after_merge": "Original-Liste nach dem Zusammenführen löschen",
+    "no_destination": "Kein Ziel",
+    "description": "Beschreibung (Optional)",
+    "share_list": "Liste teilen",
+    "rss": {
+      "title": "RSS-Feed",
+      "description": "Einen RSS-Feed für diese Liste aktivieren",
+      "feed_url": "RSS-Feed-URL"
+    },
+    "public_list": {
+      "title": "Öffentliche Liste",
+      "description": "Anderen erlauben, diese Liste anzusehen",
+      "share_link": "Link teilen"
+    }
   },
   "tags": {
     "all_tags": "Alle Tags",
@@ -238,7 +327,12 @@
   },
   "preview": {
     "view_original": "Original anzeigen",
-    "cached_content": "Gecachte Inhalte"
+    "cached_content": "Gecachte Inhalte",
+    "reader_view": "Leseansicht",
+    "tabs": {
+      "content": "Inhalt",
+      "details": "Details"
+    }
   },
   "editor": {
     "quickly_focus": "Sie können schnell auf dieses Feld fokussieren, indem Sie ⌘ + E drücken",
@@ -296,7 +390,8 @@
       "undo": "Rückgängig",
       "redo": "Wiederholen",
       "bold": "Fett"
-    }
+    },
+    "placeholder_v2": "Füge einen Link ein, schreibe eine Notiz oder ziehe ein Bild hinein…"
   },
   "toasts": {
     "bookmarks": {
@@ -309,7 +404,9 @@
     },
     "lists": {
       "created": "Liste wurde erstellt!",
-      "updated": "Liste wurde aktualisiert!"
+      "updated": "Liste wurde aktualisiert!",
+      "deleted": "Liste wurde gelöscht!",
+      "merged": "Liste wurde zusammengeführt!"
     }
   },
   "cleanups": {
@@ -351,6 +448,34 @@
     "type_is_not": "nicht vom Typ",
     "has_any_tag": "hat irgendein Tag",
     "created_on_or_before": "erstellt am oder vor",
-    "not_created_on_or_before": "erstellt vor"
+    "not_created_on_or_before": "erstellt vor",
+    "is_from_feed": "Stammt aus RSS-Feed",
+    "is_not_from_feed": "Stammt nicht aus RSS-Feed",
+    "created_within": "Erstellt innerhalb",
+    "created_earlier_than": "Erstellt vor",
+    "day_s": " Tag(e)",
+    "week_s": " Woche(n)",
+    "month_s": " Monat(e)",
+    "year_s": " Jahr(e)",
+    "day_s_ago": " Vor Tag(en)",
+    "week_s_ago": " Vor Woche(n)",
+    "month_s_ago": " Vor Monat(en)",
+    "year_s_ago": " Vor Jahr(en)"
+  },
+  "bookmark_editor": {
+    "subtitle": "Ändere die Details des Lesezeichens. Klicke auf Speichern, wenn du fertig bist.",
+    "author": "Autor",
+    "publisher": "Herausgeber",
+    "date_published": "Veröffentlichungsdatum",
+    "pick_a_date": "Wähle ein Datum",
+    "save_changes": "Änderungen speichern",
+    "title": "Lesezeichen bearbeiten",
+    "extracted_content": "Extrahierter Inhalt"
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "Noch keine Lesezeichen",
+      "description": "Speichere interessante Artikel, Links und Seiten, um später schnell darauf zugreifen zu können."
+    }
   }
 }

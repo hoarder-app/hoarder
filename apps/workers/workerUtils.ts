@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 
-import { db, HoarderDBTransaction } from "@karakeep/db";
+import { db, KarakeepDBTransaction } from "@karakeep/db";
 import { assets, AssetTypes, bookmarks } from "@karakeep/db/schema";
 
 type DBAssetType = typeof assets.$inferInsert;
@@ -8,7 +8,7 @@ type DBAssetType = typeof assets.$inferInsert;
 export async function updateAsset(
   oldAssetId: string | undefined,
   newAsset: DBAssetType,
-  txn: HoarderDBTransaction,
+  txn: KarakeepDBTransaction,
 ) {
   if (oldAssetId) {
     await txn.delete(assets).where(eq(assets.id, oldAssetId));
@@ -44,8 +44,8 @@ export async function getBookmarkDetails(bookmarkId: string) {
     videoAssetId: bookmark.assets.find(
       (a) => a.assetType == AssetTypes.LINK_VIDEO,
     )?.id,
-    precrawledArchiveAssetId: bookmark.assets.find(
-      (a) => a.assetType == AssetTypes.LINK_PRECRAWLED_ARCHIVE,
-    )?.id,
+    precrawledArchiveAssetId: bookmark.assets
+      .filter((a) => a.assetType == AssetTypes.LINK_PRECRAWLED_ARCHIVE)
+      .at(-1)?.id,
   };
 }

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -5,14 +8,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useIsSearchPage } from "@/lib/hooks/bookmark-search";
 import { useTranslation } from "@/lib/i18n/client";
 import { useSortOrderStore } from "@/lib/store/useSortOrderStore";
-import { Check, SortAsc, SortDesc } from "lucide-react";
+import { Check, ListFilter, SortAsc, SortDesc } from "lucide-react";
 
 export default function SortOrderToggle() {
   const { t } = useTranslation();
+  const isInSearchPage = useIsSearchPage();
 
   const { sortOrder: currentSort, setSortOrder } = useSortOrderStore();
+
+  // also see related on page enter sortOrder.relevance init
+  // in apps/web/app/dashboard/search/page.tsx
+  useEffect(() => {
+    if (!isInSearchPage && currentSort === "relevance") {
+      // reset to default sort order
+      setSortOrder("desc");
+    }
+  }, [isInSearchPage, currentSort]);
 
   return (
     <DropdownMenu>
@@ -22,14 +36,24 @@ export default function SortOrderToggle() {
           delayDuration={100}
           variant="ghost"
         >
-          {currentSort === "asc" ? (
-            <SortAsc size={18} />
-          ) : (
-            <SortDesc size={18} />
-          )}
+          {currentSort === "relevance" && <ListFilter size={18} />}
+          {currentSort === "asc" && <SortAsc size={18} />}
+          {currentSort === "desc" && <SortDesc size={18} />}
         </ButtonWithTooltip>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-fit">
+        {isInSearchPage && (
+          <DropdownMenuItem
+            className="cursor-pointer justify-between"
+            onClick={() => setSortOrder("relevance")}
+          >
+            <div className="flex items-center">
+              <ListFilter size={16} className="mr-2" />
+              <span>{t("actions.sort.relevant_first")}</span>
+            </div>
+            {currentSort === "relevance" && <Check className="ml-2 h-4 w-4" />}
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem
           className="cursor-pointer justify-between"
           onClick={() => setSortOrder("desc")}

@@ -38,7 +38,8 @@ export const listsAppRouter = router({
     .output(zBookmarkListSchema)
     .use(ensureListOwnership)
     .mutation(async ({ input, ctx }) => {
-      return await ctx.list.update(input);
+      await ctx.list.update(input);
+      return ctx.list.list;
     }),
   merge: authedProcedure
     .input(zMergeListSchema)
@@ -129,5 +130,48 @@ export const listsAppRouter = router({
       const lists = await List.getAll(ctx);
       const sizes = await Promise.all(lists.map((l) => l.getSize()));
       return { stats: new Map(lists.map((l, i) => [l.list.id, sizes[i]])) };
+    }),
+
+  // Rss endpoints
+  regenRssToken: authedProcedure
+    .input(
+      z.object({
+        listId: z.string(),
+      }),
+    )
+    .output(
+      z.object({
+        token: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const list = await List.fromId(ctx, input.listId);
+      const token = await list.regenRssToken();
+      return { token: token! };
+    }),
+  clearRssToken: authedProcedure
+    .input(
+      z.object({
+        listId: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const list = await List.fromId(ctx, input.listId);
+      await list.clearRssToken();
+    }),
+  getRssToken: authedProcedure
+    .input(
+      z.object({
+        listId: z.string(),
+      }),
+    )
+    .output(
+      z.object({
+        token: z.string().nullable(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      const list = await List.fromId(ctx, input.listId);
+      return { token: await list.getRssToken() };
     }),
 });

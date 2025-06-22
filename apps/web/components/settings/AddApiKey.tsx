@@ -30,6 +30,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { PlusCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -135,7 +136,10 @@ export default function AddApiKey() {
   return (
     <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
-        <Button>{t("settings.api_keys.new_api_key")}</Button>
+        <Button>
+          <PlusCircle className="mr-2 h-4 w-4" />
+          {t("settings.api_keys.new_api_key")}
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

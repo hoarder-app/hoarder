@@ -28,30 +28,28 @@ export default function SidebarItem({
   return (
     <li
       className={cn(
-        "relative rounded-lg hover:bg-accent",
+        "relative flex justify-between rounded-lg hover:bg-accent",
         path == currentPath ? "bg-accent/50" : "",
         className,
       )}
       style={style}
     >
-      {collapseButton}
-      <Link
-        href={path}
-        className={cn(
-          "flex w-full items-center rounded-[inherit] px-3 py-2",
-          linkClassName,
-        )}
-      >
-        <div className="flex w-full justify-between">
-          <div className="flex items-center gap-x-2">
-            {logo}
-            <span title={name} className="line-clamp-1">
-              {name}
-            </span>
-          </div>
-          {right}
-        </div>
-      </Link>
+      <div className="flex-1">
+        {collapseButton}
+        <Link
+          href={path}
+          className={cn(
+            "flex items-center gap-x-2 rounded-[inherit] px-3 py-2",
+            linkClassName,
+          )}
+        >
+          {logo}
+          <span title={name} className="line-clamp-1 break-all">
+            {name}
+          </span>
+        </Link>
+      </div>
+      {right}
     </li>
   );
 }

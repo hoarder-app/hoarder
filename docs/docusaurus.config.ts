@@ -64,7 +64,7 @@ const config: Config = {
         docsPluginId: "classic",
         config: {
           karakeep: {
-            specPath: "../packages/open-api/hoarder-openapi-spec.json",
+            specPath: "../packages/open-api/karakeep-openapi-spec.json",
             outputDir: "docs/API",
             sidebarOptions: {
               groupPathsBy: "tag",
@@ -148,6 +148,14 @@ const config: Config = {
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Karakeep App. Built with Docusaurus.`,
+    },
+    algolia: {
+      appId: 'V93C1M14G6',
+      // Public API key: it is safe to commit it
+      apiKey: '0eb8853d9740822fb9d21620d5515f35',
+      indexName: 'karakeep',
+      contextualSearch: true,
+      insights: true,
     },
     prism: {
       theme: prismThemes.github,

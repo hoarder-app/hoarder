@@ -316,6 +316,55 @@
       "when": 1744744684677,
       "tag": "0044_add_password_salt",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "6",
+      "when": 1745705657846,
+      "tag": "0045_add_rule_engine",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "6",
+      "when": 1746902541511,
+      "tag": "0046_add_rss_feed_enabled_col",
+      "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "6",
+      "when": 1747598543992,
+      "tag": "0047_add_summarization_status",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "6",
+      "when": 1748086734370,
+      "tag": "0048_add_user_settings",
+      "breakpoints": true
+    },
+    {
+      "idx": 49,
+      "version": "6",
+      "when": 1748699971545,
+      "tag": "0049_add_rss_token",
+      "breakpoints": true
+    },
+    {
+      "idx": 50,
+      "version": "6",
+      "when": 1748795265779,
+      "tag": "0050_add_user_settings_archive_display_behaviour",
+      "breakpoints": true
+    },
+    {
+      "idx": 51,
+      "version": "6",
+      "when": 1748804695561,
+      "tag": "0051_public_lists",
+      "breakpoints": true
     }
   ]
 }

@@ -26,7 +26,7 @@ const DEMO_LINK = "https://try.karakeep.app";
 const platforms = [
   {
     name: "iOS",
-    url: "https://apps.apple.com/us/app/hoarder-app/id6479258022",
+    url: "https://apps.apple.com/us/app/karakeep-app/id6479258022",
     badge: appStoreBadge,
   },
   {
@@ -36,12 +36,12 @@ const platforms = [
   },
   {
     name: "Chrome Extension",
-    url: "https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje",
+    url: "https://chromewebstore.google.com/detail/karakeep/kgcjekpmcjjogibpjebkhaanilehneje",
     badge: chromeExtensionBadge,
   },
   {
     name: "Firefox Addon",
-    url: "https://addons.mozilla.org/en-US/firefox/addon/hoarder/",
+    url: "https://addons.mozilla.org/en-US/firefox/addon/karakeep/",
     badge: firefoxAddonBadge,
   },
 ];
@@ -98,10 +98,20 @@ function NavBar() {
     <div className="flex justify-between px-3 py-4">
       <img src={Logo} alt="logo" className="w-36" />
       <div className="hidden items-center gap-6 sm:flex">
-        <a href={DOCS_LINK} className="flex justify-center gap-2 text-center">
+        <a
+          href={DOCS_LINK}
+          target="_blank"
+          className="flex justify-center gap-2 text-center"
+          rel="noreferrer"
+        >
           Docs
         </a>
-        <a href={GITHUB_LINK} className="flex justify-center gap-2 text-center">
+        <a
+          href={GITHUB_LINK}
+          target="_blank"
+          className="flex justify-center gap-2 text-center"
+          rel="noreferrer"
+        >
           GitHub
         </a>
         <a
@@ -220,13 +230,28 @@ function Features() {
 
 function Footer() {
   return (
-    <div className="flex items-center justify-between bg-black px-10 py-6 text-sm text-gray-300">
-      <div>© 2024-{currentYear} karakeep.app</div>
+    <div className="flex items-center justify-between bg-gray-100 px-10 py-6 text-sm">
+      <div>
+        © 2024-{currentYear}{" "}
+        <a href="https://localhostlabs.co.uk" target="_blank" rel="noreferrer">
+          Localhost Labs Ltd
+        </a>
+      </div>
       <div className="flex items-center gap-6">
-        <a href={DOCS_LINK} className="flex justify-center gap-2 text-center">
+        <a
+          href={DOCS_LINK}
+          target="_blank"
+          className="flex justify-center gap-2 text-center"
+          rel="noreferrer"
+        >
           Docs
         </a>
-        <a href={GITHUB_LINK} className="flex justify-center gap-2 text-center">
+        <a
+          href={GITHUB_LINK}
+          target="_blank"
+          className="flex justify-center gap-2 text-center"
+          rel="noreferrer"
+        >
           GitHub
         </a>
       </div>

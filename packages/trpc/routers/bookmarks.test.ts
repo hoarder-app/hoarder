@@ -25,7 +25,11 @@ describe("Bookmark Routes", () => {
     feedUrl: string,
   ) {
     // Create an RSS feed and return its ID
-    const feed = await api.feeds.create({ name: feedName, url: feedUrl });
+    const feed = await api.feeds.create({
+      name: feedName,
+      url: feedUrl,
+      enabled: true,
+    });
     return feed.id;
   }
 

@@ -2,6 +2,7 @@ import React from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import LoadingSpinner from "@/components/ui/spinner";
 import { toast } from "@/components/ui/use-toast";
+import { useClientConfig } from "@/lib/clientConfig";
 import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 import { ChevronUp, RefreshCw, Sparkles, Trash2 } from "lucide-react";
@@ -110,20 +111,22 @@ export default function SummarizeBookmarkArea({
     },
   });
 
+  const clientConfig = useClientConfig();
   if (bookmark.content.type !== BookmarkTypes.LINK) {
     return null;
   }
 
   if (bookmark.summary) {
     return <AISummary bookmarkId={bookmark.id} summary={bookmark.summary} />;
+  } else if (!clientConfig.inference.isConfigured) {
+    return null;
   } else {
     return (
       <div className="flex w-full items-center gap-4">
         <ActionButton
           onClick={() => mutate({ bookmarkId: bookmark.id })}
           className={cn(
-            `relative w-full overflow-hidden bg-opacity-30 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 transition-all duration-300`,
-            isPending ? "text-transparent" : "text-gray-50",
+            `relative w-full overflow-hidden bg-opacity-30 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 text-gray-50 transition-all duration-300`,
           )}
           loading={isPending}
         >

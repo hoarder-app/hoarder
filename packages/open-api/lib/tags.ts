@@ -4,8 +4,11 @@ import {
 } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
 
+import { zSortOrder } from "@karakeep/shared/types/bookmarks";
 import {
+  zCreateTagRequestSchema,
   zGetTagResponseSchema,
+  zTagBasicSchema,
   zUpdateTagRequestSchema,
 } from "@karakeep/shared/types/tags";
 
@@ -49,6 +52,35 @@ registry.registerPath({
           schema: z.object({
             tags: z.array(TagSchema),
           }),
+        },
+      },
+    },
+  },
+});
+
+registry.registerPath({
+  method: "post",
+  path: "/tags",
+  description: "Create a new tag",
+  summary: "Create a new tag",
+  tags: ["Tags"],
+  security: [{ [BearerAuth.name]: [] }],
+  request: {
+    body: {
+      description: "The data to create the tag with.",
+      content: {
+        "application/json": {
+          schema: zCreateTagRequestSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: "The created tag",
+      content: {
+        "application/json": {
+          schema: zTagBasicSchema,
         },
       },
     },
@@ -134,7 +166,7 @@ registry.registerPath({
       description: "The updated tag",
       content: {
         "application/json": {
-          schema: TagSchema,
+          schema: zTagBasicSchema,
         },
       },
     },
@@ -152,13 +184,21 @@ registry.registerPath({
 registry.registerPath({
   method: "get",
   path: "/tags/{tagId}/bookmarks",
-  description: "Get the bookmarks with the tag",
-  summary: "Get a bookmarks with the tag",
+  description: "Get bookmarks with the tag",
+  summary: "Get bookmarks with the tag",
   tags: ["Tags"],
   security: [{ [BearerAuth.name]: [] }],
   request: {
     params: z.object({ tagId: TagIdSchema }),
-    query: PaginationSchema.merge(IncludeContentSearchParamSchema),
+    query: z
+      .object({
+        sortOrder: zSortOrder
+          .exclude(["relevance"])
+          .optional()
+          .default(zSortOrder.Enum.desc),
+      })
+      .merge(PaginationSchema)
+      .merge(IncludeContentSearchParamSchema),
   },
   responses: {
     200: {

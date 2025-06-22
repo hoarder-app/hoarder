@@ -32,7 +32,11 @@
     "screenshot": "Скріншот",
     "video": "Відео",
     "archive": "Архів",
-    "home": "Домашня сторінка"
+    "home": "Домашня сторінка",
+    "updated_at": "Оновлено",
+    "title": "Заголовок",
+    "description": "Опис",
+    "summary": "Короткий зміст"
   },
   "actions": {
     "sign_out": "Вийти",
@@ -67,10 +71,13 @@
     "sort": {
       "title": "Сортувати",
       "newest_first": "Спочатку новіші",
-      "oldest_first": "Спочатку найстаріші"
+      "oldest_first": "Спочатку найстаріші",
+      "relevant_first": "Спочатку найрелевантніші"
     },
     "delete": "Видалити",
-    "save": "Зберегти"
+    "save": "Зберегти",
+    "open_editor": "Відкрити редактор",
+    "toggle_show_archived": "Показати заархівовані"
   },
   "settings": {
     "webhooks": {
@@ -101,7 +108,20 @@
       "new_password": "Новий пароль",
       "confirm_new_password": "Підтвердьте новий пароль",
       "options": "Параметри",
-      "interface_lang": "Мова інтерфейсу"
+      "interface_lang": "Мова інтерфейсу",
+      "user_settings": {
+        "user_settings_updated": "Налаштування користувача оновлено!",
+        "bookmark_click_action": {
+          "title": "Дія при кліку на закладку",
+          "open_external_url": "Відкрити оригінальний URL",
+          "open_bookmark_details": "Відкрити деталі закладки"
+        },
+        "archive_display_behaviour": {
+          "title": "Заархівовані закладки",
+          "show": "Показувати заархівовані закладки в тегах і списках",
+          "hide": "Приховувати заархівовані закладки в тегах і списках"
+        }
+      }
     },
     "ai": {
       "ai_settings": "Налаштування ШІ",
@@ -118,7 +138,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS-підписки",
-      "add_a_subscription": "Додати підписку"
+      "add_a_subscription": "Додати підписку",
+      "feed_enabled": "RSS-канал увімкнено",
+      "feed_disabled": "RSS-канал вимкнено"
     },
     "import": {
       "import_export": "Імпорт / Експорт",
@@ -127,9 +149,10 @@
       "import_bookmarks_from_pocket_export": "Імпортувати закладки з експорту Pocket",
       "import_bookmarks_from_omnivore_export": "Імпорт закладок з експорту Omnivore",
       "import_bookmarks_from_linkwarden_export": "Імпортувати закладки з експорту Linkwarden",
-      "import_bookmarks_from_hoarder_export": "Імпортувати закладки з експорту Hoarder",
+      "import_bookmarks_from_karakeep_export": "Імпортувати закладки з експорту Karakeep",
       "export_links_and_notes": "Експорт посилань і нотаток",
-      "imported_bookmarks": "Імпортовані закладки"
+      "imported_bookmarks": "Імпортовані закладки",
+      "import_bookmarks_from_tab_session_manager_export": "Імпортувати закладки з Tab Session Manager"
     },
     "api_keys": {
       "api_keys": "Ключі API",
@@ -152,6 +175,54 @@
       "asset_link": "Посилання на ресурс",
       "delete_asset": "Видалити ресурс",
       "delete_asset_confirmation": "Ви впевнені, що хочете видалити цей актив?"
+    },
+    "rules": {
+      "conditions_types": {
+        "always": "Завжди",
+        "url_contains": "URL містить",
+        "imported_from_feed": "Імпортовано з каналу",
+        "bookmark_type_is": "Тип закладки",
+        "has_tag": "Має тег",
+        "is_favourited": "В обраних",
+        "is_archived": "В архіві",
+        "and": "Усі наступні умови є істинними",
+        "or": "Будь-яке з наступного є правдою"
+      },
+      "enter_rule_name": "Введіть назву правила",
+      "rules": "Механізм правил",
+      "rule_name": "Назва правила",
+      "description": "Ти можеш використовувати правила для запуску дій, коли відбувається подія.",
+      "ceate_rule": "Створити правило",
+      "edit_rule": "Редагувати правило",
+      "save_rule": "Зберегти правило",
+      "delete_rule": "Видалити правило",
+      "delete_rule_confirmation": "Ти впевнений, що хочеш видалити це правило?",
+      "whenever": "Коли ...",
+      "if": "Якщо ...",
+      "describe_what_this_rule_does": "Опиши, що робить це правило",
+      "rule_has_been_created": "Правило створено!",
+      "rule_has_been_updated": "Правило оновлено!",
+      "rule_has_been_deleted": "Правило видалено!",
+      "no_rules_created_yet": "Ще немає жодних правил",
+      "create_your_first_rule": "Створи своє перше правило, щоб автоматизувати робочий процес",
+      "actions_types": {
+        "add_tag": "Додати тег",
+        "remove_tag": "Видалити тег",
+        "add_to_list": "Додати до списку",
+        "remove_from_list": "Видалити зі списку",
+        "download_full_page_archive": "Завантажити повний архів сторінки",
+        "favourite_bookmark": "Улюблена закладка",
+        "archive_bookmark": "Архівувати закладку"
+      },
+      "events_types": {
+        "bookmark_added": "Закладку додано",
+        "tag_added": "Цей тег додано до закладки",
+        "tag_removed": "Цей тег видалено із закладки",
+        "added_to_list": "Закладку додано до цього списку",
+        "removed_from_list": "Закладку видалено з цього списку",
+        "favourited": "Закладка додана до улюблених",
+        "archived": "Закладку заархівовано"
+      }
     }
   },
   "search": {
@@ -177,11 +248,28 @@
     "url_contains": "URL містить",
     "url_does_not_contain": "URL не містить",
     "has_tag": "Має тег",
-    "does_not_have_tag": "Не має теґа"
+    "does_not_have_tag": "Не має теґа",
+    "is_from_feed": "З RSS-каналу",
+    "is_not_from_feed": "Не з RSS-каналу",
+    "created_within": "Створено протягом",
+    "created_earlier_than": "Створено раніше ніж",
+    "day_s": " День(ів)",
+    "week_s": " Тижнів",
+    "month_s": " Місяць(ів)",
+    "year_s": " Рік(ів)",
+    "day_s_ago": " Днів тому",
+    "week_s_ago": " Тижнів тому",
+    "month_s_ago": " Місяців тому",
+    "year_s_ago": " Років тому"
   },
   "preview": {
     "cached_content": "Кешований вміст",
-    "view_original": "Переглянути оригінал"
+    "view_original": "Переглянути оригінал",
+    "reader_view": "Режим читання",
+    "tabs": {
+      "details": "Деталі",
+      "content": "Вміст"
+    }
   },
   "layouts": {
     "masonry": "Кам'яна кладка",
@@ -223,7 +311,9 @@
       "reindex_all_bookmarks": "Переіндексувати всі закладки",
       "compact_assets": "Компактні активи",
       "regenerate_ai_tags_for_all_bookmarks": "Відновити теги ШІ для всіх закладок",
-      "recrawl_failed_links_only": "Повторно просканувати лише пошкоджені посилання"
+      "recrawl_failed_links_only": "Повторно просканувати лише пошкоджені посилання",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Згенерувати AI-резюме лише для невдалих закладок",
+      "regenerate_ai_summaries_for_all_bookmarks": "Згенерувати AI-резюме для всіх закладок"
     },
     "users_list": {
       "users_list": "Список користувачів",
@@ -249,7 +339,23 @@
     "search_query_help": "Дізнайтеся більше про мову пошукових запитів.",
     "search_query": "Пошуковий запит",
     "parent_list": "Батьківський список",
-    "no_parent": "Немає батьківського елемента"
+    "no_parent": "Немає батьківського елемента",
+    "merge_list": "Об'єднати список",
+    "destination_list": "Список призначення",
+    "delete_after_merge": "Видалити оригінальний список після об'єднання",
+    "no_destination": "Немає призначення",
+    "description": "Опис (Необов'язково)",
+    "public_list": {
+      "share_link": "Поділитися посиланням",
+      "title": "Публічний список",
+      "description": "Дозволити іншим переглядати цей список"
+    },
+    "share_list": "Поділитися списком",
+    "rss": {
+      "title": "RSS-канал",
+      "description": "Увімкнути RSS-канал для цього списку",
+      "feed_url": "URL RSS-каналу"
+    }
   },
   "tags": {
     "your_tags": "Ваші теги",
@@ -320,7 +426,8 @@
     "import_as_separate_bookmarks": "Імпортувати як окремі закладки",
     "placeholder": "Вставте посилання або зображення, напишіть нотатку або перетягніть зображення сюди…",
     "new_item": "НОВИЙ ЕЛЕМЕНТ",
-    "disabled_submissions": "Надсилання вимкнено"
+    "disabled_submissions": "Надсилання вимкнено",
+    "placeholder_v2": "Вставте посилання, напишіть нотатку або перетягніть зображення…"
   },
   "dialogs": {
     "bookmarks": {
@@ -343,7 +450,9 @@
     },
     "lists": {
       "created": "Список створено!",
-      "updated": "Список оновлено!"
+      "updated": "Список оновлено!",
+      "merged": "Список об'єднано!",
+      "deleted": "Список видалено!"
     }
   },
   "cleanups": {
@@ -352,5 +461,21 @@
       "title": "Дублікати тегів",
       "merge_all_suggestions": "Об'єднати всі пропозиції?"
     }
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "Ще немає закладок",
+      "description": "Зберігай цікаві статті, посилання та сторінки, щоб мати до них швидкий доступ пізніше."
+    }
+  },
+  "bookmark_editor": {
+    "title": "Редагувати закладку",
+    "subtitle": "Внесіть зміни до деталей закладки. Коли закінчите, натисніть «Зберегти».",
+    "author": "Автор",
+    "publisher": "Видавець",
+    "date_published": "Дата публікації",
+    "pick_a_date": "Виберіть дату",
+    "save_changes": "Зберегти зміни",
+    "extracted_content": "Видобутий вміст"
   }
 }

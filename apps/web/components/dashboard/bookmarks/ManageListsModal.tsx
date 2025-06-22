@@ -179,6 +179,7 @@ export default function ManageListsModal({
                             (l) => l.id,
                           )}
                           onChange={field.onChange}
+                          listTypes={["manual"]}
                         />
                       </FormControl>
                       <FormMessage />

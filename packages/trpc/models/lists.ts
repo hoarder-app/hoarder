@@ -1,19 +1,25 @@
+import crypto from "node:crypto";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, or } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
 import { SqliteError } from "@karakeep/db";
 import { bookmarkLists, bookmarksInLists } from "@karakeep/db/schema";
+import { triggerRuleEngineOnEvent } from "@karakeep/shared/queues";
 import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
+import { ZSortOrder } from "@karakeep/shared/types/bookmarks";
 import {
   ZBookmarkList,
   zEditBookmarkListSchemaWithValidation,
   zNewBookmarkListSchema,
 } from "@karakeep/shared/types/lists";
+import { ZCursor } from "@karakeep/shared/types/pagination";
 
-import { AuthedContext } from "..";
+import { AuthedContext, Context } from "..";
+import { buildImpersonatingAuthedContext } from "../lib/impersonate";
 import { getBookmarkIdsFromMatcher } from "../lib/search";
+import { Bookmark } from "./bookmarks";
 import { PrivacyAware } from "./privacy";
 
 export abstract class List implements PrivacyAware {
@@ -57,6 +63,91 @@ export abstract class List implements PrivacyAware {
     }
   }
 
+  private static async getPublicList(
+    ctx: Context,
+    listId: string,
+    token: string | null,
+  ) {
+    const listdb = await ctx.db.query.bookmarkLists.findFirst({
+      where: and(
+        eq(bookmarkLists.id, listId),
+        or(
+          eq(bookmarkLists.public, true),
+          token !== null ? eq(bookmarkLists.rssToken, token) : undefined,
+        ),
+      ),
+      with: {
+        user: {
+          columns: {
+            name: true,
+          },
+        },
+      },
+    });
+    if (!listdb) {
+      throw new TRPCError({
+        code: "NOT_FOUND",
+        message: "List not found",
+      });
+    }
+    return listdb;
+  }
+
+  static async getPublicListMetadata(
+    ctx: Context,
+    listId: string,
+    token: string | null,
+  ) {
+    const listdb = await this.getPublicList(ctx, listId, token);
+    return {
+      userId: listdb.userId,
+      name: listdb.name,
+      description: listdb.description,
+      icon: listdb.icon,
+      ownerName: listdb.user.name,
+    };
+  }
+
+  static async getPublicListContents(
+    ctx: Context,
+    listId: string,
+    token: string | null,
+    pagination: {
+      limit: number;
+      order: Exclude<ZSortOrder, "relevance">;
+      cursor: ZCursor | null | undefined;
+    },
+  ) {
+    const listdb = await this.getPublicList(ctx, listId, token);
+
+    // The token here acts as an authed context, so we can create
+    // an impersonating context for the list owner as long as
+    // we don't leak the context.
+    const authedCtx = await buildImpersonatingAuthedContext(listdb.userId);
+    const list = List.fromData(authedCtx, listdb);
+    const bookmarkIds = await list.getBookmarkIds();
+
+    const bookmarks = await Bookmark.loadMulti(authedCtx, {
+      ids: bookmarkIds,
+      includeContent: false,
+      limit: pagination.limit,
+      sortOrder: pagination.order,
+      cursor: pagination.cursor,
+    });
+
+    return {
+      list: {
+        icon: list.list.icon,
+        name: list.list.name,
+        description: list.list.description,
+        ownerName: listdb.user.name,
+        numItems: bookmarkIds.length,
+      },
+      bookmarks: bookmarks.bookmarks.map((b) => b.asPublicBookmark()),
+      nextCursor: bookmarks.nextCursor,
+    };
+  }
+
   static async create(
     ctx: AuthedContext,
     input: z.infer<typeof zNewBookmarkListSchema>,
@@ -78,6 +169,9 @@ export abstract class List implements PrivacyAware {
 
   static async getAll(ctx: AuthedContext): Promise<(ManualList | SmartList)[]> {
     const lists = await ctx.db.query.bookmarkLists.findMany({
+      columns: {
+        rssToken: false,
+      },
       where: and(eq(bookmarkLists.userId, ctx.user.id)),
     });
     return lists.map((l) => this.fromData(ctx, l));
@@ -87,7 +181,11 @@ export abstract class List implements PrivacyAware {
     const lists = await ctx.db.query.bookmarksInLists.findMany({
       where: and(eq(bookmarksInLists.bookmarkId, bookmarkId)),
       with: {
-        list: true,
+        list: {
+          columns: {
+            rssToken: false,
+          },
+        },
       },
     });
     invariant(lists.map((l) => l.list.userId).every((id) => id == ctx.user.id));
@@ -117,7 +215,9 @@ export abstract class List implements PrivacyAware {
     }
   }
 
-  async update(input: z.infer<typeof zEditBookmarkListSchemaWithValidation>) {
+  async update(
+    input: z.infer<typeof zEditBookmarkListSchemaWithValidation>,
+  ): Promise<void> {
     const result = await this.ctx.db
       .update(bookmarkLists)
       .set({
@@ -126,6 +226,7 @@ export abstract class List implements PrivacyAware {
         icon: input.icon,
         parentId: input.parentId,
         query: input.query,
+        public: input.public,
       })
       .where(
         and(
@@ -137,7 +238,46 @@ export abstract class List implements PrivacyAware {
     if (result.length == 0) {
       throw new TRPCError({ code: "NOT_FOUND" });
     }
-    return result[0];
+    this.list = result[0];
+  }
+
+  private async setRssToken(token: string | null) {
+    const result = await this.ctx.db
+      .update(bookmarkLists)
+      .set({ rssToken: token })
+      .where(
+        and(
+          eq(bookmarkLists.id, this.list.id),
+          eq(bookmarkLists.userId, this.ctx.user.id),
+        ),
+      )
+      .returning();
+    if (result.length == 0) {
+      throw new TRPCError({ code: "NOT_FOUND" });
+    }
+    return result[0].rssToken;
+  }
+
+  async getRssToken(): Promise<string | null> {
+    const [result] = await this.ctx.db
+      .select({ rssToken: bookmarkLists.rssToken })
+      .from(bookmarkLists)
+      .where(
+        and(
+          eq(bookmarkLists.id, this.list.id),
+          eq(bookmarkLists.userId, this.ctx.user.id),
+        ),
+      )
+      .limit(1);
+    return result.rssToken ?? null;
+  }
+
+  async regenRssToken() {
+    return await this.setRssToken(crypto.randomBytes(32).toString("hex"));
+  }
+
+  async clearRssToken() {
+    await this.setRssToken(null);
   }
 
   abstract get type(): "manual" | "smart";
@@ -248,13 +388,17 @@ export class ManualList extends List {
         listId: this.list.id,
         bookmarkId,
       });
+      await triggerRuleEngineOnEvent(bookmarkId, [
+        {
+          type: "addedToList",
+          listId: this.list.id,
+        },
+      ]);
     } catch (e) {
       if (e instanceof SqliteError) {
         if (e.code == "SQLITE_CONSTRAINT_PRIMARYKEY") {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: `Bookmark ${bookmarkId} is already in the list ${this.list.id}`,
-          });
+          // this is fine, it just means the bookmark is already in the list
+          return;
         }
       }
       throw new TRPCError({
@@ -279,6 +423,12 @@ export class ManualList extends List {
         message: `Bookmark ${bookmarkId} is already not in list ${this.list.id}`,
       });
     }
+    await triggerRuleEngineOnEvent(bookmarkId, [
+      {
+        type: "removedFromList",
+        listId: this.list.id,
+      },
+    ]);
   }
 
   async update(input: z.infer<typeof zEditBookmarkListSchemaWithValidation>) {

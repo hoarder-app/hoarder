@@ -6,7 +6,7 @@ import { createTestUser } from "../../utils/api";
 import { waitUntil } from "../../utils/general";
 
 describe("Crawler Tests", () => {
-  const port = inject("hoarderPort");
+  const port = inject("karakeepPort");
 
   if (!port) {
     throw new Error("Missing required environment variables");
@@ -57,7 +57,7 @@ describe("Crawler Tests", () => {
         return data.content.crawledAt !== null;
       },
       "Bookmark is crawled",
-      10000,
+      20000,
     );
 
     bookmark = await getBookmark(bookmark.id);
@@ -87,7 +87,7 @@ describe("Crawler Tests", () => {
         return data.content.type === "asset";
       },
       "Bookmark is crawled and converted to an image",
-      10000,
+      20000,
     );
 
     bookmark = await getBookmark(bookmark.id);

@@ -32,7 +32,11 @@
     },
     "highlights": "points saillants",
     "type": "Tapez",
-    "size": "Taille"
+    "size": "Taille",
+    "updated_at": "Mis à jour le",
+    "title": "Titre",
+    "description": "Description",
+    "summary": "Résumé"
   },
   "layouts": {
     "masonry": "Mosaïque",
@@ -74,9 +78,12 @@
     "sort": {
       "title": "Trier",
       "newest_first": "Plus récents d'abord",
-      "oldest_first": "Plus anciens d'abord"
+      "oldest_first": "Plus anciens d'abord",
+      "relevant_first": "Les plus pertinents en premier"
     },
-    "recrawl": "Réexplorer"
+    "recrawl": "Réexplorer",
+    "open_editor": "Ouvrir l'éditeur",
+    "toggle_show_archived": "Afficher les éléments archivés"
   },
   "settings": {
     "back_to_app": "Retour à l'application",
@@ -89,7 +96,20 @@
       "new_password": "Nouveau mot de passe",
       "confirm_new_password": "Confirmer le nouveau mot de passe",
       "options": "Options",
-      "interface_lang": "Langue de l'interface"
+      "interface_lang": "Langue de l'interface",
+      "user_settings": {
+        "archive_display_behaviour": {
+          "hide": "Masquer les marque-pages archivés dans les balises et les listes",
+          "title": "Marque-pages archivés",
+          "show": "Afficher les marque-pages archivés dans les balises et les listes"
+        },
+        "user_settings_updated": "Les paramètres utilisateur ont été mis à jour !",
+        "bookmark_click_action": {
+          "title": "Action au clic sur un marque-page",
+          "open_external_url": "Ouvrir l’URL d’origine",
+          "open_bookmark_details": "Ouvrir les détails du marque-page"
+        }
+      }
     },
     "ai": {
       "ai_settings": "Paramètres de l'IA",
@@ -106,7 +126,9 @@
     },
     "feeds": {
       "rss_subscriptions": "Abonnements RSS",
-      "add_a_subscription": "Ajouter un abonnement"
+      "add_a_subscription": "Ajouter un abonnement",
+      "feed_enabled": "Flux RSS activé",
+      "feed_disabled": "Flux RSS désactivé"
     },
     "import": {
       "import_export": "Importer / Exporter",
@@ -114,10 +136,11 @@
       "import_bookmarks_from_html_file": "Importer des favoris depuis un fichier HTML",
       "import_bookmarks_from_pocket_export": "Importer des favoris depuis une exportation Pocket",
       "import_bookmarks_from_omnivore_export": "Importer des favoris depuis une exportation Omnivore",
-      "import_bookmarks_from_hoarder_export": "Importer des favoris depuis une exportation Hoarder",
+      "import_bookmarks_from_karakeep_export": "Importer des favoris depuis une exportation Karakeep",
       "export_links_and_notes": "Exporter les liens et les notes",
       "imported_bookmarks": "Favoris importés",
-      "import_bookmarks_from_linkwarden_export": "Importer des marque-pages depuis l'export Linkwarden"
+      "import_bookmarks_from_linkwarden_export": "Importer des marque-pages depuis l'export Linkwarden",
+      "import_bookmarks_from_tab_session_manager_export": "Importer les marque-pages depuis Tab Session Manager"
     },
     "api_keys": {
       "api_keys": "Clés API",
@@ -158,6 +181,54 @@
       "asset_link": "Lien de l'actif",
       "delete_asset": "Supprimer l'actif",
       "delete_asset_confirmation": "Êtes-vous sûr de vouloir supprimer cet actif ?"
+    },
+    "rules": {
+      "rules": "Moteur de règles",
+      "rule_name": "Nom de la règle",
+      "description": "Vous pouvez utiliser des règles pour déclencher des actions lorsqu’un événement se produit.",
+      "ceate_rule": "Créer une règle",
+      "edit_rule": "Modifier la règle",
+      "save_rule": "Enregistrer la règle",
+      "delete_rule": "Supprimer la règle",
+      "delete_rule_confirmation": "Êtes-vous sûr de vouloir supprimer cette règle ?",
+      "whenever": "À chaque fois que...",
+      "if": "Si...",
+      "enter_rule_name": "Entrez le nom de la règle",
+      "describe_what_this_rule_does": "Décrivez ce que fait cette règle",
+      "rule_has_been_created": "La règle a été créée !",
+      "rule_has_been_updated": "La règle a été mise à jour !",
+      "rule_has_been_deleted": "La règle a été supprimée !",
+      "no_rules_created_yet": "Aucune règle n'a encore été créée",
+      "create_your_first_rule": "Créez votre première règle pour automatiser votre flux de travail",
+      "conditions_types": {
+        "always": "Toujours",
+        "url_contains": "L'URL contient",
+        "imported_from_feed": "Importé depuis un flux",
+        "bookmark_type_is": "Le type de marque-page est",
+        "has_tag": "A un tag",
+        "is_favourited": "Est mis en favori",
+        "is_archived": "Est archivé",
+        "and": "Toutes les conditions suivantes sont vraies",
+        "or": "Si l'une des conditions suivantes est remplie"
+      },
+      "actions_types": {
+        "add_tag": "Ajouter un tag",
+        "remove_tag": "Supprimer le tag",
+        "add_to_list": "Ajouter à la liste",
+        "remove_from_list": "Supprimer de la liste",
+        "download_full_page_archive": "Télécharger l'archive de la page complète",
+        "favourite_bookmark": "Marquer un marque-page comme favori",
+        "archive_bookmark": "Archiver le marque-page"
+      },
+      "events_types": {
+        "bookmark_added": "Un marque-page est ajouté",
+        "tag_added": "Ce tag est ajouté à un marque-page",
+        "tag_removed": "Ce tag est supprimé d'un marque-page",
+        "added_to_list": "Un marque-page est ajouté à cette liste",
+        "removed_from_list": "Un marque-page est supprimé de cette liste",
+        "favourited": "Un marque-page est mis en favori",
+        "archived": "Un marque-page est archivé"
+      }
     }
   },
   "admin": {
@@ -191,7 +262,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Régénérer les tags AI pour tous les favoris",
       "reindex_all_bookmarks": "Réindexer tous les favoris",
       "compact_assets": "Compacter les assets",
-      "reprocess_assets_fix_mode": "Reprocesser les assets (mode fix)"
+      "reprocess_assets_fix_mode": "Reprocesser les assets (mode fix)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Régénérer les résumés IA uniquement pour les marque-pages ayant échoué",
+      "regenerate_ai_summaries_for_all_bookmarks": "Régénérer les résumés IA pour tous les marque-pages"
     },
     "users_list": {
       "users_list": "Liste des utilisateurs",
@@ -221,7 +294,23 @@
     "search_query": "Requête de recherche",
     "parent_list": "Liste parente",
     "no_parent": "Pas de parent",
-    "list_type": "Type de liste"
+    "list_type": "Type de liste",
+    "merge_list": "Fusionner la liste",
+    "destination_list": "Liste de destination",
+    "delete_after_merge": "Supprimer la liste originale après la fusion",
+    "no_destination": "Pas de destination",
+    "description": "Description (Optional)",
+    "rss": {
+      "title": "Flux RSS",
+      "description": "Activer un flux RSS pour cette liste",
+      "feed_url": "URL du flux RSS"
+    },
+    "share_list": "Partager la liste",
+    "public_list": {
+      "title": "Liste publique",
+      "description": "Autoriser les autres à consulter cette liste",
+      "share_link": "Partager le lien"
+    }
   },
   "tags": {
     "all_tags": "Tous les tags",
@@ -238,7 +327,12 @@
   },
   "preview": {
     "view_original": "Voir l'original",
-    "cached_content": "Contenu en cache"
+    "cached_content": "Contenu en cache",
+    "reader_view": "Vue Lecteur",
+    "tabs": {
+      "details": "Détails",
+      "content": "Contenu"
+    }
   },
   "editor": {
     "quickly_focus": "Vous pouvez rapidement vous concentrer sur ce champ en appuyant sur ⌘ + E",
@@ -296,7 +390,8 @@
           "example": "*Italique* ou _Italique_ ou CTRL+i"
         }
       }
-    }
+    },
+    "placeholder_v2": "Collez un lien, écrivez une note ou déposez une image…"
   },
   "toasts": {
     "bookmarks": {
@@ -309,7 +404,9 @@
     },
     "lists": {
       "created": "La liste a été créée !",
-      "updated": "La liste a été mise à jour !"
+      "updated": "La liste a été mise à jour !",
+      "merged": "La liste a été fusionnée !",
+      "deleted": "La liste a été supprimée !"
     }
   },
   "cleanups": {
@@ -342,7 +439,19 @@
     "full_text_search": "Recherche en texte intégral",
     "type_is": "Le type est",
     "is_archived": "Est archivé",
-    "and": "Et"
+    "and": "Et",
+    "is_not_from_feed": "Ne provient pas d'un flux RSS",
+    "is_from_feed": "Provient d'un flux RSS",
+    "created_within": "Créé dans",
+    "created_earlier_than": "Créé avant",
+    "day_s": " {days} jour(s)",
+    "week_s": " {weeks} semaine(s)",
+    "month_s": " {months} mois",
+    "year_s": " {years} an(s)",
+    "day_s_ago": " Il y a {days} jour(s)",
+    "week_s_ago": " Il y a {weeks} semaine(s)",
+    "month_s_ago": " Il y a {months} mois",
+    "year_s_ago": " Il y a {years} an(s)"
   },
   "dialogs": {
     "bookmarks": {
@@ -352,5 +461,21 @@
   },
   "highlights": {
     "no_highlights": "Vous n'avez pas encore de surlignages."
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "Pas encore de marque-pages",
+      "description": "Enregistrez des articles, des liens et des pages intéressants pour y accéder rapidement plus tard."
+    }
+  },
+  "bookmark_editor": {
+    "title": "Modifier le marque-page",
+    "subtitle": "Apportez des modifications aux détails du marque-page. Cliquez sur Enregistrer lorsque vous avez terminé.",
+    "author": "Auteur",
+    "publisher": "Éditeur",
+    "date_published": "Date de publication",
+    "pick_a_date": "Choisir une date",
+    "save_changes": "Enregistrer les modifications",
+    "extracted_content": "Contenu extrait"
   }
 }

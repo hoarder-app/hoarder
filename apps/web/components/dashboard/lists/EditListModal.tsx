@@ -192,7 +192,11 @@ export function EditListModal({
     (value: z.infer<typeof zNewBookmarkListSchema>) => {
       value.parentId = value.parentId === "" ? null : value.parentId;
       value.query = value.type === "smart" ? value.query : undefined;
-      isEdit ? editList({ ...value, listId: list.id }) : createList(value);
+      if (isEdit) {
+        editList({ ...value, listId: list.id });
+      } else {
+        createList(value);
+      }
     },
   );
 
@@ -358,14 +362,16 @@ export function EditListModal({
                             value={field.value}
                             onChange={field.onChange}
                             placeholder={t("lists.search_query")}
+                            endIcon={
+                              parsedSearchQuery ? (
+                                <QueryExplainerTooltip
+                                  className="stroke-foreground p-1"
+                                  parsedSearchQuery={parsedSearchQuery}
+                                />
+                              ) : undefined
+                            }
                           />
                         </FormControl>
-                        {parsedSearchQuery && (
-                          <QueryExplainerTooltip
-                            className="translate-1/2 absolute right-1.5 top-2 stroke-foreground p-0.5"
-                            parsedSearchQuery={parsedSearchQuery}
-                          />
-                        )}
                       </div>
                       <FormDescription>
                         <Link

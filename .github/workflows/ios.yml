@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15
     steps:
       - name: Setup repo
         uses: actions/checkout@v4
@@ -29,5 +29,5 @@ jobs:
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
-          name: hoarder-ios
+          name: karakeep-ios
           path: ${{ github.workspace }}/app-release.ipa

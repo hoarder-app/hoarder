@@ -1,22 +1,22 @@
 import { assert, beforeEach, describe, expect, inject, it } from "vitest";
 
-import { createHoarderClient } from "@karakeep/sdk";
+import { createKarakeepClient } from "@karakeep/sdk";
 
 import { createTestUser } from "../../utils/api";
 
 describe("Bookmarks API", () => {
-  const port = inject("hoarderPort");
+  const port = inject("karakeepPort");
 
   if (!port) {
     throw new Error("Missing required environment variables");
   }
 
-  let client: ReturnType<typeof createHoarderClient>;
+  let client: ReturnType<typeof createKarakeepClient>;
   let apiKey: string;
 
   beforeEach(async () => {
     apiKey = await createTestUser();
-    client = createHoarderClient({
+    client = createKarakeepClient({
       baseUrl: `http://localhost:${port}/api/v1/`,
       headers: {
         "Content-Type": "application/json",
@@ -397,54 +397,258 @@ describe("Bookmarks API", () => {
     expect(finalPage!.nextCursor).toBeNull();
   });
 
-  it("should support precrawling via singlefile", async () => {
-    const file = new File(["<html>HELLO WORLD</html>"], "test.html", {
-      type: "text/html",
-    });
+  describe("singlefile", () => {
+    async function uploadSinglefileAsset(ifexists?: string) {
+      const file = new File(["<html>HELLO WORLD</html>"], "test.html", {
+        type: "text/html",
+      });
 
-    const formData = new FormData();
-    formData.append("url", "https://example.com");
-    formData.append("file", file);
+      const formData = new FormData();
+      formData.append("url", "https://example.com");
+      formData.append("file", file);
 
-    // OpenAPI typescript doesn't support multipart/form-data
-    // Upload the singlefile archive
-    const response = await fetch(
-      `http://localhost:${port}/api/v1/bookmarks/singlefile`,
-      {
+      const url = new URL(
+        `http://localhost:${port}/api/v1/bookmarks/singlefile`,
+      );
+      if (ifexists) {
+        url.searchParams.append("ifexists", ifexists);
+      }
+
+      const response = await fetch(url.toString(), {
         method: "POST",
         headers: {
           authorization: `Bearer ${apiKey}`,
         },
         body: formData,
-      },
-    );
+      });
 
-    if (!response.ok) {
-      throw new Error(`Failed to upload asset: ${response.statusText}`);
+      if (!response.ok) {
+        return [null, response] as const;
+      }
+
+      const data = (await response.json()) as { id: string };
+      return [data, response] as const;
     }
 
-    expect(response.status).toBe(201);
+    it("should support precrawling via singlefile with ifexists=skip", async () => {
+      // First upload: create a bookmark
+      const [data, response] = await uploadSinglefileAsset();
+      expect(response?.status).toBe(201);
+      const bookmarkId = data?.id;
+      if (!bookmarkId) throw new Error("Bookmark ID not found");
 
-    const { id: bookmarkId } = (await response.json()) as {
-      id: string;
-    };
-
-    // Get the created bookmark
-    const { data: retrievedBookmark, response: getResponse } = await client.GET(
-      "/bookmarks/{bookmarkId}",
-      {
-        params: {
-          path: {
-            bookmarkId: bookmarkId,
-          },
+      // Get the bookmark and record the precrawled asset id
+      const { data: bookmark, response: getResponse1 } = await client.GET(
+        "/bookmarks/{bookmarkId}",
+        {
+          params: { path: { bookmarkId } },
         },
-      },
-    );
+      );
+      expect(getResponse1.status).toBe(200);
+      const assetIds = bookmark!.assets
+        .filter((a) => a.assetType === "precrawledArchive")
+        .map((a) => a.id);
+      expect(assetIds.length).toBe(1);
+      const firstAssetId = assetIds[0];
 
-    expect(getResponse.status).toBe(200);
-    assert(retrievedBookmark!.content.type === "link");
-    expect(retrievedBookmark!.assets.map((a) => a.assetType)).toContain(
-      "precrawledArchive",
-    );
+      // Second upload with skip
+      const [data2, response2] = await uploadSinglefileAsset("skip");
+      expect(response2?.status).toBe(200);
+      expect(data2?.id).toBe(bookmarkId);
+
+      // Get the bookmark again
+      const { data: bookmark2, response: getResponse2 } = await client.GET(
+        "/bookmarks/{bookmarkId}",
+        {
+          params: { path: { bookmarkId } },
+        },
+      );
+      expect(getResponse2.status).toBe(200);
+      const assetIds2 = bookmark2!.assets
+        .filter((a) => a.assetType === "precrawledArchive")
+        .map((a) => a.id);
+      expect(assetIds2).toEqual([firstAssetId]); // same asset
+    });
+
+    it("should support precrawling via singlefile with ifexists=overwrite", async () => {
+      // First upload
+      const [data, response] = await uploadSinglefileAsset("overwrite");
+      expect(response?.status).toBe(201);
+      const bookmarkId = data?.id;
+      if (!bookmarkId) throw new Error("Bookmark ID not found");
+
+      // Record the asset
+      const { data: bookmark, response: getResponse1 } = await client.GET(
+        "/bookmarks/{bookmarkId}",
+        {
+          params: { path: { bookmarkId } },
+        },
+      );
+      expect(getResponse1.status).toBe(200);
+      const firstAssetId = bookmark!.assets.find(
+        (a) => a.assetType === "precrawledArchive",
+      )?.id;
+      expect(firstAssetId).toBeDefined();
+
+      // Second upload with overwrite
+      const [data2, response2] = await uploadSinglefileAsset("overwrite");
+      expect(response2?.status).toBe(200);
+      expect(data2?.id).toBe(bookmarkId);
+
+      // Get the bookmark again
+      const { data: bookmark2, response: getResponse2 } = await client.GET(
+        "/bookmarks/{bookmarkId}",
+        {
+          params: { path: { bookmarkId } },
+        },
+      );
+      expect(getResponse2.status).toBe(200);
+      const secondAssetId = bookmark2!.assets.find(
+        (a) => a.assetType === "precrawledArchive",
+      )?.id;
+      expect(secondAssetId).toBeDefined();
+      expect(secondAssetId).not.toBe(firstAssetId);
+      // There should be only one precrawledArchive asset
+      const precrawledAssets = bookmark2!.assets.filter(
+        (a) => a.assetType === "precrawledArchive",
+      );
+      expect(precrawledAssets.length).toBe(1);
+    });
+
+    it("should support precrawling via singlefile with ifexists=overwrite-recrawl", async () => {
+      // First upload
+      const [data, response] = await uploadSinglefileAsset("overwrite-recrawl");
+      expect(response?.status).toBe(201);
+      const bookmarkId = data?.id;
+      if (!bookmarkId) throw new Error("Bookmark ID not found");
+
+      // Record the asset
+      const { data: bookmark, response: getResponse1 } = await client.GET(
+        "/bookmarks/{bookmarkId}",
+        {
+          params: { path: { bookmarkId } },
+        },
+      );
+      expect(getResponse1.status).toBe(200);
+      const firstAssetId = bookmark!.assets.find(
+        (a) => a.assetType === "precrawledArchive",
+      )?.id;
+      expect(firstAssetId).toBeDefined();
+
+      // Second upload with overwrite-recrawl
+      const [data2, response2] =
+        await uploadSinglefileAsset("overwrite-recrawl");
+      expect(response2?.status).toBe(200);
+      expect(data2?.id).toBe(bookmarkId);
+
+      // Get the bookmark again
+      const { data: bookmark2, response: getResponse2 } = await client.GET(
+        "/bookmarks/{bookmarkId}",
+        {
+          params: { path: { bookmarkId } },
+        },
+      );
+      expect(getResponse2.status).toBe(200);
+      const secondAssetId = bookmark2!.assets.find(
+        (a) => a.assetType === "precrawledArchive",
+      )?.id;
+      expect(secondAssetId).toBeDefined();
+      expect(secondAssetId).not.toBe(firstAssetId);
+      // There should be only one precrawledArchive asset
+      const precrawledAssets = bookmark2!.assets.filter(
+        (a) => a.assetType === "precrawledArchive",
+      );
+      expect(precrawledAssets.length).toBe(1);
+    });
+
+    it("should support precrawling via singlefile with ifexists=append", async () => {
+      // First upload
+      const [data, response] = await uploadSinglefileAsset("append");
+      expect(response?.status).toBe(201);
+      const bookmarkId = data?.id;
+      if (!bookmarkId) throw new Error("Bookmark ID not found");
+
+      // Record the first asset
+      const { data: bookmark, response: getResponse1 } = await client.GET(
+        "/bookmarks/{bookmarkId}",
+        {
+          params: { path: { bookmarkId } },
+        },
+      );
+      expect(getResponse1.status).toBe(200);
+      const firstAssetId = bookmark!.assets.find(
+        (a) => a.assetType === "precrawledArchive",
+      )?.id;
+      expect(firstAssetId).toBeDefined();
+
+      // Second upload with append
+      const [data2, response2] = await uploadSinglefileAsset("append");
+      expect(response2?.status).toBe(200);
+      expect(data2?.id).toBe(bookmarkId);
+
+      // Get the bookmark again
+      const { data: bookmark2, response: getResponse2 } = await client.GET(
+        "/bookmarks/{bookmarkId}",
+        {
+          params: { path: { bookmarkId } },
+        },
+      );
+      expect(getResponse2.status).toBe(200);
+      const precrawledAssets = bookmark2!.assets.filter(
+        (a) => a.assetType === "precrawledArchive",
+      );
+      expect(precrawledAssets.length).toBe(2);
+      expect(precrawledAssets.map((a) => a.id)).toContain(firstAssetId);
+      // The second asset id should be different
+      const secondAssetId = precrawledAssets.find(
+        (asset) => asset.id !== firstAssetId,
+      )?.id;
+      expect(secondAssetId).toBeDefined();
+    });
+
+    it("should support precrawling via singlefile with ifexists=append-recrawl", async () => {
+      // First upload
+      const [data, response] = await uploadSinglefileAsset("append-recrawl");
+      expect(response?.status).toBe(201);
+      const bookmarkId = data?.id;
+      if (!bookmarkId) throw new Error("Bookmark ID not found");
+
+      // Record the first asset
+      const { data: bookmark, response: getResponse1 } = await client.GET(
+        "/bookmarks/{bookmarkId}",
+        {
+          params: { path: { bookmarkId } },
+        },
+      );
+      expect(getResponse1.status).toBe(200);
+      const firstAssetId = bookmark!.assets.find(
+        (a) => a.assetType === "precrawledArchive",
+      )?.id;
+      expect(firstAssetId).toBeDefined();
+
+      // Second upload with append-recrawl
+      const [data2, response2] = await uploadSinglefileAsset("append-recrawl");
+      expect(response2?.status).toBe(200);
+      expect(data2?.id).toBe(bookmarkId);
+
+      // Get the bookmark again
+      const { data: bookmark2, response: getResponse2 } = await client.GET(
+        "/bookmarks/{bookmarkId}",
+        {
+          params: { path: { bookmarkId } },
+        },
+      );
+      expect(getResponse2.status).toBe(200);
+      const precrawledAssets = bookmark2!.assets.filter(
+        (a) => a.assetType === "precrawledArchive",
+      );
+      expect(precrawledAssets.length).toBe(2);
+      expect(precrawledAssets.map((a) => a.id)).toContain(firstAssetId);
+      // The second asset id should be different
+      const secondAssetId = precrawledAssets.find(
+        (asset) => asset.id !== firstAssetId,
+      )?.id;
+      expect(secondAssetId).toBeDefined();
+    });
   });
 });

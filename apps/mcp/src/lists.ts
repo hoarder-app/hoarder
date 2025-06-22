@@ -6,17 +6,27 @@ import { toMcpToolError } from "./utils";
 
 mcpServer.tool(
   "get-lists",
-  `Search for bookmarks matching a specific a query.`,
+  `Retrieves a list of lists.`,
   async (): Promise<CallToolResult> => {
     const res = await karakeepClient.GET("/lists");
     if (!res.data) {
       return toMcpToolError(res.error);
     }
     return {
-      content: res.data.lists.map((list) => ({
-        type: "text",
-        text: JSON.stringify(list),
-      })),
+      content: [
+        {
+          type: "text",
+          text: res.data.lists
+            .map(
+              (list) => `List ID: ${list.id}
+Name: ${list.name}
+Icon: ${list.icon}
+Description: ${list.description ?? ""}
+Parent ID: ${list.parentId}`,
+            )
+            .join("\n\n"),
+        },
+      ],
     };
   },
 );

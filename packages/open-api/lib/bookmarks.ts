@@ -9,9 +9,11 @@ import {
   zBareBookmarkSchema,
   zManipulatedTagSchema,
   zNewBookmarkRequestSchema,
+  zSortOrder,
   zUpdateBookmarksRequestSchema,
 } from "@karakeep/shared/types/bookmarks";
 
+import { AssetIdSchema } from "./assets";
 import { BearerAuth } from "./common";
 import { ErrorSchema } from "./errors";
 import { HighlightSchema } from "./highlights";
@@ -25,17 +27,6 @@ import { TagIdSchema } from "./tags";
 
 export const registry = new OpenAPIRegistry();
 extendZodWithOpenApi(z);
-
-export const AssetIdSchema = registry.registerParameter(
-  "AssetId",
-  z.string().openapi({
-    param: {
-      name: "assetId",
-      in: "path",
-    },
-    example: "ieidlxygmwj87oxz5hxttoc8",
-  }),
-);
 
 export const BookmarkIdSchema = registry.registerParameter(
   "BookmarkId",
@@ -60,6 +51,10 @@ registry.registerPath({
       .object({
         archived: z.boolean().optional(),
         favourited: z.boolean().optional(),
+        sortOrder: zSortOrder
+          .exclude(["relevance"])
+          .optional()
+          .default(zSortOrder.Enum.desc),
       })
       .merge(PaginationSchema)
       .merge(IncludeContentSearchParamSchema),
@@ -87,6 +82,7 @@ registry.registerPath({
     query: z
       .object({
         q: z.string(),
+        sortOrder: zSortOrder.optional().default(zSortOrder.Enum.relevance),
       })
       .merge(PaginationSchema)
       .merge(IncludeContentSearchParamSchema),

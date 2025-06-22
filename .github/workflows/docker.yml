@@ -25,10 +25,14 @@ jobs:
             target: cli
             tags_latest: ghcr.io/hoarder-app/hoarder-cli:latest,ghcr.io/mohamedbassem/hoarder-cli:latest,ghcr.io/karakeep-app/karakeep-cli:latest
             tags_release: ghcr.io/hoarder-app/hoarder-cli:${{ github.event.release.name }},ghcr.io/mohamedbassem/hoarder-cli:${{ github.event.release.name }},ghcr.io/karakeep-app/karakeep-cli:${{ github.event.release.name }},ghcr.io/hoarder-app/hoarder-cli:release,ghcr.io/mohamedbassem/hoarder-cli:release,ghcr.io/karakeep-app/karakeep-cli:release
+          - name: karakeep-mcp
+            target: mcp
+            tags_latest: ghcr.io/karakeep-app/karakeep-mcp:latest
+            tags_release: ghcr.io/karakeep-app/karakeep-mcp:${{ github.event.release.name }},ghcr.io/karakeep-app/karakeep-mcp:release
           - name: karakeep-aio
             target: aio
-            tags_latest: ghcr.io/hoarder-app/hoarder:latest,ghcr.io/mohamedbassem/hoarder:latest,ghcr.io/karakeep-app/karakeep:latest
-            tags_release: ghcr.io/hoarder-app/hoarder:${{ github.event.release.name }},ghcr.io/mohamedbassem/hoarder:${{ github.event.release.name }},ghcr.io/karakeep-app/karakeep:${{ github.event.release.name }},ghcr.io/hoarder-app/hoarder:release,ghcr.io/mohamedbassem/hoarder:release,ghcr.io/karakeep-app/karakeep:release
+            tags_latest: ghcr.io/hoarder-app/hoarder:latest,ghcr.io/karakeep-app/karakeep:latest
+            tags_release: ghcr.io/hoarder-app/hoarder:${{ github.event.release.name }},ghcr.io/karakeep-app/karakeep:${{ github.event.release.name }},ghcr.io/hoarder-app/hoarder:release,ghcr.io/karakeep-app/karakeep:release
     runs-on: ubuntu-latest
     permissions:
       packages: write

@@ -28,14 +28,17 @@
     "sort": {
       "title": "Sắp xếp",
       "newest_first": "Sắp xếp theo mới nhất",
-      "oldest_first": "Sắp xếp theo cũ nhất"
+      "oldest_first": "Sắp xếp theo cũ nhất",
+      "relevant_first": "Liên quan nhất trước"
     },
     "ignore": "Bỏ qua",
     "apply_all": "Áp dụng cho tất cả",
     "merge": "Hợp nhất",
     "edit_title": "Sửa tiêu đề",
     "add": "Thêm",
-    "fetch_now": "Lấy dữ liệu ngay"
+    "fetch_now": "Lấy dữ liệu ngay",
+    "open_editor": "Mở trình chỉnh sửa",
+    "toggle_show_archived": "Hiển thị đã lưu trữ"
   },
   "layouts": {
     "list": "Danh sách",
@@ -46,7 +49,9 @@
   "settings": {
     "feeds": {
       "add_a_subscription": "Thêm đăng kí",
-      "rss_subscriptions": "Đăng kí RSS"
+      "rss_subscriptions": "Đăng kí RSS",
+      "feed_enabled": "Đã bật Nguồn cấp RSS",
+      "feed_disabled": "Đã tắt Nguồn cấp RSS"
     },
     "import": {
       "imported_bookmarks": "Đánh dấu trang đã được nhập",
@@ -57,7 +62,8 @@
       "import_bookmarks_from_linkwarden_export": "Nhập dấu trang từ bản xuất Linkwarden",
       "import_bookmarks_from_pocket_export": "Nhập dấu trang từ bản xuất Pocket",
       "import_bookmarks_from_omnivore_export": "Nhập dấu trang từ xuất Omnivore",
-      "import_bookmarks_from_hoarder_export": "Nhập dấu trang từ bản xuất Hoarder"
+      "import_bookmarks_from_karakeep_export": "Nhập dấu trang từ bản xuất Karakeep",
+      "import_bookmarks_from_tab_session_manager_export": "Nhập dấu trang từ Tab Session Manager"
     },
     "webhooks": {
       "edit_auth_token": "Sửa mã xác thực",
@@ -105,7 +111,20 @@
       "new_password": "Mật khẩu mới",
       "confirm_new_password": "Xác nhận mật khẩu mới",
       "options": "Tùy chọn",
-      "interface_lang": "Ngôn ngữ giao diện"
+      "interface_lang": "Ngôn ngữ giao diện",
+      "user_settings": {
+        "user_settings_updated": "Đã cập nhật cài đặt người dùng!",
+        "bookmark_click_action": {
+          "title": "Hành động khi nhấp vào bookmark",
+          "open_external_url": "Mở URL gốc",
+          "open_bookmark_details": "Mở chi tiết bookmark"
+        },
+        "archive_display_behaviour": {
+          "title": "Bookmark đã lưu trữ",
+          "show": "Hiển thị các bookmark đã lưu trữ trong tag và danh sách",
+          "hide": "Ẩn các bookmark đã lưu trữ trong tag và danh sách"
+        }
+      }
     },
     "user_settings": "Cài đặt người dùng",
     "back_to_app": "Quay lại ứng dụng",
@@ -123,6 +142,54 @@
       "delete_asset_confirmation": "Bạn có chắc chắn muốn xóa tài sản này không?",
       "manage_assets": "Quản lý tài sản",
       "no_assets": "Mày chưa có tài sản mẹ gì cả."
+    },
+    "rules": {
+      "actions_types": {
+        "archive_bookmark": "Lưu trữ dấu trang",
+        "add_tag": "Thêm thẻ",
+        "remove_tag": "Xóa thẻ",
+        "add_to_list": "Thêm vào danh sách",
+        "remove_from_list": "Xóa khỏi danh sách",
+        "download_full_page_archive": "Tải xuống bản lưu trữ toàn trang",
+        "favourite_bookmark": "Đánh dấu trang yêu thích"
+      },
+      "rules": "Công cụ quy tắc",
+      "rule_name": "Tên quy tắc",
+      "description": "Bạn có thể sử dụng các quy tắc để kích hoạt các hành động khi một sự kiện xảy ra.",
+      "ceate_rule": "Tạo quy tắc",
+      "edit_rule": "Chỉnh sửa quy tắc",
+      "save_rule": "Lưu quy tắc",
+      "delete_rule": "Xóa quy tắc",
+      "delete_rule_confirmation": "Bạn có chắc chắn muốn xóa quy tắc này không?",
+      "whenever": "Bất cứ khi nào ...",
+      "if": "Nếu ...",
+      "enter_rule_name": "Nhập tên quy tắc",
+      "describe_what_this_rule_does": "Mô tả quy tắc này làm gì",
+      "rule_has_been_created": "Quy tắc đã được tạo!",
+      "rule_has_been_updated": "Quy tắc đã được cập nhật!",
+      "rule_has_been_deleted": "Quy tắc đã bị xóa!",
+      "no_rules_created_yet": "Chưa có quy tắc nào được tạo",
+      "create_your_first_rule": "Tạo quy tắc đầu tiên của bạn để tự động hóa quy trình làm việc",
+      "conditions_types": {
+        "always": "Luôn luôn",
+        "url_contains": "URL chứa",
+        "imported_from_feed": "Đã nhập từ nguồn cấp dữ liệu",
+        "bookmark_type_is": "Loại dấu trang là",
+        "has_tag": "Có thẻ",
+        "is_favourited": "Được yêu thích",
+        "is_archived": "Đã lưu trữ",
+        "and": "Tất cả những điều sau đây là đúng",
+        "or": "Bất kỳ điều nào sau đây là đúng"
+      },
+      "events_types": {
+        "bookmark_added": "Một dấu trang được thêm vào",
+        "tag_added": "Thẻ này được thêm vào một dấu trang",
+        "tag_removed": "Thẻ này bị xóa khỏi dấu trang",
+        "added_to_list": "Một dấu trang được thêm vào danh sách này",
+        "removed_from_list": "Một dấu trang bị xóa khỏi danh sách này",
+        "favourited": "Một dấu trang được yêu thích",
+        "archived": "Một dấu trang được lưu trữ"
+      }
     }
   },
   "admin": {
@@ -167,7 +234,9 @@
       "reindex_all_bookmarks": "Lập chỉ mục lại tất cả dấu trang",
       "compact_assets": "Gộp tài sản",
       "reprocess_assets_fix_mode": "Xử lý lại tài sản (Chế độ sửa lỗi)",
-      "without_inference": "Không có suy luận"
+      "without_inference": "Không có suy luận",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Tạo lại tóm tắt AI chỉ cho các bookmark bị lỗi",
+      "regenerate_ai_summaries_for_all_bookmarks": "Tạo lại tóm tắt AI cho tất cả các bookmark"
     }
   },
   "common": {
@@ -203,7 +272,11 @@
     "archive": "Lưu trữ",
     "actions": "Các hành động",
     "type": "Loại",
-    "size": "Kích thước"
+    "size": "Kích thước",
+    "updated_at": "Cập nhật lúc",
+    "title": "Tiêu đề",
+    "description": "Mô tả",
+    "summary": "Tóm tắt"
   },
   "highlights": {
     "no_highlights": "Bạn chưa có đánh dấu nào."
@@ -220,7 +293,23 @@
     "no_parent": "Không có thư mục gốc",
     "search_query": "Truy vấn tìm kiếm",
     "new_nested_list": "Danh sách lồng nhau mới",
-    "search_query_help": "Tìm hiểu thêm về ngôn ngữ truy vấn tìm kiếm."
+    "search_query_help": "Tìm hiểu thêm về ngôn ngữ truy vấn tìm kiếm.",
+    "merge_list": "Hợp nhất danh sách",
+    "destination_list": "Danh sách đích",
+    "delete_after_merge": "Xóa danh sách gốc sau khi hợp nhất",
+    "no_destination": "Không có đích đến",
+    "description": "Mô tả (Tùy chọn)",
+    "share_list": "Chia sẻ danh sách",
+    "rss": {
+      "title": "Nguồn cấp RSS",
+      "description": "Bật nguồn cấp RSS cho danh sách này",
+      "feed_url": "URL nguồn cấp RSS"
+    },
+    "public_list": {
+      "title": "Danh sách công khai",
+      "description": "Cho phép người khác xem danh sách này",
+      "share_link": "Chia sẻ liên kết"
+    }
   },
   "search": {
     "is_favorited": "Được ưa thích",
@@ -245,7 +334,19 @@
     "type_is_not": "Thể loại không phải là",
     "full_text_search": "Tìm kiếm toàn văn bản",
     "and": "Và",
-    "or": "Hoặc"
+    "or": "Hoặc",
+    "is_from_feed": "Lấy từ RSS Feed",
+    "is_not_from_feed": "Không lấy từ RSS Feed",
+    "created_within": "Được tạo trong vòng",
+    "day_s": " Ngày",
+    "created_earlier_than": "Được tạo trước",
+    "week_s": " Tuần",
+    "month_s": " Tháng",
+    "year_s": " Năm",
+    "day_s_ago": " Ngày trước",
+    "week_s_ago": " Tuần trước",
+    "month_s_ago": " Tháng trước",
+    "year_s_ago": " Năm trước"
   },
   "tags": {
     "all_tags": "Tất cả nhãn",
@@ -320,7 +421,8 @@
     "multiple_urls_dialog_title": "Nhập URL dưới dạng Dấu trang riêng biệt?",
     "import_as_text": "Nhập dưới dạng Dấu trang văn bản",
     "placeholder": "Dán một liên kết hoặc một hình ảnh, viết một ghi chú hoặc kéo và thả một hình ảnh vào đây…",
-    "new_item": "MỤC MỚI"
+    "new_item": "MỤC MỚI",
+    "placeholder_v2": "Dán liên kết, viết ghi chú hoặc thả ảnh…"
   },
   "cleanups": {
     "duplicate_tags": {
@@ -346,11 +448,34 @@
     },
     "lists": {
       "created": "Đã tạo danh sách!",
-      "updated": "Danh sách đã được cập nhật!"
+      "updated": "Danh sách đã được cập nhật!",
+      "merged": "Đã hợp nhất danh sách!",
+      "deleted": "Đã xóa danh sách!"
     }
   },
   "preview": {
     "view_original": "Xem bản gốc",
-    "cached_content": "Nội dung được lưu trong bộ nhớ cache"
+    "cached_content": "Nội dung được lưu trong bộ nhớ cache",
+    "reader_view": "Chế độ đọc",
+    "tabs": {
+      "content": "Nội dung",
+      "details": "Chi tiết"
+    }
+  },
+  "bookmark_editor": {
+    "title": "Sửa dấu trang",
+    "subtitle": "Thay đổi chi tiết dấu trang. Nhấn lưu khi xong việc nhé.",
+    "author": "Tác giả",
+    "publisher": "Nhà xuất bản",
+    "date_published": "Ngày xuất bản",
+    "pick_a_date": "Chọn ngày",
+    "save_changes": "Lưu thay đổi",
+    "extracted_content": "Nội dung đã trích xuất"
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "Chưa có dấu trang nào",
+      "description": "Lưu các bài viết, liên kết và trang thú vị để truy cập nhanh sau này."
+    }
   }
 }

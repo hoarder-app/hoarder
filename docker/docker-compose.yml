@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   web:
     image: ghcr.io/karakeep-app/karakeep:${KARAKEEP_VERSION:-release}

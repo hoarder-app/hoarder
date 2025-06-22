@@ -32,7 +32,11 @@
       "media": "Media"
     },
     "type": "Type",
-    "source": "Bron"
+    "source": "Bron",
+    "updated_at": "Bijgewerkt op",
+    "title": "Titel",
+    "description": "Beschrijving",
+    "summary": "Samenvatting"
   },
   "layouts": {
     "list": "Lijst",
@@ -75,8 +79,11 @@
     "sort": {
       "title": "Sorteren",
       "newest_first": "Nieuwste eerst",
-      "oldest_first": "Oudste eerst"
-    }
+      "oldest_first": "Oudste eerst",
+      "relevant_first": "Meest relevant eerst"
+    },
+    "open_editor": "Editor openen",
+    "toggle_show_archived": "Gearchiveerde items weergeven"
   },
   "settings": {
     "ai": {
@@ -100,8 +107,9 @@
       "import_bookmarks_from_pocket_export": "Importeer Bladwijzers van Pocket export",
       "import_bookmarks_from_omnivore_export": "Bladwijzers importeren uit Omnivore export",
       "import_bookmarks_from_linkwarden_export": "Bladwijzers importeren uit Linkwarden-export",
-      "import_bookmarks_from_hoarder_export": "Bladwijzers importeren uit Hoarder-export",
-      "export_links_and_notes": "Links en notities exporteren"
+      "import_bookmarks_from_karakeep_export": "Bladwijzers importeren uit Karakeep-export",
+      "export_links_and_notes": "Links en notities exporteren",
+      "import_bookmarks_from_tab_session_manager_export": "Bladwijzers importeren uit Tab Session Manager"
     },
     "broken_links": {
       "broken_links": "Gebroken Links",
@@ -124,13 +132,28 @@
       "new_password": "Nieuwe Wachtwoord",
       "options": "Opties",
       "confirm_new_password": "Confirmeer Nieuwe Wachtwoord",
-      "interface_lang": "Interface Taal"
+      "interface_lang": "Interface Taal",
+      "user_settings": {
+        "user_settings_updated": "Gebruikersinstellingen zijn bijgewerkt!",
+        "bookmark_click_action": {
+          "title": "Actie bij klikken op bladwijzer",
+          "open_external_url": "Originele URL openen",
+          "open_bookmark_details": "Bladwijzerdetails openen"
+        },
+        "archive_display_behaviour": {
+          "title": "Gearchiveerde bladwijzers",
+          "show": "Gearchiveerde bladwijzers weergeven in tags en lijsten",
+          "hide": "Gearchiveerde bladwijzers verbergen in tags en lijsten"
+        }
+      }
     },
     "back_to_app": "Terug Naar App",
     "user_settings": "Gebruikersinstellingen",
     "feeds": {
       "rss_subscriptions": "RSS Abonnementen",
-      "add_a_subscription": "Abonnement Toevoegen"
+      "add_a_subscription": "Abonnement Toevoegen",
+      "feed_enabled": "RSS-feed ingeschakeld",
+      "feed_disabled": "RSS-feed uitgeschakeld"
     },
     "manage_assets": {
       "manage_assets": "Activa beheren",
@@ -158,6 +181,54 @@
       "delete_webhook_confirmation": "Weet je zeker dat je deze webhook wilt verwijderen?",
       "edit_webhook": "Webhook bewerken",
       "webhook_url": "Webhook URL"
+    },
+    "rules": {
+      "rules": "Regelengine",
+      "rule_name": "Regelnaam",
+      "description": "Je kunt regels gebruiken om acties te activeren wanneer een gebeurtenis wordt geactiveerd.",
+      "ceate_rule": "Regel aanmaken",
+      "edit_rule": "Regel bewerken",
+      "save_rule": "Regel opslaan",
+      "delete_rule": "Regel verwijderen",
+      "delete_rule_confirmation": "Weet je zeker dat je deze regel wilt verwijderen?",
+      "whenever": "Wanneer ...",
+      "if": "Indien ...",
+      "enter_rule_name": "Voer regelnaam in",
+      "describe_what_this_rule_does": "Beschrijf wat deze regel doet",
+      "rule_has_been_created": "Regel is aangemaakt!",
+      "rule_has_been_updated": "Regel is bijgewerkt!",
+      "rule_has_been_deleted": "Regel is verwijderd!",
+      "no_rules_created_yet": "Nog geen regels aangemaakt",
+      "create_your_first_rule": "Maak je eerste regel om je workflow te automatiseren",
+      "conditions_types": {
+        "always": "Altijd",
+        "url_contains": "URL bevat",
+        "imported_from_feed": "Geïmporteerd uit feed",
+        "bookmark_type_is": "Bladwijzertype is",
+        "has_tag": "Heeft tag",
+        "is_favourited": "Is favoriet",
+        "is_archived": "Is Gearchiveerd",
+        "and": "Al het volgende is waar",
+        "or": "Als een van de volgende waar is"
+      },
+      "actions_types": {
+        "add_tag": "Tag toevoegen",
+        "remove_tag": "Tag verwijderen",
+        "add_to_list": "Toevoegen aan lijst",
+        "remove_from_list": "Verwijderen uit lijst",
+        "download_full_page_archive": "Volledige pagina-archief downloaden",
+        "favourite_bookmark": "Favoriete bladwijzer",
+        "archive_bookmark": "Bladwijzer archiveren"
+      },
+      "events_types": {
+        "bookmark_added": "Er is een bladwijzer toegevoegd",
+        "tag_added": "Deze tag is toegevoegd aan een bladwijzer",
+        "tag_removed": "Deze tag is verwijderd van een bladwijzer",
+        "added_to_list": "Een bladwijzer is toegevoegd aan deze lijst",
+        "removed_from_list": "Een bladwijzer is verwijderd uit deze lijst",
+        "favourited": "Een bladwijzer is favoriet",
+        "archived": "Een bladwijzer is gearchiveerd"
+      }
     }
   },
   "admin": {
@@ -202,7 +273,9 @@
       "reprocess_assets_fix_mode": "Activa opnieuw verwerken (Fix-modus)",
       "recrawl_failed_links_only": "Alleen mislukte links opnieuw crawlen",
       "recrawl_all_links": "Alle links opnieuw crawlen",
-      "reindex_all_bookmarks": "Alle bladwijzers opnieuw indexeren"
+      "reindex_all_bookmarks": "Alle bladwijzers opnieuw indexeren",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "AI-samenvattingen opnieuw genereren, alleen voor mislukte bladwijzers",
+      "regenerate_ai_summaries_for_all_bookmarks": "AI-samenvattingen opnieuw genereren voor alle bladwijzers"
     }
   },
   "tags": {
@@ -220,7 +293,12 @@
   },
   "preview": {
     "view_original": "Toon origineel",
-    "cached_content": "Inhoud in cache"
+    "cached_content": "Inhoud in cache",
+    "reader_view": "Lezersweergave",
+    "tabs": {
+      "content": "Inhoud",
+      "details": "Details"
+    }
   },
   "editor": {
     "text_toolbar": {
@@ -278,7 +356,8 @@
     "new_item": "NIEUW ITEM",
     "multiple_urls_dialog_desc": "De invoer bevat meerdere URL's op afzonderlijke regels. Wil je ze als afzonderlijke bladwijzers importeren?",
     "disabled_submissions": "Inzendingen zijn uitgeschakeld",
-    "placeholder": "Plak hier een link of een afbeelding, schrijf een notitie of sleep een afbeelding hierheen…"
+    "placeholder": "Plak hier een link of een afbeelding, schrijf een notitie of sleep een afbeelding hierheen…",
+    "placeholder_v2": "Plak een link, schrijf een notitie of sleep een afbeelding…"
   },
   "options": {
     "dark_mode": "Donkere Modus",
@@ -296,7 +375,23 @@
     "parent_list": "Bovenliggende lijst",
     "list_type": "Type lijst",
     "manual_list": "Handmatige lijst",
-    "new_nested_list": "Nieuwe geneste lijst"
+    "new_nested_list": "Nieuwe geneste lijst",
+    "merge_list": "Lijst samenvoegen",
+    "destination_list": "Bestemmingslijst",
+    "delete_after_merge": "Originele lijst verwijderen na samenvoegen",
+    "no_destination": "Geen bestemming",
+    "description": "Beschrijving (Optioneel)",
+    "public_list": {
+      "title": "Openbare lijst",
+      "description": "Anderen toestaan deze lijst te bekijken",
+      "share_link": "Link delen"
+    },
+    "share_list": "Lijst delen",
+    "rss": {
+      "title": "RSS-feed",
+      "description": "Een RSS-feed inschakelen voor deze lijst",
+      "feed_url": "RSS-feed URL"
+    }
   },
   "search": {
     "full_text_search": "Volledige tekst zoeken",
@@ -321,7 +416,19 @@
     "has_no_tags": "Heeft geen tag",
     "is_in_any_list": "Staat in een lijst",
     "created_on_or_after": "Gemaakt op of na",
-    "type_is": "Type is"
+    "type_is": "Type is",
+    "is_from_feed": "Komt uit RSS-feed",
+    "is_not_from_feed": "Komt niet uit RSS-feed",
+    "created_within": "Gemaakt binnen",
+    "created_earlier_than": "Eerder gemaakt dan",
+    "day_s": " Dagen",
+    "week_s": " Weken",
+    "month_s": " Maanden",
+    "year_s": " Jaar",
+    "day_s_ago": " Dagen geleden",
+    "week_s_ago": " Weken geleden",
+    "month_s_ago": " Maanden geleden",
+    "year_s_ago": " Jaar geleden"
   },
   "dialogs": {
     "bookmarks": {
@@ -340,7 +447,9 @@
     },
     "lists": {
       "updated": "Lijst is bijgewerkt!",
-      "created": "Lijst is aangemaakt!"
+      "created": "Lijst is aangemaakt!",
+      "merged": "Lijst is samengevoegd!",
+      "deleted": "Lijst is verwijderd!"
     }
   },
   "cleanups": {
@@ -352,5 +461,21 @@
   },
   "highlights": {
     "no_highlights": "Je hebt nog geen markeringen."
+  },
+  "bookmark_editor": {
+    "save_changes": "Wijzigingen opslaan",
+    "title": "Bladwijzer bewerken",
+    "subtitle": "Breng wijzigingen aan in de bladwijzerdetails. Klik op opslaan als je klaar bent.",
+    "author": "Auteur",
+    "publisher": "Uitgever",
+    "date_published": "Datum gepubliceerd",
+    "pick_a_date": "Kies een datum",
+    "extracted_content": "Geëxtraheerde inhoud"
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "Nog geen bladwijzers",
+      "description": "Sla interessante artikelen, links en pagina's op om ze later snel te kunnen openen."
+    }
   }
 }

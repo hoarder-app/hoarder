@@ -1,3 +1,5 @@
+import { vi } from "vitest";
+
 import { getInMemoryDB } from "@karakeep/db/drizzle";
 import { users } from "@karakeep/db/schema";
 
@@ -70,6 +72,18 @@ export async function buildTestContext(
 
 export function defaultBeforeEach(seedDB = true) {
   return async (context: object) => {
+    vi.mock("@karakeep/shared/queues", () => ({
+      LinkCrawlerQueue: {
+        enqueue: vi.fn(),
+      },
+      OpenAIQueue: {
+        enqueue: vi.fn(),
+      },
+      triggerRuleEngineOnEvent: vi.fn(),
+      triggerSearchReindex: vi.fn(),
+      triggerWebhook: vi.fn(),
+      triggerSearchDeletion: vi.fn(),
+    }));
     Object.assign(context, await buildTestContext(seedDB));
   };
 }

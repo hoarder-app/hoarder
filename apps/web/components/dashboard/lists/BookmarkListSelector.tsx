@@ -7,8 +7,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import LoadingSpinner from "@/components/ui/spinner";
+import { cn } from "@/lib/utils";
 
 import { useBookmarkLists } from "@karakeep/shared-react/hooks/lists";
+import { ZBookmarkList } from "@karakeep/shared/types/lists";
 
 export function BookmarkListSelector({
   value,
@@ -16,12 +18,16 @@ export function BookmarkListSelector({
   hideSubtreeOf,
   hideBookmarkIds = [],
   placeholder = "Select a list",
+  className,
+  listTypes = ["manual", "smart"],
 }: {
+  className?: string;
   value?: string | null;
   onChange: (value: string) => void;
   placeholder?: string;
   hideSubtreeOf?: string;
   hideBookmarkIds?: string[];
+  listTypes?: ZBookmarkList["type"][];
 }) {
   const { data, isPending: isFetchingListsPending } = useBookmarkLists();
   let { allPaths } = data ?? {};
@@ -34,6 +40,9 @@ export function BookmarkListSelector({
     if (hideBookmarkIds.includes(path[path.length - 1].id)) {
       return false;
     }
+    if (!listTypes.includes(path[path.length - 1].type)) {
+      return false;
+    }
     if (!hideSubtreeOf) {
       return true;
     }
@@ -42,7 +51,7 @@ export function BookmarkListSelector({
 
   return (
     <Select onValueChange={onChange} value={value ?? ""}>
-      <SelectTrigger className="w-full">
+      <SelectTrigger className={cn("w-full", className)}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

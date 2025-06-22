@@ -9,9 +9,10 @@ export default async function MobileSidebar({
 }: {
   items: (t: TFunction) => TSidebarItem[];
 }) {
+  // oxlint-disable-next-line rules-of-hooks
   const { t } = await useTranslation();
   return (
-    <aside className="w-full">
+    <aside className="w-full overflow-x-auto">
       <ul className="flex justify-between space-x-2 border-b-black px-5 py-2 pt-5">
         {items(t).map((item) => (
           <MobileSidebarItem

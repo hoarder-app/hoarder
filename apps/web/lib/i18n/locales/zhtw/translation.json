@@ -32,7 +32,11 @@
       "media": "媒體"
     },
     "type": "類型",
-    "size": "大小"
+    "size": "大小",
+    "updated_at": "更新於",
+    "title": "標題",
+    "description": "描述",
+    "summary": "摘要"
   },
   "layouts": {
     "masonry": "瀑布式",
@@ -74,9 +78,12 @@
     "sort": {
       "title": "排序",
       "newest_first": "最新在前",
-      "oldest_first": "最舊在前"
+      "oldest_first": "最舊在前",
+      "relevant_first": "最相關優先"
     },
-    "recrawl": "重新抓取"
+    "recrawl": "重新抓取",
+    "open_editor": "開啟編輯器",
+    "toggle_show_archived": "顯示已封存"
   },
   "settings": {
     "back_to_app": "返回應用程式",
@@ -89,7 +96,20 @@
       "new_password": "新密碼",
       "confirm_new_password": "確認新密碼",
       "options": "選項",
-      "interface_lang": "介面語言"
+      "interface_lang": "介面語言",
+      "user_settings": {
+        "archive_display_behaviour": {
+          "hide": "在標籤和列表中隱藏已封存的書籤",
+          "title": "已封存的書籤",
+          "show": "在標籤和列表中顯示已封存的書籤"
+        },
+        "user_settings_updated": "使用者設定已更新！",
+        "bookmark_click_action": {
+          "title": "書籤點擊動作",
+          "open_external_url": "開啟原始網址",
+          "open_bookmark_details": "開啟書籤詳細資訊"
+        }
+      }
     },
     "ai": {
       "ai_settings": "AI 設定",
@@ -106,7 +126,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS 訂閱",
-      "add_a_subscription": "新增訂閱"
+      "add_a_subscription": "新增訂閱",
+      "feed_enabled": "已啟用 RSS 摘要",
+      "feed_disabled": "已停用 RSS 摘要"
     },
     "import": {
       "import_export": "匯入／匯出",
@@ -114,10 +136,11 @@
       "import_bookmarks_from_html_file": "從 HTML 檔案匯入書籤",
       "import_bookmarks_from_pocket_export": "從 Pocket 匯出檔案匯入書籤",
       "import_bookmarks_from_omnivore_export": "從 Omnivore 匯出檔案匯入書籤",
-      "import_bookmarks_from_hoarder_export": "從 Hoarder 匯出檔案匯入書籤",
+      "import_bookmarks_from_karakeep_export": "從 Karakeep 匯出檔案匯入書籤",
       "export_links_and_notes": "匯出連結和筆記",
       "imported_bookmarks": "已匯入的書籤",
-      "import_bookmarks_from_linkwarden_export": "從 Linkwarden 匯出檔案匯入書籤"
+      "import_bookmarks_from_linkwarden_export": "從 Linkwarden 匯出檔案匯入書籤",
+      "import_bookmarks_from_tab_session_manager_export": "從 Tab Session Manager 匯入書籤"
     },
     "api_keys": {
       "api_keys": "API 金鑰",
@@ -158,6 +181,54 @@
       "asset_link": "資產連結",
       "delete_asset": "刪除資產",
       "delete_asset_confirmation": "你確定要刪除這個資產嗎？"
+    },
+    "rules": {
+      "conditions_types": {
+        "has_tag": "有標籤",
+        "is_favourited": "已設為最愛",
+        "always": "總是",
+        "url_contains": "網址包含",
+        "imported_from_feed": "從 Feed 匯入",
+        "bookmark_type_is": "書籤類型為",
+        "is_archived": "已封存",
+        "and": "以下全部為真",
+        "or": "以下任一項為真"
+      },
+      "rules": "規則引擎",
+      "rule_name": "規則名稱",
+      "description": "您可以使用規則在事件觸發時觸發動作。",
+      "ceate_rule": "建立規則",
+      "edit_rule": "編輯規則",
+      "save_rule": "儲存規則",
+      "delete_rule": "刪除規則",
+      "delete_rule_confirmation": "你確定要刪除此規則嗎？",
+      "whenever": "無論何時...",
+      "if": "如果...",
+      "enter_rule_name": "輸入規則名稱",
+      "describe_what_this_rule_does": "描述此規則的作用",
+      "rule_has_been_created": "規則已建立！",
+      "rule_has_been_updated": "規則已更新！",
+      "rule_has_been_deleted": "規則已刪除！",
+      "no_rules_created_yet": "尚未建立任何規則",
+      "create_your_first_rule": "建立您的第一個規則以自動化您的工作流程",
+      "actions_types": {
+        "add_tag": "新增標籤",
+        "remove_tag": "移除標籤",
+        "add_to_list": "新增至清單",
+        "remove_from_list": "從清單中移除",
+        "download_full_page_archive": "下載完整頁面封存",
+        "favourite_bookmark": "我的最愛書籤",
+        "archive_bookmark": "封存書籤"
+      },
+      "events_types": {
+        "bookmark_added": "已新增書籤",
+        "tag_added": "此標籤已新增至書籤",
+        "tag_removed": "已從書籤中移除此標籤",
+        "added_to_list": "已將書籤新增至此清單",
+        "removed_from_list": "已從此清單中移除書籤",
+        "favourited": "已將書籤設為我的最愛",
+        "archived": "已封存書籤"
+      }
     }
   },
   "admin": {
@@ -191,7 +262,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "重新產生所有書籤的 AI 標籤",
       "reindex_all_bookmarks": "重新索引所有書籤",
       "compact_assets": "壓縮資源",
-      "reprocess_assets_fix_mode": "重新處理資源(固定模式)"
+      "reprocess_assets_fix_mode": "重新處理資源(固定模式)",
+      "regenerate_ai_summaries_for_all_bookmarks": "為所有書籤重新產生 AI 摘要",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "僅為失敗的書籤重新產生 AI 摘要"
     },
     "users_list": {
       "users_list": "使用者清單",
@@ -221,7 +294,23 @@
     "manual_list": "手動清單",
     "smart_list": "智慧清單",
     "search_query": "搜尋查詢",
-    "parent_list": "上層清單"
+    "parent_list": "上層清單",
+    "description": "描述（可選）",
+    "merge_list": "合併清單",
+    "destination_list": "目標清單",
+    "delete_after_merge": "合併後刪除原始清單",
+    "no_destination": "無目標",
+    "rss": {
+      "description": "為此清單啟用 RSS 訂閱",
+      "feed_url": "RSS 訂閱網址",
+      "title": "RSS 訂閱"
+    },
+    "share_list": "分享清單",
+    "public_list": {
+      "title": "公開清單",
+      "description": "允許其他人檢視此清單",
+      "share_link": "分享連結"
+    }
   },
   "tags": {
     "all_tags": "所有標籤",
@@ -238,7 +327,12 @@
   },
   "preview": {
     "view_original": "檢視原始內容",
-    "cached_content": "快取內容"
+    "cached_content": "快取內容",
+    "reader_view": "閱讀器檢視",
+    "tabs": {
+      "content": "內容",
+      "details": "詳細資訊"
+    }
   },
   "editor": {
     "quickly_focus": "您可以按下 ⌘ + E 快速聚焦此欄位",
@@ -296,7 +390,8 @@
       "code": "程式碼",
       "highlight": "醒目標示",
       "align_left": "靠左對齊"
-    }
+    },
+    "placeholder_v2": "貼上連結、寫筆記或放入圖片…"
   },
   "toasts": {
     "bookmarks": {
@@ -309,7 +404,9 @@
     },
     "lists": {
       "created": "清單已建立！",
-      "updated": "清單已更新！"
+      "updated": "清單已更新！",
+      "merged": "清單已合併！",
+      "deleted": "清單已刪除！"
     }
   },
   "cleanups": {
@@ -342,7 +439,19 @@
     "has_tag": "有標籤",
     "is_in_list": "在清單中",
     "is_not_in_list": "不在清單中",
-    "type_is": "類型為"
+    "type_is": "類型為",
+    "is_from_feed": "來自 RSS 訂閱",
+    "is_not_from_feed": "不是來自 RSS 訂閱",
+    "created_within": "建立於",
+    "created_earlier_than": "建立於早於",
+    "day_s": " 幾天",
+    "week_s": " 幾週",
+    "month_s": " 幾個月",
+    "year_s": " 幾年",
+    "day_s_ago": " 幾天前",
+    "week_s_ago": " 幾週前",
+    "month_s_ago": " 幾個月前",
+    "year_s_ago": " 幾年前"
   },
   "dialogs": {
     "bookmarks": {
@@ -352,5 +461,21 @@
   },
   "highlights": {
     "no_highlights": "您目前尚未有任何標記重點。"
+  },
+  "bookmark_editor": {
+    "date_published": "發佈日期",
+    "title": "編輯書籤",
+    "subtitle": "變更書籤詳細資訊。完成後點擊儲存。",
+    "author": "作者",
+    "publisher": "發佈者",
+    "pick_a_date": "選擇日期",
+    "save_changes": "儲存變更",
+    "extracted_content": "已擷取內容"
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "還沒有書籤",
+      "description": "儲存有趣的的文章、連結和頁面，以便日後快速存取。"
+    }
   }
 }

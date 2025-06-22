@@ -8,15 +8,15 @@ import {
   useBookmarkLayout,
 } from "@/lib/userLocalSettings/bookmarksLayout";
 import { cn } from "@/lib/utils";
-import dayjs from "dayjs";
 import { Check, Image as ImageIcon, NotebookPen } from "lucide-react";
 import { useTheme } from "next-themes";
 
 import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
-import { isBookmarkStillTagging } from "@karakeep/shared-react/utils/bookmarkUtils";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
+import { isBookmarkStillTagging } from "@karakeep/shared/utils/bookmarkUtils";
 
 import BookmarkActionBar from "./BookmarkActionBar";
+import BookmarkFormattedCreatedAt from "./BookmarkFormattedCreatedAt";
 import TagList from "./TagList";
 
 interface Props {
@@ -30,13 +30,6 @@ interface Props {
   wrapTags: boolean;
 }
 
-function BookmarkFormattedCreatedAt({ bookmark }: { bookmark: ZBookmark }) {
-  const createdAt = dayjs(bookmark.createdAt);
-  const oneYearAgo = dayjs().subtract(1, "year");
-  const formatString = createdAt.isAfter(oneYearAgo) ? "MMM D" : "MMM D, YYYY";
-  return createdAt.format(formatString);
-}
-
 function BottomRow({
   footer,
   bookmark,
@@ -46,13 +39,13 @@ function BottomRow({
 }) {
   return (
     <div className="justify flex w-full shrink-0 justify-between text-gray-500">
-      <div className="flex items-center gap-2 overflow-hidden text-nowrap">
+      <div className="flex items-center gap-2 overflow-hidden text-nowrap font-light">
         {footer && <>{footer}•</>}
         <Link
           href={`/dashboard/preview/${bookmark.id}`}
           suppressHydrationWarning
         >
-          <BookmarkFormattedCreatedAt bookmark={bookmark} />
+          <BookmarkFormattedCreatedAt createdAt={bookmark.createdAt} />
         </Link>
       </div>
       <BookmarkActionBar bookmark={bookmark} />
@@ -122,7 +115,7 @@ function ListView({
   return (
     <div
       className={cn(
-        "relative flex max-h-96 gap-4 overflow-hidden rounded-lg p-2 shadow-md",
+        "relative flex max-h-96 gap-4 overflow-hidden rounded-lg p-2",
         className,
       )}
     >
@@ -167,7 +160,7 @@ function GridView({
   return (
     <div
       className={cn(
-        "relative flex flex-col overflow-hidden rounded-lg shadow-md",
+        "relative flex flex-col overflow-hidden rounded-lg",
         className,
         fitHeight && layout != "grid" ? "max-h-96" : "h-96",
       )}
@@ -200,7 +193,7 @@ function CompactView({ bookmark, title, footer, className }: Props) {
   return (
     <div
       className={cn(
-        "relative flex flex-col overflow-hidden rounded-lg shadow-md",
+        "relative flex flex-col overflow-hidden rounded-lg",
         className,
         "max-h-96",
       )}
@@ -239,7 +232,7 @@ function CompactView({ bookmark, title, footer, className }: Props) {
             suppressHydrationWarning
             className="shrink-0 gap-2 text-gray-500"
           >
-            <BookmarkFormattedCreatedAt bookmark={bookmark} />
+            <BookmarkFormattedCreatedAt createdAt={bookmark.createdAt} />
           </Link>
         </div>
         <BookmarkActionBar bookmark={bookmark} />

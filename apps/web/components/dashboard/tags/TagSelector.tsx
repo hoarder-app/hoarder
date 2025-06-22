@@ -8,15 +8,18 @@ import {
 } from "@/components/ui/select";
 import LoadingSpinner from "@/components/ui/spinner";
 import { api } from "@/lib/trpc";
+import { cn } from "@/lib/utils";
 
 export function TagSelector({
   value,
   onChange,
   placeholder = "Select a tag",
+  className,
 }: {
   value?: string | null;
   onChange: (value: string) => void;
   placeholder?: string;
+  className?: string;
 }) {
   const { data: allTags, isPending } = api.tags.list.useQuery();
 
@@ -28,7 +31,7 @@ export function TagSelector({
 
   return (
     <Select onValueChange={onChange} value={value ?? ""}>
-      <SelectTrigger className="w-full">
+      <SelectTrigger className={cn("w-full", className)}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

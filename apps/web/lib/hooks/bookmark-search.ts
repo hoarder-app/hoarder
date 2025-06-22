@@ -6,6 +6,11 @@ import { keepPreviousData } from "@tanstack/react-query";
 
 import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 
+export function useIsSearchPage() {
+  const pathname = usePathname();
+  return pathname.startsWith("/dashboard/search");
+}
+
 function useSearchQuery() {
   const searchParams = useSearchParams();
   const searchQuery = decodeURIComponent(searchParams.get("q") ?? "");
@@ -17,8 +22,8 @@ function useSearchQuery() {
 export function useDoBookmarkSearch() {
   const router = useRouter();
   const { searchQuery, parsedSearchQuery } = useSearchQuery();
+  const isInSearchPage = useIsSearchPage();
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | undefined>();
-  const pathname = usePathname();
 
   useEffect(() => {
     return () => {
@@ -49,7 +54,7 @@ export function useDoBookmarkSearch() {
     debounceSearch,
     searchQuery,
     parsedSearchQuery,
-    isInSearchPage: pathname.startsWith("/dashboard/search"),
+    isInSearchPage,
   };
 }
 

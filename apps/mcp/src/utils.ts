@@ -16,77 +16,37 @@ export function toMcpToolError(
   };
 }
 
-interface CompactBookmark {
-  id: string;
-  createdAt: string;
-  title: string;
-  summary: string;
-  note: string;
-  content:
-    | {
-        type: "link";
-        url: string;
-        description: string;
-        author: string;
-        publisher: string;
-      }
-    | {
-        type: "text";
-        sourceUrl: string;
-      }
-    | {
-        type: "media";
-        assetId: string;
-        assetType: string;
-        sourceUrl: string;
-      }
-    | {
-        type: "unknown";
-      };
-  tags: string[];
-}
-
 export function compactBookmark(
   bookmark: KarakeepAPISchemas["Bookmark"],
-): CompactBookmark {
-  let content: CompactBookmark["content"];
+): string {
+  let content: string;
   if (bookmark.content.type === "link") {
-    content = {
-      type: "link",
-      url: bookmark.content.url,
-      description: bookmark.content.description ?? "",
-      author: bookmark.content.author ?? "",
-      publisher: bookmark.content.publisher ?? "",
-    };
+    content = `Bookmark type: link
+Bookmarked URL: ${bookmark.content.url}
+description: ${bookmark.content.description ?? ""}
+author: ${bookmark.content.author ?? ""}
+publisher: ${bookmark.content.publisher ?? ""}`;
   } else if (bookmark.content.type === "text") {
-    content = {
-      type: "text",
-      sourceUrl: bookmark.content.sourceUrl ?? "",
-    };
+    content = `Bookmark type: text
+  Source URL: ${bookmark.content.sourceUrl ?? ""}`;
   } else if (bookmark.content.type === "asset") {
-    content = {
-      type: "media",
-      assetId: bookmark.content.assetId,
-      assetType: bookmark.content.assetType,
-      sourceUrl: bookmark.content.sourceUrl ?? "",
-    };
+    content = `Bookmark type: media
+Asset ID: ${bookmark.content.assetId}
+Asset type: ${bookmark.content.assetType}
+Source URL: ${bookmark.content.sourceUrl ?? ""}`;
   } else {
-    content = {
-      type: "unknown",
-    };
+    content = `Bookmark type: unknown`;
   }
 
-  return {
-    id: bookmark.id,
-    createdAt: bookmark.createdAt,
-    title: bookmark.title
+  return `Bookmark ID: ${bookmark.id}
+  Created at: ${bookmark.createdAt}
+  Title: ${
+    bookmark.title
       ? bookmark.title
-      : ((bookmark.content.type === "link"
-          ? bookmark.content.title
-          : undefined) ?? ""),
-    summary: bookmark.summary ?? "",
-    note: bookmark.note ?? "",
-    content,
-    tags: bookmark.tags.map((t) => t.name),
-  };
+      : ((bookmark.content.type === "link" ? bookmark.content.title : "") ?? "")
+  }
+  Summary: ${bookmark.summary ?? ""}
+  Note: ${bookmark.note ?? ""}
+  ${content}
+  Tags: ${bookmark.tags.map((t) => t.name).join(", ")}`;
 }

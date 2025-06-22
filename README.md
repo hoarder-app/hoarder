@@ -1,9 +1,9 @@
 <div align="center">
-    <a href="https://github.com/hoarder-app/hoarder/actions/workflows/ci.yml">
-        <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/hoarder-app/hoarder/ci.yml" />
+    <a href="https://github.com/karakeep-app/karakeep/actions/workflows/ci.yml">
+        <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/karakeep-app/karakeep/ci.yml" />
     </a>
-    <a href="https://github.com/hoarder-app/hoarder/releases">
-        <img alt="GitHub Release" src="https://img.shields.io/github/v/release/hoarder-app/hoarder" />
+    <a href="https://github.com/karakeep-app/karakeep/releases">
+        <img alt="GitHub Release" src="https://img.shields.io/github/v/release/karakeep-app/karakeep" />
     </a>
     <a href="https://discord.gg/NrgeYywsFh">
         <img alt="Discord" src="https://img.shields.io/discord/1223681308962721802?label=chat%20on%20discord" />
@@ -17,7 +17,7 @@
 
 Karakeep (previously Hoarder) is a self-hostable bookmark-everything app with a touch of AI for the data hoarders out there.
 
-![homepage screenshot](https://github.com/hoarder-app/hoarder/blob/main/screenshots/homepage.png?raw=true)
+![homepage screenshot](https://github.com/karakeep-app/karakeep/blob/main/screenshots/homepage.png?raw=true)
 
 ## Features
 
@@ -25,13 +25,14 @@ Karakeep (previously Hoarder) is a self-hostable bookmark-everything app with a 
 - ⬇️ Automatic fetching for link titles, descriptions and images.
 - 📋 Sort your bookmarks into lists.
 - 🔎 Full text search of all the content stored.
-- ✨ AI-based (aka chatgpt) automatic tagging. With supports for local models using ollama!
+- ✨ AI-based (aka chatgpt) automatic tagging and summarization. With supports for local models using ollama!
+- 🤖 Rule-based engine for customized management.
 - 🎆 OCR for extracting text from images.
-- 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/hoarder/kgcjekpmcjjogibpjebkhaanilehneje) and [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/hoarder/) for quick bookmarking.
-- 📱 An [iOS app](https://apps.apple.com/us/app/hoarder-app/id6479258022), and an [Android app](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
+- 🔖 [Chrome plugin](https://chromewebstore.google.com/detail/karakeep/kgcjekpmcjjogibpjebkhaanilehneje) and [Firefox addon](https://addons.mozilla.org/en-US/firefox/addon/karakeep/) for quick bookmarking.
+- 📱 An [iOS app](https://apps.apple.com/us/app/karakeep-app/id6479258022), and an [Android app](https://play.google.com/store/apps/details?id=app.hoarder.hoardermobile&pcampaignid=web_share).
 - 📰 Auto hoarding from RSS feeds.
 - 🔌 REST API.
-- 🌐 Mutli-language support.
+- 🌐 Multi-language support.
 - 🖍️ Mark and store highlights from your hoarded content.
 - 🗄️ Full page archival (using [monolith](https://github.com/Y2Z/monolith)) to protect against link rot. Auto video archiving using [youtube-dl](https://github.com/marado/youtube-dl).
 - ☑️ Bulk actions support.
@@ -40,15 +41,15 @@ Karakeep (previously Hoarder) is a self-hostable bookmark-everything app with a 
 - 💾 Self-hosting first.
 - [Planned] Downloading the content for offline reading in the mobile app.
 
-**⚠️ This app is under heavy development and it's far from stable.**
+**⚠️ This app is under heavy development.**
 
 ## Documentation
 
-- [Installation](https://docs.hoarder.app/Installation/docker)
-- [Configuration](https://docs.hoarder.app/configuration)
-- [Screenshots](https://docs.hoarder.app/screenshots)
-- [Security Considerations](https://docs.hoarder.app/security-considerations)
-- [Development](https://docs.hoarder.app/Development/setup)
+- [Installation](https://docs.karakeep.app/Installation/docker)
+- [Configuration](https://docs.karakeep.app/configuration)
+- [Screenshots](https://docs.karakeep.app/screenshots)
+- [Security Considerations](https://docs.karakeep.app/security-considerations)
+- [Development](https://docs.karakeep.app/Development/setup)
 
 ## Demo
 
@@ -103,6 +104,10 @@ If you're enjoying using Karakeep, drop a ⭐️ on the repo!
 
 <a href="https://www.buymeacoffee.com/mbassem" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
+## License
+
+Karakeep is licensed under [AGPL-3.0](https://github.com/karakeep-app/karakeep/blob/main/LICENSE) and owned by [Localhost Labs Ltd](https://localhostlabs.co.uk).
+
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=hoarder-app/hoarder&type=Date)](https://star-history.com/#hoarder-app/hoarder&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=karakeep-app/karakeep&type=Date)](https://star-history.com/#karakeep-app/karakeep&Date)

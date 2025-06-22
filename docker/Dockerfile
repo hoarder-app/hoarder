@@ -31,19 +31,17 @@ RUN pnpm deploy --node-linker=isolated --filter @karakeep/workers --prod /prod/w
 # Build the cli
 RUN (cd apps/cli && pnpm build)
 
+# Build the mcp server
+RUN (cd apps/mcp && pnpm build)
+
 ################# The All-in-one builder ##############
 
 FROM node:22-alpine AS aio_builder
 LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
 WORKDIR /app
 
-# https://github.com/karakeep-app/karakeep/issues/967
-RUN npm install -g corepack@0.31.0
-
 ARG SERVER_VERSION=nightly
 ENV SERVER_VERSION=${SERVER_VERSION}
-
-USER root
 
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
@@ -97,7 +95,8 @@ COPY --from=base --chown=node:node /app/apps/web/.next/static ./apps/web/.next/s
 # Prepare the workers app
 ######################
 COPY --from=base /prod/workers /app/apps/workers
-RUN corepack enable && corepack pack
+
+RUN npm install -g tsx
 
 ENTRYPOINT ["/init"]
 
@@ -145,3 +144,15 @@ ARG SERVER_VERSION=nightly
 ENV SERVER_VERSION=${SERVER_VERSION}
 
 ENTRYPOINT ["node", "index.mjs"]
+
+################# MCP server ##############
+
+FROM node:22-alpine AS mcp
+LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
+WORKDIR /app
+
+COPY --from=base /app/apps/mcp/dist/index.js apps/mcp/index.js
+
+WORKDIR /app/apps/mcp
+
+ENTRYPOINT ["node", "index.js"]

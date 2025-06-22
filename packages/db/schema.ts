@@ -3,6 +3,7 @@ import { createId } from "@paralleldrive/cuid2";
 import { relations } from "drizzle-orm";
 import {
   AnySQLiteColumn,
+  foreignKey,
   index,
   integer,
   primaryKey,
@@ -120,6 +121,9 @@ export const bookmarks = sqliteTable(
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
     taggingStatus: text("taggingStatus", {
+      enum: ["pending", "failure", "success"],
+    }).default("pending"),
+    summarizationStatus: text("summarizationStatus", {
       enum: ["pending", "failure", "success"],
     }).default("pending"),
     summary: text("summary"),
@@ -283,6 +287,7 @@ export const bookmarkTags = sqliteTable(
   },
   (bt) => [
     unique().on(bt.userId, bt.name),
+    unique("bookmarkTags_userId_id_idx").on(bt.userId, bt.id),
     index("bookmarkTags_name_idx").on(bt.name),
     index("bookmarkTags_userId_idx").on(bt.userId),
   ],
@@ -331,8 +336,14 @@ export const bookmarkLists = sqliteTable(
       (): AnySQLiteColumn => bookmarkLists.id,
       { onDelete: "set null" },
     ),
+    // Whoever have access to this token can read the content of this list
+    rssToken: text("rssToken"),
+    public: integer("public", { mode: "boolean" }).notNull().default(false),
   },
-  (bl) => [index("bookmarkLists_userId_idx").on(bl.userId)],
+  (bl) => [
+    index("bookmarkLists_userId_idx").on(bl.userId),
+    unique("bookmarkLists_userId_id_idx").on(bl.userId, bl.id),
+  ],
 );
 
 export const bookmarksInLists = sqliteTable(
@@ -384,6 +395,7 @@ export const rssFeedsTable = sqliteTable(
       .$defaultFn(() => createId()),
     name: text("name").notNull(),
     url: text("url").notNull(),
+    enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
     createdAt: createdAtField(),
     lastFetchedAt: integer("lastFetchedAt", { mode: "timestamp" }),
     lastFetchedStatus: text("lastFetchedStatus", {
@@ -410,7 +422,7 @@ export const webhooksTable = sqliteTable(
       .references(() => users.id, { onDelete: "cascade" }),
     events: text("events", { mode: "json" })
       .notNull()
-      .$type<("created" | "edited" | "crawled" | "ai tagged")[]>(),
+      .$type<("created" | "edited" | "crawled" | "ai tagged" | "deleted")[]>(),
     token: text("token"),
   },
   (bl) => [index("webhooks_userId_idx").on(bl.userId)],
@@ -444,12 +456,108 @@ export const config = sqliteTable("config", {
   value: text("value").notNull(),
 });
 
+export const ruleEngineRulesTable = sqliteTable(
+  "ruleEngineRules",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    enabled: integer("enabled", { mode: "boolean" }).notNull().default(true),
+    name: text("name").notNull(),
+    description: text("description"),
+    event: text("event").notNull(),
+    condition: text("condition").notNull(),
+
+    // References
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    listId: text("listId"),
+    tagId: text("tagId"),
+  },
+  (rl) => [
+    index("ruleEngine_userId_idx").on(rl.userId),
+
+    // Ensures correct ownership
+    foreignKey({
+      columns: [rl.userId, rl.tagId],
+      foreignColumns: [bookmarkTags.userId, bookmarkTags.id],
+      name: "ruleEngineRules_userId_tagId_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [rl.userId, rl.listId],
+      foreignColumns: [bookmarkLists.userId, bookmarkLists.id],
+      name: "ruleEngineRules_userId_listId_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const ruleEngineActionsTable = sqliteTable(
+  "ruleEngineActions",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    ruleId: text("ruleId")
+      .notNull()
+      .references(() => ruleEngineRulesTable.id, { onDelete: "cascade" }),
+    action: text("action").notNull(),
+
+    // References
+    listId: text("listId"),
+    tagId: text("tagId"),
+  },
+  (rl) => [
+    index("ruleEngineActions_userId_idx").on(rl.userId),
+    index("ruleEngineActions_ruleId_idx").on(rl.ruleId),
+    // Ensures correct ownership
+    foreignKey({
+      columns: [rl.userId, rl.tagId],
+      foreignColumns: [bookmarkTags.userId, bookmarkTags.id],
+      name: "ruleEngineActions_userId_tagId_fk",
+    }).onDelete("cascade"),
+    foreignKey({
+      columns: [rl.userId, rl.listId],
+      foreignColumns: [bookmarkLists.userId, bookmarkLists.id],
+      name: "ruleEngineActions_userId_listId_fk",
+    }).onDelete("cascade"),
+  ],
+);
+
+export const userSettings = sqliteTable("userSettings", {
+  userId: text("userId")
+    .notNull()
+    .primaryKey()
+    .references(() => users.id, { onDelete: "cascade" }),
+  bookmarkClickAction: text("bookmarkClickAction", {
+    enum: ["open_original_link", "expand_bookmark_preview"],
+  })
+    .notNull()
+    .default("open_original_link"),
+  archiveDisplayBehaviour: text("archiveDisplayBehaviour", {
+    enum: ["show", "hide"],
+  })
+    .notNull()
+    .default("show"),
+});
+
 // Relations
 
-export const userRelations = relations(users, ({ many }) => ({
+export const userRelations = relations(users, ({ many, one }) => ({
   tags: many(bookmarkTags),
   bookmarks: many(bookmarks),
   webhooks: many(webhooksTable),
+  rules: many(ruleEngineRulesTable),
+  settings: one(userSettings, {
+    fields: [users.id],
+    references: [userSettings.userId],
+  }),
 }));
 
 export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
@@ -472,6 +580,7 @@ export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
   tagsOnBookmarks: many(tagsOnBookmarks),
   bookmarksInLists: many(bookmarksInLists),
   assets: many(assets),
+  rssFeeds: many(rssFeedImportsTable),
 }));
 
 export const assetRelations = relations(assets, ({ one }) => ({
@@ -545,6 +654,48 @@ export const bookmarksInListsRelations = relations(
 export const webhooksRelations = relations(webhooksTable, ({ one }) => ({
   user: one(users, {
     fields: [webhooksTable.userId],
+    references: [users.id],
+  }),
+}));
+
+export const ruleEngineRulesRelations = relations(
+  ruleEngineRulesTable,
+  ({ one, many }) => ({
+    user: one(users, {
+      fields: [ruleEngineRulesTable.userId],
+      references: [users.id],
+    }),
+    actions: many(ruleEngineActionsTable),
+  }),
+);
+
+export const ruleEngineActionsTableRelations = relations(
+  ruleEngineActionsTable,
+  ({ one }) => ({
+    rule: one(ruleEngineRulesTable, {
+      fields: [ruleEngineActionsTable.ruleId],
+      references: [ruleEngineRulesTable.id],
+    }),
+  }),
+);
+
+export const rssFeedImportsTableRelations = relations(
+  rssFeedImportsTable,
+  ({ one }) => ({
+    rssFeed: one(rssFeedsTable, {
+      fields: [rssFeedImportsTable.rssFeedId],
+      references: [rssFeedsTable.id],
+    }),
+    bookmark: one(bookmarks, {
+      fields: [rssFeedImportsTable.bookmarkId],
+      references: [bookmarks.id],
+    }),
+  }),
+);
+
+export const userSettingsRelations = relations(userSettings, ({ one }) => ({
+  user: one(users, {
+    fields: [userSettings.userId],
     references: [users.id],
   }),
 }));

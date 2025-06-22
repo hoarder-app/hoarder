@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { useDoBookmarkSearch } from "@/lib/hooks/bookmark-search";
 import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
+import { SearchIcon } from "lucide-react";
 
 import { EditListModal } from "../lists/EditListModal";
 import QueryExplainerTooltip from "./QueryExplainerTooltip";
@@ -99,6 +100,7 @@ const SearchInput = React.forwardRef<
           </Button>
         )}
       <Input
+        startIcon={<SearchIcon size={18} className="text-muted-foreground" />}
         ref={inputRef}
         value={value}
         onChange={onChange}

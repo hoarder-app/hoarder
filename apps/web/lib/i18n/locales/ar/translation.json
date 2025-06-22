@@ -32,7 +32,11 @@
       "media": "وسائط متعددة"
     },
     "type": "نوع",
-    "size": "حجم"
+    "size": "حجم",
+    "title": "العنوان",
+    "description": "الوصف",
+    "summary": "ملخص",
+    "updated_at": "تم التحديث في"
   },
   "layouts": {
     "masonry": "متعدد الأعمدة",
@@ -75,8 +79,11 @@
     "sort": {
       "title": "ترتيب",
       "newest_first": "الأحدث أولاً",
-      "oldest_first": "الأقدم أولاً"
-    }
+      "oldest_first": "الأقدم أولاً",
+      "relevant_first": "الأكثر صلة أولاً"
+    },
+    "open_editor": "فتح المحرر",
+    "toggle_show_archived": "اعرض المؤرشفة"
   },
   "highlights": {
     "no_highlights": "ليس لديك أي تمييزات بعد."
@@ -92,7 +99,20 @@
       "new_password": "كلمة المرور الجديدة",
       "confirm_new_password": "تأكيد كلمة المرور الجديدة",
       "options": "خيارات",
-      "interface_lang": "لغة الواجهة"
+      "interface_lang": "لغة الواجهة",
+      "user_settings": {
+        "user_settings_updated": "تم تحديث إعدادات المستخدم!",
+        "bookmark_click_action": {
+          "title": "إجراء النقر على الإشارة المرجعية",
+          "open_external_url": "افتح عنوان URL الأصلي",
+          "open_bookmark_details": "افتح تفاصيل الإشارة المرجعية"
+        },
+        "archive_display_behaviour": {
+          "title": "الإشارات المرجعية المؤرشفة",
+          "show": "اعرض الإشارات المرجعية المؤرشفة في العلامات والقوائم",
+          "hide": "إخفاء الإشارات المرجعية المؤرشفة في العلامات والقوائم"
+        }
+      }
     },
     "ai": {
       "ai_settings": "إعدادات الذكاء الاصطناعي",
@@ -109,7 +129,9 @@
     },
     "feeds": {
       "rss_subscriptions": "اشتراكات RSS",
-      "add_a_subscription": "إضافة اشتراك"
+      "add_a_subscription": "إضافة اشتراك",
+      "feed_enabled": "تمكين موجز RSS",
+      "feed_disabled": "تم تعطيل موجز RSS"
     },
     "webhooks": {
       "webhooks": "واجهات الربط",
@@ -136,9 +158,10 @@
       "import_bookmarks_from_pocket_export": "استيراد إشارات مرجعية من تصدير Pocket",
       "import_bookmarks_from_omnivore_export": "استيراد إشارات مرجعية من تصدير Omnivore",
       "import_bookmarks_from_linkwarden_export": "استيراد إشارات مرجعية من تصدير Linkwarden",
-      "import_bookmarks_from_hoarder_export": "استيراد إشارات مرجعية من تصدير Hoarder",
+      "import_bookmarks_from_karakeep_export": "استيراد إشارات مرجعية من تصدير Karakeep",
       "export_links_and_notes": "تصدير الروابط والملاحظات",
-      "imported_bookmarks": "الإشارات المرجعية المستوردة"
+      "imported_bookmarks": "الإشارات المرجعية المستوردة",
+      "import_bookmarks_from_tab_session_manager_export": "استيراد الإشارات المرجعية من مدير جلسة علامات التبويب"
     },
     "api_keys": {
       "api_keys": "مفاتيح API",
@@ -161,6 +184,54 @@
       "asset_link": "رابط الأصل",
       "manage_assets": "إدارة الأصول",
       "no_assets": "ليس لديك أي أصول حتى الآن."
+    },
+    "rules": {
+      "enter_rule_name": "أدخل اسم القاعدة",
+      "conditions_types": {
+        "or": "أي مما يلي صحيح",
+        "always": "دائمًا",
+        "url_contains": "عنوان URL يحتوي على",
+        "imported_from_feed": "تم الاستيراد من الخلاصة",
+        "bookmark_type_is": "نوع الإشارة المرجعية هو",
+        "has_tag": "يحتوي على وسم",
+        "is_favourited": "مفضل",
+        "is_archived": "مؤرشف",
+        "and": "كل ما يلي صحيح"
+      },
+      "actions_types": {
+        "add_tag": "إضافة علامة",
+        "remove_tag": "إزالة الوسم",
+        "add_to_list": "أضف إلى القائمة",
+        "remove_from_list": "إزالة من القائمة",
+        "download_full_page_archive": "تنزيل أرشيف الصفحة الكاملة",
+        "favourite_bookmark": "إشارة مرجعية مفضلة",
+        "archive_bookmark": "أرشفة الإشارة المرجعية"
+      },
+      "rules": "محرك القواعد",
+      "rule_name": "اسم القاعدة",
+      "description": "يمكنك استخدام القواعد لتشغيل الإجراءات عند إطلاق حدث.",
+      "ceate_rule": "إنشاء قاعدة",
+      "edit_rule": "تعديل القاعدة",
+      "save_rule": "حفظ القاعدة",
+      "delete_rule": "حذف القاعدة",
+      "delete_rule_confirmation": "هل أنت متأكد أنك تريد حذف هذه القاعدة؟",
+      "whenever": "كلما ...",
+      "if": "إذا ...",
+      "describe_what_this_rule_does": "صف ما تفعله هذه القاعدة",
+      "rule_has_been_created": "تم إنشاء القاعدة!",
+      "rule_has_been_updated": "تم تحديث القاعدة!",
+      "rule_has_been_deleted": "تم حذف القاعدة!",
+      "no_rules_created_yet": "لم يتم إنشاء أي قواعد حتى الآن",
+      "create_your_first_rule": "أنشئ قاعدتك الأولى لأتمتة سير عملك",
+      "events_types": {
+        "bookmark_added": "تمت إضافة إشارة مرجعية",
+        "tag_added": "تمت إضافة هذه العلامة إلى إشارة مرجعية",
+        "tag_removed": "تمت إزالة هذا الوسم من إشارة مرجعية",
+        "added_to_list": "تمت إضافة إشارة مرجعية إلى هذه القائمة",
+        "removed_from_list": "تمت إزالة إشارة مرجعية من هذه القائمة",
+        "favourited": "تم تفضيل إشارة مرجعية",
+        "archived": "تم أرشفة إشارة مرجعية"
+      }
     }
   },
   "admin": {
@@ -194,7 +265,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "إعادة إنشاء علامات الذكاء الاصطناعي لجميع الإشارات المرجعية",
       "reindex_all_bookmarks": "إعادة فهرسة جميع الإشارات المرجعية",
       "compact_assets": "ضغط الوسائط",
-      "reprocess_assets_fix_mode": "إعادة معالجة الوسائط (وضع الإصلاح)"
+      "reprocess_assets_fix_mode": "إعادة معالجة الوسائط (وضع الإصلاح)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "أعد إنشاء ملخصات الذكاء الاصطناعي للإشارات المرجعية الفاشلة فقط",
+      "regenerate_ai_summaries_for_all_bookmarks": "أعد إنشاء ملخصات الذكاء الاصطناعي لجميع الإشارات المرجعية"
     },
     "users_list": {
       "users_list": "قائمة المستخدمين",
@@ -224,7 +297,23 @@
     "manual_list": "قائمة يدوية",
     "smart_list": "قائمة ذكية",
     "search_query": "استعلام البحث",
-    "search_query_help": "تعرف المزيد عن لغة استعلام البحث."
+    "search_query_help": "تعرف المزيد عن لغة استعلام البحث.",
+    "merge_list": "دمج القائمة",
+    "destination_list": "القائمة الوجهة",
+    "delete_after_merge": "حذف القائمة الأصلية بعد الدمج",
+    "no_destination": "لا توجد وجهة",
+    "description": "الوصف (اختياري)",
+    "rss": {
+      "title": "موجز RSS",
+      "description": "تمكين موجز RSS لهذه القائمة",
+      "feed_url": "عنوان URL لموجز RSS"
+    },
+    "share_list": "شارك القائمة",
+    "public_list": {
+      "title": "قائمة عامة",
+      "description": "السماح للآخرين بعرض هذه القائمة",
+      "share_link": "شارك الرابط"
+    }
   },
   "tags": {
     "all_tags": "جميع الوسوم",
@@ -262,11 +351,28 @@
     "type_is": "النوع هو",
     "type_is_not": "النوع ليس كـ",
     "and": "و",
-    "or": "أو"
+    "or": "أو",
+    "is_from_feed": "من موجز RSS",
+    "is_not_from_feed": "ليس من موجز RSS",
+    "created_within": "تم إنشاؤه في غضون",
+    "month_s_ago": " منذ شهر (أشهر)",
+    "year_s_ago": " منذ سنة (سنوات)",
+    "created_earlier_than": "تم إنشاؤه في وقت أبكر من",
+    "day_s": " يوم (أيام)",
+    "week_s": " أسبوع (أسابيع)",
+    "month_s": " شهر (أشهر)",
+    "year_s": " سنة (سنوات)",
+    "day_s_ago": " منذ يوم (أيام)",
+    "week_s_ago": " منذ أسبوع (أسابيع)"
   },
   "preview": {
     "view_original": "عرض النسخة الأصلية",
-    "cached_content": "النسخة المخزنة"
+    "cached_content": "النسخة المخزنة",
+    "reader_view": "عرض القارئ",
+    "tabs": {
+      "content": "المحتوى",
+      "details": "التفاصيل"
+    }
   },
   "editor": {
     "quickly_focus": "يمكنك التركيز سريعاً على هذا الحقل بالضغط على ⌘ + E",
@@ -324,7 +430,8 @@
           "example": "``` + مسافة"
         }
       }
-    }
+    },
+    "placeholder_v2": "الصق رابطًا أو اكتب ملاحظة أو أسقط صورة…"
   },
   "dialogs": {
     "bookmarks": {
@@ -343,7 +450,9 @@
     },
     "lists": {
       "created": "تم إنشاء القائمة!",
-      "updated": "تم تحديث القائمة!"
+      "updated": "تم تحديث القائمة!",
+      "merged": "تم دمج القائمة!",
+      "deleted": "تم حذف القائمة!"
     }
   },
   "cleanups": {
@@ -352,5 +461,21 @@
       "title": "وسوم مكررة",
       "merge_all_suggestions": "دمج جميع الاقتراحات؟"
     }
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "لا توجد إشارات مرجعية حتى الآن",
+      "description": "احفظ المقالات والروابط والصفحات الشيقة للوصول إليها بسرعة لاحقًا."
+    }
+  },
+  "bookmark_editor": {
+    "title": "تعديل الإشارة المرجعية",
+    "subtitle": "قم بإجراء تغييرات على تفاصيل الإشارة المرجعية. انقر فوق حفظ عند الانتهاء.",
+    "author": "المؤلف",
+    "publisher": "الناشر",
+    "date_published": "تاريخ النشر",
+    "pick_a_date": "اختر تاريخًا",
+    "save_changes": "حفظ التغييرات",
+    "extracted_content": "المحتوى المستخرج"
   }
 }

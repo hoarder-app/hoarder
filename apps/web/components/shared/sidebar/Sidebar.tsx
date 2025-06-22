@@ -14,6 +14,7 @@ export default async function Sidebar({
   items: (t: TFunction) => TSidebarItem[];
   extraSections?: React.ReactNode;
 }) {
+  // oxlint-disable-next-line rules-of-hooks
   const { t } = await useTranslation();
 
   return (
@@ -35,7 +36,7 @@ export default async function Sidebar({
         href={
           serverConfig.serverVersion === "nightly"
             ? `https://github.com/karakeep-app/karakeep`
-            : `https://github.com/hoarder-app/hoarder/releases/tag/v${serverConfig.serverVersion}`
+            : `https://github.com/karakeep-app/karakeep/releases/tag/v${serverConfig.serverVersion}`
         }
         target="_blank"
         rel="noopener noreferrer"

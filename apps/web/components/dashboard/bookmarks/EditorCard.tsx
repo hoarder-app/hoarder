@@ -132,7 +132,7 @@ export default function EditorCard({ className }: { className?: string }) {
     if (!text.length) return;
     try {
       tryToImportUrls(text);
-    } catch (e) {
+    } catch {
       // Not a URL
       mutate({ type: BookmarkTypes.TEXT, text });
     }
@@ -148,7 +148,7 @@ export default function EditorCard({ className }: { className?: string }) {
   };
   const cardHeight = useBookmarkLayoutSwitch({
     grid: "h-96",
-    masonry: "h-96",
+    masonry: "h-48",
     list: undefined,
     compact: undefined,
   });
@@ -195,10 +195,10 @@ export default function EditorCard({ className }: { className?: string }) {
               ref={inputRef}
               disabled={isPending}
               className={cn(
-                "h-full w-full border-none p-0 text-lg focus-visible:ring-0",
+                "text-md h-full w-full border-none p-0 font-light focus-visible:ring-0",
                 { "resize-none": bookmarkLayout !== "list" },
               )}
-              placeholder={t("editor.placeholder")}
+              placeholder={t("editor.placeholder_v2")}
               onKeyDown={(e) => {
                 if (demoMode) {
                   return;
@@ -218,7 +218,12 @@ export default function EditorCard({ className }: { className?: string }) {
             />
           </FormControl>
         </FormItem>
-        <ActionButton loading={isPending} type="submit" variant="default">
+        <ActionButton
+          disabled={!form.formState.dirtyFields.text}
+          loading={isPending}
+          type="submit"
+          variant="secondary"
+        >
           {form.formState.dirtyFields.text
             ? demoMode
               ? t("editor.disabled_submissions")

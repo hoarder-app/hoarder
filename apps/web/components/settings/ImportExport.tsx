@@ -6,12 +6,19 @@ import { useRouter } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import FilePickerButton from "@/components/ui/file-picker-button";
 import { Progress } from "@/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
 import {
   deduplicateBookmarks,
   ParsedBookmark,
-  parseHoarderBookmarkFile,
+  parseKarakeepBookmarkFile,
   parseLinkwardenBookmarkFile,
   parseNetscapeBookmarkFile,
   parseOmnivoreBookmarkFile,
@@ -20,7 +27,6 @@ import {
 } from "@/lib/importBookmarkParser";
 import { cn } from "@/lib/utils";
 import { useMutation } from "@tanstack/react-query";
-import { TRPCClientError } from "@trpc/client";
 import { Download, Upload } from "lucide-react";
 
 import {
@@ -63,6 +69,8 @@ function ImportCard({
 
 function ExportButton() {
   const { t } = useTranslation();
+  const [format, setFormat] = useState<"json" | "netscape">("json");
+
   return (
     <Card className="transition-all hover:shadow-md">
       <CardContent className="flex items-center gap-3 p-4">
@@ -72,9 +80,21 @@ function ExportButton() {
         <div className="flex-1">
           <h3 className="font-medium">Export File</h3>
           <p>{t("settings.import.export_links_and_notes")}</p>
+          <Select
+            value={format}
+            onValueChange={(value) => setFormat(value as "json" | "netscape")}
+          >
+            <SelectTrigger className="mt-2 w-[180px]">
+              <SelectValue placeholder="Format" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="json">JSON (Karakeep format)</SelectItem>
+              <SelectItem value="netscape">HTML (Netscape format)</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
         <Link
-          href="/api/bookmarks/export"
+          href={`/api/bookmarks/export?format=${format}`}
           className={cn(
             buttonVariants({ variant: "default", size: "sm" }),
             "flex items-center gap-2",
@@ -104,7 +124,7 @@ export function ImportExportRow() {
   const { mutateAsync: parseAndCreateBookmark } = useMutation({
     mutationFn: async (toImport: {
       bookmark: ParsedBookmark;
-      listId: string;
+      listIds: string[];
     }) => {
       const bookmark = toImport.bookmark;
       if (bookmark.content === undefined) {
@@ -116,6 +136,7 @@ export function ImportExportRow() {
           ? new Date(bookmark.addDate * 1000)
           : undefined,
         note: bookmark.notes,
+        archived: bookmark.archived,
         ...(bookmark.content.type === BookmarkTypes.LINK
           ? {
               type: BookmarkTypes.LINK,
@@ -129,20 +150,12 @@ export function ImportExportRow() {
 
       await Promise.all([
         // Add to import list
-        addToList({
-          bookmarkId: created.id,
-          listId: toImport.listId,
-        }).catch((e) => {
-          if (
-            e instanceof TRPCClientError &&
-            e.message.includes("already in the list")
-          ) {
-            /* empty */
-          } else {
-            throw e;
-          }
-        }),
-
+        ...toImport.listIds.map((listId) =>
+          addToList({
+            bookmarkId: created.id,
+            listId,
+          }),
+        ),
         // Update tags
         bookmark.tags.length > 0
           ? updateTags({
@@ -166,7 +179,7 @@ export function ImportExportRow() {
         | "html"
         | "pocket"
         | "omnivore"
-        | "hoarder"
+        | "karakeep"
         | "linkwarden"
         | "tab-session-manager";
     }) => {
@@ -174,8 +187,8 @@ export function ImportExportRow() {
         return await parseNetscapeBookmarkFile(file);
       } else if (source === "pocket") {
         return await parsePocketBookmarkFile(file);
-      } else if (source === "hoarder") {
-        return await parseHoarderBookmarkFile(file);
+      } else if (source === "karakeep") {
+        return await parseKarakeepBookmarkFile(file);
       } else if (source === "omnivore") {
         return await parseOmnivoreBookmarkFile(file);
       } else if (source === "linkwarden") {
@@ -192,7 +205,7 @@ export function ImportExportRow() {
         return;
       }
 
-      const importList = await createList({
+      const rootList = await createList({
         name: t("settings.import.imported_bookmarks"),
         icon: "⬆️",
       });
@@ -201,33 +214,83 @@ export function ImportExportRow() {
 
       setImportProgress({ done: 0, total: finalBookmarksToImport.length });
 
+      // Precreate folder lists
+      const allRequiredPaths = new Set<string>();
+      // collect the paths of all bookmarks that have non-empty paths
+      for (const bookmark of finalBookmarksToImport) {
+        for (const path of bookmark.paths) {
+          if (path && path.length > 0) {
+            // We need every prefix of the path for the hierarchy
+            for (let i = 1; i <= path.length; i++) {
+              const subPath = path.slice(0, i);
+              const pathKey = subPath.join("/");
+              allRequiredPaths.add(pathKey);
+            }
+          }
+        }
+      }
+
+      // Convert to array and sort by depth (so that parent paths come first)
+      const allRequiredPathsArray = Array.from(allRequiredPaths).sort(
+        (a, b) => a.split("/").length - b.split("/").length,
+      );
+
+      const pathMap: Record<string, string> = {};
+
+      // Root list is the parent for top-level folders
+      // Represent root as empty string
+      pathMap[""] = rootList.id;
+
+      for (const pathKey of allRequiredPathsArray) {
+        const parts = pathKey.split("/");
+        const parentKey = parts.slice(0, -1).join("/");
+        const parentId = pathMap[parentKey] || rootList.id;
+
+        const folderName = parts[parts.length - 1];
+        // Create the list
+        const folderList = await createList({
+          name: folderName,
+          parentId: parentId,
+          icon: "📁",
+        });
+        pathMap[pathKey] = folderList.id;
+      }
+
       const importPromises = finalBookmarksToImport.map(
-        (bookmark) => () =>
-          parseAndCreateBookmark({
-            bookmark: bookmark,
-            listId: importList.id,
-          }).then(
-            (value) => {
-              setImportProgress((prev) => {
-                const newDone = (prev?.done ?? 0) + 1;
-                return {
-                  done: newDone,
-                  total: finalBookmarksToImport.length,
-                };
-              });
-              return { status: "fulfilled" as const, value };
-            },
-            () => {
-              setImportProgress((prev) => {
-                const newDone = (prev?.done ?? 0) + 1;
-                return {
-                  done: newDone,
-                  total: finalBookmarksToImport.length,
-                };
-              });
-              return { status: "rejected" as const };
-            },
-          ),
+        (bookmark) => async () => {
+          // Determine the target list ids
+          const listIds = bookmark.paths.map(
+            (path) => pathMap[path.join("/")] || rootList.id,
+          );
+          if (listIds.length === 0) {
+            listIds.push(rootList.id);
+          }
+
+          try {
+            const created = await parseAndCreateBookmark({
+              bookmark: bookmark,
+              listIds,
+            });
+
+            setImportProgress((prev) => {
+              const newDone = (prev?.done ?? 0) + 1;
+              return {
+                done: newDone,
+                total: finalBookmarksToImport.length,
+              };
+            });
+            return { status: "fulfilled" as const, value: created };
+          } catch {
+            setImportProgress((prev) => {
+              const newDone = (prev?.done ?? 0) + 1;
+              return {
+                done: newDone,
+                total: finalBookmarksToImport.length,
+              };
+            });
+            return { status: "rejected" as const };
+          }
+        },
       );
 
       const CONCURRENCY_LIMIT = 20;
@@ -268,7 +331,7 @@ export function ImportExportRow() {
         });
       }
 
-      router.push(`/dashboard/lists/${importList.id}`);
+      router.push(`/dashboard/lists/${rootList.id}`);
     },
     onError: (error) => {
       setImportProgress(null); // Clear progress on initial parsing error
@@ -374,9 +437,9 @@ export function ImportExportRow() {
           </FilePickerButton>
         </ImportCard>
         <ImportCard
-          text="Hoarder"
+          text="Karakeep"
           description={t(
-            "settings.import.import_bookmarks_from_hoarder_export",
+            "settings.import.import_bookmarks_from_karakeep_export",
           )}
         >
           <FilePickerButton
@@ -386,7 +449,7 @@ export function ImportExportRow() {
             multiple={false}
             className="flex items-center gap-2"
             onFileSelect={(file) =>
-              runUploadBookmarkFile({ file, source: "hoarder" })
+              runUploadBookmarkFile({ file, source: "karakeep" })
             }
           >
             <p>Import</p>

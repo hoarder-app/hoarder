@@ -32,7 +32,11 @@
       "media": "Multimedia"
     },
     "type": "Escribe",
-    "size": "Tamaño"
+    "size": "Tamaño",
+    "updated_at": "Actualizado o",
+    "title": "Título",
+    "description": "Descrición",
+    "summary": "Resumo"
   },
   "actions": {
     "favorite": "Marcar como favorito",
@@ -69,8 +73,11 @@
     "sort": {
       "oldest_first": "Primeiro os máis antigos",
       "title": "Ordenar",
-      "newest_first": "Primeiro o máis novo"
-    }
+      "newest_first": "Primeiro o máis novo",
+      "relevant_first": "Primeiro os máis relevantes"
+    },
+    "open_editor": "Abrir editor",
+    "toggle_show_archived": "Mostrar os arquivados"
   },
   "tags": {
     "drag_and_drop_merging_info": "Arrastra e solta etiquetas sobre outras para unilas",
@@ -96,7 +103,9 @@
     },
     "lists": {
       "updated": "A lista foi actualizada!",
-      "created": "Enlace creado correctamente!"
+      "created": "Enlace creado correctamente!",
+      "merged": "A lista foi combinada!",
+      "deleted": "A lista foi eliminada!"
     }
   },
   "cleanups": {
@@ -120,9 +129,10 @@
       "import_bookmarks_from_pocket_export": "Importar marcadores desde Pocket",
       "import_bookmarks_from_omnivore_export": "Importar marcadores desde Omnivore",
       "import_bookmarks_from_linkwarden_export": "Importar marcadores desde Linkwarden",
-      "import_bookmarks_from_hoarder_export": "Importar marcadores desde Hoarder",
+      "import_bookmarks_from_karakeep_export": "Importar marcadores desde Karakeep",
       "export_links_and_notes": "Exportar links e notas",
-      "imported_bookmarks": "Marcadores importados"
+      "imported_bookmarks": "Marcadores importados",
+      "import_bookmarks_from_tab_session_manager_export": "Importar marcadores do xestor de sesións de pestanas"
     },
     "back_to_app": "Volver á aplicación",
     "user_settings": "Axustes de usuario",
@@ -134,7 +144,20 @@
       "new_password": "Novo contrasinal",
       "confirm_new_password": "Confirmar novo contrasinal",
       "options": "Axustes",
-      "interface_lang": "Idioma de la interface"
+      "interface_lang": "Idioma de la interface",
+      "user_settings": {
+        "user_settings_updated": "Actualizáronse os axustes do usuario!",
+        "bookmark_click_action": {
+          "title": "Acción ao premer no marcador",
+          "open_external_url": "Abrir o URL orixinal",
+          "open_bookmark_details": "Abrir os detalles do marcador"
+        },
+        "archive_display_behaviour": {
+          "title": "Marcadores arquivados",
+          "show": "Mostrar os marcadores arquivados en etiquetas e listas",
+          "hide": "Ocultar os marcadores arquivados en etiquetas e listas"
+        }
+      }
     },
     "ai": {
       "ai_settings": "Axustes de la IA",
@@ -151,7 +174,9 @@
     },
     "feeds": {
       "rss_subscriptions": "Subscricións RSS",
-      "add_a_subscription": "Engadir subscrición"
+      "add_a_subscription": "Engadir subscrición",
+      "feed_enabled": "Fonte RSS activada",
+      "feed_disabled": "Fonte RSS desactivada"
     },
     "api_keys": {
       "api_keys": "Chaves APIs",
@@ -192,6 +217,54 @@
       "no_assets": "Aínda non tes ningún recurso.",
       "asset_type": "Tipo de recurso",
       "bookmark_link": "Ligazón do marcador"
+    },
+    "rules": {
+      "rules": "Motor de regras",
+      "rule_name": "Nome da regra",
+      "description": "Podes usar regras para activar accións cando se activa un evento.",
+      "ceate_rule": "Crear regra",
+      "edit_rule": "Editar regra",
+      "save_rule": "Gardar regra",
+      "delete_rule": "Eliminar regra",
+      "delete_rule_confirmation": "Seguro que queres eliminar esta regra?",
+      "whenever": "Sempre que ...",
+      "if": "Se ...",
+      "enter_rule_name": "Introduza o nome da regra",
+      "describe_what_this_rule_does": "Describe o que fai esta regra",
+      "rule_has_been_created": "Creouse a regra!",
+      "rule_has_been_updated": "A regra actualizouse!",
+      "rule_has_been_deleted": "Eliminouse a regra!",
+      "no_rules_created_yet": "Aínda non se crearon regras",
+      "create_your_first_rule": "Crea a túa primeira regra para automatizar o teu fluxo de traballo",
+      "conditions_types": {
+        "always": "Sempre",
+        "url_contains": "O URL contén",
+        "imported_from_feed": "Importado da fonte",
+        "bookmark_type_is": "O tipo de marcador é",
+        "has_tag": "Ten etiqueta",
+        "is_favourited": "Está marcado como favorito",
+        "is_archived": "Está arquivado",
+        "and": "Todo o seguinte é certo",
+        "or": "Calquera das seguintes é verdadeira"
+      },
+      "actions_types": {
+        "add_tag": "Engadir etiqueta",
+        "remove_tag": "Eliminar etiqueta",
+        "add_to_list": "Engadir á lista",
+        "remove_from_list": "Eliminar da lista",
+        "download_full_page_archive": "Descargar o arquivo da páxina completa",
+        "favourite_bookmark": "Marcar marcador como favorito",
+        "archive_bookmark": "Gardar marcador"
+      },
+      "events_types": {
+        "bookmark_added": "Engadiuse un marcador",
+        "tag_added": "Esta etiqueta engádese a un marcador",
+        "tag_removed": "Esta etiqueta elimínase dun marcador",
+        "added_to_list": "Engádese un marcador a esta lista",
+        "removed_from_list": "Eliminouse un marcador desta lista",
+        "favourited": "Un marcador está marcado como favorito",
+        "archived": "Un marcador gárdase"
+      }
     }
   },
   "highlights": {
@@ -228,7 +301,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Rexenerar etiquetas IA para todos os marcadores",
       "reindex_all_bookmarks": "Reindexar marcadores",
       "compact_assets": "Optimizar multimedia",
-      "reprocess_assets_fix_mode": "Reprocesar assets (modo fixo)"
+      "reprocess_assets_fix_mode": "Reprocesar assets (modo fixo)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Volver xerar os resumos da IA só para os marcadores fallidos",
+      "regenerate_ai_summaries_for_all_bookmarks": "Volver xerar os resumos da IA para todos os marcadores"
     },
     "users_list": {
       "users_list": "Listado de usuarios",
@@ -258,11 +333,32 @@
     "no_parent": "Sen pai",
     "list_type": "Tipo de lista",
     "search_query_help": "Aprende máis sobre a linguaxe de consulta de busca.",
-    "edit_list": "Editar lista"
+    "edit_list": "Editar lista",
+    "merge_list": "Combinar lista",
+    "destination_list": "Lista de destino",
+    "delete_after_merge": "Eliminar a lista orixinal despois da combinación",
+    "no_destination": "Sen destino",
+    "description": "Descrición (Opcional)",
+    "share_list": "Compartir lista",
+    "rss": {
+      "title": "Fonte RSS",
+      "description": "Activar unha fonte RSS para esta lista",
+      "feed_url": "URL da fonte RSS"
+    },
+    "public_list": {
+      "title": "Lista pública",
+      "description": "Permitir que outros vexan esta lista",
+      "share_link": "Compartir ligazón"
+    }
   },
   "preview": {
     "view_original": "Ver orixinal",
-    "cached_content": "Contendo cacheado"
+    "cached_content": "Contendo cacheado",
+    "reader_view": "Vista de lectura",
+    "tabs": {
+      "content": "Contido",
+      "details": "Detalles"
+    }
   },
   "editor": {
     "quickly_focus": "Podes enfocar este campo pulsando ⌘ + E",
@@ -320,7 +416,8 @@
           "example": "``` + espacio"
         }
       }
-    }
+    },
+    "placeholder_v2": "Pega unha ligazón, escribe unha nota ou solta unha imaxe…"
   },
   "search": {
     "is_not_archived": "Non está arquivado",
@@ -345,12 +442,40 @@
     "created_on_or_after": "Creado en ou despois do",
     "not_created_on_or_after": "Non creado en ou despois de",
     "url_contains": "O URL contén",
-    "has_any_tag": "Ten algunha etiqueta"
+    "has_any_tag": "Ten algunha etiqueta",
+    "is_from_feed": "É dunha fonte RSS",
+    "is_not_from_feed": "Non é dunha fonte RSS",
+    "created_within": "Creado dentro de",
+    "created_earlier_than": "Creado antes de",
+    "day_s": " Día(s)",
+    "week_s": " Semana(s)",
+    "month_s": " Mes(es)",
+    "year_s": " Ano(s)",
+    "day_s_ago": " Hai días",
+    "week_s_ago": " Hai semanas",
+    "month_s_ago": " Hai meses",
+    "year_s_ago": " Hai anos"
   },
   "dialogs": {
     "bookmarks": {
       "delete_confirmation_title": "Queres eliminar o marcador?",
       "delete_confirmation_description": "Seguro que queres borrar este marcador?"
     }
+  },
+  "banners": {
+    "no_bookmarks": {
+      "title": "Aínda non hai marcadores",
+      "description": "Garda artigos, ligazóns e páxinas interesantes para acceder a eles rapidamente máis tarde."
+    }
+  },
+  "bookmark_editor": {
+    "title": "Editar marcador",
+    "subtitle": "Fai cambios nos detalles do marcador. Cando remates, fai clic en gardar.",
+    "author": "Autor",
+    "publisher": "Editor",
+    "date_published": "Data de publicación",
+    "pick_a_date": "Escolle unha data",
+    "save_changes": "Gardar cambios",
+    "extracted_content": "Contido extraído"
   }
 }
