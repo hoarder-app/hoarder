@@ -2321,8 +2321,7 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string",
-                    "minLength": 1
+                    "type": "string"
                   }
                 },
                 "required": [
