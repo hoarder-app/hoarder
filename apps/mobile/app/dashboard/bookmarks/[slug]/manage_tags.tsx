@@ -129,6 +129,7 @@ const ListPickerPage = () => {
             placeholder: "Search Tags",
             onChangeText: (event) => setSearch(event.nativeEvent.text),
             autoCapitalize: "none",
+            hideWhenScrolling: false,
           },
         }}
       />
