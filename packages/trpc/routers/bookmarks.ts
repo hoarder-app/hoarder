@@ -50,6 +50,7 @@ import {
   zSearchBookmarksRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "@karakeep/shared/types/bookmarks";
+import { normalizeTagName } from "@karakeep/shared/utils/tag";
 
 import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";
@@ -867,9 +868,11 @@ export const bookmarksAppRouter = router({
           };
         }
 
-        const toAddTagNames = input.attach.flatMap((i) =>
-          i.tagName ? [i.tagName] : [],
-        );
+        const toAddTagNames = input.attach
+          .flatMap((i) => (i.tagName ? [i.tagName] : []))
+          .map(normalizeTagName) // strip leading #
+          .filter((n) => n.length > 0); // drop empty results
+
         const toAddTagIds = input.attach.flatMap((i) =>
           i.tagId ? [i.tagId] : [],
         );
