@@ -150,14 +150,12 @@ export function ImportExportRow() {
 
       await Promise.all([
         // Add to import list
-        ...[
-          toImport.listIds.map((listId) =>
-            addToList({
-              bookmarkId: created.id,
-              listId,
-            }),
-          ),
-        ],
+        ...toImport.listIds.map((listId) =>
+          addToList({
+            bookmarkId: created.id,
+            listId,
+          }),
+        ),
         // Update tags
         bookmark.tags.length > 0
           ? updateTags({

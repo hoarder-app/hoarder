@@ -4,9 +4,6 @@
     "../../tooling/oxlint/oxlint-base.json",
     "../../tooling/oxlint/oxlint-react.json"
   ],
-  "categories": {
-    "correctness": "warn"
-  },
   "env": {
     "builtin": true,
     "commonjs": true,

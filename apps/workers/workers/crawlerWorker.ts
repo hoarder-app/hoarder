@@ -105,7 +105,7 @@ async function startBrowserInstance() {
     );
     const webUrl = new URL(serverConfig.crawler.browserWebUrl);
     // We need to resolve the ip address as a workaround for https://github.com/puppeteer/puppeteer/issues/2242
-    const { address: address } = await dns.promises.lookup(webUrl.hostname);
+    const { address } = await dns.promises.lookup(webUrl.hostname);
     webUrl.hostname = address;
     logger.info(
       `[Crawler] Successfully resolved IP address, new address: ${webUrl.toString()}`,

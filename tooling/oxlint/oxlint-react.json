@@ -5,7 +5,6 @@
     "jsx-a11y"
   ],
   "rules": {
-    "react/prop-types": "off",
     "react/jsx-key": "warn",
     "react/jsx-no-comment-textnodes": "warn",
     "react/jsx-no-duplicate-props": "warn",
@@ -20,7 +19,6 @@
     "react/no-string-refs": "warn",
     "react/no-unescaped-entities": "warn",
     "react/no-unknown-property": "warn",
-    "react/react-in-jsx-scope": "off",
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "off",
     "jsx-a11y/alt-text": "error",
@@ -54,7 +52,7 @@
       }
     ],
     "jsx-a11y/no-redundant-roles": "error",
-    "jsx-a11y/role-has-required-aria-props": "warn",
+    "jsx-a11y/role-has-required-aria-props": "off",
     "jsx-a11y/role-supports-aria-props": "error",
     "jsx-a11y/scope": "error",
     "jsx-a11y/tabindex-no-positive": "error"

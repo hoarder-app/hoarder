@@ -2,7 +2,9 @@
   "$schema": "../../node_modules/oxlint/configuration_schema.json",
   "plugins": [
     "typescript",
-    "import"
+    "import",
+    "unicorn",
+    "oxc"
   ],
   "rules": {
     "for-direction": "error",
@@ -108,20 +110,7 @@
     {
       "files": ["**/*"],
       "rules": {
-        "no-class-assign": "off",
-        "no-const-assign": "off",
-        "no-dupe-class-members": "off",
-        "no-dupe-keys": "off",
-        "no-func-assign": "off",
-        "no-import-assign": "off",
-        "no-new-native-nonconstructor": "off",
-        "no-obj-calls": "off",
-        "no-redeclare": "off",
-        "no-setter-return": "off",
-        "no-this-before-super": "off",
-        "no-unsafe-negation": "off",
         "no-var": "error",
-        "no-with": "off",
         "prefer-rest-params": "error",
         "prefer-spread": "error"
       }

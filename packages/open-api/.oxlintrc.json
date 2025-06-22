@@ -3,10 +3,7 @@
   "extends": [
     "../../tooling/oxlint/oxlint-base.json"
   ],
-  "categories": {
-    "correctness": "warn"
-  },
-    "env": {
+  "env": {
     "builtin": true,
     "commonjs": true
   },
