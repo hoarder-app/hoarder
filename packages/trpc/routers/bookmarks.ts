@@ -50,13 +50,13 @@ import {
   zSearchBookmarksRequestSchema,
   zUpdateBookmarksRequestSchema,
 } from "@karakeep/shared/types/bookmarks";
+import { normalizeTagName } from "@karakeep/shared/utils/tag";
 
 import type { AuthedContext, Context } from "../index";
 import { authedProcedure, router } from "../index";
 import { mapDBAssetTypeToUserType } from "../lib/attachments";
 import { getBookmarkIdsFromMatcher } from "../lib/search";
 import { Bookmark } from "../models/bookmarks";
-import { normalizeTagName } from "../utils/tag";
 import { ensureAssetOwnership } from "./assets";
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
@@ -870,7 +870,7 @@ export const bookmarksAppRouter = router({
 
         const toAddTagNames = input.attach
           .flatMap((i) => (i.tagName ? [i.tagName] : []))
-          .map((n) => normalizeTagName(n)) // strip leading #
+          .map(normalizeTagName) // strip leading #
           .filter((n) => n.length > 0); // drop empty results
 
         const toAddTagIds = input.attach.flatMap((i) =>

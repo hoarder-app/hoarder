@@ -1,7 +1,14 @@
 import { z } from "zod";
 
+import { normalizeTagName } from "../utils/tag";
+
+const zTagNameSchemaWithValidation = z
+  .string()
+  .transform((s) => normalizeTagName(s).trim())
+  .pipe(z.string().min(1));
+
 export const zCreateTagRequestSchema = z.object({
-  name: z.string().min(1),
+  name: zTagNameSchemaWithValidation,
 });
 
 export const zAttachedByEnumSchema = z.enum(["ai", "human"]);
@@ -23,7 +30,7 @@ export type ZGetTagResponse = z.infer<typeof zGetTagResponseSchema>;
 
 export const zUpdateTagRequestSchema = z.object({
   tagId: z.string(),
-  name: z.string().optional(),
+  name: zTagNameSchemaWithValidation.optional(),
 });
 
 export const zTagBasicSchema = z.object({
