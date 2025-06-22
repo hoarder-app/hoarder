@@ -10,7 +10,7 @@ import {
   getBookmarkTitle,
   getSourceUrl,
   isBookmarkStillCrawling,
-} from "@karakeep/shared-react/utils/bookmarkUtils";
+} from "@karakeep/shared/utils/bookmarkUtils";
 
 import { BookmarkLayoutAdaptingCard } from "./BookmarkLayoutAdaptingCard";
 import FooterLinkURL from "./FooterLinkURL";

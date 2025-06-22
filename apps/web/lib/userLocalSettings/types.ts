@@ -15,7 +15,7 @@ export type UserLocalSettings = z.infer<typeof zUserLocalSettings>;
 export function parseUserLocalSettings(str: string | undefined) {
   try {
     return zUserLocalSettings.parse(JSON.parse(str ?? "{}"));
-  } catch (e) {
+  } catch {
     return undefined;
   }
 }

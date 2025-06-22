@@ -79,7 +79,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Gjenskap AI-tagger for alle bokmerker",
       "reindex_all_bookmarks": "Reindekser alle bokmerker",
       "compact_assets": "Komprimer ressurser",
-      "reprocess_assets_fix_mode": "Behandle aktiva på nytt (Fiks-modus)"
+      "reprocess_assets_fix_mode": "Behandle aktiva på nytt (Fiks-modus)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Gjenopprett AI-sammendrag kun for mislykkede bokmerker",
+      "regenerate_ai_summaries_for_all_bookmarks": "Gjenopprett AI-sammendrag for alle bokmerker"
     },
     "admin_settings": "Admin-innstillinger"
   },
@@ -89,7 +91,8 @@
     "sort": {
       "title": "Sorter",
       "newest_first": "Nyeste først",
-      "oldest_first": "Eldste først"
+      "oldest_first": "Eldste først",
+      "relevant_first": "Mest relevant først"
     },
     "cancel": "Avbryt",
     "change_layout": "Endre layout",
@@ -120,7 +123,8 @@
     "apply_all": "Bruk alle",
     "ignore": "Ignorer",
     "favorite": "Favoritt",
-    "open_editor": "Åpne redigeringsprogram"
+    "open_editor": "Åpne redigeringsprogram",
+    "toggle_show_archived": "Vis arkiverte"
   },
   "settings": {
     "info": {
@@ -131,7 +135,20 @@
       "confirm_new_password": "Bekreft nytt passord",
       "options": "Alternativer",
       "current_password": "Nåværende passord",
-      "new_password": "Nytt passord"
+      "new_password": "Nytt passord",
+      "user_settings": {
+        "user_settings_updated": "Brukerinnstillingene er oppdatert!",
+        "bookmark_click_action": {
+          "title": "Handling ved klikk på bokmerke",
+          "open_external_url": "Åpne original URL",
+          "open_bookmark_details": "Åpne bokmerkedetaljer"
+        },
+        "archive_display_behaviour": {
+          "title": "Arkiverte bokmerker",
+          "show": "Vis arkiverte bokmerker i tagger og lister",
+          "hide": "Skjul arkiverte bokmerker i tagger og lister"
+        }
+      }
     },
     "ai": {
       "tagging_rules": "Regler for merking",
@@ -187,7 +204,9 @@
     "user_settings": "Brukerinnstillinger",
     "feeds": {
       "rss_subscriptions": "RSS-abonnementer",
-      "add_a_subscription": "Legg til et abonnement"
+      "add_a_subscription": "Legg til et abonnement",
+      "feed_enabled": "RSS-strøm aktivert",
+      "feed_disabled": "RSS-strøm deaktivert"
     },
     "broken_links": {
       "broken_links": "Ødelagte lenker",
@@ -274,7 +293,18 @@
     "destination_list": "Destinasjonsliste",
     "delete_after_merge": "Slett opprinnelig liste etter sammenslåing",
     "no_destination": "Ingen destinasjon",
-    "description": "Beskrivelse (valgfritt)"
+    "description": "Beskrivelse (valgfritt)",
+    "rss": {
+      "description": "Aktiver en RSS-feed for denne lista",
+      "feed_url": "RSS-feed URL",
+      "title": "RSS-feed"
+    },
+    "public_list": {
+      "title": "Offentlig liste",
+      "share_link": "Del lenke",
+      "description": "Tillat andre å se denne lista"
+    },
+    "share_list": "Del liste"
   },
   "tags": {
     "all_tags": "Alle tagger",
@@ -420,7 +450,11 @@
   "preview": {
     "cached_content": "Cachet innhold",
     "view_original": "Vis original",
-    "reader_view": "Lesevisning"
+    "reader_view": "Lesevisning",
+    "tabs": {
+      "content": "Innhold",
+      "details": "Detaljer"
+    }
   },
   "dialogs": {
     "bookmarks": {

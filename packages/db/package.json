@@ -20,18 +20,11 @@
     "tsx": "^4.7.1"
   },
   "devDependencies": {
-    "@karakeep/eslint-config": "workspace:^0.2.0",
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "@tsconfig/node22": "^22.0.0",
     "@types/better-sqlite3": "^7.6.11",
     "drizzle-kit": "^0.30.01"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@karakeep/eslint-config/base"
-    ]
   },
   "prettier": "@karakeep/prettier-config"
 }

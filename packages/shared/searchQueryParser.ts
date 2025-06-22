@@ -224,7 +224,7 @@ MATCHER.setPattern(
                   inverse: !!minus,
                 },
               };
-            } catch (e) {
+            } catch {
               return {
                 // If parsing the date fails, emit it as pure text
                 text: (minus?.text ?? "") + qualifier.text + ident,
@@ -241,7 +241,7 @@ MATCHER.setPattern(
                   inverse: !!minus,
                 },
               };
-            } catch (e) {
+            } catch {
               return {
                 // If parsing the date fails, emit it as pure text
                 text: (minus?.text ?? "") + qualifier.text + ident,
@@ -258,7 +258,7 @@ MATCHER.setPattern(
                   relativeDate: { direction, amount, unit },
                 },
               };
-            } catch (e) {
+            } catch {
               return {
                 // If parsing the relative time fails, emit it as pure text
                 text: (minus?.text ?? "") + qualifier.text + ident,

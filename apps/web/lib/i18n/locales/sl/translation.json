@@ -27,7 +27,20 @@
       "new_password": "Novo geslo",
       "confirm_new_password": "Potrdite novo geslo",
       "interface_lang": "Jezik vmesnika",
-      "user_info": "Informacije o uporabniku"
+      "user_info": "Informacije o uporabniku",
+      "user_settings": {
+        "user_settings_updated": "Uporabniške nastavitve so bile posodobljene!",
+        "bookmark_click_action": {
+          "title": "Dejanje klika zaznamka",
+          "open_external_url": "Odpri izvirni URL",
+          "open_bookmark_details": "Odpri podrobnosti zaznamka"
+        },
+        "archive_display_behaviour": {
+          "title": "Arhivirani zaznamki",
+          "show": "Prikaži arhivirane zaznamke v oznakah in seznamih",
+          "hide": "Skrij arhivirane zaznamke v oznakah in seznamih"
+        }
+      }
     },
     "ai": {
       "text_prompt": "Besedilni ukaz",
@@ -63,7 +76,9 @@
     },
     "feeds": {
       "add_a_subscription": "Dodaj naročnino",
-      "rss_subscriptions": "RSS Naročnine"
+      "rss_subscriptions": "RSS Naročnine",
+      "feed_enabled": "RSS vir je omogočen",
+      "feed_disabled": "RSS vir je onemogočen"
     },
     "user_settings": "Uporabniške nastavitve",
     "broken_links": {
@@ -172,7 +187,9 @@
       "without_inference": "Brez sklepanja",
       "reindex_all_bookmarks": "Ponovno indeksiraj vse zaznamke",
       "compact_assets": "Kompaktna sredstva",
-      "reprocess_assets_fix_mode": "Ponovno obdelaj sredstva (način popravljanja)"
+      "reprocess_assets_fix_mode": "Ponovno obdelaj sredstva (način popravljanja)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Ponovno ustvari povzetke umetne inteligence samo za neuspele zaznamke",
+      "regenerate_ai_summaries_for_all_bookmarks": "Ponovno ustvari povzetke umetne inteligence za vse zaznamke"
     }
   },
   "search": {
@@ -272,7 +289,8 @@
     "sort": {
       "oldest_first": "Najstarejše najprej",
       "title": "Sortiraj",
-      "newest_first": "Najnovejše najprej"
+      "newest_first": "Najnovejše najprej",
+      "relevant_first": "Najbolj pomembno najprej"
     },
     "unselect_all": "Od-izberi vse",
     "create": "Ustvari",
@@ -301,7 +319,8 @@
     "edit_tags": "Uredi oznake",
     "fetch_now": "Poberi zdaj",
     "apply_all": "Uporabi vse",
-    "open_editor": "Odpri urejevalnik"
+    "open_editor": "Odpri urejevalnik",
+    "toggle_show_archived": "Prikaži arhivirano"
   },
   "layouts": {
     "compact": "Kompaktno",
@@ -326,7 +345,18 @@
     "no_destination": "Ni cilja",
     "description": "Opis (neobvezno)",
     "merge_list": "Združi seznam",
-    "destination_list": "Ciljni seznam"
+    "destination_list": "Ciljni seznam",
+    "share_list": "Deli seznam",
+    "rss": {
+      "title": "RSS vir",
+      "description": "Omogoči RSS vir za ta seznam",
+      "feed_url": "URL RSS vira"
+    },
+    "public_list": {
+      "title": "Javni seznam",
+      "description": "Dovoli drugim ogled tega seznama",
+      "share_link": "Povezava za deljenje"
+    }
   },
   "options": {
     "dark_mode": "Temni način",
@@ -423,7 +453,11 @@
   "preview": {
     "view_original": "Ogled izvirnika",
     "cached_content": "Predpomnjena vsebina",
-    "reader_view": "Pogled bralnika"
+    "reader_view": "Pogled bralnika",
+    "tabs": {
+      "content": "Vsebina",
+      "details": "Podrobnosti"
+    }
   },
   "highlights": {
     "no_highlights": "Še nimaš nobenih poudarkov."

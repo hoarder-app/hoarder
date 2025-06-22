@@ -41,7 +41,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "Ponovno generiranje AI oznaka za sve oznake",
       "without_inference": "Bez zaključivanja",
       "compact_assets": "Kompaktiranje resursa",
-      "reprocess_assets_fix_mode": "Ponovno postupanje s resursima (fiksni mod)"
+      "reprocess_assets_fix_mode": "Ponovno postupanje s resursima (fiksni mod)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Ponovno generiraj AI sažetke samo za neuspjele oznake",
+      "regenerate_ai_summaries_for_all_bookmarks": "Ponovno generiraj AI sažetke za sve oznake"
     }
   },
   "layouts": {
@@ -125,7 +127,20 @@
       "new_password": "Nova lozinka",
       "confirm_new_password": "Potvrdi novu lozinku",
       "options": "Opcije",
-      "interface_lang": "Jezik sučelja"
+      "interface_lang": "Jezik sučelja",
+      "user_settings": {
+        "user_settings_updated": "Postavke korisnika su ažurirane!",
+        "bookmark_click_action": {
+          "title": "Radnja klika na oznaku",
+          "open_external_url": "Otvori izvorni URL",
+          "open_bookmark_details": "Otvori detalje oznake"
+        },
+        "archive_display_behaviour": {
+          "title": "Arhivirane oznake",
+          "show": "Prikaži arhivirane oznake u oznakama i popisima",
+          "hide": "Sakrij arhivirane oznake u oznakama i popisima"
+        }
+      }
     },
     "api_keys": {
       "api_keys": "API ključevi",
@@ -142,7 +157,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS pretplate",
-      "add_a_subscription": "Dodaj pretplatu"
+      "add_a_subscription": "Dodaj pretplatu",
+      "feed_enabled": "RSS feed omogućen",
+      "feed_disabled": "RSS feed onemogućen"
     },
     "webhooks": {
       "edit_webhook": "Uredi Webhook",
@@ -255,9 +272,11 @@
     "sort": {
       "title": "Sortiraj",
       "newest_first": "Najnovije prvo",
-      "oldest_first": "Najstarije prvo"
+      "oldest_first": "Najstarije prvo",
+      "relevant_first": "Najrelevantnije prvo"
     },
-    "open_editor": "Otvori uređivač"
+    "open_editor": "Otvori uređivač",
+    "toggle_show_archived": "Prikaži arhivirano"
   },
   "highlights": {
     "no_highlights": "Još nemate nijednu istaknutu stavku."
@@ -283,7 +302,18 @@
     "destination_list": "Odredišna lista",
     "delete_after_merge": "Izbriši izvornu listu nakon spajanja",
     "no_destination": "Nema odredišta",
-    "description": "Opis (neobavezno)"
+    "description": "Opis (neobavezno)",
+    "public_list": {
+      "share_link": "Podijeli vezu",
+      "title": "Javni popis",
+      "description": "Dopusti drugima da vide ovaj popis"
+    },
+    "share_list": "Podijeli popis",
+    "rss": {
+      "title": "RSS feed",
+      "description": "Omogući RSS feed za ovaj popis",
+      "feed_url": "URL RSS feeda"
+    }
   },
   "tags": {
     "all_tags": "Sve oznake",
@@ -301,7 +331,11 @@
   "preview": {
     "view_original": "Pogledaj orginal",
     "cached_content": "Keširani sadržaj",
-    "reader_view": "Prikaz čitača"
+    "reader_view": "Prikaz čitača",
+    "tabs": {
+      "content": "Sadržaj",
+      "details": "Detalji"
+    }
   },
   "editor": {
     "quickly_focus": "Možete brzo fokusirati ovo polje pritiskanjem ⌘ + E",

@@ -19,8 +19,8 @@ import {
   useDetachBookmarkAsset,
   useReplaceBookmarkAsset,
 } from "@karakeep/shared-react/hooks/assets";
-import { getAssetUrl } from "@karakeep/shared-react/utils/assetUtils";
 import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
+import { getAssetUrl } from "@karakeep/shared/utils/assetUtils";
 import {
   humanFriendlyNameForAssertType,
   isAllowedToAttachAsset,

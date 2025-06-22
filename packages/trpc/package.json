@@ -8,8 +8,8 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier . --ignore-path ../../.prettierignore",
     "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
     "test": "vitest"
   },
   "dependencies": {
@@ -24,19 +24,12 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@karakeep/eslint-config": "workspace:^0.2.0",
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/deep-equal": "^1.0.4",
     "vite-tsconfig-paths": "^4.3.1",
     "vitest": "^1.6.1"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@karakeep/eslint-config/base"
-    ]
   },
   "prettier": "@karakeep/prettier-config"
 }

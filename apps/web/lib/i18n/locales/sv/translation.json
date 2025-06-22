@@ -74,14 +74,16 @@
     "sort": {
       "title": "Sortera",
       "newest_first": "Nyast först",
-      "oldest_first": "Äldst först"
+      "oldest_first": "Äldst först",
+      "relevant_first": "Mest relevant först"
     },
     "recrawl": "Omindexera",
     "unfavorite": "Sluta favorisera",
     "close_bulk_edit": "Stäng massredigering",
     "bulk_edit": "Massredigera",
     "apply_all": "Använd alla",
-    "open_editor": "Öppna redigeraren"
+    "open_editor": "Öppna redigeraren",
+    "toggle_show_archived": "Visa arkiverade"
   },
   "settings": {
     "back_to_app": "Tillbaka till app",
@@ -93,11 +95,26 @@
       "confirm_new_password": "Bekräfta nytt lösenord",
       "change_password": "Ändra lösenord",
       "new_password": "Nytt lösenord",
-      "options": "Alternativ"
+      "options": "Alternativ",
+      "user_settings": {
+        "user_settings_updated": "Användarinställningarna har uppdaterats!",
+        "bookmark_click_action": {
+          "title": "Åtgärd vid klick på bokmärke",
+          "open_external_url": "Öppna ursprunglig URL",
+          "open_bookmark_details": "Öppna bokmärkesdetaljer"
+        },
+        "archive_display_behaviour": {
+          "title": "Arkiverade bokmärken",
+          "show": "Visa arkiverade bokmärken i taggar och listor",
+          "hide": "Dölj arkiverade bokmärken i taggar och listor"
+        }
+      }
     },
     "feeds": {
       "rss_subscriptions": "RSS-prenumerationer",
-      "add_a_subscription": "Lägg till en prenumeration"
+      "add_a_subscription": "Lägg till en prenumeration",
+      "feed_enabled": "RSS-flöde aktiverat",
+      "feed_disabled": "RSS-flöde inaktiverat"
     },
     "ai": {
       "images_prompt": "Bildprompt",
@@ -245,7 +262,9 @@
       "recrawl_failed_links_only": "Genomsök endast misslyckade länkar igen",
       "recrawl_all_links": "Omkryp alla länkar",
       "regenerate_ai_tags_for_failed_bookmarks_only": "Återskapa AI-taggar endast för misslyckade bokmärken",
-      "compact_assets": "Komprimera tillgångar"
+      "compact_assets": "Komprimera tillgångar",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "Återskapa AI-sammanfattningar endast för misslyckade bokmärken",
+      "regenerate_ai_summaries_for_all_bookmarks": "Återskapa AI-sammanfattningar för alla bokmärken"
     },
     "users_list": {
       "reset_password": "Återställ lösenord",
@@ -280,7 +299,18 @@
     "description": "Beskrivning (Valfritt)",
     "merge_list": "Slå samman lista",
     "destination_list": "Destinationslista",
-    "delete_after_merge": "Ta bort originallistan efter sammanslagning"
+    "delete_after_merge": "Ta bort originallistan efter sammanslagning",
+    "share_list": "Dela lista",
+    "rss": {
+      "title": "RSS-flöde",
+      "description": "Aktivera ett RSS-flöde för den här listan",
+      "feed_url": "URL för RSS-flöde"
+    },
+    "public_list": {
+      "title": "Offentlig lista",
+      "description": "Tillåt andra att visa den här listan",
+      "share_link": "Dela länk"
+    }
   },
   "tags": {
     "drag_and_drop_merging_info": "Dra och släpp taggar på varandra för att sammanfoga dem",
@@ -380,7 +410,11 @@
   "preview": {
     "view_original": "Visa orginal",
     "cached_content": "Cachelagrat innehåll",
-    "reader_view": "Läsarvy"
+    "reader_view": "Läsarvy",
+    "tabs": {
+      "content": "Innehåll",
+      "details": "Detaljer"
+    }
   },
   "dialogs": {
     "bookmarks": {

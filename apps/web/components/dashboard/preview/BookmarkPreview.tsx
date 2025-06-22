@@ -18,13 +18,13 @@ import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { CalendarDays, ExternalLink } from "lucide-react";
 
+import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 import {
   getBookmarkTitle,
   getSourceUrl,
   isBookmarkStillCrawling,
   isBookmarkStillLoading,
-} from "@karakeep/shared-react/utils/bookmarkUtils";
-import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
+} from "@karakeep/shared/utils/bookmarkUtils";
 
 import SummarizeBookmarkArea from "../bookmarks/SummarizeBookmarkArea";
 import ActionBar from "./ActionBar";

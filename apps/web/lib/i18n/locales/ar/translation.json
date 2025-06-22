@@ -79,9 +79,11 @@
     "sort": {
       "title": "ترتيب",
       "newest_first": "الأحدث أولاً",
-      "oldest_first": "الأقدم أولاً"
+      "oldest_first": "الأقدم أولاً",
+      "relevant_first": "الأكثر صلة أولاً"
     },
-    "open_editor": "فتح المحرر"
+    "open_editor": "فتح المحرر",
+    "toggle_show_archived": "اعرض المؤرشفة"
   },
   "highlights": {
     "no_highlights": "ليس لديك أي تمييزات بعد."
@@ -97,7 +99,20 @@
       "new_password": "كلمة المرور الجديدة",
       "confirm_new_password": "تأكيد كلمة المرور الجديدة",
       "options": "خيارات",
-      "interface_lang": "لغة الواجهة"
+      "interface_lang": "لغة الواجهة",
+      "user_settings": {
+        "user_settings_updated": "تم تحديث إعدادات المستخدم!",
+        "bookmark_click_action": {
+          "title": "إجراء النقر على الإشارة المرجعية",
+          "open_external_url": "افتح عنوان URL الأصلي",
+          "open_bookmark_details": "افتح تفاصيل الإشارة المرجعية"
+        },
+        "archive_display_behaviour": {
+          "title": "الإشارات المرجعية المؤرشفة",
+          "show": "اعرض الإشارات المرجعية المؤرشفة في العلامات والقوائم",
+          "hide": "إخفاء الإشارات المرجعية المؤرشفة في العلامات والقوائم"
+        }
+      }
     },
     "ai": {
       "ai_settings": "إعدادات الذكاء الاصطناعي",
@@ -114,7 +129,9 @@
     },
     "feeds": {
       "rss_subscriptions": "اشتراكات RSS",
-      "add_a_subscription": "إضافة اشتراك"
+      "add_a_subscription": "إضافة اشتراك",
+      "feed_enabled": "تمكين موجز RSS",
+      "feed_disabled": "تم تعطيل موجز RSS"
     },
     "webhooks": {
       "webhooks": "واجهات الربط",
@@ -248,7 +265,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "إعادة إنشاء علامات الذكاء الاصطناعي لجميع الإشارات المرجعية",
       "reindex_all_bookmarks": "إعادة فهرسة جميع الإشارات المرجعية",
       "compact_assets": "ضغط الوسائط",
-      "reprocess_assets_fix_mode": "إعادة معالجة الوسائط (وضع الإصلاح)"
+      "reprocess_assets_fix_mode": "إعادة معالجة الوسائط (وضع الإصلاح)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "أعد إنشاء ملخصات الذكاء الاصطناعي للإشارات المرجعية الفاشلة فقط",
+      "regenerate_ai_summaries_for_all_bookmarks": "أعد إنشاء ملخصات الذكاء الاصطناعي لجميع الإشارات المرجعية"
     },
     "users_list": {
       "users_list": "قائمة المستخدمين",
@@ -283,7 +302,18 @@
     "destination_list": "القائمة الوجهة",
     "delete_after_merge": "حذف القائمة الأصلية بعد الدمج",
     "no_destination": "لا توجد وجهة",
-    "description": "الوصف (اختياري)"
+    "description": "الوصف (اختياري)",
+    "rss": {
+      "title": "موجز RSS",
+      "description": "تمكين موجز RSS لهذه القائمة",
+      "feed_url": "عنوان URL لموجز RSS"
+    },
+    "share_list": "شارك القائمة",
+    "public_list": {
+      "title": "قائمة عامة",
+      "description": "السماح للآخرين بعرض هذه القائمة",
+      "share_link": "شارك الرابط"
+    }
   },
   "tags": {
     "all_tags": "جميع الوسوم",
@@ -338,7 +368,11 @@
   "preview": {
     "view_original": "عرض النسخة الأصلية",
     "cached_content": "النسخة المخزنة",
-    "reader_view": "عرض القارئ"
+    "reader_view": "عرض القارئ",
+    "tabs": {
+      "content": "المحتوى",
+      "details": "التفاصيل"
+    }
   },
   "editor": {
     "quickly_focus": "يمكنك التركيز سريعاً على هذا الحقل بالضغط على ⌘ + E",

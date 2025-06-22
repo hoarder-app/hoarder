@@ -192,7 +192,11 @@ export function EditListModal({
     (value: z.infer<typeof zNewBookmarkListSchema>) => {
       value.parentId = value.parentId === "" ? null : value.parentId;
       value.query = value.type === "smart" ? value.query : undefined;
-      isEdit ? editList({ ...value, listId: list.id }) : createList(value);
+      if (isEdit) {
+        editList({ ...value, listId: list.id });
+      } else {
+        createList(value);
+      }
     },
   );
 

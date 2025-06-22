@@ -150,7 +150,7 @@ async function run(req: DequeuedJob<ZFeedRequestSchema>) {
 
   // For feeds that don't have guids, use the link as the id
   feedItems.forEach((item) => {
-    item.guid = item.guid ?? `${item.id}` ?? item.link;
+    item.guid = item.guid ?? item.id ?? item.link;
   });
 
   const exitingEntries = await db.query.rssFeedImportsTable.findMany({

@@ -51,6 +51,7 @@
     "favorite": "Favorite",
     "unfavorite": "Unfavorite",
     "delete": "Delete",
+    "toggle_show_archived": "Show Archived",
     "refresh": "Refresh",
     "recrawl": "Recrawl",
     "download_full_page_archive": "Download Full Page Archive",
@@ -101,9 +102,16 @@
       "interface_lang": "Interface Language",
       "user_settings": {
         "user_settings_updated": "User settings have been updated!",
-        "boomark_click_action": "Bookmark Click Action",
-        "open_external_url": "Open Original URL",
-        "open_bookmark_details": "Open Bookmark Details"
+        "bookmark_click_action": {
+          "title": "Bookmark Click Action",
+          "open_external_url": "Open Original URL",
+          "open_bookmark_details": "Open Bookmark Details"
+        },
+        "archive_display_behaviour": {
+          "title": "Archived Bookmarks",
+          "show": "Show archived bookmarks in tags and lists",
+          "hide": "Hide archived bookmarks in tags and lists"
+        }
       }
     },
     "ai": {
@@ -267,6 +275,7 @@
       "change_role": "Change Role",
       "reset_password": "Reset Password",
       "delete_user": "Delete User",
+      "delete_user_confirm_description": "Are you sure you want to delete user \"{{name}}\"?",
       "num_bookmarks": "Num Bookmarks",
       "asset_sizes": "Asset Sizes",
       "local_user": "Local User",
@@ -282,6 +291,7 @@
     "favourites": "Favourites",
     "new_list": "New List",
     "edit_list": "Edit List",
+    "share_list": "Share List",
     "new_nested_list": "New Nested List",
     "merge_list": "Merge List",
     "destination_list": "Destination List",
@@ -294,7 +304,17 @@
     "smart_list": "Smart List",
     "search_query": "Search Query",
     "search_query_help": "Learn more about the search query language.",
-    "description": "Description (Optional)"
+    "description": "Description (Optional)",
+    "rss": {
+      "title": "RSS Feed",
+      "description": "Enable an RSS feed for this list",
+      "feed_url": "RSS Feed URL"
+    },
+    "public_list": {
+      "title": "Public List",
+      "description": "Allow others to view this list",
+      "share_link": "Share Link"
+    }
   },
   "tags": {
     "all_tags": "All Tags",

@@ -90,6 +90,21 @@ const app = new Hono()
   .post(
     "/singlefile",
     zValidator(
+      "query",
+      z.object({
+        ifexists: z
+          .enum([
+            "skip",
+            "overwrite",
+            "overwrite-recrawl",
+            "append",
+            "append-recrawl",
+          ])
+          .optional()
+          .default("skip"),
+      }),
+    ),
+    zValidator(
       "form",
       z.object({
         url: z.string(),
@@ -107,7 +122,59 @@ const app = new Hono()
         url: form.url,
         precrawledArchiveId: up.assetId,
       });
-      return c.json(bookmark, 201);
+      if (bookmark.alreadyExists) {
+        const ifexists = c.req.valid("query").ifexists;
+        switch (ifexists) {
+          case "skip":
+            break;
+          case "overwrite-recrawl":
+          case "overwrite": {
+            const existingPrecrawledArchiveId = bookmark.assets
+              .filter((a) => a.assetType == "precrawledArchive")
+              .at(-1)?.id;
+            if (existingPrecrawledArchiveId) {
+              await c.var.api.assets.replaceAsset({
+                bookmarkId: bookmark.id,
+                oldAssetId: existingPrecrawledArchiveId,
+                newAssetId: up.assetId,
+              });
+            } else {
+              await c.var.api.assets.attachAsset({
+                bookmarkId: bookmark.id,
+                asset: {
+                  id: up.assetId,
+                  assetType: "precrawledArchive",
+                },
+              });
+            }
+            if (ifexists == "overwrite-recrawl") {
+              await c.var.api.bookmarks.recrawlBookmark({
+                bookmarkId: bookmark.id,
+              });
+            }
+            break;
+          }
+          case "append-recrawl":
+          case "append": {
+            await c.var.api.assets.attachAsset({
+              bookmarkId: bookmark.id,
+              asset: {
+                id: up.assetId,
+                assetType: "precrawledArchive",
+              },
+            });
+            if (ifexists == "append-recrawl") {
+              await c.var.api.bookmarks.recrawlBookmark({
+                bookmarkId: bookmark.id,
+              });
+            }
+            break;
+          }
+        }
+        return c.json(bookmark, 200);
+      } else {
+        return c.json(bookmark, 201);
+      }
     },
   )
 

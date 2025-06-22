@@ -336,6 +336,9 @@ export const bookmarkLists = sqliteTable(
       (): AnySQLiteColumn => bookmarkLists.id,
       { onDelete: "set null" },
     ),
+    // Whoever have access to this token can read the content of this list
+    rssToken: text("rssToken"),
+    public: integer("public", { mode: "boolean" }).notNull().default(false),
   },
   (bl) => [
     index("bookmarkLists_userId_idx").on(bl.userId),
@@ -534,7 +537,14 @@ export const userSettings = sqliteTable("userSettings", {
     .references(() => users.id, { onDelete: "cascade" }),
   bookmarkClickAction: text("bookmarkClickAction", {
     enum: ["open_original_link", "expand_bookmark_preview"],
-  }).notNull().default("open_original_link"),
+  })
+    .notNull()
+    .default("open_original_link"),
+  archiveDisplayBehaviour: text("archiveDisplayBehaviour", {
+    enum: ["show", "hide"],
+  })
+    .notNull()
+    .default("show"),
 });
 
 // Relations

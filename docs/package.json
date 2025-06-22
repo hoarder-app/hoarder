@@ -45,14 +45,6 @@
       "last 5 safari version"
     ]
   },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@karakeep/eslint-config/base",
-      "@karakeep/eslint-config/nextjs",
-      "@karakeep/eslint-config/react"
-    ]
-  },
   "prettier": "@karakeep/prettier-config",
   "engines": {
     "node": ">=18.0"
