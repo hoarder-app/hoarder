@@ -19,7 +19,6 @@ import metascraperDescription from "metascraper-description";
 import metascraperImage from "metascraper-image";
 import metascraperLogo from "metascraper-logo-favicon";
 import metascraperPublisher from "metascraper-publisher";
-import metascraperReadability from "metascraper-readability";
 import metascraperTitle from "metascraper-title";
 import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
@@ -72,7 +71,6 @@ const metascraperParser = metascraper([
   }),
   metascraperAmazon(),
   metascraperReddit(),
-  metascraperReadability(),
   metascraperAuthor(),
   metascraperPublisher(),
   metascraperTitle(),
