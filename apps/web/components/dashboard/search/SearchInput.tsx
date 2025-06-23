@@ -82,12 +82,13 @@ const SearchInput = React.forwardRef<
   const [newNestedListModalOpen, setNewNestedListModalOpen] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const isPopoverMouseDown = useRef(false);
+  const isHistorySelected = useRef(false);
 
   const handleValueChange = useCallback(
     (newValue: string) => {
       setValue(newValue);
       debounceSearch(newValue);
+      isHistorySelected.current = false; // Reset flag when user types
     },
     [debounceSearch],
   );
@@ -101,37 +102,34 @@ const SearchInput = React.forwardRef<
   const isPopoverVisible = isPopoverOpen && suggestions.length > 0;
   const handleHistorySelect = useCallback(
     (term: string) => {
+      isHistorySelected.current = true;
       setValue(term);
       doSearch(term);
       addTerm(term);
       setIsPopoverOpen(false);
       inputRef.current?.blur();
     },
-    [doSearch, addTerm],
+    [doSearch],
   );
 
-  const handleCommandKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === "Enter") {
-        const commandElement = e.currentTarget as HTMLElement;
-        const selectedItem = commandElement.querySelector(
-          '[data-selected="true"]',
-        );
-        // if there is selected item, CommandInput will handle, skip
-        if (!selectedItem && value) {
-          // No matched history, finish search
-          e.preventDefault();
-          setIsPopoverOpen(false);
-          inputRef.current?.blur();
-        }
-      } else if (e.key === "Escape") {
+  const handleCommandKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      const selectedItem = document.querySelector(
+        '[cmdk-item][data-selected="true"]',
+      );
+      const isPlaceholderSelected =
+        selectedItem?.getAttribute("data-value") === "-";
+      if (!selectedItem || isPlaceholderSelected) {
         e.preventDefault();
         setIsPopoverOpen(false);
         inputRef.current?.blur();
       }
-    },
-    [value, addTerm],
-  );
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setIsPopoverOpen(false);
+      inputRef.current?.blur();
+    }
+  }, []);
 
   useFocusSearchOnKeyPress(inputRef, value, setValue, setIsPopoverOpen);
   useImperativeHandle(ref, () => inputRef.current!);
@@ -143,23 +141,19 @@ const SearchInput = React.forwardRef<
   }, [isInSearchPage]);
 
   const handleFocus = useCallback(() => {
-    isPopoverMouseDown.current = false;
     setIsPopoverOpen(true);
   }, []);
 
   const handleBlur = useCallback(() => {
-    // blur caused by click history, do nothing
-    if (isPopoverMouseDown.current) return;
-
-    if (value) {
+    // Only add to history if it wasn't a history selection
+    if (value && !isHistorySelected.current) {
       addTerm(value);
     }
+
+    // Reset the flag
+    isHistorySelected.current = false;
     setIsPopoverOpen(false);
   }, [value, addTerm]);
-
-  const handlePopoverMouseDown = useCallback(() => {
-    isPopoverMouseDown.current = true;
-  }, []);
 
   return (
     <div className={cn("relative flex-1", className)}>
@@ -210,18 +204,22 @@ const SearchInput = React.forwardRef<
             className="w-[--radix-popover-trigger-width] p-0"
             onOpenAutoFocus={(e) => e.preventDefault()}
             onCloseAutoFocus={(e) => e.preventDefault()}
-            onMouseDown={handlePopoverMouseDown}
           >
             <CommandList>
               <CommandGroup
                 heading={t("search.history")}
                 className="max-h-60 overflow-y-auto"
               >
+                {/* prevent cmdk auto select the first suggestion -> https://github.com/pacocoursey/cmdk/issues/171*/}
+                <CommandItem value="-" className="hidden" />
                 {suggestions.map((term) => (
                   <CommandItem
                     key={term}
                     value={term}
                     onSelect={() => handleHistorySelect(term)}
+                    onMouseDown={() => {
+                      isHistorySelected.current = true;
+                    }}
                     className="cursor-pointer"
                   >
                     <History className="mr-2 h-4 w-4" />
