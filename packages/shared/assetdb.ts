@@ -14,6 +14,7 @@ export const enum ASSET_TYPES {
   IMAGE_WEBP = "image/webp",
   APPLICATION_PDF = "application/pdf",
   TEXT_HTML = "text/html",
+  TEXT_MARKDOWN = "text/markdown",
   VIDEO_MP4 = "video/mp4",
 }
 
@@ -27,6 +28,7 @@ export const IMAGE_ASSET_TYPES: Set<string> = new Set<string>([
 export const SUPPORTED_UPLOAD_ASSET_TYPES: Set<string> = new Set<string>([
   ...IMAGE_ASSET_TYPES,
   ASSET_TYPES.TEXT_HTML,
+  ASSET_TYPES.TEXT_MARKDOWN,
   ASSET_TYPES.APPLICATION_PDF,
 ]);
 
