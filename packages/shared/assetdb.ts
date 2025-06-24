@@ -36,6 +36,7 @@ export const SUPPORTED_UPLOAD_ASSET_TYPES: Set<string> = new Set<string>([
 export const SUPPORTED_BOOKMARK_ASSET_TYPES: Set<string> = new Set<string>([
   ...IMAGE_ASSET_TYPES,
   ASSET_TYPES.APPLICATION_PDF,
+  ASSET_TYPES.TEXT_MARKDOWN,
 ]);
 
 // The assets that we support saving in the asset db
