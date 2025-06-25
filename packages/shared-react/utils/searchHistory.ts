@@ -1,8 +1,12 @@
+import { z } from "zod";
+
 export interface StorageAdapter {
   getItem(key: string): Promise<string | null> | string | null;
   setItem(key: string, value: string): Promise<void> | void;
   removeItem(key: string): Promise<void> | void;
 }
+
+const searchHistorySchema = z.array(z.string());
 
 const BOOKMARK_SEARCH_HISTORY_KEY = "karakeep_search_history";
 const MAX_STORED_ITEMS = 50;
@@ -16,12 +20,10 @@ export class SearchHistoryUtil {
         BOOKMARK_SEARCH_HISTORY_KEY,
       );
       if (rawHistory) {
-        const parsed = JSON.parse(rawHistory) as string[];
-        if (
-          Array.isArray(parsed) &&
-          parsed.every((item) => typeof item === "string")
-        ) {
-          return parsed;
+        const parsed = JSON.parse(rawHistory) as unknown;
+        const result = searchHistorySchema.safeParse(parsed);
+        if (result.success) {
+          return result.data;
         }
       }
       return [];
