@@ -30,6 +30,8 @@ import { History } from "lucide-react";
 import { EditListModal } from "../lists/EditListModal";
 import QueryExplainerTooltip from "./QueryExplainerTooltip";
 
+const MAX_DISPLAY_SUGGESTIONS = 5;
+
 function useFocusSearchOnKeyPress(
   inputRef: React.RefObject<HTMLInputElement>,
   value: string,
@@ -94,9 +96,15 @@ const SearchInput = React.forwardRef<
   );
 
   const suggestions = useMemo(() => {
-    return history.filter((item) =>
-      item.toLowerCase().includes(value.toLowerCase()),
-    );
+    if (value.trim() === "") {
+      // Show recent items when not typing
+      return history.slice(0, MAX_DISPLAY_SUGGESTIONS);
+    } else {
+      // Show filtered items when typing
+      return history
+        .filter((item) => item.toLowerCase().includes(value.toLowerCase()))
+        .slice(0, MAX_DISPLAY_SUGGESTIONS);
+    }
   }, [history, value]);
 
   const isPopoverVisible = isPopoverOpen && suggestions.length > 0;

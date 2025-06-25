@@ -18,6 +18,8 @@ import { api } from "@/lib/trpc";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
 
+const MAX_DISPLAY_SUGGESTIONS = 5;
+
 export default function Search() {
   const [search, setSearch] = useState("");
 
@@ -49,11 +51,13 @@ export default function Search() {
 
   const filteredHistory = useMemo(() => {
     if (search.trim().length === 0) {
-      return history;
+      // Show recent items when not typing
+      return history.slice(0, MAX_DISPLAY_SUGGESTIONS);
     }
-    return history.filter((item) =>
-      item.toLowerCase().includes(search.toLowerCase()),
-    );
+    // Show filtered items when typing
+    return history
+      .filter((item) => item.toLowerCase().includes(search.toLowerCase()))
+      .slice(0, MAX_DISPLAY_SUGGESTIONS);
   }, [search, history]);
 
   if (error) {

@@ -1,37 +1,27 @@
-const BOOKMARK_SEARCH_HISTORY_KEY = "karakeep_search_history";
-const MAX_HISTORY_ITEMS = 5;
+import {
+  SearchHistoryUtil,
+  StorageAdapter,
+} from "@karakeep/shared-react/utils/searchHistory";
 
-export function getSearchHistory(): string[] {
-  try {
-    const rawHistory = localStorage.getItem(BOOKMARK_SEARCH_HISTORY_KEY);
-    if (rawHistory) {
-      const parsed = JSON.parse(rawHistory) as string[];
-      if (
-        Array.isArray(parsed) &&
-        parsed.every((item) => typeof item === "string")
-      ) {
-        return parsed;
-      }
-    }
-    return [];
-  } catch (error) {
-    console.error("Failed to parse search history:", error);
-    return [];
+export class LocalStorageAdapter implements StorageAdapter {
+  getItem(key: string): string | null {
+    return localStorage.getItem(key);
+  }
+
+  setItem(key: string, value: string): void {
+    localStorage.setItem(key, value);
+  }
+
+  removeItem(key: string): void {
+    localStorage.removeItem(key);
   }
 }
 
-export function addSearchTermToHistory(term: string) {
-  if (!term || term.trim().length === 0) {
-    return;
-  }
-  const currentHistory = getSearchHistory();
-  const filteredHistory = currentHistory.filter(
-    (item) => item.toLowerCase() !== term.toLowerCase(),
-  );
-  const newHistory = [term, ...filteredHistory];
-  const finalHistory = newHistory.slice(0, MAX_HISTORY_ITEMS);
-  localStorage.setItem(
-    BOOKMARK_SEARCH_HISTORY_KEY,
-    JSON.stringify(finalHistory),
-  );
-}
+export const searchHistoryUtil = new SearchHistoryUtil(
+  new LocalStorageAdapter(),
+);
+
+export const getSearchHistory = () => searchHistoryUtil.getSearchHistory();
+export const addSearchTermToHistory = (term: string) =>
+  searchHistoryUtil.addSearchTermToHistory(term);
+export const clearSearchHistory = () => searchHistoryUtil.clearSearchHistory();
