@@ -55,7 +55,7 @@ function ImportCard({
     <Card className="transition-all hover:shadow-md">
       <CardContent className="flex items-center gap-3 p-4">
         <div className="rounded-full bg-primary/10 p-2">
-          <Upload className="h-5 w-5 text-primary" />
+          <Download className="h-5 w-5 text-primary" />
         </div>
         <div className="flex-1">
           <h3 className="font-medium">{text}</h3>
@@ -75,7 +75,7 @@ function ExportButton() {
     <Card className="transition-all hover:shadow-md">
       <CardContent className="flex items-center gap-3 p-4">
         <div className="rounded-full bg-primary/10 p-2">
-          <Download className="h-5 w-5 text-primary" />
+          <Upload className="h-5 w-5 text-primary" />
         </div>
         <div className="flex-1">
           <h3 className="font-medium">Export File</h3>
