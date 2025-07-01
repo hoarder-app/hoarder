@@ -365,6 +365,13 @@
       "when": 1748804695561,
       "tag": "0051_public_lists",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "6",
+      "when": 1751409503089,
+      "tag": "0052_add_bookmark_quota",
+      "breakpoints": true
     }
   ]
 }

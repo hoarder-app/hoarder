@@ -19,8 +19,8 @@ import { useSession } from "next-auth/react";
 
 import ActionConfirmingDialog from "../ui/action-confirming-dialog";
 import AddUserDialog from "./AddUserDialog";
-import ChangeRoleDialog from "./ChangeRoleDialog";
 import ResetPasswordDialog from "./ResetPasswordDialog";
+import UpdateUserDialog from "./UpdateUserDialog";
 
 function toHumanReadableSize(size: number) {
   const sizes = ["Bytes", "KB", "MB", "GB", "TB"];
@@ -71,6 +71,7 @@ export default function UsersSection() {
           <TableHead>{t("common.name")}</TableHead>
           <TableHead>{t("common.email")}</TableHead>
           <TableHead>{t("admin.users_list.num_bookmarks")}</TableHead>
+          <TableHead>{t("common.quota")}</TableHead>
           <TableHead>{t("admin.users_list.asset_sizes")}</TableHead>
           <TableHead>{t("common.role")}</TableHead>
           <TableHead>{t("admin.users_list.local_user")}</TableHead>
@@ -83,6 +84,9 @@ export default function UsersSection() {
               <TableCell className="py-1">{u.email}</TableCell>
               <TableCell className="py-1">
                 {userStats[u.id].numBookmarks}
+              </TableCell>
+              <TableCell className="py-1">
+                {u.bookmarkQuota ?? t("admin.users_list.unlimited")}
               </TableCell>
               <TableCell className="py-1">
                 {toHumanReadableSize(userStats[u.id].assetSizes)}
@@ -132,15 +136,19 @@ export default function UsersSection() {
                     <KeyRound size={16} color="red" />
                   </ButtonWithTooltip>
                 </ResetPasswordDialog>
-                <ChangeRoleDialog userId={u.id} currentRole={u.role!}>
+                <UpdateUserDialog
+                  userId={u.id}
+                  currentRole={u.role!}
+                  currentQuota={u.bookmarkQuota}
+                >
                   <ButtonWithTooltip
-                    tooltip={t("admin.users_list.change_role")}
+                    tooltip="Edit User"
                     variant="outline"
                     disabled={session!.user.id == u.id}
                   >
                     <Pencil size={16} color="red" />
                   </ButtonWithTooltip>
-                </ChangeRoleDialog>
+                </UpdateUserDialog>
               </TableCell>
             </TableRow>
           ))}

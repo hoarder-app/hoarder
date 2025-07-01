@@ -144,6 +144,7 @@ export const usersAppRouter = router({
             email: z.string(),
             role: z.enum(["user", "admin"]).nullable(),
             localUser: z.boolean(),
+            bookmarkQuota: z.number().nullable(),
           }),
         ),
       }),
@@ -156,6 +157,7 @@ export const usersAppRouter = router({
           email: users.email,
           role: users.role,
           password: users.password,
+          bookmarkQuota: users.bookmarkQuota,
         })
         .from(users);
 

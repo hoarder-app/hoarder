@@ -1,5 +1,5 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
-import { and, eq, gt, inArray, lt, or } from "drizzle-orm";
+import { and, count, eq, gt, inArray, lt, or } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -19,6 +19,7 @@ import {
   bookmarkTexts,
   customPrompts,
   tagsOnBookmarks,
+  users,
 } from "@karakeep/db/schema";
 import {
   deleteAsset,
@@ -265,6 +266,28 @@ export const bookmarksAppRouter = router({
         const alreadyExists = await attemptToDedupLink(ctx, input.url);
         if (alreadyExists) {
           return { ...alreadyExists, alreadyExists: true };
+        }
+      }
+
+      // Check user quota
+      const user = await ctx.db.query.users.findFirst({
+        where: eq(users.id, ctx.user.id),
+        columns: {
+          bookmarkQuota: true,
+        },
+      });
+
+      if (user?.bookmarkQuota !== null && user?.bookmarkQuota !== undefined) {
+        const currentBookmarkCount = await ctx.db
+          .select({ count: count() })
+          .from(bookmarks)
+          .where(eq(bookmarks.userId, ctx.user.id));
+
+        if (currentBookmarkCount[0].count >= user.bookmarkQuota) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: `Bookmark quota exceeded. You can only have ${user.bookmarkQuota} bookmarks.`,
+          });
         }
       }
       const bookmark = await ctx.db.transaction(async (tx) => {

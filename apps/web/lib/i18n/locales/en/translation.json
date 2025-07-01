@@ -36,7 +36,8 @@
       "link": "Link",
       "text": "Text",
       "media": "Media"
-    }
+    },
+    "quota": "Quota"
   },
   "layouts": {
     "masonry": "Masonry",
@@ -279,7 +280,8 @@
       "num_bookmarks": "Num Bookmarks",
       "asset_sizes": "Asset Sizes",
       "local_user": "Local User",
-      "confirm_password": "Confirm Password"
+      "confirm_password": "Confirm Password",
+      "unlimited": "Unlimited"
     }
   },
   "options": {
