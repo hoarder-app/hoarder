@@ -7,6 +7,7 @@ import { Context } from "@karakeep/trpc";
 import trpcAdapter from "./middlewares/trpcAdapter";
 import assets from "./routes/assets";
 import bookmarks from "./routes/bookmarks";
+import health from "./routes/health";
 import highlights from "./routes/highlights";
 import lists from "./routes/lists";
 import publicRoute from "./routes/public";
@@ -44,6 +45,7 @@ const app = new Hono<{
     await next();
   })
   .use(trpcAdapter)
+  .route("/health", health)
   .route("/trpc", trpc)
   .route("/v1", v1)
   .route("/assets", assets)
