@@ -929,6 +929,9 @@ importers:
 
   packages/api:
     dependencies:
+      '@hono/trpc-server':
+        specifier: ^0.4.0
+        version: 0.4.0(@trpc/server@11.0.0(typescript@5.8.2))(hono@4.7.11)
       '@hono/zod-validator':
         specifier: ^0.5.0
         version: 0.5.0(hono@4.7.11)(zod@3.24.2)
@@ -3130,6 +3133,13 @@ packages:
 
   '@hapi/topo@5.1.0':
     resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
+
+  '@hono/trpc-server@0.4.0':
+    resolution: {integrity: sha512-LGlJfCmNIGMwcknZEIYdujVMs9OkNVazhpOhaz3kTWOXvNL660VOHpvvktosCiJrajyBY1RtIJKQ+IKaQvNuSg==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      '@trpc/server': ^10.10.0 || >11.0.0-rc
+      hono: '>=4.*'
 
   '@hono/zod-validator@0.5.0':
     resolution: {integrity: sha512-ds5bW6DCgAnNHP33E3ieSbaZFd5dkV52ZjyaXtGoR06APFrCtzAsKZxTHwOrJNBdXsi0e5wNwo5L4nVEVnJUdg==}
@@ -17516,6 +17526,11 @@ snapshots:
   '@hapi/topo@5.1.0':
     dependencies:
       '@hapi/hoek': 9.3.0
+
+  '@hono/trpc-server@0.4.0(@trpc/server@11.0.0(typescript@5.8.2))(hono@4.7.11)':
+    dependencies:
+      '@trpc/server': 11.0.0(typescript@5.8.2)
+      hono: 4.7.11
 
   '@hono/zod-validator@0.5.0(hono@4.7.11)(zod@3.24.2)':
     dependencies:

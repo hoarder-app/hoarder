@@ -12,6 +12,7 @@ import lists from "./routes/lists";
 import publicRoute from "./routes/public";
 import rss from "./routes/rss";
 import tags from "./routes/tags";
+import trpc from "./routes/trpc";
 import users from "./routes/users";
 
 const v1 = new Hono<{
@@ -43,6 +44,7 @@ const app = new Hono<{
     await next();
   })
   .use(trpcAdapter)
+  .route("/trpc", trpc)
   .route("/v1", v1)
   .route("/assets", assets)
   .route("/public", publicRoute);
