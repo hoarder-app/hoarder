@@ -141,6 +141,7 @@ export default function BookmarkPreview({
         )}
         <Separator />
       </div>
+      <ActionBar bookmark={bookmark} />
       <CreationTime createdAt={bookmark.createdAt} />
       <SummarizeBookmarkArea bookmark={bookmark} />
       <div className="flex items-center gap-4">
@@ -153,7 +154,6 @@ export default function BookmarkPreview({
       </div>
       <AttachmentBox bookmark={bookmark} />
       <HighlightsBox bookmarkId={bookmark.id} />
-      <ActionBar bookmark={bookmark} />
     </div>
   );
 
@@ -178,12 +178,12 @@ export default function BookmarkPreview({
         <TabsList
           className={`sticky top-0 z-10 grid h-auto w-full grid-cols-2`}
         >
-          <TabsTrigger value="content">{t("preview.tabs.content")}</TabsTrigger>
-          <TabsTrigger value="details">{t("preview.tabs.details")}</TabsTrigger>
+          <TabsTrigger value="content" className="select-none overflow-hidden whitespace-nowrap text-ellipsis text-left">{t("preview.tabs.content")}</TabsTrigger>
+          <TabsTrigger value="details" className="select-none overflow-hidden whitespace-nowrap text-ellipsis text-left">{t("preview.tabs.details")}</TabsTrigger>
         </TabsList>
         <TabsContent
           value="content"
-          className="h-full flex-1 overflow-hidden overflow-y-auto bg-background p-2 data-[state=inactive]:hidden"
+          className="h-full flex-1 overflow-hidden overflow-y-auto bg-background data-[state=inactive]:hidden"
         >
           {contentSection}
         </TabsContent>

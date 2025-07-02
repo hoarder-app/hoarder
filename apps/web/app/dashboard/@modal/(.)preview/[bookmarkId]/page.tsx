@@ -24,7 +24,7 @@ export default function BookmarkPreviewPage({
   return (
     <Dialog open={open} onOpenChange={setOpenWithRouter}>
       <DialogContent
-        className="h-[90%] max-w-[90%] overflow-hidden p-0"
+        className="h-[95%] max-w-[96%] overflow-hidden p-0"
         hideCloseBtn={true}
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
