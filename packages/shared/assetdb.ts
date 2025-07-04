@@ -368,8 +368,16 @@ class S3AssetStore implements AssetStore {
       throw new Error("Unsupported asset type");
     }
 
-    const asset = await fs.promises.readFile(assetPath);
-    await this.saveAsset({ userId, assetId, asset, metadata });
+    const asset = fs.createReadStream(assetPath);
+    await this.s3Client.send(
+      new PutObjectCommand({
+        Bucket: this.bucketName,
+        Key: this.getAssetKey(userId, assetId),
+        Body: asset,
+        ContentType: metadata.contentType,
+        Metadata: this.metadataToS3Metadata(metadata),
+      }),
+    );
     await fs.promises.rm(assetPath);
   }
 
