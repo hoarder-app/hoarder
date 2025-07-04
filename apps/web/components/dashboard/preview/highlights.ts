@@ -12,4 +12,10 @@ export const HIGHLIGHT_COLOR_MAP = {
     blue: "border-l-blue-200",
     yellow: "border-l-yellow-200",
   } as const,
+  img: {
+    red: "hue-rotate(-30deg) saturate(1.5) brightness(1.1)",
+    green: "hue-rotate(60deg) saturate(1.3) brightness(1.1)",
+    blue: "hue-rotate(180deg) saturate(1.2) brightness(1.1)",
+    yellow: "hue-rotate(30deg) saturate(1.4) brightness(1.1)",
+  } as const,
 };

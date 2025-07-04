@@ -228,7 +228,7 @@ function BookmarkHTMLHighlighter({
             targetElement = pendingRange;
           }
         } catch {
-
+          /* empty */
         }
       }
 
@@ -268,7 +268,6 @@ function BookmarkHTMLHighlighter({
       window.removeEventListener("resize", handleResize);
     };
   }, [pendingRange, selectedHighlight, isMobile]);
-
 
   const getCharacterOffsetOfNode = useCallback(
     (node: Node, parentElement: HTMLElement): number => {
@@ -625,6 +624,21 @@ function BookmarkHTMLHighlighter({
           }
         }
       }
+
+      const imgs = masterRange.cloneContents().querySelectorAll("img");
+      imgs.forEach((img) => {
+        const src = img.getAttribute("src");
+        if (!src) return;
+        const realImg = contentRef.current?.querySelector(
+          `img[src="${CSS.escape(src)}"]`,
+        ) as HTMLImageElement | null;
+        if (realImg) {
+
+          realImg.style.filter = HIGHLIGHT_COLOR_MAP.img[highlight.color];
+
+          realImg.dataset.highlightId = highlight.id;
+        }
+      });
     },
     [getTextNodeAtOffset_refined, HIGHLIGHT_COLOR_MAP],
   );
