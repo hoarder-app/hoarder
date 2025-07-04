@@ -26,6 +26,42 @@ const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
 });
 
+function parseJsonFromLLMResponse(response: string): unknown {
+  const trimmedResponse = response.trim();
+
+  // Try parsing the response as-is first
+  try {
+    return JSON.parse(trimmedResponse);
+  } catch {
+    // If that fails, try to extract JSON from markdown code blocks
+    const jsonBlockRegex = /```(?:json)?\s*(\{[\s\S]*?\})\s*```/i;
+    const match = trimmedResponse.match(jsonBlockRegex);
+
+    if (match) {
+      try {
+        return JSON.parse(match[1]);
+      } catch {
+        // Fall through to other extraction methods
+      }
+    }
+
+    // Try to find JSON object boundaries in the text
+    const jsonObjectRegex = /\{[\s\S]*\}/;
+    const objectMatch = trimmedResponse.match(jsonObjectRegex);
+
+    if (objectMatch) {
+      try {
+        return JSON.parse(objectMatch[0]);
+      } catch {
+        // Fall through to final attempt
+      }
+    }
+
+    // Last resort: try to parse the original response again to get the original error
+    return JSON.parse(trimmedResponse);
+  }
+}
+
 function tagNormalizer(col: Column) {
   function normalizeTag(tag: string) {
     return tag.toLowerCase().replace(/[ \-_]/g, "");
@@ -225,7 +261,9 @@ async function inferTags(
   }
 
   try {
-    let tags = openAIResponseSchema.parse(JSON.parse(response.response)).tags;
+    let tags = openAIResponseSchema.parse(
+      parseJsonFromLLMResponse(response.response),
+    ).tags;
     logger.info(
       `[inference][${jobId}] Inferring tag for bookmark "${bookmark.id}" used ${response.totalTokens} tokens and inferred: ${tags}`,
     );
