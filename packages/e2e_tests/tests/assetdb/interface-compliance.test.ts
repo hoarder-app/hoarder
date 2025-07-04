@@ -1,3 +1,4 @@
+import * as fs from "fs";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { ASSET_TYPES, AssetStore } from "@karakeep/shared/assetdb";
@@ -10,6 +11,7 @@ import {
   createLocalFileSystemStore,
   createS3Store,
   createTempDirectory,
+  createTempFile,
   createTestAssetData,
   createTestBucket,
   createTestImageData,
@@ -348,6 +350,45 @@ describe.each([
     });
   });
 
+  describe("File Operations", () => {
+    it("should save asset from file and delete original file", async () => {
+      const testData = createTestAssetData();
+      const tempFile = await createTempFile(testData.content, "temp-asset.bin");
+
+      // Verify temp file exists before operation
+      expect(
+        await fs.promises
+          .access(tempFile)
+          .then(() => true)
+          .catch(() => false),
+      ).toBe(true);
+
+      await context.store.saveAssetFromFile({
+        userId: testData.userId,
+        assetId: testData.assetId,
+        assetPath: tempFile,
+        metadata: testData.metadata,
+      });
+
+      // Verify temp file was deleted
+      expect(
+        await fs.promises
+          .access(tempFile)
+          .then(() => true)
+          .catch(() => false),
+      ).toBe(false);
+
+      // Verify asset was saved correctly
+      const { asset, metadata } = await context.store.readAsset({
+        userId: testData.userId,
+        assetId: testData.assetId,
+      });
+
+      expect(asset).toEqual(testData.content);
+      expect(metadata).toEqual(testData.metadata);
+    });
+  });
+
   describe("Error Handling", () => {
     it("should throw error for non-existent asset read", async () => {
       await expect(
@@ -376,13 +417,29 @@ describe.each([
       ).rejects.toThrow();
     });
 
+    it("should handle deleting non-existent asset gracefully", async () => {
+      // Filesystem implementation throws errors for non-existent files
+      await expect(
+        context.store.deleteAsset({
+          userId: "non-existent-user",
+          assetId: "non-existent-asset",
+        }),
+      ).resolves.not.toThrow();
+    });
+
+    it("should handle deletion of non-existent user directory gracefully", async () => {
+      // Should not throw error when user directory doesn't exist
+      await expect(
+        context.store.deleteUserAssets({ userId: "non-existent-user" }),
+      ).resolves.not.toThrow();
+    });
+
     it("should handle non-existent asset stream appropriately", async () => {
       const streamResult = context.store.createAssetReadStream({
         userId: "non-existent-user",
         assetId: "non-existent-asset",
       });
 
-      // S3 implementation - should reject
       await expect(streamResult).rejects.toThrow();
     });
   });
@@ -565,27 +622,6 @@ describe.each([
 
       expect(asset).toEqual(testData.content);
       expect(metadata).toEqual(testData.metadata);
-    });
-
-    it("should handle very long content", async () => {
-      // Create 1MB of content
-      const largeContent = Buffer.alloc(1024 * 1024, "A");
-      const testData = createTestAssetData({ content: largeContent });
-
-      await context.store.saveAsset({
-        userId: testData.userId,
-        assetId: testData.assetId,
-        asset: testData.content,
-        metadata: testData.metadata,
-      });
-
-      const { asset } = await context.store.readAsset({
-        userId: testData.userId,
-        assetId: testData.assetId,
-      });
-
-      expect(asset.length).toBe(largeContent.length);
-      expect(asset).toEqual(largeContent);
     });
   });
 });

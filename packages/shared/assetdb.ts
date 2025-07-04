@@ -124,7 +124,7 @@ class LocalFileSystemAssetStore implements AssetStore {
     return path.join(this.rootPath, userId, assetId);
   }
 
-  private async isFileExists(filePath: string) {
+  private async isPathExists(filePath: string) {
     return fs.promises
       .access(filePath)
       .then(() => true)
@@ -214,7 +214,7 @@ class LocalFileSystemAssetStore implements AssetStore {
   }) {
     const assetDir = this.getAssetDir(userId, assetId);
     const assetPath = path.join(assetDir, "asset.bin");
-    if (!(await this.isFileExists(assetPath))) {
+    if (!(await this.isPathExists(assetPath))) {
       throw new Error(`Asset ${assetId} not found`);
     }
 
@@ -251,15 +251,15 @@ class LocalFileSystemAssetStore implements AssetStore {
 
   async deleteAsset({ userId, assetId }: { userId: string; assetId: string }) {
     const assetDir = this.getAssetDir(userId, assetId);
-    await fs.promises.rm(path.join(assetDir), { recursive: true });
+    if (!(await this.isPathExists(assetDir))) {
+      return;
+    }
+    await fs.promises.rm(assetDir, { recursive: true });
   }
 
   async deleteUserAssets({ userId }: { userId: string }) {
     const userDir = path.join(this.rootPath, userId);
-    const dirExists = await fs.promises
-      .access(userDir)
-      .then(() => true)
-      .catch(() => false);
+    const dirExists = await this.isPathExists(userDir);
     if (!dirExists) {
       return;
     }

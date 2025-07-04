@@ -9,7 +9,6 @@ import {
   cleanupTempDirectory,
   createLocalFileSystemStore,
   createTempDirectory,
-  createTempFile,
   createTestAssetData,
 } from "./assetdb-utils";
 
@@ -118,64 +117,6 @@ describe("LocalFileSystemAssetStore - Filesystem-Specific Behaviors", () => {
           .then(() => true)
           .catch(() => false),
       ).toBe(true);
-    });
-  });
-
-  describe("File Operations", () => {
-    it("should save asset from file and delete original file", async () => {
-      const testData = createTestAssetData();
-      const tempFile = await createTempFile(testData.content, "temp-asset.bin");
-
-      // Verify temp file exists before operation
-      expect(
-        await fs.promises
-          .access(tempFile)
-          .then(() => true)
-          .catch(() => false),
-      ).toBe(true);
-
-      await store.saveAssetFromFile({
-        userId: testData.userId,
-        assetId: testData.assetId,
-        assetPath: tempFile,
-        metadata: testData.metadata,
-      });
-
-      // Verify temp file was deleted
-      expect(
-        await fs.promises
-          .access(tempFile)
-          .then(() => true)
-          .catch(() => false),
-      ).toBe(false);
-
-      // Verify asset was saved correctly
-      const { asset, metadata } = await store.readAsset({
-        userId: testData.userId,
-        assetId: testData.assetId,
-      });
-
-      expect(asset).toEqual(testData.content);
-      expect(metadata).toEqual(testData.metadata);
-    });
-  });
-
-  describe("File System Error Handling", () => {
-    it("should throw error when deleting non-existent asset", async () => {
-      // Filesystem implementation throws errors for non-existent files
-      await expect(
-        store.deleteAsset({
-          userId: "non-existent-user",
-          assetId: "non-existent-asset",
-        }),
-      ).rejects.toThrow();
-    });
-
-    it("should handle deletion of non-existent user directory gracefully", async () => {
-      // Should not throw error when user directory doesn't exist
-      await expect(
-        store.deleteUserAssets({ userId: "non-existent-user" }),
-      ).resolves.not.toThrow();
     });
   });
 

@@ -157,25 +157,6 @@ describe("S3AssetStore - S3-Specific Behaviors", () => {
     });
   });
 
-  describe("S3 Error Handling", () => {
-    it("should handle deletion of non-existent asset gracefully", async () => {
-      // S3 doesn't throw errors for deleting non-existent objects
-      await expect(
-        store.deleteAsset({
-          userId: "non-existent-user",
-          assetId: "non-existent-asset",
-        }),
-      ).resolves.not.toThrow();
-    });
-
-    it("should handle deletion of non-existent user gracefully", async () => {
-      // S3 doesn't throw errors for deleting non-existent objects
-      await expect(
-        store.deleteUserAssets({ userId: "non-existent-user" }),
-      ).resolves.not.toThrow();
-    });
-  });
-
   describe("S3 Metadata Conversion", () => {
     it("should correctly convert between AssetMetadata and S3 metadata", async () => {
       const testCases = [
