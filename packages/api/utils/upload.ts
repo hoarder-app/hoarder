@@ -24,7 +24,7 @@ export function webStreamToNode(
 }
 
 export function toWebReadableStream(
-  nodeStream: fs.ReadStream,
+  nodeStream: NodeJS.ReadableStream,
 ): ReadableStream<Uint8Array> {
   const reader = nodeStream as unknown as Readable;
 
