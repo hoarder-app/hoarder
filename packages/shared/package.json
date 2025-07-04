@@ -5,6 +5,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.842.0",
     "glob": "^11.0.0",
     "js-tiktoken": "^1.0.20",
     "liteque": "^0.3.2",

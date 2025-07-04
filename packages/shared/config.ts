@@ -88,6 +88,14 @@ const allEnv = z.object({
 
   // A flag to detect if the user is running in the old separete containers setup
   USING_LEGACY_SEPARATE_CONTAINERS: stringBool("false"),
+
+  // Asset storage configuration
+  ASSET_STORE_S3_ENDPOINT: z.string().optional(),
+  ASSET_STORE_S3_REGION: z.string().optional(),
+  ASSET_STORE_S3_BUCKET: z.string().optional(),
+  ASSET_STORE_S3_ACCESS_KEY_ID: z.string().optional(),
+  ASSET_STORE_S3_SECRET_ACCESS_KEY: z.string().optional(),
+  ASSET_STORE_S3_FORCE_PATH_STYLE: stringBool("false"),
 });
 
 const serverConfigSchema = allEnv.transform((val) => {
@@ -184,6 +192,19 @@ const serverConfigSchema = allEnv.transform((val) => {
     webhook: {
       timeoutSec: val.WEBHOOK_TIMEOUT_SEC,
       retryTimes: val.WEBHOOK_RETRY_TIMES,
+    },
+    assetStore: {
+      type: val.ASSET_STORE_S3_ENDPOINT
+        ? ("s3" as const)
+        : ("filesystem" as const),
+      s3: {
+        endpoint: val.ASSET_STORE_S3_ENDPOINT,
+        region: val.ASSET_STORE_S3_REGION,
+        bucket: val.ASSET_STORE_S3_BUCKET,
+        accessKeyId: val.ASSET_STORE_S3_ACCESS_KEY_ID,
+        secretAccessKey: val.ASSET_STORE_S3_SECRET_ACCESS_KEY,
+        forcePathStyle: val.ASSET_STORE_S3_FORCE_PATH_STYLE,
+      },
     },
   };
 });

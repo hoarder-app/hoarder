@@ -2,17 +2,38 @@
 
 The app is mainly configured by environment variables. All the used environment variables are listed in [packages/shared/config.ts](https://github.com/karakeep-app/karakeep/blob/main/packages/shared/config.ts). The most important ones are:
 
-| Name                      | Required                              | Default | Description                                                                                                                                    |
-| ------------------------- | ------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| DATA_DIR                  | Yes                                   | Not set | The path for the persistent data directory. This is where the db lives. Assets are stored here by default unless `ASSETS_DIR` is set.          |
-| ASSETS_DIR                | No                                    | Not set | The path where crawled assets will be stored. If not set, defaults to `${DATA_DIR}/assets`.                                                    |
-| NEXTAUTH_URL              | Yes                                   | Not set | Should point to the address of your server. The app will function without it, but will redirect you to wrong addresses on signout for example. |
-| NEXTAUTH_SECRET           | Yes                                   | Not set | Random string used to sign the JWT tokens. Generate one with `openssl rand -base64 36`.                                                        |
-| MEILI_ADDR                | No                                    | Not set | The address of meilisearch. If not set, Search will be disabled. E.g. (`http://meilisearch:7700`)                                              |
-| MEILI_MASTER_KEY          | Only in Prod and if search is enabled | Not set | The master key configured for meilisearch. Not needed in development environment. Generate one with `openssl rand -base64 36 \| tr -dc 'A-Za-z0-9'`                |
-| MAX_ASSET_SIZE_MB         | No                                    | 50      | Sets the maximum allowed asset size (in MB) to be uploaded                                                                                     |
-| DISABLE_NEW_RELEASE_CHECK | No                                    | false   | If set to true, latest release check will be disabled in the admin panel.                                                                      |
+| Name                      | Required                              | Default | Description                                                                                                                                         |
+| ------------------------- | ------------------------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DATA_DIR                  | Yes                                   | Not set | The path for the persistent data directory. This is where the db lives. Assets are stored here by default unless `ASSETS_DIR` is set.               |
+| ASSETS_DIR                | No                                    | Not set | The path where crawled assets will be stored. If not set, defaults to `${DATA_DIR}/assets`.                                                         |
+| NEXTAUTH_URL              | Yes                                   | Not set | Should point to the address of your server. The app will function without it, but will redirect you to wrong addresses on signout for example.      |
+| NEXTAUTH_SECRET           | Yes                                   | Not set | Random string used to sign the JWT tokens. Generate one with `openssl rand -base64 36`.                                                             |
+| MEILI_ADDR                | No                                    | Not set | The address of meilisearch. If not set, Search will be disabled. E.g. (`http://meilisearch:7700`)                                                   |
+| MEILI_MASTER_KEY          | Only in Prod and if search is enabled | Not set | The master key configured for meilisearch. Not needed in development environment. Generate one with `openssl rand -base64 36 \| tr -dc 'A-Za-z0-9'` |
+| MAX_ASSET_SIZE_MB         | No                                    | 50      | Sets the maximum allowed asset size (in MB) to be uploaded                                                                                          |
+| DISABLE_NEW_RELEASE_CHECK | No                                    | false   | If set to true, latest release check will be disabled in the admin panel.                                                                           |
 
+## Asset Storage
+
+Karakeep supports two storage backends for assets: local filesystem (default) and S3-compatible object storage. S3 storage is automatically detected when an S3 endpoint is passed.
+
+| Name                             | Required          | Default   | Description                                                                                               |
+| -------------------------------- | ----------------- | --------- | --------------------------------------------------------------------------------------------------------- |
+| ASSET_STORE_S3_ENDPOINT          | No                | Not set   | The S3 endpoint URL. Required for S3-compatible services like MinIO. **Setting this enables S3 storage**. |
+| ASSET_STORE_S3_REGION            | No                | Not set | The S3 region to use.                                                                                     |
+| ASSET_STORE_S3_BUCKET            | Yes when using S3 | Not set   | The S3 bucket name where assets will be stored.                      |
+| ASSET_STORE_S3_ACCESS_KEY_ID     | Yes when using S3 | Not set   | The S3 access key ID for authentication.                                                                  |
+| ASSET_STORE_S3_SECRET_ACCESS_KEY | Yes when using S3 | Not set   | The S3 secret access key for authentication.                                                              |
+| ASSET_STORE_S3_FORCE_PATH_STYLE  | No                | false     | Whether to force path-style URLs for S3 requests. Set to true for MinIO and other S3-compatible services. |
+
+
+:::info
+When using S3 storage, make sure the bucket exists and the provided credentials have the necessary permissions to read, write, and delete objects in the bucket.
+:::
+
+:::warning
+Switching between storage backends after data has been stored will require manual migration of existing assets. Plan your storage backend choice carefully before deploying.
+:::
 
 ## Authentication / Signup
 
