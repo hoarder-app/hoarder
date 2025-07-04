@@ -4,6 +4,7 @@ import { Readable } from "stream";
 import {
   _Object,
   DeleteObjectCommand,
+  DeleteObjectsCommand,
   GetObjectCommand,
   HeadObjectCommand,
   ListObjectsV2Command,
@@ -469,15 +470,16 @@ class S3AssetStore implements AssetStore {
       );
 
       if (listResponse.Contents && listResponse.Contents.length > 0) {
-        const deletePromises = listResponse.Contents.map((obj: _Object) =>
-          this.s3Client.send(
-            new DeleteObjectCommand({
-              Bucket: this.bucketName,
-              Key: obj.Key!,
-            }),
-          ),
+        await this.s3Client.send(
+          new DeleteObjectsCommand({
+            Bucket: this.bucketName,
+            Delete: {
+              Objects: listResponse.Contents.map((obj) => ({
+                Key: obj.Key!,
+              })),
+            },
+          }),
         );
-        await Promise.all(deletePromises);
       }
 
       continuationToken = listResponse.NextContinuationToken;
