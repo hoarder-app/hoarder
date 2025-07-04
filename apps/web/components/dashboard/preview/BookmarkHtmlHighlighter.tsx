@@ -7,14 +7,12 @@ import { cn } from "@/lib/utils";
 import { PopoverAnchor } from "@radix-ui/react-popover";
 import { Check, ClipboardCopy, Trash2 } from "lucide-react";
 
-
-
-import { SUPPORTED_HIGHLIGHT_COLORS, ZHighlightColor } from "@karakeep/shared/types/highlights";
-
-
+import {
+  SUPPORTED_HIGHLIGHT_COLORS,
+  ZHighlightColor,
+} from "@karakeep/shared/types/highlights";
 
 import { HIGHLIGHT_COLOR_MAP } from "./highlights";
-
 
 interface ColorPickerMenuProps {
   position: { x: number; y: number } | null;
@@ -191,11 +189,11 @@ function BookmarkHTMLHighlighter({
   };
 
   const getFirstVisibleHighlight = (
-      highlightId: string,
-      menuPosition?: { x: number; y: number },
+    highlightId: string,
+    menuPosition?: { x: number; y: number },
   ): HTMLElement | null => {
     const elements = document.querySelectorAll(
-        `span[data-highlight-id="${highlightId}"]`,
+      `span[data-highlight-id="${highlightId}"]`,
     );
     let closestEl: HTMLElement | null = null;
     let minDistance = Number.POSITIVE_INFINITY;
@@ -231,9 +229,7 @@ function BookmarkHTMLHighlighter({
     let animationFrameId: number | null = null;
     let lastKnownY = 0;
     let lastKnownX = 0;
-    let currentPos = menuPosition
-        ? { ...menuPosition }
-        : { x: 0, y: 0 };
+    let currentPos = menuPosition ? { ...menuPosition } : { x: 0, y: 0 };
 
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
@@ -268,8 +264,8 @@ function BookmarkHTMLHighlighter({
       currentPos.y = lerp(currentPos.y, targetPos.y, 0.5);
 
       if (
-          Math.abs(currentPos.x - lastKnownX) > 1 ||
-          Math.abs(currentPos.y - lastKnownY) > 1
+        Math.abs(currentPos.x - lastKnownX) > 1 ||
+        Math.abs(currentPos.y - lastKnownY) > 1
       ) {
         setMenuPosition({ x: currentPos.x, y: currentPos.y });
         lastKnownX = currentPos.x;
@@ -306,8 +302,14 @@ function BookmarkHTMLHighlighter({
       window.removeEventListener("scroll", handleViewportChange, true);
       document.removeEventListener("scroll", handleViewportChange, true);
       if (window.visualViewport) {
-        window.visualViewport.removeEventListener("resize", handleViewportChange);
-        window.visualViewport.removeEventListener("scroll", handleViewportChange);
+        window.visualViewport.removeEventListener(
+          "resize",
+          handleViewportChange,
+        );
+        window.visualViewport.removeEventListener(
+          "scroll",
+          handleViewportChange,
+        );
       }
     };
   }, [pendingRange, selectedHighlight, isMobile]);
@@ -675,7 +677,6 @@ function BookmarkHTMLHighlighter({
           `img[src="${CSS.escape(src)}"]`,
         ) as HTMLImageElement | null;
         if (realImg) {
-
           realImg.style.filter = HIGHLIGHT_COLOR_MAP.img[highlight.color];
 
           realImg.dataset.highlightId = highlight.id;

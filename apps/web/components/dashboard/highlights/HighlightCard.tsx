@@ -60,7 +60,7 @@ export default function HighlightCard({
     normalized = normalized.replace(/\r/g, "\n");
 
     normalized = normalized.replace(
-      /[\t\u00A0\u1680\u180E\u2000-\u200A\u202F\u205F\u3000]+/g,
+      /[\t\u00A0\u1680\u180E\u2000-\u200A\u202F\u205F\u3000]+/g, // ignore all types of whitespace
       " ",
     );
 
