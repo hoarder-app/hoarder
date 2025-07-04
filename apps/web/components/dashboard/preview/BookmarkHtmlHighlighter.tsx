@@ -7,12 +7,14 @@ import { cn } from "@/lib/utils";
 import { PopoverAnchor } from "@radix-ui/react-popover";
 import { Check, ClipboardCopy, Trash2 } from "lucide-react";
 
-import {
-  SUPPORTED_HIGHLIGHT_COLORS,
-  ZHighlightColor,
-} from "@karakeep/shared/types/highlights";
+
+
+import { SUPPORTED_HIGHLIGHT_COLORS, ZHighlightColor } from "@karakeep/shared/types/highlights";
+
+
 
 import { HIGHLIGHT_COLOR_MAP } from "./highlights";
+
 
 interface ColorPickerMenuProps {
   position: { x: number; y: number } | null;
@@ -189,18 +191,33 @@ function BookmarkHTMLHighlighter({
   };
 
   const getFirstVisibleHighlight = (
-    highlightId: string,
+      highlightId: string,
+      menuPosition?: { x: number; y: number },
   ): HTMLElement | null => {
     const elements = document.querySelectorAll(
-      `span[data-highlight-id="${highlightId}"]`,
+        `span[data-highlight-id="${highlightId}"]`,
     );
+    let closestEl: HTMLElement | null = null;
+    let minDistance = Number.POSITIVE_INFINITY;
+
     for (const el of Array.from(elements)) {
       const rect = el.getBoundingClientRect();
       if (isElementVisible(rect)) {
-        return el as HTMLElement;
+        if (!menuPosition) {
+          return el as HTMLElement;
+        }
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const dx = centerX - menuPosition.x;
+        const dy = centerY - menuPosition.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestEl = el as HTMLElement;
+        }
       }
     }
-    return null;
+    return closestEl;
   };
 
   const calculateMenuPosition = (rect: DOMRect, isMobile: boolean) => ({
@@ -213,12 +230,18 @@ function BookmarkHTMLHighlighter({
 
     let animationFrameId: number | null = null;
     let lastKnownY = 0;
+    let lastKnownX = 0;
+    let currentPos = menuPosition
+        ? { ...menuPosition }
+        : { x: 0, y: 0 };
+
+    const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
     const updatePosition = () => {
       let targetElement: HTMLElement | Range | null = null;
 
       if (selectedHighlight) {
-        targetElement = getFirstVisibleHighlight(selectedHighlight.id);
+        targetElement = getFirstVisibleHighlight(selectedHighlight.id); // todo refactor this function so it doesnt keep jumping around on scroll
       }
 
       if (!targetElement && pendingRange) {
@@ -238,37 +261,56 @@ function BookmarkHTMLHighlighter({
       }
 
       const rect = targetElement.getBoundingClientRect();
+      const targetPos = calculateMenuPosition(rect, isMobile);
 
-      if (Math.abs(rect.top - lastKnownY) < 2) {
-        animationFrameId = requestAnimationFrame(updatePosition);
-        return;
+      // Smoothly interpolate position
+      currentPos.x = lerp(currentPos.x, targetPos.x, 0.5); // todo make this smoother
+      currentPos.y = lerp(currentPos.y, targetPos.y, 0.5);
+
+      if (
+          Math.abs(currentPos.x - lastKnownX) > 1 ||
+          Math.abs(currentPos.y - lastKnownY) > 1
+      ) {
+        setMenuPosition({ x: currentPos.x, y: currentPos.y });
+        lastKnownX = currentPos.x;
+        lastKnownY = currentPos.y;
       }
-
-      lastKnownY = rect.top;
-      setMenuPosition(calculateMenuPosition(rect, isMobile));
+      // todo fix ai slop
 
       animationFrameId = requestAnimationFrame(updatePosition);
     };
 
     animationFrameId = requestAnimationFrame(updatePosition);
 
-    const handleResize = () => {
+    const handleViewportChange = () => {
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
       animationFrameId = requestAnimationFrame(updatePosition);
     };
 
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleViewportChange);
+    window.addEventListener("scroll", handleViewportChange, true);
+    document.addEventListener("scroll", handleViewportChange, true);
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener("resize", handleViewportChange);
+      window.visualViewport.addEventListener("scroll", handleViewportChange);
+    }
 
     return () => {
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
       }
-      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", handleViewportChange);
+      window.removeEventListener("scroll", handleViewportChange, true);
+      document.removeEventListener("scroll", handleViewportChange, true);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", handleViewportChange);
+        window.visualViewport.removeEventListener("scroll", handleViewportChange);
+      }
     };
   }, [pendingRange, selectedHighlight, isMobile]);
-
   const getCharacterOffsetOfNode = useCallback(
     (node: Node, parentElement: HTMLElement): number => {
       let offset = 0;
