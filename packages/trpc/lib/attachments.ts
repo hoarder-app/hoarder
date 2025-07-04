@@ -55,7 +55,7 @@ export function isAllowedToAttachAsset(type: ZAssetType) {
     screenshot: true,
     assetScreenshot: true,
     fullPageArchive: false,
-    precrawledArchive: false,
+    precrawledArchive: true,
     bannerImage: true,
     video: false,
     bookmarkAsset: false,

@@ -1,5 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 import { Check, Copy } from "lucide-react";
+
+import { Button } from "./button";
+import { toast } from "./use-toast";
 
 export default function CopyBtn({
   className,
@@ -33,5 +37,40 @@ export default function CopyBtn({
     >
       {copyOk ? <Check /> : <Copy />}
     </button>
+  );
+}
+
+export function CopyBtnV2({
+  className,
+  getStringToCopy,
+}: {
+  className?: string;
+  getStringToCopy: () => string;
+}) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async (url: string) => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({
+        description:
+          "Failed to copy link. Browsers only support copying to the clipboard from https pages.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  return (
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={() => handleCopy(getStringToCopy())}
+      className={cn("shrink-0", className)}
+    >
+      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+    </Button>
   );
 }

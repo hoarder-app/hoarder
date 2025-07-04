@@ -8,10 +8,17 @@ import {
   View,
 } from "react-native";
 import ImageView from "react-native-image-viewing";
-import WebView from "react-native-webview";
+import * as Haptics from "expo-haptics";
 import { Stack, useLocalSearchParams, useRouter } from "expo-router";
 import BookmarkAssetImage from "@/components/bookmarks/BookmarkAssetImage";
+import {
+  BookmarkLinkArchivePreview,
+  BookmarkLinkBrowserPreview,
+  BookmarkLinkReaderPreview,
+  BookmarkLinkScreenshotPreview,
+} from "@/components/bookmarks/BookmarkLinkPreview";
 import BookmarkTextMarkdown from "@/components/bookmarks/BookmarkTextMarkdown";
+import { PDFViewer } from "@/components/bookmarks/PDFViewer";
 import FullPageError from "@/components/FullPageError";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import { Button } from "@/components/ui/Button";
@@ -21,7 +28,16 @@ import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useAssetUrl } from "@/lib/hooks";
 import { api } from "@/lib/trpc";
-import { ClipboardList, Globe, Info, Tag, Trash2 } from "lucide-react-native";
+import { MenuView } from "@react-native-menu/menu";
+import {
+  ChevronDown,
+  ClipboardList,
+  Globe,
+  Info,
+  Tag,
+  Trash2,
+} from "lucide-react-native";
+import { useColorScheme } from "nativewind";
 
 import {
   useDeleteBookmark,
@@ -29,9 +45,54 @@ import {
 } from "@karakeep/shared-react/hooks/bookmarks";
 import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 
+type BookmarkLinkType = "browser" | "reader" | "screenshot" | "archive";
+
+function BookmarkLinkTypeSelector({
+  type,
+  onChange,
+}: {
+  type: BookmarkLinkType;
+  onChange: (type: BookmarkLinkType) => void;
+}) {
+  return (
+    <MenuView
+      onPressAction={({ nativeEvent }) => {
+        Haptics.selectionAsync();
+        onChange(nativeEvent.event as BookmarkLinkType);
+      }}
+      actions={[
+        {
+          id: "reader",
+          title: "Reader",
+          state: type === "reader" ? "on" : undefined,
+        },
+        {
+          id: "browser",
+          title: "Browser",
+          state: type === "browser" ? "on" : undefined,
+        },
+        {
+          id: "screenshot",
+          title: "Screenshot",
+          state: type === "screenshot" ? "on" : undefined,
+        },
+        {
+          id: "archive",
+          title: "Archive",
+          state: type === "archive" ? "on" : undefined,
+        },
+      ]}
+      shouldOpenOnLongPress={false}
+    >
+      <ChevronDown onPress={() => Haptics.selectionAsync()} color="gray" />
+    </MenuView>
+  );
+}
+
 function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
   const { toast } = useToast();
   const router = useRouter();
+
   const { mutate: deleteBookmark, isPending: isDeletionPending } =
     useDeleteBookmark({
       onSuccess: () => {
@@ -151,17 +212,27 @@ function BottomActions({ bookmark }: { bookmark: ZBookmark }) {
   );
 }
 
-function BookmarkLinkView({ bookmark }: { bookmark: ZBookmark }) {
+function BookmarkLinkView({
+  bookmark,
+  bookmarkPreviewType,
+}: {
+  bookmark: ZBookmark;
+  bookmarkPreviewType: BookmarkLinkType;
+}) {
   if (bookmark.content.type !== BookmarkTypes.LINK) {
     throw new Error("Wrong content type rendered");
   }
-  return (
-    <WebView
-      startInLoadingState={true}
-      mediaPlaybackRequiresUserAction={true}
-      source={{ uri: bookmark.content.url }}
-    />
-  );
+
+  switch (bookmarkPreviewType) {
+    case "browser":
+      return <BookmarkLinkBrowserPreview bookmark={bookmark} />;
+    case "reader":
+      return <BookmarkLinkReaderPreview bookmark={bookmark} />;
+    case "screenshot":
+      return <BookmarkLinkScreenshotPreview bookmark={bookmark} />;
+    case "archive":
+      return <BookmarkLinkArchivePreview bookmark={bookmark} />;
+  }
 }
 
 function BookmarkTextView({ bookmark }: { bookmark: ZBookmark }) {
@@ -235,6 +306,20 @@ function BookmarkAssetView({ bookmark }: { bookmark: ZBookmark }) {
     throw new Error("Wrong content type rendered");
   }
   const assetSource = useAssetUrl(bookmark.content.assetId);
+
+  // Check if this is a PDF asset
+  if (bookmark.content.assetType === "pdf") {
+    return (
+      <View className="flex flex-1">
+        <PDFViewer
+          source={assetSource.uri ?? ""}
+          headers={assetSource.headers}
+        />
+      </View>
+    );
+  }
+
+  // Handle image assets as before
   return (
     <View className="flex flex-1 gap-2">
       <ImageView
@@ -257,6 +342,12 @@ function BookmarkAssetView({ bookmark }: { bookmark: ZBookmark }) {
 
 export default function ListView() {
   const { slug } = useLocalSearchParams();
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+
+  const [bookmarkLinkType, setBookmarkLinkType] =
+    useState<BookmarkLinkType>("reader");
+
   if (typeof slug !== "string") {
     throw new Error("Unexpected param type");
   }
@@ -265,7 +356,10 @@ export default function ListView() {
     data: bookmark,
     error,
     refetch,
-  } = api.bookmarks.getBookmark.useQuery({ bookmarkId: slug });
+  } = api.bookmarks.getBookmark.useQuery({
+    bookmarkId: slug,
+    includeContent: false,
+  });
 
   if (error) {
     return <FullPageError error={error.message} onRetry={refetch} />;
@@ -280,7 +374,12 @@ export default function ListView() {
   switch (bookmark.content.type) {
     case BookmarkTypes.LINK:
       title = bookmark.title ?? bookmark.content.title;
-      comp = <BookmarkLinkView bookmark={bookmark} />;
+      comp = (
+        <BookmarkLinkView
+          bookmark={bookmark}
+          bookmarkPreviewType={bookmarkLinkType}
+        />
+      );
       break;
     case BookmarkTypes.TEXT:
       title = bookmark.title;
@@ -298,6 +397,18 @@ export default function ListView() {
           headerTitle: title ?? "",
           headerBackTitle: "Back",
           headerTransparent: false,
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: isDark ? "#000" : "#fff",
+          },
+          headerTintColor: isDark ? "#fff" : "#000",
+          headerRight: () =>
+            bookmark.content.type === BookmarkTypes.LINK ? (
+              <BookmarkLinkTypeSelector
+                type={bookmarkLinkType}
+                onChange={(type) => setBookmarkLinkType(type)}
+              />
+            ) : undefined,
         }}
       />
       <View className="flex h-full">

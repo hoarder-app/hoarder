@@ -76,7 +76,7 @@ export default function AllLists({
             }
             name={node.item.name}
             path={`/dashboard/lists/${node.item.id}`}
-            className="px-0.5"
+            className="group px-0.5"
             right={
               <ListOptions
                 onOpenChange={(open) => {
@@ -88,34 +88,32 @@ export default function AllLists({
                 }}
                 list={node.item}
               >
-                <Button size="none" variant="ghost">
-                  <div className="relative">
-                    <MoreHorizontal
-                      className={cn(
-                        "absolute inset-0 m-auto size-4 opacity-0 transition-opacity duration-100 group-hover:opacity-100",
-                        selectedListId == node.item.id
-                          ? "opacity-100"
-                          : "opacity-0",
-                      )}
-                    />
+                <Button size="none" variant="ghost" className="relative">
+                  <MoreHorizontal
+                    className={cn(
+                      "absolute inset-0 m-auto size-4 opacity-0 transition-opacity duration-100 group-hover:opacity-100",
+                      selectedListId == node.item.id
+                        ? "opacity-100"
+                        : "opacity-0",
+                    )}
+                  />
 
-                    <Badge
-                      variant="outline"
-                      className={cn(
-                        "font-normal opacity-100 transition-opacity duration-100 group-hover:opacity-0",
-                        selectedListId == node.item.id ||
-                          numBookmarks === undefined
-                          ? "opacity-0"
-                          : "opacity-100",
-                      )}
-                    >
-                      {numBookmarks}
-                    </Badge>
-                  </div>
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "font-normal opacity-100 transition-opacity duration-100 group-hover:opacity-0",
+                      selectedListId == node.item.id ||
+                        numBookmarks === undefined
+                        ? "opacity-0"
+                        : "opacity-100",
+                    )}
+                  >
+                    {numBookmarks}
+                  </Badge>
                 </Button>
               </ListOptions>
             }
-            linkClassName="group py-0.5"
+            linkClassName="py-0.5"
             style={{ marginLeft: `${level * 1}rem` }}
           />
         )}

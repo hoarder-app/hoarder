@@ -100,7 +100,7 @@ const SearchInput = React.forwardRef<
           </Button>
         )}
       <Input
-        startIcon={SearchIcon}
+        startIcon={<SearchIcon size={18} className="text-muted-foreground" />}
         ref={inputRef}
         value={value}
         onChange={onChange}

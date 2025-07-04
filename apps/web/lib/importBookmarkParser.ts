@@ -15,6 +15,8 @@ export interface ParsedBookmark {
   tags: string[];
   addDate?: number;
   notes?: string;
+  archived?: boolean;
+  paths: string[][];
 }
 
 export async function parseNetscapeBookmarkFile(
@@ -37,15 +39,28 @@ export async function parseNetscapeBookmarkFile(
       const tagsStr = $a.attr("tags");
       try {
         tags = tagsStr && tagsStr.length > 0 ? tagsStr.split(",") : [];
-      } catch (e) {
+      } catch {
         /* empty */
       }
       const url = $a.attr("href");
+
+      // Build folder path by traversing up the hierarchy
+      const path: string[] = [];
+      let current = $a.parent();
+      while (current && current.length > 0) {
+        const h3 = current.find("> h3").first();
+        if (h3.length > 0) {
+          path.unshift(h3.text());
+        }
+        current = current.parent();
+      }
+
       return {
         title: $a.text(),
         content: url ? { type: BookmarkTypes.LINK as const, url } : undefined,
         tags,
         addDate: typeof addDate === "undefined" ? undefined : parseInt(addDate),
+        paths: [path],
       };
     })
     .get();
@@ -64,6 +79,7 @@ export async function parsePocketBookmarkFile(
     url: string;
     time_added: string;
     tags: string;
+    status?: string;
   }[];
 
   return records.map((record) => {
@@ -72,6 +88,8 @@ export async function parsePocketBookmarkFile(
       content: { type: BookmarkTypes.LINK as const, url: record.url },
       tags: record.tags.length > 0 ? record.tags.split("|") : [],
       addDate: parseInt(record.time_added),
+      archived: record.status === "archive",
+      paths: [], // TODO
     };
   });
 }
@@ -107,6 +125,8 @@ export async function parseKarakeepBookmarkFile(
       tags: bookmark.tags,
       addDate: bookmark.createdAt,
       notes: bookmark.note ?? undefined,
+      archived: bookmark.archived,
+      paths: [], // TODO
     };
   });
 }
@@ -121,6 +141,7 @@ export async function parseOmnivoreBookmarkFile(
       url: z.string(),
       labels: z.array(z.string()),
       savedAt: z.coerce.date(),
+      state: z.string().optional(),
     }),
   );
 
@@ -137,6 +158,8 @@ export async function parseOmnivoreBookmarkFile(
       content: { type: BookmarkTypes.LINK as const, url: bookmark.url },
       tags: bookmark.labels,
       addDate: bookmark.savedAt.getTime() / 1000,
+      archived: bookmark.state === "Archived",
+      paths: [],
     };
   });
 }
@@ -173,6 +196,7 @@ export async function parseLinkwardenBookmarkFile(
       content: { type: BookmarkTypes.LINK as const, url: bookmark.url },
       tags: bookmark.tags.map((tag) => tag.name),
       addDate: bookmark.createdAt.getTime() / 1000,
+      paths: [], // TODO
     }));
   });
 }
@@ -213,6 +237,7 @@ export async function parseTabSessionManagerStateFile(
       content: { type: BookmarkTypes.LINK as const, url: tab.url },
       tags: [],
       addDate: tab.lastAccessed,
+      paths: [], // Tab Session Manager doesn't have folders
     })),
   );
 }
@@ -230,7 +255,8 @@ export function deduplicateBookmarks(
         const existing = deduplicatedBookmarksMap.get(url)!;
         // Merge tags
         existing.tags = [...new Set([...existing.tags, ...bookmark.tags])];
-        // Keep earliest date
+        // Merge paths
+        existing.paths = [...existing.paths, ...bookmark.paths];
         const existingDate = existing.addDate ?? Infinity;
         const newDate = bookmark.addDate ?? Infinity;
         if (newDate < existingDate) {
@@ -241,6 +267,10 @@ export function deduplicateBookmarks(
           existing.notes = `${existing.notes}\n---\n${bookmark.notes}`;
         } else if (bookmark.notes) {
           existing.notes = bookmark.notes;
+        }
+        // For archived status, prefer archived if either is archived
+        if (bookmark.archived === true) {
+          existing.archived = true;
         }
         // Title: keep existing one for simplicity
       } else {

@@ -130,11 +130,11 @@ async function replaceTagsPlaceholders(
   const tags = (await api.tags.list()).tags;
   const tagsString = `[${tags.map((tag) => tag.name).join(", ")}]`;
   const aiTagsString = `[${tags
-    .filter((tag) => tag.numBookmarksByAttachedType.human ?? 0 == 0)
+    .filter((tag) => tag.numBookmarksByAttachedType.human ?? true)
     .map((tag) => tag.name)
     .join(", ")}]`;
   const userTagsString = `[${tags
-    .filter((tag) => tag.numBookmarksByAttachedType.human ?? 0 > 0)
+    .filter((tag) => tag.numBookmarksByAttachedType.human ?? false)
     .map((tag) => tag.name)
     .join(", ")}]`;
 

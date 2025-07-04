@@ -2,15 +2,14 @@ import * as dns from "dns";
 import { promises as fs } from "fs";
 import * as path from "node:path";
 import * as os from "os";
-import type { Browser } from "puppeteer";
-import { PuppeteerBlocker } from "@ghostery/adblocker-puppeteer";
+import { PlaywrightBlocker } from "@ghostery/adblocker-playwright";
 import { Readability } from "@mozilla/readability";
 import { Mutex } from "async-mutex";
 import DOMPurify from "dompurify";
 import { eq } from "drizzle-orm";
 import { execa } from "execa";
 import { isShuttingDown } from "exit";
-import { JSDOM } from "jsdom";
+import { JSDOM, VirtualConsole } from "jsdom";
 import { DequeuedJob, Runner } from "liteque";
 import metascraper from "metascraper";
 import metascraperAmazon from "metascraper-amazon";
@@ -20,12 +19,12 @@ import metascraperDescription from "metascraper-description";
 import metascraperImage from "metascraper-image";
 import metascraperLogo from "metascraper-logo-favicon";
 import metascraperPublisher from "metascraper-publisher";
-import metascraperReadability from "metascraper-readability";
 import metascraperTitle from "metascraper-title";
 import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
 import fetch from "node-fetch";
-import puppeteer from "puppeteer-extra";
+import { Browser } from "playwright";
+import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
 import { getBookmarkDetails, updateAsset } from "workerUtils";
@@ -63,13 +62,15 @@ import {
 } from "@karakeep/shared/queues";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
+import metascraperReddit from "../metascraper-plugins/metascraper-reddit";
+
 const metascraperParser = metascraper([
   metascraperDate({
     dateModified: true,
     datePublished: true,
   }),
   metascraperAmazon(),
-  metascraperReadability(),
+  metascraperReddit(),
   metascraperAuthor(),
   metascraperPublisher(),
   metascraperTitle(),
@@ -81,38 +82,37 @@ const metascraperParser = metascraper([
 ]);
 
 let globalBrowser: Browser | undefined;
-let globalBlocker: PuppeteerBlocker | undefined;
+let globalBlocker: PlaywrightBlocker | undefined;
 // Guards the interactions with the browser instance.
 // This is needed given that most of the browser APIs are async.
 const browserMutex = new Mutex();
 
 async function startBrowserInstance() {
-  const defaultViewport = {
-    width: 1440,
-    height: 900,
-  };
   if (serverConfig.crawler.browserWebSocketUrl) {
     logger.info(
       `[Crawler] Connecting to existing browser websocket address: ${serverConfig.crawler.browserWebSocketUrl}`,
     );
-    return puppeteer.connect({
-      browserWSEndpoint: serverConfig.crawler.browserWebSocketUrl,
-      defaultViewport,
+    return await chromium.connect(serverConfig.crawler.browserWebSocketUrl, {
+      // Important: using slowMo to ensure stability with remote browser
+      slowMo: 100,
+      timeout: 5000,
     });
   } else if (serverConfig.crawler.browserWebUrl) {
     logger.info(
       `[Crawler] Connecting to existing browser instance: ${serverConfig.crawler.browserWebUrl}`,
     );
+
     const webUrl = new URL(serverConfig.crawler.browserWebUrl);
-    // We need to resolve the ip address as a workaround for https://github.com/puppeteer/puppeteer/issues/2242
-    const { address: address } = await dns.promises.lookup(webUrl.hostname);
+    const { address } = await dns.promises.lookup(webUrl.hostname);
     webUrl.hostname = address;
     logger.info(
       `[Crawler] Successfully resolved IP address, new address: ${webUrl.toString()}`,
     );
-    return puppeteer.connect({
-      browserURL: webUrl.toString(),
-      defaultViewport,
+
+    return await chromium.connectOverCDP(webUrl.toString(), {
+      // Important: using slowMo to ensure stability with remote browser
+      slowMo: 100,
+      timeout: 5000,
     });
   } else {
     logger.info(`Running in browserless mode`);
@@ -141,12 +141,12 @@ async function launchBrowser() {
     globalBrowser?.on("disconnected", () => {
       if (isShuttingDown) {
         logger.info(
-          "[Crawler] The puppeteer browser got disconnected. But we're shutting down so won't restart it.",
+          "[Crawler] The Playwright browser got disconnected. But we're shutting down so won't restart it.",
         );
         return;
       }
       logger.info(
-        "[Crawler] The puppeteer browser got disconnected. Will attempt to launch it again.",
+        "[Crawler] The Playwright browser got disconnected. Will attempt to launch it again.",
       );
       launchBrowser();
     });
@@ -155,11 +155,11 @@ async function launchBrowser() {
 
 export class CrawlerWorker {
   static async build() {
-    puppeteer.use(StealthPlugin());
+    chromium.use(StealthPlugin());
     if (serverConfig.crawler.enableAdblocker) {
       try {
         logger.info("[crawler] Loading adblocker ...");
-        globalBlocker = await PuppeteerBlocker.fromPrebuiltFull(fetch, {
+        globalBlocker = await PlaywrightBlocker.fromPrebuiltFull(fetch, {
           path: path.join(os.tmpdir(), "karakeep_adblocker.bin"),
           read: fs.readFile,
           write: fs.writeFile,
@@ -287,39 +287,45 @@ async function crawlPage(
   if (!browser) {
     return browserlessCrawlPage(jobId, url, abortSignal);
   }
-  const context = await browser.createBrowserContext();
 
+  const context = await browser.newContext({
+    viewport: { width: 1440, height: 900 },
+    userAgent:
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+  });
   try {
+    // Create a new page in the context
     const page = await context.newPage();
+
+    // Apply ad blocking
     if (globalBlocker) {
       await globalBlocker.enableBlockingInPage(page);
     }
-    await page.setUserAgent(
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    );
 
+    // Navigate to the target URL
+    logger.info(`[Crawler][${jobId}] Navigating to "${url}"`);
     const response = await page.goto(url, {
       timeout: serverConfig.crawler.navigateTimeoutSec * 1000,
+      waitUntil: "domcontentloaded",
     });
+
     logger.info(
       `[Crawler][${jobId}] Successfully navigated to "${url}". Waiting for the page to load ...`,
     );
 
-    // Wait until there's at most two connections for 2 seconds
-    // Attempt to wait only for 5 seconds
+    // Wait until network is relatively idle or timeout after 5 seconds
     await Promise.race([
-      page.waitForNetworkIdle({
-        idleTime: 1000, // 1 sec
-        concurrency: 2,
-      }),
-      new Promise((f) => setTimeout(f, 5000)),
+      page.waitForLoadState("networkidle", { timeout: 5000 }).catch(() => ({})),
+      new Promise((resolve) => setTimeout(resolve, 5000)),
     ]);
 
     logger.info(`[Crawler][${jobId}] Finished waiting for the page to load.`);
 
+    // Extract content from the page
     const htmlContent = await page.content();
     logger.info(`[Crawler][${jobId}] Successfully fetched the page content.`);
 
+    // Take a screenshot if configured
     let screenshot: Buffer | undefined = undefined;
     if (serverConfig.crawler.storeScreenshot) {
       try {
@@ -327,7 +333,6 @@ async function crawlPage(
           page.screenshot({
             // If you change this, you need to change the asset type in the store function.
             type: "png",
-            encoding: "binary",
             fullPage: serverConfig.crawler.fullPageScreenshot,
           }),
           new Promise((_, reject) =>
@@ -358,6 +363,7 @@ async function crawlPage(
     };
   } finally {
     await context.close();
+    // Only close the browser if it was created on demand
     if (serverConfig.crawler.browserConnectOnDemand) {
       await browser.close();
     }
@@ -391,7 +397,8 @@ function extractReadableContent(
   logger.info(
     `[Crawler][${jobId}] Will attempt to extract readable content ...`,
   );
-  const dom = new JSDOM(htmlContent, { url });
+  const virtualConsole = new VirtualConsole();
+  const dom = new JSDOM(htmlContent, { url, virtualConsole });
   const readableContent = new Readability(dom.window.document).parse();
   if (!readableContent || typeof readableContent.content !== "string") {
     return null;
@@ -697,7 +704,7 @@ async function crawlAndParseUrl(
     }
     try {
       return new Date(date);
-    } catch (_e) {
+    } catch {
       return null;
     }
   };

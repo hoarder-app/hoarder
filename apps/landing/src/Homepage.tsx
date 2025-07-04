@@ -230,8 +230,13 @@ function Features() {
 
 function Footer() {
   return (
-    <div className="flex items-center justify-between bg-black px-10 py-6 text-sm text-gray-300">
-      <div>© 2024-{currentYear} karakeep.app</div>
+    <div className="flex items-center justify-between bg-gray-100 px-10 py-6 text-sm">
+      <div>
+        © 2024-{currentYear}{" "}
+        <a href="https://localhostlabs.co.uk" target="_blank" rel="noreferrer">
+          Localhost Labs Ltd
+        </a>
+      </div>
       <div className="flex items-center gap-6">
         <a
           href={DOCS_LINK}

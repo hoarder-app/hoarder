@@ -132,7 +132,7 @@ export default function EditorCard({ className }: { className?: string }) {
     if (!text.length) return;
     try {
       tryToImportUrls(text);
-    } catch (e) {
+    } catch {
       // Not a URL
       mutate({ type: BookmarkTypes.TEXT, text });
     }

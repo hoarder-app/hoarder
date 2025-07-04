@@ -35,9 +35,6 @@
     "lint": {
       "dependsOn": [
         "^topo"
-      ],
-      "outputs": [
-        "node_modules/.cache/.eslintcache"
       ]
     },
     "typecheck": {

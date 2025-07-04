@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ghostery/adblocker-puppeteer": "^2.5.1",
+    "@ghostery/adblocker-playwright": "^2.5.1",
     "@karakeep/db": "workspace:^0.1.0",
     "@karakeep/shared": "workspace:^0.1.0",
     "@karakeep/trpc": "workspace:^0.1.0",
@@ -18,26 +18,26 @@
     "execa": "9.3.1",
     "jsdom": "^24.0.0",
     "liteque": "^0.3.2",
-    "metascraper": "^5.46.5",
-    "metascraper-amazon": "^5.45.22",
-    "metascraper-author": "5.46.5",
-    "metascraper-date": "^5.46.5",
-    "metascraper-description": "^5.45.22",
-    "metascraper-image": "^5.45.22",
-    "metascraper-logo": "^5.45.22",
-    "metascraper-logo-favicon": "^5.45.22",
-    "metascraper-publisher": "^5.46.5",
-    "metascraper-readability": "^5.45.22",
-    "metascraper-title": "^5.45.22",
+    "metascraper": "^5.46.18",
+    "metascraper-amazon": "^5.46.18",
+    "metascraper-author": "5.46.18",
+    "metascraper-date": "^5.46.18",
+    "metascraper-description": "^5.46.18",
+    "metascraper-image": "^5.46.18",
+    "metascraper-logo": "^5.46.18",
+    "metascraper-logo-favicon": "^5.46.18",
+    "metascraper-publisher": "^5.46.18",
+    "metascraper-readability": "^5.46.18",
+    "metascraper-title": "^5.46.18",
     "metascraper-twitter": "^5.45.6",
-    "metascraper-url": "^5.45.22",
+    "metascraper-url": "^5.46.18",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
     "pdf2json": "^3.1.5",
     "pdf2pic": "^3.1.3",
     "pdfjs-dist": "^4.2.67",
-    "puppeteer": "^22.0.0",
-    "puppeteer-extra": "^3.3.6",
+    "playwright": "^1.42.1",
+    "playwright-extra": "^4.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "rss-parser": "^3.13.0",
     "tesseract.js": "^5.1.1",
@@ -46,26 +46,18 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@karakeep/eslint-config": "workspace:^0.2.0",
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@types/jsdom": "^21.1.6",
-    "@types/metascraper": "^5.14.3",
     "@types/node-cron": "^3.0.11"
   },
   "scripts": {
     "start": "tsx watch index.ts",
     "start:prod": "tsx index.ts",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
     "format": "prettier . --ignore-path ../../.prettierignore",
     "format:fix": "prettier . --ignore-path ../../.prettierignore --write",
     "typecheck": "tsc --noEmit"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@karakeep/eslint-config/base"
-    ]
   },
   "prettier": "@karakeep/prettier-config"
 }

@@ -261,7 +261,7 @@ bookmarkCmd
         results = [...results, ...resp.bookmarks];
       }
       printObject(results.map(normalizeBookmark), { maxArrayLength: null });
-    } catch (e) {
+    } catch {
       printStatusMessage(false, "Failed to query bookmarks");
     }
   });

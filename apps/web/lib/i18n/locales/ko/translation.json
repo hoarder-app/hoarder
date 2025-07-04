@@ -79,9 +79,11 @@
     "sort": {
       "title": "정렬",
       "newest_first": "최근 우선",
-      "oldest_first": "오래된것 우선"
+      "oldest_first": "오래된것 우선",
+      "relevant_first": "관련성 높은 순서대로"
     },
-    "open_editor": "편집기 열기"
+    "open_editor": "편집기 열기",
+    "toggle_show_archived": "보관된 항목 표시"
   },
   "tags": {
     "unused_tags": "사용되지 않은 태그",
@@ -136,7 +138,11 @@
   "preview": {
     "view_original": "원본 보기",
     "cached_content": "캐싱된 컨텐츠",
-    "reader_view": "리더 보기"
+    "reader_view": "리더 보기",
+    "tabs": {
+      "content": "콘텐츠",
+      "details": "세부 정보"
+    }
   },
   "editor": {
     "quickly_focus": "⌘ + E를 누르면 이 필드에 초점이 옮겨집니다",
@@ -260,7 +266,20 @@
       "new_password": "새로운 암호",
       "confirm_new_password": "새로운 암호 확인",
       "options": "옵션",
-      "interface_lang": "인터페이스 언어"
+      "interface_lang": "인터페이스 언어",
+      "user_settings": {
+        "user_settings_updated": "사용자 설정이 업데이트되었습니다!",
+        "bookmark_click_action": {
+          "title": "북마크 클릭 액션",
+          "open_external_url": "원본 URL 열기",
+          "open_bookmark_details": "북마크 세부 정보 열기"
+        },
+        "archive_display_behaviour": {
+          "title": "보관된 북마크",
+          "show": "보관된 북마크를 태그 및 목록에 표시",
+          "hide": "보관된 북마크를 태그 및 목록에서 숨기기"
+        }
+      }
     },
     "ai": {
       "ai_settings": "AI 설정",
@@ -277,7 +296,9 @@
     },
     "feeds": {
       "add_a_subscription": "구독 추가",
-      "rss_subscriptions": "RSS 구독"
+      "rss_subscriptions": "RSS 구독",
+      "feed_enabled": "RSS 피드 활성화됨",
+      "feed_disabled": "RSS 피드 비활성화됨"
     },
     "import": {
       "import_bookmarks_from_linkwarden_export": "Linkwarden 내보내기에서 북마크 가져오기",
@@ -399,7 +420,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "모든 북마크 AI 태그 재생성",
       "reindex_all_bookmarks": "모든 북마크 재 인덱싱",
       "compact_assets": "애셋 압축",
-      "reprocess_assets_fix_mode": "재작업된 자산(수정 모드)"
+      "reprocess_assets_fix_mode": "재작업된 자산(수정 모드)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "실패한 북마크에 대해서만 AI 요약 다시 생성",
+      "regenerate_ai_summaries_for_all_bookmarks": "모든 북마크에 대해 AI 요약 다시 생성"
     }
   },
   "lists": {
@@ -419,7 +442,18 @@
     "destination_list": "대상 목록",
     "delete_after_merge": "병합 후 원본 목록 삭제",
     "no_destination": "대상 없음",
-    "description": "설명 (선택 사항)"
+    "description": "설명 (선택 사항)",
+    "rss": {
+      "title": "RSS 피드",
+      "description": "이 목록에 대한 RSS 피드 활성화",
+      "feed_url": "RSS 피드 URL"
+    },
+    "public_list": {
+      "description": "다른 사람이 이 목록을 볼 수 있도록 허용",
+      "share_link": "링크 공유",
+      "title": "공개 목록"
+    },
+    "share_list": "목록 공유"
   },
   "options": {
     "light_mode": "라이트 모드",

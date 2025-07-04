@@ -127,9 +127,12 @@ async function runWorker(job: DequeuedJob<ZVideoRequest>) {
       );
       return;
     }
-    logger.error(
-      `[VideoCrawler][${jobId}] Failed to download a file from "${url}" to "${assetPath}"`,
-    );
+    const genericError = `[VideoCrawler][${jobId}] Failed to download a file from "${url}" to "${assetPath}"`;
+    if ("stderr" in err) {
+      logger.error(`${genericError}: ${err.stderr}`);
+    } else {
+      logger.error(genericError);
+    }
     await deleteLeftOverAssetFile(jobId, videoAssetId);
     return;
   }
@@ -190,7 +193,7 @@ async function deleteLeftOverAssetFile(
   );
   try {
     await fs.promises.rm(assetFile);
-  } catch (e) {
+  } catch {
     logger.error(
       `[VideoCrawler][${jobId}] Failed deleting leftover video asset "${assetFile}".`,
     );

@@ -79,9 +79,11 @@
     "sort": {
       "title": "Sortieren",
       "newest_first": "Neueste zuerst",
-      "oldest_first": "Älteste zuerst"
+      "oldest_first": "Älteste zuerst",
+      "relevant_first": "Zuerst das Relevanteste"
     },
-    "open_editor": "Editor öffnen"
+    "open_editor": "Editor öffnen",
+    "toggle_show_archived": "Archivierte anzeigen"
   },
   "settings": {
     "back_to_app": "Zurück zur App",
@@ -94,7 +96,20 @@
       "new_password": "Neues Passwort",
       "confirm_new_password": "Neues Passwort bestätigen",
       "options": "Optionen",
-      "interface_lang": "Oberflächensprache"
+      "interface_lang": "Oberflächensprache",
+      "user_settings": {
+        "user_settings_updated": "Benutzereinstellungen wurden aktualisiert!",
+        "bookmark_click_action": {
+          "open_bookmark_details": "Lesezeichen-Details öffnen",
+          "title": "Aktion bei Lesezeichen-Klick",
+          "open_external_url": "Original-URL öffnen"
+        },
+        "archive_display_behaviour": {
+          "title": "Archivierte Lesezeichen",
+          "show": "Archivierte Lesezeichen in Tags und Listen anzeigen",
+          "hide": "Archivierte Lesezeichen in Tags und Listen ausblenden"
+        }
+      }
     },
     "ai": {
       "ai_settings": "KI-Einstellungen",
@@ -111,7 +126,9 @@
     },
     "feeds": {
       "rss_subscriptions": "RSS-Abonnements",
-      "add_a_subscription": "Ein Abonnement hinzufügen"
+      "add_a_subscription": "Ein Abonnement hinzufügen",
+      "feed_enabled": "RSS-Feed aktiviert",
+      "feed_disabled": "RSS-Feed deaktiviert"
     },
     "import": {
       "import_export": "Import / Export",
@@ -245,7 +262,9 @@
       "regenerate_ai_tags_for_all_bookmarks": "KI-Tags für alle Lesezeichen neu generieren",
       "reindex_all_bookmarks": "Alle Lesezeichen neu indizieren",
       "compact_assets": "Assets komprimieren",
-      "reprocess_assets_fix_mode": "Assets neu verarbeiten (Fix-Modus)"
+      "reprocess_assets_fix_mode": "Assets neu verarbeiten (Fix-Modus)",
+      "regenerate_ai_summaries_for_failed_bookmarks_only": "KI-Zusammenfassungen nur für fehlgeschlagene Lesezeichen neu generieren",
+      "regenerate_ai_summaries_for_all_bookmarks": "KI-Zusammenfassungen für alle Lesezeichen neu generieren"
     },
     "users_list": {
       "users_list": "Benutzerliste",
@@ -280,7 +299,18 @@
     "destination_list": "Zielliste",
     "delete_after_merge": "Original-Liste nach dem Zusammenführen löschen",
     "no_destination": "Kein Ziel",
-    "description": "Beschreibung (Optional)"
+    "description": "Beschreibung (Optional)",
+    "share_list": "Liste teilen",
+    "rss": {
+      "title": "RSS-Feed",
+      "description": "Einen RSS-Feed für diese Liste aktivieren",
+      "feed_url": "RSS-Feed-URL"
+    },
+    "public_list": {
+      "title": "Öffentliche Liste",
+      "description": "Anderen erlauben, diese Liste anzusehen",
+      "share_link": "Link teilen"
+    }
   },
   "tags": {
     "all_tags": "Alle Tags",
@@ -298,7 +328,11 @@
   "preview": {
     "view_original": "Original anzeigen",
     "cached_content": "Gecachte Inhalte",
-    "reader_view": "Leseansicht"
+    "reader_view": "Leseansicht",
+    "tabs": {
+      "content": "Inhalt",
+      "details": "Details"
+    }
   },
   "editor": {
     "quickly_focus": "Sie können schnell auf dieses Feld fokussieren, indem Sie ⌘ + E drücken",

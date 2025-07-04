@@ -13,7 +13,7 @@ RUN apk add --no-cache libc6-compat make g++ py3-pip linux-headers
 
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
-ENV PUPPETEER_SKIP_DOWNLOAD true
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 RUN pnpm install --frozen-lockfile
 
 # Build the db migration script
@@ -40,13 +40,8 @@ FROM node:22-alpine AS aio_builder
 LABEL org.opencontainers.image.source="https://github.com/karakeep-app/karakeep"
 WORKDIR /app
 
-# https://github.com/karakeep-app/karakeep/issues/967
-RUN npm install -g corepack@0.31.0
-
 ARG SERVER_VERSION=nightly
 ENV SERVER_VERSION=${SERVER_VERSION}
-
-USER root
 
 ENV PORT 3000
 ENV HOSTNAME "0.0.0.0"
@@ -100,7 +95,8 @@ COPY --from=base --chown=node:node /app/apps/web/.next/static ./apps/web/.next/s
 # Prepare the workers app
 ######################
 COPY --from=base /prod/workers /app/apps/workers
-RUN corepack enable && corepack pack
+
+RUN npm install -g tsx
 
 ENTRYPOINT ["/init"]
 

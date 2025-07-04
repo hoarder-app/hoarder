@@ -1,6 +1,8 @@
 import MobileSidebar from "@/components/shared/sidebar/MobileSidebar";
 import Sidebar from "@/components/shared/sidebar/Sidebar";
 import SidebarLayout from "@/components/shared/sidebar/SidebarLayout";
+import { UserSettingsContextProvider } from "@/lib/userSettings";
+import { api } from "@/server/api/client";
 import { TFunction } from "i18next";
 import {
   ArrowLeft,
@@ -79,12 +81,15 @@ export default async function SettingsLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const userSettings = await api.users.settings();
   return (
-    <SidebarLayout
-      sidebar={<Sidebar items={settingsSidebarItems} />}
-      mobileSidebar={<MobileSidebar items={settingsSidebarItems} />}
-    >
-      {children}
-    </SidebarLayout>
+    <UserSettingsContextProvider userSettings={userSettings}>
+      <SidebarLayout
+        sidebar={<Sidebar items={settingsSidebarItems} />}
+        mobileSidebar={<MobileSidebar items={settingsSidebarItems} />}
+      >
+        {children}
+      </SidebarLayout>
+    </UserSettingsContextProvider>
   );
 }
