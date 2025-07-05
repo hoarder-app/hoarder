@@ -56,7 +56,7 @@ export async function createUserRaw(
         .insert(users)
         .values({
           name: input.name,
-          email: input.email,
+          email: input.email.toLowerCase(),
           password: input.password,
           salt: input.salt,
           role: userRole,

@@ -57,6 +57,28 @@ describe("User Routes", () => {
     ).rejects.toThrow(/Email is already taken/);
   });
 
+  test<CustomTestContext>("email case insensitive uniqueness", async ({
+    unauthedAPICaller,
+  }) => {
+    // Create user with lowercase email
+    await unauthedAPICaller.users.create({
+      name: "Test User",
+      email: "test123@test.com",
+      password: "pass1234",
+      confirmPassword: "pass1234",
+    });
+
+    // Try to create another user with uppercase email - should fail
+    await expect(() =>
+      unauthedAPICaller.users.create({
+        name: "Test User 2",
+        email: "TEST123@TEST.COM",
+        password: "pass1234",
+        confirmPassword: "pass1234",
+      }),
+    ).rejects.toThrow(/Email is already taken/);
+  });
+
   test<CustomTestContext>("privacy checks", async ({
     db,
     unauthedAPICaller,

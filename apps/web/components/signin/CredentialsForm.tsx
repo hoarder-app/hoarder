@@ -65,7 +65,7 @@ function SignIn() {
         onSubmit={form.handleSubmit(async (value) => {
           const resp = await signIn("credentials", {
             redirect: false,
-            email: value.email.trim(),
+            email: value.email.trim().toLowerCase(),
             password: value.password,
           });
           if (!resp || !resp?.ok) {
@@ -137,7 +137,10 @@ function SignUp() {
       <form
         onSubmit={form.handleSubmit(async (value) => {
           try {
-            await createUserMutation.mutateAsync(value);
+            await createUserMutation.mutateAsync({
+              ...value,
+              email: value.email.trim().toLowerCase(),
+            });
           } catch (e) {
             if (e instanceof TRPCClientError) {
               setErrorMessage(e.message);
@@ -146,7 +149,7 @@ function SignUp() {
           }
           const resp = await signIn("credentials", {
             redirect: false,
-            email: value.email.trim(),
+            email: value.email.trim().toLowerCase(),
             password: value.password,
           });
           if (!resp || !resp.ok) {

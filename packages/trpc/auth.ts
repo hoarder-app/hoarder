@@ -89,7 +89,7 @@ export async function validatePassword(email: string, password: string) {
     throw new Error("Password authentication is currently disabled");
   }
   const user = await db.query.users.findFirst({
-    where: (u, { eq }) => eq(u.email, email),
+    where: (u, { eq }) => eq(u.email, email.toLowerCase()),
   });
 
   if (!user) {

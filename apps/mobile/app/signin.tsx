@@ -100,7 +100,7 @@ export default function Signin() {
     if (loginType === LoginType.Password) {
       const randStr = (Math.random() + 1).toString(36).substring(5);
       login({
-        email: formState.email,
+        email: formState.email.toLowerCase(),
         password: formState.password,
         keyName: `Mobile App: (${randStr})`,
       });
@@ -155,7 +155,10 @@ export default function Signin() {
                   autoCapitalize="none"
                   value={formState.email}
                   onChangeText={(e) =>
-                    setFormState((s) => ({ ...s, email: e.trim() }))
+                    setFormState((s) => ({
+                      ...s,
+                      email: e.trim().toLowerCase(),
+                    }))
                   }
                 />
               </View>
