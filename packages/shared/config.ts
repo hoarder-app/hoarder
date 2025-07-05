@@ -57,6 +57,11 @@ const allEnv = z.object({
   CRAWLER_JOB_TIMEOUT_SEC: z.coerce.number().default(60),
   CRAWLER_NAVIGATE_TIMEOUT_SEC: z.coerce.number().default(30),
   CRAWLER_NUM_WORKERS: z.coerce.number().default(1),
+  INFERENCE_NUM_WORKERS: z.coerce.number().default(1),
+  SEARCH_NUM_WORKERS: z.coerce.number().default(1),
+  WEBHOOK_NUM_WORKERS: z.coerce.number().default(1),
+  ASSET_PREPROCESSING_NUM_WORKERS: z.coerce.number().default(1),
+  RULE_ENGINE_NUM_WORKERS: z.coerce.number().default(1),
   CRAWLER_DOWNLOAD_BANNER_IMAGE: stringBool("true"),
   CRAWLER_STORE_SCREENSHOT: stringBool("true"),
   CRAWLER_FULL_PAGE_SCREENSHOT: stringBool("false"),
@@ -124,6 +129,7 @@ const serverConfigSchema = allEnv.transform((val) => {
       },
     },
     inference: {
+      numWorkers: val.INFERENCE_NUM_WORKERS,
       jobTimeoutSec: val.INFERENCE_JOB_TIMEOUT_SEC,
       fetchTimeoutSec: val.INFERENCE_FETCH_TIMEOUT_SEC,
       openAIApiKey: val.OPENAI_API_KEY,
@@ -170,12 +176,15 @@ const serverConfigSchema = allEnv.transform((val) => {
       cacheDir: val.OCR_CACHE_DIR,
       confidenceThreshold: val.OCR_CONFIDENCE_THRESHOLD,
     },
-    meilisearch: val.MEILI_ADDR
-      ? {
-          address: val.MEILI_ADDR,
-          key: val.MEILI_MASTER_KEY,
-        }
-      : undefined,
+    search: {
+      numWorkers: val.SEARCH_NUM_WORKERS,
+      meilisearch: val.MEILI_ADDR
+        ? {
+            address: val.MEILI_ADDR,
+            key: val.MEILI_MASTER_KEY,
+          }
+        : undefined,
+    },
     logLevel: val.LOG_LEVEL,
     demoMode: val.DEMO_MODE
       ? {
@@ -192,6 +201,13 @@ const serverConfigSchema = allEnv.transform((val) => {
     webhook: {
       timeoutSec: val.WEBHOOK_TIMEOUT_SEC,
       retryTimes: val.WEBHOOK_RETRY_TIMES,
+      numWorkers: val.WEBHOOK_NUM_WORKERS,
+    },
+    assetPreprocessing: {
+      numWorkers: val.ASSET_PREPROCESSING_NUM_WORKERS,
+    },
+    ruleEngine: {
+      numWorkers: val.RULE_ENGINE_NUM_WORKERS,
     },
     assetStore: {
       type: val.ASSET_STORE_S3_ENDPOINT

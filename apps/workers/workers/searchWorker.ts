@@ -4,6 +4,7 @@ import { DequeuedJob, Runner } from "liteque";
 import type { ZSearchIndexingRequest } from "@karakeep/shared/queues";
 import { db } from "@karakeep/db";
 import { bookmarks } from "@karakeep/db/schema";
+import serverConfig from "@karakeep/shared/config";
 import logger from "@karakeep/shared/logger";
 import {
   SearchIndexingQueue,
@@ -32,7 +33,7 @@ export class SearchIndexingWorker {
         },
       },
       {
-        concurrency: 1,
+        concurrency: serverConfig.search.numWorkers,
         pollIntervalMs: 1000,
         timeoutSecs: 30,
       },
