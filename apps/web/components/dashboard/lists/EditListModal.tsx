@@ -356,6 +356,14 @@ export function EditListModal({
                   return (
                     <FormItem className="grow pb-4">
                       <FormLabel>{t("lists.search_query")}</FormLabel>
+                      <FormDescription>
+                        <Link
+                          href="https://docs.karakeep.app/Guides/search-query-language"
+                          className="italic"
+                        >
+                          {t("lists.search_query_help")}
+                        </Link>
+                      </FormDescription>
                       <div className="relative">
                         <FormControl>
                           <Input
@@ -373,14 +381,6 @@ export function EditListModal({
                           />
                         </FormControl>
                       </div>
-                      <FormDescription>
-                        <Link
-                          href="https://docs.karakeep.app/Guides/search-query-language"
-                          className="italic"
-                        >
-                          {t("lists.search_query_help")}
-                        </Link>
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   );
