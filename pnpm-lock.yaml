@@ -12,6 +12,10 @@ patchedDependencies:
 importers:
 
   .:
+    dependencies:
+      husky:
+        specifier: ^9.0.11
+        version: 9.1.7
     devDependencies:
       '@karakeep/prettier-config':
         specifier: workspace:^0.1.0
@@ -22,9 +26,6 @@ importers:
       es-errors:
         specifier: ^1.3.0
         version: 1.3.0
-      husky:
-        specifier: ^9.0.11
-        version: 9.1.7
       install:
         specifier: ^0.13.0
         version: 0.13.0
@@ -996,6 +997,9 @@ importers:
       dotenv:
         specifier: ^16.4.1
         version: 16.4.5
+      drizzle-kit:
+        specifier: ^0.30.01
+        version: 0.30.6
       drizzle-orm:
         specifier: ^0.38.3
         version: 0.38.3(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.6)(better-sqlite3@11.3.0)(react@18.3.1)
@@ -1015,9 +1019,6 @@ importers:
       '@types/better-sqlite3':
         specifier: ^7.6.11
         version: 7.6.13
-      drizzle-kit:
-        specifier: ^0.30.01
-        version: 0.30.6
 
   packages/e2e_tests:
     dependencies:

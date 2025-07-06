@@ -60,3 +60,4 @@ data
 
 # VS-Code
 .vscode
+auth_failures.log
