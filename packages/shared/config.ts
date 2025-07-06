@@ -94,6 +94,9 @@ const allEnv = z.object({
   // A flag to detect if the user is running in the old separete containers setup
   USING_LEGACY_SEPARATE_CONTAINERS: stringBool("false"),
 
+  // Prometheus metrics configuration
+  PROMETHEUS_AUTH_TOKEN: z.string().optional(),
+
   // Asset storage configuration
   ASSET_STORE_S3_ENDPOINT: z.string().optional(),
   ASSET_STORE_S3_REGION: z.string().optional(),
@@ -221,6 +224,9 @@ const serverConfigSchema = allEnv.transform((val) => {
         secretAccessKey: val.ASSET_STORE_S3_SECRET_ACCESS_KEY,
         forcePathStyle: val.ASSET_STORE_S3_FORCE_PATH_STYLE,
       },
+    },
+    prometheus: {
+      metricsToken: val.PROMETHEUS_AUTH_TOKEN,
     },
   };
 });

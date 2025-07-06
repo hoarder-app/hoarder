@@ -5,6 +5,12 @@ import { ZodError } from "zod";
 import type { db } from "@karakeep/db";
 import serverConfig from "@karakeep/shared/config";
 
+import {
+  apiErrorsTotalCounter,
+  apiRequestDurationSummary,
+  apiRequestsTotalCounter,
+} from "./stats";
+
 interface User {
   id: string;
   name?: string | null | undefined;
@@ -36,6 +42,11 @@ const t = initTRPC.context<Context>().create({
   transformer: superjson,
   errorFormatter(opts) {
     const { shape, error } = opts;
+    apiErrorsTotalCounter.inc({
+      type: opts.type,
+      path: opts.path,
+      code: error.code,
+    });
     return {
       ...shape,
       data: {
@@ -51,15 +62,30 @@ const t = initTRPC.context<Context>().create({
 export const createCallerFactory = t.createCallerFactory;
 // Base router and procedure helpers
 export const router = t.router;
-export const procedure = t.procedure.use(function isDemoMode(opts) {
-  if (serverConfig.demoMode && opts.type == "mutation") {
-    throw new TRPCError({
-      message: "Mutations are not allowed in demo mode",
-      code: "FORBIDDEN",
+export const procedure = t.procedure
+  .use(function isDemoMode(opts) {
+    if (serverConfig.demoMode && opts.type == "mutation") {
+      throw new TRPCError({
+        message: "Mutations are not allowed in demo mode",
+        code: "FORBIDDEN",
+      });
+    }
+    return opts.next();
+  })
+  .use(async (opts) => {
+    const end = apiRequestDurationSummary.startTimer({
+      path: opts.path,
+      type: opts.type,
     });
-  }
-  return opts.next();
-});
+    const res = await opts.next();
+    apiRequestsTotalCounter.inc({
+      type: opts.type,
+      path: opts.path,
+      is_error: res.ok ? 0 : 1,
+    });
+    end();
+    return res;
+  });
 export const publicProcedure = procedure;
 
 export const authedProcedure = procedure.use(function isAuthed(opts) {

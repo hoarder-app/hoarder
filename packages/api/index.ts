@@ -10,6 +10,7 @@ import bookmarks from "./routes/bookmarks";
 import health from "./routes/health";
 import highlights from "./routes/highlights";
 import lists from "./routes/lists";
+import metrics, { registerMetrics } from "./routes/metrics";
 import publicRoute from "./routes/public";
 import rss from "./routes/rss";
 import tags from "./routes/tags";
@@ -37,6 +38,7 @@ const app = new Hono<{
 }>()
   .use(logger())
   .use(poweredBy())
+  .use("*", registerMetrics)
   .use(async (c, next) => {
     // Ensure that the ctx is set
     if (!c.var.ctx) {
@@ -49,6 +51,7 @@ const app = new Hono<{
   .route("/trpc", trpc)
   .route("/v1", v1)
   .route("/assets", assets)
-  .route("/public", publicRoute);
+  .route("/public", publicRoute)
+  .route("/metrics", metrics);
 
 export default app;
