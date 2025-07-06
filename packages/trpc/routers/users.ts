@@ -1,14 +1,17 @@
 import { TRPCError } from "@trpc/server";
-import { and, count, eq } from "drizzle-orm";
+import { and, count, desc, eq, gte, sql } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
 import { SqliteError } from "@karakeep/db";
 import {
+  assets,
+  bookmarkLinks,
   bookmarkLists,
   bookmarks,
   bookmarkTags,
   highlights,
+  tagsOnBookmarks,
   users,
   userSettings,
 } from "@karakeep/db/schema";
@@ -223,6 +226,11 @@ export const usersAppRouter = router({
   stats: authedProcedure
     .output(zUserStatsResponseSchema)
     .query(async ({ ctx }) => {
+      const now = new Date();
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const yearAgo = new Date(now.getTime() - 365 * 24 * 60 * 60 * 1000);
+
       const [
         [{ numBookmarks }],
         [{ numFavorites }],
@@ -230,7 +238,18 @@ export const usersAppRouter = router({
         [{ numTags }],
         [{ numLists }],
         [{ numHighlights }],
+        bookmarksByType,
+        topDomains,
+        [{ totalAssetSize }],
+        assetsByType,
+        [{ thisWeek }],
+        [{ thisMonth }],
+        [{ thisYear }],
+        bookmarkingByHour,
+        bookmarkingByDay,
+        tagUsage,
       ] = await Promise.all([
+        // Basic counts
         ctx.db
           .select({ numBookmarks: count() })
           .from(bookmarks)
@@ -265,7 +284,185 @@ export const usersAppRouter = router({
           .select({ numHighlights: count() })
           .from(highlights)
           .where(eq(highlights.userId, ctx.user.id)),
+
+        // Bookmarks by type
+        ctx.db
+          .select({
+            type: bookmarks.type,
+            count: count(),
+          })
+          .from(bookmarks)
+          .where(eq(bookmarks.userId, ctx.user.id))
+          .groupBy(bookmarks.type),
+
+        // Top domains
+        ctx.db
+          .select({
+            domain: sql<string>`CASE 
+              WHEN ${bookmarkLinks.url} LIKE 'https://%' THEN 
+                CASE 
+                  WHEN INSTR(SUBSTR(${bookmarkLinks.url}, 9), '/') > 0 THEN
+                    SUBSTR(${bookmarkLinks.url}, 9, INSTR(SUBSTR(${bookmarkLinks.url}, 9), '/') - 1)
+                  ELSE
+                    SUBSTR(${bookmarkLinks.url}, 9)
+                END
+              WHEN ${bookmarkLinks.url} LIKE 'http://%' THEN 
+                CASE 
+                  WHEN INSTR(SUBSTR(${bookmarkLinks.url}, 8), '/') > 0 THEN
+                    SUBSTR(${bookmarkLinks.url}, 8, INSTR(SUBSTR(${bookmarkLinks.url}, 8), '/') - 1)
+                  ELSE
+                    SUBSTR(${bookmarkLinks.url}, 8)
+                END
+              ELSE 
+                CASE 
+                  WHEN INSTR(${bookmarkLinks.url}, '/') > 0 THEN
+                    SUBSTR(${bookmarkLinks.url}, 1, INSTR(${bookmarkLinks.url}, '/') - 1)
+                  ELSE
+                    ${bookmarkLinks.url}
+                END
+            END`,
+            count: count(),
+          })
+          .from(bookmarkLinks)
+          .innerJoin(bookmarks, eq(bookmarks.id, bookmarkLinks.id))
+          .where(eq(bookmarks.userId, ctx.user.id))
+          .groupBy(
+            sql`CASE 
+            WHEN ${bookmarkLinks.url} LIKE 'https://%' THEN 
+              CASE 
+                WHEN INSTR(SUBSTR(${bookmarkLinks.url}, 9), '/') > 0 THEN
+                  SUBSTR(${bookmarkLinks.url}, 9, INSTR(SUBSTR(${bookmarkLinks.url}, 9), '/') - 1)
+                ELSE
+                  SUBSTR(${bookmarkLinks.url}, 9)
+              END
+            WHEN ${bookmarkLinks.url} LIKE 'http://%' THEN 
+              CASE 
+                WHEN INSTR(SUBSTR(${bookmarkLinks.url}, 8), '/') > 0 THEN
+                  SUBSTR(${bookmarkLinks.url}, 8, INSTR(SUBSTR(${bookmarkLinks.url}, 8), '/') - 1)
+                ELSE
+                  SUBSTR(${bookmarkLinks.url}, 8)
+              END
+            ELSE 
+              CASE 
+                WHEN INSTR(${bookmarkLinks.url}, '/') > 0 THEN
+                  SUBSTR(${bookmarkLinks.url}, 1, INSTR(${bookmarkLinks.url}, '/') - 1)
+                ELSE
+                  ${bookmarkLinks.url}
+              END
+          END`,
+          )
+          .orderBy(desc(count()))
+          .limit(10),
+
+        // Total asset size
+        ctx.db
+          .select({
+            totalAssetSize: sql<number>`COALESCE(SUM(${assets.size}), 0)`,
+          })
+          .from(assets)
+          .where(eq(assets.userId, ctx.user.id)),
+
+        // Assets by type
+        ctx.db
+          .select({
+            type: assets.assetType,
+            count: count(),
+            totalSize: sql<number>`COALESCE(SUM(${assets.size}), 0)`,
+          })
+          .from(assets)
+          .where(eq(assets.userId, ctx.user.id))
+          .groupBy(assets.assetType),
+
+        // Activity stats
+        ctx.db
+          .select({ thisWeek: count() })
+          .from(bookmarks)
+          .where(
+            and(
+              eq(bookmarks.userId, ctx.user.id),
+              gte(bookmarks.createdAt, weekAgo),
+            ),
+          ),
+        ctx.db
+          .select({ thisMonth: count() })
+          .from(bookmarks)
+          .where(
+            and(
+              eq(bookmarks.userId, ctx.user.id),
+              gte(bookmarks.createdAt, monthAgo),
+            ),
+          ),
+        ctx.db
+          .select({ thisYear: count() })
+          .from(bookmarks)
+          .where(
+            and(
+              eq(bookmarks.userId, ctx.user.id),
+              gte(bookmarks.createdAt, yearAgo),
+            ),
+          ),
+
+        // Bookmarking by hour (UTC time)
+        ctx.db
+          .select({
+            hour: sql<number>`CAST(strftime('%H', datetime(${bookmarks.createdAt} / 1000, 'unixepoch')) AS INTEGER)`,
+            count: count(),
+          })
+          .from(bookmarks)
+          .where(eq(bookmarks.userId, ctx.user.id))
+          .groupBy(
+            sql`strftime('%H', datetime(${bookmarks.createdAt} / 1000, 'unixepoch'))`,
+          ),
+
+        // Bookmarking by day of week (UTC time)
+        ctx.db
+          .select({
+            day: sql<number>`CAST(strftime('%w', datetime(${bookmarks.createdAt} / 1000, 'unixepoch')) AS INTEGER)`,
+            count: count(),
+          })
+          .from(bookmarks)
+          .where(eq(bookmarks.userId, ctx.user.id))
+          .groupBy(
+            sql`strftime('%w', datetime(${bookmarks.createdAt} / 1000, 'unixepoch'))`,
+          ),
+
+        // Tag usage
+        ctx.db
+          .select({
+            name: bookmarkTags.name,
+            count: count(),
+          })
+          .from(bookmarkTags)
+          .innerJoin(
+            tagsOnBookmarks,
+            eq(tagsOnBookmarks.tagId, bookmarkTags.id),
+          )
+          .where(eq(bookmarkTags.userId, ctx.user.id))
+          .groupBy(bookmarkTags.name)
+          .orderBy(desc(count()))
+          .limit(10),
       ]);
+
+      // Process bookmarks by type
+      const bookmarkTypeMap = { link: 0, text: 0, asset: 0 };
+      bookmarksByType.forEach((item) => {
+        if (item.type in bookmarkTypeMap) {
+          bookmarkTypeMap[item.type as keyof typeof bookmarkTypeMap] =
+            item.count;
+        }
+      });
+
+      // Fill missing hours and days with 0
+      const hourlyActivity = Array.from({ length: 24 }, (_, i) => ({
+        hour: i,
+        count: bookmarkingByHour.find((item) => item.hour === i)?.count || 0,
+      }));
+
+      const dailyActivity = Array.from({ length: 7 }, (_, i) => ({
+        day: i,
+        count: bookmarkingByDay.find((item) => item.day === i)?.count || 0,
+      }));
+
       return {
         numBookmarks,
         numFavorites,
@@ -273,6 +470,18 @@ export const usersAppRouter = router({
         numTags,
         numLists,
         numHighlights,
+        bookmarksByType: bookmarkTypeMap,
+        topDomains: topDomains.filter((d) => d.domain && d.domain.length > 0),
+        totalAssetSize: totalAssetSize || 0,
+        assetsByType,
+        bookmarkingActivity: {
+          thisWeek: thisWeek || 0,
+          thisMonth: thisMonth || 0,
+          thisYear: thisYear || 0,
+          byHour: hourlyActivity,
+          byDayOfWeek: dailyActivity,
+        },
+        tagUsage,
       };
     }),
   settings: authedProcedure

@@ -38,6 +38,52 @@ export const zUserStatsResponseSchema = z.object({
   numTags: z.number(),
   numLists: z.number(),
   numHighlights: z.number(),
+  bookmarksByType: z.object({
+    link: z.number(),
+    text: z.number(),
+    asset: z.number(),
+  }),
+  topDomains: z
+    .array(
+      z.object({
+        domain: z.string(),
+        count: z.number(),
+      }),
+    )
+    .max(10),
+  totalAssetSize: z.number(),
+  assetsByType: z.array(
+    z.object({
+      type: z.string(),
+      count: z.number(),
+      totalSize: z.number(),
+    }),
+  ),
+  bookmarkingActivity: z.object({
+    thisWeek: z.number(),
+    thisMonth: z.number(),
+    thisYear: z.number(),
+    byHour: z.array(
+      z.object({
+        hour: z.number(),
+        count: z.number(),
+      }),
+    ),
+    byDayOfWeek: z.array(
+      z.object({
+        day: z.number(),
+        count: z.number(),
+      }),
+    ),
+  }),
+  tagUsage: z
+    .array(
+      z.object({
+        name: z.string(),
+        count: z.number(),
+      }),
+    )
+    .max(10),
 });
 
 export const zUserSettingsSchema = z.object({

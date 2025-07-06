@@ -115,6 +115,9 @@
         }
       }
     },
+    "stats": {
+      "usage_statistics": "Usage Statistics"
+    },
     "ai": {
       "ai_settings": "AI Settings",
       "tagging_rules": "Tagging Rules",

@@ -1,0 +1,495 @@
+"use client";
+
+import { useMemo } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
+import { api } from "@/lib/trpc";
+import {
+  Archive,
+  BarChart3,
+  BookOpen,
+  Clock,
+  Database,
+  FileText,
+  Globe,
+  Hash,
+  Heart,
+  Highlighter,
+  Image,
+  Link,
+  List,
+  TrendingUp,
+} from "lucide-react";
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+}
+
+function formatNumber(num: number): string {
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + "M";
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + "K";
+  }
+  return num.toString();
+}
+
+const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const hourLabels = Array.from({ length: 24 }, (_, i) =>
+  i === 0 ? "12 AM" : i < 12 ? `${i} AM` : i === 12 ? "12 PM" : `${i - 12} PM`,
+);
+
+function SimpleBarChart({
+  data,
+  maxValue,
+  labels,
+}: {
+  data: number[];
+  maxValue: number;
+  labels: string[];
+}) {
+  return (
+    <div className="space-y-2">
+      {data.map((value, index) => (
+        <div key={index} className="flex items-center gap-3">
+          <div className="w-12 text-right text-xs text-muted-foreground">
+            {labels[index]}
+          </div>
+          <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-muted">
+            <div
+              className="h-full rounded-full bg-primary transition-all duration-300"
+              style={{
+                width: `${maxValue > 0 ? (value / maxValue) * 100 : 0}%`,
+              }}
+            />
+          </div>
+          <div className="w-8 text-right text-xs text-muted-foreground">
+            {value}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function StatCard({
+  title,
+  value,
+  icon,
+  description,
+}: {
+  title: string;
+  value: string | number;
+  icon: React.ReactNode;
+  description?: string;
+}) {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-sm font-medium">{title}</CardTitle>
+        {icon}
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+        {description && (
+          <p className="text-xs text-muted-foreground">{description}</p>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export default function StatsPage() {
+  const { data: stats, isLoading } = api.users.stats.useQuery();
+
+  const maxHourlyActivity = useMemo(() => {
+    if (!stats) return 0;
+    return Math.max(
+      ...stats.bookmarkingActivity.byHour.map(
+        (h: { hour: number; count: number }) => h.count,
+      ),
+    );
+  }, [stats]);
+
+  const maxDailyActivity = useMemo(() => {
+    if (!stats) return 0;
+    return Math.max(
+      ...stats.bookmarkingActivity.byDayOfWeek.map(
+        (d: { day: number; count: number }) => d.count,
+      ),
+    );
+  }, [stats]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold">Usage Statistics</h1>
+          <p className="text-muted-foreground">
+            Insights into your bookmarking habits and collection
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Card key={i}>
+              <CardHeader className="space-y-0 pb-2">
+                <Skeleton className="h-4 w-24" />
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="mb-2 h-8 w-16" />
+                <Skeleton className="h-3 w-32" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!stats) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <p className="text-muted-foreground">Failed to load statistics</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Usage Statistics</h1>
+        <p className="text-muted-foreground">
+          Insights into your bookmarking habits and collection
+        </p>
+      </div>
+
+      {/* Overview Stats */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          title="Total Bookmarks"
+          value={formatNumber(stats.numBookmarks)}
+          icon={<BookOpen className="h-4 w-4 text-muted-foreground" />}
+          description="All saved items"
+        />
+        <StatCard
+          title="Favorites"
+          value={formatNumber(stats.numFavorites)}
+          icon={<Heart className="h-4 w-4 text-muted-foreground" />}
+          description="Starred bookmarks"
+        />
+        <StatCard
+          title="Archived"
+          value={formatNumber(stats.numArchived)}
+          icon={<Archive className="h-4 w-4 text-muted-foreground" />}
+          description="Archived items"
+        />
+        <StatCard
+          title="Tags"
+          value={formatNumber(stats.numTags)}
+          icon={<Hash className="h-4 w-4 text-muted-foreground" />}
+          description="Unique tags created"
+        />
+        <StatCard
+          title="Lists"
+          value={formatNumber(stats.numLists)}
+          icon={<List className="h-4 w-4 text-muted-foreground" />}
+          description="Bookmark collections"
+        />
+        <StatCard
+          title="Highlights"
+          value={formatNumber(stats.numHighlights)}
+          icon={<Highlighter className="h-4 w-4 text-muted-foreground" />}
+          description="Text highlights"
+        />
+        <StatCard
+          title="Storage Used"
+          value={formatBytes(stats.totalAssetSize)}
+          icon={<Database className="h-4 w-4 text-muted-foreground" />}
+          description="Total asset storage"
+        />
+        <StatCard
+          title="This Month"
+          value={formatNumber(stats.bookmarkingActivity.thisMonth)}
+          icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
+          description="Bookmarks added"
+        />
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Bookmark Types */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Bookmark Types
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Link className="h-4 w-4 text-blue-500" />
+                  <span className="text-sm">Links</span>
+                </div>
+                <span className="text-sm font-medium">
+                  {stats.bookmarksByType.link}
+                </span>
+              </div>
+              <Progress
+                value={
+                  stats.numBookmarks > 0
+                    ? (stats.bookmarksByType.link / stats.numBookmarks) * 100
+                    : 0
+                }
+                className="h-2"
+              />
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileText className="h-4 w-4 text-green-500" />
+                  <span className="text-sm">Text Notes</span>
+                </div>
+                <span className="text-sm font-medium">
+                  {stats.bookmarksByType.text}
+                </span>
+              </div>
+              <Progress
+                value={
+                  stats.numBookmarks > 0
+                    ? (stats.bookmarksByType.text / stats.numBookmarks) * 100
+                    : 0
+                }
+                className="h-2"
+              />
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Image className="h-4 w-4 text-purple-500" />
+                  <span className="text-sm">Assets</span>
+                </div>
+                <span className="text-sm font-medium">
+                  {stats.bookmarksByType.asset}
+                </span>
+              </div>
+              <Progress
+                value={
+                  stats.numBookmarks > 0
+                    ? (stats.bookmarksByType.asset / stats.numBookmarks) * 100
+                    : 0
+                }
+                className="h-2"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Recent Activity */}
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              Recent Activity
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-1 items-center">
+            <div className="grid w-full grid-cols-3 gap-4 text-center">
+              <div>
+                <div className="text-2xl font-bold text-green-600">
+                  {stats.bookmarkingActivity.thisWeek}
+                </div>
+                <div className="text-xs text-muted-foreground">This Week</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {stats.bookmarkingActivity.thisMonth}
+                </div>
+                <div className="text-xs text-muted-foreground">This Month</div>
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-purple-600">
+                  {stats.bookmarkingActivity.thisYear}
+                </div>
+                <div className="text-xs text-muted-foreground">This Year</div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Top Domains */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Globe className="h-5 w-5" />
+              Top Domains
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {stats.topDomains.length > 0 ? (
+              <div className="space-y-3">
+                {stats.topDomains
+                  .slice(0, 8)
+                  .map(
+                    (
+                      domain: { domain: string; count: number },
+                      index: number,
+                    ) => (
+                      <div
+                        key={domain.domain}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                            {index + 1}
+                          </div>
+                          <span
+                            className="max-w-[200px] truncate text-sm"
+                            title={domain.domain}
+                          >
+                            {domain.domain}
+                          </span>
+                        </div>
+                        <Badge variant="secondary">{domain.count}</Badge>
+                      </div>
+                    ),
+                  )}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No domains found</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Top Tags */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Hash className="h-5 w-5" />
+              Most Used Tags
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {stats.tagUsage.length > 0 ? (
+              <div className="space-y-3">
+                {stats.tagUsage
+                  .slice(0, 8)
+                  .map(
+                    (tag: { name: string; count: number }, index: number) => (
+                      <div
+                        key={tag.name}
+                        className="flex items-center justify-between"
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-muted text-xs font-medium">
+                            {index + 1}
+                          </div>
+                          <span
+                            className="max-w-[200px] truncate text-sm"
+                            title={tag.name}
+                          >
+                            {tag.name}
+                          </span>
+                        </div>
+                        <Badge variant="secondary">{tag.count}</Badge>
+                      </div>
+                    ),
+                  )}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">No tags found</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Activity Patterns */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Hourly Activity */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Clock className="h-5 w-5" />
+              Activity by Hour
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SimpleBarChart
+              data={stats.bookmarkingActivity.byHour.map(
+                (h: { hour: number; count: number }) => h.count,
+              )}
+              maxValue={maxHourlyActivity}
+              labels={hourLabels}
+            />
+          </CardContent>
+        </Card>
+
+        {/* Daily Activity */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5" />
+              Activity by Day
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SimpleBarChart
+              data={stats.bookmarkingActivity.byDayOfWeek.map(
+                (d: { day: number; count: number }) => d.count,
+              )}
+              maxValue={maxDailyActivity}
+              labels={dayNames}
+            />
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Asset Storage */}
+      {stats.assetsByType.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Storage Breakdown
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {stats.assetsByType.map(
+                (asset: { type: string; count: number; totalSize: number }) => (
+                  <div key={asset.type} className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium capitalize">
+                        {asset.type.replace(/([A-Z])/g, " $1").trim()}
+                      </span>
+                      <Badge variant="outline">{asset.count}</Badge>
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {formatBytes(asset.totalSize)}
+                    </div>
+                    <Progress
+                      value={
+                        stats.totalAssetSize > 0
+                          ? (asset.totalSize / stats.totalAssetSize) * 100
+                          : 0
+                      }
+                      className="h-2"
+                    />
+                  </div>
+                ),
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
