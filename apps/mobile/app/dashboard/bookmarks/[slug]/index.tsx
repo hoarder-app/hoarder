@@ -47,41 +47,75 @@ import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 type BookmarkLinkType = "browser" | "reader" | "screenshot" | "archive";
 
+function getAvailableViewTypes(bookmark: ZBookmark): BookmarkLinkType[] {
+  if (bookmark.content.type !== BookmarkTypes.LINK) {
+    return [];
+  }
+
+  const availableTypes: BookmarkLinkType[] = ["browser", "reader"];
+
+  if (bookmark.assets.some((asset) => asset.assetType === "screenshot")) {
+    availableTypes.push("screenshot");
+  }
+
+  if (
+    bookmark.assets.some(
+      (asset) =>
+        asset.assetType === "precrawledArchive" ||
+        asset.assetType === "fullPageArchive",
+    )
+  ) {
+    availableTypes.push("archive");
+  }
+
+  return availableTypes;
+}
+
 function BookmarkLinkTypeSelector({
   type,
   onChange,
+  bookmark,
 }: {
   type: BookmarkLinkType;
   onChange: (type: BookmarkLinkType) => void;
+  bookmark: ZBookmark;
 }) {
+  const availableTypes = getAvailableViewTypes(bookmark);
+
+  const allActions = [
+    {
+      id: "reader" as const,
+      title: "Reader View",
+      state: type === "reader" ? ("on" as const) : undefined,
+    },
+    {
+      id: "browser" as const,
+      title: "Browser",
+      state: type === "browser" ? ("on" as const) : undefined,
+    },
+    {
+      id: "screenshot" as const,
+      title: "Screenshot",
+      state: type === "screenshot" ? ("on" as const) : undefined,
+    },
+    {
+      id: "archive" as const,
+      title: "Archived Page",
+      state: type === "archive" ? ("on" as const) : undefined,
+    },
+  ];
+
+  const availableActions = allActions.filter((action) =>
+    availableTypes.includes(action.id),
+  );
+
   return (
     <MenuView
       onPressAction={({ nativeEvent }) => {
         Haptics.selectionAsync();
         onChange(nativeEvent.event as BookmarkLinkType);
       }}
-      actions={[
-        {
-          id: "reader",
-          title: "Reader",
-          state: type === "reader" ? "on" : undefined,
-        },
-        {
-          id: "browser",
-          title: "Browser",
-          state: type === "browser" ? "on" : undefined,
-        },
-        {
-          id: "screenshot",
-          title: "Screenshot",
-          state: type === "screenshot" ? "on" : undefined,
-        },
-        {
-          id: "archive",
-          title: "Archive",
-          state: type === "archive" ? "on" : undefined,
-        },
-      ]}
+      actions={availableActions}
       shouldOpenOnLongPress={false}
     >
       <ChevronDown onPress={() => Haptics.selectionAsync()} color="gray" />
@@ -346,7 +380,7 @@ export default function ListView() {
   const isDark = colorScheme === "dark";
 
   const [bookmarkLinkType, setBookmarkLinkType] =
-    useState<BookmarkLinkType>("reader");
+    useState<BookmarkLinkType>("browser");
 
   if (typeof slug !== "string") {
     throw new Error("Unexpected param type");
@@ -407,6 +441,7 @@ export default function ListView() {
               <BookmarkLinkTypeSelector
                 type={bookmarkLinkType}
                 onChange={(type) => setBookmarkLinkType(type)}
+                bookmark={bookmark}
               />
             ) : undefined,
         }}
