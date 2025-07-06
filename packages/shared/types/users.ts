@@ -92,6 +92,7 @@ export const zUserSettingsSchema = z.object({
     "expand_bookmark_preview",
   ]),
   archiveDisplayBehaviour: z.enum(["show", "hide"]),
+  timezone: z.string(),
 });
 
 export type ZUserSettings = z.infer<typeof zUserSettingsSchema>;
@@ -99,4 +100,5 @@ export type ZUserSettings = z.infer<typeof zUserSettingsSchema>;
 export const zUpdateUserSettingsSchema = zUserSettingsSchema.partial().pick({
   bookmarkClickAction: true,
   archiveDisplayBehaviour: true,
+  timezone: true,
 });

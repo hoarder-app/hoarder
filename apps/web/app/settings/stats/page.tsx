@@ -110,6 +110,7 @@ function StatCard({
 export default function StatsPage() {
   const { t } = useTranslation();
   const { data: stats, isLoading } = api.users.stats.useQuery();
+  const { data: userSettings } = api.users.settings.useQuery();
 
   const maxHourlyActivity = useMemo(() => {
     if (!stats) return 0;
@@ -176,6 +177,11 @@ export default function StatsPage() {
         </h1>
         <p className="text-muted-foreground">
           Insights into your bookmarking habits and collection
+          {userSettings?.timezone && userSettings.timezone !== "UTC" && (
+            <span className="block text-sm">
+              Times shown in {userSettings.timezone} timezone
+            </span>
+          )}
         </p>
       </div>
 
@@ -443,6 +449,11 @@ export default function StatsPage() {
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
               {t("settings.stats.activity_patterns.activity_by_hour")}
+              {userSettings?.timezone && userSettings.timezone !== "UTC" && (
+                <span className="text-xs font-normal text-muted-foreground">
+                  ({userSettings.timezone})
+                </span>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -462,6 +473,11 @@ export default function StatsPage() {
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5" />
               {t("settings.stats.activity_patterns.activity_by_day")}
+              {userSettings?.timezone && userSettings.timezone !== "UTC" && (
+                <span className="text-xs font-normal text-muted-foreground">
+                  ({userSettings.timezone})
+                </span>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent>

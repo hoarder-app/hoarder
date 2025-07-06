@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useClientConfig } from "@/lib/clientConfig";
 import { useTranslation } from "@/lib/i18n/client";
 import { useInterfaceLang } from "@/lib/userLocalSettings/bookmarksLayout";
 import { updateInterfaceLang } from "@/lib/userLocalSettings/userLocalSettings";
 import { useUserSettings } from "@/lib/userSettings";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Archive, Bookmark, Globe } from "lucide-react";
+import { Archive, Bookmark, Clock, Globe } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -71,6 +71,9 @@ export default function UserOptions() {
       });
     },
   });
+  const [timezones, setTimezones] = useState<
+    { label: string; value: string }[] | null
+  >(null);
 
   const bookmarkClickActionTranslation: Record<
     ZUserSettings["bookmarkClickAction"],
@@ -91,6 +94,39 @@ export default function UserOptions() {
     show: t("settings.info.user_settings.archive_display_behaviour.show"),
     hide: t("settings.info.user_settings.archive_display_behaviour.hide"),
   };
+
+  // Get all supported timezones and format them nicely
+  useEffect(() => {
+    try {
+      const browserTimezones = Intl.supportedValuesOf("timeZone");
+      setTimezones(
+        browserTimezones
+          .map((tz) => {
+            // Create a more readable label by replacing underscores with spaces
+            // and showing the current time offset
+            const now = new Date();
+            const formatter = new Intl.DateTimeFormat("en", {
+              timeZone: tz,
+              timeZoneName: "short",
+            });
+            const parts = formatter.formatToParts(now);
+            const timeZoneName =
+              parts.find((part) => part.type === "timeZoneName")?.value || "";
+
+            // Format the timezone name for display
+            const displayName = tz.replace(/_/g, " ").replace("/", " / ");
+            const label = timeZoneName
+              ? `${displayName} (${timeZoneName})`
+              : displayName;
+
+            return { value: tz, label };
+          })
+          .sort((a, b) => a.label.localeCompare(b.label)),
+      );
+    } catch {
+      setTimezones(null);
+    }
+  }, []);
 
   const form = useForm<z.infer<typeof zUserSettingsSchema>>({
     resolver: zodResolver(zUserSettingsSchema),
@@ -119,9 +155,47 @@ export default function UserOptions() {
             <LanguageSelect />
           </div>
 
+          <FormField
+            control={form.control}
+            name="timezone"
+            render={({ field }) => (
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2 text-sm font-medium">
+                  <Clock className="h-4 w-4" />
+                  Timezone
+                </Label>
+                <Select
+                  disabled={!!clientConfig.demoMode || timezones === null}
+                  value={field.value}
+                  onValueChange={(value) => {
+                    mutate({
+                      timezone: value,
+                    });
+                  }}
+                >
+                  <SelectTrigger className="h-11">
+                    <SelectValue>
+                      {timezones?.find(
+                        (tz: { value: string; label: string }) =>
+                          tz.value === field.value,
+                      )?.label || field.value}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {timezones?.map((tz: { value: string; label: string }) => (
+                      <SelectItem key={tz.value} value={tz.value}>
+                        {tz.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+          />
+
           <Separator />
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             <FormField
               control={form.control}
               name="bookmarkClickAction"

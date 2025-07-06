@@ -547,6 +547,7 @@ export const userSettings = sqliteTable("userSettings", {
   })
     .notNull()
     .default("show"),
+  timezone: text("timezone").default("UTC"),
 });
 
 // Relations

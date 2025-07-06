@@ -228,6 +228,11 @@ export const usersAppRouter = router({
   stats: authedProcedure
     .output(zUserStatsResponseSchema)
     .query(async ({ ctx }) => {
+      // Get user's timezone
+      const userSet = await ctx.db.query.userSettings.findFirst({
+        where: eq(userSettings.userId, ctx.user.id),
+      });
+      const userTimezone = userSet?.timezone || "UTC";
       const now = new Date();
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -247,8 +252,7 @@ export const usersAppRouter = router({
         [{ thisWeek }],
         [{ thisMonth }],
         [{ thisYear }],
-        bookmarkingByHour,
-        bookmarkingByDay,
+        bookmarkTimestamps,
         tagUsage,
       ] = await Promise.all([
         // Basic counts
@@ -404,29 +408,13 @@ export const usersAppRouter = router({
             ),
           ),
 
-        // Bookmarking by hour (UTC time)
+        // Get all bookmark timestamps for timezone conversion
         ctx.db
           .select({
-            hour: sql<number>`CAST(strftime('%H', datetime(${bookmarks.createdAt} / 1000, 'unixepoch')) AS INTEGER)`,
-            count: count(),
+            createdAt: bookmarks.createdAt,
           })
           .from(bookmarks)
-          .where(eq(bookmarks.userId, ctx.user.id))
-          .groupBy(
-            sql`strftime('%H', datetime(${bookmarks.createdAt} / 1000, 'unixepoch'))`,
-          ),
-
-        // Bookmarking by day of week (UTC time)
-        ctx.db
-          .select({
-            day: sql<number>`CAST(strftime('%w', datetime(${bookmarks.createdAt} / 1000, 'unixepoch')) AS INTEGER)`,
-            count: count(),
-          })
-          .from(bookmarks)
-          .where(eq(bookmarks.userId, ctx.user.id))
-          .groupBy(
-            sql`strftime('%w', datetime(${bookmarks.createdAt} / 1000, 'unixepoch'))`,
-          ),
+          .where(eq(bookmarks.userId, ctx.user.id)),
 
         // Tag usage
         ctx.db
@@ -454,15 +442,34 @@ export const usersAppRouter = router({
         }
       });
 
-      // Fill missing hours and days with 0
+      // Process timestamps with user timezone
+      const hourCounts = Array.from({ length: 24 }, () => 0);
+      const dayCounts = Array.from({ length: 7 }, () => 0);
+
+      bookmarkTimestamps.forEach(({ createdAt }) => {
+        if (createdAt) {
+          // Convert timestamp to user timezone
+          const date = new Date(createdAt);
+          const userDate = new Date(
+            date.toLocaleString("en-US", { timeZone: userTimezone }),
+          );
+
+          const hour = userDate.getHours();
+          const day = userDate.getDay();
+
+          hourCounts[hour]++;
+          dayCounts[day]++;
+        }
+      });
+
       const hourlyActivity = Array.from({ length: 24 }, (_, i) => ({
         hour: i,
-        count: bookmarkingByHour.find((item) => item.hour === i)?.count || 0,
+        count: hourCounts[i],
       }));
 
       const dailyActivity = Array.from({ length: 7 }, (_, i) => ({
         day: i,
-        count: bookmarkingByDay.find((item) => item.day === i)?.count || 0,
+        count: dayCounts[i],
       }));
 
       return {
@@ -501,6 +508,7 @@ export const usersAppRouter = router({
       return {
         bookmarkClickAction: settings.bookmarkClickAction,
         archiveDisplayBehaviour: settings.archiveDisplayBehaviour,
+        timezone: settings.timezone || "UTC",
       };
     }),
   updateSettings: authedProcedure
@@ -517,6 +525,7 @@ export const usersAppRouter = router({
         .set({
           bookmarkClickAction: input.bookmarkClickAction,
           archiveDisplayBehaviour: input.archiveDisplayBehaviour,
+          timezone: input.timezone,
         })
         .where(eq(userSettings.userId, ctx.user.id));
     }),
