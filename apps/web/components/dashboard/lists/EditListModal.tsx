@@ -377,6 +377,7 @@ export function EditListModal({
                         <Link
                           href="https://docs.karakeep.app/Guides/search-query-language"
                           className="italic"
+                          target="_blank"
                         >
                           {t("lists.search_query_help")}
                         </Link>

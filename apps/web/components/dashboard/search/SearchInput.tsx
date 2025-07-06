@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useDoBookmarkSearch } from "@/lib/hooks/bookmark-search";
@@ -84,17 +85,20 @@ const SearchInput = React.forwardRef<
           query: value,
         }}
       />
-      <QueryExplainerTooltip
-        className="-translate-1/2 absolute right-1.5 top-2 stroke-foreground p-0.5"
-        parsedSearchQuery={parsedSearchQuery}
-      />
+      <Link
+        href="https://docs.karakeep.app/Guides/search-query-language"
+        target="_blank"
+        className="-translate-1/2 absolute right-1.5 top-2 z-50 stroke-foreground px-0.5"
+      >
+        <QueryExplainerTooltip parsedSearchQuery={parsedSearchQuery} />
+      </Link>
       {parsedSearchQuery.result === "full" &&
         parsedSearchQuery.text.length == 0 && (
           <Button
             onClick={() => setNewNestedListModalOpen(true)}
             size="none"
             variant="secondary"
-            className="absolute right-9 top-2 z-50 px-2 py-1 text-xs"
+            className="absolute right-10 top-2 z-50 px-2 py-1 text-xs"
           >
             {t("actions.save")}
           </Button>
