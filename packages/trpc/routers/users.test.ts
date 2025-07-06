@@ -115,6 +115,7 @@ describe("User Routes", () => {
     expect(settings).toEqual({
       bookmarkClickAction: "open_original_link",
       archiveDisplayBehaviour: "show",
+      timezone: "UTC",
     });
 
     // Update settings
@@ -127,6 +128,7 @@ describe("User Routes", () => {
     expect(updatedSettings).toEqual({
       bookmarkClickAction: "expand_bookmark_preview",
       archiveDisplayBehaviour: "show",
+      timezone: "UTC",
     });
 
     // Test invalid update (e.g., empty input, if schema enforces it)
