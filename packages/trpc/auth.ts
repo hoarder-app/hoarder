@@ -93,6 +93,12 @@ export async function validatePassword(email: string, password: string) {
   });
 
   if (!user) {
+    // Run a bcrypt comparison anyways to hide the fact of whether the user exists or not (protecting against timing attacks)
+    await bcrypt.compare(
+      password +
+        "b6bfd1e907eb40462e73986f6cd628c036dc079b101186d36d53b824af3c9d2e",
+      "a-dummy-password-that-should-never-match",
+    );
     throw new Error("User not found");
   }
 
