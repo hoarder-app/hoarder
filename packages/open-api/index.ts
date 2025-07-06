@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as process from "process";
 import {
   OpenApiGeneratorV3,
   OpenAPIRegistry,
@@ -54,4 +55,19 @@ function writeDocumentation() {
   });
 }
 
-writeDocumentation();
+function checkDocumentation() {
+  const docs = getOpenApiDocumentation();
+  const fileContent = JSON.stringify(docs, null, 2);
+  const oldContent = fs.readFileSync(`./karakeep-openapi-spec.json`, {
+    encoding: "utf-8",
+  });
+  if (oldContent !== fileContent) {
+    process.exit(1);
+  }
+}
+
+if (process.argv[2] === "check") {
+  checkDocumentation();
+} else {
+  writeDocumentation();
+}
