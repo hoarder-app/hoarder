@@ -351,6 +351,10 @@ export const adminAppRouter = router({
         updateData.bookmarkQuota = input.bookmarkQuota;
       }
 
+      if (input.storageQuota !== undefined) {
+        updateData.storageQuota = input.storageQuota;
+      }
+
       if (Object.keys(updateData).length === 0) {
         throw new TRPCError({
           code: "BAD_REQUEST",

@@ -148,6 +148,7 @@ export const usersAppRouter = router({
             role: z.enum(["user", "admin"]).nullable(),
             localUser: z.boolean(),
             bookmarkQuota: z.number().nullable(),
+            storageQuota: z.number().nullable(),
           }),
         ),
       }),
@@ -161,6 +162,7 @@ export const usersAppRouter = router({
           role: users.role,
           password: users.password,
           bookmarkQuota: users.bookmarkQuota,
+          storageQuota: users.storageQuota,
         })
         .from(users);
 

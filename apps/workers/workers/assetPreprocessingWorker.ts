@@ -21,6 +21,10 @@ import {
   OpenAIQueue,
   triggerSearchReindex,
 } from "@karakeep/shared/queues";
+import {
+  checkStorageQuota,
+  StorageQuotaError,
+} from "@karakeep/trpc/lib/storageQuota";
 
 export class AssetPreprocessingWorker {
   static build() {
@@ -128,6 +132,13 @@ export async function extractAndSavePDFScreenshot(
       return false;
     }
 
+    // Check storage quota before inserting
+    const quotaApproved = await checkStorageQuota(
+      db,
+      bookmark.userId,
+      screenshot.buffer.byteLength,
+    );
+
     // Store the screenshot
     const assetId = newAssetId();
     const fileName = "screenshot.png";
@@ -140,6 +151,7 @@ export async function extractAndSavePDFScreenshot(
         contentType,
         fileName,
       },
+      quotaApproved,
     });
 
     // Insert into database
@@ -158,6 +170,12 @@ export async function extractAndSavePDFScreenshot(
     );
     return true;
   } catch (error) {
+    if (error instanceof StorageQuotaError) {
+      logger.warn(
+        `[assetPreprocessing][${jobId}] Skipping PDF screenshot due to quota exceeded: ${error.message}`,
+      );
+      return true; // Return true to indicate the job completed successfully, just skipped the asset
+    }
     logger.error(
       `[assetPreprocessing][${jobId}] Failed to process PDF screenshot: ${error}`,
     );

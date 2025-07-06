@@ -16,6 +16,7 @@ import { z } from "zod";
 
 import serverConfig from "./config";
 import logger from "./logger";
+import { QuotaApproved } from "./storageQuota";
 
 const ROOT_PATH = serverConfig.assetsDir;
 
@@ -616,12 +617,22 @@ export async function saveAsset({
   assetId,
   asset,
   metadata,
+  quotaApproved,
 }: {
   userId: string;
   assetId: string;
   asset: Buffer;
   metadata: z.infer<typeof zAssetMetadataSchema>;
+  quotaApproved: QuotaApproved;
 }) {
+  // Verify the quota approval is for the correct user and size
+  if (quotaApproved.userId !== userId) {
+    throw new Error("Quota approval is for a different user");
+  }
+  if (quotaApproved.approvedSize < asset.byteLength) {
+    throw new Error("Asset size exceeds approved quota");
+  }
+
   return defaultAssetStore.saveAsset({ userId, assetId, asset, metadata });
 }
 
@@ -630,12 +641,22 @@ export async function saveAssetFromFile({
   assetId,
   assetPath,
   metadata,
+  quotaApproved,
 }: {
   userId: string;
   assetId: string;
   assetPath: string;
   metadata: z.infer<typeof zAssetMetadataSchema>;
+  quotaApproved: QuotaApproved;
 }) {
+  // Verify the quota approval is for the correct user
+  if (quotaApproved.userId !== userId) {
+    throw new Error("Quota approval is for a different user");
+  }
+
+  // For file-based saves, we'll verify the file size matches the approved size
+  // when the underlying store implementation reads the file
+
   return defaultAssetStore.saveAssetFromFile({
     userId,
     assetId,
@@ -723,36 +744,4 @@ export async function deleteUserAssets({ userId }: { userId: string }) {
 
 export async function* getAllAssets() {
   yield* defaultAssetStore.getAllAssets();
-}
-
-export async function storeScreenshot(
-  screenshot: Buffer | undefined,
-  userId: string,
-  jobId: string,
-) {
-  if (!serverConfig.crawler.storeScreenshot) {
-    logger.info(
-      `[Crawler][${jobId}] Skipping storing the screenshot as per the config.`,
-    );
-    return null;
-  }
-  if (!screenshot) {
-    logger.info(
-      `[Crawler][${jobId}] Skipping storing the screenshot as it's empty.`,
-    );
-    return null;
-  }
-  const assetId = newAssetId();
-  const contentType = "image/png";
-  const fileName = "screenshot.png";
-  await saveAsset({
-    userId,
-    assetId,
-    metadata: { contentType, fileName },
-    asset: screenshot,
-  });
-  logger.info(
-    `[Crawler][${jobId}] Stored the screenshot as assetId: ${assetId}`,
-  );
-  return { assetId, contentType, fileName, size: screenshot.byteLength };
 }

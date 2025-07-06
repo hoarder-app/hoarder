@@ -72,6 +72,7 @@ export default function UsersSection() {
           <TableHead>{t("common.email")}</TableHead>
           <TableHead>{t("admin.users_list.num_bookmarks")}</TableHead>
           <TableHead>{t("common.quota")}</TableHead>
+          <TableHead>Storage Quota</TableHead>
           <TableHead>{t("admin.users_list.asset_sizes")}</TableHead>
           <TableHead>{t("common.role")}</TableHead>
           <TableHead>{t("admin.users_list.local_user")}</TableHead>
@@ -87,6 +88,11 @@ export default function UsersSection() {
               </TableCell>
               <TableCell className="py-1">
                 {u.bookmarkQuota ?? t("admin.users_list.unlimited")}
+              </TableCell>
+              <TableCell className="py-1">
+                {u.storageQuota
+                  ? toHumanReadableSize(u.storageQuota)
+                  : t("admin.users_list.unlimited")}
               </TableCell>
               <TableCell className="py-1">
                 {toHumanReadableSize(userStats[u.id].assetSizes)}
@@ -140,6 +146,7 @@ export default function UsersSection() {
                   userId={u.id}
                   currentRole={u.role!}
                   currentQuota={u.bookmarkQuota}
+                  currentStorageQuota={u.storageQuota}
                 >
                   <ButtonWithTooltip
                     tooltip="Edit User"

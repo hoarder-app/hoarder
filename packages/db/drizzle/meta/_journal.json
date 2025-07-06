@@ -372,6 +372,13 @@
       "when": 1751409503089,
       "tag": "0052_add_bookmark_quota",
       "breakpoints": true
+    },
+    {
+      "idx": 53,
+      "version": "6",
+      "when": 1751816757805,
+      "tag": "0053_storage_quota",
+      "breakpoints": true
     }
   ]
 }

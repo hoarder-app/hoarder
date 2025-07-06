@@ -61,6 +61,10 @@ import {
   zCrawlLinkRequestSchema,
 } from "@karakeep/shared/queues";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
+import {
+  checkStorageQuota,
+  StorageQuotaError,
+} from "@karakeep/trpc/lib/storageQuota";
 
 import metascraperReddit from "../metascraper-plugins/metascraper-reddit";
 
@@ -435,16 +439,35 @@ async function storeScreenshot(
   const assetId = newAssetId();
   const contentType = "image/png";
   const fileName = "screenshot.png";
-  await saveAsset({
-    userId,
-    assetId,
-    metadata: { contentType, fileName },
-    asset: screenshot,
-  });
-  logger.info(
-    `[Crawler][${jobId}] Stored the screenshot as assetId: ${assetId}`,
-  );
-  return { assetId, contentType, fileName, size: screenshot.byteLength };
+
+  // Check storage quota before saving the screenshot
+  try {
+    const quotaApproved = await checkStorageQuota(
+      db,
+      userId,
+      screenshot.byteLength,
+    );
+
+    await saveAsset({
+      userId,
+      assetId,
+      metadata: { contentType, fileName },
+      asset: screenshot,
+      quotaApproved,
+    });
+    logger.info(
+      `[Crawler][${jobId}] Stored the screenshot as assetId: ${assetId}`,
+    );
+    return { assetId, contentType, fileName, size: screenshot.byteLength };
+  } catch (error) {
+    if (error instanceof StorageQuotaError) {
+      logger.warn(
+        `[Crawler][${jobId}] Skipping screenshot storage due to quota exceeded: ${error.message}`,
+      );
+      return null;
+    }
+    throw error;
+  }
 }
 
 async function downloadAndStoreFile(
@@ -470,11 +493,19 @@ async function downloadAndStoreFile(
       throw new Error("No content type in the response");
     }
 
+    // Check storage quota before saving the asset
+    const quotaApproved = await checkStorageQuota(
+      db,
+      userId,
+      buffer.byteLength,
+    );
+
     await saveAsset({
       userId,
       assetId,
       metadata: { contentType },
       asset: Buffer.from(buffer),
+      quotaApproved,
     });
 
     logger.info(
@@ -483,6 +514,12 @@ async function downloadAndStoreFile(
 
     return { assetId, userId, contentType, size: buffer.byteLength };
   } catch (e) {
+    if (e instanceof StorageQuotaError) {
+      logger.warn(
+        `[Crawler][${jobId}] Skipping ${fileType} storage due to quota exceeded: ${e.message}`,
+      );
+      return null;
+    }
     logger.error(
       `[Crawler][${jobId}] Failed to download and store ${fileType}: ${e}`,
     );
@@ -523,24 +560,52 @@ async function archiveWebpage(
 
   const contentType = "text/html";
 
-  await saveAssetFromFile({
-    userId,
-    assetId,
-    assetPath,
-    metadata: {
+  // Get file size and check quota before saving
+  const stats = await fs.stat(assetPath);
+  const fileSize = stats.size;
+
+  try {
+    const quotaApproved = await checkStorageQuota(db, userId, fileSize);
+
+    await saveAssetFromFile({
+      userId,
+      assetId,
+      assetPath,
+      metadata: {
+        contentType,
+      },
+      quotaApproved,
+    });
+
+    logger.info(
+      `[Crawler][${jobId}] Done archiving the page as assetId: ${assetId}`,
+    );
+
+    return {
+      assetId,
       contentType,
-    },
-  });
-
-  logger.info(
-    `[Crawler][${jobId}] Done archiving the page as assetId: ${assetId}`,
-  );
-
-  return {
-    assetId,
-    contentType,
-    size: await getAssetSize({ userId, assetId }),
-  };
+      size: await getAssetSize({ userId, assetId }),
+    };
+  } catch (error) {
+    if (error instanceof StorageQuotaError) {
+      logger.warn(
+        `[Crawler][${jobId}] Skipping page archive storage due to quota exceeded: ${error.message}`,
+      );
+      // Clean up the temporary file
+      try {
+        await fs.unlink(assetPath);
+        logger.info(
+          `[Crawler][${jobId}] Cleaned up temporary archive file: ${assetPath}`,
+        );
+      } catch (cleanupError) {
+        logger.warn(
+          `[Crawler][${jobId}] Failed to clean up temporary archive file: ${cleanupError}`,
+        );
+      }
+      return null;
+    }
+    throw error;
+  }
 }
 
 async function getContentType(
@@ -761,11 +826,7 @@ async function crawlAndParseUrl(
       !precrawledArchiveAssetId &&
       (serverConfig.crawler.fullPageArchive || archiveFullPage)
     ) {
-      const {
-        assetId: fullPageArchiveAssetId,
-        size,
-        contentType,
-      } = await archiveWebpage(
+      const archiveResult = await archiveWebpage(
         htmlContent,
         browserUrl,
         userId,
@@ -773,23 +834,31 @@ async function crawlAndParseUrl(
         abortSignal,
       );
 
-      await db.transaction(async (txn) => {
-        await updateAsset(
-          oldFullPageArchiveAssetId,
-          {
-            id: fullPageArchiveAssetId,
-            bookmarkId,
-            userId,
-            assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
-            contentType,
-            size,
-            fileName: null,
-          },
-          txn,
-        );
-      });
-      if (oldFullPageArchiveAssetId) {
-        silentDeleteAsset(userId, oldFullPageArchiveAssetId);
+      if (archiveResult) {
+        const {
+          assetId: fullPageArchiveAssetId,
+          size,
+          contentType,
+        } = archiveResult;
+
+        await db.transaction(async (txn) => {
+          await updateAsset(
+            oldFullPageArchiveAssetId,
+            {
+              id: fullPageArchiveAssetId,
+              bookmarkId,
+              userId,
+              assetType: AssetTypes.LINK_FULL_PAGE_ARCHIVE,
+              contentType,
+              size,
+              fileName: null,
+            },
+            txn,
+          );
+        });
+        if (oldFullPageArchiveAssetId) {
+          silentDeleteAsset(userId, oldFullPageArchiveAssetId);
+        }
       }
     }
   };

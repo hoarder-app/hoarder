@@ -39,6 +39,7 @@ export const users = sqliteTable("user", {
   salt: text("salt").notNull().default(""),
   role: text("role", { enum: ["admin", "user"] }).default("user"),
   bookmarkQuota: integer("bookmarkQuota"),
+  storageQuota: integer("storageQuota"),
 });
 
 export const accounts = sqliteTable(
