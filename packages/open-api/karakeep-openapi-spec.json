@@ -3038,6 +3038,145 @@
                     },
                     "numHighlights": {
                       "type": "number"
+                    },
+                    "bookmarksByType": {
+                      "type": "object",
+                      "properties": {
+                        "link": {
+                          "type": "number"
+                        },
+                        "text": {
+                          "type": "number"
+                        },
+                        "asset": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "link",
+                        "text",
+                        "asset"
+                      ]
+                    },
+                    "topDomains": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "domain": {
+                            "type": "string"
+                          },
+                          "count": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "domain",
+                          "count"
+                        ]
+                      },
+                      "maxItems": 10
+                    },
+                    "totalAssetSize": {
+                      "type": "number"
+                    },
+                    "assetsByType": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string"
+                          },
+                          "count": {
+                            "type": "number"
+                          },
+                          "totalSize": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "type",
+                          "count",
+                          "totalSize"
+                        ]
+                      }
+                    },
+                    "bookmarkingActivity": {
+                      "type": "object",
+                      "properties": {
+                        "thisWeek": {
+                          "type": "number"
+                        },
+                        "thisMonth": {
+                          "type": "number"
+                        },
+                        "thisYear": {
+                          "type": "number"
+                        },
+                        "byHour": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "hour": {
+                                "type": "number"
+                              },
+                              "count": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "hour",
+                              "count"
+                            ]
+                          }
+                        },
+                        "byDayOfWeek": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "day": {
+                                "type": "number"
+                              },
+                              "count": {
+                                "type": "number"
+                              }
+                            },
+                            "required": [
+                              "day",
+                              "count"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "thisWeek",
+                        "thisMonth",
+                        "thisYear",
+                        "byHour",
+                        "byDayOfWeek"
+                      ]
+                    },
+                    "tagUsage": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "count": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "name",
+                          "count"
+                        ]
+                      },
+                      "maxItems": 10
                     }
                   },
                   "required": [
@@ -3046,7 +3185,13 @@
                     "numArchived",
                     "numTags",
                     "numLists",
-                    "numHighlights"
+                    "numHighlights",
+                    "bookmarksByType",
+                    "topDomains",
+                    "totalAssetSize",
+                    "assetsByType",
+                    "bookmarkingActivity",
+                    "tagUsage"
                   ]
                 }
               }
