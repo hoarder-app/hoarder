@@ -118,7 +118,7 @@ async function getBookmark(
     });
   }
 
-  return toZodSchema(bookmark, includeContent);
+  return await toZodSchema(bookmark, includeContent);
 }
 
 async function attemptToDedupLink(ctx: AuthedContext, url: string) {
@@ -177,10 +177,10 @@ async function cleanupAssetForBookmark(
   );
 }
 
-function toZodSchema(
+async function toZodSchema(
   bookmark: BookmarkQueryReturnType,
   includeContent: boolean,
-): ZBookmark {
+): Promise<ZBookmark> {
   const { tagsOnBookmarks, link, text, asset, assets, ...rest } = bookmark;
 
   let content: ZBookmarkContent = {
@@ -208,7 +208,9 @@ function toZodSchema(
       description: link.description,
       imageUrl: link.imageUrl,
       favicon: link.favicon,
-      htmlContent: includeContent ? link.htmlContent : null,
+      htmlContent: includeContent
+        ? await Bookmark.getBookmarkHtmlContent(link, bookmark.userId)
+        : null,
       crawledAt: link.crawledAt,
       author: link.author,
       publisher: link.publisher,
@@ -806,7 +808,9 @@ export const bookmarksAppRouter = router({
       }
 
       return {
-        bookmarks: results.map((b) => toZodSchema(b, input.includeContent)),
+        bookmarks: await Promise.all(
+          results.map((b) => toZodSchema(b, input.includeContent)),
+        ),
         nextCursor:
           resp.hits.length + resp.offset >= resp.estimatedTotalHits
             ? null
@@ -1052,10 +1056,15 @@ export const bookmarksAppRouter = router({
         });
       }
 
+      const content = await Bookmark.getBookmarkPlainTextContent(
+        bookmark,
+        ctx.user.id,
+      );
+
       const bookmarkDetails = `
 Title: ${bookmark.title ?? ""}
 Description: ${bookmark.description ?? ""}
-Content: ${bookmark.content ?? ""}
+Content: ${content}
 Publisher: ${bookmark.publisher ?? ""}
 Author: ${bookmark.author ?? ""}
 `;

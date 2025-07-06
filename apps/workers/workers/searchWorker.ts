@@ -11,6 +11,7 @@ import {
   zSearchIndexingRequestSchema,
 } from "@karakeep/shared/queues";
 import { getSearchIdxClient } from "@karakeep/shared/search";
+import { Bookmark } from "@karakeep/trpc/models/bookmarks";
 
 export class SearchIndexingWorker {
   static build() {
@@ -75,6 +76,12 @@ async function runIndex(
     throw new Error(`Bookmark ${bookmarkId} not found`);
   }
 
+  // Extract plain text content from HTML for search indexing
+  const content = await Bookmark.getBookmarkPlainTextContent(
+    bookmark.link,
+    bookmark.userId,
+  );
+
   const task = await searchClient.addDocuments(
     [
       {
@@ -85,7 +92,7 @@ async function runIndex(
               url: bookmark.link.url,
               linkTitle: bookmark.link.title,
               description: bookmark.link.description,
-              content: bookmark.link.content,
+              content,
               publisher: bookmark.link.publisher,
               author: bookmark.link.author,
               datePublished: bookmark.link.datePublished,

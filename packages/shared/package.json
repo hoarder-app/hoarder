@@ -7,6 +7,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.842.0",
     "glob": "^11.0.0",
+    "html-to-text": "^9.0.5",
     "js-tiktoken": "^1.0.20",
     "liteque": "^0.3.2",
     "meilisearch": "^0.37.0",
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
+    "@types/html-to-text": "^9.0.4",
     "vitest": "^1.6.1"
   },
   "scripts": {

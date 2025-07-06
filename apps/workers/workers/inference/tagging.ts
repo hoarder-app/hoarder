@@ -21,6 +21,7 @@ import {
   triggerSearchReindex,
   triggerWebhook,
 } from "@karakeep/shared/queues";
+import { Bookmark } from "@karakeep/trpc/models/bookmarks";
 
 const openAIResponseSchema = z.object({
   tags: z.array(z.string()),
@@ -77,13 +78,17 @@ async function buildPrompt(
 ) {
   const prompts = await fetchCustomPrompts(bookmark.userId, "text");
   if (bookmark.link) {
-    if (!bookmark.link.description && !bookmark.link.content) {
+    let content =
+      (await Bookmark.getBookmarkPlainTextContent(
+        bookmark.link,
+        bookmark.userId,
+      )) ?? "";
+
+    if (!bookmark.link.description && !content) {
       throw new Error(
         `No content found for link "${bookmark.id}". Skipping ...`,
       );
     }
-
-    const content = bookmark.link.content;
     return buildTextPrompt(
       serverConfig.inference.inferredTagLang,
       prompts,

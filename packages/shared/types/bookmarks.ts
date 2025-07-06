@@ -16,6 +16,7 @@ export const zSortOrder = z.enum(["asc", "desc", "relevance"]);
 export type ZSortOrder = z.infer<typeof zSortOrder>;
 
 export const zAssetTypesSchema = z.enum([
+  "linkHtmlContent",
   "screenshot",
   "assetScreenshot",
   "bannerImage",
@@ -45,6 +46,7 @@ export const zBookmarkedLinkSchema = z.object({
   videoAssetId: z.string().nullish(),
   favicon: z.string().nullish(),
   htmlContent: z.string().nullish(),
+  contentAssetId: z.string().nullish(),
   crawledAt: z.date().nullish(),
   author: z.string().nullish(),
   publisher: z.string().nullish(),

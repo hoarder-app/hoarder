@@ -46,5 +46,8 @@ export async function getBookmarkDetails(bookmarkId: string) {
     precrawledArchiveAssetId: bookmark.assets
       .filter((a) => a.assetType == AssetTypes.LINK_PRECRAWLED_ARCHIVE)
       .at(-1)?.id,
+    contentAssetId: bookmark.assets.find(
+      (a) => a.assetType == AssetTypes.LINK_HTML_CONTENT,
+    )?.id,
   };
 }

@@ -161,8 +161,8 @@ export const bookmarkLinks = sqliteTable(
     dateModified: integer("dateModified", { mode: "timestamp" }),
     imageUrl: text("imageUrl"),
     favicon: text("favicon"),
-    content: text("content"),
     htmlContent: text("htmlContent"),
+    contentAssetId: text("contentAssetId"),
     crawledAt: integer("crawledAt", { mode: "timestamp" }),
     crawlStatus: text("crawlStatus", {
       enum: ["pending", "failure", "success"],
@@ -179,6 +179,7 @@ export const enum AssetTypes {
   LINK_FULL_PAGE_ARCHIVE = "linkFullPageArchive",
   LINK_PRECRAWLED_ARCHIVE = "linkPrecrawledArchive",
   LINK_VIDEO = "linkVideo",
+  LINK_HTML_CONTENT = "linkHtmlContent",
   BOOKMARK_ASSET = "bookmarkAsset",
   UNKNOWN = "unknown",
 }
@@ -196,6 +197,7 @@ export const assets = sqliteTable(
         AssetTypes.LINK_FULL_PAGE_ARCHIVE,
         AssetTypes.LINK_PRECRAWLED_ARCHIVE,
         AssetTypes.LINK_VIDEO,
+        AssetTypes.LINK_HTML_CONTENT,
         AssetTypes.BOOKMARK_ASSET,
         AssetTypes.UNKNOWN,
       ],

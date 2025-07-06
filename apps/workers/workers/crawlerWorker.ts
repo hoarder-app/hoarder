@@ -696,6 +696,75 @@ async function handleAsAssetBookmark(
   });
 }
 
+const HTML_CONTENT_SIZE_THRESHOLD = 50 * 1024; // 50KB
+
+type StoreHtmlResult =
+  | { result: "stored"; assetId: string; size: number }
+  | { result: "store_inline" }
+  | { result: "not_stored" };
+
+async function storeHtmlContent(
+  htmlContent: string | undefined,
+  userId: string,
+  jobId: string,
+): Promise<StoreHtmlResult> {
+  if (!htmlContent) {
+    return { result: "not_stored" };
+  }
+
+  const contentBuffer = Buffer.from(htmlContent, "utf8");
+  const contentSize = contentBuffer.byteLength;
+
+  // Only store in assets if content is >= 50KB
+  if (contentSize < HTML_CONTENT_SIZE_THRESHOLD) {
+    logger.info(
+      `[Crawler][${jobId}] HTML content size (${contentSize} bytes) is below threshold, storing inline`,
+    );
+    return { result: "store_inline" };
+  }
+
+  try {
+    const quotaApproved = await checkStorageQuota(
+      db,
+      userId,
+      contentBuffer.byteLength,
+    );
+    const assetId = newAssetId();
+
+    await saveAsset({
+      userId,
+      assetId,
+      asset: contentBuffer,
+      metadata: {
+        contentType: ASSET_TYPES.TEXT_HTML,
+        fileName: null,
+      },
+      quotaApproved,
+    });
+
+    logger.info(
+      `[Crawler][${jobId}] Stored large HTML content (${contentSize} bytes) as asset: ${assetId}`,
+    );
+
+    return {
+      result: "stored",
+      assetId,
+      size: contentSize,
+    };
+  } catch (error) {
+    if (error instanceof StorageQuotaError) {
+      logger.warn(
+        `[Crawler][${jobId}] Skipping HTML content storage due to quota exceeded: ${error.message}`,
+      );
+      return { result: "not_stored" };
+    }
+    logger.error(
+      `[Crawler][${jobId}] Failed to store HTML content as asset: ${error}`,
+    );
+    throw error;
+  }
+}
+
 async function crawlAndParseUrl(
   url: string,
   userId: string,
@@ -704,6 +773,7 @@ async function crawlAndParseUrl(
   oldScreenshotAssetId: string | undefined,
   oldImageAssetId: string | undefined,
   oldFullPageArchiveAssetId: string | undefined,
+  oldContentAssetId: string | undefined,
   precrawledArchiveAssetId: string | undefined,
   archiveFullPage: boolean,
   abortSignal: AbortSignal,
@@ -741,6 +811,12 @@ async function crawlAndParseUrl(
     extractReadableContent(htmlContent, browserUrl, jobId),
     storeScreenshot(screenshot, userId, jobId),
   ]);
+
+  const htmlContentAssetInfo = await storeHtmlContent(
+    readableContent?.content,
+    userId,
+    jobId,
+  );
   abortSignal.throwIfAborted();
   let imageAssetInfo: DBAssetType | null = null;
   if (meta.image) {
@@ -784,8 +860,14 @@ async function crawlAndParseUrl(
         // Don't store data URIs as they're not valid URLs and are usually quite large
         imageUrl: meta.image?.startsWith("data:") ? null : meta.image,
         favicon: meta.logo,
-        content: readableContent?.textContent,
-        htmlContent: readableContent?.content,
+        htmlContent:
+          htmlContentAssetInfo.result === "store_inline"
+            ? readableContent?.content
+            : null,
+        contentAssetId:
+          htmlContentAssetInfo.result === "stored"
+            ? htmlContentAssetInfo.assetId
+            : null,
         crawledAt: new Date(),
         crawlStatusCode: statusCode,
         author: meta.author,
@@ -813,12 +895,31 @@ async function crawlAndParseUrl(
     if (imageAssetInfo) {
       await updateAsset(oldImageAssetId, imageAssetInfo, txn);
     }
+    if (htmlContentAssetInfo.result === "stored") {
+      await updateAsset(
+        oldContentAssetId,
+        {
+          id: htmlContentAssetInfo.assetId,
+          bookmarkId,
+          userId,
+          assetType: AssetTypes.LINK_HTML_CONTENT,
+          contentType: ASSET_TYPES.TEXT_HTML,
+          size: htmlContentAssetInfo.size,
+          fileName: null,
+        },
+        txn,
+      );
+    } else if (oldContentAssetId) {
+      // Unlink the old content asset
+      await txn.delete(assets).where(eq(assets.id, oldContentAssetId));
+    }
   });
 
   // Delete the old assets if any
   await Promise.all([
     silentDeleteAsset(userId, oldScreenshotAssetId),
     silentDeleteAsset(userId, oldImageAssetId),
+    silentDeleteAsset(userId, oldContentAssetId),
   ]);
 
   return async () => {
@@ -857,7 +958,7 @@ async function crawlAndParseUrl(
           );
         });
         if (oldFullPageArchiveAssetId) {
-          silentDeleteAsset(userId, oldFullPageArchiveAssetId);
+          await silentDeleteAsset(userId, oldFullPageArchiveAssetId);
         }
       }
     }
@@ -882,6 +983,7 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
     screenshotAssetId: oldScreenshotAssetId,
     imageAssetId: oldImageAssetId,
     fullPageArchiveAssetId: oldFullPageArchiveAssetId,
+    contentAssetId: oldContentAssetId,
     precrawledArchiveAssetId,
   } = await getBookmarkDetails(bookmarkId);
 
@@ -926,6 +1028,7 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
       oldScreenshotAssetId,
       oldImageAssetId,
       oldFullPageArchiveAssetId,
+      oldContentAssetId,
       precrawledArchiveAssetId,
       archiveFullPage,
       job.abortSignal,
