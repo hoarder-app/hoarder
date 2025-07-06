@@ -116,7 +116,54 @@
       }
     },
     "stats": {
-      "usage_statistics": "Usage Statistics"
+      "usage_statistics": "Usage Statistics",
+      "insights_description": "Insights into your bookmarking habits and collection",
+      "failed_to_load": "Failed to load statistics",
+      "overview": {
+        "total_bookmarks": "Total Bookmarks",
+        "all_saved_items": "All saved items",
+        "favorites": "Favorites",
+        "starred_bookmarks": "Starred bookmarks",
+        "archived": "Archived",
+        "archived_items": "Archived items",
+        "tags": "Tags",
+        "unique_tags_created": "Unique tags created",
+        "lists": "Lists",
+        "bookmark_collections": "Bookmark collections",
+        "highlights": "Highlights",
+        "text_highlights": "Text highlights",
+        "storage_used": "Storage Used",
+        "total_asset_storage": "Total asset storage",
+        "this_month": "This Month",
+        "bookmarks_added": "Bookmarks added"
+      },
+      "bookmark_types": {
+        "title": "Bookmark Types",
+        "links": "Links",
+        "text_notes": "Text Notes",
+        "assets": "Assets"
+      },
+      "recent_activity": {
+        "title": "Recent Activity",
+        "this_week": "This Week",
+        "this_month": "This Month",
+        "this_year": "This Year"
+      },
+      "top_domains": {
+        "title": "Top Domains",
+        "no_domains_found": "No domains found"
+      },
+      "most_used_tags": {
+        "title": "Most Used Tags",
+        "no_tags_found": "No tags found"
+      },
+      "activity_patterns": {
+        "activity_by_hour": "Activity by Hour",
+        "activity_by_day": "Activity by Day"
+      },
+      "storage_breakdown": {
+        "title": "Storage Breakdown"
+      }
     },
     "ai": {
       "ai_settings": "AI Settings",

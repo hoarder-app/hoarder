@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import {
   Archive,
@@ -107,6 +108,7 @@ function StatCard({
 }
 
 export default function StatsPage() {
+  const { t } = useTranslation();
   const { data: stats, isLoading } = api.users.stats.useQuery();
 
   const maxHourlyActivity = useMemo(() => {
@@ -131,9 +133,11 @@ export default function StatsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold">Usage Statistics</h1>
+          <h1 className="text-3xl font-bold">
+            {t("settings.stats.usage_statistics")}
+          </h1>
           <p className="text-muted-foreground">
-            Insights into your bookmarking habits and collection
+            {t("settings.stats.insights_description")}
           </p>
         </div>
 
@@ -157,7 +161,9 @@ export default function StatsPage() {
   if (!stats) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-muted-foreground">Failed to load statistics</p>
+        <p className="text-muted-foreground">
+          {t("settings.stats.failed_to_load")}
+        </p>
       </div>
     );
   }
@@ -165,7 +171,9 @@ export default function StatsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Usage Statistics</h1>
+        <h1 className="text-3xl font-bold">
+          {t("settings.stats.usage_statistics")}
+        </h1>
         <p className="text-muted-foreground">
           Insights into your bookmarking habits and collection
         </p>
@@ -174,52 +182,52 @@ export default function StatsPage() {
       {/* Overview Stats */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Total Bookmarks"
+          title={t("settings.stats.overview.total_bookmarks")}
           value={formatNumber(stats.numBookmarks)}
           icon={<BookOpen className="h-4 w-4 text-muted-foreground" />}
-          description="All saved items"
+          description={t("settings.stats.overview.all_saved_items")}
         />
         <StatCard
-          title="Favorites"
+          title={t("settings.stats.overview.favorites")}
           value={formatNumber(stats.numFavorites)}
           icon={<Heart className="h-4 w-4 text-muted-foreground" />}
-          description="Starred bookmarks"
+          description={t("settings.stats.overview.starred_bookmarks")}
         />
         <StatCard
-          title="Archived"
+          title={t("settings.stats.overview.archived")}
           value={formatNumber(stats.numArchived)}
           icon={<Archive className="h-4 w-4 text-muted-foreground" />}
-          description="Archived items"
+          description={t("settings.stats.overview.archived_items")}
         />
         <StatCard
-          title="Tags"
+          title={t("settings.stats.overview.tags")}
           value={formatNumber(stats.numTags)}
           icon={<Hash className="h-4 w-4 text-muted-foreground" />}
-          description="Unique tags created"
+          description={t("settings.stats.overview.unique_tags_created")}
         />
         <StatCard
-          title="Lists"
+          title={t("settings.stats.overview.lists")}
           value={formatNumber(stats.numLists)}
           icon={<List className="h-4 w-4 text-muted-foreground" />}
-          description="Bookmark collections"
+          description={t("settings.stats.overview.bookmark_collections")}
         />
         <StatCard
-          title="Highlights"
+          title={t("settings.stats.overview.highlights")}
           value={formatNumber(stats.numHighlights)}
           icon={<Highlighter className="h-4 w-4 text-muted-foreground" />}
-          description="Text highlights"
+          description={t("settings.stats.overview.text_highlights")}
         />
         <StatCard
-          title="Storage Used"
+          title={t("settings.stats.overview.storage_used")}
           value={formatBytes(stats.totalAssetSize)}
           icon={<Database className="h-4 w-4 text-muted-foreground" />}
-          description="Total asset storage"
+          description={t("settings.stats.overview.total_asset_storage")}
         />
         <StatCard
-          title="This Month"
+          title={t("settings.stats.overview.this_month")}
           value={formatNumber(stats.bookmarkingActivity.thisMonth)}
           icon={<TrendingUp className="h-4 w-4 text-muted-foreground" />}
-          description="Bookmarks added"
+          description={t("settings.stats.overview.bookmarks_added")}
         />
       </div>
 
@@ -229,7 +237,7 @@ export default function StatsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5" />
-              Bookmark Types
+              {t("settings.stats.bookmark_types.title")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -237,7 +245,9 @@ export default function StatsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Link className="h-4 w-4 text-blue-500" />
-                  <span className="text-sm">Links</span>
+                  <span className="text-sm">
+                    {t("settings.stats.bookmark_types.links")}
+                  </span>
                 </div>
                 <span className="text-sm font-medium">
                   {stats.bookmarksByType.link}
@@ -256,7 +266,9 @@ export default function StatsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <FileText className="h-4 w-4 text-green-500" />
-                  <span className="text-sm">Text Notes</span>
+                  <span className="text-sm">
+                    {t("settings.stats.bookmark_types.text_notes")}
+                  </span>
                 </div>
                 <span className="text-sm font-medium">
                   {stats.bookmarksByType.text}
@@ -275,7 +287,9 @@ export default function StatsPage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Image className="h-4 w-4 text-purple-500" />
-                  <span className="text-sm">Assets</span>
+                  <span className="text-sm">
+                    {t("settings.stats.bookmark_types.assets")}
+                  </span>
                 </div>
                 <span className="text-sm font-medium">
                   {stats.bookmarksByType.asset}
@@ -298,7 +312,7 @@ export default function StatsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              Recent Activity
+              {t("settings.stats.recent_activity.title")}
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-1 items-center">
@@ -307,19 +321,25 @@ export default function StatsPage() {
                 <div className="text-2xl font-bold text-green-600">
                   {stats.bookmarkingActivity.thisWeek}
                 </div>
-                <div className="text-xs text-muted-foreground">This Week</div>
+                <div className="text-xs text-muted-foreground">
+                  {t("settings.stats.recent_activity.this_week")}
+                </div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-blue-600">
                   {stats.bookmarkingActivity.thisMonth}
                 </div>
-                <div className="text-xs text-muted-foreground">This Month</div>
+                <div className="text-xs text-muted-foreground">
+                  {t("settings.stats.recent_activity.this_month")}
+                </div>
               </div>
               <div>
                 <div className="text-2xl font-bold text-purple-600">
                   {stats.bookmarkingActivity.thisYear}
                 </div>
-                <div className="text-xs text-muted-foreground">This Year</div>
+                <div className="text-xs text-muted-foreground">
+                  {t("settings.stats.recent_activity.this_year")}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -330,7 +350,7 @@ export default function StatsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Globe className="h-5 w-5" />
-              Top Domains
+              {t("settings.stats.top_domains.title")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -364,7 +384,9 @@ export default function StatsPage() {
                   )}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No domains found</p>
+              <p className="text-sm text-muted-foreground">
+                {t("settings.stats.top_domains.no_domains_found")}
+              </p>
             )}
           </CardContent>
         </Card>
@@ -374,7 +396,7 @@ export default function StatsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Hash className="h-5 w-5" />
-              Most Used Tags
+              {t("settings.stats.most_used_tags.title")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -405,7 +427,9 @@ export default function StatsPage() {
                   )}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No tags found</p>
+              <p className="text-sm text-muted-foreground">
+                {t("settings.stats.most_used_tags.no_tags_found")}
+              </p>
             )}
           </CardContent>
         </Card>
@@ -418,7 +442,7 @@ export default function StatsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Clock className="h-5 w-5" />
-              Activity by Hour
+              {t("settings.stats.activity_patterns.activity_by_hour")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -437,7 +461,7 @@ export default function StatsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5" />
-              Activity by Day
+              {t("settings.stats.activity_patterns.activity_by_day")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -458,7 +482,7 @@ export default function StatsPage() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Database className="h-5 w-5" />
-              Storage Breakdown
+              {t("settings.stats.storage_breakdown.title")}
             </CardTitle>
           </CardHeader>
           <CardContent>

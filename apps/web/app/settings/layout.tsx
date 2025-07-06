@@ -36,7 +36,7 @@ const settingsSidebarItems = (
     path: "/settings/info",
   },
   {
-    name: "Usage Statistics",
+    name: t("settings.stats.usage_statistics"),
     icon: <BarChart3 size={18} />,
     path: "/settings/stats",
   },
