@@ -1,4 +1,4 @@
-import { getProviders } from "next-auth/react";
+import { authOptions } from "@/server/auth";
 
 import serverConfig from "@karakeep/shared/config";
 
@@ -6,7 +6,7 @@ import CredentialsForm from "./CredentialsForm";
 import SignInProviderButton from "./SignInProviderButton";
 
 export default async function SignInForm() {
-  const providers = await getProviders();
+  const providers = authOptions.providers;
   let providerValues;
   if (providers) {
     providerValues = Object.values(providers).filter(
@@ -36,7 +36,9 @@ export default async function SignInForm() {
           <div className="space-y-2">
             {providerValues.map((provider) => (
               <div key={provider.id}>
-                <SignInProviderButton provider={provider} />
+                <SignInProviderButton
+                  provider={{ id: provider.id, name: provider.name }}
+                />
               </div>
             ))}
           </div>
