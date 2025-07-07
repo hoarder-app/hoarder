@@ -21,6 +21,17 @@ jobs:
           git config user.name "$GITHUB_ACTOR"
           git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
+                - name: Install Helm
+      - uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.18.3
+
+      - name: Add Helm dependency repos
+        run: |
+          helm repo add bjw-s https://bjw-s-labs.github.io/helm-charts
+          helm repo add meilisearch https://meilisearch.github.io/meilisearch-kubernetes
+          helm repo update
+
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.7.0
         with:
