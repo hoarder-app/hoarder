@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { logger } from "hono/logger";
+import { cors } from "hono/cors";
 import { poweredBy } from "hono/powered-by";
 
 import { Context } from "@karakeep/trpc";
@@ -38,6 +39,11 @@ const app = new Hono<{
 }>()
   .use(logger())
   .use(poweredBy())
+  .use(cors({
+    origin: "*",
+    allowHeaders: ["Authorization", "Content-Type"],
+    credentials: true,
+  }))
   .use("*", registerMetrics)
   .use(async (c, next) => {
     // Ensure that the ctx is set
