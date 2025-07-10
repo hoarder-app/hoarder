@@ -142,6 +142,15 @@ export default function CredentialsForm() {
           >
             Sign In
           </ActionButton>
+
+          <div className="text-center">
+            <Link
+              href="/forgot-password"
+              className="text-sm text-muted-foreground underline hover:text-primary"
+            >
+              Forgot your password?
+            </Link>
+          </div>
         </form>
       </Form>
 

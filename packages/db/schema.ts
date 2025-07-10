@@ -87,6 +87,23 @@ export const verificationTokens = sqliteTable(
   (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })],
 );
 
+export const passwordResetTokens = sqliteTable(
+  "passwordResetToken",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    token: text("token").notNull().unique(),
+    expires: integer("expires", { mode: "timestamp_ms" }).notNull(),
+    createdAt: createdAtField(),
+  },
+  (prt) => [index("passwordResetTokens_userId_idx").on(prt.userId)],
+);
+
 export const apiKeys = sqliteTable(
   "apiKey",
   {
@@ -727,3 +744,13 @@ export const invitesRelations = relations(invites, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export const passwordResetTokensRelations = relations(
+  passwordResetTokens,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [passwordResetTokens.userId],
+      references: [users.id],
+    }),
+  }),
+);

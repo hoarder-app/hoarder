@@ -11,13 +11,16 @@ import {
   bookmarks,
   bookmarkTags,
   highlights,
+  passwordResetTokens,
   tagsOnBookmarks,
   users,
   userSettings,
+  verificationTokens,
 } from "@karakeep/db/schema";
 import { deleteUserAssets } from "@karakeep/shared/assetdb";
 import serverConfig from "@karakeep/shared/config";
 import {
+  zResetPasswordSchema,
   zSignUpSchema,
   zUpdateUserSettingsSchema,
   zUserSettingsSchema,
@@ -26,7 +29,7 @@ import {
 } from "@karakeep/shared/types/users";
 
 import { generatePasswordSalt, hashPassword, validatePassword } from "../auth";
-import { sendVerificationEmail, verifyEmailToken } from "../email";
+import { sendPasswordResetEmail, sendVerificationEmail } from "../email";
 import {
   adminProcedure,
   authedProcedure,
@@ -35,6 +38,46 @@ import {
   publicProcedure,
   router,
 } from "../index";
+
+export async function verifyEmailToken(
+  db: Context["db"],
+  email: string,
+  token: string,
+): Promise<boolean> {
+  const verificationToken = await db.query.verificationTokens.findFirst({
+    where: (vt, { and, eq }) =>
+      and(eq(vt.identifier, email), eq(vt.token, token)),
+  });
+
+  if (!verificationToken) {
+    return false;
+  }
+
+  if (verificationToken.expires < new Date()) {
+    // Clean up expired token
+    await db
+      .delete(verificationTokens)
+      .where(
+        and(
+          eq(verificationTokens.identifier, email),
+          eq(verificationTokens.token, token),
+        ),
+      );
+    return false;
+  }
+
+  // Clean up used token
+  await db
+    .delete(verificationTokens)
+    .where(
+      and(
+        eq(verificationTokens.identifier, email),
+        eq(verificationTokens.token, token),
+      ),
+    );
+
+  return true;
+}
 
 export async function createUserRaw(
   db: Context["db"],
@@ -563,7 +606,7 @@ export const usersAppRouter = router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      const isValid = await verifyEmailToken(input.email, input.token);
+      const isValid = await verifyEmailToken(ctx.db, input.email, input.token);
       if (!isValid) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -638,5 +681,116 @@ export const usersAppRouter = router({
           message: "Failed to send verification email",
         });
       }
+    }),
+  forgotPassword: publicProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "users.forgotPassword",
+        windowMs: 15 * 60 * 1000,
+        maxRequests: 3,
+      }),
+    )
+    .input(
+      z.object({
+        email: z.string().email(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (!serverConfig.email.smtp) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Email service is not configured",
+        });
+      }
+
+      const user = await ctx.db.query.users.findFirst({
+        where: eq(users.email, input.email),
+      });
+
+      if (!user) {
+        // Don't reveal if user exists or not for security
+        return { success: true };
+      }
+
+      // Only send reset email for users with passwords (local accounts)
+      if (!user.password) {
+        return { success: true };
+      }
+
+      try {
+        await sendPasswordResetEmail(input.email, user.name, user.id);
+        return { success: true };
+      } catch (error) {
+        console.error("Failed to send password reset email:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send password reset email",
+        });
+      }
+    }),
+  resetPassword: publicProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "users.resetPassword",
+        windowMs: 5 * 60 * 1000,
+        maxRequests: 10,
+      }),
+    )
+    .input(zResetPasswordSchema)
+    .mutation(async ({ input, ctx }) => {
+      const token = input.token;
+      const resetToken = await ctx.db.query.passwordResetTokens.findFirst({
+        where: eq(passwordResetTokens.token, token),
+        with: {
+          user: {
+            columns: {
+              id: true,
+            },
+          },
+        },
+      });
+
+      if (!resetToken) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid or expired reset token",
+        });
+      }
+
+      if (resetToken.expires < new Date()) {
+        // Clean up expired token
+        await ctx.db
+          .delete(passwordResetTokens)
+          .where(eq(passwordResetTokens.token, token));
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid or expired reset token",
+        });
+      }
+
+      if (!resetToken.user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+
+      // Generate new password hash
+      const newSalt = generatePasswordSalt();
+      const hashedPassword = await hashPassword(input.newPassword, newSalt);
+
+      // Update user password
+      await ctx.db
+        .update(users)
+        .set({
+          password: hashedPassword,
+          salt: newSalt,
+        })
+        .where(eq(users.id, resetToken.user.id));
+
+      await ctx.db
+        .delete(passwordResetTokens)
+        .where(eq(passwordResetTokens.token, token));
+      return { success: true };
     }),
 });
