@@ -7,7 +7,12 @@ import { invites, users } from "@karakeep/db/schema";
 
 import { generatePasswordSalt, hashPassword } from "../auth";
 import { sendInviteEmail } from "../email";
-import { adminProcedure, publicProcedure, router } from "../index";
+import {
+  adminProcedure,
+  createRateLimitMiddleware,
+  publicProcedure,
+  router,
+} from "../index";
 import { createUserRaw } from "./users";
 
 export const invitesAppRouter = router({
@@ -113,6 +118,13 @@ export const invitesAppRouter = router({
     }),
 
   get: publicProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "invites.get",
+        windowMs: 60 * 1000,
+        maxRequests: 10,
+      }),
+    )
     .input(
       z.object({
         token: z.string(),
@@ -153,6 +165,13 @@ export const invitesAppRouter = router({
     }),
 
   accept: publicProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "invites.accept",
+        windowMs: 60 * 1000,
+        maxRequests: 10,
+      }),
+    )
     .input(
       z.object({
         token: z.string(),

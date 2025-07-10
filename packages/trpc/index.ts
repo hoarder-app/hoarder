@@ -5,6 +5,7 @@ import { ZodError } from "zod";
 import type { db } from "@karakeep/db";
 import serverConfig from "@karakeep/shared/config";
 
+import { createRateLimitMiddleware } from "./rateLimit";
 import {
   apiErrorsTotalCounter,
   apiRequestDurationSummary,
@@ -86,21 +87,38 @@ export const procedure = t.procedure
     end();
     return res;
   });
-export const publicProcedure = procedure;
 
-export const authedProcedure = procedure.use(function isAuthed(opts) {
-  const user = opts.ctx.user;
+// Default public procedure rate limiting
+export const publicProcedure = procedure.use(
+  createRateLimitMiddleware({
+    name: "globalPublic",
+    windowMs: 60 * 1000,
+    maxRequests: 1000,
+  }),
+);
 
-  if (!user?.id) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
-  }
+export const authedProcedure = procedure
+  // Default authed procedure rate limiting
+  .use(
+    createRateLimitMiddleware({
+      name: "globalAuthed",
+      windowMs: 60 * 1000,
+      maxRequests: 3000,
+    }),
+  )
+  .use(function isAuthed(opts) {
+    const user = opts.ctx.user;
 
-  return opts.next({
-    ctx: {
-      user,
-    },
+    if (!user?.id) {
+      throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
+    return opts.next({
+      ctx: {
+        user,
+      },
+    });
   });
-});
 
 export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
   const user = opts.ctx.user;
@@ -109,3 +127,6 @@ export const adminProcedure = authedProcedure.use(function isAdmin(opts) {
   }
   return opts.next(opts);
 });
+
+// Export the rate limiting utilities for use in routers
+export { createRateLimitMiddleware };

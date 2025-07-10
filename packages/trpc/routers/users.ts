@@ -31,6 +31,7 @@ import {
   adminProcedure,
   authedProcedure,
   Context,
+  createRateLimitMiddleware,
   publicProcedure,
   router,
 } from "../index";
@@ -124,6 +125,13 @@ export async function createUser(
 
 export const usersAppRouter = router({
   create: publicProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "users.create",
+        windowMs: 60 * 1000,
+        maxRequests: 3,
+      }),
+    )
     .input(zSignUpSchema)
     .output(
       z.object({
@@ -541,6 +549,13 @@ export const usersAppRouter = router({
         .where(eq(userSettings.userId, ctx.user.id));
     }),
   verifyEmail: publicProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "users.verifyEmail",
+        windowMs: 5 * 60 * 1000,
+        maxRequests: 10,
+      }),
+    ) // 10 requests per 5 minutes
     .input(
       z.object({
         email: z.string().email(),
@@ -572,6 +587,13 @@ export const usersAppRouter = router({
       return { success: true };
     }),
   resendVerificationEmail: publicProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "users.resendVerificationEmail",
+        windowMs: 5 * 60 * 1000,
+        maxRequests: 3,
+      }),
+    ) // 3 requests per 5 minutes
     .input(
       z.object({
         email: z.string().email(),

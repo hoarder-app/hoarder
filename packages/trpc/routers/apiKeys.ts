@@ -11,7 +11,12 @@ import {
   logAuthenticationError,
   validatePassword,
 } from "../auth";
-import { authedProcedure, publicProcedure, router } from "../index";
+import {
+  authedProcedure,
+  createRateLimitMiddleware,
+  publicProcedure,
+  router,
+} from "../index";
 
 const zApiKeySchema = z.object({
   id: z.string(),
@@ -70,6 +75,13 @@ export const apiKeysAppRouter = router({
   // Exchange the username and password with an API key.
   // Homemade oAuth. This is used by the extension.
   exchange: publicProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "apiKey.exchange",
+        windowMs: 15 * 60 * 1000,
+        maxRequests: 10,
+      }),
+    ) // 10 requests per 15 minutes
     .input(
       z.object({
         keyName: z.string(),
@@ -97,6 +109,13 @@ export const apiKeysAppRouter = router({
       return await generateApiKey(input.keyName, user.id);
     }),
   validate: publicProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "apiKey.validate",
+        windowMs: 60 * 1000,
+        maxRequests: 30,
+      }),
+    ) // 30 requests per minute
     .input(z.object({ apiKey: z.string() }))
     .output(z.object({ success: z.boolean() }))
     .mutation(async ({ input, ctx }) => {

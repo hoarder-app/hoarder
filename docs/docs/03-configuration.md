@@ -13,6 +13,7 @@ The app is mainly configured by environment variables. All the used environment 
 | MAX_ASSET_SIZE_MB         | No                                    | 50      | Sets the maximum allowed asset size (in MB) to be uploaded                                                                                                                                                        |
 | DISABLE_NEW_RELEASE_CHECK | No                                    | false   | If set to true, latest release check will be disabled in the admin panel.                                                                                                                                         |
 | PROMETHEUS_AUTH_TOKEN     | No                                    | Not set | If set, will enable a prometheus metrics endpoint at `/api/metrics`. This endpoint will require this token being passed in the Authorization header as a Bearer token. If not set, that endpoint will return 404. |
+| RATE_LIMITING_ENABLED     | No                                    | false   | If set to true, API rate limiting will be enabled.                                                                                                                                                                |
 
 ## Asset Storage
 

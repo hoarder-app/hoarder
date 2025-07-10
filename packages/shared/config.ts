@@ -113,6 +113,9 @@ const allEnv = z.object({
   ASSET_STORE_S3_ACCESS_KEY_ID: z.string().optional(),
   ASSET_STORE_S3_SECRET_ACCESS_KEY: z.string().optional(),
   ASSET_STORE_S3_FORCE_PATH_STYLE: stringBool("false"),
+
+  // Rate limiting configuration
+  RATE_LIMITING_ENABLED: stringBool("false"),
 });
 
 const serverConfigSchema = allEnv
@@ -250,6 +253,9 @@ const serverConfigSchema = allEnv
       },
       prometheus: {
         metricsToken: val.PROMETHEUS_AUTH_TOKEN,
+      },
+      rateLimiting: {
+        enabled: val.RATE_LIMITING_ENABLED,
       },
     };
   })
