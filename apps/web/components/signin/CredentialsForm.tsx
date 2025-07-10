@@ -28,8 +28,10 @@ const signInSchema = z.object({
   password: z.string(),
 });
 
-const SIGNIN_FAILED = "Incorrect username or password";
+const SIGNIN_FAILED = "Incorrect email or password";
 const OAUTH_FAILED = "OAuth login failed: ";
+
+const VERIFY_EMAIL_ERROR = "Please verify your email address before signing in";
 
 function SignIn() {
   const [signinError, setSigninError] = useState("");
@@ -68,8 +70,16 @@ function SignIn() {
             email: value.email.trim(),
             password: value.password,
           });
-          if (!resp || !resp?.ok) {
-            setSigninError(SIGNIN_FAILED);
+          if (!resp || !resp?.ok || resp.error) {
+            if (resp?.error === "CredentialsSignin") {
+              setSigninError(SIGNIN_FAILED);
+            } else if (resp?.error === VERIFY_EMAIL_ERROR) {
+              router.replace(
+                `/check-email?email=${encodeURIComponent(value.email.trim())}`,
+              );
+            } else {
+              setSigninError(resp?.error ?? SIGNIN_FAILED);
+            }
             return;
           }
           router.replace("/");
@@ -149,8 +159,16 @@ function SignUp() {
             email: value.email.trim(),
             password: value.password,
           });
-          if (!resp || !resp.ok) {
-            setErrorMessage("Hit an unexpected error while signing in");
+          if (!resp || !resp.ok || resp.error) {
+            if (resp?.error === VERIFY_EMAIL_ERROR) {
+              router.replace(
+                `/check-email?email=${encodeURIComponent(value.email.trim())}`,
+              );
+            } else {
+              setErrorMessage(
+                resp?.error ?? "Hit an unexpected error while signing in",
+              );
+            }
             return;
           }
           router.replace("/");

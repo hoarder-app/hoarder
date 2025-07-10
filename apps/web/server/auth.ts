@@ -1,6 +1,6 @@
 import { Adapter, AdapterUser } from "@auth/core/adapters";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { and, count, eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import NextAuth, {
   DefaultSession,
   getServerSession,
@@ -169,22 +169,38 @@ export const authOptions: NextAuthOptions = {
     newUser: "/signin",
   },
   callbacks: {
-    async signIn({ credentials, profile }) {
+    async signIn({ user: credUser, credentials, profile }) {
+      const email = credUser.email || profile?.email;
+      if (!email) {
+        throw new Error("Provider didn't provide an email during signin");
+      }
+      const user = await db.query.users.findFirst({
+        columns: { emailVerified: true },
+        where: eq(users.email, email),
+      });
+
       if (credentials) {
+        if (!user) {
+          throw new Error("Invalid credentials");
+        }
+        if (
+          serverConfig.auth.emailVerificationRequired &&
+          !user.emailVerified
+        ) {
+          throw new Error("Please verify your email address before signing in");
+        }
         return true;
       }
-      if (!profile?.email) {
-        throw new Error("No profile");
-      }
-      const [{ count: userCount }] = await db
-        .select({ count: count() })
-        .from(users)
-        .where(and(eq(users.email, profile.email)));
 
       // If it's a new user and signups are disabled, fail the sign in
-      if (userCount === 0 && serverConfig.auth.disableSignups) {
+      if (!user && serverConfig.auth.disableSignups) {
         throw new Error("Signups are disabled in server config");
       }
+
+      // TODO: We're blindly trusting oauth providers to validate emails
+      // As such, oauth users can sign in even if email verification is enabled.
+      // We might want to change this in the future.
+
       return true;
     },
     async jwt({ token, user }) {

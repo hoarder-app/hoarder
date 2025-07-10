@@ -26,6 +26,7 @@ import {
 } from "@karakeep/shared/types/users";
 
 import { generatePasswordSalt, hashPassword, validatePassword } from "../auth";
+import { sendVerificationEmail, verifyEmailToken } from "../email";
 import {
   adminProcedure,
   authedProcedure,
@@ -102,13 +103,23 @@ export async function createUser(
   role?: "user" | "admin",
 ) {
   const salt = generatePasswordSalt();
-  return await createUserRaw(ctx.db, {
+  let user = await createUserRaw(ctx.db, {
     name: input.name,
     email: input.email,
     password: await hashPassword(input.password, salt),
     salt,
     role,
   });
+  // Send verification email if required
+  if (serverConfig.auth.emailVerificationRequired) {
+    try {
+      await sendVerificationEmail(input.email, input.name);
+    } catch (error) {
+      console.error("Failed to send verification email:", error);
+      // Don't fail user creation if email sending fails
+    }
+  }
+  return user;
 }
 
 export const usersAppRouter = router({
@@ -528,5 +539,82 @@ export const usersAppRouter = router({
           timezone: input.timezone,
         })
         .where(eq(userSettings.userId, ctx.user.id));
+    }),
+  verifyEmail: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+        token: z.string(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      const isValid = await verifyEmailToken(input.email, input.token);
+      if (!isValid) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Invalid or expired verification token",
+        });
+      }
+
+      // Update user's emailVerified status
+      const result = await ctx.db
+        .update(users)
+        .set({ emailVerified: new Date() })
+        .where(eq(users.email, input.email));
+
+      if (result.changes === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+
+      return { success: true };
+    }),
+  resendVerificationEmail: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (
+        !serverConfig.auth.emailVerificationRequired ||
+        !serverConfig.email.smtp
+      ) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Email verification is not enabled",
+        });
+      }
+
+      const user = await ctx.db.query.users.findFirst({
+        where: eq(users.email, input.email),
+      });
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "User not found",
+        });
+      }
+
+      if (user.emailVerified) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Email is already verified",
+        });
+      }
+
+      try {
+        await sendVerificationEmail(input.email, user.name);
+        return { success: true };
+      } catch (error) {
+        console.error("Failed to send verification email:", error);
+        throw new TRPCError({
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send verification email",
+        });
+      }
     }),
 });

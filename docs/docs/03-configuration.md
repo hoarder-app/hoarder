@@ -48,17 +48,18 @@ Only OIDC compliant OAuth providers are supported! For information on how to set
 When setting up OAuth, the allowed redirect URLs configured at the provider should be set to `<KARAKEEP_ADDRESS>/api/auth/callback/custom` where `<KARAKEEP_ADDRESS>` is the address you configured in `NEXTAUTH_URL` (for example: `https://try.karakeep.app/api/auth/callback/custom`).
 :::
 
-| Name                                        | Required | Default                | Description                                                                                                                                                          |
-| ------------------------------------------- | -------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DISABLE_SIGNUPS                             | No       | false                  | If enabled, no new signups will be allowed and the signup button will be disabled in the UI                                                                          |
-| DISABLE_PASSWORD_AUTH                       | No       | false                  | If enabled, only signups and logins using OAuth are allowed and the signup button and login form for local accounts will be disabled in the UI                       |
-| OAUTH_WELLKNOWN_URL                         | No       | Not set                | The "wellknown Url" for openid-configuration as provided by the OAuth provider                                                                                       |
-| OAUTH_CLIENT_SECRET                         | No       | Not set                | The "Client Secret" as provided by the OAuth provider                                                                                                                |
-| OAUTH_CLIENT_ID                             | No       | Not set                | The "Client ID" as provided by the OAuth provider                                                                                                                    |
-| OAUTH_SCOPE                                 | No       | "openid email profile" | "Full list of scopes to request (space delimited)"                                                                                                                   |
-| OAUTH_PROVIDER_NAME                         | No       | "Custom Provider"      | The name of your provider. Will be shown on the signup page as "Sign in with `<name>`"                                                                               |
-| OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING | No       | false                  | Whether existing accounts in karakeep stored in the database should automatically be linked with your OAuth account. Only enable it if you trust the OAuth provider! |
-| OAUTH_TIMEOUT                               | No       | 3500                   | The wait time in milliseconds for the OAuth provider response. Increase this if you are having `outgoing request timed out` errors                                   |
+| Name                                        | Required | Default                | Description                                                                                                                                                                                           |
+| ------------------------------------------- | -------- | ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DISABLE_SIGNUPS                             | No       | false                  | If enabled, no new signups will be allowed and the signup button will be disabled in the UI                                                                                                           |
+| DISABLE_PASSWORD_AUTH                       | No       | false                  | If enabled, only signups and logins using OAuth are allowed and the signup button and login form for local accounts will be disabled in the UI                                                        |
+| EMAIL_VERIFICATION_REQUIRED                 | No       | false                  | Whether email verification is required during user signup. If enabled, users must verify their email address before they can use their account. If you enable this, you must configure SMTP settings. |
+| OAUTH_WELLKNOWN_URL                         | No       | Not set                | The "wellknown Url" for openid-configuration as provided by the OAuth provider                                                                                                                        |
+| OAUTH_CLIENT_SECRET                         | No       | Not set                | The "Client Secret" as provided by the OAuth provider                                                                                                                                                 |
+| OAUTH_CLIENT_ID                             | No       | Not set                | The "Client ID" as provided by the OAuth provider                                                                                                                                                     |
+| OAUTH_SCOPE                                 | No       | "openid email profile" | "Full list of scopes to request (space delimited)"                                                                                                                                                    |
+| OAUTH_PROVIDER_NAME                         | No       | "Custom Provider"      | The name of your provider. Will be shown on the signup page as "Sign in with `<name>`"                                                                                                                |
+| OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING | No       | false                  | Whether existing accounts in karakeep stored in the database should automatically be linked with your OAuth account. Only enable it if you trust the OAuth provider!                                  |
+| OAUTH_TIMEOUT                               | No       | 3500                   | The wait time in milliseconds for the OAuth provider response. Increase this if you are having `outgoing request timed out` errors                                                                    |
 
 For more information on `OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING`, check the [next-auth.js documentation](https://next-auth.js.org/configuration/providers/oauth#allowdangerousemailaccountlinking-option).
 
@@ -121,13 +122,13 @@ Either `OPENAI_API_KEY` or `OLLAMA_BASE_URL` need to be set for automatic taggin
 
 These settings control the number of concurrent workers for different background processing tasks. Increasing these values can improve throughput but will consume more system resources.
 
-| Name                            | Required | Default | Description                                                                                                                                                                                                                                                                                                                                                                   |
-| ------------------------------- | -------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| INFERENCE_NUM_WORKERS           | No       | 1       | Number of concurrent workers for AI inference tasks (tagging and summarization). Increase this if you have multiple AI inference requests and want to process them in parallel.                                                                                                                                                                                              |
-| SEARCH_NUM_WORKERS              | No       | 1       | Number of concurrent workers for search indexing tasks. Increase this if you have a high volume of content being indexed for search.                                                                                                                                                                                                                                         |
-| WEBHOOK_NUM_WORKERS             | No       | 1       | Number of concurrent workers for webhook delivery. Increase this if you have multiple webhook endpoints or high webhook traffic.                                                                                                                                                                                                                                              |
-| ASSET_PREPROCESSING_NUM_WORKERS | No       | 1       | Number of concurrent workers for asset preprocessing tasks (image processing, OCR, etc.). Increase this if you have many images or documents that need processing.                                                                                                                                                                                                           |
-| RULE_ENGINE_NUM_WORKERS         | No       | 1       | Number of concurrent workers for rule engine processing. Increase this if you have complex automation rules that need to be processed quickly.                                                                                                                                                                                                                               |
+| Name                            | Required | Default | Description                                                                                                                                                                     |
+| ------------------------------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| INFERENCE_NUM_WORKERS           | No       | 1       | Number of concurrent workers for AI inference tasks (tagging and summarization). Increase this if you have multiple AI inference requests and want to process them in parallel. |
+| SEARCH_NUM_WORKERS              | No       | 1       | Number of concurrent workers for search indexing tasks. Increase this if you have a high volume of content being indexed for search.                                            |
+| WEBHOOK_NUM_WORKERS             | No       | 1       | Number of concurrent workers for webhook delivery. Increase this if you have multiple webhook endpoints or high webhook traffic.                                                |
+| ASSET_PREPROCESSING_NUM_WORKERS | No       | 1       | Number of concurrent workers for asset preprocessing tasks (image processing, OCR, etc.). Increase this if you have many images or documents that need processing.              |
+| RULE_ENGINE_NUM_WORKERS         | No       | 1       | Number of concurrent workers for rule engine processing. Increase this if you have complex automation rules that need to be processed quickly.                                  |
 
 ## OCR Configs
 
@@ -168,3 +169,16 @@ You can use webhooks to trigger actions when bookmarks are created, changed or c
   ```
 
   :::
+
+## SMTP Configuration
+
+Karakeep can send emails for various purposes such as email verification during signup. Configure these settings to enable email functionality.
+
+| Name          | Required | Default | Description                                                                                     |
+| ------------- | -------- | ------- | ----------------------------------------------------------------------------------------------- |
+| SMTP_HOST     | No       | Not set | The SMTP server hostname or IP address. Required if you want to enable email functionality.     |
+| SMTP_PORT     | No       | 587     | The SMTP server port. Common values are 587 (STARTTLS), 465 (SSL/TLS), or 25 (unencrypted).     |
+| SMTP_SECURE   | No       | false   | Whether to use SSL/TLS encryption. Set to true for port 465, false for port 587 with STARTTLS.  |
+| SMTP_USER     | No       | Not set | The username for SMTP authentication. Usually your email address.                               |
+| SMTP_PASSWORD | No       | Not set | The password for SMTP authentication. For services like Gmail, use an app-specific password.    |
+| SMTP_FROM     | No       | Not set | The "from" email address that will appear in sent emails. This should be a valid email address. |
