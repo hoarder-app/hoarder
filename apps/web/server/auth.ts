@@ -67,7 +67,7 @@ async function isFirstUser(): Promise<boolean> {
 async function isAdmin(email: string): Promise<boolean> {
   const res = await db.query.users.findFirst({
     columns: { role: true },
-    where: eq(users.email, email),
+    where: eq(users.email, email.toLowerCase()),
   });
   return res?.role == "admin";
 }
@@ -179,7 +179,7 @@ export const authOptions: NextAuthOptions = {
       const [{ count: userCount }] = await db
         .select({ count: count() })
         .from(users)
-        .where(and(eq(users.email, profile.email)));
+        .where(and(eq(users.email, profile.email.toLowerCase())));
 
       // If it's a new user and signups are disabled, fail the sign in
       if (userCount === 0 && serverConfig.auth.disableSignups) {
