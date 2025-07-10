@@ -5,6 +5,7 @@ import { assetsAppRouter } from "./assets";
 import { bookmarksAppRouter } from "./bookmarks";
 import { feedsAppRouter } from "./feeds";
 import { highlightsAppRouter } from "./highlights";
+import { invitesAppRouter } from "./invites";
 import { listsAppRouter } from "./lists";
 import { promptsAppRouter } from "./prompts";
 import { publicBookmarks } from "./publicBookmarks";
@@ -26,6 +27,7 @@ export const appRouter = router({
   webhooks: webhooksAppRouter,
   assets: assetsAppRouter,
   rules: rulesAppRouter,
+  invites: invitesAppRouter,
   publicBookmarks: publicBookmarks,
 });
 // export type definition of API

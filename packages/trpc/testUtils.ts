@@ -28,14 +28,19 @@ export async function seedUsers(db: TestDB) {
     .returning();
 }
 
-export function getApiCaller(db: TestDB, userId?: string, email?: string) {
+export function getApiCaller(
+  db: TestDB,
+  userId?: string,
+  email?: string,
+  role: "user" | "admin" = "user",
+) {
   const createCaller = createCallerFactory(appRouter);
   return createCaller({
     user: userId
       ? {
           id: userId,
           email,
-          role: "user",
+          role,
         }
       : null,
     db,

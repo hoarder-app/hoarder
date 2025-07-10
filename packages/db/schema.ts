@@ -552,6 +552,21 @@ export const userSettings = sqliteTable("userSettings", {
   timezone: text("timezone").default("UTC"),
 });
 
+export const invites = sqliteTable("invites", {
+  id: text("id")
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  email: text("email").notNull(),
+  token: text("token").notNull().unique(),
+  createdAt: createdAtField(),
+  expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
+  usedAt: integer("usedAt", { mode: "timestamp" }),
+  invitedBy: text("invitedBy")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+});
+
 // Relations
 
 export const userRelations = relations(users, ({ many, one }) => ({
@@ -559,6 +574,7 @@ export const userRelations = relations(users, ({ many, one }) => ({
   bookmarks: many(bookmarks),
   webhooks: many(webhooksTable),
   rules: many(ruleEngineRulesTable),
+  invites: many(invites),
   settings: one(userSettings, {
     fields: [users.id],
     references: [userSettings.userId],
@@ -701,6 +717,13 @@ export const rssFeedImportsTableRelations = relations(
 export const userSettingsRelations = relations(userSettings, ({ one }) => ({
   user: one(users, {
     fields: [userSettings.userId],
+    references: [users.id],
+  }),
+}));
+
+export const invitesRelations = relations(invites, ({ one }) => ({
+  invitedBy: one(users, {
+    fields: [invites.invitedBy],
     references: [users.id],
   }),
 }));
