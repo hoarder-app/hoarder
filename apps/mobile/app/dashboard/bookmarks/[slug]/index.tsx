@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -379,8 +379,17 @@ export default function ListView() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
-  const [bookmarkLinkType, setBookmarkLinkType] =
-    useState<BookmarkLinkType>("browser");
+  const { data: userSettings } = api.users.settings.useQuery();
+
+  const [bookmarkLinkType, setBookmarkLinkType] = useState<BookmarkLinkType>(
+    userSettings?.mobileBookmarkClickDefaultViewMode || "reader",
+  );
+
+  useEffect(() => {
+    if (userSettings?.mobileBookmarkClickDefaultViewMode) {
+      setBookmarkLinkType(userSettings.mobileBookmarkClickDefaultViewMode);
+    }
+  }, [userSettings?.mobileBookmarkClickDefaultViewMode]);
 
   if (typeof slug !== "string") {
     throw new Error("Unexpected param type");

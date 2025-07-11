@@ -97,6 +97,7 @@ export const zUserSettingsSchema = z.object({
     "open_original_link",
     "expand_bookmark_preview",
   ]),
+  mobileBookmarkClickDefaultViewMode: z.enum(["browser", "reader"]),
   archiveDisplayBehaviour: z.enum(["show", "hide"]),
   timezone: z.string(),
 });
@@ -105,6 +106,7 @@ export type ZUserSettings = z.infer<typeof zUserSettingsSchema>;
 
 export const zUpdateUserSettingsSchema = zUserSettingsSchema.partial().pick({
   bookmarkClickAction: true,
+  mobileBookmarkClickDefaultViewMode: true,
   archiveDisplayBehaviour: true,
   timezone: true,
 });
