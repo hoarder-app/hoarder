@@ -400,6 +400,13 @@
       "when": 1752180326709,
       "tag": "0056_user_invites",
       "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "6",
+      "when": 1752263100786,
+      "tag": "0057_add_mobile_bookmark_click_default_view_mode",
+      "breakpoints": true
     }
   ]
 }

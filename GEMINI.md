@@ -66,3 +66,7 @@ The project is organized into `apps` and `packages`:
 Starting services:
 - `pnpm web`: Start the web application (this doesn't return, unless you kill it).
 - `pnpm workers`: Starts the background workers (this doesn't return, unless you kill it).
+
+## Development Notes
+
+- When you need to make schema changes, refer to the instructions in docs/docs/07-Development/03-database.md

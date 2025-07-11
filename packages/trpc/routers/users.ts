@@ -526,6 +526,8 @@ export const usersAppRouter = router({
       }
       return {
         bookmarkClickAction: settings.bookmarkClickAction,
+        mobileBookmarkClickDefaultViewMode:
+          settings.mobileBookmarkClickDefaultViewMode,
         archiveDisplayBehaviour: settings.archiveDisplayBehaviour,
         timezone: settings.timezone || "UTC",
       };
@@ -543,6 +545,8 @@ export const usersAppRouter = router({
         .update(userSettings)
         .set({
           bookmarkClickAction: input.bookmarkClickAction,
+          mobileBookmarkClickDefaultViewMode:
+            input.mobileBookmarkClickDefaultViewMode,
           archiveDisplayBehaviour: input.archiveDisplayBehaviour,
           timezone: input.timezone,
         })

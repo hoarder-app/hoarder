@@ -8,6 +8,7 @@ import { api } from "./trpc";
 
 export const UserSettingsContext = createContext<ZUserSettings>({
   bookmarkClickAction: "open_original_link",
+  mobileBookmarkClickDefaultViewMode: "reader",
   archiveDisplayBehaviour: "show",
   timezone: "UTC",
 });
