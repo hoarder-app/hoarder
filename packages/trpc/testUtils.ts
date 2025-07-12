@@ -84,6 +84,9 @@ export function defaultBeforeEach(seedDB = true) {
       OpenAIQueue: {
         enqueue: vi.fn(),
       },
+      SearchIndexingQueue: {
+        enqueue: vi.fn(),
+      },
       triggerRuleEngineOnEvent: vi.fn(),
       triggerSearchReindex: vi.fn(),
       triggerWebhook: vi.fn(),

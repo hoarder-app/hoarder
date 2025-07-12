@@ -579,9 +579,6 @@ importers:
       '@trpc/server':
         specifier: 11.0.0
         version: 11.0.0(typescript@5.8.2)
-      better-sqlite3:
-        specifier: ^11.3.0
-        version: 11.3.0
       cheerio:
         specifier: ^1.0.0
         version: 1.0.0
