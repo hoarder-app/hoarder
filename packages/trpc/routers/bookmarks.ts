@@ -55,7 +55,7 @@ import {
 import { normalizeTagName } from "@karakeep/shared/utils/tag";
 
 import type { AuthedContext, Context } from "../index";
-import { authedProcedure, router } from "../index";
+import { authedProcedure, createRateLimitMiddleware, router } from "../index";
 import { mapDBAssetTypeToUserType } from "../lib/attachments";
 import { getBookmarkIdsFromMatcher } from "../lib/search";
 import { Bookmark } from "../models/bookmarks";
@@ -709,6 +709,13 @@ export const bookmarksAppRouter = router({
       }
     }),
   recrawlBookmark: authedProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "bookmarks.recrawlBookmark",
+        windowMs: 30 * 60 * 1000,
+        maxRequests: 200,
+      }),
+    )
     .input(
       z.object({
         bookmarkId: z.string(),
@@ -1053,6 +1060,13 @@ export const bookmarksAppRouter = router({
       };
     }),
   summarizeBookmark: authedProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "bookmarks.summarizeBookmark",
+        windowMs: 30 * 60 * 1000,
+        maxRequests: 100,
+      }),
+    )
     .input(
       z.object({
         bookmarkId: z.string(),
