@@ -18,6 +18,7 @@ export default function SignInProviderButton({
           callbackUrl: "/",
         })
       }
+      className="w-full"
     >
       Sign in with {provider.name}
     </Button>
