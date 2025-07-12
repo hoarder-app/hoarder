@@ -53,6 +53,23 @@ export function useCreateBookmarkWithPostHook(
   });
 }
 
+export function useCreateBookmarkWithCustomPostHook(
+  postCreationHook: () => (bookmarkId: string) => Promise<void>,
+  ...opts: Parameters<typeof api.bookmarks.createBookmark.useMutation>
+) {
+  const apiUtils = api.useUtils();
+  const postCreationCB = postCreationHook();
+  return api.bookmarks.createBookmark.useMutation({
+    ...opts[0],
+    onSuccess: async (res, req, meta) => {
+      apiUtils.bookmarks.getBookmarks.invalidate();
+      apiUtils.bookmarks.searchBookmarks.invalidate();
+      await postCreationCB(res.id);
+      return opts[0]?.onSuccess?.(res, req, meta);
+    },
+  });
+}
+
 export function useDeleteBookmark(
   ...opts: Parameters<typeof api.bookmarks.deleteBookmark.useMutation>
 ) {

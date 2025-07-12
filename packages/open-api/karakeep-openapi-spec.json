@@ -434,6 +434,9 @@
           },
           "public": {
             "type": "boolean"
+          },
+          "locked": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -441,7 +444,8 @@
           "name",
           "icon",
           "parentId",
-          "public"
+          "public",
+          "locked"
         ]
       },
       "Tag": {
@@ -1831,6 +1835,14 @@
                   "parentId": {
                     "type": "string",
                     "nullable": true
+                  },
+                  "locked": {
+                    "type": "boolean",
+                    "default": false
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 1
                   }
                 },
                 "required": [
@@ -2020,6 +2032,13 @@
                   },
                   "public": {
                     "type": "boolean"
+                  },
+                  "locked": {
+                    "type": "boolean"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 1
                   }
                 }
               }

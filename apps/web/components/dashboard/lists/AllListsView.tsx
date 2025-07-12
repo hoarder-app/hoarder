@@ -5,7 +5,7 @@ import { EditListModal } from "@/components/dashboard/lists/EditListModal";
 import { Button } from "@/components/ui/button";
 import { CollapsibleTriggerChevron } from "@/components/ui/collapsible";
 import { useTranslation } from "@/lib/i18n/client";
-import { MoreHorizontal, Plus } from "lucide-react";
+import { Lock, MoreHorizontal, Plus } from "lucide-react";
 
 import type { ZBookmarkList } from "@karakeep/shared/types/lists";
 
@@ -42,6 +42,7 @@ function ListItem({
           <p className="text-nowrap text-lg">
             {icon} {name}
           </p>
+          {list?.locked && <Lock className="size-4 text-muted-foreground" />}
         </Link>
       </span>
       {list && (

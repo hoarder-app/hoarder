@@ -10,6 +10,7 @@ import {
   inArray,
   lt,
   lte,
+  not,
   or,
 } from "drizzle-orm";
 import invariant from "tiny-invariant";
@@ -20,6 +21,7 @@ import {
   AssetTypes,
   bookmarkAssets,
   bookmarkLinks,
+  bookmarkLists,
   bookmarks,
   bookmarksInLists,
   bookmarkTags,
@@ -166,6 +168,27 @@ export class Bookmark implements PrivacyAware {
                       lte(bookmarks.id, input.cursor.id),
                     ),
                   )
+              : undefined,
+            // Exclude bookmarks from locked lists when no specific list is requested
+            input.listId === undefined
+              ? not(
+                  // Bookmark is not in any locked list
+                  exists(
+                    ctx.db
+                      .select()
+                      .from(bookmarksInLists)
+                      .innerJoin(
+                        bookmarkLists,
+                        eq(bookmarksInLists.listId, bookmarkLists.id),
+                      )
+                      .where(
+                        and(
+                          eq(bookmarksInLists.bookmarkId, bookmarks.id),
+                          eq(bookmarkLists.locked, true),
+                        ),
+                      ),
+                  ),
+                )
               : undefined,
           ),
         )
