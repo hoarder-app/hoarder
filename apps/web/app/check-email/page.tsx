@@ -44,7 +44,7 @@ export default function CheckEmailPage() {
 
   if (!email) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold">
@@ -65,7 +65,7 @@ export default function CheckEmailPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Check Your Email</CardTitle>
@@ -79,11 +79,11 @@ export default function CheckEmailPage() {
           </div>
 
           <div className="space-y-2 text-center">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-muted-foreground">
               We&apos;ve sent a verification email to:
             </p>
-            <p className="font-medium text-gray-900">{email}</p>
-            <p className="text-sm text-gray-600">
+            <p className="font-medium text-foreground">{email}</p>
+            <p className="text-sm text-muted-foreground">
               Click the link in the email to verify your account and complete
               your registration.
             </p>
