@@ -28,7 +28,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Separator } from "../ui/separator";
 import { toast } from "../ui/use-toast";
 
 const LanguageSelect = () => {
@@ -193,9 +192,7 @@ export default function UserOptions() {
             )}
           />
 
-          <Separator />
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-6">
             <FormField
               control={form.control}
               name="bookmarkClickAction"
