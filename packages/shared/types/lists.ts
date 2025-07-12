@@ -17,6 +17,8 @@ export const zNewBookmarkListSchema = z
     type: z.enum(["manual", "smart"]).optional().default("manual"),
     query: z.string().min(1).optional(),
     parentId: z.string().nullish(),
+    locked: z.boolean().optional().default(false),
+    password: z.string().min(1).optional(),
   })
   .refine((val) => val.type === "smart" || !val.query, {
     message: "Manual lists cannot have a query",
@@ -37,6 +39,10 @@ export const zNewBookmarkListSchema = z
     message:
       "Smart lists cannot have unqualified terms (aka full text search terms) in the query",
     path: ["query"],
+  })
+  .refine((val) => !val.locked || val.password, {
+    message: "Locked lists must have a password",
+    path: ["password"],
   });
 
 export const zBookmarkListSchema = z.object({
@@ -48,6 +54,7 @@ export const zBookmarkListSchema = z.object({
   type: z.enum(["manual", "smart"]).default("manual"),
   query: z.string().nullish(),
   public: z.boolean(),
+  locked: z.boolean(),
 });
 
 export type ZBookmarkList = z.infer<typeof zBookmarkListSchema>;
@@ -68,6 +75,8 @@ export const zEditBookmarkListSchema = z.object({
   parentId: z.string().nullish(),
   query: z.string().min(1).optional(),
   public: z.boolean().optional(),
+  locked: z.boolean().optional(),
+  password: z.string().min(1).optional(),
 });
 
 export const zEditBookmarkListSchemaWithValidation = zEditBookmarkListSchema
@@ -86,6 +95,10 @@ export const zEditBookmarkListSchemaWithValidation = zEditBookmarkListSchema
     message:
       "Smart lists cannot have unqualified terms (aka full text search terms) in the query",
     path: ["query"],
+  })
+  .refine((val) => !val.locked || val.password, {
+    message: "Locked lists must have a password",
+    path: ["password"],
   });
 
 export const zMergeListSchema = z

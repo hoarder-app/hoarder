@@ -343,6 +343,9 @@ export const bookmarkLists = sqliteTable(
     // Whoever have access to this token can read the content of this list
     rssToken: text("rssToken"),
     public: integer("public", { mode: "boolean" }).notNull().default(false),
+    // Password protection for locked lists
+    locked: integer("locked", { mode: "boolean" }).notNull().default(false),
+    passwordHash: text("passwordHash"),
   },
   (bl) => [
     index("bookmarkLists_userId_idx").on(bl.userId),

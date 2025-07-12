@@ -30,6 +30,7 @@ describe("Lists Routes", () => {
       description: "A test list",
       icon: "📋",
       type: "manual",
+      locked: false,
     };
 
     const createdList = await api.create(newListInput);
@@ -56,6 +57,7 @@ describe("Lists Routes", () => {
       description: "Original description",
       icon: "📋",
       type: "manual",
+      locked: false,
     };
     const createdList = await api.create(createdListInput);
 
@@ -95,11 +97,13 @@ describe("Lists Routes", () => {
       name: "Source List",
       type: "manual",
       icon: "📚",
+      locked: false,
     };
     const targetListInput: z.infer<typeof zNewBookmarkListSchema> = {
       name: "Target List",
       type: "manual",
       icon: "📖",
+      locked: false,
     };
     const sourceList = await api.create(sourceListInput);
     const targetList = await api.create(targetListInput);
@@ -142,6 +146,7 @@ describe("Lists Routes", () => {
       name: "List to Delete",
       type: "manual",
       icon: "📚",
+      locked: false,
     };
     const createdList = await api.create(createdListInput);
 
@@ -171,6 +176,7 @@ describe("Lists Routes", () => {
       name: "Manual List",
       type: "manual",
       icon: "📚",
+      locked: false,
     };
     const createdList = await api.create(listInput);
 
@@ -202,6 +208,7 @@ describe("Lists Routes", () => {
       type: "smart",
       query: "#example",
       icon: "📚",
+      locked: false,
     };
     const smartList = await api.create(smartListInput);
     await expect(() =>
@@ -216,6 +223,7 @@ describe("Lists Routes", () => {
       name: "Get Test List",
       type: "manual",
       icon: "📚",
+      locked: false,
     };
     const createdList = await api.create(newListInput);
 
@@ -240,6 +248,7 @@ describe("Lists Routes", () => {
       name: "Stats Test List",
       type: "manual",
       icon: "📚",
+      locked: false,
     };
     const createdList = await api.create(listInput);
     await api.addToList({ listId: createdList.id, bookmarkId });

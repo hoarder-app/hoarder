@@ -8,6 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import BookmarkAlreadyExistsToast from "@/components/utils/BookmarkAlreadyExistsToast";
+import { useCreateBookmarkWithPostHook } from "@/hooks/useBookmarkPostCreationHook";
 import { useClientConfig } from "@/lib/clientConfig";
 import { useTranslation } from "@/lib/i18n/client";
 import {
@@ -19,7 +20,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { useCreateBookmarkWithPostHook } from "@karakeep/shared-react/hooks/bookmarks";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import { useUploadAsset } from "../UploadDropzone";

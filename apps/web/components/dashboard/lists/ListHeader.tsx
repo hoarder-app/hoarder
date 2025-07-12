@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n/client";
-import { MoreHorizontal, SearchIcon } from "lucide-react";
+import { Lock, MoreHorizontal, SearchIcon } from "lucide-react";
 
 import { api } from "@karakeep/shared-react/trpc";
 import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
@@ -54,6 +54,7 @@ export default function ListHeader({
             </span>
           )}
         </span>
+        {list.locked && <Lock className="size-5 text-muted-foreground" />}
       </div>
       <div className="flex items-center">
         {parsedQuery && (

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CollapsibleTriggerTriangle } from "@/components/ui/collapsible";
 import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
-import { CirclePlus, MoreHorizontal } from "lucide-react";
+import { CirclePlus, Lock, MoreHorizontal } from "lucide-react";
 
 import type { ZBookmarkList } from "@karakeep/shared/types/lists";
 import { ZBookmarkListTreeNode } from "@karakeep/shared/utils/listUtils";
@@ -70,8 +70,11 @@ export default function AllLists({
               )
             }
             logo={
-              <span className="flex">
+              <span className="flex items-center gap-1">
                 <span className="text-lg"> {node.item.icon}</span>
+                {node.item.locked && (
+                  <Lock className="size-3 text-muted-foreground" />
+                )}
               </span>
             }
             name={node.item.name}

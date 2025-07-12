@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useCallback, useState } from "react";
+import { useCreateBookmarkWithPostHook } from "@/hooks/useBookmarkPostCreationHook";
 import useUpload from "@/lib/hooks/upload-file";
 import { cn } from "@/lib/utils";
 import { TRPCClientError } from "@trpc/client";
 import DropZone from "react-dropzone";
 
-import { useCreateBookmarkWithPostHook } from "@karakeep/shared-react/hooks/bookmarks";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import LoadingSpinner from "../ui/spinner";

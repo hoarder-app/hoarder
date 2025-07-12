@@ -1,5 +1,6 @@
 import crypto from "node:crypto";
 import { TRPCError } from "@trpc/server";
+import bcrypt from "bcryptjs";
 import { and, count, eq, or } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
@@ -22,16 +23,19 @@ import { getBookmarkIdsFromMatcher } from "../lib/search";
 import { Bookmark } from "./bookmarks";
 import { PrivacyAware } from "./privacy";
 
+// Internal type that includes passwordHash for server-side operations
+type InternalBookmarkList = ZBookmarkList & {
+  userId: string;
+  passwordHash?: string | null;
+};
+
 export abstract class List implements PrivacyAware {
   protected constructor(
     protected ctx: AuthedContext,
-    public list: ZBookmarkList & { userId: string },
+    public list: InternalBookmarkList,
   ) {}
 
-  private static fromData(
-    ctx: AuthedContext,
-    data: ZBookmarkList & { userId: string },
-  ) {
+  private static fromData(ctx: AuthedContext, data: InternalBookmarkList) {
     if (data.type === "smart") {
       return new SmartList(ctx, data);
     } else {
@@ -71,6 +75,7 @@ export abstract class List implements PrivacyAware {
     const listdb = await ctx.db.query.bookmarkLists.findFirst({
       where: and(
         eq(bookmarkLists.id, listId),
+        eq(bookmarkLists.locked, false), // Exclude locked lists from public access
         or(
           eq(bookmarkLists.public, true),
           token !== null ? eq(bookmarkLists.rssToken, token) : undefined,
@@ -152,6 +157,12 @@ export abstract class List implements PrivacyAware {
     ctx: AuthedContext,
     input: z.infer<typeof zNewBookmarkListSchema>,
   ): Promise<ManualList | SmartList> {
+    // Hash password if list is locked
+    let passwordHash: string | undefined;
+    if (input.locked && input.password) {
+      passwordHash = await bcrypt.hash(input.password, 12);
+    }
+
     const [result] = await ctx.db
       .insert(bookmarkLists)
       .values({
@@ -162,17 +173,29 @@ export abstract class List implements PrivacyAware {
         parentId: input.parentId,
         type: input.type,
         query: input.query,
+        locked: input.locked ?? false,
+        passwordHash,
       })
       .returning();
     return this.fromData(ctx, result);
   }
 
-  static async getAll(ctx: AuthedContext): Promise<(ManualList | SmartList)[]> {
+  static async getAll(
+    ctx: AuthedContext,
+    includeLockedLists = false,
+  ): Promise<(ManualList | SmartList)[]> {
+    const whereConditions = [eq(bookmarkLists.userId, ctx.user.id)];
+
+    // Exclude locked lists unless explicitly requested
+    if (!includeLockedLists) {
+      whereConditions.push(eq(bookmarkLists.locked, false));
+    }
+
     const lists = await ctx.db.query.bookmarkLists.findMany({
       columns: {
         rssToken: false,
       },
-      where: and(eq(bookmarkLists.userId, ctx.user.id)),
+      where: and(...whereConditions),
     });
     return lists.map((l) => this.fromData(ctx, l));
   }
@@ -201,6 +224,52 @@ export abstract class List implements PrivacyAware {
     }
   }
 
+  /**
+   * Get the public representation of the list (without passwordHash)
+   */
+  get publicList(): ZBookmarkList {
+    const {
+      passwordHash: _passwordHash,
+      userId: _userId,
+      ...publicData
+    } = this.list;
+    return publicData;
+  }
+
+  /**
+   * Check if the provided password is correct for a locked list
+   */
+  async verifyPassword(password: string): Promise<boolean> {
+    if (!this.list.locked || !this.list.passwordHash) {
+      return false;
+    }
+    return await bcrypt.compare(password, this.list.passwordHash);
+  }
+
+  /**
+   * Ensure the list can be accessed - either it's not locked or password is verified
+   */
+  async ensureCanAccessLocked(password?: string): Promise<void> {
+    if (!this.list.locked) {
+      return; // Not locked, access allowed
+    }
+
+    if (!password) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "This list is locked and requires a password",
+      });
+    }
+
+    const isValid = await this.verifyPassword(password);
+    if (!isValid) {
+      throw new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Invalid password for locked list",
+      });
+    }
+  }
+
   async delete() {
     const res = await this.ctx.db
       .delete(bookmarkLists)
@@ -218,16 +287,33 @@ export abstract class List implements PrivacyAware {
   async update(
     input: z.infer<typeof zEditBookmarkListSchemaWithValidation>,
   ): Promise<void> {
+    // Hash password if list is being locked
+    let passwordHash: string | null | undefined;
+    if (input.locked && input.password) {
+      passwordHash = await bcrypt.hash(input.password, 12);
+    } else if (input.locked === false) {
+      // Clear password when unlocking
+      passwordHash = null;
+    }
+
+    const updateData: Record<string, unknown> = {
+      name: input.name,
+      description: input.description,
+      icon: input.icon,
+      parentId: input.parentId,
+      query: input.query,
+      public: input.public,
+      locked: input.locked,
+    };
+
+    // Only update password hash if it was explicitly set
+    if (passwordHash !== undefined) {
+      updateData.passwordHash = passwordHash;
+    }
+
     const result = await this.ctx.db
       .update(bookmarkLists)
-      .set({
-        name: input.name,
-        description: input.description,
-        icon: input.icon,
-        parentId: input.parentId,
-        query: input.query,
-        public: input.public,
-      })
+      .set(updateData)
       .where(
         and(
           eq(bookmarkLists.id, this.list.id),
