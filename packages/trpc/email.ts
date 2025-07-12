@@ -1,24 +1,15 @@
-import { randomBytes } from "crypto";
 import { createTransport } from "nodemailer";
 
-import { db } from "@karakeep/db";
-import { passwordResetTokens, verificationTokens } from "@karakeep/db/schema";
 import serverConfig from "@karakeep/shared/config";
 
-export async function sendVerificationEmail(email: string, name: string) {
+export async function sendVerificationEmail(
+  email: string,
+  name: string,
+  token: string,
+) {
   if (!serverConfig.email.smtp) {
     throw new Error("SMTP is not configured");
   }
-
-  const token = randomBytes(10).toString("hex");
-  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
-
-  // Store verification token
-  await db.insert(verificationTokens).values({
-    identifier: email,
-    token,
-    expires,
-  });
 
   const transporter = createTransport({
     host: serverConfig.email.smtp.host,
@@ -133,21 +124,11 @@ If you weren't expecting this invitation, you can safely ignore this email.
 export async function sendPasswordResetEmail(
   email: string,
   name: string,
-  userId: string,
+  token: string,
 ) {
   if (!serverConfig.email.smtp) {
     throw new Error("SMTP is not configured");
   }
-
-  const token = randomBytes(32).toString("hex");
-  const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
-
-  // Store password reset token
-  await db.insert(passwordResetTokens).values({
-    userId,
-    token,
-    expires,
-  });
 
   const transporter = createTransport({
     host: serverConfig.email.smtp.host,
@@ -197,5 +178,4 @@ If you didn't request a password reset, please ignore this email. Your password 
   };
 
   await transporter.sendMail(mailOptions);
-  return token;
 }

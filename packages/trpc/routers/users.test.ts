@@ -14,7 +14,7 @@ import type { CustomTestContext } from "../testUtils";
 import * as emailModule from "../email";
 import { defaultBeforeEach, getApiCaller } from "../testUtils";
 
-// Mock server config with all required properties - MUST be before any imports that use config
+// Mock server config with email settings
 vi.mock("@karakeep/shared/config", async (original) => {
   const mod = (await original()) as typeof import("@karakeep/shared/config");
   return {
@@ -516,7 +516,7 @@ describe("User Routes", () => {
       unauthedAPICaller,
     }) => {
       // Create a user first
-      const user = await unauthedAPICaller.users.create({
+      await unauthedAPICaller.users.create({
         name: "Test User",
         email: "reset@test.com",
         password: "pass1234",
@@ -534,7 +534,7 @@ describe("User Routes", () => {
       expect(emailModule.sendPasswordResetEmail).toHaveBeenCalledWith(
         "reset@test.com",
         "Test User",
-        user.id,
+        expect.any(String), // token
       );
     });
 

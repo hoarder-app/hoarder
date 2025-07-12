@@ -6,6 +6,32 @@ import { invites, users } from "@karakeep/db/schema";
 import type { CustomTestContext } from "../testUtils";
 import { defaultBeforeEach, getApiCaller } from "../testUtils";
 
+// Mock server config with email settings
+vi.mock("@karakeep/shared/config", async (original) => {
+  const mod = (await original()) as typeof import("@karakeep/shared/config");
+  return {
+    ...mod,
+    default: {
+      ...mod.default,
+      email: {
+        smtp: {
+          host: "test-smtp.example.com",
+          port: 587,
+          secure: false,
+          user: "test@example.com",
+          password: "test-password",
+          from: "test@example.com",
+        },
+      },
+    },
+  };
+});
+
+// Mock email functions
+vi.mock("../email", () => ({
+  sendInviteEmail: vi.fn().mockResolvedValue(undefined),
+}));
+
 beforeEach<CustomTestContext>(defaultBeforeEach(false));
 
 describe("Invites Router", () => {

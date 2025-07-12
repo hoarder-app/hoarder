@@ -1,3 +1,4 @@
+import { randomBytes } from "crypto";
 import { TRPCError } from "@trpc/server";
 import { and, count, desc, eq, gte, sql } from "drizzle-orm";
 import invariant from "tiny-invariant";
@@ -39,7 +40,21 @@ import {
   router,
 } from "../index";
 
-export async function verifyEmailToken(
+async function genEmailVerificationToken(db: Context["db"], email: string) {
+  const token = randomBytes(10).toString("hex");
+  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+  // Store verification token
+  await db.insert(verificationTokens).values({
+    identifier: email,
+    token,
+    expires,
+  });
+
+  return token;
+}
+
+async function verifyEmailToken(
   db: Context["db"],
   email: string,
   token: string,
@@ -156,8 +171,9 @@ export async function createUser(
   });
   // Send verification email if required
   if (serverConfig.auth.emailVerificationRequired) {
+    const token = await genEmailVerificationToken(ctx.db, input.email);
     try {
-      await sendVerificationEmail(input.email, input.name);
+      await sendVerificationEmail(input.email, input.name, token);
     } catch (error) {
       console.error("Failed to send verification email:", error);
       // Don't fail user creation if email sending fails
@@ -671,8 +687,9 @@ export const usersAppRouter = router({
         });
       }
 
+      const token = await genEmailVerificationToken(ctx.db, input.email);
       try {
-        await sendVerificationEmail(input.email, user.name);
+        await sendVerificationEmail(input.email, user.name, token);
         return { success: true };
       } catch (error) {
         console.error("Failed to send verification email:", error);
@@ -718,7 +735,17 @@ export const usersAppRouter = router({
       }
 
       try {
-        await sendPasswordResetEmail(input.email, user.name, user.id);
+        const token = randomBytes(32).toString("hex");
+        const expires = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
+
+        // Store password reset token
+        await ctx.db.insert(passwordResetTokens).values({
+          userId: user.id,
+          token,
+          expires,
+        });
+
+        await sendPasswordResetEmail(input.email, user.name, token);
         return { success: true };
       } catch (error) {
         console.error("Failed to send password reset email:", error);
