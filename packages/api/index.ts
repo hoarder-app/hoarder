@@ -6,6 +6,7 @@ import { poweredBy } from "hono/powered-by";
 import { Context } from "@karakeep/trpc";
 
 import trpcAdapter from "./middlewares/trpcAdapter";
+import admin from "./routes/admin";
 import assets from "./routes/assets";
 import bookmarks from "./routes/bookmarks";
 import health from "./routes/health";
@@ -58,6 +59,7 @@ const app = new Hono<{
   .route("/health", health)
   .route("/trpc", trpc)
   .route("/v1", v1)
+  .route("/admin", admin)
   .route("/assets", assets)
   .route("/public", publicRoute)
   .route("/metrics", metrics);

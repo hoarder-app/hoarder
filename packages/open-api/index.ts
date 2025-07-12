@@ -5,6 +5,7 @@ import {
   OpenAPIRegistry,
 } from "@asteasolutions/zod-to-openapi";
 
+import { registry as adminRegistry } from "./lib/admin";
 import { registry as assetsRegistry } from "./lib/assets";
 import { registry as bookmarksRegistry } from "./lib/bookmarks";
 import { registry as commonRegistry } from "./lib/common";
@@ -22,6 +23,7 @@ function getOpenApiDocumentation() {
     highlightsRegistry,
     userRegistry,
     assetsRegistry,
+    adminRegistry,
   ]);
 
   const generator = new OpenApiGeneratorV3(registry.definitions);
