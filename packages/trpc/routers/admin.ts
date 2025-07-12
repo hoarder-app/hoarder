@@ -11,7 +11,6 @@ import {
   OpenAIQueue,
   SearchIndexingQueue,
   TidyAssetsQueue,
-  triggerReprocessingFixMode,
   triggerSearchReindex,
   VideoWorkerQueue,
   WebhookQueue,
@@ -238,7 +237,14 @@ export const adminAppRouter = router({
       },
     });
 
-    await Promise.all(bookmarkIds.map((b) => triggerReprocessingFixMode(b.id)));
+    await Promise.all(
+      bookmarkIds.map((b) =>
+        AssetPreprocessingQueue.enqueue({
+          bookmarkId: b.id,
+          fixMode: true,
+        }),
+      ),
+    );
   }),
   reRunInferenceOnAllBookmarks: adminProcedure
     .input(

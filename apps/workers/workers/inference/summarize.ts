@@ -127,5 +127,7 @@ URL: ${link.url ?? ""}
     })
     .where(eq(bookmarks.id, bookmarkId));
 
-  await triggerSearchReindex(bookmarkId);
+  await triggerSearchReindex(bookmarkId, {
+    priority: job.priority,
+  });
 }

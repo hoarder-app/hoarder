@@ -1,6 +1,6 @@
 import os from "os";
 import { eq } from "drizzle-orm";
-import { DequeuedJob, Runner } from "liteque";
+import { DequeuedJob, EnqueueOptions, Runner } from "liteque";
 import PDFParser from "pdf2json";
 import { fromBuffer } from "pdf2pic";
 import { createWorker } from "tesseract.js";
@@ -345,13 +345,20 @@ async function run(req: DequeuedJob<AssetPreprocessingRequest>) {
       );
   }
 
+  // Propagate priority to child jobs
+  const enqueueOpts: EnqueueOptions = {
+    priority: req.priority,
+  };
   if (!isFixMode || anythingChanged) {
-    await OpenAIQueue.enqueue({
-      bookmarkId,
-      type: "tag",
-    });
+    await OpenAIQueue.enqueue(
+      {
+        bookmarkId,
+        type: "tag",
+      },
+      enqueueOpts,
+    );
 
     // Update the search index
-    await triggerSearchReindex(bookmarkId);
+    await triggerSearchReindex(bookmarkId, enqueueOpts);
   }
 }

@@ -686,6 +686,13 @@
                       "createdAt": {
                         "type": "string",
                         "nullable": true
+                      },
+                      "crawlPriority": {
+                        "type": "string",
+                        "enum": [
+                          "low",
+                          "normal"
+                        ]
                       }
                     }
                   },

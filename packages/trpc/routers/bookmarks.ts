@@ -1,5 +1,6 @@
 import { experimental_trpcMiddleware, TRPCError } from "@trpc/server";
 import { and, count, eq, gt, inArray, lt, or } from "drizzle-orm";
+import { EnqueueOptions } from "liteque";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -32,8 +33,8 @@ import {
   AssetPreprocessingQueue,
   LinkCrawlerQueue,
   OpenAIQueue,
+  SearchIndexingQueue,
   triggerRuleEngineOnEvent,
-  triggerSearchDeletion,
   triggerSearchReindex,
   triggerWebhook,
 } from "@karakeep/shared/queues";
@@ -420,37 +421,60 @@ export const bookmarksAppRouter = router({
         };
       });
 
+      const enqueueOpts: EnqueueOptions = {
+        // The lower the priority number, the sooner the job will be processed
+        priority: input.crawlPriority === "low" ? 50 : 0,
+      };
+
       // Enqueue crawling request
       switch (bookmark.content.type) {
         case BookmarkTypes.LINK: {
           // The crawling job triggers openai when it's done
-          await LinkCrawlerQueue.enqueue({
-            bookmarkId: bookmark.id,
-          });
+          await LinkCrawlerQueue.enqueue(
+            {
+              bookmarkId: bookmark.id,
+            },
+            enqueueOpts,
+          );
           break;
         }
         case BookmarkTypes.TEXT: {
-          await OpenAIQueue.enqueue({
-            bookmarkId: bookmark.id,
-            type: "tag",
-          });
+          await OpenAIQueue.enqueue(
+            {
+              bookmarkId: bookmark.id,
+              type: "tag",
+            },
+            enqueueOpts,
+          );
           break;
         }
         case BookmarkTypes.ASSET: {
-          await AssetPreprocessingQueue.enqueue({
-            bookmarkId: bookmark.id,
-            fixMode: false,
-          });
+          await AssetPreprocessingQueue.enqueue(
+            {
+              bookmarkId: bookmark.id,
+              fixMode: false,
+            },
+            enqueueOpts,
+          );
           break;
         }
       }
-      await triggerRuleEngineOnEvent(bookmark.id, [
-        {
-          type: "bookmarkAdded",
-        },
-      ]);
-      await triggerSearchReindex(bookmark.id);
-      await triggerWebhook(bookmark.id, "created");
+      await triggerRuleEngineOnEvent(
+        bookmark.id,
+        [
+          {
+            type: "bookmarkAdded",
+          },
+        ],
+        enqueueOpts,
+      );
+      await triggerSearchReindex(bookmark.id, enqueueOpts);
+      await triggerWebhook(
+        bookmark.id,
+        "created",
+        /* userId */ undefined,
+        enqueueOpts,
+      );
       return bookmark;
     }),
 
@@ -671,7 +695,10 @@ export const bookmarksAppRouter = router({
             eq(bookmarks.id, input.bookmarkId),
           ),
         );
-      await triggerSearchDeletion(input.bookmarkId);
+      await SearchIndexingQueue.enqueue({
+        bookmarkId: input.bookmarkId,
+        type: "delete",
+      });
       await triggerWebhook(input.bookmarkId, "deleted", ctx.user.id);
       if (deleted.changes > 0 && bookmark) {
         await cleanupAssetForBookmark({

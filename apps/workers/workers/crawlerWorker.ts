@@ -10,7 +10,7 @@ import { eq } from "drizzle-orm";
 import { execa } from "execa";
 import { isShuttingDown } from "exit";
 import { JSDOM, VirtualConsole } from "jsdom";
-import { DequeuedJob, Runner } from "liteque";
+import { DequeuedJob, EnqueueOptions, Runner } from "liteque";
 import metascraper from "metascraper";
 import metascraperAmazon from "metascraper-amazon";
 import metascraperAuthor from "metascraper-author";
@@ -56,8 +56,8 @@ import {
   LinkCrawlerQueue,
   OpenAIQueue,
   triggerSearchReindex,
-  triggerVideoWorker,
   triggerWebhook,
+  VideoWorkerQueue,
   zCrawlLinkRequestSchema,
 } from "@karakeep/shared/queues";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
@@ -1034,26 +1034,43 @@ async function runCrawler(job: DequeuedJob<ZCrawlLinkRequest>) {
       job.abortSignal,
     );
 
+    // Propagate priority to child jobs
+    const enqueueOpts: EnqueueOptions = {
+      priority: job.priority,
+    };
+
     // Enqueue openai job (if not set, assume it's true for backward compatibility)
     if (job.data.runInference !== false) {
-      await OpenAIQueue.enqueue({
-        bookmarkId,
-        type: "tag",
-      });
-      await OpenAIQueue.enqueue({
-        bookmarkId,
-        type: "summarize",
-      });
+      await OpenAIQueue.enqueue(
+        {
+          bookmarkId,
+          type: "tag",
+        },
+        enqueueOpts,
+      );
+      await OpenAIQueue.enqueue(
+        {
+          bookmarkId,
+          type: "summarize",
+        },
+        enqueueOpts,
+      );
     }
 
     // Update the search index
-    await triggerSearchReindex(bookmarkId);
+    await triggerSearchReindex(bookmarkId, enqueueOpts);
 
     // Trigger a potential download of a video from the URL
-    await triggerVideoWorker(bookmarkId, url);
+    await VideoWorkerQueue.enqueue(
+      {
+        bookmarkId,
+        url,
+      },
+      enqueueOpts,
+    );
 
     // Trigger a webhook
-    await triggerWebhook(bookmarkId, "crawled");
+    await triggerWebhook(bookmarkId, "crawled", undefined, enqueueOpts);
 
     // Do the archival as a separate last step as it has the potential for failure
     await archivalLogic();

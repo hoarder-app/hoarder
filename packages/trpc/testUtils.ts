@@ -87,7 +87,6 @@ export function defaultBeforeEach(seedDB = true) {
       triggerRuleEngineOnEvent: vi.fn(),
       triggerSearchReindex: vi.fn(),
       triggerWebhook: vi.fn(),
-      triggerSearchDeletion: vi.fn(),
     }));
     Object.assign(context, await buildTestContext(seedDB));
   };

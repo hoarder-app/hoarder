@@ -139,6 +139,9 @@ export const zNewBookmarkRequestSchema = z
     note: z.string().optional(),
     summary: z.string().optional(),
     createdAt: z.coerce.date().optional(),
+    // A mechanism to prioritize crawling of bookmarks depending on whether
+    // they were created by a user interaction or by a bulk import.
+    crawlPriority: z.enum(["low", "normal"]).optional(),
   })
   .and(
     z.discriminatedUnion("type", [

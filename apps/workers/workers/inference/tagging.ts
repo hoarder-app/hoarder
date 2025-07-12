@@ -1,5 +1,5 @@
 import { and, Column, eq, inArray, sql } from "drizzle-orm";
-import { DequeuedJob } from "liteque";
+import { DequeuedJob, EnqueueOptions } from "liteque";
 import { buildImpersonatingTRPCClient } from "trpc";
 import { z } from "zod";
 
@@ -434,9 +434,14 @@ export async function runTagging(
 
   await connectTags(bookmarkId, tags, bookmark.userId);
 
+  // Propagate priority to child jobs
+  const enqueueOpts: EnqueueOptions = {
+    priority: job.priority,
+  };
+
   // Trigger a webhook
-  await triggerWebhook(bookmarkId, "ai tagged");
+  await triggerWebhook(bookmarkId, "ai tagged", undefined, enqueueOpts);
 
   // Update the search index
-  await triggerSearchReindex(bookmarkId);
+  await triggerSearchReindex(bookmarkId, enqueueOpts);
 }
