@@ -86,6 +86,7 @@ const CustomProvider = (): Adapter => {
         name: user.name ?? "",
         email: user.email,
         emailVerified: user.emailVerified,
+        role: user.role,
       });
     },
   };
