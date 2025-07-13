@@ -35,6 +35,7 @@ export const zWhoAmIResponseSchema = z.object({
   id: z.string(),
   name: z.string().nullish(),
   email: z.string().nullish(),
+  localUser: z.boolean(),
 });
 
 export const zUserStatsResponseSchema = z.object({

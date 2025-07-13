@@ -289,6 +289,52 @@ export const usersAppRouter = router({
       }
       await deleteUserAssets({ userId: input.userId });
     }),
+  deleteAccount: authedProcedure
+    .input(
+      z.object({
+        password: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      invariant(ctx.user.email, "A user always has an email specified");
+
+      // Check if user has a password (local account)
+      const user = await ctx.db.query.users.findFirst({
+        where: eq(users.id, ctx.user.id),
+      });
+
+      if (!user) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      // If user has a password, verify it before allowing account deletion
+      if (user.password) {
+        if (!input.password) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Password is required for local accounts",
+          });
+        }
+
+        try {
+          await validatePassword(ctx.user.email, input.password);
+        } catch {
+          throw new TRPCError({
+            code: "UNAUTHORIZED",
+            message: "Invalid password",
+          });
+        }
+      }
+
+      // Delete the user account
+      const res = await ctx.db.delete(users).where(eq(users.id, ctx.user.id));
+      if (res.changes == 0) {
+        throw new TRPCError({ code: "NOT_FOUND" });
+      }
+
+      // Delete user assets
+      await deleteUserAssets({ userId: ctx.user.id });
+    }),
   whoami: authedProcedure
     .output(zWhoAmIResponseSchema)
     .query(async ({ ctx }) => {
@@ -301,7 +347,12 @@ export const usersAppRouter = router({
       if (!userDb) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
-      return { id: ctx.user.id, name: ctx.user.name, email: ctx.user.email };
+      return {
+        id: ctx.user.id,
+        name: ctx.user.name,
+        email: ctx.user.email,
+        localUser: userDb.password !== null,
+      };
     }),
   stats: authedProcedure
     .output(zUserStatsResponseSchema)

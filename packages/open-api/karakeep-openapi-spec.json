@@ -3003,10 +3003,14 @@
                     "email": {
                       "type": "string",
                       "nullable": true
+                    },
+                    "localUser": {
+                      "type": "boolean"
                     }
                   },
                   "required": [
-                    "id"
+                    "id",
+                    "localUser"
                   ]
                 }
               }
