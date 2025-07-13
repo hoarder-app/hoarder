@@ -150,6 +150,7 @@ describe("User Routes", () => {
     expect(settings).toEqual({
       bookmarkClickAction: "open_original_link",
       archiveDisplayBehaviour: "show",
+      mobileBookmarkClickDefaultViewMode: "reader",
       timezone: "UTC",
     });
 
@@ -163,6 +164,7 @@ describe("User Routes", () => {
     expect(updatedSettings).toEqual({
       bookmarkClickAction: "expand_bookmark_preview",
       archiveDisplayBehaviour: "show",
+      mobileBookmarkClickDefaultViewMode: "reader",
       timezone: "UTC",
     });
 

@@ -24,8 +24,22 @@ export default function Dashboard() {
   const imageQualityMin = useSharedValue(0);
   const imageQualityMax = useSharedValue(100);
 
-  const { data: userSettings, isLoading: isUserSettingsLoading } =
-    api.users.settings.useQuery();
+  const {
+    data: userSettings,
+    isLoading: isUserSettingsLoading,
+    error: userSettingsError,
+  } = api.users.settings.useQuery(undefined, {
+    /**
+     * Don't retry if the endpoint doesn't exist
+     * maybe we can remove this after x months after release lol
+     */
+    retry: false,
+  });
+
+  const mobileBookmarkClickDefaultViewModeSupported =
+    !userSettingsError &&
+    userSettings &&
+    "mobileBookmarkClickDefaultViewMode" in userSettings;
 
   useEffect(() => {
     imageQuality.value = settings.imageQuality * 100;
@@ -70,6 +84,34 @@ export default function Dashboard() {
             </Pressable>
           </Link>
         </View>
+        {mobileBookmarkClickDefaultViewModeSupported && (
+          <View className="flex w-full flex-row items-center justify-between gap-8 rounded-lg bg-white px-4 py-2 dark:bg-accent">
+            <Link
+              asChild
+              href="/dashboard/settings/bookmark-default-view"
+              className="flex-1"
+            >
+              <Pressable className="flex flex-row justify-between">
+                <Text className="text-lg text-accent-foreground">
+                  Bookmark View Mode
+                </Text>
+                <View className="flex flex-row items-center gap-2">
+                  {isUserSettingsLoading ? (
+                    <ActivityIndicator size="small" />
+                  ) : (
+                    <Text className="text-lg text-muted-foreground">
+                      {(userSettings?.mobileBookmarkClickDefaultViewMode ||
+                        "reader") === "reader"
+                        ? "Reader"
+                        : "Browser"}
+                    </Text>
+                  )}
+                  <ChevronRight color="rgb(0, 122, 255)" />
+                </View>
+              </Pressable>
+            </Link>
+          </View>
+        )}
         <Text className="w-full p-1 text-2xl font-bold text-foreground">
           Upload Settings
         </Text>
@@ -91,35 +133,6 @@ export default function Dashboard() {
               maximumValue={imageQualityMax}
             />
           </View>
-        </View>
-        <Text className="w-full p-1 text-2xl font-bold text-foreground">
-          Options
-        </Text>
-        <View className="flex w-full flex-row items-center justify-between gap-8 rounded-lg bg-white px-4 py-2 dark:bg-accent">
-          <Link
-            asChild
-            href="/dashboard/settings/bookmark-default-view"
-            className="flex-1"
-          >
-            <Pressable className="flex flex-row justify-between">
-              <Text className="text-lg text-accent-foreground">
-                Default View
-              </Text>
-              <View className="flex flex-row items-center gap-2">
-                {isUserSettingsLoading ? (
-                  <ActivityIndicator size="small" />
-                ) : (
-                  <Text className="text-lg text-muted-foreground">
-                    {userSettings?.mobileBookmarkClickDefaultViewMode ===
-                    "reader"
-                      ? "Reader"
-                      : "Browser"}
-                  </Text>
-                )}
-                <ChevronRight color="rgb(0, 122, 255)" />
-              </View>
-            </Pressable>
-          </Link>
         </View>
         <Divider orientation="horizontal" />
         <Button className="w-full" label="Log Out" onPress={logout} />
