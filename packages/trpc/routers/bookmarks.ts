@@ -187,7 +187,7 @@ async function toZodSchema(
   let content: ZBookmarkContent = {
     type: BookmarkTypes.UNKNOWN,
   };
-  if (link) {
+  if (bookmark.link) {
     content = {
       type: BookmarkTypes.LINK,
       screenshotAssetId: assets.find(
@@ -219,7 +219,7 @@ async function toZodSchema(
       dateModified: link.dateModified,
     };
   }
-  if (text) {
+  if (bookmark.text) {
     content = {
       type: BookmarkTypes.TEXT,
       // It's ok to include the text content as it's usually not big and is used to render the text bookmark card.
@@ -227,7 +227,7 @@ async function toZodSchema(
       sourceUrl: text.sourceUrl,
     };
   }
-  if (asset) {
+  if (bookmark.asset) {
     content = {
       type: BookmarkTypes.ASSET,
       assetType: asset.assetType,

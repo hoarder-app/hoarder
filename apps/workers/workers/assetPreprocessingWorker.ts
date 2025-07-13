@@ -189,11 +189,6 @@ async function extractAndSaveImageText(
   bookmark: NonNullable<Awaited<ReturnType<typeof getBookmark>>>,
   isFixMode: boolean,
 ): Promise<boolean> {
-  if (!bookmark.asset) {
-    throw new Error(
-      `[assetPreprocessing][${jobId}] Bookmark ${bookmark.id} has no asset attached`,
-    );
-  }
   {
     const alreadyHasText = !!bookmark.asset.content;
     if (alreadyHasText && isFixMode) {
@@ -237,11 +232,6 @@ async function extractAndSavePDFText(
   bookmark: NonNullable<Awaited<ReturnType<typeof getBookmark>>>,
   isFixMode: boolean,
 ): Promise<boolean> {
-  if (!bookmark.asset) {
-    throw new Error(
-      `[assetPreprocessing][${jobId}] Bookmark ${bookmark.id} has no asset attached`,
-    );
-  }
   {
     const alreadyHasText = !!bookmark.asset.content;
     if (alreadyHasText && isFixMode) {
