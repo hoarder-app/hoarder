@@ -55,7 +55,7 @@ function ImportCard({
     <Card className="transition-all hover:shadow-md">
       <CardContent className="flex items-center gap-3 p-4">
         <div className="rounded-full bg-primary/10 p-2">
-          <Upload className="h-5 w-5 text-primary" />
+          <Download className="h-5 w-5 text-primary" />
         </div>
         <div className="flex-1">
           <h3 className="font-medium">{text}</h3>
@@ -75,7 +75,7 @@ function ExportButton() {
     <Card className="transition-all hover:shadow-md">
       <CardContent className="flex items-center gap-3 p-4">
         <div className="rounded-full bg-primary/10 p-2">
-          <Download className="h-5 w-5 text-primary" />
+          <Upload className="h-5 w-5 text-primary" />
         </div>
         <div className="flex-1">
           <h3 className="font-medium">Export File</h3>
@@ -131,6 +131,8 @@ export function ImportExportRow() {
         throw new Error("Content is undefined");
       }
       const created = await createBookmark({
+        // This is important to avoid blocking the crawling of more important bookmarks
+        crawlPriority: "low",
         title: bookmark.title,
         createdAt: bookmark.addDate
           ? new Date(bookmark.addDate * 1000)
@@ -150,14 +152,12 @@ export function ImportExportRow() {
 
       await Promise.all([
         // Add to import list
-        ...[
-          toImport.listIds.map((listId) =>
-            addToList({
-              bookmarkId: created.id,
-              listId,
-            }),
-          ),
-        ],
+        ...toImport.listIds.map((listId) =>
+          addToList({
+            bookmarkId: created.id,
+            listId,
+          }),
+        ),
         // Update tags
         bookmark.tags.length > 0
           ? updateTags({
@@ -282,7 +282,7 @@ export function ImportExportRow() {
               };
             });
             return { status: "fulfilled" as const, value: created };
-          } catch (e) {
+          } catch {
             setImportProgress((prev) => {
               const newDone = (prev?.done ?? 0) + 1;
               return {

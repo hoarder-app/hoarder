@@ -8,8 +8,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
     "format": "prettier . --ignore-path ../../.prettierignore",
     "format:fix": "prettier . --ignore-path ../../.prettierignore --write",
     "typecheck": "tsc --noEmit"
@@ -28,7 +28,6 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
-    "@karakeep/eslint-config": "workspace:^0.2.0",
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tailwind-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
@@ -41,13 +40,6 @@
     "tailwindcss": "^3.4.1",
     "vite": "^5.1.0",
     "vite-plugin-svgr": "^4.3.0"
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@karakeep/eslint-config/base",
-      "@karakeep/eslint-config/react"
-    ]
   },
   "prettier": "@karakeep/prettier-config"
 }

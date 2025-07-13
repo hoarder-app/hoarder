@@ -31,7 +31,7 @@
     "@docusaurus/module-type-aliases": "3.7.0",
     "@docusaurus/tsconfig": "3.7.0",
     "@docusaurus/types": "3.7.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.8.3"
   },
   "browserslist": {
     "production": [
@@ -43,14 +43,6 @@
       "last 3 chrome version",
       "last 3 firefox version",
       "last 5 safari version"
-    ]
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@karakeep/eslint-config/base",
-      "@karakeep/eslint-config/nextjs",
-      "@karakeep/eslint-config/react"
     ]
   },
   "prettier": "@karakeep/prettier-config",

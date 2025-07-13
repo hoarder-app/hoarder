@@ -224,7 +224,7 @@ function LinkCard({
   } else {
     imageComp = (
       <Image
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        // oxlint-disable-next-line no-require-imports
         source={require("@/assets/blur.jpeg")}
         className="h-56 w-full rounded-t-lg"
       />

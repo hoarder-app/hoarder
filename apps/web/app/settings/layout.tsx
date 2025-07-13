@@ -6,6 +6,7 @@ import { api } from "@/server/api/client";
 import { TFunction } from "i18next";
 import {
   ArrowLeft,
+  BarChart3,
   Download,
   GitBranch,
   Image,
@@ -33,6 +34,11 @@ const settingsSidebarItems = (
     name: t("settings.info.user_info"),
     icon: <User size={18} />,
     path: "/settings/info",
+  },
+  {
+    name: t("settings.stats.usage_statistics"),
+    icon: <BarChart3 size={18} />,
+    path: "/settings/stats",
   },
   {
     name: t("settings.ai.ai_settings"),

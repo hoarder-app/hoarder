@@ -1,18 +1,24 @@
 import { z } from "zod";
 
+export const PASSWORD_MIN_LENGTH = 8;
 export const PASSWORD_MAX_LENGTH = 100;
 
 export const zSignUpSchema = z
   .object({
     name: z.string().min(1, { message: "Name can't be empty" }),
     email: z.string().email(),
-    password: z.string().min(8).max(PASSWORD_MAX_LENGTH),
+    password: z.string().min(PASSWORD_MIN_LENGTH).max(PASSWORD_MAX_LENGTH),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export const zResetPasswordSchema = z.object({
+  token: z.string(),
+  newPassword: z.string().min(PASSWORD_MIN_LENGTH).max(PASSWORD_MAX_LENGTH),
+});
 
 export const zChangePasswordSchema = z
   .object({
@@ -38,6 +44,52 @@ export const zUserStatsResponseSchema = z.object({
   numTags: z.number(),
   numLists: z.number(),
   numHighlights: z.number(),
+  bookmarksByType: z.object({
+    link: z.number(),
+    text: z.number(),
+    asset: z.number(),
+  }),
+  topDomains: z
+    .array(
+      z.object({
+        domain: z.string(),
+        count: z.number(),
+      }),
+    )
+    .max(10),
+  totalAssetSize: z.number(),
+  assetsByType: z.array(
+    z.object({
+      type: z.string(),
+      count: z.number(),
+      totalSize: z.number(),
+    }),
+  ),
+  bookmarkingActivity: z.object({
+    thisWeek: z.number(),
+    thisMonth: z.number(),
+    thisYear: z.number(),
+    byHour: z.array(
+      z.object({
+        hour: z.number(),
+        count: z.number(),
+      }),
+    ),
+    byDayOfWeek: z.array(
+      z.object({
+        day: z.number(),
+        count: z.number(),
+      }),
+    ),
+  }),
+  tagUsage: z
+    .array(
+      z.object({
+        name: z.string(),
+        count: z.number(),
+      }),
+    )
+    .max(10),
 });
 
 export const zUserSettingsSchema = z.object({
@@ -46,6 +98,7 @@ export const zUserSettingsSchema = z.object({
     "expand_bookmark_preview",
   ]),
   archiveDisplayBehaviour: z.enum(["show", "hide"]),
+  timezone: z.string(),
 });
 
 export type ZUserSettings = z.infer<typeof zUserSettingsSchema>;
@@ -53,4 +106,5 @@ export type ZUserSettings = z.infer<typeof zUserSettingsSchema>;
 export const zUpdateUserSettingsSchema = zUserSettingsSchema.partial().pick({
   bookmarkClickAction: true,
   archiveDisplayBehaviour: true,
+  timezone: true,
 });

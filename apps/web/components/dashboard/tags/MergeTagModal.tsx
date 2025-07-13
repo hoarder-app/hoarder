@@ -50,7 +50,7 @@ export function MergeTagModal({
     },
   });
 
-  const { mutate: mergeTag, isPending: isPending } = useMergeTag({
+  const { mutate: mergeTag, isPending } = useMergeTag({
     onSuccess: (resp) => {
       toast({
         description: "Tag has been updated!",

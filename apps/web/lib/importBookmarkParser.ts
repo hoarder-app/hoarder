@@ -39,7 +39,7 @@ export async function parseNetscapeBookmarkFile(
       const tagsStr = $a.attr("tags");
       try {
         tags = tagsStr && tagsStr.length > 0 ? tagsStr.split(",") : [];
-      } catch (e) {
+      } catch {
         /* empty */
       }
       const url = $a.attr("href");

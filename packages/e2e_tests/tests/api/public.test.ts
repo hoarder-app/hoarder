@@ -8,6 +8,8 @@ import { createTestUser, uploadTestAsset } from "../../utils/api";
 import { waitUntil } from "../../utils/general";
 import { getTrpcClient } from "../../utils/trpc";
 
+const SINGING_SECRET = "secret";
+
 describe("Public API", () => {
   const port = inject("karakeepPort");
 
@@ -174,6 +176,7 @@ describe("Public API", () => {
           assetId,
           userId,
         } as z.infer<typeof zAssetSignedTokenSchema>,
+        SINGING_SECRET,
         Date.now() + 60000, // Expires in 60 seconds
       );
       const res = await fetch(
@@ -208,6 +211,7 @@ describe("Public API", () => {
       };
       const token = createSignedToken(
         malformedInnerPayload,
+        SINGING_SECRET,
         Date.now() + 60000,
       );
       const res = await fetch(
@@ -225,6 +229,7 @@ describe("Public API", () => {
           assetId,
           userId,
         } as z.infer<typeof zAssetSignedTokenSchema>,
+        SINGING_SECRET,
         Date.now() + 1000, // Expires in 1 second
       );
 
@@ -256,6 +261,7 @@ describe("Public API", () => {
           assetId: anotherAssetId,
           userId,
         } as z.infer<typeof zAssetSignedTokenSchema>,
+        SINGING_SECRET,
         Date.now() + 60000,
       );
 
@@ -285,6 +291,7 @@ describe("Public API", () => {
           assetId: assetId, // assetId belongs to user1 (userId)
           userId: userIdUser2, // token claims user2 is accessing it
         } as z.infer<typeof zAssetSignedTokenSchema>,
+        SINGING_SECRET,
         Date.now() + 60000,
       );
 
@@ -307,6 +314,7 @@ describe("Public API", () => {
           assetId: nonExistentAssetId,
           userId, // Valid userId from the primary user
         } as z.infer<typeof zAssetSignedTokenSchema>,
+        SINGING_SECRET,
         Date.now() + 60000,
       );
 

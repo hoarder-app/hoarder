@@ -14,6 +14,7 @@ import { toast } from "@/components/ui/use-toast";
 import { useTranslation } from "@/lib/i18n/client";
 import { api } from "@/lib/trpc";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { Archive, BookOpen, Camera, Video } from "lucide-react";
 
 import {
   useCreateHighlight,
@@ -200,12 +201,20 @@ export default function LinkContentSection({
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            <SelectItem value="cached">{t("preview.reader_view")}</SelectItem>
+            <SelectItem value="cached">
+              <div className="flex items-center">
+                <BookOpen className="mr-2 h-4 w-4" />
+                {t("preview.reader_view")}
+              </div>
+            </SelectItem>
             <SelectItem
               value="screenshot"
               disabled={!bookmark.content.screenshotAssetId}
             >
-              {t("common.screenshot")}
+              <div className="flex items-center">
+                <Camera className="mr-2 h-4 w-4" />
+                {t("common.screenshot")}
+              </div>
             </SelectItem>
             <SelectItem
               value="archive"
@@ -214,10 +223,16 @@ export default function LinkContentSection({
                 !bookmark.content.precrawledArchiveAssetId
               }
             >
-              {t("common.archive")}
+              <div className="flex items-center">
+                <Archive className="mr-2 h-4 w-4" />
+                {t("common.archive")}
+              </div>
             </SelectItem>
             <SelectItem value="video" disabled={!bookmark.content.videoAssetId}>
-              {t("common.video")}
+              <div className="flex items-center">
+                <Video className="mr-2 h-4 w-4" />
+                {t("common.video")}
+              </div>
             </SelectItem>
           </SelectGroup>
         </SelectContent>

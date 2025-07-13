@@ -16,3 +16,6 @@ The whole point of Karakeep is making it easy to hoard the content. That's why t
 
 - **Chrome extension**: [here](https://chromewebstore.google.com/detail/karakeep/kgcjekpmcjjogibpjebkhaanilehneje).
 - **Firefox addon**: [here](https://addons.mozilla.org/en-US/firefox/addon/karakeep/).
+
+- ## Community Extensions
+- **Safari extension**: [App Store Link](https://apps.apple.com/us/app/karakeeper-bookmarker/id6746722790).  For macOS and iOS to allow a simple way to add your bookmarks to your self hosted karakeep instance.

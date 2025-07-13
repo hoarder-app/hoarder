@@ -3,7 +3,7 @@ import { DequeuedJob, Runner } from "liteque";
 import fetch from "node-fetch";
 
 import { db } from "@karakeep/db";
-import { bookmarks } from "@karakeep/db/schema";
+import { bookmarks, webhooksTable } from "@karakeep/db/schema";
 import serverConfig from "@karakeep/shared/config";
 import logger from "@karakeep/shared/logger";
 import {
@@ -33,7 +33,7 @@ export class WebhookWorker {
         },
       },
       {
-        concurrency: 1,
+        concurrency: serverConfig.webhook.numWorkers,
         pollIntervalMs: 1000,
         timeoutSecs:
           serverConfig.webhook.timeoutSec *
@@ -56,13 +56,13 @@ async function fetchBookmark(bookmarkId: string) {
           url: true,
         },
       },
-      user: {
-        columns: {},
-        with: {
-          webhooks: true,
-        },
-      },
     },
+  });
+}
+
+async function fetchUserWebhooks(userId: string) {
+  return await db.query.webhooksTable.findMany({
+    where: eq(webhooksTable.userId, userId),
   });
 }
 
@@ -72,22 +72,23 @@ async function runWebhook(job: DequeuedJob<ZWebhookRequest>) {
 
   const { bookmarkId } = job.data;
   const bookmark = await fetchBookmark(bookmarkId);
-  if (!bookmark) {
-    throw new Error(
-      `[webhook][${jobId}] bookmark with id ${bookmarkId} was not found`,
-    );
-  }
 
-  if (!bookmark.user.webhooks) {
+  const userId = job.data.userId ?? bookmark?.userId;
+  if (!userId) {
+    logger.error(
+      `[webhook][${jobId}] Failed to find user for bookmark with id ${bookmarkId}. Skipping webhook`,
+    );
     return;
   }
 
+  const webhooks = await fetchUserWebhooks(userId);
+
   logger.info(
-    `[webhook][${jobId}] Starting a webhook job for bookmark with id "${bookmark.id} for operation "${job.data.operation}"`,
+    `[webhook][${jobId}] Starting a webhook job for bookmark with id "${bookmarkId} for operation "${job.data.operation}"`,
   );
 
   await Promise.allSettled(
-    bookmark.user.webhooks
+    webhooks
       .filter((w) => w.events.includes(job.data.operation))
       .map(async (webhook) => {
         const url = webhook.url;
@@ -111,9 +112,9 @@ async function runWebhook(job: DequeuedJob<ZWebhookRequest>) {
               body: JSON.stringify({
                 jobId,
                 bookmarkId,
-                userId: bookmark.userId,
-                url: bookmark.link ? bookmark.link.url : undefined,
-                type: bookmark.type,
+                userId,
+                url: bookmark?.link ? bookmark.link.url : undefined,
+                type: bookmark?.type,
                 operation: job.data.operation,
               }),
               signal: AbortSignal.timeout(webhookTimeoutSec * 1000),

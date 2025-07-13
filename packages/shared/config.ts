@@ -57,6 +57,11 @@ const allEnv = z.object({
   CRAWLER_JOB_TIMEOUT_SEC: z.coerce.number().default(60),
   CRAWLER_NAVIGATE_TIMEOUT_SEC: z.coerce.number().default(30),
   CRAWLER_NUM_WORKERS: z.coerce.number().default(1),
+  INFERENCE_NUM_WORKERS: z.coerce.number().default(1),
+  SEARCH_NUM_WORKERS: z.coerce.number().default(1),
+  WEBHOOK_NUM_WORKERS: z.coerce.number().default(1),
+  ASSET_PREPROCESSING_NUM_WORKERS: z.coerce.number().default(1),
+  RULE_ENGINE_NUM_WORKERS: z.coerce.number().default(1),
   CRAWLER_DOWNLOAD_BANNER_IMAGE: stringBool("true"),
   CRAWLER_STORE_SCREENSHOT: stringBool("true"),
   CRAWLER_FULL_PAGE_SCREENSHOT: stringBool("false"),
@@ -88,105 +93,193 @@ const allEnv = z.object({
 
   // A flag to detect if the user is running in the old separete containers setup
   USING_LEGACY_SEPARATE_CONTAINERS: stringBool("false"),
+
+  // Prometheus metrics configuration
+  PROMETHEUS_AUTH_TOKEN: z.string().optional(),
+
+  // Email configuration
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().optional().default(587),
+  SMTP_SECURE: stringBool("false"),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASSWORD: z.string().optional(),
+  SMTP_FROM: z.string().optional(),
+  EMAIL_VERIFICATION_REQUIRED: stringBool("false"),
+
+  // Asset storage configuration
+  ASSET_STORE_S3_ENDPOINT: z.string().optional(),
+  ASSET_STORE_S3_REGION: z.string().optional(),
+  ASSET_STORE_S3_BUCKET: z.string().optional(),
+  ASSET_STORE_S3_ACCESS_KEY_ID: z.string().optional(),
+  ASSET_STORE_S3_SECRET_ACCESS_KEY: z.string().optional(),
+  ASSET_STORE_S3_FORCE_PATH_STYLE: stringBool("false"),
+
+  // Rate limiting configuration
+  RATE_LIMITING_ENABLED: stringBool("false"),
+
+  // Proxy configuration
+  HTTP_PROXY: z.string().optional(),
+  HTTPS_PROXY: z.string().optional(),
+  NO_PROXY: z.string().optional(),
 });
 
-const serverConfigSchema = allEnv.transform((val) => {
-  return {
-    apiUrl: val.API_URL,
-    publicUrl: val.NEXTAUTH_URL,
-    publicApiUrl: `${val.NEXTAUTH_URL}/api`,
-    signingSecret: () => {
-      if (!val.NEXTAUTH_SECRET) {
-        throw new Error("NEXTAUTH_SECRET is not set");
-      }
-      return val.NEXTAUTH_SECRET;
-    },
-    auth: {
-      disableSignups: val.DISABLE_SIGNUPS,
-      disablePasswordAuth: val.DISABLE_PASSWORD_AUTH,
-      oauth: {
-        allowDangerousEmailAccountLinking:
-          val.OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING,
-        wellKnownUrl: val.OAUTH_WELLKNOWN_URL,
-        clientSecret: val.OAUTH_CLIENT_SECRET,
-        clientId: val.OAUTH_CLIENT_ID,
-        scope: val.OAUTH_SCOPE,
-        name: val.OAUTH_PROVIDER_NAME,
-        timeout: val.OAUTH_TIMEOUT,
+const serverConfigSchema = allEnv
+  .transform((val) => {
+    return {
+      apiUrl: val.API_URL,
+      publicUrl: val.NEXTAUTH_URL,
+      publicApiUrl: `${val.NEXTAUTH_URL}/api`,
+      signingSecret: () => {
+        if (!val.NEXTAUTH_SECRET) {
+          throw new Error("NEXTAUTH_SECRET is not set");
+        }
+        return val.NEXTAUTH_SECRET;
       },
+      auth: {
+        disableSignups: val.DISABLE_SIGNUPS,
+        disablePasswordAuth: val.DISABLE_PASSWORD_AUTH,
+        emailVerificationRequired: val.EMAIL_VERIFICATION_REQUIRED,
+        oauth: {
+          allowDangerousEmailAccountLinking:
+            val.OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING,
+          wellKnownUrl: val.OAUTH_WELLKNOWN_URL,
+          clientSecret: val.OAUTH_CLIENT_SECRET,
+          clientId: val.OAUTH_CLIENT_ID,
+          scope: val.OAUTH_SCOPE,
+          name: val.OAUTH_PROVIDER_NAME,
+          timeout: val.OAUTH_TIMEOUT,
+        },
+      },
+      email: {
+        smtp: val.SMTP_HOST
+          ? {
+              host: val.SMTP_HOST,
+              port: val.SMTP_PORT,
+              secure: val.SMTP_SECURE,
+              user: val.SMTP_USER,
+              password: val.SMTP_PASSWORD,
+              from: val.SMTP_FROM,
+            }
+          : undefined,
+      },
+      inference: {
+        numWorkers: val.INFERENCE_NUM_WORKERS,
+        jobTimeoutSec: val.INFERENCE_JOB_TIMEOUT_SEC,
+        fetchTimeoutSec: val.INFERENCE_FETCH_TIMEOUT_SEC,
+        openAIApiKey: val.OPENAI_API_KEY,
+        openAIBaseUrl: val.OPENAI_BASE_URL,
+        ollamaBaseUrl: val.OLLAMA_BASE_URL,
+        ollamaKeepAlive: val.OLLAMA_KEEP_ALIVE,
+        textModel: val.INFERENCE_TEXT_MODEL,
+        imageModel: val.INFERENCE_IMAGE_MODEL,
+        inferredTagLang: val.INFERENCE_LANG,
+        contextLength: val.INFERENCE_CONTEXT_LENGTH,
+        outputSchema:
+          val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT !== undefined
+            ? val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT
+              ? ("structured" as const)
+              : ("plain" as const)
+            : val.INFERENCE_OUTPUT_SCHEMA,
+        enableAutoTagging: val.INFERENCE_ENABLE_AUTO_TAGGING,
+        enableAutoSummarization: val.INFERENCE_ENABLE_AUTO_SUMMARIZATION,
+      },
+      embedding: {
+        textModel: val.EMBEDDING_TEXT_MODEL,
+      },
+      crawler: {
+        numWorkers: val.CRAWLER_NUM_WORKERS,
+        headlessBrowser: val.CRAWLER_HEADLESS_BROWSER,
+        browserWebUrl: val.BROWSER_WEB_URL,
+        browserWebSocketUrl: val.BROWSER_WEBSOCKET_URL,
+        browserConnectOnDemand: val.BROWSER_CONNECT_ONDEMAND,
+        jobTimeoutSec: val.CRAWLER_JOB_TIMEOUT_SEC,
+        navigateTimeoutSec: val.CRAWLER_NAVIGATE_TIMEOUT_SEC,
+        downloadBannerImage: val.CRAWLER_DOWNLOAD_BANNER_IMAGE,
+        storeScreenshot: val.CRAWLER_STORE_SCREENSHOT,
+        fullPageScreenshot: val.CRAWLER_FULL_PAGE_SCREENSHOT,
+        fullPageArchive: val.CRAWLER_FULL_PAGE_ARCHIVE,
+        downloadVideo: val.CRAWLER_VIDEO_DOWNLOAD,
+        maxVideoDownloadSize: val.CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE,
+        downloadVideoTimeout: val.CRAWLER_VIDEO_DOWNLOAD_TIMEOUT_SEC,
+        enableAdblocker: val.CRAWLER_ENABLE_ADBLOCKER,
+        ytDlpArguments: val.CRAWLER_YTDLP_ARGS,
+        screenshotTimeoutSec: val.CRAWLER_SCREENSHOT_TIMEOUT_SEC,
+      },
+      ocr: {
+        langs: val.OCR_LANGS,
+        cacheDir: val.OCR_CACHE_DIR,
+        confidenceThreshold: val.OCR_CONFIDENCE_THRESHOLD,
+      },
+      search: {
+        numWorkers: val.SEARCH_NUM_WORKERS,
+        meilisearch: val.MEILI_ADDR
+          ? {
+              address: val.MEILI_ADDR,
+              key: val.MEILI_MASTER_KEY,
+            }
+          : undefined,
+      },
+      logLevel: val.LOG_LEVEL,
+      demoMode: val.DEMO_MODE
+        ? {
+            email: val.DEMO_MODE_EMAIL,
+            password: val.DEMO_MODE_PASSWORD,
+          }
+        : undefined,
+      dataDir: val.DATA_DIR,
+      assetsDir: val.ASSETS_DIR ?? path.join(val.DATA_DIR, "assets"),
+      maxAssetSizeMb: val.MAX_ASSET_SIZE_MB,
+      serverVersion: val.SERVER_VERSION,
+      disableNewReleaseCheck: val.DISABLE_NEW_RELEASE_CHECK,
+      usingLegacySeparateContainers: val.USING_LEGACY_SEPARATE_CONTAINERS,
+      webhook: {
+        timeoutSec: val.WEBHOOK_TIMEOUT_SEC,
+        retryTimes: val.WEBHOOK_RETRY_TIMES,
+        numWorkers: val.WEBHOOK_NUM_WORKERS,
+      },
+      proxy: {
+        httpProxy: val.HTTP_PROXY,
+        httpsProxy: val.HTTPS_PROXY,
+        noProxy: val.NO_PROXY,
+      },
+      assetPreprocessing: {
+        numWorkers: val.ASSET_PREPROCESSING_NUM_WORKERS,
+      },
+      ruleEngine: {
+        numWorkers: val.RULE_ENGINE_NUM_WORKERS,
+      },
+      assetStore: {
+        type: val.ASSET_STORE_S3_ENDPOINT
+          ? ("s3" as const)
+          : ("filesystem" as const),
+        s3: {
+          endpoint: val.ASSET_STORE_S3_ENDPOINT,
+          region: val.ASSET_STORE_S3_REGION,
+          bucket: val.ASSET_STORE_S3_BUCKET,
+          accessKeyId: val.ASSET_STORE_S3_ACCESS_KEY_ID,
+          secretAccessKey: val.ASSET_STORE_S3_SECRET_ACCESS_KEY,
+          forcePathStyle: val.ASSET_STORE_S3_FORCE_PATH_STYLE,
+        },
+      },
+      prometheus: {
+        metricsToken: val.PROMETHEUS_AUTH_TOKEN,
+      },
+      rateLimiting: {
+        enabled: val.RATE_LIMITING_ENABLED,
+      },
+    };
+  })
+  .refine(
+    (val) => {
+      if (val.auth.emailVerificationRequired && !val.email.smtp) {
+        return false;
+      }
+      return true;
     },
-    inference: {
-      jobTimeoutSec: val.INFERENCE_JOB_TIMEOUT_SEC,
-      fetchTimeoutSec: val.INFERENCE_FETCH_TIMEOUT_SEC,
-      openAIApiKey: val.OPENAI_API_KEY,
-      openAIBaseUrl: val.OPENAI_BASE_URL,
-      ollamaBaseUrl: val.OLLAMA_BASE_URL,
-      ollamaKeepAlive: val.OLLAMA_KEEP_ALIVE,
-      textModel: val.INFERENCE_TEXT_MODEL,
-      imageModel: val.INFERENCE_IMAGE_MODEL,
-      inferredTagLang: val.INFERENCE_LANG,
-      contextLength: val.INFERENCE_CONTEXT_LENGTH,
-      outputSchema:
-        val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT !== undefined
-          ? val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT
-            ? ("structured" as const)
-            : ("plain" as const)
-          : val.INFERENCE_OUTPUT_SCHEMA,
-      enableAutoTagging: val.INFERENCE_ENABLE_AUTO_TAGGING,
-      enableAutoSummarization: val.INFERENCE_ENABLE_AUTO_SUMMARIZATION,
+    {
+      message: "To enable email verification, SMTP settings must be configured",
     },
-    embedding: {
-      textModel: val.EMBEDDING_TEXT_MODEL,
-    },
-    crawler: {
-      numWorkers: val.CRAWLER_NUM_WORKERS,
-      headlessBrowser: val.CRAWLER_HEADLESS_BROWSER,
-      browserWebUrl: val.BROWSER_WEB_URL,
-      browserWebSocketUrl: val.BROWSER_WEBSOCKET_URL,
-      browserConnectOnDemand: val.BROWSER_CONNECT_ONDEMAND,
-      jobTimeoutSec: val.CRAWLER_JOB_TIMEOUT_SEC,
-      navigateTimeoutSec: val.CRAWLER_NAVIGATE_TIMEOUT_SEC,
-      downloadBannerImage: val.CRAWLER_DOWNLOAD_BANNER_IMAGE,
-      storeScreenshot: val.CRAWLER_STORE_SCREENSHOT,
-      fullPageScreenshot: val.CRAWLER_FULL_PAGE_SCREENSHOT,
-      fullPageArchive: val.CRAWLER_FULL_PAGE_ARCHIVE,
-      downloadVideo: val.CRAWLER_VIDEO_DOWNLOAD,
-      maxVideoDownloadSize: val.CRAWLER_VIDEO_DOWNLOAD_MAX_SIZE,
-      downloadVideoTimeout: val.CRAWLER_VIDEO_DOWNLOAD_TIMEOUT_SEC,
-      enableAdblocker: val.CRAWLER_ENABLE_ADBLOCKER,
-      ytDlpArguments: val.CRAWLER_YTDLP_ARGS,
-      screenshotTimeoutSec: val.CRAWLER_SCREENSHOT_TIMEOUT_SEC,
-    },
-    ocr: {
-      langs: val.OCR_LANGS,
-      cacheDir: val.OCR_CACHE_DIR,
-      confidenceThreshold: val.OCR_CONFIDENCE_THRESHOLD,
-    },
-    meilisearch: val.MEILI_ADDR
-      ? {
-          address: val.MEILI_ADDR,
-          key: val.MEILI_MASTER_KEY,
-        }
-      : undefined,
-    logLevel: val.LOG_LEVEL,
-    demoMode: val.DEMO_MODE
-      ? {
-          email: val.DEMO_MODE_EMAIL,
-          password: val.DEMO_MODE_PASSWORD,
-        }
-      : undefined,
-    dataDir: val.DATA_DIR,
-    assetsDir: val.ASSETS_DIR ?? path.join(val.DATA_DIR, "assets"),
-    maxAssetSizeMb: val.MAX_ASSET_SIZE_MB,
-    serverVersion: val.SERVER_VERSION,
-    disableNewReleaseCheck: val.DISABLE_NEW_RELEASE_CHECK,
-    usingLegacySeparateContainers: val.USING_LEGACY_SEPARATE_CONTAINERS,
-    webhook: {
-      timeoutSec: val.WEBHOOK_TIMEOUT_SEC,
-      retryTimes: val.WEBHOOK_RETRY_TIMES,
-    },
-  };
-});
+  );
 
 const serverConfig = serverConfigSchema.parse(process.env);
 // Always explicitly pick up stuff from server config to avoid accidentally leaking stuff

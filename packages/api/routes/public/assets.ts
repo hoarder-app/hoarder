@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { z } from "zod";
 
 import { assets } from "@karakeep/db/schema";
+import serverConfig from "@karakeep/shared/config";
 import { verifySignedToken } from "@karakeep/shared/signedTokens";
 import { zAssetSignedTokenSchema } from "@karakeep/shared/types/assets";
 
@@ -25,6 +26,7 @@ const app = new Hono()
       const assetId = c.req.param("assetId");
       const tokenPayload = verifySignedToken(
         c.req.valid("query").token,
+        serverConfig.signingSecret(),
         zAssetSignedTokenSchema,
       );
       if (!tokenPayload) {
