@@ -9,7 +9,6 @@ import NextAuth, {
 import { Adapter as NextAuthAdapater } from "next-auth/adapters";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Provider } from "next-auth/providers/index";
-import requestIp from "request-ip";
 
 import { db } from "@karakeep/db";
 import {
@@ -19,7 +18,7 @@ import {
   verificationTokens,
 } from "@karakeep/db/schema";
 import serverConfig from "@karakeep/shared/config";
-import { logAuthenticationError, validatePassword } from "@karakeep/trpc/auth";
+import { validatePassword } from "@karakeep/trpc/auth";
 import { createUserRaw } from "@karakeep/trpc/routers/users";
 
 type UserRole = "admin" | "user";
@@ -100,7 +99,7 @@ const providers: Provider[] = [
       email: { label: "Email", type: "email", placeholder: "Email" },
       password: { label: "Password", type: "password" },
     },
-    async authorize(credentials, req) {
+    async authorize(credentials) {
       if (!credentials) {
         return null;
       }
@@ -110,13 +109,7 @@ const providers: Provider[] = [
           credentials?.email,
           credentials?.password,
         );
-      } catch (e) {
-        const error = e as Error;
-        logAuthenticationError(
-          credentials?.email,
-          error.message,
-          requestIp.getClientIp({ headers: req.headers }),
-        );
+      } catch {
         return null;
       }
     },

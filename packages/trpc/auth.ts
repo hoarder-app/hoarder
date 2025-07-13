@@ -4,7 +4,6 @@ import * as bcrypt from "bcryptjs";
 import { db } from "@karakeep/db";
 import { apiKeys } from "@karakeep/db/schema";
 import serverConfig from "@karakeep/shared/config";
-import { authFailureLogger } from "@karakeep/shared/logger";
 
 // API Keys
 
@@ -115,14 +114,4 @@ export async function validatePassword(email: string, password: string) {
   }
 
   return user;
-}
-
-export function logAuthenticationError(
-  user: string,
-  message: string,
-  ip: string | null,
-): void {
-  authFailureLogger.error(
-    `Authentication error. User: "${user}", Message: "${message}", IP-Address: "${ip}"`,
-  );
 }
