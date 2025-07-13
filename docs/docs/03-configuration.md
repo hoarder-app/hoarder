@@ -183,3 +183,18 @@ Karakeep can send emails for various purposes such as email verification during 
 | SMTP_USER     | No       | Not set | The username for SMTP authentication. Usually your email address.                               |
 | SMTP_PASSWORD | No       | Not set | The password for SMTP authentication. For services like Gmail, use an app-specific password.    |
 | SMTP_FROM     | No       | Not set | The "from" email address that will appear in sent emails. This should be a valid email address. |
+
+
+## Proxy Configuration
+
+If your Karakeep instance needs to connect through a proxy server, you can configure the following settings:
+
+| Name        | Required | Default | Description                                                                                                   |
+| ----------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------- |
+| HTTP_PROXY  | No       | Not set | HTTP proxy server URL for outgoing HTTP requests (e.g., `http://proxy.example.com:8080`)                      |
+| HTTPS_PROXY | No       | Not set | HTTPS proxy server URL for outgoing HTTPS requests (e.g., `http://proxy.example.com:8080`)                    |
+| NO_PROXY    | No       | Not set | Comma-separated list of hostnames/IPs that should bypass the proxy (e.g., `localhost,127.0.0.1,.local`)      |
+
+:::info
+These proxy settings will be used by the crawler and other components that make outgoing HTTP requests.
+:::

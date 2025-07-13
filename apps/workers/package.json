@@ -16,6 +16,8 @@
     "dotenv": "^16.4.1",
     "drizzle-orm": "^0.44.2",
     "execa": "9.3.1",
+    "http-proxy-agent": "^7.0.2",
+    "https-proxy-agent": "^7.0.6",
     "jsdom": "^24.0.0",
     "liteque": "^0.4.1",
     "metascraper": "^5.46.18",

@@ -9,6 +9,8 @@ import DOMPurify from "dompurify";
 import { eq } from "drizzle-orm";
 import { execa } from "execa";
 import { isShuttingDown } from "exit";
+import { HttpProxyAgent } from "http-proxy-agent";
+import { HttpsProxyAgent } from "https-proxy-agent";
 import { JSDOM, VirtualConsole } from "jsdom";
 import { DequeuedJob, EnqueueOptions, Runner } from "liteque";
 import metascraper from "metascraper";
@@ -23,7 +25,7 @@ import metascraperTitle from "metascraper-title";
 import metascraperTwitter from "metascraper-twitter";
 import metascraperUrl from "metascraper-url";
 import fetch from "node-fetch";
-import { Browser } from "playwright";
+import { Browser, BrowserContextOptions } from "playwright";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { withTimeout } from "utils";
@@ -84,6 +86,76 @@ const metascraperParser = metascraper([
   metascraperLogo(),
   metascraperUrl(),
 ]);
+
+function getProxyAgent(url: string) {
+  const { proxy } = serverConfig;
+
+  if (!proxy.httpProxy && !proxy.httpsProxy) {
+    return undefined;
+  }
+
+  const urlObj = new URL(url);
+  const protocol = urlObj.protocol;
+
+  // Check if URL should bypass proxy
+  if (proxy.noProxy) {
+    const noProxyList = proxy.noProxy.split(",").map((host) => host.trim());
+    const hostname = urlObj.hostname;
+
+    for (const noProxyHost of noProxyList) {
+      if (
+        noProxyHost === hostname ||
+        (noProxyHost.startsWith(".") && hostname.endsWith(noProxyHost)) ||
+        hostname.endsWith("." + noProxyHost)
+      ) {
+        return undefined;
+      }
+    }
+  }
+
+  if (protocol === "https:" && proxy.httpsProxy) {
+    return new HttpsProxyAgent(proxy.httpsProxy);
+  } else if (protocol === "http:" && proxy.httpProxy) {
+    return new HttpProxyAgent(proxy.httpProxy);
+  } else if (proxy.httpProxy) {
+    // Fallback to HTTP proxy for HTTPS if HTTPS proxy not configured
+    return new HttpProxyAgent(proxy.httpProxy);
+  }
+
+  return undefined;
+}
+
+function getPlaywrightProxyConfig(): BrowserContextOptions["proxy"] {
+  const { proxy } = serverConfig;
+
+  if (!proxy.httpProxy && !proxy.httpsProxy) {
+    return undefined;
+  }
+
+  // Use HTTPS proxy if available, otherwise fall back to HTTP proxy
+  const proxyUrl = proxy.httpsProxy || proxy.httpProxy;
+  if (!proxyUrl) {
+    // Unreachable, but TypeScript doesn't know that
+    return undefined;
+  }
+
+  const parsed = new URL(proxyUrl);
+
+  return {
+    server: proxyUrl,
+    username: parsed.username,
+    password: parsed.password,
+    bypass: proxy.noProxy,
+  };
+}
+
+const fetchWithProxy = (url: string, options: Record<string, unknown> = {}) => {
+  const agent = getProxyAgent(url);
+  if (agent) {
+    options.agent = agent;
+  }
+  return fetch(url, options);
+};
 
 let globalBrowser: Browser | undefined;
 let globalBlocker: PlaywrightBlocker | undefined;
@@ -163,11 +235,14 @@ export class CrawlerWorker {
     if (serverConfig.crawler.enableAdblocker) {
       try {
         logger.info("[crawler] Loading adblocker ...");
-        globalBlocker = await PlaywrightBlocker.fromPrebuiltFull(fetch, {
-          path: path.join(os.tmpdir(), "karakeep_adblocker.bin"),
-          read: fs.readFile,
-          write: fs.writeFile,
-        });
+        globalBlocker = await PlaywrightBlocker.fromPrebuiltFull(
+          fetchWithProxy,
+          {
+            path: path.join(os.tmpdir(), "karakeep_adblocker.bin"),
+            read: fs.readFile,
+            write: fs.writeFile,
+          },
+        );
       } catch (e) {
         logger.error(
           `[crawler] Failed to load adblocker. Will not be blocking ads: ${e}`,
@@ -258,7 +333,7 @@ async function browserlessCrawlPage(
   logger.info(
     `[Crawler][${jobId}] Running in browserless mode. Will do a plain http request to "${url}". Screenshots will be disabled.`,
   );
-  const response = await fetch(url, {
+  const response = await fetchWithProxy(url, {
     signal: AbortSignal.any([AbortSignal.timeout(5000), abortSignal]),
   });
   logger.info(
@@ -296,6 +371,7 @@ async function crawlPage(
     viewport: { width: 1440, height: 900 },
     userAgent:
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    proxy: getPlaywrightProxyConfig(),
   });
   try {
     // Create a new page in the context
@@ -479,7 +555,7 @@ async function downloadAndStoreFile(
 ) {
   try {
     logger.info(`[Crawler][${jobId}] Downloading ${fileType} from "${url}"`);
-    const response = await fetch(url, {
+    const response = await fetchWithProxy(url, {
       signal: abortSignal,
     });
     if (!response.ok) {
@@ -617,7 +693,7 @@ async function getContentType(
     logger.info(
       `[Crawler][${jobId}] Attempting to determine the content-type for the url ${url}`,
     );
-    const response = await fetch(url, {
+    const response = await fetchWithProxy(url, {
       method: "HEAD",
       signal: AbortSignal.any([AbortSignal.timeout(5000), abortSignal]),
     });

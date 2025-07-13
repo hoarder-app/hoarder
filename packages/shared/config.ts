@@ -116,6 +116,11 @@ const allEnv = z.object({
 
   // Rate limiting configuration
   RATE_LIMITING_ENABLED: stringBool("false"),
+
+  // Proxy configuration
+  HTTP_PROXY: z.string().optional(),
+  HTTPS_PROXY: z.string().optional(),
+  NO_PROXY: z.string().optional(),
 });
 
 const serverConfigSchema = allEnv
@@ -231,6 +236,11 @@ const serverConfigSchema = allEnv
         timeoutSec: val.WEBHOOK_TIMEOUT_SEC,
         retryTimes: val.WEBHOOK_RETRY_TIMES,
         numWorkers: val.WEBHOOK_NUM_WORKERS,
+      },
+      proxy: {
+        httpProxy: val.HTTP_PROXY,
+        httpsProxy: val.HTTPS_PROXY,
+        noProxy: val.NO_PROXY,
       },
       assetPreprocessing: {
         numWorkers: val.ASSET_PREPROCESSING_NUM_WORKERS,

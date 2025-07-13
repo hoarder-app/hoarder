@@ -784,6 +784,12 @@ importers:
       execa:
         specifier: 9.3.1
         version: 9.3.1
+      http-proxy-agent:
+        specifier: ^7.0.2
+        version: 7.0.2
+      https-proxy-agent:
+        specifier: ^7.0.6
+        version: 7.0.6(supports-color@10.0.0)
       jsdom:
         specifier: ^24.0.0
         version: 24.1.3
