@@ -1,6 +1,6 @@
 # Setup
 
-## Quick Start (Recommended)
+## Quick Start
 
 For the fastest way to get started with development, use the one-command setup script:
 
