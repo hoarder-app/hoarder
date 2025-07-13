@@ -13,10 +13,12 @@ import FullPageError from "@/components/FullPageError";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
-import { useSearchHistory } from "@/lib/hooks";
 import { api } from "@/lib/trpc";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { keepPreviousData } from "@tanstack/react-query";
 import { useDebounce } from "use-debounce";
+
+import { useSearchHistory } from "@karakeep/shared-react/hooks/search-history";
 
 const MAX_DISPLAY_SUGGESTIONS = 5;
 
@@ -27,7 +29,11 @@ export default function Search() {
   const inputRef = useRef<TextInput>(null);
 
   const [isInputFocused, setIsInputFocused] = useState(true);
-  const { history, addTerm, clearHistory } = useSearchHistory();
+  const { history, addTerm, clearHistory } = useSearchHistory({
+    getItem: (k: string) => AsyncStorage.getItem(k),
+    setItem: (k: string, v: string) => AsyncStorage.setItem(k, v),
+    removeItem: (k: string) => AsyncStorage.removeItem(k),
+  });
 
   const onRefresh = api.useUtils().bookmarks.searchBookmarks.invalidate;
 

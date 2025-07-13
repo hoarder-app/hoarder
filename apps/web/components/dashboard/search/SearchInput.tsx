@@ -23,10 +23,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useDoBookmarkSearch } from "@/lib/hooks/bookmark-search";
-import { useSearchHistory } from "@/lib/hooks/useSearchHistory";
 import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 import { History } from "lucide-react";
+
+import { useSearchHistory } from "@karakeep/shared-react/hooks/search-history";
 
 import { EditListModal } from "../lists/EditListModal";
 import QueryExplainerTooltip from "./QueryExplainerTooltip";
@@ -78,7 +79,11 @@ const SearchInput = React.forwardRef<
     parsedSearchQuery,
     isInSearchPage,
   } = useDoBookmarkSearch();
-  const { addTerm, history } = useSearchHistory();
+  const { addTerm, history } = useSearchHistory({
+    getItem: (k: string) => localStorage.getItem(k),
+    setItem: (k: string, v: string) => localStorage.setItem(k, v),
+    removeItem: (k: string) => localStorage.removeItem(k),
+  });
 
   const [value, setValue] = React.useState(searchQuery);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
