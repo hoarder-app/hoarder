@@ -61,18 +61,9 @@ export async function uploadAsset(
     data = formData.image;
   }
 
-  let contentType = data.type;
+  const contentType = data.type;
   const fileName = data.name;
-
-  // Handle .md files that might not have the correct MIME type
-  if (fileName.endsWith(".md") && !contentType) {
-    contentType = "text/markdown";
-  }
-
-  if (
-    !SUPPORTED_UPLOAD_ASSET_TYPES.has(contentType) &&
-    !fileName.endsWith(".md")
-  ) {
+  if (!SUPPORTED_UPLOAD_ASSET_TYPES.has(contentType)) {
     return { error: "Unsupported asset type", status: 400 };
   }
   if (data.size > MAX_UPLOAD_SIZE_BYTES) {
