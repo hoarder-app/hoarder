@@ -117,6 +117,17 @@ const allEnv = z.object({
   // Rate limiting configuration
   RATE_LIMITING_ENABLED: stringBool("false"),
 
+  // Stripe configuration
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_PUBLISHABLE_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  STRIPE_PRICE_ID: z.string().optional(),
+
+  FREE_QUOTA_BOOKMARK_LIMIT: z.coerce.number().optional(),
+  FREE_QUOTA_ASSET_SIZE_BYTES: z.coerce.number().optional(),
+  PAID_QUOTA_BOOKMARK_LIMIT: z.coerce.number().optional(),
+  PAID_QUOTA_ASSET_SIZE_BYTES: z.coerce.number().optional(),
+
   // Proxy configuration
   HTTP_PROXY: z.string().optional(),
   HTTPS_PROXY: z.string().optional(),
@@ -266,6 +277,23 @@ const serverConfigSchema = allEnv
       },
       rateLimiting: {
         enabled: val.RATE_LIMITING_ENABLED,
+      },
+      stripe: {
+        secretKey: val.STRIPE_SECRET_KEY,
+        publishableKey: val.STRIPE_PUBLISHABLE_KEY,
+        webhookSecret: val.STRIPE_WEBHOOK_SECRET,
+        priceId: val.STRIPE_PRICE_ID,
+        isConfigured: !!val.STRIPE_SECRET_KEY && !!val.STRIPE_PUBLISHABLE_KEY,
+      },
+      quotas: {
+        free: {
+          bookmarkLimit: val.FREE_QUOTA_BOOKMARK_LIMIT,
+          assetSizeBytes: val.FREE_QUOTA_ASSET_SIZE_BYTES,
+        },
+        paid: {
+          bookmarkLimit: val.PAID_QUOTA_BOOKMARK_LIMIT,
+          assetSizeBytes: val.PAID_QUOTA_ASSET_SIZE_BYTES,
+        },
       },
     };
   })

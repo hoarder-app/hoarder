@@ -118,6 +118,11 @@ async function inferTagsFromImage(
   inferenceClient: InferenceClient,
   abortSignal: AbortSignal,
 ) {
+  if (!bookmark.asset) {
+    throw new Error(
+      `[inference][${jobId}] Bookmark ${bookmark.id} has no asset attached`,
+    );
+  }
   const { asset, metadata } = await readAsset({
     userId: bookmark.userId,
     assetId: bookmark.asset.assetId,
@@ -199,11 +204,16 @@ function containsTagsPlaceholder(prompts: { text: string }[]): boolean {
 }
 
 async function inferTagsFromPDF(
-  _jobId: string,
+  jobId: string,
   bookmark: NonNullable<Awaited<ReturnType<typeof fetchBookmark>>>,
   inferenceClient: InferenceClient,
   abortSignal: AbortSignal,
 ) {
+  if (!bookmark.asset) {
+    throw new Error(
+      `[inference][${jobId}] Bookmark ${bookmark.id} has no asset attached`,
+    );
+  }
   const prompt = buildTextPrompt(
     serverConfig.inference.inferredTagLang,
     await fetchCustomPrompts(bookmark.userId, "text"),

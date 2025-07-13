@@ -407,6 +407,13 @@
       "when": 1752314617600,
       "tag": "0057_salty_carmella_unuscione",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "6",
+      "when": 1752436258865,
+      "tag": "0058_add_subscription",
+      "breakpoints": true
     }
   ]
 }

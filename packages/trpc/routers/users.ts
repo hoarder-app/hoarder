@@ -124,6 +124,8 @@ export async function createUserRaw(
           salt: input.salt,
           role: userRole,
           emailVerified: input.emailVerified,
+          bookmarkQuota: serverConfig.quotas.free.bookmarkLimit,
+          storageQuota: serverConfig.quotas.free.assetSizeBytes,
         })
         .returning({
           id: users.id,

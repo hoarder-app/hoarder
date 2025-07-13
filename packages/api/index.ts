@@ -18,6 +18,7 @@ import rss from "./routes/rss";
 import tags from "./routes/tags";
 import trpc from "./routes/trpc";
 import users from "./routes/users";
+import webhooks from "./routes/webhooks";
 
 const v1 = new Hono<{
   Variables: {
@@ -62,6 +63,7 @@ const app = new Hono<{
   .route("/admin", admin)
   .route("/assets", assets)
   .route("/public", publicRoute)
-  .route("/metrics", metrics);
+  .route("/metrics", metrics)
+  .route("/webhooks", webhooks);
 
 export default app;

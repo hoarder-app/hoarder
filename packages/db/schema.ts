@@ -584,6 +584,51 @@ export const invites = sqliteTable("invites", {
     .references(() => users.id, { onDelete: "cascade" }),
 });
 
+export const subscriptions = sqliteTable(
+  "subscriptions",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" })
+      .unique(),
+    stripeCustomerId: text("stripeCustomerId").notNull(),
+    stripeSubscriptionId: text("stripeSubscriptionId"),
+    status: text("status", {
+      enum: [
+        "active",
+        "canceled",
+        "past_due",
+        "unpaid",
+        "incomplete",
+        "trialing",
+        "incomplete_expired",
+        "paused",
+      ],
+    }).notNull(),
+    tier: text("tier", {
+      enum: ["free", "paid"],
+    })
+      .notNull()
+      .default("free"),
+    priceId: text("priceId"),
+    cancelAtPeriodEnd: integer("cancelAtPeriodEnd", {
+      mode: "boolean",
+    }).default(false),
+    startDate: integer("startDate", { mode: "timestamp" }),
+    endDate: integer("endDate", { mode: "timestamp" }),
+    createdAt: createdAtField(),
+    modifiedAt: modifiedAtField(),
+  },
+  (s) => [
+    index("subscriptions_userId_idx").on(s.userId),
+    index("subscriptions_stripeCustomerId_idx").on(s.stripeCustomerId),
+  ],
+);
+
 // Relations
 
 export const userRelations = relations(users, ({ many, one }) => ({
@@ -596,6 +641,7 @@ export const userRelations = relations(users, ({ many, one }) => ({
     fields: [users.id],
     references: [userSettings.userId],
   }),
+  subscription: one(subscriptions),
 }));
 
 export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
@@ -603,18 +649,9 @@ export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
     fields: [bookmarks.userId],
     references: [users.id],
   }),
-  link: one(bookmarkLinks, {
-    fields: [bookmarks.id],
-    references: [bookmarkLinks.id],
-  }),
-  text: one(bookmarkTexts, {
-    fields: [bookmarks.id],
-    references: [bookmarkTexts.id],
-  }),
-  asset: one(bookmarkAssets, {
-    fields: [bookmarks.id],
-    references: [bookmarkAssets.id],
-  }),
+  link: one(bookmarkLinks),
+  text: one(bookmarkTexts),
+  asset: one(bookmarkAssets),
   tagsOnBookmarks: many(tagsOnBookmarks),
   bookmarksInLists: many(bookmarksInLists),
   assets: many(assets),
@@ -741,6 +778,13 @@ export const userSettingsRelations = relations(userSettings, ({ one }) => ({
 export const invitesRelations = relations(invites, ({ one }) => ({
   invitedBy: one(users, {
     fields: [invites.invitedBy],
+    references: [users.id],
+  }),
+}));
+
+export const subscriptionsRelations = relations(subscriptions, ({ one }) => ({
+  user: one(users, {
+    fields: [subscriptions.userId],
     references: [users.id],
   }),
 }));
