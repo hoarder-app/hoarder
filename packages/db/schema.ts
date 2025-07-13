@@ -649,18 +649,9 @@ export const bookmarkRelations = relations(bookmarks, ({ many, one }) => ({
     fields: [bookmarks.userId],
     references: [users.id],
   }),
-  link: one(bookmarkLinks, {
-    fields: [bookmarks.id],
-    references: [bookmarkLinks.id],
-  }),
-  text: one(bookmarkTexts, {
-    fields: [bookmarks.id],
-    references: [bookmarkTexts.id],
-  }),
-  asset: one(bookmarkAssets, {
-    fields: [bookmarks.id],
-    references: [bookmarkAssets.id],
-  }),
+  link: one(bookmarkLinks),
+  text: one(bookmarkTexts),
+  asset: one(bookmarkAssets),
   tagsOnBookmarks: many(tagsOnBookmarks),
   bookmarksInLists: many(bookmarksInLists),
   assets: many(assets),
