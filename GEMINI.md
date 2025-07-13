@@ -69,4 +69,4 @@ Starting services:
 
 ## Development Notes
 
-- When you need to make schema changes, refer to the instructions in docs/docs/07-Development/03-database.md
+- When making schema changes, refer to the instructions in docs/docs/07-Development/03-database.md
