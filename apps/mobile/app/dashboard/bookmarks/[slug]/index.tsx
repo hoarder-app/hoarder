@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Alert,
   Keyboard,
@@ -27,6 +27,7 @@ import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { useAssetUrl } from "@/lib/hooks";
+import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
 import { MenuView } from "@react-native-menu/menu";
 import {
@@ -378,18 +379,11 @@ export default function ListView() {
   const { slug } = useLocalSearchParams();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
-
-  const { data: userSettings } = api.users.settings.useQuery();
+  const { settings } = useAppSettings();
 
   const [bookmarkLinkType, setBookmarkLinkType] = useState<BookmarkLinkType>(
-    userSettings?.mobileBookmarkClickDefaultViewMode || "reader",
+    settings.mobileBookmarkClickDefaultViewMode,
   );
-
-  useEffect(() => {
-    if (userSettings?.mobileBookmarkClickDefaultViewMode) {
-      setBookmarkLinkType(userSettings.mobileBookmarkClickDefaultViewMode);
-    }
-  }, [userSettings?.mobileBookmarkClickDefaultViewMode]);
 
   if (typeof slug !== "string") {
     throw new Error("Unexpected param type");

@@ -1,1 +1,0 @@
-ALTER TABLE `userSettings` ADD `mobileBookmarkClickDefaultViewMode` text DEFAULT 'reader' NOT NULL;

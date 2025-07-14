@@ -3,44 +3,41 @@ import { useRouter } from "expo-router";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import { Divider } from "@/components/ui/Divider";
 import { useToast } from "@/components/ui/Toast";
-import { api } from "@/lib/trpc";
+import useAppSettings from "@/lib/settings";
 import { Check } from "lucide-react-native";
 
 export default function BookmarkDefaultViewSettings() {
   const router = useRouter();
   const { toast } = useToast();
+  const { settings, setSettings } = useAppSettings();
 
-  const utils = api.useUtils();
-  const { data: userSettings } = api.users.settings.useQuery();
-  const { mutate: updateUserSettings } = api.users.updateSettings.useMutation({
-    onSuccess: () => {
-      // Invalidate and refetch user settings cache
-      utils.users.settings.invalidate();
+  const handleUpdate = async (mode: "reader" | "browser") => {
+    try {
+      await setSettings({
+        ...settings,
+        mobileBookmarkClickDefaultViewMode: mode,
+      });
       toast({
-        message: "Bookmark View Mode updated!",
+        message: "Default Bookmark View updated!",
         showProgress: false,
       });
       router.back();
-    },
-    onError: () => {
+    } catch {
       toast({
         message: "Something went wrong",
         variant: "destructive",
         showProgress: false,
       });
-    },
-  });
+    }
+  };
 
   const options = (["reader", "browser"] as const)
     .map((mode) => {
-      const currentMode =
-        userSettings?.mobileBookmarkClickDefaultViewMode || "reader";
+      const currentMode = settings.mobileBookmarkClickDefaultViewMode;
       const isChecked = currentMode === mode;
       return [
         <Pressable
-          onPress={() =>
-            updateUserSettings({ mobileBookmarkClickDefaultViewMode: mode })
-          }
+          onPress={() => handleUpdate(mode)}
           className="flex flex-row justify-between"
           key={mode}
         >

@@ -561,11 +561,6 @@ export const userSettings = sqliteTable("userSettings", {
   })
     .notNull()
     .default("open_original_link"),
-  mobileBookmarkClickDefaultViewMode: text("mobileBookmarkClickDefaultViewMode", {
-    enum: ["browser", "reader"],
-  })
-    .notNull()
-    .default("reader"),
   archiveDisplayBehaviour: text("archiveDisplayBehaviour", {
     enum: ["show", "hide"],
   })

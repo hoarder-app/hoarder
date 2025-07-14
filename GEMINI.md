@@ -62,11 +62,8 @@ The project is organized into `apps` and `packages`:
 - `pnpm format`: Format the codebase.
 - `pnpm format:fix`: Fix formatting issues.
 - `pnpm test`: Run tests.
+- `pnpm db:generate --name description_of_schema_change`: db migration after making schema changes
 
 Starting services:
 - `pnpm web`: Start the web application (this doesn't return, unless you kill it).
 - `pnpm workers`: Starts the background workers (this doesn't return, unless you kill it).
-
-## Development Notes
-
-- When making schema changes, refer to the instructions in docs/docs/07-Development/03-database.md
