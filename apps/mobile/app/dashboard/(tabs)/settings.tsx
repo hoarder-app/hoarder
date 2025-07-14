@@ -82,7 +82,7 @@ export default function Dashboard() {
                   <ActivityIndicator size="small" />
                 ) : (
                   <Text className="text-lg text-muted-foreground">
-                    {settings.mobileBookmarkClickDefaultViewMode === "reader"
+                    {settings.defaultBookmarkView === "reader"
                       ? "Reader"
                       : "Browser"}
                   </Text>

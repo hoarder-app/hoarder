@@ -10,7 +10,7 @@ const zSettingsSchema = z.object({
   address: z.string(),
   imageQuality: z.number().optional().default(0.2),
   theme: z.enum(["light", "dark", "system"]).optional().default("system"),
-  mobileBookmarkClickDefaultViewMode: z
+  defaultBookmarkView: z
     .enum(["reader", "browser"])
     .optional()
     .default("reader"),
@@ -31,7 +31,7 @@ const useSettings = create<AppSettingsState>((set, get) => ({
       address: "",
       imageQuality: 0.2,
       theme: "system",
-      mobileBookmarkClickDefaultViewMode: "reader",
+      defaultBookmarkView: "reader",
     },
   },
   setSettings: async (settings) => {

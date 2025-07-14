@@ -382,7 +382,7 @@ export default function ListView() {
   const { settings } = useAppSettings();
 
   const [bookmarkLinkType, setBookmarkLinkType] = useState<BookmarkLinkType>(
-    settings.mobileBookmarkClickDefaultViewMode,
+    settings.defaultBookmarkView,
   );
 
   if (typeof slug !== "string") {

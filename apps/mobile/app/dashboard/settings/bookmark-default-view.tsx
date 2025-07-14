@@ -15,7 +15,7 @@ export default function BookmarkDefaultViewSettings() {
     try {
       await setSettings({
         ...settings,
-        mobileBookmarkClickDefaultViewMode: mode,
+        defaultBookmarkView: mode,
       });
       toast({
         message: "Default Bookmark View updated!",
@@ -33,7 +33,7 @@ export default function BookmarkDefaultViewSettings() {
 
   const options = (["reader", "browser"] as const)
     .map((mode) => {
-      const currentMode = settings.mobileBookmarkClickDefaultViewMode;
+      const currentMode = settings.defaultBookmarkView;
       const isChecked = currentMode === mode;
       return [
         <Pressable
