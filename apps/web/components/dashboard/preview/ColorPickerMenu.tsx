@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
+import CopyBtn from "@/components/ui/copy-button";
 import { Popover, PopoverContent } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { PopoverAnchor } from "@radix-ui/react-popover";
@@ -21,7 +22,7 @@ interface ColorPickerMenuProps {
   selectedHighlight: Highlight | null;
   onClose: () => void;
   isMobile: boolean;
-  onCopy: () => void;
+  onCopy: () => string;
 }
 
 export function ColorPickerMenu({
@@ -84,16 +85,10 @@ export function ColorPickerMenu({
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
         {selectedHighlight && (
-          <ActionButton
-            loading={false}
-            size="none"
-            title="Copy to clipboard"
-            variant="ghost"
+          <CopyBtn
             className="size-8 rounded-full transition-all duration-200 hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={onCopy}
-          >
-            <ClipboardCopy className="size-5" />
-          </ActionButton>
+            getStringToCopy={onCopy}
+          ></CopyBtn>
         )}
 
         {SUPPORTED_HIGHLIGHT_COLORS.map((color) => (

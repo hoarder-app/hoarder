@@ -466,26 +466,6 @@ function BookmarkHTMLHighlighter({
     closeMenu();
   };
 
-  const handleCopy = () => {
-    if (!selectedHighlight?.text) {
-      toast({ description: "No highlight text to copy" });
-      return;
-    }
-
-    if (!navigator.clipboard) {
-      toast({
-        description:
-          "Clipboard API not supported. Your Karakeep instance must be running over HTTPS.",
-      });
-      return;
-    }
-
-    navigator.clipboard
-      .writeText(selectedHighlight.text)
-      .then(() => toast({ description: "Copied to clipboard!" }))
-      .catch(() => toast({ description: "Failed to copy text" }));
-  };
-
   return (
     <div>
       <div
@@ -515,7 +495,9 @@ function BookmarkHTMLHighlighter({
           onDelete={
             selectedHighlight && onDeleteHighlight ? handleDelete : undefined
           }
-          onCopy={handleCopy}
+          onCopy={() => {
+            return selectedHighlight?.text || "";
+          }}
         />
       )}
     </div>
