@@ -13,9 +13,9 @@ export const HIGHLIGHT_COLOR_MAP = {
     yellow: "border-l-yellow-200",
   } as const,
   img: {
-    red: "hue-rotate(-30deg) saturate(1.5) brightness(1.1)",
-    green: "hue-rotate(60deg) saturate(1.3) brightness(1.1)",
-    blue: "hue-rotate(180deg) saturate(1.2) brightness(1.1)",
-    yellow: "hue-rotate(30deg) saturate(1.4) brightness(1.1)", // todo make these tints more.. "tintier"
+    red: "hue-rotate(-30deg) saturate(1.5) brightness(0.9)",
+    green: "hue-rotate(60deg) saturate(1.3) brightness(0.9)",
+    blue: "hue-rotate(180deg) saturate(1.2) brightness(0.9)",
+    yellow: "hue-rotate(30deg) saturate(1.4) brightness(0.9)",
   } as const,
 };

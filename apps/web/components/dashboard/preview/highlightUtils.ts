@@ -1,49 +1,17 @@
-import { cn } from "@/lib/utils";
-
 import { ZHighlightColor } from "@karakeep/shared/types/highlights";
 
-import { HIGHLIGHT_COLOR_MAP } from "../preview/highlights";
-import { useCallback } from "react";
-
-export type HighlightPosition = {
+export interface HighlightPosition {
   startOffset: number;
   endOffset: number;
   text: string | null;
-};
+}
 
 export type Highlight = HighlightPosition & {
   id: string;
   color: ZHighlightColor;
 };
 
-export function findTextNodeAtOffset(
-  parentElement: HTMLElement,
-  offset: number,
-): { node: Text; offsetInNode: number } | null {
-  let currentOffset = 0;
-  const walker = document.createTreeWalker(parentElement, NodeFilter.SHOW_TEXT);
-  let lastNode: Text | null = null;
-
-  while (walker.nextNode()) {
-    const node = walker.currentNode as Text;
-    lastNode = node;
-    const nodeLength = node.textContent?.length ?? 0;
-
-    if (offset >= currentOffset && offset <= currentOffset + nodeLength) {
-      return { node, offsetInNode: offset - currentOffset };
-    }
-    currentOffset += nodeLength;
-  }
-
-  if (offset === currentOffset && lastNode) {
-    // edge case for the ending offset
-    return { node: lastNode, offsetInNode: lastNode.length };
-  }
-
-  return null;
-}
-
-export   function isSelectionValid(
+export function isSelectionValid(
   range: Range,
   contentElement: HTMLElement,
 ): boolean {
@@ -231,4 +199,4 @@ export function getFirstVisibleHighlight(
     }
   }
   return closestEl;
-};
+}

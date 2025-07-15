@@ -7,10 +7,10 @@ import { ZHighlightColor } from "@karakeep/shared/types/highlights";
 
 import { HIGHLIGHT_COLOR_MAP } from "./highlights";
 import {
+  getFirstVisibleHighlight,
   getHighlightFromRange,
   Highlight,
   isElementVisible,
-  getFirstVisibleHighlight,
   isSelectionValid,
 } from "./highlightUtils";
 
@@ -108,7 +108,6 @@ function BookmarkHTMLHighlighter({
     };
 
     animationFrameId = requestAnimationFrame(updatePosition);
-
 
     const handleViewportChange = () => {
       if (animationFrameId) {
@@ -226,9 +225,10 @@ function BookmarkHTMLHighlighter({
 
       const masterRange = document.createRange();
       try {
-        if ( // make sure offsets are within the text node bounds
+        if (
+          // make sure offsets are within the text node bounds
           startPoint.offsetInNode >
-          (startPoint.node.textContent?.length ?? 0) ||
+            (startPoint.node.textContent?.length ?? 0) ||
           endPoint.offsetInNode > (endPoint.node.textContent?.length ?? 0)
         ) {
           return;
@@ -250,7 +250,8 @@ function BookmarkHTMLHighlighter({
       }[] = [];
       const commonAncestor = masterRange.commonAncestorContainer;
 
-      if ( // if it's a single text node
+      if (
+        // if it's a single text node
         commonAncestor.nodeType === Node.TEXT_NODE &&
         masterRange.startContainer === commonAncestor &&
         masterRange.endContainer === commonAncestor
@@ -260,8 +261,8 @@ function BookmarkHTMLHighlighter({
           startOffsetInNode: masterRange.startOffset,
           endOffsetInNode: masterRange.endOffset,
         });
-
-      } else if ( // if it's a range that spans multiple texts
+      } else if (
+        // if it's a range that spans multiple texts
         commonAncestor.nodeType === Node.ELEMENT_NODE ||
         commonAncestor.nodeType === Node.DOCUMENT_FRAGMENT_NODE
       ) {
@@ -300,8 +301,8 @@ function BookmarkHTMLHighlighter({
 
       // intentionally reverse the order to avoid issues with DOM manipulation
       for (let i = nodesToProcessDetails.length - 1; i >= 0; i--) {
-
-        const { node, startOffsetInNode, endOffsetInNode } = nodesToProcessDetails[i];
+        const { node, startOffsetInNode, endOffsetInNode } =
+          nodesToProcessDetails[i];
         let nodeToWrap: Text = node;
 
         if (!nodeToWrap.parentNode || !document.body.contains(nodeToWrap))
@@ -353,7 +354,6 @@ function BookmarkHTMLHighlighter({
     [getTextNodeAtOffset, HIGHLIGHT_COLOR_MAP],
   );
 
-
   useEffect(() => {
     if (!contentRef.current) {
       return;
@@ -368,11 +368,6 @@ function BookmarkHTMLHighlighter({
       });
     }
   }, [highlights, htmlContent, applyHighlightByOffset]);
-
-
-
-
-
 
   const processSelection = useCallback(
     (selection: Selection | null, x: number, y: number) => {
@@ -439,8 +434,6 @@ function BookmarkHTMLHighlighter({
     }, 1);
   };
 
-
-
   const closeMenu = () => {
     setMenuPosition(null);
     setPendingRange(null);
@@ -477,7 +470,10 @@ function BookmarkHTMLHighlighter({
     }
 
     if (!navigator.clipboard) {
-      toast({ description: "Clipboard API not supported. Your Karakeep instance must be running over HTTPS." });
+      toast({
+        description:
+          "Clipboard API not supported. Your Karakeep instance must be running over HTTPS.",
+      });
       return;
     }
 
