@@ -4,7 +4,7 @@ export const HIGHLIGHT_COLOR_MAP = {
     red: { light: "bg-red-200", dark: "bg-red-500" },
     green: { light: "bg-green-200", dark: "bg-green-500" },
     blue: { light: "bg-blue-200", dark: "bg-blue-500" },
-    yellow: { light: "bg-yellow-200", dark: "bg-yellow-500" },
+    yellow: { light: "bg-yellow-200", dark: "bg-yellow-600" },
   } as const,
   ["border-l"]: {
     red: "border-l-red-200",
