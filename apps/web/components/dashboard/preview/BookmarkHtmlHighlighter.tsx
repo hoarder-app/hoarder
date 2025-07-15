@@ -1,149 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { ActionButton } from "@/components/ui/action-button";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverContent } from "@/components/ui/popover";
+import { ColorPickerMenu } from "@/components/dashboard/preview/ColorPickerMenu";
 import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-import { PopoverAnchor } from "@radix-ui/react-popover";
-import { Check, ClipboardCopy, Trash2 } from "lucide-react";
 
-import {
-  SUPPORTED_HIGHLIGHT_COLORS,
-  ZHighlightColor,
-} from "@karakeep/shared/types/highlights";
+import { ZHighlightColor } from "@karakeep/shared/types/highlights";
 
 import { HIGHLIGHT_COLOR_MAP } from "./highlights";
-
-interface ColorPickerMenuProps {
-  position: { x: number; y: number } | null;
-  onColorSelect: (color: ZHighlightColor) => void;
-  onDelete?: () => void;
-  selectedHighlight: Highlight | null;
-  onClose: () => void;
-  isMobile: boolean;
-  onCopy: () => void;
-}
-
-const ColorPickerMenu: React.FC<ColorPickerMenuProps> = ({
-  position,
-  onColorSelect,
-  onDelete,
-  selectedHighlight,
-  onClose,
-  isMobile,
-  onCopy,
-}) => {
-  if (!position) {
-    return null;
-  }
-
-  if (selectedHighlight) {
-    const elements = document.querySelectorAll(
-      `[data-highlight-id="${selectedHighlight.id}"]`,
-    );
-    if (elements.length === 0) {
-      return;
-    }
-
-    elements.forEach((el) => {
-      el.classList.add(
-        HIGHLIGHT_COLOR_MAP.bg[selectedHighlight.color].dark,
-        "transition-colors",
-        "duration-1000",
-      );
-    });
-  }
-
-  return (
-    <Popover
-      open={!!position}
-      onOpenChange={(open) => {
-        if (!open) {
-          const elements = document.querySelectorAll(
-            `[data-highlight-id="${selectedHighlight?.id}"]`,
-          );
-          if (elements.length !== 0 && selectedHighlight) {
-            elements.forEach((el) => {
-              el.classList.remove(
-                HIGHLIGHT_COLOR_MAP.bg[selectedHighlight?.color].dark,
-              );
-            });
-          }
-          onClose();
-        }
-      }}
-    >
-      <PopoverAnchor
-        className="fixed"
-        style={{
-          left: position.x,
-          top: position.y,
-          transform: isMobile
-            ? "translate(-50%, 15px)"
-            : "translate(-50%, -100%) translateY(-15px)",
-        }}
-      />
-      <PopoverContent
-        side={isMobile ? "bottom" : "top"}
-        align="center"
-        className="flex w-fit items-center gap-1 rounded-lg bg-white p-2 shadow-xl dark:bg-gray-800"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-      >
-        <div className="flex gap-2">
-          {selectedHighlight && onCopy && (
-            <ActionButton
-              loading={false}
-              size="none"
-              title="Copy to clipboard"
-              variant="ghost"
-              className="size-8 rounded-full transition-all duration-200 hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-700"
-              onClick={onCopy}
-            >
-              <ClipboardCopy className="size-5" />
-            </ActionButton>
-          )}
-        </div>
-        {SUPPORTED_HIGHLIGHT_COLORS.map((color) => (
-          <Button
-            key={color}
-            size="none"
-            variant="none"
-            title={`Highlight ${color}`}
-            className={cn(
-              "relative size-8 rounded-full transition-all duration-200 ease-in-out hover:ring-2 hover:ring-gray-400 hover:ring-offset-1 focus-visible:ring-0 focus-visible:ring-gray-500 focus-visible:ring-offset-2",
-              HIGHLIGHT_COLOR_MAP.bg[color].light,
-            )}
-            onClick={() => onColorSelect(color)}
-          >
-            {selectedHighlight?.color === color && (
-              <Check className="absolute left-1/2 top-1/2 size-4 -translate-x-1/2 -translate-y-1/2 text-black drop-shadow-sm" />
-            )}
-          </Button>
-        ))}
-        {selectedHighlight && onDelete && (
-          <ActionButton
-            loading={false}
-            size="none"
-            title="Delete highlight"
-            variant="ghost"
-            className="size-8 rounded-full transition-all duration-200 hover:scale-105 hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={onDelete}
-          >
-            <Trash2 className="size-5 text-destructive" />
-          </ActionButton>
-        )}
-      </PopoverContent>
-    </Popover>
-  );
-};
-
-export interface Highlight {
-  id: string;
-  startOffset: number;
-  endOffset: number;
-  color: ZHighlightColor;
-  text: string | null;
-}
+import {
+  getHighlightFromRange,
+  Highlight,
+  isElementVisible,
+  getFirstVisibleHighlight,
+  isSelectionValid,
+} from "./highlightUtils";
 
 export interface HTMLHighlighterProps {
   htmlContent: string;
@@ -177,47 +46,6 @@ function BookmarkHTMLHighlighter({
     setIsMobile(window.matchMedia("(pointer: coarse)").matches);
   }, []);
 
-  const isElementVisible = (rect: DOMRect) => {
-    return (
-      rect.width > 0 &&
-      rect.height > 0 &&
-      rect.bottom >= 0 &&
-      rect.top <= window.innerHeight &&
-      rect.right >= 0 &&
-      rect.left <= window.innerWidth
-    );
-  };
-
-  const getFirstVisibleHighlight = (
-    highlightId: string,
-    menuPosition?: { x: number; y: number },
-  ): HTMLElement | null => {
-    const elements = document.querySelectorAll(
-      `span[data-highlight-id="${highlightId}"]`,
-    );
-    let closestEl: HTMLElement | null = null;
-    let minDistance = Number.POSITIVE_INFINITY;
-
-    for (const el of Array.from(elements)) {
-      const rect = el.getBoundingClientRect();
-      if (isElementVisible(rect)) {
-        if (!menuPosition) {
-          return el as HTMLElement;
-        }
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        const dx = centerX - menuPosition.x;
-        const dy = centerY - menuPosition.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestEl = el as HTMLElement;
-        }
-      }
-    }
-    return closestEl;
-  };
-
   const calculateMenuPosition = (rect: DOMRect, isMobile: boolean) => ({
     x: rect.left + rect.width / 2,
     y: isMobile ? rect.bottom + 8 : rect.top - 12,
@@ -233,11 +61,17 @@ function BookmarkHTMLHighlighter({
 
     const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
+    let lastUpdateTime = 0;
     const updatePosition = () => {
+      const now = performance.now();
+      const deltaTime = now - lastUpdateTime;
+      if (deltaTime < 8.33) return; // 1000 ms / 120 fps
+      lastUpdateTime = now;
+
       let targetElement: HTMLElement | Range | null = null;
 
       if (selectedHighlight) {
-        targetElement = getFirstVisibleHighlight(selectedHighlight.id); // todo refactor this function so it doesnt keep jumping around on scroll
+        targetElement = getFirstVisibleHighlight(selectedHighlight.id);
       }
 
       if (!targetElement && pendingRange) {
@@ -259,8 +93,7 @@ function BookmarkHTMLHighlighter({
       const rect = targetElement.getBoundingClientRect();
       const targetPos = calculateMenuPosition(rect, isMobile);
 
-      // Smoothly interpolate position
-      currentPos.x = lerp(currentPos.x, targetPos.x, 0.5); // todo make this smoother
+      currentPos.x = lerp(currentPos.x, targetPos.x, 0.5);
       currentPos.y = lerp(currentPos.y, targetPos.y, 0.5);
 
       if (
@@ -271,12 +104,11 @@ function BookmarkHTMLHighlighter({
         lastKnownX = currentPos.x;
         lastKnownY = currentPos.y;
       }
-      // todo fix ai slop
-
       animationFrameId = requestAnimationFrame(updatePosition);
     };
 
     animationFrameId = requestAnimationFrame(updatePosition);
+
 
     const handleViewportChange = () => {
       if (animationFrameId) {
@@ -285,9 +117,9 @@ function BookmarkHTMLHighlighter({
       animationFrameId = requestAnimationFrame(updatePosition);
     };
 
-    window.addEventListener("resize", handleViewportChange);
-    window.addEventListener("scroll", handleViewportChange, true);
-    document.addEventListener("scroll", handleViewportChange, true);
+    window.addEventListener("resize", handleViewportChange); // handle resize for mobile
+    window.addEventListener("scroll", handleViewportChange, true); // handle scroll for desktop
+    document.addEventListener("scroll", handleViewportChange, true); // handle coarser scroll for mobile
 
     if (window.visualViewport) {
       window.visualViewport.addEventListener("resize", handleViewportChange);
@@ -301,6 +133,7 @@ function BookmarkHTMLHighlighter({
       window.removeEventListener("resize", handleViewportChange);
       window.removeEventListener("scroll", handleViewportChange, true);
       document.removeEventListener("scroll", handleViewportChange, true);
+
       if (window.visualViewport) {
         window.visualViewport.removeEventListener(
           "resize",
@@ -313,177 +146,8 @@ function BookmarkHTMLHighlighter({
       }
     };
   }, [pendingRange, selectedHighlight, isMobile]);
-  const getCharacterOffsetOfNode = useCallback(
-    (node: Node, parentElement: HTMLElement): number => {
-      let offset = 0;
-      const walker = document.createTreeWalker(
-        parentElement,
-        NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
-      );
-      let currentWalkerNode;
-      while ((currentWalkerNode = walker.nextNode())) {
-        if (currentWalkerNode === node) {
-          break; // Stop when node is reached.
-        }
-        if (currentWalkerNode.nodeType === Node.TEXT_NODE) {
-          offset += currentWalkerNode.textContent?.length ?? 0;
-        }
-      }
-      return offset;
-    },
-    [],
-  );
 
-  const getHighlightDataFromRange = useCallback(
-    (range: Range): Omit<Highlight, "id" | "color"> | null => {
-      if (!contentRef.current) {
-        return null;
-      }
-      contentRef.current.normalize();
-
-      const {
-        startContainer,
-        startOffset: startOffsetInContainer,
-        endContainer,
-        endOffset: endOffsetInContainer,
-      } = range;
-
-      const getGlobalCharOffsetFromPoint = (
-        pointContainer: Node,
-        pointOffsetInNode: number,
-      ): number => {
-        if (!contentRef.current) {
-          return -1;
-        }
-
-        if (pointContainer.nodeType === Node.TEXT_NODE) {
-          const offsetBeforeNode = getCharacterOffsetOfNode(
-            pointContainer,
-            contentRef.current,
-          );
-          return offsetBeforeNode + pointOffsetInNode;
-        } else if (pointContainer.nodeType === Node.ELEMENT_NODE) {
-          let referenceNodeForOffsetCalc: Node | null; // Node to calculate offset against
-          let includeTextWithinReferenceNode = false;
-
-          if (pointOffsetInNode < pointContainer.childNodes.length) {
-            referenceNodeForOffsetCalc =
-              pointContainer.childNodes[pointOffsetInNode];
-          } else {
-            referenceNodeForOffsetCalc = pointContainer;
-            includeTextWithinReferenceNode = true;
-          }
-
-          if (!referenceNodeForOffsetCalc) {
-            return -1;
-          }
-
-          let accumulatedOffset = getCharacterOffsetOfNode(
-            referenceNodeForOffsetCalc,
-            contentRef.current,
-          );
-
-          if (
-            includeTextWithinReferenceNode &&
-            referenceNodeForOffsetCalc.nodeType === Node.ELEMENT_NODE
-          ) {
-            const innerWalker = document.createTreeWalker(
-              referenceNodeForOffsetCalc,
-              NodeFilter.SHOW_TEXT,
-            );
-            let textNode;
-            while ((textNode = innerWalker.nextNode())) {
-              accumulatedOffset += textNode.textContent?.length ?? 0;
-            }
-          }
-          return accumulatedOffset;
-        }
-        return -1; // Should not be reached for valid node types
-      };
-
-      const globalStartOffset = getGlobalCharOffsetFromPoint(
-        startContainer,
-        startOffsetInContainer,
-      );
-      const globalEndOffset = getGlobalCharOffsetFromPoint(
-        endContainer,
-        endOffsetInContainer,
-      );
-
-      if (
-        globalStartOffset === -1 ||
-        globalEndOffset === -1 ||
-        globalStartOffset > globalEndOffset // Basic validation
-      ) {
-        return null;
-      }
-
-      let textContent = "";
-      const fragment = range.cloneContents();
-      const tempDiv = document.createElement("div");
-      tempDiv.appendChild(fragment);
-
-      const walkNodes = (node: Node, isFirstBlock = true) => {
-        if (node.nodeType === Node.TEXT_NODE) {
-          textContent += node.textContent ?? "";
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-          const element = node as HTMLElement;
-          const style = window.getComputedStyle(element);
-          const isBlock =
-            style.display === "block" ||
-            element.nodeName === "P" ||
-            element.nodeName === "DIV" ||
-            element.nodeName === "LI" ||
-            element.nodeName === "H1" ||
-            element.nodeName === "H2" ||
-            element.nodeName === "H3" ||
-            element.nodeName === "H4" ||
-            element.nodeName === "H5" ||
-            element.nodeName === "H6" ||
-            element.nodeName === "BLOCKQUOTE";
-
-          if (
-            isBlock &&
-            !isFirstBlock &&
-            textContent &&
-            !textContent.endsWith("\n")
-          ) {
-            textContent += "\n"; // adding a newline before blocks
-          }
-
-          if (element.nodeName === "BR") {
-            textContent += "\n";
-          }
-
-          let firstChildBlock = true;
-          for (const child of Array.from(element.childNodes)) {
-            walkNodes(child, firstChildBlock);
-            if (firstChildBlock) firstChildBlock = false;
-          }
-
-          if (isBlock && !textContent.endsWith("\n")) {
-            textContent += "\n"; // now add after blocks
-          }
-        }
-      };
-
-      walkNodes(tempDiv);
-
-      if (!textContent.trim()) {
-        // Ignore only whitespace
-        return null;
-      }
-
-      return {
-        startOffset: globalStartOffset,
-        endOffset: globalEndOffset,
-        text: textContent,
-      };
-    },
-    [getCharacterOffsetOfNode],
-  );
-
-  const getTextNodeAtOffset_refined = useCallback(
+  const getTextNodeAtOffset = useCallback(
     (
       parentElement: HTMLElement,
       globalOffset: number,
@@ -493,6 +157,7 @@ function BookmarkHTMLHighlighter({
         parentElement,
         NodeFilter.SHOW_TEXT,
       );
+
       let currentNodeAsText: Text | null = null;
       let lastVisitedNode: Text | null = null;
 
@@ -507,6 +172,7 @@ function BookmarkHTMLHighlighter({
           }
           break;
         }
+
         lastVisitedNode = nextNode;
         currentNodeAsText = nextNode;
         const nodeLength = currentNodeAsText.textContent?.length ?? 0;
@@ -521,13 +187,14 @@ function BookmarkHTMLHighlighter({
         }
         accumulatedOffset += nodeLength;
       }
+
       if (globalOffset === accumulatedOffset && lastVisitedNode) {
         return {
           node: lastVisitedNode,
           offsetInNode: lastVisitedNode.length,
         };
       }
-      return null; // Offset not found
+      return null; // nothing found
     },
     [],
   );
@@ -537,19 +204,18 @@ function BookmarkHTMLHighlighter({
       if (
         !contentRef.current ||
         !highlight ||
-        highlight.startOffset >= highlight.endOffset || // Invalid range
-        !highlight.id // Highlight must have an ID
+        !highlight.id ||
+        highlight.startOffset >= highlight.endOffset
       ) {
         return;
       }
-      // Normalize content to merge adjacent text nodes for consistent offset mapping.
-      contentRef.current.normalize();
+      contentRef.current.normalize(); // normalizing makes it so nodes are merged which make sure offsets are correct
 
-      const startPoint = getTextNodeAtOffset_refined(
+      const startPoint = getTextNodeAtOffset(
         contentRef.current,
         highlight.startOffset,
       );
-      const endPoint = getTextNodeAtOffset_refined(
+      const endPoint = getTextNodeAtOffset(
         contentRef.current,
         highlight.endOffset,
       );
@@ -560,9 +226,9 @@ function BookmarkHTMLHighlighter({
 
       const masterRange = document.createRange();
       try {
-        if (
+        if ( // make sure offsets are within the text node bounds
           startPoint.offsetInNode >
-            (startPoint.node.textContent?.length ?? 0) ||
+          (startPoint.node.textContent?.length ?? 0) ||
           endPoint.offsetInNode > (endPoint.node.textContent?.length ?? 0)
         ) {
           return;
@@ -584,7 +250,7 @@ function BookmarkHTMLHighlighter({
       }[] = [];
       const commonAncestor = masterRange.commonAncestorContainer;
 
-      if (
+      if ( // if it's a single text node
         commonAncestor.nodeType === Node.TEXT_NODE &&
         masterRange.startContainer === commonAncestor &&
         masterRange.endContainer === commonAncestor
@@ -594,7 +260,8 @@ function BookmarkHTMLHighlighter({
           startOffsetInNode: masterRange.startOffset,
           endOffsetInNode: masterRange.endOffset,
         });
-      } else if (
+
+      } else if ( // if it's a range that spans multiple texts
         commonAncestor.nodeType === Node.ELEMENT_NODE ||
         commonAncestor.nodeType === Node.DOCUMENT_FRAGMENT_NODE
       ) {
@@ -610,20 +277,20 @@ function BookmarkHTMLHighlighter({
         );
         let currentWalkerNode;
         while ((currentWalkerNode = walker.nextNode() as Text | null)) {
-          const sOffset =
-            currentWalkerNode === masterRange.startContainer
-              ? masterRange.startOffset
+          const startOffset =
+            currentWalkerNode === masterRange.startContainer // if the node is the start container, use range
+              ? masterRange.startOffset // else use 0 (as we're in the center of the node)
               : 0;
-          const eOffset =
+          const endOffset =
             currentWalkerNode === masterRange.endContainer
               ? masterRange.endOffset
               : currentWalkerNode.length;
 
-          if (sOffset < eOffset) {
+          if (startOffset < endOffset) {
             nodesToProcessDetails.push({
               node: currentWalkerNode,
-              startOffsetInNode: sOffset,
-              endOffsetInNode: eOffset,
+              startOffsetInNode: startOffset,
+              endOffsetInNode: endOffset,
             });
           }
         }
@@ -631,19 +298,19 @@ function BookmarkHTMLHighlighter({
         return;
       }
 
+      // intentionally reverse the order to avoid issues with DOM manipulation
       for (let i = nodesToProcessDetails.length - 1; i >= 0; i--) {
-        const { node, startOffsetInNode, endOffsetInNode } =
-          nodesToProcessDetails[i];
+
+        const { node, startOffsetInNode, endOffsetInNode } = nodesToProcessDetails[i];
         let nodeToWrap: Text = node;
 
         if (!nodeToWrap.parentNode || !document.body.contains(nodeToWrap))
           continue;
 
         try {
-          // Split after highlight. nodeToQWrap is the first part
           if (endOffsetInNode < nodeToWrap.length) {
             nodeToWrap.splitText(endOffsetInNode);
-          } // Splitting before highlight.
+          }
           if (startOffsetInNode > 0) {
             nodeToWrap = nodeToWrap.splitText(startOffsetInNode);
           }
@@ -669,8 +336,8 @@ function BookmarkHTMLHighlighter({
         }
       }
 
-      const imgs = masterRange.cloneContents().querySelectorAll("img");
-      imgs.forEach((img) => {
+      const images = masterRange.cloneContents().querySelectorAll("img");
+      images.forEach((img) => {
         const src = img.getAttribute("src");
         if (!src) return;
         const realImg = contentRef.current?.querySelector(
@@ -683,8 +350,9 @@ function BookmarkHTMLHighlighter({
         }
       });
     },
-    [getTextNodeAtOffset_refined, HIGHLIGHT_COLOR_MAP],
+    [getTextNodeAtOffset, HIGHLIGHT_COLOR_MAP],
   );
+
 
   useEffect(() => {
     if (!contentRef.current) {
@@ -701,158 +369,122 @@ function BookmarkHTMLHighlighter({
     }
   }, [highlights, htmlContent, applyHighlightByOffset]);
 
+
+
+
+
+
   const processSelection = useCallback(
-    (selection: Selection | null, clickX: number, clickY: number) => {
-      if (!selection) {
-        if (pendingRange) setPendingRange(null);
+    (selection: Selection | null, x: number, y: number) => {
+      if (!selection || selection.isCollapsed || !contentRef.current) {
+        setPendingRange(null);
         return;
       }
 
-      if (
-        selection.rangeCount > 0 &&
-        !selection.isCollapsed && // Selection must not be a collapsed caret
-        contentRef.current // Must exist
-      ) {
+      if (selection.rangeCount > 0) {
         const range = selection.getRangeAt(0);
-        const commonAncestor = range.commonAncestorContainer;
+        const isSelectionInContent = isSelectionValid(
+          range,
+          contentRef.current,
+        );
 
-        if (!commonAncestor) {
-          if (pendingRange) setPendingRange(null);
-          return;
-        }
-
-        const isContainedCheck =
-          contentRef.current.contains(commonAncestor) ||
-          contentRef.current === commonAncestor;
-
-        if (isContainedCheck) {
-          if (
-            !contentRef.current.contains(range.startContainer) ||
-            !contentRef.current.contains(range.endContainer)
-          ) {
-            if (pendingRange) setPendingRange(null);
-            return;
-          }
-
-          const selectionText = range.toString().trim();
-          if (!selectionText) {
-            if (pendingRange) setPendingRange(null);
-            return;
-          }
-
+        if (isSelectionInContent && range.toString().trim()) {
           setPendingRange(range);
           setSelectedHighlight(null);
-
-          const newMenuPos = {
-            x: clickX,
-            y: isMobile ? clickY + 8 : clickY - 12,
-          };
-
-          const rect = range.getBoundingClientRect();
-          if (
-            isNaN(newMenuPos.x) ||
-            isNaN(newMenuPos.y) ||
-            !isFinite(newMenuPos.x) ||
-            !isFinite(newMenuPos.y) ||
-            (rect.width === 0 && rect.height === 0 && selectionText.length > 0)
-          ) {
-            setPendingRange(null);
-            return;
-          }
-          setMenuPosition(newMenuPos);
+          setMenuPosition({
+            x,
+            y: isMobile ? y + 8 : y - 12,
+          });
         } else {
-          if (pendingRange) setPendingRange(null);
+          setPendingRange(null);
         }
-      } else {
-        if (pendingRange) setPendingRange(null);
       }
     },
-    [isMobile, pendingRange],
+    [isMobile, setMenuPosition],
   );
 
   const handlePointerUp = (e: React.PointerEvent) => {
     if (e.button !== 0) {
-      if (pendingRange) setPendingRange(null);
-      if (menuPosition && !selectedHighlight) {
-        setMenuPosition(null);
-      }
+      // left clicks only
+      setPendingRange(null);
+      if (menuPosition && !selectedHighlight) setMenuPosition(null);
       return;
     }
 
     const target = e.target as HTMLElement;
-    const highlightSpan = target.closest<HTMLElement>(
-      "span[data-highlight='true']",
+    const highlightElement = target.closest<HTMLElement>(
+      'span[data-highlight="true"], img[data-highlight-id]',
     );
 
-    if (highlightSpan?.dataset.highlightId) {
-      const highlightId = highlightSpan.dataset.highlightId;
+    if (highlightElement?.dataset.highlightId) {
+      // if clicked on a highlight
+      const highlightId = highlightElement.dataset.highlightId;
       const foundHighlight = highlights.find((h) => h.id === highlightId);
+
       if (foundHighlight) {
         setSelectedHighlight(foundHighlight);
         setPendingRange(null);
-        const clickPos = {
+        setMenuPosition({
           x: e.clientX,
           y: isMobile ? e.clientY + 8 : e.clientY - 12,
-        };
-        setMenuPosition(clickPos);
+        });
         e.stopPropagation();
       }
       return;
     }
 
+    // small delay to avoid issues with text selection
     setTimeout(() => {
-      const selection = window.getSelection();
-      processSelection(selection, e.clientX, e.clientY);
-    }, 1); // Very small delay to wait for selection to update.
+      processSelection(window.getSelection(), e.clientX, e.clientY);
+    }, 1);
   };
 
-  const closeColorPicker = useCallback(() => {
+
+
+  const closeMenu = () => {
+    setMenuPosition(null);
+    setPendingRange(null);
     setSelectedHighlight(null);
-  }, []);
+  };
 
   const handleColorSelect = (color: ZHighlightColor) => {
-    if (pendingRange && onHighlight) {
-      const highlightData = getHighlightDataFromRange(pendingRange);
+    if (pendingRange && onHighlight && contentRef.current) {
+      const highlightData = getHighlightFromRange(
+        pendingRange,
+        contentRef.current,
+      );
       if (highlightData) {
         onHighlight({ ...highlightData, color });
       }
     } else if (selectedHighlight && onUpdateHighlight) {
       onUpdateHighlight({ ...selectedHighlight, color });
     }
-    setMenuPosition(null);
-    setPendingRange(null);
-    setSelectedHighlight(null);
+
+    closeMenu();
   };
 
   const handleDelete = () => {
     if (selectedHighlight && onDeleteHighlight) {
       onDeleteHighlight(selectedHighlight);
     }
-    setMenuPosition(null);
-    setPendingRange(null);
-    setSelectedHighlight(null);
+    closeMenu();
   };
 
   const handleCopy = () => {
-    if (!selectedHighlight) {
-      toast({
-        description: "You don't have a highlight selected",
-      });
+    if (!selectedHighlight?.text) {
+      toast({ description: "No highlight text to copy" });
       return;
     }
+
     if (!navigator.clipboard) {
-      toast({
-        description: "Clipboard API not supported.", // todo add a faq thing?
-      });
+      toast({ description: "Clipboard API not supported. Your Karakeep instance must be running over HTTPS." });
       return;
     }
-    try {
-      navigator.clipboard
-        ?.writeText(selectedHighlight.text ?? "")
-        .then(() => toast({ description: "Copied highlight to clipboard!" }));
-    } catch (e) {
-      toast({ description: "Could not copy text" });
-    }
+
+    navigator.clipboard
+      .writeText(selectedHighlight.text)
+      .then(() => toast({ description: "Copied to clipboard!" }))
+      .catch(() => toast({ description: "Failed to copy text" }));
   };
 
   return (
@@ -868,17 +500,15 @@ function BookmarkHTMLHighlighter({
           msUserSelect: "text",
         }}
       />
-      {menuPosition && ( // Conditional render
+
+      {menuPosition && ( // render only if menuPosition is set
         <ColorPickerMenu
           position={menuPosition}
           onColorSelect={handleColorSelect}
           selectedHighlight={selectedHighlight}
           onClose={() => {
-            setMenuPosition(null);
-            closeColorPicker();
-            if (pendingRange) {
-              setPendingRange(null);
-            } else if (!selectedHighlight) {
+            closeMenu();
+            if (!selectedHighlight) {
               window.getSelection()?.removeAllRanges();
             }
           }}
