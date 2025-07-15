@@ -160,10 +160,12 @@ function BookmarkHTMLHighlighter({
       let currentNodeAsText: Text | null = null;
       let lastVisitedNode: Text | null = null;
 
-      while (walker.nextNode()) { // go through all the nodes sequentially
+      while (walker.nextNode()) {
+        // go through all the nodes sequentially
         const nextNode = walker.currentNode as Text;
         if (!nextNode) {
-          if (globalOffset === accumulatedOffset && lastVisitedNode) { // get the offset of the last node
+          if (globalOffset === accumulatedOffset && lastVisitedNode) {
+            // get the offset of the last node
             return {
               node: lastVisitedNode,
               offsetInNode: lastVisitedNode.length,
@@ -321,7 +323,8 @@ function BookmarkHTMLHighlighter({
 
         if (nodeToWrap.nodeValue && nodeToWrap.nodeValue.trim().length > 0) {
           const span = document.createElement("span");
-          span.className = cn( // finally apply the highlight styles
+          span.className = cn(
+            // finally apply the highlight styles
             HIGHLIGHT_COLOR_MAP.bg[highlight.color].light,
             "text-gray-600",
             "whitespace-normal",
