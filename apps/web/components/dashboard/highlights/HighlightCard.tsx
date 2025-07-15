@@ -44,8 +44,8 @@ export default function HighlightCard({
           }
         },
         {
-          root: null, // use viewport
-          threshold: 0.5, // Adjust as needed (e.g. 0.5 = half in view)
+          root: null,
+          threshold: 0.5,
         },
       );
 
@@ -92,7 +92,7 @@ export default function HighlightCard({
 
         setTimeout(() => {
           el.classList.remove(HIGHLIGHT_COLOR_MAP.bg[highlight.color].dark);
-        }, 1500);
+        }, 1000);
       });
     });
   };
