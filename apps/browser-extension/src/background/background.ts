@@ -8,6 +8,7 @@ import {
   Settings,
   subscribeToSettingsChanges,
 } from "../utils/settings.ts";
+import { getApiClient } from "../utils/trpc.ts";
 import { NEW_BOOKMARK_REQUEST_KEY_NAME } from "./protocol.ts";
 
 const OPEN_KARAKEEP_ID = "open-karakeep";
@@ -122,3 +123,31 @@ function handleCommand(command: string, tab: chrome.tabs.Tab) {
 }
 
 chrome.commands.onCommand.addListener(handleCommand);
+
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+  const tabId = activeInfo.tabId;
+  const tabInfo = await chrome.tabs.get(tabId);
+  console.log("Tab activated", tabId, tabInfo);
+  if (!tabInfo.url || tabInfo.status !== "complete") return;
+
+  try {
+    const api = await getApiClient();
+    const data = await api.bookmarks.searchBookmarks.query({
+      text: "url:" + tabInfo.url,
+    });
+    if (!data) {
+      return;
+    }
+    const count = data.bookmarks.length || 0;
+    await Promise.all([
+      chrome.action.setBadgeText({ tabId, text: `${count}` }),
+      chrome.action.setBadgeBackgroundColor({
+        tabId,
+        color: count > 0 ? "#4CAF50" : "#F44336",
+      }),
+    ]);
+  } catch (error) {
+    console.error("Archive check failed:", error);
+    await chrome.action.setBadgeText({ tabId, text: "!" });
+  }
+});
