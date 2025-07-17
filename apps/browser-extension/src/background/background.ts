@@ -128,10 +128,18 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
   const tabId = activeInfo.tabId;
   const tabInfo = await chrome.tabs.get(tabId);
   console.log("Tab activated", tabId, tabInfo);
-  if (!tabInfo.url || tabInfo.status !== "complete") return;
+  const pluginSettings = await getPluginSettings();
+  if (
+    !pluginSettings.showCountBadge ||
+    !tabInfo.url ||
+    tabInfo.status !== "complete"
+  ) {
+    return;
+  }
 
   try {
     const api = await getApiClient();
+    console.log("Checking archive count for", tabInfo.url);
     const data = await api.bookmarks.searchBookmarks.query({
       text: "url:" + tabInfo.url,
     });
