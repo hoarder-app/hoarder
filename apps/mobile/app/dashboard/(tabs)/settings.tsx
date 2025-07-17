@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { Slider } from "react-native-awesome-slider";
 import { useSharedValue } from "react-native-reanimated";
 import { Link } from "expo-router";
@@ -62,6 +62,31 @@ export default function Dashboard() {
                     ]
                   }
                 </Text>
+                <ChevronRight color="rgb(0, 122, 255)" />
+              </View>
+            </Pressable>
+          </Link>
+        </View>
+        <View className="flex w-full flex-row items-center justify-between gap-8 rounded-lg bg-white px-4 py-2 dark:bg-accent">
+          <Link
+            asChild
+            href="/dashboard/settings/bookmark-default-view"
+            className="flex-1"
+          >
+            <Pressable className="flex flex-row justify-between">
+              <Text className="text-lg text-accent-foreground">
+                Default Bookmark View
+              </Text>
+              <View className="flex flex-row items-center gap-2">
+                {isSettingsLoading ? (
+                  <ActivityIndicator size="small" />
+                ) : (
+                  <Text className="text-lg text-muted-foreground">
+                    {settings.defaultBookmarkView === "reader"
+                      ? "Reader"
+                      : "Browser"}
+                  </Text>
+                )}
                 <ChevronRight color="rgb(0, 122, 255)" />
               </View>
             </Pressable>

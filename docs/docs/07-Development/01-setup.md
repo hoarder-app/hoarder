@@ -1,5 +1,31 @@
 # Setup
 
+## Quick Start
+
+For the fastest way to get started with development, use the one-command setup script:
+
+```bash
+./start-dev.sh
+```
+
+This script will automatically:
+- Start Meilisearch in Docker (on port 7700)
+- Start headless Chrome in Docker (on port 9222) 
+- Install dependencies with `pnpm install` if needed
+- Start both the web app and workers in parallel
+- Provide cleanup when you stop with Ctrl+C
+
+**Prerequisites:**
+- Docker installed and running
+- pnpm installed (see manual setup below for installation instructions)
+
+The script will output the running services:
+- Web app: http://localhost:3000
+- Meilisearch: http://localhost:7700  
+- Chrome debugger: http://localhost:9222
+
+Press Ctrl+C to stop all services and clean up Docker containers.
+
 ## Manual Setup
 
 Karakeep uses `node` version 22. To install it, you can use `nvm` [^1]
@@ -88,13 +114,43 @@ The worker app will automatically start headless chrome on startup for crawling 
 
 - Run `pnpm workers` in the root of the repo.
 
-### iOS Mobile App
+### Mobile App (iOS & Android)
+
+#### Prerequisites
+
+To build and run the mobile app locally, you'll need:
+
+- **For iOS development**: 
+  - macOS computer
+  - Xcode installed from the App Store
+  - iOS Simulator (comes with Xcode)
+
+- **For Android development**:
+  - Android Studio installed
+  - Android SDK configured
+  - Android Emulator or physical device
+
+For detailed setup instructions, refer to the [Expo documentation](https://docs.expo.dev/guides/local-app-development/).
+
+#### Running the app
 
 - `cd apps/mobile`
 - `pnpm exec expo prebuild --no-install` to build the app.
-- Start the ios simulator.
+
+**For iOS:**
 - `pnpm exec expo run:ios`
 - The app will be installed and started in the simulator.
+
+**Troubleshooting iOS Setup:**
+If you encounter an error like `xcrun: error: SDK "iphoneos" cannot be located`, you may need to set the correct Xcode developer directory:
+```bash
+sudo xcode-select -s /Applications/Xcode.app/Contents/Developer
+```
+
+**For Android:**
+- Start the Android emulator or connect a physical device.
+- `pnpm exec expo run:android`
+- The app will be installed and started on the emulator/device.
 
 Changing the code will hot reload the app. However, installing new packages requires restarting the expo server.
 

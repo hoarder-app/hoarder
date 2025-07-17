@@ -61,3 +61,4 @@ data
 # VS-Code
 .vscode
 auth_failures.log
+.claude/settings.local.json
