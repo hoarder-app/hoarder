@@ -76,7 +76,7 @@ export function initializeCache() {
   chrome.alarms.get(PURGE_ALARM_NAME, (alarm) => {
     if (!alarm) {
       chrome.alarms.create(PURGE_ALARM_NAME, {
-        periodInMinutes: 60,
+        periodInMinutes: 10,
       });
     }
   });
