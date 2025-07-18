@@ -34,6 +34,9 @@ function purgeStaleFromObject(
 // --- Periodic Purge Task (for use with chrome.alarms) ---
 // Removes expired entries from both memory and persistent storage
 export async function purgeStaleBadgeCache() {
+  console.log(
+    "[badgeCache] purgeStaleBadgeCache: cleaning up stale badge cache...",
+  );
   // 1. Purge memory cache
   const now = Date.now();
   for (const [key, entry] of badgeMemoryCache.entries()) {
@@ -68,6 +71,7 @@ export async function purgeStaleBadgeCache() {
  * Initialize the badge cache module. Should be called once at background script startup.
  */
 export function initializeCache() {
+  console.log("[badgeCache] Initializing badge cache...");
   // Set up an hourly alarm for periodic cache purge
   chrome.alarms.get(PURGE_ALARM_NAME, (alarm) => {
     if (!alarm) {
@@ -83,10 +87,12 @@ export function initializeCache() {
  * Returns cached data and marks whether it is fresh.
  */
 export async function getBadgeStatusSWR(url: string) {
+  console.log(`[badgeCache] getBadgeStatusSWR: key=${url}`);
   // 1. Check memory cache (L1)
   const memEntry = badgeMemoryCache.get(url);
   if (memEntry) {
     const isFresh = Date.now() - memEntry.ts < BADGE_CACHE_EXPIRE_MS;
+    console.log(`[badgeCache] getBadgeStatusSWR: key=${url}, value=`, memEntry);
     return { ...memEntry, source: "memory", fresh: isFresh };
   }
   // 2. Check persistent storage (L2)
@@ -97,9 +103,14 @@ export async function getBadgeStatusSWR(url: string) {
     if (storageEntry) {
       badgeMemoryCache.set(url, storageEntry);
       const isFresh = Date.now() - storageEntry.ts < BADGE_CACHE_EXPIRE_MS;
+      console.log(
+        `[badgeCache] getBadgeStatusSWR: key=${url}, value=`,
+        storageEntry,
+      );
       return { ...storageEntry, source: "storage", fresh: isFresh };
     }
     // Not found in either cache
+    console.log(`[badgeCache] getBadgeStatusSWR: key=${url}, value=null`);
     return null;
   } catch (err) {
     console.error("Failed to get badge cache from storage:", err);
@@ -115,6 +126,10 @@ export async function setBadgeStatusSWR(
   count: number,
   isExisted: boolean,
 ) {
+  console.log(`[badgeCache] setBadgeStatusSWR: key=${url}, value=`, {
+    count,
+    isExisted,
+  });
   const entry = { count, isExisted, ts: Date.now() };
   // 1. Update memory cache immediately
   badgeMemoryCache.set(url, entry);
@@ -136,6 +151,7 @@ export async function setBadgeStatusSWR(
  * Remove badge status cache for a specific URL or all URLs.
  */
 export async function clearBadgeStatusSWR(url?: string) {
+  console.log(`[badgeCache] clearBadgeStatusSWR: key=${url}`);
   // 1. Remove from memory cache
   if (url) {
     badgeMemoryCache.delete(url);

@@ -204,7 +204,6 @@ export async function getTabCount(tabUrl: string) {
  */
 async function checkAndUpdateIcon(tabId: number) {
   const tabInfo = await chrome.tabs.get(tabId);
-  console.log("Tab activated", tabId, tabInfo);
   const pluginSettings = await getPluginSettings();
   if (
     !pluginSettings.showCountBadge ||
@@ -213,6 +212,7 @@ async function checkAndUpdateIcon(tabId: number) {
   ) {
     return;
   }
+  console.log("Tab activated", tabId, tabInfo);
 
   try {
     const cachedInfo = await getBadgeStatusSWR(tabInfo.url);
