@@ -4,6 +4,12 @@ import {
 } from "@karakeep/shared/types/bookmarks.ts";
 
 import {
+  getBadgeStatusSWR,
+  initializeCache,
+  purgeStaleBadgeCache,
+  setBadgeStatusSWR,
+} from "../utils/badgeCache";
+import {
   getPluginSettings,
   Settings,
   subscribeToSettingsChanges,
@@ -14,6 +20,20 @@ import { NEW_BOOKMARK_REQUEST_KEY_NAME } from "./protocol.ts";
 const OPEN_KARAKEEP_ID = "open-karakeep";
 const ADD_LINK_TO_KARAKEEP_ID = "add-link";
 
+// Initialize the cache system, which creates a timer for periodic cache cleanup.
+initializeCache();
+
+// Listen for timer events and execute cache cleanup tasks when triggered.
+chrome.alarms.onAlarm.addListener((alarm) => {
+  if (alarm.name === "badgeCachePurgeAlarm") {
+    purgeStaleBadgeCache();
+  }
+});
+
+/**
+ * Check the current settings state and register or remove context menus accordingly.
+ * @param settings The current plugin settings.
+ */
 function checkSettingsState(settings: Settings) {
   if (settings?.address) {
     registerContextMenus();
@@ -22,15 +42,18 @@ function checkSettingsState(settings: Settings) {
   }
 }
 
+/**
+ * Remove context menus from the browser.
+ */
 function removeContextMenus() {
   chrome.contextMenus.remove(OPEN_KARAKEEP_ID);
   chrome.contextMenus.remove(ADD_LINK_TO_KARAKEEP_ID);
 }
 
 /**
- * Registers
- * * a context menu button to open a tab with the currently configured karakeep instance
- * * a context menu button to add a link to karakeep without loading the page
+ * Register context menus in the browser.
+ * * A context menu button to open a tab with the currently configured karakeep instance.
+ * * A context menu button to add a link to karakeep without loading the page.
  */
 function registerContextMenus() {
   chrome.contextMenus.create({
@@ -46,8 +69,8 @@ function registerContextMenus() {
 }
 
 /**
- * Reads the current settings and opens a new tab with karakeep
- * @param info the information about the click in the context menu
+ * Handle context menu clicks by opening a new tab with karakeep or adding a link to karakeep.
+ * @param info Information about the context menu click event.
  */
 async function handleContextMenuClick(info: chrome.contextMenus.OnClickData) {
   const { menuItemId, selectionText, srcUrl, linkUrl, pageUrl } = info;
@@ -64,6 +87,10 @@ async function handleContextMenuClick(info: chrome.contextMenus.OnClickData) {
   }
 }
 
+/**
+ * Add a link to karakeep based on the provided information.
+ * @param options An object containing information about the link to add.
+ */
 function addLinkToKarakeep({
   selectionText,
   srcUrl,
@@ -106,6 +133,11 @@ subscribeToSettingsChanges((settings) => {
 // eslint-disable-next-line @typescript-eslint/no-misused-promises -- Manifest V3 allows async functions for all callbacks
 chrome.contextMenus.onClicked.addListener(handleContextMenuClick);
 
+/**
+ * Handle command events, such as adding a link to karakeep.
+ * @param command The command to handle.
+ * @param tab The current tab.
+ */
 function handleCommand(command: string, tab: chrome.tabs.Tab) {
   if (command === ADD_LINK_TO_KARAKEEP_ID) {
     addLinkToKarakeep({
@@ -124,6 +156,12 @@ function handleCommand(command: string, tab: chrome.tabs.Tab) {
 
 chrome.commands.onCommand.addListener(handleCommand);
 
+/**
+ * Set the badge text and color based on the provided information.
+ * @param text The text to display on the badge.
+ * @param isExisted Whether the badge should indicate existence.
+ * @param tabId The ID of the tab to update.
+ */
 export async function setBadge(
   text: string | number,
   isExisted: boolean,
@@ -138,6 +176,10 @@ export async function setBadge(
   ]);
 }
 
+/**
+ * Get the count of bookmarks for a given tab URL.
+ * @param tabUrl The URL of the tab to check.
+ */
 export async function getTabCount(tabUrl: string) {
   const api = await getApiClient();
   const data = await api.bookmarks.searchBookmarks.query({
@@ -156,6 +198,10 @@ export async function getTabCount(tabUrl: string) {
   };
 }
 
+/**
+ * Check and update the badge icon for a given tab ID.
+ * @param tabId The ID of the tab to update.
+ */
 async function checkAndUpdateIcon(tabId: number) {
   const tabInfo = await chrome.tabs.get(tabId);
   console.log("Tab activated", tabId, tabInfo);
@@ -169,8 +215,16 @@ async function checkAndUpdateIcon(tabId: number) {
   }
 
   try {
+    const cachedInfo = await getBadgeStatusSWR(tabInfo.url);
+    if (cachedInfo) {
+      const { count: cachedBadgeCount, isExisted: cachedIsExisted } =
+        cachedInfo;
+      await setBadge(cachedBadgeCount, cachedIsExisted, tabId);
+      return;
+    }
     const { count, isExisted } = await getTabCount(tabInfo.url);
     await setBadge(count, isExisted, tabId);
+    await setBadgeStatusSWR(tabInfo.url, count, isExisted);
   } catch (error) {
     console.error("Archive check failed:", error);
     await setBadge("!", false, tabId);
