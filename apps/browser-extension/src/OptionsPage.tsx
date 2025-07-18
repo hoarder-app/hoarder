@@ -45,7 +45,12 @@ export default function OptionsPage() {
     if (settings.apiKeyId) {
       deleteKey({ id: settings.apiKeyId });
     }
-    setSettings((s) => ({ ...s, apiKey: "", apiKeyId: undefined }));
+    setSettings((s) => ({
+      ...s,
+      apiKey: "",
+      apiKeyId: undefined,
+      showCountBadge: false,
+    }));
     invalidateWhoami();
     navigate("/notconfigured");
   };
