@@ -124,8 +124,39 @@ function handleCommand(command: string, tab: chrome.tabs.Tab) {
 
 chrome.commands.onCommand.addListener(handleCommand);
 
-chrome.tabs.onActivated.addListener(async (activeInfo) => {
-  const tabId = activeInfo.tabId;
+export async function setBadge(
+  text: string | number,
+  isExisted: boolean,
+  tabId?: number,
+) {
+  return await Promise.all([
+    chrome.action.setBadgeText({ tabId, text: `${text}` }),
+    chrome.action.setBadgeBackgroundColor({
+      tabId,
+      color: isExisted ? "#4CAF50" : "#F44336",
+    }),
+  ]);
+}
+
+export async function getTabCount(tabUrl: string) {
+  const api = await getApiClient();
+  const data = await api.bookmarks.searchBookmarks.query({
+    text: "url:" + tabUrl,
+  });
+  if (!data) {
+    return { count: 0, isExisted: false };
+  }
+  const bookmarks = data.bookmarks || [];
+  const isExisted = bookmarks.some(
+    (b) => b.content.type === "link" && tabUrl === b.content.url,
+  );
+  return {
+    count: bookmarks.length,
+    isExisted,
+  };
+}
+
+async function checkAndUpdateIcon(tabId: number) {
   const tabInfo = await chrome.tabs.get(tabId);
   console.log("Tab activated", tabId, tabInfo);
   const pluginSettings = await getPluginSettings();
@@ -138,24 +169,18 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
   }
 
   try {
-    const api = await getApiClient();
-    console.log("Checking archive count for", tabInfo.url);
-    const data = await api.bookmarks.searchBookmarks.query({
-      text: "url:" + tabInfo.url,
-    });
-    if (!data) {
-      return;
-    }
-    const count = data.bookmarks.length || 0;
-    await Promise.all([
-      chrome.action.setBadgeText({ tabId, text: `${count}` }),
-      chrome.action.setBadgeBackgroundColor({
-        tabId,
-        color: count > 0 ? "#4CAF50" : "#F44336",
-      }),
-    ]);
+    const { count, isExisted } = await getTabCount(tabInfo.url);
+    await setBadge(count, isExisted, tabId);
   } catch (error) {
     console.error("Archive check failed:", error);
-    await chrome.action.setBadgeText({ tabId, text: "!" });
+    await setBadge("!", false, tabId);
   }
+}
+
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+  await checkAndUpdateIcon(activeInfo.tabId);
+});
+
+chrome.tabs.onUpdated.addListener(async (changeInfo) => {
+  await checkAndUpdateIcon(changeInfo);
 });
