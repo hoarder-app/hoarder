@@ -4,6 +4,7 @@ import {
 } from "@karakeep/shared/types/bookmarks.ts";
 
 import {
+  clearBadgeStatusSWR,
   getBadgeStatusSWR,
   initializeCache,
   purgeStaleBadgeCache,
@@ -15,6 +16,7 @@ import {
   subscribeToSettingsChanges,
 } from "../utils/settings.ts";
 import { getApiClient } from "../utils/trpc.ts";
+import { MessageType } from "../utils/type.ts";
 import { NEW_BOOKMARK_REQUEST_KEY_NAME } from "./protocol.ts";
 
 const OPEN_KARAKEEP_ID = "open-karakeep";
@@ -190,7 +192,7 @@ export async function getTabCount(tabUrl: string) {
   }
   const bookmarks = data.bookmarks || [];
   const isExisted = bookmarks.some(
-    (b) => b.content.type === "link" && tabUrl === b.content.url,
+    (b) => b.content.type === BookmarkTypes.LINK && tabUrl === b.content.url,
   );
   return {
     count: bookmarks.length,
@@ -237,4 +239,22 @@ chrome.tabs.onActivated.addListener(async (activeInfo) => {
 
 chrome.tabs.onUpdated.addListener(async (changeInfo) => {
   await checkAndUpdateIcon(changeInfo);
+});
+
+// Listen for REFRESH_BADGE messages from popup and update badge accordingly
+chrome.runtime.onMessage.addListener(async (msg) => {
+  if (msg && msg.type) {
+    if (
+      msg.currentTab &&
+      (msg.type === MessageType.BOOKMARK_CREATED_REFRESH_BADGE ||
+        msg.type === MessageType.BOOKMARK_DELETED_REFRESH_BADGE)
+    ) {
+      console.log(
+        "Received REFRESH_BADGE message for tab:",
+        msg.currentTab.url,
+      );
+      await clearBadgeStatusSWR(msg.currentTab.url);
+      await checkAndUpdateIcon(msg.currentTab.id);
+    }
+  }
 });
