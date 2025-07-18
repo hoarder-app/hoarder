@@ -29,3 +29,7 @@ export async function getApiClient() {
   }
   return apiClient;
 }
+
+export function cleanupApiClient() {
+  apiClient = null;
+}

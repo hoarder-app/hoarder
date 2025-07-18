@@ -15,7 +15,7 @@ import {
   Settings,
   subscribeToSettingsChanges,
 } from "../utils/settings.ts";
-import { getApiClient } from "../utils/trpc.ts";
+import { cleanupApiClient, getApiClient } from "../utils/trpc.ts";
 import { MessageType } from "../utils/type.ts";
 import { NEW_BOOKMARK_REQUEST_KEY_NAME } from "./protocol.ts";
 
@@ -36,11 +36,13 @@ chrome.alarms.onAlarm.addListener((alarm) => {
  * Check the current settings state and register or remove context menus accordingly.
  * @param settings The current plugin settings.
  */
-function checkSettingsState(settings: Settings) {
-  if (settings?.address) {
+async function checkSettingsState(settings: Settings) {
+  if (settings?.address && settings?.apiKey) {
     registerContextMenus();
   } else {
     removeContextMenus();
+    cleanupApiClient();
+    await clearBadgeStatusSWR();
   }
 }
 
@@ -124,12 +126,12 @@ function addLinkToKarakeep({
   }
 }
 
-getPluginSettings().then((settings: Settings) => {
-  checkSettingsState(settings);
+getPluginSettings().then(async (settings: Settings) => {
+  await checkSettingsState(settings);
 });
 
-subscribeToSettingsChanges((settings) => {
-  checkSettingsState(settings);
+subscribeToSettingsChanges(async (settings) => {
+  await checkSettingsState(settings);
 });
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises -- Manifest V3 allows async functions for all callbacks
