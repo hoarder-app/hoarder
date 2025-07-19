@@ -125,8 +125,10 @@ const allEnv = z.object({
 
   FREE_QUOTA_BOOKMARK_LIMIT: z.coerce.number().optional(),
   FREE_QUOTA_ASSET_SIZE_BYTES: z.coerce.number().optional(),
+  FREE_BROWSER_CRAWLING_ENABLED: optionalStringBool(),
   PAID_QUOTA_BOOKMARK_LIMIT: z.coerce.number().optional(),
   PAID_QUOTA_ASSET_SIZE_BYTES: z.coerce.number().optional(),
+  PAID_BROWSER_CRAWLING_ENABLED: optionalStringBool(),
 
   // Proxy configuration
   CRAWLER_HTTP_PROXY: z.string().optional(),
@@ -290,12 +292,14 @@ const serverConfigSchema = allEnv
       },
       quotas: {
         free: {
-          bookmarkLimit: val.FREE_QUOTA_BOOKMARK_LIMIT,
-          assetSizeBytes: val.FREE_QUOTA_ASSET_SIZE_BYTES,
+          bookmarkLimit: val.FREE_QUOTA_BOOKMARK_LIMIT ?? null,
+          assetSizeBytes: val.FREE_QUOTA_ASSET_SIZE_BYTES ?? null,
+          browserCrawlingEnabled: val.FREE_BROWSER_CRAWLING_ENABLED ?? null,
         },
         paid: {
-          bookmarkLimit: val.PAID_QUOTA_BOOKMARK_LIMIT,
-          assetSizeBytes: val.PAID_QUOTA_ASSET_SIZE_BYTES,
+          bookmarkLimit: val.PAID_QUOTA_BOOKMARK_LIMIT ?? null,
+          assetSizeBytes: val.PAID_QUOTA_ASSET_SIZE_BYTES ?? null,
+          browserCrawlingEnabled: val.PAID_BROWSER_CRAWLING_ENABLED ?? null,
         },
       },
       database: {

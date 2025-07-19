@@ -3332,6 +3332,10 @@
                     "type": "integer",
                     "nullable": true,
                     "minimum": 0
+                  },
+                  "browserCrawlingEnabled": {
+                    "type": "boolean",
+                    "nullable": true
                   }
                 },
                 "description": "User update data",

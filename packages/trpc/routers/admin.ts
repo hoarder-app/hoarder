@@ -361,6 +361,10 @@ export const adminAppRouter = router({
         updateData.storageQuota = input.storageQuota;
       }
 
+      if (input.browserCrawlingEnabled !== undefined) {
+        updateData.browserCrawlingEnabled = input.browserCrawlingEnabled;
+      }
+
       if (Object.keys(updateData).length === 0) {
         throw new TRPCError({
           code: "BAD_REQUEST",

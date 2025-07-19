@@ -414,6 +414,13 @@
       "when": 1752436258865,
       "tag": "0058_add_subscription",
       "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "6",
+      "when": 1752922057728,
+      "tag": "0059_browserless_user_setting",
+      "breakpoints": true
     }
   ]
 }

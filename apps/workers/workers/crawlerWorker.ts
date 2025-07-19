@@ -39,6 +39,7 @@ import {
   bookmarkAssets,
   bookmarkLinks,
   bookmarks,
+  users,
 } from "@karakeep/db/schema";
 import {
   ASSET_TYPES,
@@ -350,6 +351,7 @@ async function browserlessCrawlPage(
 async function crawlPage(
   jobId: string,
   url: string,
+  userId: string,
   abortSignal: AbortSignal,
 ): Promise<{
   htmlContent: string;
@@ -357,6 +359,22 @@ async function crawlPage(
   statusCode: number;
   url: string;
 }> {
+  // Check user's browser crawling setting
+  const userData = await db.query.users.findFirst({
+    where: eq(users.id, userId),
+    columns: { browserCrawlingEnabled: true },
+  });
+  if (!userData) {
+    logger.error(`[Crawler][${jobId}] User ${userId} not found`);
+    throw new Error(`User ${userId} not found`);
+  }
+
+  const browserCrawlingEnabled = userData.browserCrawlingEnabled;
+
+  if (browserCrawlingEnabled !== null && !browserCrawlingEnabled) {
+    return browserlessCrawlPage(jobId, url, abortSignal);
+  }
+
   let browser: Browser | undefined;
   if (serverConfig.crawler.browserConnectOnDemand) {
     browser = await startBrowserInstance();
@@ -876,7 +894,7 @@ async function crawlAndParseUrl(
       url,
     };
   } else {
-    result = await crawlPage(jobId, url, abortSignal);
+    result = await crawlPage(jobId, url, userId, abortSignal);
   }
   abortSignal.throwIfAborted();
 

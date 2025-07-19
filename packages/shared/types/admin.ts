@@ -13,6 +13,7 @@ export const updateUserSchema = z.object({
   role: z.enum(["user", "admin"]).optional(),
   bookmarkQuota: z.number().int().min(0).nullable().optional(),
   storageQuota: z.number().int().min(0).nullable().optional(),
+  browserCrawlingEnabled: z.boolean().nullable().optional(),
 });
 
 export const resetPasswordSchema = z

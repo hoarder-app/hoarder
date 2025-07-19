@@ -90,12 +90,14 @@ async function syncStripeDataToDatabase(customerId: string, db: Context["db"]) {
           })
           .where(eq(subscriptions.stripeCustomerId, customerId));
 
-        // Update user quotas to free tier limits
+        // Update user quotas to free tier limits and disable browser crawling
         await trx
           .update(users)
           .set({
             bookmarkQuota: serverConfig.quotas.free.bookmarkLimit,
             storageQuota: serverConfig.quotas.free.assetSizeBytes,
+            browserCrawlingEnabled:
+              serverConfig.quotas.free.browserCrawlingEnabled,
           })
           .where(eq(users.id, existingSubscription.userId));
       });
@@ -129,19 +131,25 @@ async function syncStripeDataToDatabase(customerId: string, db: Context["db"]) {
         .where(eq(subscriptions.stripeCustomerId, customerId));
 
       if (subData.status === "active" || subData.status === "trialing") {
+        // Enable paid tier quotas and browser crawling
         await trx
           .update(users)
           .set({
             bookmarkQuota: serverConfig.quotas.paid.bookmarkLimit,
             storageQuota: serverConfig.quotas.paid.assetSizeBytes,
+            browserCrawlingEnabled:
+              serverConfig.quotas.paid.browserCrawlingEnabled,
           })
           .where(eq(users.id, existingSubscription.userId));
       } else {
+        // Set free tier quotas and disable browser crawling
         await trx
           .update(users)
           .set({
             bookmarkQuota: serverConfig.quotas.free.bookmarkLimit,
             storageQuota: serverConfig.quotas.free.assetSizeBytes,
+            browserCrawlingEnabled:
+              serverConfig.quotas.free.browserCrawlingEnabled,
           })
           .where(eq(users.id, existingSubscription.userId));
       }
