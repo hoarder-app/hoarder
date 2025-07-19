@@ -132,6 +132,9 @@ const allEnv = z.object({
   CRAWLER_HTTP_PROXY: z.string().optional(),
   CRAWLER_HTTPS_PROXY: z.string().optional(),
   CRAWLER_NO_PROXY: z.string().optional(),
+
+  // Database configuration
+  DB_WAL_MODE: stringBool("false"),
 });
 
 const serverConfigSchema = allEnv
@@ -294,6 +297,9 @@ const serverConfigSchema = allEnv
           bookmarkLimit: val.PAID_QUOTA_BOOKMARK_LIMIT,
           assetSizeBytes: val.PAID_QUOTA_ASSET_SIZE_BYTES,
         },
+      },
+      database: {
+        walMode: val.DB_WAL_MODE,
       },
     };
   })

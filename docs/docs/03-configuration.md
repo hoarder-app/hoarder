@@ -2,18 +2,19 @@
 
 The app is mainly configured by environment variables. All the used environment variables are listed in [packages/shared/config.ts](https://github.com/karakeep-app/karakeep/blob/main/packages/shared/config.ts). The most important ones are:
 
-| Name                      | Required                              | Default | Description                                                                                                                                                                                                       |
-| ------------------------- | ------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| DATA_DIR                  | Yes                                   | Not set | The path for the persistent data directory. This is where the db lives. Assets are stored here by default unless `ASSETS_DIR` is set.                                                                             |
-| ASSETS_DIR                | No                                    | Not set | The path where crawled assets will be stored. If not set, defaults to `${DATA_DIR}/assets`.                                                                                                                       |
-| NEXTAUTH_URL              | Yes                                   | Not set | Should point to the address of your server. The app will function without it, but will redirect you to wrong addresses on signout for example.                                                                    |
-| NEXTAUTH_SECRET           | Yes                                   | Not set | Random string used to sign the JWT tokens. Generate one with `openssl rand -base64 36`.                                                                                                                           |
-| MEILI_ADDR                | No                                    | Not set | The address of meilisearch. If not set, Search will be disabled. E.g. (`http://meilisearch:7700`)                                                                                                                 |
-| MEILI_MASTER_KEY          | Only in Prod and if search is enabled | Not set | The master key configured for meilisearch. Not needed in development environment. Generate one with `openssl rand -base64 36 \| tr -dc 'A-Za-z0-9'`                                                               |
-| MAX_ASSET_SIZE_MB         | No                                    | 50      | Sets the maximum allowed asset size (in MB) to be uploaded                                                                                                                                                        |
-| DISABLE_NEW_RELEASE_CHECK | No                                    | false   | If set to true, latest release check will be disabled in the admin panel.                                                                                                                                         |
-| PROMETHEUS_AUTH_TOKEN     | No                                    | Not set | If set, will enable a prometheus metrics endpoint at `/api/metrics`. This endpoint will require this token being passed in the Authorization header as a Bearer token. If not set, that endpoint will return 404. |
-| RATE_LIMITING_ENABLED     | No                                    | false   | If set to true, API rate limiting will be enabled.                                                                                                                                                                |
+| Name                      | Required                              | Default | Description                                                                                                                                                                                                                                                            |
+| ------------------------- | ------------------------------------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DATA_DIR                  | Yes                                   | Not set | The path for the persistent data directory. This is where the db lives. Assets are stored here by default unless `ASSETS_DIR` is set.                                                                                                                                  |
+| ASSETS_DIR                | No                                    | Not set | The path where crawled assets will be stored. If not set, defaults to `${DATA_DIR}/assets`.                                                                                                                                                                            |
+| NEXTAUTH_URL              | Yes                                   | Not set | Should point to the address of your server. The app will function without it, but will redirect you to wrong addresses on signout for example.                                                                                                                         |
+| NEXTAUTH_SECRET           | Yes                                   | Not set | Random string used to sign the JWT tokens. Generate one with `openssl rand -base64 36`.                                                                                                                                                                                |
+| MEILI_ADDR                | No                                    | Not set | The address of meilisearch. If not set, Search will be disabled. E.g. (`http://meilisearch:7700`)                                                                                                                                                                      |
+| MEILI_MASTER_KEY          | Only in Prod and if search is enabled | Not set | The master key configured for meilisearch. Not needed in development environment. Generate one with `openssl rand -base64 36 \| tr -dc 'A-Za-z0-9'`                                                                                                                    |
+| MAX_ASSET_SIZE_MB         | No                                    | 50      | Sets the maximum allowed asset size (in MB) to be uploaded                                                                                                                                                                                                             |
+| DISABLE_NEW_RELEASE_CHECK | No                                    | false   | If set to true, latest release check will be disabled in the admin panel.                                                                                                                                                                                              |
+| PROMETHEUS_AUTH_TOKEN     | No                                    | Not set | If set, will enable a prometheus metrics endpoint at `/api/metrics`. This endpoint will require this token being passed in the Authorization header as a Bearer token. If not set, that endpoint will return 404.                                                      |
+| RATE_LIMITING_ENABLED     | No                                    | false   | If set to true, API rate limiting will be enabled.                                                                                                                                                                                                                     |
+| DB_WAL_MODE               | No                                    | false   | Enables WAL mode for the sqlite database. This should improve the performance of the database. There's no reason why you shouldn't set this to true unless you're running the db on a network attached drive. This will become the default at some time in the future. |
 
 ## Asset Storage
 
@@ -184,16 +185,15 @@ Karakeep can send emails for various purposes such as email verification during 
 | SMTP_PASSWORD | No       | Not set | The password for SMTP authentication. For services like Gmail, use an app-specific password.    |
 | SMTP_FROM     | No       | Not set | The "from" email address that will appear in sent emails. This should be a valid email address. |
 
-
 ## Proxy Configuration
 
 If your Karakeep instance needs to connect through a proxy server, you can configure the following settings:
 
-| Name        | Required | Default | Description                                                                                                   |
-| ----------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------- |
-| CRAWLER_HTTP_PROXY  | No       | Not set | HTTP proxy server URL for outgoing HTTP requests (e.g., `http://proxy.example.com:8080`)                      |
-| CRAWLER_HTTPS_PROXY | No       | Not set | HTTPS proxy server URL for outgoing HTTPS requests (e.g., `http://proxy.example.com:8080`)                    |
-| CRAWLER_NO_PROXY    | No       | Not set | Comma-separated list of hostnames/IPs that should bypass the proxy (e.g., `localhost,127.0.0.1,.local`)      |
+| Name                | Required | Default | Description                                                                                             |
+| ------------------- | -------- | ------- | ------------------------------------------------------------------------------------------------------- |
+| CRAWLER_HTTP_PROXY  | No       | Not set | HTTP proxy server URL for outgoing HTTP requests (e.g., `http://proxy.example.com:8080`)                |
+| CRAWLER_HTTPS_PROXY | No       | Not set | HTTPS proxy server URL for outgoing HTTPS requests (e.g., `http://proxy.example.com:8080`)              |
+| CRAWLER_NO_PROXY    | No       | Not set | Comma-separated list of hostnames/IPs that should bypass the proxy (e.g., `localhost,127.0.0.1,.local`) |
 
 :::info
 These proxy settings will be used by the crawler and other components that make outgoing HTTP requests.
