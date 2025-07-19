@@ -26,6 +26,7 @@ RUN cd packages/db && \
 RUN (cd apps/web && pnpm exec next build --experimental-build-mode compile)
 
 # Build the worker code
+RUN (cd apps/workers && pnpm build)
 RUN pnpm deploy --node-linker=isolated --filter @karakeep/workers --prod /prod/workers
 
 # Build the cli
@@ -95,8 +96,6 @@ COPY --from=base --chown=node:node /app/apps/web/.next/static ./apps/web/.next/s
 # Prepare the workers app
 ######################
 COPY --from=base /prod/workers /app/apps/workers
-
-RUN npm install -g tsx
 
 ENTRYPOINT ["/init"]
 
