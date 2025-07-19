@@ -306,7 +306,7 @@ export function EditListModal({
                         type="button"
                         variant="ghost"
                         onClick={() => {
-                          form.resetField("parentId");
+                          form.setValue("parentId", "");
                         }}
                       >
                         <X />
