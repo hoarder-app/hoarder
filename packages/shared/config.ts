@@ -129,9 +129,9 @@ const allEnv = z.object({
   PAID_QUOTA_ASSET_SIZE_BYTES: z.coerce.number().optional(),
 
   // Proxy configuration
-  HTTP_PROXY: z.string().optional(),
-  HTTPS_PROXY: z.string().optional(),
-  NO_PROXY: z.string().optional(),
+  CRAWLER_HTTP_PROXY: z.string().optional(),
+  CRAWLER_HTTPS_PROXY: z.string().optional(),
+  CRAWLER_NO_PROXY: z.string().optional(),
 });
 
 const serverConfigSchema = allEnv
@@ -249,9 +249,9 @@ const serverConfigSchema = allEnv
         numWorkers: val.WEBHOOK_NUM_WORKERS,
       },
       proxy: {
-        httpProxy: val.HTTP_PROXY,
-        httpsProxy: val.HTTPS_PROXY,
-        noProxy: val.NO_PROXY,
+        httpProxy: val.CRAWLER_HTTP_PROXY,
+        httpsProxy: val.CRAWLER_HTTPS_PROXY,
+        noProxy: val.CRAWLER_NO_PROXY,
       },
       assetPreprocessing: {
         numWorkers: val.ASSET_PREPROCESSING_NUM_WORKERS,

@@ -191,9 +191,9 @@ If your Karakeep instance needs to connect through a proxy server, you can confi
 
 | Name        | Required | Default | Description                                                                                                   |
 | ----------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------- |
-| HTTP_PROXY  | No       | Not set | HTTP proxy server URL for outgoing HTTP requests (e.g., `http://proxy.example.com:8080`)                      |
-| HTTPS_PROXY | No       | Not set | HTTPS proxy server URL for outgoing HTTPS requests (e.g., `http://proxy.example.com:8080`)                    |
-| NO_PROXY    | No       | Not set | Comma-separated list of hostnames/IPs that should bypass the proxy (e.g., `localhost,127.0.0.1,.local`)      |
+| CRAWLER_HTTP_PROXY  | No       | Not set | HTTP proxy server URL for outgoing HTTP requests (e.g., `http://proxy.example.com:8080`)                      |
+| CRAWLER_HTTPS_PROXY | No       | Not set | HTTPS proxy server URL for outgoing HTTPS requests (e.g., `http://proxy.example.com:8080`)                    |
+| CRAWLER_NO_PROXY    | No       | Not set | Comma-separated list of hostnames/IPs that should bypass the proxy (e.g., `localhost,127.0.0.1,.local`)      |
 
 :::info
 These proxy settings will be used by the crawler and other components that make outgoing HTTP requests.
