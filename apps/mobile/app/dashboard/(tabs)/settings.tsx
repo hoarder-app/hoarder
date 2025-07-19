@@ -99,7 +99,7 @@ export default function Dashboard() {
           <Text className="text-lg text-accent-foreground">Image Quality</Text>
           <View className="flex flex-1 flex-row items-center justify-center gap-2">
             <Text className="text-foreground">
-              {settings.imageQuality * 100}%
+              {Math.round(settings.imageQuality * 100)}%
             </Text>
             <Slider
               onSlidingComplete={(value) =>
