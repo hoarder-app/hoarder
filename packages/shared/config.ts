@@ -38,6 +38,7 @@ const allEnv = z.object({
   INFERENCE_IMAGE_MODEL: z.string().default("gpt-4o-mini"),
   EMBEDDING_TEXT_MODEL: z.string().default("text-embedding-3-small"),
   INFERENCE_CONTEXT_LENGTH: z.coerce.number().default(2048),
+  INFERENCE_MAX_OUTPUT_TOKENS: z.coerce.number().default(2048),
   INFERENCE_SUPPORTS_STRUCTURED_OUTPUT: optionalStringBool(),
   INFERENCE_OUTPUT_SCHEMA: z
     .enum(["structured", "json", "plain"])
@@ -190,6 +191,7 @@ const serverConfigSchema = allEnv
         imageModel: val.INFERENCE_IMAGE_MODEL,
         inferredTagLang: val.INFERENCE_LANG,
         contextLength: val.INFERENCE_CONTEXT_LENGTH,
+        maxOutputTokens: val.INFERENCE_MAX_OUTPUT_TOKENS,
         outputSchema:
           val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT !== undefined
             ? val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT
