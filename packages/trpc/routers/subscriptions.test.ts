@@ -210,6 +210,7 @@ describe("Subscription Routes", () => {
         customer_update: {
           address: "auto",
         },
+        allow_promotion_codes: true,
       });
     });
 
