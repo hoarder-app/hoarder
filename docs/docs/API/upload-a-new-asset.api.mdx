@@ -5,7 +5,7 @@ description: "Upload a new asset"
 sidebar_label: "Upload a new asset"
 hide_title: true
 hide_table_of_contents: true
-api: eJyNVE1v2zAM/SsGz26c7uhbtqFANmAr0BQ7BDnQNl2rsS1VotNlhv77QMlNnDYD5pMsfj3yPXGEilxplWGle8jh0bQaqwSTnl4TdI4YUmB8cpBvYSX/DnYpOCoHq/gI+XaEgtCSXQ3cQL7d+V0Kll4GcvxZV0fIx3clNg0lFTImrJPSEjIl3FAslrwqbhaQQql7pp4luhtaVgYtZ7W23Y2EyrUrG+rCiY+GIAddPFMpcI3VhiwrcmKtVUvBS7Ec4E61JKULSobQLFXgwye4ndG9i4GflsuP4L8So2pdgoUeOOCOLVSnYc2QozGtKlFCs2cn8f8PO6RbVzNHx1b1T+BPJTbh/ordqT9zQz90BVkxyCx+YHctykfWlKVKqH4rf1lsSj1LtEtPgw3qgGmSHXGjK8jBaBeaQ1EHZBglJAqyB7IuCGiwLeQwYlVZcs5naFR2uIUUDmgVFu00kWiOnNQ4tAw5NMzG5VnG9rjYo8U9kVmgMZBeUd2UIdF1YO775J9ELAJ9Ju0HISpWngv8NDipLH0EN8gnJ0inw522HQrCb782Ybqqr7WES9cR0u1iuVjCeYAnPKv79VX8q/t1Umt7CV6a9WmYc4dBYn1g+PpTvkg6nsX6j4cfW2X6zZlpUfVSKbA1ToxOSglLoRGq8y2MY4GOHm3rvVy/DGRlUezOfIY9kUJDWJENEtjTEXL4EuHcTGI7YDtI/WsbwKdvQauyJMMz9w/PTmg9CfL+58NGWJp2U6criZHEIW96PkaQeEn7O5oD+MmE/XGGYhyjx0bvqfce0gkuyz/4nff+L1YD4pc=
+api: eJyNVE1v2zAM/SsGz26c7uhbtqFANmAL0BQ7BDnQNlOrsS1VotNlhv77QMlNnDQDdpMlfrzH98wBKnKlVYaV7iCHJ9NorBJMOnpL0DliSIHx2UG+gYV8O9im4KjsreIj5JsBCkJLdtFzDflm67cpWHrtyfFnXR0hH65arGtKKmRMWCelJWRKuKbYLHlTXM8ghVJ3TB1Ldts3rAxaznbatneSKteurKkNJz4aghx08UKlwDVWG7KsyMnrTjUUohTLAR5UQ9K6oKQPZKkC7yNmZakSoiFn6328d0Z3Lhb7NJ9/JPSVGFXjEix0z4FLpFWdBjhhg8Y0qkRJzV6c5P8/lVBuWU0CHVvVPYM/tViH+xvvTv2ZPnR9W5CVB+H6A9tbWVdTeW9/2WwsPSm0TU/DDo4BHyfZEte6ghyMdoEcimMgw2grcZU9kHXBVL1tIIcBq8qScz5Do7LDPaRwQKuwaMaJxOeoyQ77hiGHmtm4PMvYHmd7tLgnMjM0BtIbThwrJHoXlPs+xicRi0Cf2P1RhIqdp6Y/DU46C48QBvkYBOl4eNC2RUH47dc6TFd1Oy3pwjpCup/NZ3M4D/CEZ7Fa3sS/WC2TnbaX4IWsT8OcWwwW64LCt3/vi6LD2az/WAaRKtNvzkyDqpNOQa1hVHR0SlgUtUidb2AYCnT0ZBvv5fq1JyvLY3vWM+yOFGrCimywwJ6OkMOXCOduNNsBm17639oKPn1PWpQlGZ6Ef/jtRNaTIVc/H9ei0rivWl1JjhQOddPzMYLES9mvZA7gxyfsjhMUwxAj1npPnfeQjnBZvsHLxvkLeuzpPg==
 sidebar_class_name: "post api-method"
 info_path: API/karakeep-api
 custom_edit_url: null
@@ -54,7 +54,7 @@ Upload a new asset
 
 <RequestSchema
   title={"Body"}
-  body={{"description":"The data to create the asset with.","content":{"multipart/form-data":{"schema":{"type":"object","properties":{"file":{"title":"File to be uploaded"}}}}}}}
+  body={{"description":"The data to create the asset with.","content":{"multipart/form-data":{"schema":{"type":"object","properties":{"file":{"title":"File to be uploaded"}},"required":["file"]}}}}}
 >
   
 </RequestSchema>

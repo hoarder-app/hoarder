@@ -258,6 +258,18 @@ const sidebar: SidebarsConfig = {
         },
       ],
     },
+    {
+      type: "category",
+      label: "Admin",
+      items: [
+        {
+          type: "doc",
+          id: "API/update-user",
+          label: "Update user",
+          className: "api-method put",
+        },
+      ],
+    },
   ],
 };
 
