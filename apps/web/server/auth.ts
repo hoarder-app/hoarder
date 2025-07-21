@@ -108,6 +108,7 @@ const providers: Provider[] = [
         return await validatePassword(
           credentials?.email,
           credentials?.password,
+          db,
         );
       } catch {
         return null;
