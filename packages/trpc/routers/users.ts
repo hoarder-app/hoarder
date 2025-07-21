@@ -264,7 +264,11 @@ export const usersAppRouter = router({
       invariant(ctx.user.email, "A user always has an email specified");
       let user;
       try {
-        user = await validatePassword(ctx.user.email, input.currentPassword);
+        user = await validatePassword(
+          ctx.user.email,
+          input.currentPassword,
+          ctx.db,
+        );
       } catch {
         throw new TRPCError({ code: "UNAUTHORIZED" });
       }
@@ -319,7 +323,7 @@ export const usersAppRouter = router({
         }
 
         try {
-          await validatePassword(ctx.user.email, input.password);
+          await validatePassword(ctx.user.email, input.password, ctx.db);
         } catch {
           throw new TRPCError({
             code: "UNAUTHORIZED",
