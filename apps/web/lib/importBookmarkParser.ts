@@ -267,10 +267,10 @@ export async function parseOneTabBookmarkFile(
     const parsed = zOneTabJsonSchema.safeParse(JSON.parse(textContent));
     if (parsed.success) {
       const bookmarks: ParsedBookmark[] = [];
-      
+
       for (const group of parsed.data) {
         const groupPath = group.groupTitle ? [group.groupTitle] : [];
-        
+
         for (const tab of group.tabLinks) {
           bookmarks.push({
             title: tab.title || new URL(tab.link).hostname,
@@ -282,7 +282,7 @@ export async function parseOneTabBookmarkFile(
           });
         }
       }
-      
+
       return bookmarks;
     }
   } catch {
@@ -291,16 +291,16 @@ export async function parseOneTabBookmarkFile(
 
   // Parse as simple text format (URL | Title per line)
   const lines = textContent
-    .split('\n')
-    .map(line => line.trim())
-    .filter(line => line.length > 0 && !line.startsWith('#')); // Skip comments and empty lines
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !line.startsWith("#")); // Skip comments and empty lines
 
   const bookmarks: ParsedBookmark[] = [];
 
   for (const line of lines) {
-    if (line.includes(' | ')) {
-      const [url, title] = line.split(' | ', 2);
-      
+    if (line.includes(" | ")) {
+      const [url, title] = line.split(" | ", 2);
+
       // Validate URL
       try {
         new URL(url.trim());
@@ -333,7 +333,9 @@ export async function parseOneTabBookmarkFile(
   }
 
   if (bookmarks.length === 0) {
-    throw new Error("No valid bookmarks found in the OneTab file. Please ensure the file contains URLs in the format 'URL | Title' or valid OneTab JSON export.");
+    throw new Error(
+      "No valid bookmarks found in the OneTab file. Please ensure the file contains URLs in the format 'URL | Title' or valid OneTab JSON export.",
+    );
   }
 
   return bookmarks;
@@ -351,7 +353,9 @@ export function deduplicateBookmarks(
       if (deduplicatedBookmarksMap.has(url)) {
         const existing = deduplicatedBookmarksMap.get(url)!;
         // Merge tags
-        existing.tags = Array.from(new Set([...existing.tags, ...bookmark.tags]));
+        existing.tags = Array.from(
+          new Set([...existing.tags, ...bookmark.tags]),
+        );
         // Merge paths
         existing.paths = [...existing.paths, ...bookmark.paths];
         const existingDate = existing.addDate ?? Infinity;
