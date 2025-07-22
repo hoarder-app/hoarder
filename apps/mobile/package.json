@@ -36,7 +36,7 @@
     "expo-navigation-bar": "^4.0.9",
     "expo-router": "~4.0.21",
     "expo-secure-store": "^14.0.1",
-    "expo-share-intent": "3.0.0",
+    "expo-share-intent": "3.2.3",
     "expo-status-bar": "~2.0.1",
     "expo-system-ui": "^4.0.9",
     "expo-web-browser": "^14.0.2",
