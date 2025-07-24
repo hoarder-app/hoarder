@@ -16,6 +16,7 @@ import {
 
 export interface HTMLHighlighterProps {
   htmlContent: string;
+  style?: React.CSSProperties;
   className?: string;
   highlights?: Highlight[];
   onHighlight?: (highlightData: Omit<Highlight, "id">) => void;
@@ -26,6 +27,7 @@ export interface HTMLHighlighterProps {
 function BookmarkHTMLHighlighter({
   htmlContent,
   className,
+  style,
   highlights = [],
   onHighlight,
   onUpdateHighlight,

@@ -131,6 +131,8 @@ export function ImportExportRow() {
         throw new Error("Content is undefined");
       }
       const created = await createBookmark({
+        // This is important to avoid blocking the crawling of more important bookmarks
+        crawlPriority: "low",
         title: bookmark.title,
         createdAt: bookmark.addDate
           ? new Date(bookmark.addDate * 1000)
