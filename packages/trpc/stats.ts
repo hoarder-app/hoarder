@@ -15,6 +15,7 @@ import {
   WebhookQueue,
 } from "@karakeep/shared/queues";
 
+// Queue metrics
 const queuePendingJobsGauge = new Gauge({
   name: "karakeep_queue_jobs",
   help: "Number of jobs in each background queue",
@@ -55,6 +56,7 @@ const queuePendingJobsGauge = new Gauge({
   },
 });
 
+// User metrics
 const totalUsersGauge = new Gauge({
   name: "karakeep_total_users",
   help: "Total number of users in the system",
@@ -69,6 +71,7 @@ const totalUsersGauge = new Gauge({
   },
 });
 
+// Asset metrics
 const totalAssetSizeGauge = new Gauge({
   name: "karakeep_total_asset_size_bytes",
   help: "Total size of all assets in bytes",
@@ -85,6 +88,7 @@ const totalAssetSizeGauge = new Gauge({
   },
 });
 
+// Bookmark metrics
 const totalBookmarksGauge = new Gauge({
   name: "karakeep_total_bookmarks",
   help: "Total number of bookmarks in the system",
@@ -99,6 +103,7 @@ const totalBookmarksGauge = new Gauge({
   },
 });
 
+// Api metrics
 const apiRequestsTotalCounter = new Counter({
   name: "karakeep_trpc_requests_total",
   help: "Total number of API requests",
@@ -117,6 +122,7 @@ const apiRequestDurationSummary = new Summary({
   labelNames: ["type", "path"],
 });
 
+// Register all metrics
 register.registerMetric(queuePendingJobsGauge);
 register.registerMetric(totalUsersGauge);
 register.registerMetric(totalAssetSizeGauge);
