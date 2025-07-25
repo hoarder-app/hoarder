@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Platform, Pressable, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Platform,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useShareIntentContext } from "expo-share-intent";
 import { Button } from "@/components/ui/Button";
@@ -60,8 +66,8 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
     }
 
     // Add Android-specific debugging
-    if (Platform.OS === 'android' && __DEV__) {
-      console.log('Android share intent data:', {
+    if (Platform.OS === "android" && __DEV__) {
+      console.log("Android share intent data:", {
         hasShareIntent,
         webUrl: shareIntent?.webUrl,
         text: shareIntent?.text,
@@ -70,9 +76,12 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
     }
 
     // Validate that we have actual share intent data before processing
-    if (!shareIntent || (!shareIntent.webUrl && !shareIntent.text && !shareIntent.files?.length)) {
-      if (Platform.OS === 'android' && __DEV__) {
-        console.log('No valid share intent data found, waiting...');
+    if (
+      !shareIntent ||
+      (!shareIntent.webUrl && !shareIntent.text && !shareIntent.files?.length)
+    ) {
+      if (Platform.OS === "android" && __DEV__) {
+        console.log("No valid share intent data found, waiting...");
       }
       return;
     }
@@ -87,7 +96,11 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
       } else {
         mutate({ type: BookmarkTypes.TEXT, text: shareIntent.text });
       }
-    } else if (!isPending && shareIntent?.files && shareIntent.files.length > 0) {
+    } else if (
+      !isPending &&
+      shareIntent?.files &&
+      shareIntent.files.length > 0
+    ) {
       uploadAsset({
         type: shareIntent.files[0].mimeType,
         name: shareIntent.files[0].fileName ?? "",
@@ -108,7 +121,8 @@ export default function Sharing() {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>({ type: "idle" });
 
-  const [autoCloseTimeoutId, setAutoCloseTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [autoCloseTimeoutId, setAutoCloseTimeoutId] =
+    useState<NodeJS.Timeout | null>(null);
 
   let comp;
   switch (mode.type) {
