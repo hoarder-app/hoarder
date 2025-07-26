@@ -26,11 +26,12 @@
     "commander": "^12.0.0",
     "superjson": "^2.2.1",
     "table": "^6.8.2",
-    "tsx": "^4.7.1",
-    "vite": "^5.1.0"
+    "tsx": "^4.8.1",
+    "vite": "^7.0.6",
+    "vite-tsconfig-paths": "^4.3.1"
   },
   "scripts": {
-    "build": "vite build",
+    "build": "vite build && chmod +x dist/index.mjs",
     "run": "tsx src/index.ts",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",

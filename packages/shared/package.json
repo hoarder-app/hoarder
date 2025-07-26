@@ -24,7 +24,7 @@
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "@types/html-to-text": "^9.0.4",
     "@types/nodemailer": "^6.4.17",
-    "vitest": "^1.6.1"
+    "vitest": "^3.2.4"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

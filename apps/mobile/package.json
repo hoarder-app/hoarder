@@ -20,7 +20,7 @@
     "@karakeep/trpc": "workspace:^0.1.0",
     "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-menu/menu": "^1.1.6",
-    "@tanstack/react-query": "^5.69.0",
+    "@tanstack/react-query": "^5.80.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "expo": "~52.0.46",

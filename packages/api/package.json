@@ -30,7 +30,7 @@
     "@types/deep-equal": "^1.0.4",
     "@types/rss": "^0.0.32",
     "vite-tsconfig-paths": "^4.3.1",
-    "vitest": "^1.6.1"
+    "vitest": "^3.2.4"
   },
   "prettier": "@karakeep/prettier-config"
 }

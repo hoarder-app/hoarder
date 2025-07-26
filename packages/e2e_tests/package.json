@@ -25,7 +25,7 @@
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "vite-tsconfig-paths": "^4.3.1",
-    "vitest": "^1.6.1"
+    "vitest": "^3.2.4"
   },
   "prettier": "@karakeep/prettier-config"
 }

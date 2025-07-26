@@ -18,7 +18,7 @@
     "dotenv": "^16.4.1",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.2",
-    "tsx": "^4.7.1"
+    "tsx": "^4.8.1"
   },
   "devDependencies": {
     "@karakeep/prettier-config": "workspace:^0.1.0",
