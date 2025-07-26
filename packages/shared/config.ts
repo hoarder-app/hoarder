@@ -180,6 +180,7 @@ const serverConfigSchema = allEnv
           : undefined,
       },
       inference: {
+        isConfigured: !!val.OPENAI_API_KEY || !!val.OLLAMA_BASE_URL,
         numWorkers: val.INFERENCE_NUM_WORKERS,
         jobTimeoutSec: val.INFERENCE_JOB_TIMEOUT_SEC,
         fetchTimeoutSec: val.INFERENCE_FETCH_TIMEOUT_SEC,
@@ -332,9 +333,7 @@ export const clientConfig = {
     disablePasswordAuth: serverConfig.auth.disablePasswordAuth,
   },
   inference: {
-    isConfigured:
-      !!serverConfig.inference.openAIApiKey ||
-      !!serverConfig.inference.ollamaBaseUrl,
+    isConfigured: serverConfig.inference.isConfigured,
     inferredTagLang: serverConfig.inference.inferredTagLang,
   },
   serverVersion: serverConfig.serverVersion,
