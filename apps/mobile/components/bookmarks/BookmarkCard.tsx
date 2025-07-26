@@ -13,12 +13,12 @@ import {
 import * as Clipboard from "expo-clipboard";
 import * as FileSystem from "expo-file-system";
 import * as Haptics from "expo-haptics";
-import * as Sharing from "expo-sharing";
 import { router, useRouter } from "expo-router";
+import * as Sharing from "expo-sharing";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
 import { MenuView } from "@react-native-menu/menu";
-import { Ellipsis, Star } from "lucide-react-native";
+import { Ellipsis, Share2, Star } from "lucide-react-native";
 
 import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
 import {
@@ -175,6 +175,15 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         )}
       </Pressable>
 
+      <Pressable
+        onPress={() => {
+          Haptics.selectionAsync();
+          handleShare();
+        }}
+      >
+        <Share2 color="gray" />
+      </Pressable>
+
       <MenuView
         onPressAction={({ nativeEvent }) => {
           Haptics.selectionAsync();
@@ -189,18 +198,9 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             router.push(`/dashboard/bookmarks/${bookmark.id}/manage_lists`);
           } else if (nativeEvent.event === "manage_tags") {
             router.push(`/dashboard/bookmarks/${bookmark.id}/manage_tags`);
-          } else if (nativeEvent.event === "share") {
-            handleShare();
           }
         }}
         actions={[
-          {
-            id: "share",
-            title: "Share",
-            image: Platform.select({
-              ios: "square.and.arrow.up",
-            }),
-          },
           {
             id: "archive",
             title: bookmark.archived ? "Un-archive" : "Archive",
