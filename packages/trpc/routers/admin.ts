@@ -3,7 +3,6 @@ import { count, eq, or, sum } from "drizzle-orm";
 import { z } from "zod";
 
 import { assets, bookmarkLinks, bookmarks, users } from "@karakeep/db/schema";
-import serverConfig from "@karakeep/shared/config";
 import {
   AssetPreprocessingQueue,
   FeedQueue,
@@ -410,12 +409,12 @@ export const adminAppRouter = router({
   getAdminNoticies: adminProcedure
     .output(
       z.object({
-        legacyContainersNotice: z.boolean(),
+        // Unused for now
       }),
     )
     .query(() => {
       return {
-        legacyContainersNotice: serverConfig.usingLegacySeparateContainers,
+        // Unused for now
       };
     }),
 });
