@@ -61,8 +61,8 @@
     "build:watch": "tsdown --watch",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
-    "format": "prettier . --ignore-path ../../.prettierignore",
-    "format:fix": "prettier . --ignore-path ../../.prettierignore --write",
+    "format": "prettier . --cache --ignore-path ../../.prettierignore --check",
+    "format:fix": "prettier . --cache --ignore-path ../../.prettierignore --write",
     "typecheck": "tsc --noEmit"
   },
   "prettier": "@karakeep/prettier-config"

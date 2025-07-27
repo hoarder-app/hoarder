@@ -1,13 +1,13 @@
 {
-  "name": "browser-extension",
+  "name": "@karakeep/browser-extension",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "format": "prettier .",
-    "format:fix": "prettier . --write",
+    "format": "prettier . --cache --check",
+    "format:fix": "prettier . --cache --write",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
     "preview": "vite preview",

@@ -36,8 +36,8 @@
     "run": "tsx src/index.ts",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
-    "format": "prettier . --ignore-path ../../.prettierignore",
-    "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
+    "format": "prettier . --cache --ignore-path ../../.prettierignore --check",
+    "format:fix": "prettier . --cache --write --ignore-path ../../.prettierignore",
     "typecheck": "tsc --noEmit"
   },
   "repository": {

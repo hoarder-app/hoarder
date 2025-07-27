@@ -18,8 +18,8 @@
     "typecheck": "tsc --noEmit",
     "check": "tsx index.ts check",
     "generate": "tsx index.ts",
-    "format": "prettier . --ignore-path ../../.prettierignore",
-    "format:fix": "prettier . --write --ignore-path ../../.prettierignore",
+    "format": "prettier . --cache --ignore-path ../../.prettierignore --check",
+    "format:fix": "prettier . --cache --write --ignore-path ../../.prettierignore",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix"
   },
