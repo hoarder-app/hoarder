@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 import { logger as loggerMiddleware } from "hono/logger";
 import { poweredBy } from "hono/powered-by";
 
+import { loadAllPlugins } from "@karakeep/shared-server";
 import logger from "@karakeep/shared/logger";
 import { Context } from "@karakeep/trpc";
 
@@ -20,6 +21,8 @@ import tags from "./routes/tags";
 import trpc from "./routes/trpc";
 import users from "./routes/users";
 import webhooks from "./routes/webhooks";
+
+await loadAllPlugins();
 
 const v1 = new Hono<{
   Variables: {

@@ -963,6 +963,9 @@ importers:
       '@karakeep/shared':
         specifier: workspace:*
         version: link:../shared
+      '@karakeep/shared-server':
+        specifier: workspace:*
+        version: link:../shared-server
       '@karakeep/trpc':
         specifier: workspace:*
         version: link:../trpc

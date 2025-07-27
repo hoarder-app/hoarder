@@ -18,6 +18,7 @@
     "@hono/zod-validator": "^0.5.0",
     "@karakeep/db": "workspace:*",
     "@karakeep/shared": "workspace:*",
+    "@karakeep/shared-server": "workspace:*",
     "@karakeep/trpc": "workspace:*",
     "@trpc/server": "^11.4.3",
     "drizzle-orm": "^0.44.2",
