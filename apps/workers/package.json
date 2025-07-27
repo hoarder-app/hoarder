@@ -8,6 +8,7 @@
     "@ghostery/adblocker-playwright": "^2.5.1",
     "@karakeep/db": "workspace:^0.1.0",
     "@karakeep/shared": "workspace:^0.1.0",
+    "@karakeep/shared-server": "workspace:^0.1.0",
     "@karakeep/trpc": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "@mozilla/readability": "^0.6.0",

@@ -76,8 +76,6 @@ const allEnv = z.object({
     .default("")
     .transform((t) => t.split("%%").filter((a) => a)),
   CRAWLER_SCREENSHOT_TIMEOUT_SEC: z.coerce.number().default(5),
-  MEILI_ADDR: z.string().optional(),
-  MEILI_MASTER_KEY: z.string().default(""),
   LOG_LEVEL: z.string().default("debug"),
   DEMO_MODE: stringBool("false"),
   DEMO_MODE_EMAIL: z.string().optional(),
@@ -231,12 +229,6 @@ const serverConfigSchema = allEnv
       },
       search: {
         numWorkers: val.SEARCH_NUM_WORKERS,
-        meilisearch: val.MEILI_ADDR
-          ? {
-              address: val.MEILI_ADDR,
-              key: val.MEILI_MASTER_KEY,
-            }
-          : undefined,
       },
       logLevel: val.LOG_LEVEL,
       demoMode: val.DEMO_MODE
