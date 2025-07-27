@@ -1,5 +1,5 @@
 import { count, sum } from "drizzle-orm";
-import { Counter, Gauge, register, Summary } from "prom-client";
+import { Counter, Gauge, Histogram, register } from "prom-client";
 
 import { db } from "@karakeep/db";
 import { assets, bookmarks, users } from "@karakeep/db/schema";
@@ -116,10 +116,13 @@ const apiErrorsTotalCounter = new Counter({
   labelNames: ["type", "path", "code"],
 });
 
-const apiRequestDurationSummary = new Summary({
+const apiRequestDurationSummary = new Histogram({
   name: "karakeep_trpc_request_duration_seconds",
   help: "Duration of tRPC requests in seconds",
   labelNames: ["type", "path"],
+  buckets: [
+    5e-3, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10,
+  ],
 });
 
 // Register all metrics
