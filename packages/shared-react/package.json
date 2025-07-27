@@ -3,6 +3,7 @@
   "name": "@karakeep/shared-react",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@karakeep/shared": "workspace:^0.1.0",
     "@karakeep/trpc": "workspace:^0.1.0",

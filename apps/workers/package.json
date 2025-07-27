@@ -3,6 +3,7 @@
   "name": "@karakeep/workers",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@ghostery/adblocker-playwright": "^2.5.1",
     "@karakeep/db": "workspace:^0.1.0",

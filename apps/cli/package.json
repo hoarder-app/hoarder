@@ -4,6 +4,7 @@
   "version": "0.25.0",
   "description": "Command Line Interface (CLI) for Karakeep",
   "license": "GNU Affero General Public License version 3",
+  "type": "module",
   "keywords": [
     "hoarder",
     "karakeep",
