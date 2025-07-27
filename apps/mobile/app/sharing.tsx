@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Platform,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useShareIntentContext } from "expo-share-intent";
 import { Button } from "@/components/ui/Button";
@@ -33,7 +27,7 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
       type: d.alreadyExists ? "alreadyExists" : "success",
       bookmarkId: d.id,
     });
-    // Reset share intent only after successful save
+
     if (hasShareIntent) {
       resetShareIntent();
     }
@@ -41,7 +35,7 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
 
   const onError = () => {
     setMode({ type: "error" });
-    // Reset share intent on error to prevent stuck state
+
     if (hasShareIntent) {
       resetShareIntent();
     }
@@ -62,27 +56,6 @@ function SaveBookmark({ setMode }: { setMode: (mode: Mode) => void }) {
 
   useEffect(() => {
     if (isLoading) {
-      return;
-    }
-
-    // Add Android-specific debugging
-    if (Platform.OS === "android" && __DEV__) {
-      console.log("Android share intent data:", {
-        hasShareIntent,
-        webUrl: shareIntent?.webUrl,
-        text: shareIntent?.text,
-        files: shareIntent?.files?.length || 0,
-      });
-    }
-
-    // Validate that we have actual share intent data before processing
-    if (
-      !shareIntent ||
-      (!shareIntent.webUrl && !shareIntent.text && !shareIntent.files?.length)
-    ) {
-      if (Platform.OS === "android" && __DEV__) {
-        console.log("No valid share intent data found, waiting...");
-      }
       return;
     }
 
