@@ -77,6 +77,7 @@ const allEnv = z.object({
     .transform((t) => t.split("%%").filter((a) => a)),
   CRAWLER_SCREENSHOT_TIMEOUT_SEC: z.coerce.number().default(5),
   LOG_LEVEL: z.string().default("debug"),
+  NO_COLOR: stringBool("false"),
   DEMO_MODE: stringBool("false"),
   DEMO_MODE_EMAIL: z.string().optional(),
   DEMO_MODE_PASSWORD: z.string().optional(),
@@ -231,6 +232,7 @@ const serverConfigSchema = allEnv
         numWorkers: val.SEARCH_NUM_WORKERS,
       },
       logLevel: val.LOG_LEVEL,
+      logNoColor: val.NO_COLOR,
       demoMode: val.DEMO_MODE
         ? {
             email: val.DEMO_MODE_EMAIL,
