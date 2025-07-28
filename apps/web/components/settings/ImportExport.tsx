@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { buttonVariants } from "@/components/ui/button";
 import FilePickerButton from "@/components/ui/file-picker-button";
 import { Progress } from "@/components/ui/progress";
@@ -13,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
+import { useBookmarkImport } from "@/lib/hooks/useBookmarkImport";
 import { useTranslation } from "@/lib/i18n/client";
 import {
   deduplicateBookmarks,
@@ -27,19 +26,7 @@ import {
   parseTabSessionManagerStateFile,
 } from "@/lib/importBookmarkParser";
 import { cn } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
 import { Download, Upload } from "lucide-react";
-
-import {
-  useCreateBookmarkWithPostHook,
-  useUpdateBookmarkTags,
-} from "@karakeep/shared-react/hooks/bookmarks";
-import {
-  useAddBookmarkToList,
-  useCreateBookmarkList,
-} from "@karakeep/shared-react/hooks/lists";
-import { limitConcurrency } from "@karakeep/shared/concurrency";
-import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import { Card, CardContent } from "../ui/card";
 
@@ -347,6 +334,7 @@ export function ImportExportRow() {
       });
     },
   });
+  const { importProgress, runUploadBookmarkFile } = useBookmarkImport();
 
   return (
     <div className="flex flex-col gap-3">
