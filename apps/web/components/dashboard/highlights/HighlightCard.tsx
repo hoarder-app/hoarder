@@ -1,4 +1,4 @@
-import React from "react";
+import { ReactNode } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import { toast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
