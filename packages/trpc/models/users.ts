@@ -15,7 +15,6 @@ import {
   passwordResetTokens,
   tagsOnBookmarks,
   users,
-  userSettings,
   verificationTokens,
 } from "@karakeep/db/schema";
 import { deleteUserAssets } from "@karakeep/shared/assetdb";
@@ -120,10 +119,6 @@ export class User implements PrivacyAware {
           })
           .returning();
 
-        await trx.insert(userSettings).values({
-          userId: result.id,
-        });
-
         return result;
       } catch (e) {
         if (e instanceof SqliteError) {
@@ -143,21 +138,7 @@ export class User implements PrivacyAware {
   }
 
   static async getAll(ctx: AuthedContext): Promise<User[]> {
-    const dbUsers = await ctx.db
-      .select({
-        id: users.id,
-        name: users.name,
-        email: users.email,
-        role: users.role,
-        password: users.password,
-        bookmarkQuota: users.bookmarkQuota,
-        storageQuota: users.storageQuota,
-        emailVerified: users.emailVerified,
-        image: users.image,
-        salt: users.salt,
-        browserCrawlingEnabled: users.browserCrawlingEnabled,
-      })
-      .from(users);
+    const dbUsers = await ctx.db.select().from(users);
 
     return dbUsers.map((u) => new User(ctx, u));
   }
@@ -453,8 +434,13 @@ export class User implements PrivacyAware {
   }
 
   async getSettings(): Promise<z.infer<typeof zUserSettingsSchema>> {
-    const settings = await this.ctx.db.query.userSettings.findFirst({
-      where: eq(userSettings.userId, this.user.id),
+    const settings = await this.ctx.db.query.users.findFirst({
+      where: eq(users.id, this.user.id),
+      columns: {
+        bookmarkClickAction: true,
+        archiveDisplayBehaviour: true,
+        timezone: true,
+      },
     });
 
     if (!settings) {
@@ -482,20 +468,23 @@ export class User implements PrivacyAware {
     }
 
     await this.ctx.db
-      .update(userSettings)
+      .update(users)
       .set({
         bookmarkClickAction: input.bookmarkClickAction,
         archiveDisplayBehaviour: input.archiveDisplayBehaviour,
         timezone: input.timezone,
       })
-      .where(eq(userSettings.userId, this.user.id));
+      .where(eq(users.id, this.user.id));
   }
 
   async getStats(): Promise<z.infer<typeof zUserStatsResponseSchema>> {
-    const userSet = await this.ctx.db.query.userSettings.findFirst({
-      where: eq(userSettings.userId, this.user.id),
+    const userObj = await this.ctx.db.query.users.findFirst({
+      where: eq(users.id, this.user.id),
+      columns: {
+        timezone: true,
+      },
     });
-    const userTimezone = userSet?.timezone || "UTC";
+    const userTimezone = userObj?.timezone || "UTC";
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
