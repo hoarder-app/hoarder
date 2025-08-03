@@ -1,6 +1,6 @@
 import { randomBytes } from "crypto";
 import { TRPCError } from "@trpc/server";
-import { and, eq, gt } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { invites, users } from "@karakeep/db/schema";
@@ -35,10 +35,7 @@ export const invitesAppRouter = router({
       }
 
       const existingInvite = await ctx.db.query.invites.findFirst({
-        where: and(
-          eq(invites.email, input.email),
-          gt(invites.expiresAt, new Date()),
-        ),
+        where: eq(invites.email, input.email),
       });
 
       if (existingInvite) {
@@ -49,14 +46,12 @@ export const invitesAppRouter = router({
       }
 
       const token = randomBytes(32).toString("hex");
-      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
       const [invite] = await ctx.db
         .insert(invites)
         .values({
           email: input.email,
           token,
-          expiresAt,
           invitedBy: ctx.user.id,
         })
         .returning();
@@ -76,7 +71,6 @@ export const invitesAppRouter = router({
       return {
         id: invite.id,
         email: invite.email,
-        expiresAt: invite.expiresAt,
       };
     }),
 
@@ -88,7 +82,6 @@ export const invitesAppRouter = router({
             id: z.string(),
             email: z.string(),
             createdAt: z.date(),
-            expiresAt: z.date(),
             invitedBy: z.object({
               id: z.string(),
               name: z.string(),
@@ -148,16 +141,6 @@ export const invitesAppRouter = router({
         });
       }
 
-      const now = new Date();
-      const expired = invite.expiresAt < now;
-
-      if (expired) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Invite has expired",
-        });
-      }
-
       return {
         email: invite.email,
         expired: false,
@@ -188,14 +171,6 @@ export const invitesAppRouter = router({
         throw new TRPCError({
           code: "NOT_FOUND",
           message: "Invite not found or has been used",
-        });
-      }
-
-      const now = new Date();
-      if (invite.expiresAt < now) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "This invite has expired",
         });
       }
 
@@ -273,13 +248,11 @@ export const invitesAppRouter = router({
       }
 
       const newToken = randomBytes(32).toString("hex");
-      const newExpiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
       await ctx.db
         .update(invites)
         .set({
           token: newToken,
-          expiresAt: newExpiresAt,
         })
         .where(eq(invites.id, input.inviteId));
 
@@ -298,7 +271,6 @@ export const invitesAppRouter = router({
       return {
         id: invite.id,
         email: invite.email,
-        expiresAt: newExpiresAt,
       };
     }),
 });

@@ -580,7 +580,6 @@ export const invites = sqliteTable("invites", {
   email: text("email").notNull(),
   token: text("token").notNull().unique(),
   createdAt: createdAtField(),
-  expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
   usedAt: integer("usedAt", { mode: "timestamp" }),
   invitedBy: text("invitedBy")
     .notNull()

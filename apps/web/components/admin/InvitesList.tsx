@@ -59,32 +59,7 @@ export default function InvitesList() {
     return <LoadingSpinner />;
   }
 
-  const activeInvites =
-    invites?.invites?.filter(
-      (invite) => new Date(invite.expiresAt) > new Date(),
-    ) || [];
-
-  const expiredInvites =
-    invites?.invites?.filter(
-      (invite) => new Date(invite.expiresAt) <= new Date(),
-    ) || [];
-
-  const getStatusBadge = (
-    invite: NonNullable<typeof invites>["invites"][0],
-  ) => {
-    if (new Date(invite.expiresAt) <= new Date()) {
-      return (
-        <span className="rounded-full bg-red-100 px-2 py-1 text-xs text-red-800">
-          Expired
-        </span>
-      );
-    }
-    return (
-      <span className="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
-        Active
-      </span>
-    );
-  };
+  const activeInvites = invites?.invites || [];
 
   const InviteTable = ({
     invites: inviteList,
@@ -94,9 +69,6 @@ export default function InvitesList() {
     title: string;
   }) => (
     <div className="mb-6">
-      <h3 className="mb-3 text-lg font-medium">
-        {title} ({inviteList.length})
-      </h3>
       {inviteList.length === 0 ? (
         <p className="text-sm text-gray-500">
           No {title.toLowerCase()} invites
@@ -107,8 +79,6 @@ export default function InvitesList() {
             <TableHead>Email</TableHead>
             <TableHead>Invited By</TableHead>
             <TableHead>Created</TableHead>
-            <TableHead>Expires</TableHead>
-            <TableHead>Status</TableHead>
             <TableHead>Actions</TableHead>
           </TableHeader>
           <TableBody>
@@ -121,14 +91,8 @@ export default function InvitesList() {
                     addSuffix: true,
                   })}
                 </TableCell>
-                <TableCell className="py-2">
-                  {formatDistanceToNow(new Date(invite.expiresAt), {
-                    addSuffix: true,
-                  })}
-                </TableCell>
-                <TableCell className="py-2">{getStatusBadge(invite)}</TableCell>
                 <TableCell className="flex gap-1 py-2">
-                  {new Date(invite.expiresAt) > new Date() && (
+                  {
                     <>
                       <ButtonWithTooltip
                         tooltip="Resend Invite"
@@ -164,7 +128,7 @@ export default function InvitesList() {
                         </ButtonWithTooltip>
                       </ActionConfirmingDialog>
                     </>
-                  )}
+                  }
                 </TableCell>
               </TableRow>
             ))}
@@ -177,7 +141,7 @@ export default function InvitesList() {
   return (
     <div className="flex flex-col gap-4">
       <div className="mb-2 flex items-center justify-between text-xl font-medium">
-        <span>User Invitations</span>
+        <span>User Invitations ({activeInvites.length})</span>
         <CreateInviteDialog>
           <ButtonWithTooltip tooltip="Send Invite" variant="outline">
             <UserPlus size={16} />
@@ -185,8 +149,7 @@ export default function InvitesList() {
         </CreateInviteDialog>
       </div>
 
-      <InviteTable invites={activeInvites} title="Active Invites" />
-      <InviteTable invites={expiredInvites} title="Expired Invites" />
+      <InviteTable invites={activeInvites} title="Invites" />
     </div>
   );
 }
