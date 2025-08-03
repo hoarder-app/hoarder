@@ -13,7 +13,7 @@ import {
   publicProcedure,
   router,
 } from "../index";
-import { createUserRaw } from "./users";
+import { User } from "../models/users";
 
 export const invitesAppRouter = router({
   create: adminProcedure
@@ -186,7 +186,7 @@ export const invitesAppRouter = router({
       }
 
       const salt = generatePasswordSalt();
-      const user = await createUserRaw(ctx.db, {
+      const user = await User.createRaw(ctx.db, {
         name: input.name,
         email: invite.email,
         password: await hashPassword(input.password, salt),
