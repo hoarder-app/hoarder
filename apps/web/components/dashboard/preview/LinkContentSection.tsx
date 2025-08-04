@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -17,7 +18,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useTranslation } from "@/lib/i18n/client";
-import { Archive, BookOpen, Camera, ExpandIcon, Video } from "lucide-react";
+import {
+  AlertTriangle,
+  Archive,
+  BookOpen,
+  Camera,
+  ExpandIcon,
+  Video,
+} from "lucide-react";
+import { ErrorBoundary } from "react-error-boundary";
 
 import {
   BookmarkTypes,
@@ -27,6 +36,26 @@ import {
 
 import { contentRendererRegistry } from "./content-renderers";
 import ReaderView from "./ReaderView";
+
+function CustomRendererErrorFallback({ error }: { error: Error }) {
+  return (
+    <div className="flex h-full w-full items-center justify-center p-4">
+      <Alert variant="destructive" className="max-w-md">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertTitle>Renderer Error</AlertTitle>
+        <AlertDescription>
+          Failed to load custom content renderer.{" "}
+          <details className="mt-2">
+            <summary className="cursor-pointer text-xs">
+              Technical details
+            </summary>
+            <code className="mt-1 block text-xs">{error.message}</code>
+          </details>
+        </AlertDescription>
+      </Alert>
+    </div>
+  );
+}
 
 function FullPageArchiveSection({ link }: { link: ZBookmarkedLink }) {
   const archiveAssetId =
@@ -90,7 +119,11 @@ export default function LinkContentSection({
   const customRenderer = availableRenderers.find((r) => r.id === section);
   if (customRenderer) {
     const RendererComponent = customRenderer.component;
-    content = <RendererComponent bookmark={bookmark} />;
+    content = (
+      <ErrorBoundary FallbackComponent={CustomRendererErrorFallback}>
+        <RendererComponent bookmark={bookmark} />
+      </ErrorBoundary>
+    );
   } else if (section === "cached") {
     content = (
       <ScrollArea className="h-full">
