@@ -53,7 +53,6 @@ describe("Invites Router", () => {
     });
 
     expect(invite.email).toBe("newuser@test.com");
-    expect(invite.expiresAt).toBeDefined();
     expect(invite.id).toBeDefined();
 
     // Verify the invite was created in the database
@@ -238,7 +237,7 @@ describe("Invites Router", () => {
     ).rejects.toThrow(/Invite not found/);
   });
 
-  test<CustomTestContext>("cannot get expired invite", async ({
+  test<CustomTestContext>("can get invite by token", async ({
     db,
     unauthedAPICaller,
   }) => {
@@ -255,22 +254,16 @@ describe("Invites Router", () => {
       email: "newuser@test.com",
     });
 
-    // Set expiry to past date
-    const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    await db
-      .update(invites)
-      .set({ expiresAt: pastDate })
-      .where(eq(invites.id, invite.id));
-
     const dbInvite = await db.query.invites.findFirst({
       where: eq(invites.id, invite.id),
     });
 
-    await expect(() =>
-      unauthedAPICaller.invites.get({
-        token: dbInvite!.token,
-      }),
-    ).rejects.toThrow(/Invite has expired/);
+    const result = await unauthedAPICaller.invites.get({
+      token: dbInvite!.token,
+    });
+
+    expect(result.email).toBe("newuser@test.com");
+    expect(result.expired).toBe(false);
   });
 
   test<CustomTestContext>("cannot get used invite (deleted)", async ({
@@ -346,7 +339,7 @@ describe("Invites Router", () => {
     expect(deletedInvite).toBeUndefined();
   });
 
-  test<CustomTestContext>("cannot accept expired invite", async ({
+  test<CustomTestContext>("can accept valid invite", async ({
     db,
     unauthedAPICaller,
   }) => {
@@ -363,23 +356,18 @@ describe("Invites Router", () => {
       email: "newuser@test.com",
     });
 
-    const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    await db
-      .update(invites)
-      .set({ expiresAt: pastDate })
-      .where(eq(invites.id, invite.id));
-
     const dbInvite = await db.query.invites.findFirst({
       where: eq(invites.id, invite.id),
     });
 
-    await expect(() =>
-      unauthedAPICaller.invites.accept({
-        token: dbInvite!.token,
-        name: "New User",
-        password: "newpass123",
-      }),
-    ).rejects.toThrow(/This invite has expired/);
+    const result = await unauthedAPICaller.invites.accept({
+      token: dbInvite!.token,
+      name: "New User",
+      password: "newpass123",
+    });
+
+    expect(result.email).toBe("newuser@test.com");
+    expect(result.name).toBe("New User");
   });
 
   test<CustomTestContext>("cannot accept used invite (deleted)", async ({
@@ -510,9 +498,7 @@ describe("Invites Router", () => {
     });
 
     expect(resentInvite.email).toBe("newuser@test.com");
-    expect(resentInvite.expiresAt.getTime()).toBeGreaterThan(
-      originalDbInvite!.expiresAt.getTime(),
-    );
+    expect(resentInvite.id).toBe(originalDbInvite!.id);
 
     // Verify token was updated in database
     const updatedDbInvite = await db.query.invites.findFirst({
@@ -556,7 +542,7 @@ describe("Invites Router", () => {
     ).rejects.toThrow(/Invite not found/);
   });
 
-  test<CustomTestContext>("invite expiration is set correctly", async ({
+  test<CustomTestContext>("invite creation works without expiration", async ({
     db,
     unauthedAPICaller,
   }) => {
@@ -569,26 +555,12 @@ describe("Invites Router", () => {
 
     const adminCaller = getApiCaller(db, admin.id, admin.email, "admin");
 
-    const beforeCreate = new Date();
     const invite = await adminCaller.invites.create({
       email: "newuser@test.com",
     });
-    const afterCreate = new Date();
 
-    // Allow for some timing variance (1 second buffer)
-    const expectedMinExpiry = new Date(
-      beforeCreate.getTime() + 7 * 24 * 60 * 60 * 1000 - 1000,
-    );
-    const expectedMaxExpiry = new Date(
-      afterCreate.getTime() + 7 * 24 * 60 * 60 * 1000 + 1000,
-    );
-
-    expect(invite.expiresAt.getTime()).toBeGreaterThanOrEqual(
-      expectedMinExpiry.getTime(),
-    );
-    expect(invite.expiresAt.getTime()).toBeLessThanOrEqual(
-      expectedMaxExpiry.getTime(),
-    );
+    expect(invite.email).toBe("newuser@test.com");
+    expect(invite.id).toBeDefined();
   });
 
   test<CustomTestContext>("invite includes inviter information", async ({

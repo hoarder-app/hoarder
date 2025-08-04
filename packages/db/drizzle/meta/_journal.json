@@ -421,6 +421,20 @@
       "when": 1752922057728,
       "tag": "0059_browserless_user_setting",
       "breakpoints": true
+    },
+    {
+      "idx": 60,
+      "version": "6",
+      "when": 1754187929331,
+      "tag": "0060_drop_invite_expire_at",
+      "breakpoints": true
+    },
+    {
+      "idx": 61,
+      "version": "6",
+      "when": 1754236017965,
+      "tag": "0061_merge_user_settings",
+      "breakpoints": true
     }
   ]
 }

@@ -23,7 +23,7 @@ import {
 
 import { generatePasswordSalt, hashPassword } from "../auth";
 import { adminProcedure, router } from "../index";
-import { createUser } from "./users";
+import { User } from "../models/users";
 
 export const adminAppRouter = router({
   stats: adminProcedure
@@ -334,7 +334,7 @@ export const adminAppRouter = router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      return createUser(input, ctx, input.role);
+      return await User.create(ctx, input, input.role);
     }),
   updateUser: adminProcedure
     .input(updateUserSchema)

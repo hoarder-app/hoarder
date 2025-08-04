@@ -100,7 +100,7 @@ export async function sendInviteEmail(
         </p>
         <p>If the button doesn't work, you can copy and paste this link into your browser:</p>
         <p><a href="${inviteUrl}">${inviteUrl}</a></p>
-        <p>This invitation will expire in 7 days.</p>
+
         <p>If you weren't expecting this invitation, you can safely ignore this email.</p>
       </div>
     `,
@@ -112,7 +112,7 @@ ${inviterName} has invited you to join Karakeep, a powerful bookmarking and cont
 Accept your invitation by visiting this link:
 ${inviteUrl}
 
-This invitation will expire in 7 days.
+
 
 If you weren't expecting this invitation, you can safely ignore this email.
     `,

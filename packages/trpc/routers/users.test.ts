@@ -21,6 +21,10 @@ vi.mock("@karakeep/shared/config", async (original) => {
     ...mod,
     default: {
       ...mod.default,
+      auth: {
+        ...mod.default.auth,
+        emailVerificationRequired: true,
+      },
       email: {
         smtp: {
           host: "test-smtp.example.com",
@@ -758,6 +762,264 @@ describe("User Routes", () => {
           newPassword: "anotherpass123",
         }),
       ).rejects.toThrow(/Invalid or expired reset token/);
+    });
+  });
+
+  describe("Change Password", () => {
+    test<CustomTestContext>("changePassword - successful change", async ({
+      db,
+      unauthedAPICaller,
+    }) => {
+      const user = await unauthedAPICaller.users.create({
+        name: "Test User",
+        email: "changepass@test.com",
+        password: "oldpass123",
+        confirmPassword: "oldpass123",
+      });
+      const caller = getApiCaller(db, user.id, user.email, user.role || "user");
+
+      await caller.users.changePassword({
+        currentPassword: "oldpass123",
+        newPassword: "newpass456",
+      });
+
+      // Password change should succeed without throwing
+    });
+
+    test<CustomTestContext>("changePassword - wrong current password", async ({
+      db,
+      unauthedAPICaller,
+    }) => {
+      const user = await unauthedAPICaller.users.create({
+        name: "Test User",
+        email: "wrongpass@test.com",
+        password: "oldpass123",
+        confirmPassword: "oldpass123",
+      });
+      const caller = getApiCaller(db, user.id, user.email, user.role || "user");
+
+      await expect(() =>
+        caller.users.changePassword({
+          currentPassword: "wrongpassword",
+          newPassword: "newpass456",
+        }),
+      ).rejects.toThrow();
+    });
+
+    test<CustomTestContext>("changePassword - OAuth user (no password)", async ({
+      db,
+    }) => {
+      // Create OAuth user without password
+      await db.insert(users).values({
+        name: "OAuth User",
+        email: "oauth@test.com",
+        password: null,
+      });
+
+      const oauthUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, "oauth@test.com"))
+        .then((rows) => rows[0]);
+
+      const caller = getApiCaller(db, oauthUser.id, oauthUser.email, "user");
+
+      await expect(() =>
+        caller.users.changePassword({
+          currentPassword: "anypassword",
+          newPassword: "newpass456",
+        }),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Delete Account", () => {
+    test<CustomTestContext>("deleteAccount - with password", async ({
+      db,
+      unauthedAPICaller,
+    }) => {
+      const user = await unauthedAPICaller.users.create({
+        name: "Test User",
+        email: "deleteaccount@test.com",
+        password: "pass1234",
+        confirmPassword: "pass1234",
+      });
+      const caller = getApiCaller(db, user.id, user.email, user.role || "user");
+
+      await caller.users.deleteAccount({
+        password: "pass1234",
+      });
+
+      // Verify user is deleted
+      const deletedUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, user.id));
+      expect(deletedUser).toHaveLength(0);
+    });
+
+    test<CustomTestContext>("deleteAccount - wrong password", async ({
+      db,
+      unauthedAPICaller,
+    }) => {
+      const user = await unauthedAPICaller.users.create({
+        name: "Test User",
+        email: "wrongdeletepass@test.com",
+        password: "pass1234",
+        confirmPassword: "pass1234",
+      });
+      const caller = getApiCaller(db, user.id, user.email, user.role || "user");
+
+      await expect(() =>
+        caller.users.deleteAccount({
+          password: "wrongpassword",
+        }),
+      ).rejects.toThrow();
+    });
+
+    test<CustomTestContext>("deleteAccount - OAuth user (no password)", async ({
+      db,
+    }) => {
+      // Create OAuth user without password
+      await db.insert(users).values({
+        name: "OAuth User",
+        email: "oauthdelete@test.com",
+        password: null,
+      });
+
+      const oauthUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, "oauthdelete@test.com"))
+        .then((rows) => rows[0]);
+
+      const caller = getApiCaller(db, oauthUser.id, oauthUser.email, "user");
+
+      await caller.users.deleteAccount({});
+
+      // Verify user is deleted
+      const deletedUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, oauthUser.id));
+      expect(deletedUser).toHaveLength(0);
+    });
+  });
+
+  describe("Who Am I", () => {
+    test<CustomTestContext>("whoami - returns user info", async ({
+      db,
+      unauthedAPICaller,
+    }) => {
+      const user = await unauthedAPICaller.users.create({
+        name: "Test User",
+        email: "whoami@test.com",
+        password: "pass1234",
+        confirmPassword: "pass1234",
+      });
+      const caller = getApiCaller(db, user.id, user.email, user.role || "user");
+
+      const whoami = await caller.users.whoami();
+
+      expect(whoami.id).toBe(user.id);
+      expect(whoami.name).toBe("Test User");
+      expect(whoami.email).toBe("whoami@test.com");
+      expect(whoami.localUser).toBe(true);
+    });
+
+    test<CustomTestContext>("whoami - OAuth user", async ({ db }) => {
+      // Create OAuth user
+      await db.insert(users).values({
+        name: "OAuth User",
+        email: "oauthwhoami@test.com",
+        password: null,
+      });
+
+      const oauthUser = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, "oauthwhoami@test.com"))
+        .then((rows) => rows[0]);
+
+      const caller = getApiCaller(db, oauthUser.id, oauthUser.email, "user");
+
+      const whoami = await caller.users.whoami();
+
+      expect(whoami.id).toBe(oauthUser.id);
+      expect(whoami.name).toBe("OAuth User");
+      expect(whoami.email).toBe("oauthwhoami@test.com");
+      expect(whoami.localUser).toBe(false);
+    });
+  });
+
+  describe("Email Verification", () => {
+    test<CustomTestContext>("verifyEmail - invalid token", async ({
+      unauthedAPICaller,
+    }) => {
+      await expect(() =>
+        unauthedAPICaller.users.verifyEmail({
+          email: "nonexistent@test.com",
+          token: "invalid-token",
+        }),
+      ).rejects.toThrow();
+    });
+
+    test<CustomTestContext>("verifyEmail - invalid email format", async ({
+      unauthedAPICaller,
+    }) => {
+      await expect(() =>
+        unauthedAPICaller.users.verifyEmail({
+          email: "invalid-email",
+          token: "some-token",
+        }),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe("Resend Verification Email", () => {
+    test<CustomTestContext>("resendVerificationEmail - existing user", async ({
+      unauthedAPICaller,
+    }) => {
+      // Create user first
+      await unauthedAPICaller.users.create({
+        name: "Test User",
+        email: "resend@test.com",
+        password: "pass1234",
+        confirmPassword: "pass1234",
+      });
+
+      const result = await unauthedAPICaller.users.resendVerificationEmail({
+        email: "resend@test.com",
+      });
+
+      expect(result.success).toBe(true);
+
+      // Verify that the email function was called
+      expect(emailModule.sendVerificationEmail).toHaveBeenCalledWith(
+        "resend@test.com",
+        "Test User",
+        expect.any(String), // token
+      );
+    });
+
+    test<CustomTestContext>("resendVerificationEmail - non-existing user", async ({
+      unauthedAPICaller,
+    }) => {
+      // Should not reveal if user exists or not
+      const result = await unauthedAPICaller.users.resendVerificationEmail({
+        email: "nonexistent@test.com",
+      });
+      expect(result.success).toBe(true);
+    });
+
+    test<CustomTestContext>("resendVerificationEmail - invalid email format", async ({
+      unauthedAPICaller,
+    }) => {
+      await expect(() =>
+        unauthedAPICaller.users.resendVerificationEmail({
+          email: "invalid-email",
+        }),
+      ).rejects.toThrow();
     });
   });
 });

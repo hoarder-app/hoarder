@@ -38,11 +38,26 @@ export const users = sqliteTable("user", {
   password: text("password"),
   salt: text("salt").notNull().default(""),
   role: text("role", { enum: ["admin", "user"] }).default("user"),
+
+  // Admin Only Settings
   bookmarkQuota: integer("bookmarkQuota"),
   storageQuota: integer("storageQuota"),
   browserCrawlingEnabled: integer("browserCrawlingEnabled", {
     mode: "boolean",
   }),
+
+  // User Settings
+  bookmarkClickAction: text("bookmarkClickAction", {
+    enum: ["open_original_link", "expand_bookmark_preview"],
+  })
+    .notNull()
+    .default("open_original_link"),
+  archiveDisplayBehaviour: text("archiveDisplayBehaviour", {
+    enum: ["show", "hide"],
+  })
+    .notNull()
+    .default("show"),
+  timezone: text("timezone").default("UTC"),
 });
 
 export const accounts = sqliteTable(
@@ -554,24 +569,6 @@ export const ruleEngineActionsTable = sqliteTable(
   ],
 );
 
-export const userSettings = sqliteTable("userSettings", {
-  userId: text("userId")
-    .notNull()
-    .primaryKey()
-    .references(() => users.id, { onDelete: "cascade" }),
-  bookmarkClickAction: text("bookmarkClickAction", {
-    enum: ["open_original_link", "expand_bookmark_preview"],
-  })
-    .notNull()
-    .default("open_original_link"),
-  archiveDisplayBehaviour: text("archiveDisplayBehaviour", {
-    enum: ["show", "hide"],
-  })
-    .notNull()
-    .default("show"),
-  timezone: text("timezone").default("UTC"),
-});
-
 export const invites = sqliteTable("invites", {
   id: text("id")
     .notNull()
@@ -580,7 +577,6 @@ export const invites = sqliteTable("invites", {
   email: text("email").notNull(),
   token: text("token").notNull().unique(),
   createdAt: createdAtField(),
-  expiresAt: integer("expiresAt", { mode: "timestamp" }).notNull(),
   usedAt: integer("usedAt", { mode: "timestamp" }),
   invitedBy: text("invitedBy")
     .notNull()
@@ -640,10 +636,6 @@ export const userRelations = relations(users, ({ many, one }) => ({
   webhooks: many(webhooksTable),
   rules: many(ruleEngineRulesTable),
   invites: many(invites),
-  settings: one(userSettings, {
-    fields: [users.id],
-    references: [userSettings.userId],
-  }),
   subscription: one(subscriptions),
 }));
 
@@ -779,13 +771,6 @@ export const rssFeedImportsTableRelations = relations(
     }),
   }),
 );
-
-export const userSettingsRelations = relations(userSettings, ({ one }) => ({
-  user: one(users, {
-    fields: [userSettings.userId],
-    references: [users.id],
-  }),
-}));
 
 export const invitesRelations = relations(invites, ({ one }) => ({
   invitedBy: one(users, {

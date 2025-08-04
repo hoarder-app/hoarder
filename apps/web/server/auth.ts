@@ -19,7 +19,7 @@ import {
 } from "@karakeep/db/schema";
 import serverConfig from "@karakeep/shared/config";
 import { validatePassword } from "@karakeep/trpc/auth";
-import { createUserRaw } from "@karakeep/trpc/routers/users";
+import { User } from "@karakeep/trpc/models/users";
 
 type UserRole = "admin" | "user";
 
@@ -82,7 +82,7 @@ const CustomProvider = (): Adapter => {
   return {
     ...adapter,
     createUser: async (user: Omit<AdapterUser, "id">) => {
-      return await createUserRaw(db, {
+      return await User.createRaw(db, {
         name: user.name ?? "",
         email: user.email,
         emailVerified: user.emailVerified,
