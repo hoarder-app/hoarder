@@ -75,8 +75,6 @@ export default function UsersSection() {
               <TableHead>{t("common.name")}</TableHead>
               <TableHead>{t("common.email")}</TableHead>
               <TableHead>{t("admin.users_list.num_bookmarks")}</TableHead>
-              <TableHead>{t("common.quota")}</TableHead>
-              <TableHead>Storage Quota</TableHead>
               <TableHead>{t("admin.users_list.asset_sizes")}</TableHead>
               <TableHead>{t("common.role")}</TableHead>
               <TableHead>{t("admin.users_list.local_user")}</TableHead>
@@ -88,18 +86,14 @@ export default function UsersSection() {
                   <TableCell className="py-1">{u.name}</TableCell>
                   <TableCell className="py-1">{u.email}</TableCell>
                   <TableCell className="py-1">
-                    {userStats[u.id].numBookmarks}
-                  </TableCell>
-                  <TableCell className="py-1">
+                    {userStats[u.id].numBookmarks} /{" "}
                     {u.bookmarkQuota ?? t("admin.users_list.unlimited")}
                   </TableCell>
                   <TableCell className="py-1">
+                    {toHumanReadableSize(userStats[u.id].assetSizes)} /{" "}
                     {u.storageQuota
                       ? toHumanReadableSize(u.storageQuota)
                       : t("admin.users_list.unlimited")}
-                  </TableCell>
-                  <TableCell className="py-1">
-                    {toHumanReadableSize(userStats[u.id].assetSizes)}
                   </TableCell>
                   <TableCell className="py-1">
                     {u.role && t(`common.roles.${u.role}`)}
