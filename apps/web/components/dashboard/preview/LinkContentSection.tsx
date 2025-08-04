@@ -25,6 +25,7 @@ import {
   ZBookmarkedLink,
 } from "@karakeep/shared/types/bookmarks";
 
+import { contentRendererRegistry } from "./content-renderers";
 import ReaderView from "./ReaderView";
 
 function FullPageArchiveSection({ link }: { link: ZBookmarkedLink }) {
@@ -74,14 +75,23 @@ export default function LinkContentSection({
   bookmark: ZBookmark;
 }) {
   const { t } = useTranslation();
-  const [section, setSection] = useState<string>("cached");
+  const availableRenderers = contentRendererRegistry.getRenderers(bookmark);
+  const defaultSection =
+    availableRenderers.length > 0 ? availableRenderers[0].id : "cached";
+  const [section, setSection] = useState<string>(defaultSection);
 
   if (bookmark.content.type != BookmarkTypes.LINK) {
     throw new Error("Invalid content type");
   }
 
   let content;
-  if (section === "cached") {
+
+  // Check if current section is a custom renderer
+  const customRenderer = availableRenderers.find((r) => r.id === section);
+  if (customRenderer) {
+    const RendererComponent = customRenderer.component;
+    content = <RendererComponent bookmark={bookmark} />;
+  } else if (section === "cached") {
     content = (
       <ScrollArea className="h-full">
         <ReaderView
@@ -109,6 +119,20 @@ export default function LinkContentSection({
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
+              {/* Custom renderers first */}
+              {availableRenderers.map((renderer) => {
+                const IconComponent = renderer.icon;
+                return (
+                  <SelectItem key={renderer.id} value={renderer.id}>
+                    <div className="flex items-center">
+                      <IconComponent className="mr-2 h-4 w-4" />
+                      {renderer.name}
+                    </div>
+                  </SelectItem>
+                );
+              })}
+
+              {/* Default renderers */}
               <SelectItem value="cached">
                 <div className="flex items-center">
                   <BookOpen className="mr-2 h-4 w-4" />
