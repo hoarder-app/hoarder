@@ -17,7 +17,11 @@ const optionalStringBool = () =>
 
 const allEnv = z.object({
   API_URL: z.string().url().default("http://localhost:3000"),
-  NEXTAUTH_URL: z.string().url().default("http://localhost:3000"),
+  NEXTAUTH_URL: z
+    .string()
+    .url()
+    .default("http://localhost:3000")
+    .transform((s) => s.replace(/\/+$/, "")),
   NEXTAUTH_SECRET: z.string().optional(),
   DISABLE_SIGNUPS: stringBool("false"),
   DISABLE_PASSWORD_AUTH: stringBool("false"),
@@ -38,6 +42,7 @@ const allEnv = z.object({
   INFERENCE_IMAGE_MODEL: z.string().default("gpt-4o-mini"),
   EMBEDDING_TEXT_MODEL: z.string().default("text-embedding-3-small"),
   INFERENCE_CONTEXT_LENGTH: z.coerce.number().default(2048),
+  INFERENCE_MAX_OUTPUT_TOKENS: z.coerce.number().default(2048),
   INFERENCE_SUPPORTS_STRUCTURED_OUTPUT: optionalStringBool(),
   INFERENCE_OUTPUT_SCHEMA: z
     .enum(["structured", "json", "plain"])
@@ -57,6 +62,11 @@ const allEnv = z.object({
   CRAWLER_JOB_TIMEOUT_SEC: z.coerce.number().default(60),
   CRAWLER_NAVIGATE_TIMEOUT_SEC: z.coerce.number().default(30),
   CRAWLER_NUM_WORKERS: z.coerce.number().default(1),
+  INFERENCE_NUM_WORKERS: z.coerce.number().default(1),
+  SEARCH_NUM_WORKERS: z.coerce.number().default(1),
+  WEBHOOK_NUM_WORKERS: z.coerce.number().default(1),
+  ASSET_PREPROCESSING_NUM_WORKERS: z.coerce.number().default(1),
+  RULE_ENGINE_NUM_WORKERS: z.coerce.number().default(1),
   CRAWLER_DOWNLOAD_BANNER_IMAGE: stringBool("true"),
   CRAWLER_STORE_SCREENSHOT: stringBool("true"),
   CRAWLER_FULL_PAGE_SCREENSHOT: stringBool("false"),
@@ -70,9 +80,8 @@ const allEnv = z.object({
     .default("")
     .transform((t) => t.split("%%").filter((a) => a)),
   CRAWLER_SCREENSHOT_TIMEOUT_SEC: z.coerce.number().default(5),
-  MEILI_ADDR: z.string().optional(),
-  MEILI_MASTER_KEY: z.string().default(""),
   LOG_LEVEL: z.string().default("debug"),
+  NO_COLOR: stringBool("false"),
   DEMO_MODE: stringBool("false"),
   DEMO_MODE_EMAIL: z.string().optional(),
   DEMO_MODE_PASSWORD: z.string().optional(),
@@ -89,6 +98,18 @@ const allEnv = z.object({
   // A flag to detect if the user is running in the old separete containers setup
   USING_LEGACY_SEPARATE_CONTAINERS: stringBool("false"),
 
+  // Prometheus metrics configuration
+  PROMETHEUS_AUTH_TOKEN: z.string().optional(),
+
+  // Email configuration
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().optional().default(587),
+  SMTP_SECURE: stringBool("false"),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASSWORD: z.string().optional(),
+  SMTP_FROM: z.string().optional(),
+  EMAIL_VERIFICATION_REQUIRED: stringBool("false"),
+
   // Asset storage configuration
   ASSET_STORE_S3_ENDPOINT: z.string().optional(),
   ASSET_STORE_S3_REGION: z.string().optional(),
@@ -96,10 +117,34 @@ const allEnv = z.object({
   ASSET_STORE_S3_ACCESS_KEY_ID: z.string().optional(),
   ASSET_STORE_S3_SECRET_ACCESS_KEY: z.string().optional(),
   ASSET_STORE_S3_FORCE_PATH_STYLE: stringBool("false"),
+
+  // Rate limiting configuration
+  RATE_LIMITING_ENABLED: stringBool("false"),
+
+  // Stripe configuration
+  STRIPE_SECRET_KEY: z.string().optional(),
+  STRIPE_PUBLISHABLE_KEY: z.string().optional(),
+  STRIPE_WEBHOOK_SECRET: z.string().optional(),
+  STRIPE_PRICE_ID: z.string().optional(),
+
+  FREE_QUOTA_BOOKMARK_LIMIT: z.coerce.number().optional(),
+  FREE_QUOTA_ASSET_SIZE_BYTES: z.coerce.number().optional(),
+  FREE_BROWSER_CRAWLING_ENABLED: optionalStringBool(),
+  PAID_QUOTA_BOOKMARK_LIMIT: z.coerce.number().optional(),
+  PAID_QUOTA_ASSET_SIZE_BYTES: z.coerce.number().optional(),
+  PAID_BROWSER_CRAWLING_ENABLED: optionalStringBool(),
+
+  // Proxy configuration
+  CRAWLER_HTTP_PROXY: z.string().optional(),
+  CRAWLER_HTTPS_PROXY: z.string().optional(),
+  CRAWLER_NO_PROXY: z.string().optional(),
+
+  // Database configuration
+  DB_WAL_MODE: stringBool("false"),
 });
 
-const serverConfigSchema = allEnv.transform((val) => {
-  return {
+const serverConfigSchema = allEnv.transform((val, ctx) => {
+  const obj = {
     apiUrl: val.API_URL,
     publicUrl: val.NEXTAUTH_URL,
     publicApiUrl: `${val.NEXTAUTH_URL}/api`,
@@ -112,6 +157,7 @@ const serverConfigSchema = allEnv.transform((val) => {
     auth: {
       disableSignups: val.DISABLE_SIGNUPS,
       disablePasswordAuth: val.DISABLE_PASSWORD_AUTH,
+      emailVerificationRequired: val.EMAIL_VERIFICATION_REQUIRED,
       oauth: {
         allowDangerousEmailAccountLinking:
           val.OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING,
@@ -123,7 +169,21 @@ const serverConfigSchema = allEnv.transform((val) => {
         timeout: val.OAUTH_TIMEOUT,
       },
     },
+    email: {
+      smtp: val.SMTP_HOST
+        ? {
+            host: val.SMTP_HOST,
+            port: val.SMTP_PORT,
+            secure: val.SMTP_SECURE,
+            user: val.SMTP_USER,
+            password: val.SMTP_PASSWORD,
+            from: val.SMTP_FROM,
+          }
+        : undefined,
+    },
     inference: {
+      isConfigured: !!val.OPENAI_API_KEY || !!val.OLLAMA_BASE_URL,
+      numWorkers: val.INFERENCE_NUM_WORKERS,
       jobTimeoutSec: val.INFERENCE_JOB_TIMEOUT_SEC,
       fetchTimeoutSec: val.INFERENCE_FETCH_TIMEOUT_SEC,
       openAIApiKey: val.OPENAI_API_KEY,
@@ -134,6 +194,7 @@ const serverConfigSchema = allEnv.transform((val) => {
       imageModel: val.INFERENCE_IMAGE_MODEL,
       inferredTagLang: val.INFERENCE_LANG,
       contextLength: val.INFERENCE_CONTEXT_LENGTH,
+      maxOutputTokens: val.INFERENCE_MAX_OUTPUT_TOKENS,
       outputSchema:
         val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT !== undefined
           ? val.INFERENCE_SUPPORTS_STRUCTURED_OUTPUT
@@ -170,13 +231,11 @@ const serverConfigSchema = allEnv.transform((val) => {
       cacheDir: val.OCR_CACHE_DIR,
       confidenceThreshold: val.OCR_CONFIDENCE_THRESHOLD,
     },
-    meilisearch: val.MEILI_ADDR
-      ? {
-          address: val.MEILI_ADDR,
-          key: val.MEILI_MASTER_KEY,
-        }
-      : undefined,
+    search: {
+      numWorkers: val.SEARCH_NUM_WORKERS,
+    },
     logLevel: val.LOG_LEVEL,
+    logNoColor: val.NO_COLOR,
     demoMode: val.DEMO_MODE
       ? {
           email: val.DEMO_MODE_EMAIL,
@@ -192,6 +251,18 @@ const serverConfigSchema = allEnv.transform((val) => {
     webhook: {
       timeoutSec: val.WEBHOOK_TIMEOUT_SEC,
       retryTimes: val.WEBHOOK_RETRY_TIMES,
+      numWorkers: val.WEBHOOK_NUM_WORKERS,
+    },
+    proxy: {
+      httpProxy: val.CRAWLER_HTTP_PROXY,
+      httpsProxy: val.CRAWLER_HTTPS_PROXY,
+      noProxy: val.CRAWLER_NO_PROXY,
+    },
+    assetPreprocessing: {
+      numWorkers: val.ASSET_PREPROCESSING_NUM_WORKERS,
+    },
+    ruleEngine: {
+      numWorkers: val.RULE_ENGINE_NUM_WORKERS,
     },
     assetStore: {
       type: val.ASSET_STORE_S3_ENDPOINT
@@ -206,7 +277,44 @@ const serverConfigSchema = allEnv.transform((val) => {
         forcePathStyle: val.ASSET_STORE_S3_FORCE_PATH_STYLE,
       },
     },
+    prometheus: {
+      metricsToken: val.PROMETHEUS_AUTH_TOKEN,
+    },
+    rateLimiting: {
+      enabled: val.RATE_LIMITING_ENABLED,
+    },
+    stripe: {
+      secretKey: val.STRIPE_SECRET_KEY,
+      publishableKey: val.STRIPE_PUBLISHABLE_KEY,
+      webhookSecret: val.STRIPE_WEBHOOK_SECRET,
+      priceId: val.STRIPE_PRICE_ID,
+      isConfigured: !!val.STRIPE_SECRET_KEY && !!val.STRIPE_PUBLISHABLE_KEY,
+    },
+    quotas: {
+      free: {
+        bookmarkLimit: val.FREE_QUOTA_BOOKMARK_LIMIT ?? null,
+        assetSizeBytes: val.FREE_QUOTA_ASSET_SIZE_BYTES ?? null,
+        browserCrawlingEnabled: val.FREE_BROWSER_CRAWLING_ENABLED ?? null,
+      },
+      paid: {
+        bookmarkLimit: val.PAID_QUOTA_BOOKMARK_LIMIT ?? null,
+        assetSizeBytes: val.PAID_QUOTA_ASSET_SIZE_BYTES ?? null,
+        browserCrawlingEnabled: val.PAID_BROWSER_CRAWLING_ENABLED ?? null,
+      },
+    },
+    database: {
+      walMode: val.DB_WAL_MODE,
+    },
   };
+  if (obj.auth.emailVerificationRequired && !obj.email.smtp) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "To enable email verification, SMTP settings must be configured",
+      fatal: true,
+    });
+    return z.NEVER;
+  }
+  return obj;
 });
 
 const serverConfig = serverConfigSchema.parse(process.env);
@@ -220,9 +328,7 @@ export const clientConfig = {
     disablePasswordAuth: serverConfig.auth.disablePasswordAuth,
   },
   inference: {
-    isConfigured:
-      !!serverConfig.inference.openAIApiKey ||
-      !!serverConfig.inference.ollamaBaseUrl,
+    isConfigured: serverConfig.inference.isConfigured,
     inferredTagLang: serverConfig.inference.inferredTagLang,
   },
   serverVersion: serverConfig.serverVersion,

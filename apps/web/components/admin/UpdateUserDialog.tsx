@@ -41,12 +41,14 @@ interface UpdateUserDialogProps {
   userId: string;
   currentRole: "user" | "admin";
   currentQuota: number | null;
+  currentStorageQuota: number | null;
   children?: React.ReactNode;
 }
 export default function UpdateUserDialog({
   userId,
   currentRole,
   currentQuota,
+  currentStorageQuota,
   children,
 }: UpdateUserDialogProps) {
   const apiUtils = api.useUtils();
@@ -55,6 +57,7 @@ export default function UpdateUserDialog({
     userId,
     role: currentRole,
     bookmarkQuota: currentQuota,
+    storageQuota: currentStorageQuota,
   };
   const form = useForm<UpdateUserSchema>({
     resolver: zodResolver(updateUserSchema),
@@ -130,6 +133,29 @@ export default function UpdateUserDialog({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Bookmark Quota</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        min="0"
+                        placeholder="Unlimited (leave empty)"
+                        {...field}
+                        value={field.value ?? ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          field.onChange(value === "" ? null : parseInt(value));
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="storageQuota"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Storage Quota (bytes)</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
