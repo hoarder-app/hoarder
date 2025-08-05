@@ -4,10 +4,9 @@ import {
 } from "@karakeep/shared/types/bookmarks.ts";
 
 import {
+  checkAndPurgeIfNeeded,
   clearBadgeStatusSWR,
   getBadgeStatusSWR,
-  initializeCache,
-  purgeStaleBadgeCache,
   setBadgeStatusSWR,
 } from "../utils/badgeCache";
 import {
@@ -21,16 +20,6 @@ import { NEW_BOOKMARK_REQUEST_KEY_NAME } from "./protocol.ts";
 
 const OPEN_KARAKEEP_ID = "open-karakeep";
 const ADD_LINK_TO_KARAKEEP_ID = "add-link";
-
-// Initialize the cache system, which creates a timer for periodic cache cleanup.
-initializeCache();
-
-// Listen for timer events and execute cache cleanup tasks when triggered.
-chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === "badgeCachePurgeAlarm") {
-    purgeStaleBadgeCache();
-  }
-});
 
 /**
  * Check the current settings state and register or remove context menus accordingly.
@@ -233,6 +222,8 @@ async function checkAndUpdateIcon(tabId: number) {
     console.error("Archive check failed:", error);
     await setBadge("!", false, tabId);
   }
+  // Check if we need to purge stale cache entries
+  await checkAndPurgeIfNeeded();
 }
 
 chrome.tabs.onActivated.addListener(async (activeInfo) => {

@@ -2,7 +2,6 @@
 // Implements dual-layer SWR (memory + persistent) cache for badge status.
 const BADGE_CACHE_KEY = "karakeep-badge-count-cache";
 const BADGE_CACHE_EXPIRE_MS = 60 * 60 * 1000; // 1 hour
-const PURGE_ALARM_NAME = "badgeCachePurgeAlarm";
 
 // 1. Memory cache (L1): fastest synchronous access
 const badgeMemoryCache = new Map<
@@ -12,6 +11,10 @@ const badgeMemoryCache = new Map<
 
 // 2. Async write queue to prevent concurrent writes to chrome.storage
 let storageWritePromiseQueue: Promise<void> = Promise.resolve();
+
+// 3. Last purge timestamp to track when we last cleaned up
+console.log("[badgeCache] Initializing badge cache...");
+let lastPurgeTimestamp = Date.now();
 
 // --- Utility Functions ---
 // Pure function: remove expired entries from an object
@@ -68,18 +71,14 @@ export async function purgeStaleBadgeCache() {
 
 // --- Public API ---
 /**
- * Initialize the badge cache module. Should be called once at background script startup.
+ * Check if enough time has passed to trigger a purge and do it if needed.
  */
-export function initializeCache() {
-  console.log("[badgeCache] Initializing badge cache...");
-  // Set up an hourly alarm for periodic cache purge
-  chrome.alarms.get(PURGE_ALARM_NAME, (alarm) => {
-    if (!alarm) {
-      chrome.alarms.create(PURGE_ALARM_NAME, {
-        periodInMinutes: 10,
-      });
-    }
-  });
+export async function checkAndPurgeIfNeeded() {
+  const now = Date.now();
+  if (now - lastPurgeTimestamp > BADGE_CACHE_EXPIRE_MS) {
+    await purgeStaleBadgeCache();
+    lastPurgeTimestamp = now;
+  }
 }
 
 /**
