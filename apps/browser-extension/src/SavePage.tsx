@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
-import {
-  BookmarkTypes,
-  ZNewBookmarkRequest,
-  zNewBookmarkRequestSchema,
-} from "@karakeep/shared/types/bookmarks";
+import { BookmarkTypes, ZNewBookmarkRequest, zNewBookmarkRequestSchema } from "@karakeep/shared/types/bookmarks";
 
 import { NEW_BOOKMARK_REQUEST_KEY_NAME } from "./background/protocol";
 import Spinner from "./Spinner";
@@ -30,7 +26,7 @@ export default function SavePage() {
         lastFocusedWindow: true,
       });
       await chrome.runtime.sendMessage({
-        type: MessageType.BOOKMARK_CREATED_REFRESH_BADGE,
+        type: MessageType.BOOKMARK_REFRESH_BADGE,
         currentTab: currentTab,
       });
     },

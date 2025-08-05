@@ -246,11 +246,7 @@ chrome.tabs.onUpdated.addListener(async (changeInfo) => {
 // Listen for REFRESH_BADGE messages from popup and update badge accordingly
 chrome.runtime.onMessage.addListener(async (msg) => {
   if (msg && msg.type) {
-    if (
-      msg.currentTab &&
-      (msg.type === MessageType.BOOKMARK_CREATED_REFRESH_BADGE ||
-        msg.type === MessageType.BOOKMARK_DELETED_REFRESH_BADGE)
-    ) {
+    if (msg.currentTab && msg.type === MessageType.BOOKMARK_REFRESH_BADGE) {
       console.log(
         "Received REFRESH_BADGE message for tab:",
         msg.currentTab.url,

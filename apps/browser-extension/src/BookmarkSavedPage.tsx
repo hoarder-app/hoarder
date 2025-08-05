@@ -26,7 +26,7 @@ export default function BookmarkSavedPage() {
         lastFocusedWindow: true,
       });
       await chrome.runtime.sendMessage({
-        type: MessageType.BOOKMARK_DELETED_REFRESH_BADGE,
+        type: MessageType.BOOKMARK_REFRESH_BADGE,
         currentTab: currentTab,
       });
       navigate("/bookmarkdeleted");
