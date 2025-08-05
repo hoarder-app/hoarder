@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "./components/ui/button";
+import { Switch } from "./components/ui/switch";
 import Logo from "./Logo";
 import Spinner from "./Spinner";
 import usePluginSettings from "./utils/settings";
@@ -60,23 +61,14 @@ export default function OptionsPage() {
       <Logo />
       <span className="text-lg">Settings</span>
       <hr />
-      <div className="flex flex-col gap-2">
-        <span className="mb-1">Show count badge</span>
-        <Button
-          variant={settings.showCountBadge ? "default" : "outline"}
-          className={
-            settings.showCountBadge
-              ? "bg-green-600 hover:bg-green-700"
-              : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-medium">Show count badge</span>
+        <Switch
+          checked={settings.showCountBadge}
+          onCheckedChange={(checked) =>
+            setSettings((s) => ({ ...s, showCountBadge: checked }))
           }
-          onClick={() =>
-            setSettings((s) => ({ ...s, showCountBadge: !s.showCountBadge }))
-          }
-        >
-          {settings.showCountBadge
-            ? "Enabled (click to disable)"
-            : "Disabled (click to enable)"}
-        </Button>
+        />
       </div>
       <div className="flex gap-2">
         <span className="my-auto">Server Address:</span>
