@@ -87,6 +87,7 @@
     "react-masonry-css": "^1.0.16",
     "react-select": "^5.8.0",
     "react-syntax-highlighter": "^15.5.0",
+    "react-tweet": "^3.2.2",
     "remark-breaks": "^4.0.0",
     "remark-gfm": "^4.0.0",
     "request-ip": "^3.3.0",

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { buttonVariants } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -17,7 +18,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useTranslation } from "@/lib/i18n/client";
-import { Archive, BookOpen, Camera, ExpandIcon, Video } from "lucide-react";
+import {
+  AlertTriangle,
+  Archive,
+  BookOpen,
+  Camera,
+  ExpandIcon,
+  Video,
+} from "lucide-react";
+import { ErrorBoundary } from "react-error-boundary";
 
 import {
   BookmarkTypes,
@@ -25,7 +34,28 @@ import {
   ZBookmarkedLink,
 } from "@karakeep/shared/types/bookmarks";
 
+import { contentRendererRegistry } from "./content-renderers";
 import ReaderView from "./ReaderView";
+
+function CustomRendererErrorFallback({ error }: { error: Error }) {
+  return (
+    <div className="flex h-full w-full items-center justify-center p-4">
+      <Alert variant="destructive" className="max-w-md">
+        <AlertTriangle className="h-4 w-4" />
+        <AlertTitle>Renderer Error</AlertTitle>
+        <AlertDescription>
+          Failed to load custom content renderer.{" "}
+          <details className="mt-2">
+            <summary className="cursor-pointer text-xs">
+              Technical details
+            </summary>
+            <code className="mt-1 block text-xs">{error.message}</code>
+          </details>
+        </AlertDescription>
+      </Alert>
+    </div>
+  );
+}
 
 function FullPageArchiveSection({ link }: { link: ZBookmarkedLink }) {
   const archiveAssetId =
@@ -74,14 +104,27 @@ export default function LinkContentSection({
   bookmark: ZBookmark;
 }) {
   const { t } = useTranslation();
-  const [section, setSection] = useState<string>("cached");
+  const availableRenderers = contentRendererRegistry.getRenderers(bookmark);
+  const defaultSection =
+    availableRenderers.length > 0 ? availableRenderers[0].id : "cached";
+  const [section, setSection] = useState<string>(defaultSection);
 
   if (bookmark.content.type != BookmarkTypes.LINK) {
     throw new Error("Invalid content type");
   }
 
   let content;
-  if (section === "cached") {
+
+  // Check if current section is a custom renderer
+  const customRenderer = availableRenderers.find((r) => r.id === section);
+  if (customRenderer) {
+    const RendererComponent = customRenderer.component;
+    content = (
+      <ErrorBoundary FallbackComponent={CustomRendererErrorFallback}>
+        <RendererComponent bookmark={bookmark} />
+      </ErrorBoundary>
+    );
+  } else if (section === "cached") {
     content = (
       <ScrollArea className="h-full">
         <ReaderView
@@ -109,6 +152,20 @@ export default function LinkContentSection({
           </SelectTrigger>
           <SelectContent>
             <SelectGroup>
+              {/* Custom renderers first */}
+              {availableRenderers.map((renderer) => {
+                const IconComponent = renderer.icon;
+                return (
+                  <SelectItem key={renderer.id} value={renderer.id}>
+                    <div className="flex items-center">
+                      <IconComponent className="mr-2 h-4 w-4" />
+                      {renderer.name}
+                    </div>
+                  </SelectItem>
+                );
+              })}
+
+              {/* Default renderers */}
               <SelectItem value="cached">
                 <div className="flex items-center">
                   <BookOpen className="mr-2 h-4 w-4" />

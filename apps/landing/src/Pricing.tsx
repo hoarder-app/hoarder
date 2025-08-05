@@ -155,6 +155,10 @@ function FAQ() {
       question: "Do you offer refunds?",
       answer: "Yes, we offer a 7-day money-back guarantee for all paid plans.",
     },
+    {
+      question: "How should I contant you if I have any questions?",
+      answer: "You can reach us at support@karakeep.app",
+    },
   ];
 
   return (
