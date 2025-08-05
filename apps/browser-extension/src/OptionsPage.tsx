@@ -70,6 +70,7 @@ export default function OptionsPage() {
           }
         />
       </div>
+      <hr />
       <div className="flex gap-2">
         <span className="my-auto">Server Address:</span>
         {settings.address}
