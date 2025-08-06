@@ -12,9 +12,14 @@ const badgeMemoryCache = new Map<
 // 2. Async write queue to prevent concurrent writes to chrome.storage
 let storageWritePromiseQueue: Promise<void> = Promise.resolve();
 
-// 3. Last purge timestamp to track when we last cleaned up
-console.log("[badgeCache] Initializing badge cache...");
-let lastPurgeTimestamp = Date.now();
+// Add persistent getter/setter
+async function getLastPurgeTimestamp(): Promise<number> {
+  const result = await chrome.storage.local.get("badgeCacheLastPurge");
+  return result.badgeCacheLastPurge ?? 0;
+}
+async function setLastPurgeTimestamp(ts: number) {
+  await chrome.storage.local.set({ badgeCacheLastPurge: ts });
+}
 
 // --- Utility Functions ---
 // Pure function: remove expired entries from an object
@@ -75,9 +80,10 @@ export async function purgeStaleBadgeCache() {
  */
 export async function checkAndPurgeIfNeeded() {
   const now = Date.now();
+  const lastPurgeTimestamp = await getLastPurgeTimestamp();
   if (now - lastPurgeTimestamp > BADGE_CACHE_EXPIRE_MS) {
     await purgeStaleBadgeCache();
-    lastPurgeTimestamp = now;
+    await setLastPurgeTimestamp(now);
   }
 }
 
