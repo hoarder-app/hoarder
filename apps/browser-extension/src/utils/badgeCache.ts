@@ -1,33 +1,53 @@
 // Badge count cache helpers (chrome.storage.local async, shared)
 // Implements dual-layer SWR (memory + persistent) cache for badge status.
+import type { BadgeCacheEntry, BadgeCacheStorage } from "../types/cache";
+import { getStorageValue, removeStorageKey, setStorageValue } from "./storage";
+
 const BADGE_CACHE_KEY = "karakeep-badge-count-cache";
 const BADGE_CACHE_EXPIRE_MS = 60 * 60 * 1000; // 1 hour
+const LAST_PURGE_KEY = "badgeCacheLastPurge";
 
 // 1. Memory cache (L1): fastest synchronous access
-const badgeMemoryCache = new Map<
-  string,
-  { count: number; isExisted: boolean; ts: number }
->();
+const badgeMemoryCache = new Map<string, BadgeCacheEntry>();
 
 // 2. Async write queue to prevent concurrent writes to chrome.storage
 let storageWritePromiseQueue: Promise<void> = Promise.resolve();
 
-// Add persistent getter/setter
-async function getLastPurgeTimestamp(): Promise<number> {
-  const result = await chrome.storage.local.get("badgeCacheLastPurge");
-  return result.badgeCacheLastPurge ?? 0;
-}
-async function setLastPurgeTimestamp(ts: number) {
-  await chrome.storage.local.set({ badgeCacheLastPurge: ts });
+/**
+ * Get the entire badge cache object from storage
+ */
+async function getBadgeCacheFromStorage(): Promise<BadgeCacheStorage> {
+  return await getStorageValue(BADGE_CACHE_KEY, {});
 }
 
-// --- Utility Functions ---
-// Pure function: remove expired entries from an object
-function purgeStaleFromObject(
-  cacheObj: Record<string, { ts: number }>,
-): Record<string, { ts: number }> {
+/**
+ * Set the entire badge cache object to storage
+ */
+async function setBadgeCacheToStorage(cache: BadgeCacheStorage): Promise<void> {
+  await setStorageValue(BADGE_CACHE_KEY, cache);
+}
+
+/**
+ * Get the last time the badge cache was purged
+ */
+async function getLastPurgeTimestamp(): Promise<number> {
+  return await getStorageValue(LAST_PURGE_KEY, 0);
+}
+
+/**
+ * Set the last time the badge cache was purged
+ */
+async function setLastPurgeTimestamp(ts: number): Promise<void> {
+  await setStorageValue(LAST_PURGE_KEY, ts);
+}
+
+/**
+ * Purge stale entries from a badge cache object
+ * @param cacheObj
+ */
+function purgeStaleFromObject(cacheObj: BadgeCacheStorage): BadgeCacheStorage {
   const now = Date.now();
-  const newCache: Record<string, { ts: number }> = {};
+  const newCache: BadgeCacheStorage = {};
   for (const key in cacheObj) {
     if (
       Object.prototype.hasOwnProperty.call(cacheObj, key) &&
@@ -39,8 +59,9 @@ function purgeStaleFromObject(
   return newCache;
 }
 
-// --- Periodic Purge Task (for use with chrome.alarms) ---
-// Removes expired entries from both memory and persistent storage
+/**
+ * Purge stale badge cache from memory and persistent storage
+ */
 export async function purgeStaleBadgeCache() {
   console.log(
     "[badgeCache] purgeStaleBadgeCache: cleaning up stale badge cache...",
@@ -55,17 +76,14 @@ export async function purgeStaleBadgeCache() {
   // 2. Purge persistent storage (queued for safety)
   storageWritePromiseQueue = storageWritePromiseQueue.then(async () => {
     try {
-      const result = await chrome.storage.local.get(BADGE_CACHE_KEY);
-      const storageCache = result[BADGE_CACHE_KEY] || {};
+      const storageCache = await getBadgeCacheFromStorage();
       const freshStorageCache = purgeStaleFromObject(storageCache);
       // Only write if cache content changed
       if (
         Object.keys(freshStorageCache).length !==
         Object.keys(storageCache).length
       ) {
-        await chrome.storage.local.set({
-          [BADGE_CACHE_KEY]: freshStorageCache,
-        });
+        await setBadgeCacheToStorage(freshStorageCache);
       }
     } catch (err) {
       console.error("Failed to purge stale badge cache from storage:", err);
@@ -102,8 +120,7 @@ export async function getBadgeStatusSWR(url: string) {
   }
   // 2. Check persistent storage (L2)
   try {
-    const result = await chrome.storage.local.get(BADGE_CACHE_KEY);
-    const storageCache = result[BADGE_CACHE_KEY] || {};
+    const storageCache = await getBadgeCacheFromStorage();
     const storageEntry = storageCache[url];
     if (storageEntry) {
       badgeMemoryCache.set(url, storageEntry);
@@ -141,10 +158,9 @@ export async function setBadgeStatusSWR(
   // 2. Queue write to persistent storage
   storageWritePromiseQueue = storageWritePromiseQueue.then(async () => {
     try {
-      const result = await chrome.storage.local.get(BADGE_CACHE_KEY);
-      const cache = result[BADGE_CACHE_KEY] || {};
+      const cache = await getBadgeCacheFromStorage();
       cache[url] = entry;
-      await chrome.storage.local.set({ [BADGE_CACHE_KEY]: cache });
+      await setBadgeCacheToStorage(cache);
     } catch (err) {
       console.error("Failed to set badge cache to storage:", err);
     }
@@ -167,13 +183,12 @@ export async function clearBadgeStatusSWR(url?: string) {
   storageWritePromiseQueue = storageWritePromiseQueue.then(async () => {
     try {
       if (!url) {
-        await chrome.storage.local.remove(BADGE_CACHE_KEY);
+        await removeStorageKey(BADGE_CACHE_KEY);
       } else {
-        const result = await chrome.storage.local.get(BADGE_CACHE_KEY);
-        const cache = result[BADGE_CACHE_KEY] || {};
+        const cache = await getBadgeCacheFromStorage();
         if (cache[url]) {
           delete cache[url];
-          await chrome.storage.local.set({ [BADGE_CACHE_KEY]: cache });
+          await setBadgeCacheToStorage(cache);
         }
       }
     } catch (err) {
