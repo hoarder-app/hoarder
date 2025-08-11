@@ -112,6 +112,7 @@ export function BookmarkLinkReaderPreview({
         }}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
+        decelerationRate="normal"
       />
     </View>
   );
@@ -145,6 +146,7 @@ export function BookmarkLinkArchivePreview({
       startInLoadingState={true}
       mediaPlaybackRequiresUserAction={true}
       source={webViewUri}
+      decelerationRate="normal"
     />
   );
 }
