@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { Button } from "./components/ui/button";
+import { Switch } from "./components/ui/switch";
 import Logo from "./Logo";
 import Spinner from "./Spinner";
 import usePluginSettings from "./utils/settings";
@@ -45,7 +46,12 @@ export default function OptionsPage() {
     if (settings.apiKeyId) {
       deleteKey({ id: settings.apiKeyId });
     }
-    setSettings((s) => ({ ...s, apiKey: "", apiKeyId: undefined }));
+    setSettings((s) => ({
+      ...s,
+      apiKey: "",
+      apiKeyId: undefined,
+      showCountBadge: false,
+    }));
     invalidateWhoami();
     navigate("/notconfigured");
   };
@@ -54,6 +60,16 @@ export default function OptionsPage() {
     <div className="flex flex-col space-y-2">
       <Logo />
       <span className="text-lg">Settings</span>
+      <hr />
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-sm font-medium">Show count badge</span>
+        <Switch
+          checked={settings.showCountBadge}
+          onCheckedChange={(checked) =>
+            setSettings((s) => ({ ...s, showCountBadge: checked }))
+          }
+        />
+      </div>
       <hr />
       <div className="flex gap-2">
         <span className="my-auto">Server Address:</span>
