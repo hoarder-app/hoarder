@@ -54,8 +54,8 @@
       "versionCode": 24
     },
     "plugins": [
-      "./plugins/trust-local-certs.js",
-      "./plugins/camera-not-required.js",
+      "./plugins/trust-local-certs.cjs",
+      "./plugins/camera-not-required.cjs",
       "expo-router",
       [
         "expo-share-intent",
