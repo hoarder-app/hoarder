@@ -39,7 +39,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
-    "@crxjs/vite-plugin": "2.0.0-beta.28",
+    "@crxjs/vite-plugin": "2.0.1",
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tailwind-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
