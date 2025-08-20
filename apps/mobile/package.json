@@ -2,7 +2,6 @@
   "name": "@karakeep/mobile",
   "version": "1.0.0",
   "main": "index.ts",
-  "type": "module",
   "scripts": {
     "clean": "git clean -xdf .expo .turbo node_modules",
     "start": "expo start",
