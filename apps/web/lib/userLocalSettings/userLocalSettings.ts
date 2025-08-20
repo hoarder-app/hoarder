@@ -39,9 +39,9 @@ export async function updateInterfaceLang(lang: string) {
 }
 
 export async function updateGridColumns(gridColumns: number) {
-  const userSettings = cookies().get(USER_LOCAL_SETTINGS_COOKIE_NAME);
+  const userSettings = (await cookies()).get(USER_LOCAL_SETTINGS_COOKIE_NAME);
   const parsed = parseUserLocalSettings(userSettings?.value);
-  cookies().set({
+  (await cookies()).set({
     name: USER_LOCAL_SETTINGS_COOKIE_NAME,
     value: JSON.stringify({ ...parsed, gridColumns }),
     maxAge: 34560000, // Chrome caps max age to 400 days
