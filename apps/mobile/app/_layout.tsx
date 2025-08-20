@@ -32,42 +32,47 @@ export default function RootLayout() {
   }, [settings.theme]);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ShareIntentProvider>
-        <Providers>
-          <StyledStack
-            contentClassName={cn(
-              "w-full flex-1 bg-gray-100 text-foreground dark:bg-background",
-              colorScheme == "dark" ? "dark" : "light",
-            )}
-            screenOptions={{
-              headerTitle: "",
-              headerTransparent: true,
-            }}
-          >
-            <Stack.Screen name="index" />
-            <Stack.Screen
-              name="signin"
-              options={{
-                headerShown: true,
-                headerBackVisible: true,
-                headerBackTitle: "Back",
-                title: "",
-              }}
-            />
-            <Stack.Screen name="sharing" />
-            <Stack.Screen
-              name="test-connection"
-              options={{
-                title: "Test Connection",
-                headerShown: true,
-                presentation: "modal",
-              }}
-            />
-          </StyledStack>
-          <StatusBar style="auto" />
-        </Providers>
-      </ShareIntentProvider>
-    </GestureHandlerRootView>
+    <>
+      <StyledStack
+        layout={(props) => {
+          return (
+            <GestureHandlerRootView style={{ flex: 1 }}>
+              <ShareIntentProvider>
+                <Providers>{props.children}</Providers>
+              </ShareIntentProvider>
+            </GestureHandlerRootView>
+          );
+        }}
+        contentClassName={cn(
+          "w-full flex-1 bg-gray-100 text-foreground dark:bg-background",
+          colorScheme == "dark" ? "dark" : "light",
+        )}
+        screenOptions={{
+          headerTitle: "",
+          headerTransparent: true,
+        }}
+      >
+        <Stack.Screen name="index" />
+        <Stack.Screen
+          name="signin"
+          options={{
+            headerShown: true,
+            headerBackVisible: true,
+            headerBackTitle: "Back",
+            title: "",
+          }}
+        />
+        <Stack.Screen name="sharing" />
+        <Stack.Screen
+          name="test-connection"
+          options={{
+            title: "Test Connection",
+            headerShown: true,
+            presentation: "modal",
+          }}
+        />
+      </StyledStack>
+      <StatusBar style="auto" />
+    </>
   );
 }
