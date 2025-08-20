@@ -6,14 +6,12 @@ import { TRPCError } from "@trpc/server";
 
 import { BookmarkListContextProvider } from "@karakeep/shared-react/hooks/bookmark-list-context";
 
-export default async function ListPage(
-  props: {
-    params: Promise<{ listId: string }>;
-    searchParams?: Promise<{
-      includeArchived?: string;
-    }>;
-  }
-) {
+export default async function ListPage(props: {
+  params: Promise<{ listId: string }>;
+  searchParams?: Promise<{
+    includeArchived?: string;
+  }>;
+}) {
   const searchParams = await props.searchParams;
   const params = await props.params;
   const userSettings = await api.users.settings();

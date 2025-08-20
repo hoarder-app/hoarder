@@ -7,14 +7,12 @@ import { api } from "@/server/api/client";
 import { TRPCError } from "@trpc/server";
 import { MoreHorizontal } from "lucide-react";
 
-export default async function TagPage(
-  props: {
-    params: Promise<{ tagId: string }>;
-    searchParams?: Promise<{
-      includeArchived?: string;
-    }>;
-  }
-) {
+export default async function TagPage(props: {
+  params: Promise<{ tagId: string }>;
+  searchParams?: Promise<{
+    includeArchived?: string;
+  }>;
+}) {
   const searchParams = await props.searchParams;
   const params = await props.params;
   let tag;

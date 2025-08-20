@@ -12,7 +12,7 @@
     "serve": "docusaurus serve",
     "write-translations": "docusaurus write-translations",
     "write-heading-ids": "docusaurus write-heading-ids",
-    "typecheck": "tsc",
+    "typecheck": "tsc --noEmit",
     "gen-api": "rm -r docs/api && pnpm docusaurus gen-api-docs all && echo '{ \"label\": \"API\" }' > docs/api/_category_.json"
   },
   "dependencies": {

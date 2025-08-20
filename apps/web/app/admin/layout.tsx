@@ -1,3 +1,4 @@
+import React from "react";
 import { redirect } from "next/navigation";
 import { AdminNotices } from "@/components/admin/AdminNotices";
 import MobileSidebar from "@/components/shared/sidebar/MobileSidebar";
@@ -6,7 +7,6 @@ import SidebarLayout from "@/components/shared/sidebar/SidebarLayout";
 import { getServerAuthSession } from "@/server/auth";
 import { TFunction } from "i18next";
 import { Activity, ArrowLeft, Settings, Users } from "lucide-react";
-import React from "react";
 
 const adminSidebarItems = (
   t: TFunction,

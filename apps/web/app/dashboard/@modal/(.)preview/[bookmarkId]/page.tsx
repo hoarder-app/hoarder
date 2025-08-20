@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, use } from "react";
+import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import BookmarkPreview from "@/components/dashboard/preview/BookmarkPreview";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 
-export default function BookmarkPreviewPage(
-  props: {
-    params: Promise<{ bookmarkId: string }>;
-  }
-) {
+export default function BookmarkPreviewPage(props: {
+  params: Promise<{ bookmarkId: string }>;
+}) {
   const params = use(props.params);
   const router = useRouter();
 
