@@ -222,9 +222,6 @@ importers:
       react-router:
         specifier: ^7.7.1
         version: 7.7.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      react-select:
-        specifier: ^5.10.1
-        version: 5.10.2(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       sharp:
         specifier: ^0.33.3
         version: 0.33.3
