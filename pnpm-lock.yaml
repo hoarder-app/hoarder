@@ -1186,7 +1186,7 @@ importers:
         specifier: ^7.0.4
         version: 7.0.4
       ollama:
-        specifier: ^0.5.17
+        specifier: ^0.5.14
         version: 0.5.17
       openai:
         specifier: ^4.86.1
