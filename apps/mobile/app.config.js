@@ -9,6 +9,9 @@ export default {
       light: "./assets/icon.png",
       tinted: "./assets/icon-tinted.png",
     },
+    experiments: {
+      reactCanary: true,
+    },
     userInterfaceStyle: "automatic",
     assetBundlePatterns: ["**/*"],
     ios: {
@@ -89,6 +92,7 @@ export default {
           },
         },
       ],
+      "expo-web-browser",
     ],
     extra: {
       router: {

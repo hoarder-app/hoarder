@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useShareIntentContext } from "expo-share-intent";
@@ -83,7 +83,7 @@ export default function Sharing() {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>({ type: "idle" });
 
-  let autoCloseTimeoutId: NodeJS.Timeout | null = null;
+  const autoCloseTimeoutId = useRef<number | null>(null);
 
   let comp;
   switch (mode.type) {
@@ -102,8 +102,8 @@ export default function Sharing() {
             label="Manage"
             onPress={() => {
               router.replace(`/dashboard/bookmarks/${mode.bookmarkId}/info`);
-              if (autoCloseTimeoutId) {
-                clearTimeout(autoCloseTimeoutId);
+              if (autoCloseTimeoutId.current) {
+                clearTimeout(autoCloseTimeoutId.current);
               }
             }}
           />
@@ -126,11 +126,11 @@ export default function Sharing() {
       return;
     }
 
-    autoCloseTimeoutId = setTimeout(() => {
+    autoCloseTimeoutId.current = setTimeout(() => {
       router.replace("dashboard");
     }, 2000);
 
-    return () => clearTimeout(autoCloseTimeoutId!);
+    return () => clearTimeout(autoCloseTimeoutId.current!);
   }, [mode.type]);
 
   return (
