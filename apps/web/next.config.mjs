@@ -1,6 +1,24 @@
+import pwa from "next-pwa";
+
+const withPWA = pwa({
+  dest: "public",
+  disable: process.env.NODE_ENV != "production",
+});
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig = withPWA({
   output: "standalone",
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    });
+    return config;
+  },
+  devIndicators: {
+    buildActivity: true,
+    buildActivityPosition: "bottom-left",
+  },
   async headers() {
     return [
       {
@@ -31,20 +49,12 @@ const nextConfig = {
       },
     ];
   },
-  turbopack: {
-    rules: {
-      "*.svg": {
-        loaders: ["@svgr/webpack"],
-        as: "*.js",
-      },
-    },
-  },
 
   // transpilePackages: ["@karakeep/shared", "@karakeep/db", "@karakeep/trpc"],
 
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
-};
+});
 
 export default nextConfig;
