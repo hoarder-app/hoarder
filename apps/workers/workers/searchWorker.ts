@@ -4,12 +4,18 @@ import { DequeuedJob, Runner } from "liteque";
 import type { ZSearchIndexingRequest } from "@karakeep/shared/queues";
 import { db } from "@karakeep/db";
 import { bookmarks } from "@karakeep/db/schema";
+import serverConfig from "@karakeep/shared/config";
 import logger from "@karakeep/shared/logger";
 import {
   SearchIndexingQueue,
   zSearchIndexingRequestSchema,
 } from "@karakeep/shared/queues";
-import { getSearchIdxClient } from "@karakeep/shared/search";
+import {
+  BookmarkSearchDocument,
+  getSearchClient,
+  SearchIndexClient,
+} from "@karakeep/shared/search";
+import { Bookmark } from "@karakeep/trpc/models/bookmarks";
 
 export class SearchIndexingWorker {
   static build() {
@@ -32,7 +38,7 @@ export class SearchIndexingWorker {
         },
       },
       {
-        concurrency: 1,
+        concurrency: serverConfig.search.numWorkers,
         pollIntervalMs: 1000,
         timeoutSecs: 30,
       },
@@ -42,20 +48,7 @@ export class SearchIndexingWorker {
   }
 }
 
-async function ensureTaskSuccess(
-  searchClient: NonNullable<Awaited<ReturnType<typeof getSearchIdxClient>>>,
-  taskUid: number,
-) {
-  const task = await searchClient.waitForTask(taskUid);
-  if (task.error) {
-    throw new Error(`Search task failed: ${task.error.message}`);
-  }
-}
-
-async function runIndex(
-  searchClient: NonNullable<Awaited<ReturnType<typeof getSearchIdxClient>>>,
-  bookmarkId: string,
-) {
+async function runIndex(searchClient: SearchIndexClient, bookmarkId: string) {
   const bookmark = await db.query.bookmarks.findFirst({
     where: eq(bookmarks.id, bookmarkId),
     with: {
@@ -74,50 +67,43 @@ async function runIndex(
     throw new Error(`Bookmark ${bookmarkId} not found`);
   }
 
-  const task = await searchClient.addDocuments(
-    [
-      {
-        id: bookmark.id,
-        userId: bookmark.userId,
-        ...(bookmark.link
-          ? {
-              url: bookmark.link.url,
-              linkTitle: bookmark.link.title,
-              description: bookmark.link.description,
-              content: bookmark.link.content,
-              publisher: bookmark.link.publisher,
-              author: bookmark.link.author,
-              datePublished: bookmark.link.datePublished,
-              dateModified: bookmark.link.dateModified,
-            }
-          : undefined),
-        ...(bookmark.asset
-          ? {
-              content: bookmark.asset.content,
-              metadata: bookmark.asset.metadata,
-            }
-          : undefined),
-        ...(bookmark.text ? { content: bookmark.text.text } : undefined),
-        note: bookmark.note,
-        summary: bookmark.summary,
-        title: bookmark.title,
-        createdAt: bookmark.createdAt.toISOString(),
-        tags: bookmark.tagsOnBookmarks.map((t) => t.tag.name),
-      },
-    ],
-    {
-      primaryKey: "id",
-    },
-  );
-  await ensureTaskSuccess(searchClient, task.taskUid);
+  const document: BookmarkSearchDocument = {
+    id: bookmark.id,
+    userId: bookmark.userId,
+    ...(bookmark.link
+      ? {
+          url: bookmark.link.url,
+          linkTitle: bookmark.link.title,
+          description: bookmark.link.description,
+          content: await Bookmark.getBookmarkPlainTextContent(
+            bookmark.link,
+            bookmark.userId,
+          ),
+          publisher: bookmark.link.publisher,
+          author: bookmark.link.author,
+          datePublished: bookmark.link.datePublished,
+          dateModified: bookmark.link.dateModified,
+        }
+      : {}),
+    ...(bookmark.asset
+      ? {
+          content: bookmark.asset.content,
+          metadata: bookmark.asset.metadata,
+        }
+      : {}),
+    ...(bookmark.text ? { content: bookmark.text.text } : {}),
+    note: bookmark.note,
+    summary: bookmark.summary,
+    title: bookmark.title,
+    createdAt: bookmark.createdAt.toISOString(),
+    tags: bookmark.tagsOnBookmarks.map((t) => t.tag.name),
+  };
+
+  await searchClient.addDocuments([document]);
 }
 
-async function runDelete(
-  searchClient: NonNullable<Awaited<ReturnType<typeof getSearchIdxClient>>>,
-  bookmarkId: string,
-) {
-  const task = await searchClient.deleteDocument(bookmarkId);
-  await ensureTaskSuccess(searchClient, task.taskUid);
+async function runDelete(searchClient: SearchIndexClient, bookmarkId: string) {
+  await searchClient.deleteDocument(bookmarkId);
 }
 
 async function runSearchIndexing(job: DequeuedJob<ZSearchIndexingRequest>) {
@@ -130,7 +116,7 @@ async function runSearchIndexing(job: DequeuedJob<ZSearchIndexingRequest>) {
     );
   }
 
-  const searchClient = await getSearchIdxClient();
+  const searchClient = await getSearchClient();
   if (!searchClient) {
     logger.debug(
       `[search][${jobId}] Search is not configured, nothing to do now`,

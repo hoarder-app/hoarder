@@ -47,7 +47,7 @@ describe("Tags Routes", () => {
 
     const api = apiCallers[1].tags;
     await expect(() => api.delete({ tagId: createdTag.id })).rejects.toThrow(
-      /Tag not found/,
+      /User is not allowed to access resource/,
     );
   });
 
@@ -142,5 +142,39 @@ describe("Tags Routes", () => {
     const apiUser2 = apiCallers[1].tags; // Different user
     const resUser2 = await apiUser2.list();
     expect(resUser2.tags.some((tag) => tag.name === "user1Tag")).toBeFalsy(); // Should not see other user's tags
+  });
+
+  test<CustomTestContext>("create strips extra leading hashes", async ({
+    apiCallers,
+    db,
+  }) => {
+    const api = apiCallers[0].tags;
+
+    const created = await api.create({ name: "##demo" });
+    expect(created.name).toBe("demo");
+
+    // Confirm DB row too
+    const row = await db.query.bookmarkTags.findFirst({
+      where: eq(bookmarkTags.id, created.id),
+    });
+    expect(row?.name).toBe("demo");
+  });
+
+  test<CustomTestContext>("update normalizes leading hashes", async ({
+    apiCallers,
+    db,
+  }) => {
+    const api = apiCallers[0].tags;
+
+    const created = await api.create({ name: "#foo" });
+    const updated = await api.update({ tagId: created.id, name: "##bar" });
+
+    expect(updated.name).toBe("bar");
+
+    // Confirm DB row too
+    const row = await db.query.bookmarkTags.findFirst({
+      where: eq(bookmarkTags.id, updated.id),
+    });
+    expect(row?.name).toBe("bar");
   });
 });

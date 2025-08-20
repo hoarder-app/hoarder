@@ -1,5 +1,11 @@
 import React, { useMemo } from "react";
-import { Pressable, SectionList, Text, View } from "react-native";
+import {
+  Pressable,
+  SectionList,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
@@ -81,6 +87,19 @@ const ListPickerPage = () => {
     onError,
   });
 
+  const clearAllTags = () => {
+    if (optimisticTags.length === 0) return;
+
+    updateTags({
+      bookmarkId,
+      detach: optimisticTags.map((tag) => ({
+        tagId: tag.id,
+        tagName: tag.name,
+      })),
+      attach: [],
+    });
+  };
+
   const optimisticExistingTagIds = useMemo(() => {
     return new Set(optimisticTags?.map((t) => t.id) ?? []);
   }, [optimisticTags]);
@@ -117,6 +136,16 @@ const ListPickerPage = () => {
     return { filteredAllTags, filteredOptimisticTags };
   }, [search, allTags, optimisticTags, optimisticExistingTagIds]);
 
+  const ClearButton = () => (
+    <TouchableOpacity
+      onPress={clearAllTags}
+      disabled={optimisticTags.length === 0}
+      className={`mr-4 ${optimisticTags.length === 0 ? "opacity-50" : ""}`}
+    >
+      <Text className="text-base font-medium text-blue-500">Clear</Text>
+    </TouchableOpacity>
+  );
+
   if (isAllTagsPending) {
     return <FullPageSpinner />;
   }
@@ -129,7 +158,9 @@ const ListPickerPage = () => {
             placeholder: "Search Tags",
             onChangeText: (event) => setSearch(event.nativeEvent.text),
             autoCapitalize: "none",
+            hideWhenScrolling: false,
           },
+          headerRight: () => <ClearButton />,
         }}
       />
       <SectionList

@@ -3,15 +3,15 @@
   "name": "@karakeep/shared-react",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@karakeep/shared": "workspace:^0.1.0",
     "@karakeep/trpc": "workspace:^0.1.0",
-    "@tanstack/react-query": "^5.69.0",
-    "@trpc/client": "11.0.0",
+    "@tanstack/react-query": "^5.80.3",
+    "@trpc/client": "^11.4.3",
     "superjson": "^2.2.1"
   },
   "devDependencies": {
-    "@karakeep/eslint-config": "workspace:^0.2.0",
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0"
   },
@@ -26,15 +26,10 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "format": "prettier . --ignore-path ../../.prettierignore",
-    "lint": "eslint ."
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@karakeep/eslint-config/base",
-      "@karakeep/eslint-config/react"
-    ]
+    "format": "prettier . --cache --ignore-path ../../.prettierignore --check",
+    "format:fix": "prettier . --cache --write --ignore-path ../../.prettierignore",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix"
   },
   "prettier": "@karakeep/prettier-config"
 }

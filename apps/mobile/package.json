@@ -8,18 +8,19 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "format": "prettier .",
-    "format:fix": "prettier . --write",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "format": "prettier . --cache --check",
+    "format:fix": "prettier . --cache --write",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@karakeep/shared": "workspace:^0.1.0",
     "@karakeep/shared-react": "workspace:^0.1.0",
     "@karakeep/trpc": "workspace:^0.1.0",
+    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-menu/menu": "^1.1.6",
-    "@tanstack/react-query": "^5.69.0",
+    "@tanstack/react-query": "^5.80.3",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "expo": "~53.0.11",
@@ -28,6 +29,7 @@
     "expo-clipboard": "^7.1.4",
     "expo-constants": "~17.1.6",
     "expo-dev-client": "^5.2.0",
+    "expo-file-system": "~18.0.12",
     "expo-haptics": "^14.1.4",
     "expo-image": "^2.2.0",
     "expo-image-picker": "^16.1.4",
@@ -36,6 +38,7 @@
     "expo-router": "~5.0.7",
     "expo-secure-store": "^14.2.3",
     "expo-share-intent": "^4.0.0",
+    "expo-sharing": "~13.0.1",
     "expo-status-bar": "~2.2.3",
     "expo-system-ui": "^5.0.8",
     "expo-web-browser": "^14.1.6",
@@ -61,31 +64,15 @@
   },
   "devDependencies": {
     "@babel/core": "~7.26.0",
-    "@karakeep/eslint-config": "workspace:^0.2.0",
     "@karakeep/prettier-config": "workspace:^0.1.0",
     "@karakeep/tailwind-config": "workspace:^0.1.0",
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "@types/react": "19.1.6",
     "ajv": "latest",
-    "eslint": "^8.57.0",
-    "eslint-config-universe": "^12.0.0",
     "prettier": "^3.4.2",
     "tailwindcss": "^3.4.1",
     "typescript": "^5.8.3"
   },
   "private": true,
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "@karakeep/eslint-config/base",
-      "@karakeep/eslint-config/react"
-    ],
-    "ignorePatterns": [
-      "expo-plugins/**",
-      "ios/**",
-      "android/**",
-      "plugins/**"
-    ]
-  },
   "prettier": "@karakeep/prettier-config"
 }

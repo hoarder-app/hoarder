@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Label } from "../ui/label";
 
 export default async function UserDetails() {
+  // oxlint-disable-next-line rules-of-hooks
   const { t } = await useTranslation();
   const whoami = await api.users.whoami();
 
