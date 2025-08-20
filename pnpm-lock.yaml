@@ -321,8 +321,8 @@ importers:
         specifier: 1.23.1
         version: 1.23.1(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))
       '@react-native-menu/menu':
-        specifier: ^1.1.6
-        version: 1.1.6(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+        specifier: ^1.2.4
+        version: 1.2.4(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
       '@tanstack/react-query':
         specifier: ^5.80.3
         version: 5.83.0(react@19.1.0)
@@ -4641,8 +4641,8 @@ packages:
     peerDependencies:
       react-native: ^0.0.0-0 || >=0.60 <1.0
 
-  '@react-native-menu/menu@1.1.6':
-    resolution: {integrity: sha512-KRPBqa9jmYDFoacUxw8z1ucpbvmdlPuRO8tsFt2jM8JMC2s+YQwTtISG73PeqH9KD7BV+8igD/nizPfcipOmhQ==}
+  '@react-native-menu/menu@1.2.4':
+    resolution: {integrity: sha512-63NU9NHd/KcBa7lhhV69xQmY3ORUxjMRmlzTY/qrY56GHnuKX+16dvUpKAuRSPK5kebBuRw5X4MFe2L9JHUlWA==}
     peerDependencies:
       react: '*'
       react-native: '*'
@@ -19293,7 +19293,7 @@ snapshots:
       merge-options: 3.0.4
       react-native: 0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0)
 
-  '@react-native-menu/menu@1.1.6(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)':
+  '@react-native-menu/menu@1.2.4(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)':
     dependencies:
       react: 19.1.0
       react-native: 0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0)
