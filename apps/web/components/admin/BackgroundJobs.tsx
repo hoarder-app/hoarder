@@ -1,6 +1,7 @@
 "use client";
 
 import { ActionButton } from "@/components/ui/action-button";
+import ActionConfirmingDialog from "@/components/ui/action-confirming-dialog";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -30,6 +31,7 @@ import {
   Webhook,
 } from "lucide-react";
 
+import { Button } from "../ui/button";
 import { AdminCard } from "./AdminCard";
 
 interface JobStats {
@@ -40,7 +42,7 @@ interface JobStats {
 
 interface JobAction {
   label: string;
-  onClick: () => void;
+  onClick: () => Promise<void>;
   loading: boolean;
 }
 
@@ -223,15 +225,25 @@ function JobCard({
             </h4>
             <div className="grid gap-2">
               {actions.map((action, index) => (
-                <ActionButton
+                <ActionConfirmingDialog
                   key={index}
-                  variant="secondary"
-                  loading={action.loading}
-                  onClick={action.onClick}
-                  className="h-auto justify-start px-3 py-2.5 text-left text-sm"
+                  title="Confirm Action"
+                  description={`Are you sure you want to ${action.label.toLowerCase()}?`}
+                  actionButton={(setDialogOpen) => (
+                    <ActionButton
+                      loading={action.loading}
+                      onClick={async () => {
+                        await action.onClick();
+                        setDialogOpen(false);
+                      }}
+                      className="h-auto justify-start px-3 py-2.5 text-left text-sm"
+                    >
+                      {t("actions.confirm")}
+                    </ActionButton>
+                  )}
                 >
-                  {action.label}
-                </ActionButton>
+                  <Button variant="secondary">{action.label}</Button>
+                </ActionConfirmingDialog>
               ))}
             </div>
           </div>
@@ -244,7 +256,7 @@ function JobCard({
 function useJobActions() {
   const { t } = useTranslation();
 
-  const { mutate: recrawlLinks, isPending: isRecrawlPending } =
+  const { mutateAsync: recrawlLinks, isPending: isRecrawlPending } =
     api.admin.recrawlLinks.useMutation({
       onSuccess: () => {
         toast({
@@ -259,7 +271,7 @@ function useJobActions() {
       },
     });
 
-  const { mutate: reindexBookmarks, isPending: isReindexPending } =
+  const { mutateAsync: reindexBookmarks, isPending: isReindexPending } =
     api.admin.reindexAllBookmarks.useMutation({
       onSuccess: () => {
         toast({
@@ -274,23 +286,25 @@ function useJobActions() {
       },
     });
 
-  const { mutate: reprocessAssetsFixMode, isPending: isReprocessingPending } =
-    api.admin.reprocessAssetsFixMode.useMutation({
-      onSuccess: () => {
-        toast({
-          description: "Reprocessing enqueued",
-        });
-      },
-      onError: (e) => {
-        toast({
-          variant: "destructive",
-          description: e.message,
-        });
-      },
-    });
+  const {
+    mutateAsync: reprocessAssetsFixMode,
+    isPending: isReprocessingPending,
+  } = api.admin.reprocessAssetsFixMode.useMutation({
+    onSuccess: () => {
+      toast({
+        description: "Reprocessing enqueued",
+      });
+    },
+    onError: (e) => {
+      toast({
+        variant: "destructive",
+        description: e.message,
+      });
+    },
+  });
 
   const {
-    mutate: reRunInferenceOnAllBookmarks,
+    mutateAsync: reRunInferenceOnAllBookmarks,
     isPending: isInferencePending,
   } = api.admin.reRunInferenceOnAllBookmarks.useMutation({
     onSuccess: () => {
