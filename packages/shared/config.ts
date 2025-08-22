@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import path from "path";
 import { z } from "zod";
 
@@ -278,7 +279,8 @@ const serverConfigSchema = allEnv.transform((val, ctx) => {
       },
     },
     prometheus: {
-      metricsToken: val.PROMETHEUS_AUTH_TOKEN,
+      metricsToken:
+        val.PROMETHEUS_AUTH_TOKEN ?? crypto.randomBytes(64).toString("hex"),
     },
     rateLimiting: {
       enabled: val.RATE_LIMITING_ENABLED,
