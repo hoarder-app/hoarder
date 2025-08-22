@@ -29,7 +29,6 @@ import fetch from "node-fetch";
 import { Browser, BrowserContextOptions } from "playwright";
 import { chromium } from "playwright-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { withTimeout } from "utils";
 import { getBookmarkDetails, updateAsset } from "workerUtils";
 
 import type { ZCrawlLinkRequest } from "@karakeep/shared/queues";
@@ -261,10 +260,7 @@ export class CrawlerWorker {
     const worker = new Runner<ZCrawlLinkRequest>(
       LinkCrawlerQueue,
       {
-        run: withTimeout(
-          runCrawler,
-          /* timeoutSec */ serverConfig.crawler.jobTimeoutSec,
-        ),
+        run: runCrawler,
         onComplete: async (job) => {
           workerStatsCounter.labels("crawler", "completed").inc();
           const jobId = job.id;

@@ -25,7 +25,6 @@ import {
   StorageQuotaError,
 } from "@karakeep/trpc/lib/storageQuota";
 
-import { withTimeout } from "../utils";
 import { getBookmarkDetails, updateAsset } from "../workerUtils";
 
 const TMP_FOLDER = path.join(os.tmpdir(), "video_downloads");
@@ -37,10 +36,7 @@ export class VideoWorker {
     return new Runner<ZVideoRequest>(
       VideoWorkerQueue,
       {
-        run: withTimeout(
-          runWorker,
-          /* timeoutSec */ serverConfig.crawler.downloadVideoTimeout,
-        ),
+        run: runWorker,
         onComplete: async (job) => {
           workerStatsCounter.labels("video", "completed").inc();
           const jobId = job.id;
