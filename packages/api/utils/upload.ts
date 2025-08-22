@@ -119,7 +119,13 @@ export async function uploadAsset(
       fileName,
     };
   } finally {
-    if (tempFilePath) {
+    if (
+      tempFilePath &&
+      (await fs.promises
+        .access(tempFilePath)
+        .then(() => true)
+        .catch(() => false))
+    ) {
       await fs.promises.unlink(tempFilePath).catch(() => ({}));
     }
   }
