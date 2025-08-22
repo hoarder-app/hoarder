@@ -17,6 +17,9 @@ const optionalStringBool = () =>
     .optional();
 
 const allEnv = z.object({
+  PORT: z.coerce.number().default(3000),
+  WORKERS_HOST: z.string().default("127.0.0.1"),
+  WORKERS_PORT: z.coerce.number().default(0),
   API_URL: z.string().url().default("http://localhost:3000"),
   NEXTAUTH_URL: z
     .string()
@@ -146,6 +149,11 @@ const allEnv = z.object({
 
 const serverConfigSchema = allEnv.transform((val, ctx) => {
   const obj = {
+    port: val.PORT,
+    workers: {
+      host: val.WORKERS_HOST,
+      port: val.WORKERS_PORT,
+    },
     apiUrl: val.API_URL,
     publicUrl: val.NEXTAUTH_URL,
     publicApiUrl: `${val.NEXTAUTH_URL}/api`,

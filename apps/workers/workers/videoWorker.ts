@@ -3,6 +3,7 @@ import * as os from "os";
 import path from "path";
 import { execa } from "execa";
 import { DequeuedJob, Runner } from "liteque";
+import { workerStatsCounter } from "metrics";
 
 import { db } from "@karakeep/db";
 import { AssetTypes } from "@karakeep/db/schema";
@@ -41,6 +42,7 @@ export class VideoWorker {
           /* timeoutSec */ serverConfig.crawler.downloadVideoTimeout,
         ),
         onComplete: async (job) => {
+          workerStatsCounter.labels("video", "completed").inc();
           const jobId = job.id;
           logger.info(
             `[VideoCrawler][${jobId}] Video Download Completed successfully`,
@@ -48,6 +50,7 @@ export class VideoWorker {
           return Promise.resolve();
         },
         onError: async (job) => {
+          workerStatsCounter.labels("video", "failed").inc();
           const jobId = job.id;
           logger.error(
             `[VideoCrawler][${jobId}] Video Download job failed: ${job.error}`,

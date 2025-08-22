@@ -611,7 +611,7 @@ importers:
         version: 1.11.10
       drizzle-orm:
         specifier: ^0.44.2
-        version: 0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0)
+        version: 0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0)(kysely@0.28.5)
       fastest-levenshtein:
         specifier: ^1.0.16
         version: 1.0.16
@@ -763,6 +763,12 @@ importers:
       '@ghostery/adblocker-playwright':
         specifier: ^2.5.1
         version: 2.7.0(playwright@1.53.1)
+      '@hono/node-server':
+        specifier: ^1.19.0
+        version: 1.19.0(hono@4.7.11)
+      '@hono/prometheus':
+        specifier: ^1.0.2
+        version: 1.0.2(hono@4.7.11)(prom-client@15.1.3)
       '@karakeep/db':
         specifier: workspace:^0.1.0
         version: link:../../packages/db
@@ -795,10 +801,13 @@ importers:
         version: 16.4.5
       drizzle-orm:
         specifier: ^0.44.2
-        version: 0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0)
+        version: 0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0)(kysely@0.28.5)
       execa:
         specifier: 9.3.1
         version: 9.3.1
+      hono:
+        specifier: ^4.7.10
+        version: 4.7.11
       http-proxy-agent:
         specifier: ^7.0.2
         version: 7.0.2
@@ -810,7 +819,7 @@ importers:
         version: 24.1.3
       liteque:
         specifier: ^0.5.0
-        version: 0.5.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(react@19.1.0)
+        version: 0.5.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(kysely@0.28.5)(react@19.1.0)
       metascraper:
         specifier: ^5.46.18
         version: 5.47.1
@@ -871,6 +880,9 @@ importers:
       playwright-extra:
         specifier: ^4.3.6
         version: 4.3.6(playwright-core@1.53.1)(playwright@1.53.1)
+      prom-client:
+        specifier: ^15.1.3
+        version: 15.1.3
       puppeteer-extra-plugin-stealth:
         specifier: ^2.11.2
         version: 2.11.2(playwright-extra@4.3.6(playwright-core@1.53.1)(playwright@1.53.1))
@@ -977,7 +989,7 @@ importers:
         version: 11.4.3(typescript@5.8.3)
       drizzle-orm:
         specifier: ^0.44.2
-        version: 0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0)
+        version: 0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0)(kysely@0.28.5)
       hono:
         specifier: ^4.7.10
         version: 4.7.11
@@ -1035,7 +1047,7 @@ importers:
         version: 0.31.4
       drizzle-orm:
         specifier: ^0.44.2
-        version: 0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0)
+        version: 0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0)(kysely@0.28.5)
       tsx:
         specifier: ^4.8.1
         version: 4.20.3
@@ -1178,7 +1190,7 @@ importers:
         version: 1.0.20
       liteque:
         specifier: ^0.5.0
-        version: 0.5.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(react@19.1.0)
+        version: 0.5.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(kysely@0.28.5)(react@19.1.0)
       nodemailer:
         specifier: ^7.0.4
         version: 7.0.4
@@ -1289,10 +1301,10 @@ importers:
         version: 2.2.3
       drizzle-orm:
         specifier: ^0.44.2
-        version: 0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0)
+        version: 0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0)(kysely@0.28.5)
       liteque:
         specifier: ^0.5.0
-        version: 0.5.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(react@19.1.0)
+        version: 0.5.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(kysely@0.28.5)(react@19.1.0)
       nodemailer:
         specifier: ^7.0.4
         version: 7.0.4
@@ -3363,6 +3375,12 @@ packages:
 
   '@hapi/topo@5.1.0':
     resolution: {integrity: sha512-foQZKJig7Ob0BMAYBfcJk8d77QtOe7Wo4ox7ff1lQYoNNAb6jwcY1ncdoy2e9wQZzvNy7ODZCYJkK8kzmcAnAg==}
+
+  '@hono/node-server@1.19.0':
+    resolution: {integrity: sha512-1k8/8OHf5VIymJEcJyVksFpT+AQ5euY0VA5hUkCnlKpD4mr8FSbvXaHblxeTTEr90OaqWzAkQaqD80qHZQKxBA==}
+    engines: {node: '>=18.14.1'}
+    peerDependencies:
+      hono: ^4
 
   '@hono/prometheus@1.0.2':
     resolution: {integrity: sha512-7z2nBMaiHEaAFfNWfIV2H5/HRezv9kLH0jDY6ZotQQAr3QR7cIYAd6FGiyTIng4GUAw6ZWeX3C0Y4QS36SLRjg==}
@@ -9514,6 +9532,10 @@ packages:
 
   kuler@2.0.0:
     resolution: {integrity: sha512-Xq9nH7KlWZmXAtodXDDRE7vs6DU1gTU8zYDHDiWLSip45Egwq3plLHzPn27NgvzL2r1LMPC1vdqh98sQxtqj4A==}
+
+  kysely@0.28.5:
+    resolution: {integrity: sha512-rlB0I/c6FBDWPcQoDtkxi9zIvpmnV5xoIalfCMSMCa7nuA6VGA3F54TW9mEgX4DVf10sXAWCF5fDbamI/5ZpKA==}
+    engines: {node: '>=20.0.0'}
 
   lan-network@0.1.7:
     resolution: {integrity: sha512-mnIlAEMu4OyEvUNdzco9xpuB9YVcPkQec+QsgycBCtPZvEqWPCDPfbAE4OJMdBBWpZWtpCn1xw9jJYlwjWI5zQ==}
@@ -17933,6 +17955,10 @@ snapshots:
     dependencies:
       '@hapi/hoek': 9.3.0
 
+  '@hono/node-server@1.19.0(hono@4.7.11)':
+    dependencies:
+      hono: 4.7.11
+
   '@hono/prometheus@1.0.2(hono@4.7.11)(prom-client@15.1.3)':
     dependencies:
       hono: 4.7.11
@@ -22614,20 +22640,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(react@19.1.0):
+  drizzle-orm@0.33.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(kysely@0.28.5)(react@19.1.0):
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
       '@types/better-sqlite3': 7.6.13
       '@types/react': 19.1.8
       better-sqlite3: 11.3.0
+      kysely: 0.28.5
       react: 19.1.0
 
-  drizzle-orm@0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0):
+  drizzle-orm@0.44.2(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@11.3.0)(gel@2.1.0)(kysely@0.28.5):
     optionalDependencies:
       '@opentelemetry/api': 1.9.0
       '@types/better-sqlite3': 7.6.13
       better-sqlite3: 11.3.0
       gel: 2.1.0
+      kysely: 0.28.5
 
   dts-resolver@2.1.1: {}
 
@@ -24895,6 +24923,9 @@ snapshots:
 
   kuler@2.0.0: {}
 
+  kysely@0.28.5:
+    optional: true
+
   lan-network@0.1.7: {}
 
   latest-version@7.0.0:
@@ -25029,11 +25060,11 @@ snapshots:
 
   liquid-json@0.3.1: {}
 
-  liteque@0.5.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(react@19.1.0):
+  liteque@0.5.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(kysely@0.28.5)(react@19.1.0):
     dependencies:
       async-mutex: 0.4.1
       better-sqlite3: 11.3.0
-      drizzle-orm: 0.33.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(react@19.1.0)
+      drizzle-orm: 0.33.0(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(@types/react@19.1.8)(better-sqlite3@11.3.0)(kysely@0.28.5)(react@19.1.0)
       zod: 3.24.2
     transitivePeerDependencies:
       - '@aws-sdk/client-rds-data'
