@@ -938,6 +938,7 @@ async function crawlAndParseUrl(
   };
 
   // TODO(important): Restrict the size of content to store
+  const assetDeletionTasks: Promise<void>[] = [];
   await db.transaction(async (txn) => {
     await txn
       .update(bookmarkLinks)
@@ -978,9 +979,11 @@ async function crawlAndParseUrl(
         },
         txn,
       );
+      assetDeletionTasks.push(silentDeleteAsset(userId, oldScreenshotAssetId));
     }
     if (imageAssetInfo) {
       await updateAsset(oldImageAssetId, imageAssetInfo, txn);
+      assetDeletionTasks.push(silentDeleteAsset(userId, oldImageAssetId));
     }
     if (htmlContentAssetInfo.result === "stored") {
       await updateAsset(
@@ -996,18 +999,16 @@ async function crawlAndParseUrl(
         },
         txn,
       );
+      assetDeletionTasks.push(silentDeleteAsset(userId, oldContentAssetId));
     } else if (oldContentAssetId) {
       // Unlink the old content asset
       await txn.delete(assets).where(eq(assets.id, oldContentAssetId));
+      assetDeletionTasks.push(silentDeleteAsset(userId, oldContentAssetId));
     }
   });
 
   // Delete the old assets if any
-  await Promise.all([
-    silentDeleteAsset(userId, oldScreenshotAssetId),
-    silentDeleteAsset(userId, oldImageAssetId),
-    silentDeleteAsset(userId, oldContentAssetId),
-  ]);
+  await Promise.all(assetDeletionTasks);
 
   return async () => {
     if (
