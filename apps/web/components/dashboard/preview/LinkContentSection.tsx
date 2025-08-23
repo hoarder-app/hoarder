@@ -62,6 +62,7 @@ function FullPageArchiveSection({ link }: { link: ZBookmarkedLink }) {
     link.fullPageArchiveAssetId ?? link.precrawledArchiveAssetId;
   return (
     <iframe
+      sandbox=""
       title={link.url}
       src={`/api/assets/${archiveAssetId}`}
       className="relative h-full min-w-full"
