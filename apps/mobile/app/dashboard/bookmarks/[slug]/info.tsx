@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  Alert,
   Keyboard,
   Pressable,
   Text,
@@ -13,13 +14,17 @@ import Animated, {
 import { router, Stack, useLocalSearchParams } from "expo-router";
 import TagPill from "@/components/bookmarks/TagPill";
 import FullPageError from "@/components/FullPageError";
+import { Button } from "@/components/ui/Button";
+import { Divider } from "@/components/ui/Divider";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { useToast } from "@/components/ui/Toast";
 import { ChevronRight } from "lucide-react-native";
 
 import {
   useAutoRefreshingBookmarkQuery,
+  useDeleteBookmark,
   useUpdateBookmark,
 } from "@karakeep/shared-react/hooks/bookmarks";
 import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
@@ -27,33 +32,33 @@ import { isBookmarkStillTagging } from "@karakeep/shared/utils/bookmarkUtils";
 
 function TagList({ bookmark }: { bookmark: ZBookmark }) {
   return (
-    <View className="flex gap-4">
-      <Text className="text-lg text-foreground">Tags</Text>
-      <View className="flex gap-2">
-        {isBookmarkStillTagging(bookmark) ? (
-          <View className="flex gap-4 pb-3">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-full" />
-          </View>
-        ) : bookmark.tags.length > 0 ? (
-          <View className="flex flex-row flex-wrap gap-2 rounded-lg bg-background p-4">
-            {bookmark.tags.map((t) => (
-              <TagPill key={t.id} tag={t} />
-            ))}
-          </View>
-        ) : (
-          <Text className="text-foreground">No tags</Text>
-        )}
-        <Pressable
-          onPress={() =>
-            router.push(`/dashboard/bookmarks/${bookmark.id}/manage_tags`)
-          }
-          className="flex w-full flex-row justify-between gap-3 rounded-lg bg-white px-4 py-2 dark:bg-accent"
-        >
-          <Text className="text-lg text-accent-foreground">Manage Tags</Text>
-          <ChevronRight color="rgb(0, 122, 255)" />
-        </Pressable>
-      </View>
+    <View className="flex gap-2 rounded-lg bg-white py-3 dark:bg-accent">
+      {isBookmarkStillTagging(bookmark) ? (
+        <View className="flex gap-4 pb-3">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+        </View>
+      ) : (
+        bookmark.tags.length > 0 && (
+          <>
+            <View className="flex flex-row flex-wrap gap-2 rounded-lg bg-background p-2">
+              {bookmark.tags.map((t) => (
+                <TagPill key={t.id} tag={t} />
+              ))}
+            </View>
+            <Divider orientation="horizontal" />
+          </>
+        )
+      )}
+      <Pressable
+        onPress={() =>
+          router.push(`/dashboard/bookmarks/${bookmark.id}/manage_tags`)
+        }
+        className="flex w-full flex-row justify-between gap-3 px-4"
+      >
+        <Text className="text-lg text-accent-foreground">Manage Tags</Text>
+        <ChevronRight color="rgb(0, 122, 255)" />
+      </Pressable>
     </View>
   );
 }
@@ -61,7 +66,6 @@ function TagList({ bookmark }: { bookmark: ZBookmark }) {
 function ManageLists({ bookmark }: { bookmark: ZBookmark }) {
   return (
     <View className="flex gap-4">
-      <Text className="text-lg text-foreground">Lists</Text>
       <Pressable
         onPress={() =>
           router.push(`/dashboard/bookmarks/${bookmark.id}/manage_lists`)
@@ -85,8 +89,6 @@ function TitleEditor({
   const { mutate, isPending } = useUpdateBookmark();
   return (
     <View className="flex gap-4">
-      <Text className="text-lg text-foreground">Title</Text>
-
       <Input
         editable={!isPending}
         multiline={true}
@@ -110,8 +112,6 @@ function NotesEditor({ bookmark }: { bookmark: ZBookmark }) {
   const { mutate, isPending } = useUpdateBookmark();
   return (
     <View className="flex gap-4">
-      <Text className="text-lg text-foreground">Notes</Text>
-
       <Input
         editable={!isPending}
         multiline={true}
@@ -133,9 +133,21 @@ function NotesEditor({ bookmark }: { bookmark: ZBookmark }) {
 
 const ViewBookmarkPage = () => {
   const { slug } = useLocalSearchParams();
+  const { toast } = useToast();
   if (typeof slug !== "string") {
     throw new Error("Unexpected param type");
   }
+
+  const { mutate: deleteBookmark, isPending: isDeletionPending } =
+    useDeleteBookmark({
+      onSuccess: () => {
+        router.replace("dashboard");
+        toast({
+          message: "The bookmark has been deleted!",
+          showProgress: false,
+        });
+      },
+    });
 
   const keyboard = useAnimatedKeyboard();
 
@@ -160,6 +172,21 @@ const ViewBookmarkPage = () => {
       <FullPageError error="Bookmark not found" onRetry={() => refetch()} />
     );
   }
+
+  const handleDeleteBookmark = () => {
+    Alert.alert(
+      "Delete bookmark?",
+      "Are you sure you want to delete this bookmark?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          onPress: () => deleteBookmark({ bookmarkId: bookmark.id }),
+          style: "destructive",
+        },
+      ],
+    );
+  };
 
   let title = null;
   switch (bookmark.content.type) {
@@ -197,11 +224,29 @@ const ViewBookmarkPage = () => {
       />
       <Animated.ScrollView className="p-4" style={[animatedStyles]}>
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View className="h-screen gap-4 px-2">
+          <View className="h-screen gap-8 px-2">
             <TitleEditor bookmarkId={bookmark.id} title={title ?? ""} />
             <TagList bookmark={bookmark} />
             <ManageLists bookmark={bookmark} />
             <NotesEditor bookmark={bookmark} />
+            <Button
+              onPress={handleDeleteBookmark}
+              variant="destructive"
+              disabled={isDeletionPending}
+              label="Delete"
+            />
+            <View className="gap-2">
+              <Text className="items-center text-center">
+                Created {bookmark.createdAt.toLocaleString()}
+              </Text>
+              {bookmark.modifiedAt &&
+                bookmark.modifiedAt.getTime() !==
+                  bookmark.createdAt.getTime() && (
+                  <Text className="items-center text-center">
+                    Modified {bookmark.modifiedAt.toLocaleString()}
+                  </Text>
+                )}
+            </View>
           </View>
         </TouchableWithoutFeedback>
       </Animated.ScrollView>
