@@ -198,14 +198,16 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             router.push(`/dashboard/bookmarks/${bookmark.id}/manage_lists`);
           } else if (nativeEvent.event === "manage_tags") {
             router.push(`/dashboard/bookmarks/${bookmark.id}/manage_tags`);
+          } else if (nativeEvent.event === "edit") {
+            router.push(`/dashboard/bookmarks/${bookmark.id}/info`);
           }
         }}
         actions={[
           {
-            id: "archive",
-            title: bookmark.archived ? "Un-archive" : "Archive",
+            id: "edit",
+            title: "Edit",
             image: Platform.select({
-              ios: "folder",
+              ios: "pencil",
             }),
           },
           {
@@ -220,6 +222,13 @@ function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             title: "Manage Tags",
             image: Platform.select({
               ios: "tag",
+            }),
+          },
+          {
+            id: "archive",
+            title: bookmark.archived ? "Un-archive" : "Archive",
+            image: Platform.select({
+              ios: "folder",
             }),
           },
           {
