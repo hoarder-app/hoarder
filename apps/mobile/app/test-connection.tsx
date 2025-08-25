@@ -80,19 +80,21 @@ export default function TestConnection() {
       <View className="m-4 flex flex-col gap-2 p-2">
         <Button
           className="w-full"
-          label="Copy Diagnostics Result"
           onPress={async () => {
             await Clipboard.setStringAsync(text);
           }}
-        />
+        >
+          <Text>Copy Diagnostics Result</Text>
+        </Button>
         <Button
           className="w-full"
-          label="Retry"
           onPress={() => {
             setText("");
             setRandomId(Math.random());
           }}
-        />
+        >
+          <Text>Retry</Text>
+        </Button>
         <View
           className={cn(
             "w-full rounded-md p-2",

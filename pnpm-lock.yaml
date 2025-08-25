@@ -323,6 +323,12 @@ importers:
       '@react-native-menu/menu':
         specifier: ^1.2.4
         version: 1.2.4(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+      '@rn-primitives/hooks':
+        specifier: ^1.3.0
+        version: 1.3.0(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+      '@rn-primitives/slot':
+        specifier: ^1.2.0
+        version: 1.2.0(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
       '@roninoss/icons':
         specifier: ^0.0.4
         version: 0.0.4(expo@53.0.20(@babel/core@7.26.0)(@expo/metro-runtime@5.0.4(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0)))(react-native-webview@13.14.1(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0))(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
@@ -4899,6 +4905,42 @@ packages:
 
   '@remusao/trie@2.1.0':
     resolution: {integrity: sha512-Er3Q8q0/2OcCJPQYJOPLmCuqO0wu7cav3SPtpjlxSbjFi1x+A1pZkkLD6c9q2rGEkGW/tkrRzfrhNMt8VQjzXg==}
+
+  '@rn-primitives/hooks@1.3.0':
+    resolution: {integrity: sha512-BR97reSu7uVDpyMeQdRJHT0w8KdS6jdYnOL6xQtqS2q3H6N7vXBlX4LFERqJZphD+aziJFIAJ3HJF1vtt6XlpQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+      react-native-web: '*'
+    peerDependenciesMeta:
+      react-native:
+        optional: true
+      react-native-web:
+        optional: true
+
+  '@rn-primitives/slot@1.2.0':
+    resolution: {integrity: sha512-cpbn+JLjSeq3wcA4uqgFsUimMrWYWx2Ks7r5rkwd1ds1utxynsGkLOKpYVQkATwWrYhtcoF1raxIKEqXuMN+/w==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+      react-native-web: '*'
+    peerDependenciesMeta:
+      react-native:
+        optional: true
+      react-native-web:
+        optional: true
+
+  '@rn-primitives/types@1.2.0':
+    resolution: {integrity: sha512-b+6zKgdKVqAfaFPSfhwlQL0dnPQXPpW890m3eguC0VDI1eOsoEvUfVb6lmgH4bum9MmI0xymq4tOUI/fsKLoCQ==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+      react-native-web: '*'
+    peerDependenciesMeta:
+      react-native:
+        optional: true
+      react-native-web:
+        optional: true
 
   '@rolldown/binding-android-arm64@1.0.0-beta.28':
     resolution: {integrity: sha512-hLb7k11KBXtO8xc7DO1OWriXWM/2FKv/R510NChqpzoI6au2aJbGUQTKJw4D8Mj7oHfY2Nwzy+sJBgWx/P8IKw==}
@@ -19754,6 +19796,25 @@ snapshots:
       '@remusao/smaz-decompress': 2.2.0
 
   '@remusao/trie@2.1.0': {}
+
+  '@rn-primitives/hooks@1.3.0(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@rn-primitives/types': 1.2.0(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)
+      react: 19.1.0
+    optionalDependencies:
+      react-native: 0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0)
+
+  '@rn-primitives/slot@1.2.0(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+    optionalDependencies:
+      react-native: 0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0)
+
+  '@rn-primitives/types@1.2.0(react-native@0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      react: 19.1.0
+    optionalDependencies:
+      react-native: 0.79.3(@babel/core@7.26.0)(@types/react@19.1.8)(react@19.1.0)
 
   '@rolldown/binding-android-arm64@1.0.0-beta.28':
     optional: true

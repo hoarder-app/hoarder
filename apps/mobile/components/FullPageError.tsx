@@ -17,7 +17,9 @@ export default function FullPageError({
           Something Went Wrong
         </Text>
         <Text className="text-foreground"> {error}</Text>
-        <Button onPress={() => onRetry()} label="Retry" />
+        <Button onPress={onRetry}>
+          <Text>Retry</Text>
+        </Button>
       </View>
     </View>
   );

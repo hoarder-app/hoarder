@@ -100,14 +100,15 @@ export default function Sharing() {
             {mode.type === "alreadyExists" ? "Already Hoarded!" : "Hoarded!"}
           </Text>
           <Button
-            label="Manage"
             onPress={() => {
               router.replace(`/dashboard/bookmarks/${mode.bookmarkId}/info`);
               if (autoCloseTimeoutId.current) {
                 clearTimeout(autoCloseTimeoutId.current);
               }
             }}
-          />
+          >
+            <Text>Manage</Text>
+          </Button>
           <Pressable onPress={() => router.replace("dashboard")}>
             <Text className="text-muted-foreground">Dismiss</Text>
           </Pressable>

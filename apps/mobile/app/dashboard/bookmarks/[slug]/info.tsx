@@ -229,12 +229,9 @@ const ViewBookmarkPage = () => {
             <TagList bookmark={bookmark} />
             <ManageLists bookmark={bookmark} />
             <NotesEditor bookmark={bookmark} />
-            <Button
-              onPress={handleDeleteBookmark}
-              variant="destructive"
-              disabled={isDeletionPending}
-              label="Delete"
-            />
+            <Button onPress={handleDeleteBookmark} disabled={isDeletionPending}>
+              <Text>Delete</Text>
+            </Button>
             <View className="gap-2">
               <Text className="items-center text-center">
                 Created {bookmark.createdAt.toLocaleString()}

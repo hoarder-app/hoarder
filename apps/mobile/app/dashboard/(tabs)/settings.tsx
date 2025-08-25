@@ -110,7 +110,9 @@ export default function Dashboard() {
           </View>
         </View>
         <Divider orientation="horizontal" />
-        <Button className="w-full" label="Log Out" onPress={logout} />
+        <Button onPress={logout}>
+          <Text>Log Out</Text>
+        </Button>
       </View>
     </CustomSafeAreaView>
   );

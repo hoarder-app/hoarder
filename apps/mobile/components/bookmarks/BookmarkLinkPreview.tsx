@@ -6,13 +6,13 @@ import { WebViewSourceUri } from "react-native-webview/lib/WebViewTypes";
 import { Text } from "@/components/ui/Text";
 import { useAssetUrl } from "@/lib/hooks";
 import { api } from "@/lib/trpc";
-import { useColorScheme } from "nativewind";
 
 import { BookmarkTypes, ZBookmark } from "@karakeep/shared/types/bookmarks";
 
 import FullPageError from "../FullPageError";
 import FullPageSpinner from "../ui/FullPageSpinner";
 import BookmarkAssetImage from "./BookmarkAssetImage";
+import { useColorScheme } from "@/lib/useColorScheme";
 
 export function BookmarkLinkBrowserPreview({
   bookmark,
@@ -37,7 +37,7 @@ export function BookmarkLinkReaderPreview({
 }: {
   bookmark: ZBookmark;
 }) {
-  const { colorScheme } = useColorScheme();
+  const { isDarkColorScheme: isDark } = useColorScheme();
 
   const {
     data: bookmarkWithContent,
@@ -60,8 +60,6 @@ export function BookmarkLinkReaderPreview({
   if (bookmarkWithContent?.content.type !== BookmarkTypes.LINK) {
     throw new Error("Wrong content type rendered");
   }
-
-  const isDark = colorScheme === "dark";
 
   return (
     <View className="flex-1 bg-background">

@@ -68,7 +68,9 @@ const NoteEditorPage = () => {
           autoCapitalize={"none"}
           textAlignVertical="top"
         />
-        <Button onPress={onSubmit} label="Save" />
+        <Button onPress={onSubmit}>
+          <Text>Save</Text>
+        </Button>
       </View>
     </CustomSafeAreaView>
   );

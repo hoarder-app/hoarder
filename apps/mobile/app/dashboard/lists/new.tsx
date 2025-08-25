@@ -48,7 +48,9 @@ const NewListPage = () => {
             autoCapitalize={"none"}
           />
         </View>
-        <Button disabled={isPending} onPress={onSubmit} label="Save" />
+        <Button disabled={isPending} onPress={onSubmit}>
+          <Text>Save</Text>
+        </Button>
       </View>
     </CustomSafeAreaView>
   );
