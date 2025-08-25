@@ -90,16 +90,16 @@ export default function Home() {
               />
             </View>
             <Pressable
-              className="flex flex-row items-center gap-1 rounded-lg border border-input bg-background px-4 py-2.5"
+              className="flex flex-row items-center gap-1 rounded-lg border border-input bg-card px-4 py-1"
               onPress={() => router.push("/dashboard/search")}
             >
               <TailwindResolver
-                className="text-muted-foreground"
+                className="text-muted"
                 comp={(styles) => (
                   <Search size={16} color={styles?.color?.toString()} />
                 )}
               />
-              <Text className="text-muted-foreground">Search</Text>
+              <Text className="text-muted">Search</Text>
             </Pressable>
           </View>
         }

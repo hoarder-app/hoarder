@@ -34,8 +34,8 @@
     --android-primary-foreground: 255 255 255;
     --android-secondary: 176 201 255;
     --android-secondary-foreground: 28 60 114;
-    --android-muted: 216 226 255;
-    --android-muted-foreground: 0 26 65;
+    --android-muted: 176 176 181;
+    --android-muted-foreground: 102 102 102;
     --android-accent: 169 73 204;
     --android-accent-foreground: 255 255 255;
     --android-destructive: 186 26 26;
@@ -97,8 +97,8 @@
       --android-primary-foreground: 214 224 255;
       --android-secondary: 28 60 114;
       --android-secondary-foreground: 255 255 255;
-      --android-muted: 29 27 29;
-      --android-muted-foreground: 230 224 228;
+      --android-muted: 112 112 115;
+      --android-muted-foreground: 226 226 231;
       --android-accent: 83 0 111;
       --android-accent-foreground: 255 255 255;
       --android-destructive: 147 0 10;
