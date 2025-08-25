@@ -478,8 +478,6 @@ export default function BookmarkCard({
   }
 
   return (
-    <View className="overflow-hidden rounded-xl border-b border-accent bg-background">
-      {comp}
-    </View>
+    <View className="overflow-hidden rounded-xl bg-background">{comp}</View>
   );
 }
