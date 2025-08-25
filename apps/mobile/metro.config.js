@@ -10,6 +10,7 @@ module.exports = withTurborepoManagedCache(
     withNativeWind(getDefaultConfig(__dirname), {
       input: "./globals.css",
       configPath: "./tailwind.config.ts",
+      inlineRem: 16,
     }),
   ),
 );

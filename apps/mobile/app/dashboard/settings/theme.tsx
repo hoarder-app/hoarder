@@ -1,18 +1,18 @@
 import { Pressable, Text, View } from "react-native";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import { Divider } from "@/components/ui/Divider";
-import useAppSettings from "@/lib/settings";
+import { useColorScheme } from "@/lib/useColorScheme";
 import { Check } from "lucide-react-native";
 
 export default function ThemePage() {
-  const { settings, setSettings } = useAppSettings();
+  const { colorScheme, setColorScheme } = useColorScheme();
 
-  const options = (["light", "dark", "system"] as const)
+  const options = (["light", "dark"] as const)
     .map((theme) => {
-      const isChecked = settings.theme === theme;
+      const isChecked = colorScheme === theme;
       return [
         <Pressable
-          onPress={() => setSettings({ ...settings, theme })}
+          onPress={() => setColorScheme(theme)}
           className="flex flex-row justify-between"
           key={theme}
         >
