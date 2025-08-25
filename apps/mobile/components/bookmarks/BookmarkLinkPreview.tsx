@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 import ImageView from "react-native-image-viewing";
 import WebView from "react-native-webview";
 import { WebViewSourceUri } from "react-native-webview/lib/WebViewTypes";
+import { Text } from "@/components/ui/Text";
 import { useAssetUrl } from "@/lib/hooks";
 import { api } from "@/lib/trpc";
 import { useColorScheme } from "nativewind";

@@ -1,7 +1,8 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 import { useRouter } from "expo-router";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import { Divider } from "@/components/ui/Divider";
+import { Text } from "@/components/ui/Text";
 import { useToast } from "@/components/ui/Toast";
 import useAppSettings from "@/lib/settings";
 import { Check } from "lucide-react-native";
@@ -41,9 +42,7 @@ export default function BookmarkDefaultViewSettings() {
           className="flex flex-row justify-between"
           key={mode}
         >
-          <Text className="text-lg text-accent-foreground">
-            {{ browser: "Browser", reader: "Reader" }[mode]}
-          </Text>
+          <Text>{{ browser: "Browser", reader: "Reader" }[mode]}</Text>
           {isChecked && <Check color="rgb(0, 122, 255)" />}
         </Pressable>,
         <Divider

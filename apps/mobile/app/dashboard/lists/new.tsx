@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { router } from "expo-router";
 import { Button } from "@/components/ui/Button";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import { Input } from "@/components/ui/Input";
+import { Text } from "@/components/ui/Text";
 import { useToast } from "@/components/ui/Toast";
 
 import { useCreateBookmarkList } from "@karakeep/shared-react/hooks/lists";

@@ -4,7 +4,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -13,6 +12,7 @@ import Logo from "@/components/Logo";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import { Button, buttonVariants } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Text } from "@/components/ui/Text";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
 import { cn } from "@/lib/utils";

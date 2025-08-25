@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FlatList, Pressable, Text, View } from "react-native";
+import { FlatList, Pressable, View } from "react-native";
 import * as Haptics from "expo-haptics";
 import { Link, router } from "expo-router";
 import FullPageError from "@/components/FullPageError";
@@ -7,6 +7,7 @@ import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import PageTitle from "@/components/ui/PageTitle";
+import { Text } from "@/components/ui/Text";
 import { api } from "@/lib/trpc";
 import { condProps } from "@/lib/utils";
 import { ChevronRight, Plus } from "lucide-react-native";
@@ -164,7 +165,7 @@ export default function Lists() {
 
             <Link asChild key={l.item.id} href={l.item.href} className="flex-1">
               <Pressable className="flex flex-row justify-between">
-                <Text className="text-lg text-accent-foreground">
+                <Text>
                   {l.item.logo} {l.item.name}
                 </Text>
                 <ChevronRight color="rgb(0, 122, 255)" />

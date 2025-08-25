@@ -3,7 +3,6 @@ import {
   Alert,
   Keyboard,
   Pressable,
-  Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
@@ -19,6 +18,7 @@ import { Divider } from "@/components/ui/Divider";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { Text } from "@/components/ui/Text";
 import { useToast } from "@/components/ui/Toast";
 import { ChevronRight } from "lucide-react-native";
 
@@ -56,7 +56,7 @@ function TagList({ bookmark }: { bookmark: ZBookmark }) {
         }
         className="flex w-full flex-row justify-between gap-3 px-4"
       >
-        <Text className="text-lg text-accent-foreground">Manage Tags</Text>
+        <Text>Manage Tags</Text>
         <ChevronRight color="rgb(0, 122, 255)" />
       </Pressable>
     </View>
@@ -72,7 +72,7 @@ function ManageLists({ bookmark }: { bookmark: ZBookmark }) {
         }
         className="flex w-full flex-row justify-between gap-3 rounded-lg bg-white px-4 py-2 dark:bg-accent"
       >
-        <Text className="text-lg text-accent-foreground">Manage Lists</Text>
+        <Text>Manage Lists</Text>
         <ChevronRight color="rgb(0, 122, 255)" />
       </Pressable>
     </View>
@@ -217,7 +217,7 @@ const ViewBookmarkPage = () => {
                 }
               }}
             >
-              <Text className="text-foreground">Done</Text>
+              <Text>Done</Text>
             </Pressable>
           ),
         }}

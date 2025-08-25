@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, View } from "react-native";
 import { Slider } from "react-native-awesome-slider";
 import { useSharedValue } from "react-native-reanimated";
 import { Link } from "expo-router";
@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import { Divider } from "@/components/ui/Divider";
 import PageTitle from "@/components/ui/PageTitle";
+import { Text } from "@/components/ui/Text";
 import { useSession } from "@/lib/session";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
@@ -39,13 +40,9 @@ export default function Dashboard() {
       <PageTitle title="Settings" />
       <View className="flex h-full w-full items-center gap-3 px-4 py-2">
         <View className="flex w-full gap-3 rounded-lg bg-white px-4 py-2 dark:bg-accent">
-          <Text className="text-lg text-accent-foreground">
-            {isSettingsLoading ? "Loading ..." : settings.address}
-          </Text>
+          <Text>{isSettingsLoading ? "Loading ..." : settings.address}</Text>
           <Divider orientation="horizontal" />
-          <Text className="text-lg text-accent-foreground">
-            {isLoading ? "Loading ..." : data?.email}
-          </Text>
+          <Text>{isLoading ? "Loading ..." : data?.email}</Text>
         </View>
         <Text className="w-full p-1 text-2xl font-bold text-foreground">
           App Settings
@@ -53,9 +50,9 @@ export default function Dashboard() {
         <View className="flex w-full flex-row items-center justify-between gap-8 rounded-lg bg-white px-4 py-2 dark:bg-accent">
           <Link asChild href="/dashboard/settings/theme" className="flex-1">
             <Pressable className="flex flex-row justify-between">
-              <Text className="text-lg text-accent-foreground">Theme</Text>
+              <Text>Theme</Text>
               <View className="flex flex-row items-center gap-2">
-                <Text className="text-lg text-muted-foreground">
+                <Text>
                   {
                     { light: "Light", dark: "Dark", system: "System" }[
                       settings.theme
@@ -74,9 +71,7 @@ export default function Dashboard() {
             className="flex-1"
           >
             <Pressable className="flex flex-row justify-between">
-              <Text className="text-lg text-accent-foreground">
-                Default Bookmark View
-              </Text>
+              <Text>Default Bookmark View</Text>
               <View className="flex flex-row items-center gap-2">
                 {isSettingsLoading ? (
                   <ActivityIndicator size="small" />
@@ -96,7 +91,7 @@ export default function Dashboard() {
           Upload Settings
         </Text>
         <View className="flex w-full flex-row items-center justify-between gap-8 rounded-lg bg-white px-4 py-2 dark:bg-accent">
-          <Text className="text-lg text-accent-foreground">Image Quality</Text>
+          <Text>Image Quality</Text>
           <View className="flex flex-1 flex-row items-center justify-center gap-2">
             <Text className="text-foreground">
               {Math.round(settings.imageQuality * 100)}%

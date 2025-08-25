@@ -1,15 +1,10 @@
 import React, { useMemo } from "react";
-import {
-  Pressable,
-  SectionList,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Pressable, SectionList, TouchableOpacity, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
+import { Text } from "@/components/ui/Text";
 import { useToast } from "@/components/ui/Toast";
 import { Check, Plus } from "lucide-react-native";
 
@@ -224,7 +219,7 @@ const ListPickerPage = () => {
                   comp={(s) => <Plus color={s?.color} />}
                 />
               )}
-              <Text className="text-center text-lg text-accent-foreground">
+              <Text>
                 {t.item.id == NEW_TAG_ID
                   ? `Create new tag '${t.item.name}'`
                   : t.item.name}

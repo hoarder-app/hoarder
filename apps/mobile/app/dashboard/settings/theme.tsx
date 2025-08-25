@@ -1,6 +1,7 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import { Divider } from "@/components/ui/Divider";
+import { Text } from "@/components/ui/Text";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { Check } from "lucide-react-native";
 
@@ -16,7 +17,7 @@ export default function ThemePage() {
           className="flex flex-row justify-between"
           key={theme}
         >
-          <Text className="text-lg text-accent-foreground">
+          <Text>
             {
               { light: "Light Mode", dark: "Dark Mode", system: "System" }[
                 theme

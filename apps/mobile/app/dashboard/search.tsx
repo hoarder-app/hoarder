@@ -1,18 +1,12 @@
 import { useMemo, useRef, useState } from "react";
-import {
-  FlatList,
-  Keyboard,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { FlatList, Keyboard, Pressable, TextInput, View } from "react-native";
 import { router } from "expo-router";
 import BookmarkList from "@/components/bookmarks/BookmarkList";
 import FullPageError from "@/components/FullPageError";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
+import { Text } from "@/components/ui/Text";
 import { api } from "@/lib/trpc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { keepPreviousData } from "@tanstack/react-query";

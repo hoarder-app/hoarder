@@ -1,6 +1,7 @@
 import type { TextInputProps } from "react-native";
 import { forwardRef } from "react";
-import { ActivityIndicator, Text, TextInput, View } from "react-native";
+import { ActivityIndicator, TextInput, View } from "react-native";
+import { Text } from "@/components/ui/Text";
 import { cn } from "@/lib/utils";
 
 import { TailwindResolver } from "../TailwindResolver";
