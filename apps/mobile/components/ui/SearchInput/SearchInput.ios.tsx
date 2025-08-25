@@ -39,6 +39,7 @@ const SearchInput = React.forwardRef<
       iconContainerClassName,
       className,
       iconColor,
+      onCancel,
       ...props
     },
     ref,
@@ -167,6 +168,7 @@ const SearchInput = React.forwardRef<
               onChangeText("");
               inputRef.current?.blur();
               setShowCancel(false);
+              onCancel?.();
             }}
             disabled={!showCancel}
             pointerEvents={!showCancel ? "none" : "auto"}

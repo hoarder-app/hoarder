@@ -22,6 +22,7 @@ const SearchInput = React.forwardRef<
       iconContainerClassName,
       className,
       iconColor,
+      onCancel,
       ...props
     },
     ref,
@@ -43,6 +44,7 @@ const SearchInput = React.forwardRef<
     }
 
     function clear() {
+      onCancel?.();
       onChangeText("");
     }
 

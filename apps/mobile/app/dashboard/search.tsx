@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { FlatList, Keyboard, Pressable, TextInput, View } from "react-native";
+import { router } from "expo-router";
 import BookmarkList from "@/components/bookmarks/BookmarkList";
 import FullPageError from "@/components/FullPageError";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
@@ -96,6 +97,7 @@ export default function Search() {
   return (
     <CustomSafeAreaView>
       <SearchInput
+        containerClassName="m-3"
         ref={inputRef}
         placeholder="Search"
         className="flex-1"
@@ -107,6 +109,7 @@ export default function Search() {
         returnKeyType="search"
         autoFocus
         autoCapitalize="none"
+        onCancel={router.back}
       />
 
       {isInputFocused ? (

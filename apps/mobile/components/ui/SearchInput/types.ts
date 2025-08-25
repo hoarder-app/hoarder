@@ -5,6 +5,7 @@ interface SearchInputProps extends TextInputProps {
   iconContainerClassName?: string;
   cancelText?: string;
   iconColor?: string;
+  onCancel?: () => void;
 }
 
 type SearchInputRef = TextInput;

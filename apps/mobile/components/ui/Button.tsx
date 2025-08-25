@@ -24,7 +24,7 @@ const buttonVariants = cva("flex-row items-center justify-center gap-2", {
         "ios:bg-primary/10 dark:ios:bg-primary/10 ios:active:bg-primary/15 bg-primary/15 dark:bg-primary/30",
       plain: "ios:active:opacity-70",
       destructive:
-        "ios:border-destructive ios:active:bg-destructive/5 border border-destructive/5 bg-destructive/80",
+        "ios:bg-destructive border border-destructive/5 bg-destructive/80",
     },
     size: {
       none: "",
@@ -171,7 +171,7 @@ const Button = React.forwardRef<
       <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
         <Root
           className={Platform.select({
-            ios: undefined,
+            ios: androidRootClassName,
             default: androidRootVariants({
               size,
               className: androidRootClassName,
