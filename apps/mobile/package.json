@@ -33,7 +33,7 @@
     "expo-clipboard": "^7.1.4",
     "expo-constants": "~17.1.6",
     "expo-dev-client": "^5.2.0",
-    "expo-file-system": "~18.0.12",
+    "expo-file-system": "~18.1.11",
     "expo-haptics": "^14.1.4",
     "expo-image": "^2.2.0",
     "expo-image-picker": "^16.1.4",
