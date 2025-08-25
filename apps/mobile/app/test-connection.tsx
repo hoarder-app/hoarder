@@ -88,6 +88,7 @@ export default function TestConnection() {
         </Button>
         <Button
           className="w-full"
+          variant="secondary"
           onPress={() => {
             setText("");
             setRandomId(Math.random());

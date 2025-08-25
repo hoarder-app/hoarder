@@ -206,7 +206,7 @@ const ListPickerPage = () => {
               })
             }
           >
-            <View className="mx-2 flex flex-row items-center gap-2 rounded-xl border border-input bg-white px-4 py-2 dark:bg-accent">
+            <View className="mx-2 flex flex-row items-center gap-2 rounded-xl border border-input bg-card px-4 py-2">
               {t.section.title == "Existing Tags" && (
                 <TailwindResolver
                   className="text-accent-foreground"

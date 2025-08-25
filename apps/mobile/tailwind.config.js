@@ -1,7 +1,7 @@
-import type { Config } from "tailwindcss";
-import { hairlineWidth, platformSelect } from "nativewind/theme";
+const { hairlineWidth, platformSelect } = require("nativewind/theme");
 
-const config = {
+/** @type {import('tailwindcss').Config} */
+module.exports = {
   // NOTE: Update this to include the paths to all of your component files.
   content: ["./app/**/*.{js,jsx,ts,tsx}", "./components/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
@@ -48,11 +48,10 @@ const config = {
     },
   },
   plugins: [],
-} satisfies Config;
+};
 
-/** 
-function withOpacity(variableName: string) {
-  return ({ opacityValue }: { opacityValue: string }): string => {
+function withOpacity(variableName) {
+  return ({ opacityValue }) => {
     if (opacityValue !== undefined) {
       return platformSelect({
         ios: `rgb(var(--${variableName}) / ${opacityValue})`,
@@ -65,13 +64,3 @@ function withOpacity(variableName: string) {
     });
   };
 }
-*/
-
-function withOpacity(variableName: string) {
-  return platformSelect({
-    ios: `rgb(var(--${variableName}))`,
-    android: `rgb(var(--android-${variableName}))`,
-  });
-}
-
-export default config;

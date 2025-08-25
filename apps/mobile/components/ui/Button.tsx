@@ -23,6 +23,8 @@ const buttonVariants = cva("flex-row items-center justify-center gap-2", {
       tonal:
         "ios:bg-primary/10 dark:ios:bg-primary/10 ios:active:bg-primary/15 bg-primary/15 dark:bg-primary/30",
       plain: "ios:active:opacity-70",
+      destructive:
+        "ios:border-destructive ios:active:bg-destructive/5 border border-destructive/5 bg-destructive/80",
     },
     size: {
       none: "",
@@ -60,6 +62,7 @@ const buttonTextVariants = cva("font-medium", {
       secondary: "ios:text-primary text-foreground",
       tonal: "ios:text-primary text-foreground",
       plain: "text-foreground",
+      destructive: "text-white",
     },
     size: {
       none: "",
@@ -101,6 +104,10 @@ const ANDROID_RIPPLE = {
     },
     plain: { color: convertToRGBA(COLORS.dark.grey5, 0.8), borderless: false },
     tonal: { color: convertToRGBA(COLORS.dark.grey5, 0.8), borderless: false },
+    destructive: {
+      color: convertToRGBA(COLORS.dark.destructive, 0.8),
+      borderless: false,
+    },
   },
   light: {
     primary: {
@@ -113,6 +120,10 @@ const ANDROID_RIPPLE = {
     },
     plain: { color: convertToRGBA(COLORS.light.grey5, 0.4), borderless: false },
     tonal: { color: convertToRGBA(COLORS.light.grey6, 0.4), borderless: false },
+    destructive: {
+      color: convertToRGBA(COLORS.light.destructive, 0.4),
+      borderless: false,
+    },
   },
 };
 

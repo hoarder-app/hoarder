@@ -3,8 +3,8 @@ import { View } from "react-native";
 import { router } from "expo-router";
 import { Button } from "@/components/ui/Button";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
-import { Input } from "@/components/ui/Input";
 import { Text } from "@/components/ui/Text";
+import { TextField } from "@/components/ui/TextField";
 import { useToast } from "@/components/ui/Toast";
 
 import { useCreateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
@@ -60,7 +60,7 @@ const NoteEditorPage = () => {
         {error && (
           <Text className="w-full text-center text-red-500">{error}</Text>
         )}
-        <Input
+        <TextField
           onChangeText={setText}
           multiline
           placeholder="What's on your mind?"

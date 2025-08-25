@@ -192,7 +192,8 @@ export default function Signin() {
 
           <View className="flex flex-row items-center justify-between gap-2">
             <Button
-              className="flex-1"
+              size="lg"
+              androidRootClassName="flex-1"
               onPress={onSignin}
               disabled={
                 userNamePasswordRequestIsPending || apiKeyValueRequestIsPending
@@ -201,6 +202,7 @@ export default function Signin() {
               <Text>Sign In</Text>
             </Button>
             <Button
+              size="icon"
               onPress={() => router.push("/test-connection")}
               disabled={!settings.address}
             >

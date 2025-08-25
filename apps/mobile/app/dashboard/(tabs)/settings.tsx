@@ -4,6 +4,7 @@ import { Slider } from "react-native-awesome-slider";
 import { useSharedValue } from "react-native-reanimated";
 import { Link } from "expo-router";
 import { Button } from "@/components/ui/Button";
+import ChevronRight from "@/components/ui/ChevronRight";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import { Divider } from "@/components/ui/Divider";
 import PageTitle from "@/components/ui/PageTitle";
@@ -11,7 +12,6 @@ import { Text } from "@/components/ui/Text";
 import { useSession } from "@/lib/session";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
-import { ChevronRight } from "lucide-react-native";
 
 export default function Dashboard() {
   const { logout } = useSession();
@@ -39,7 +39,7 @@ export default function Dashboard() {
     <CustomSafeAreaView>
       <PageTitle title="Settings" />
       <View className="flex h-full w-full items-center gap-3 px-4 py-2">
-        <View className="flex w-full gap-3 rounded-lg bg-white px-4 py-2 dark:bg-accent">
+        <View className="flex w-full gap-3 rounded-lg bg-card px-4 py-2">
           <Text>{isSettingsLoading ? "Loading ..." : settings.address}</Text>
           <Divider orientation="horizontal" />
           <Text>{isLoading ? "Loading ..." : data?.email}</Text>
@@ -47,7 +47,7 @@ export default function Dashboard() {
         <Text className="w-full p-1 text-2xl font-bold text-foreground">
           App Settings
         </Text>
-        <View className="flex w-full flex-row items-center justify-between gap-8 rounded-lg bg-white px-4 py-2 dark:bg-accent">
+        <View className="flex w-full flex-row items-center justify-between gap-8 rounded-lg bg-card px-4 py-2">
           <Link asChild href="/dashboard/settings/theme" className="flex-1">
             <Pressable className="flex flex-row justify-between">
               <Text>Theme</Text>
@@ -59,12 +59,12 @@ export default function Dashboard() {
                     ]
                   }
                 </Text>
-                <ChevronRight color="rgb(0, 122, 255)" />
+                <ChevronRight />
               </View>
             </Pressable>
           </Link>
         </View>
-        <View className="flex w-full flex-row items-center justify-between gap-8 rounded-lg bg-white px-4 py-2 dark:bg-accent">
+        <View className="flex w-full flex-row items-center justify-between gap-8 rounded-lg bg-card px-4 py-2">
           <Link
             asChild
             href="/dashboard/settings/bookmark-default-view"
@@ -82,7 +82,7 @@ export default function Dashboard() {
                       : "Browser"}
                   </Text>
                 )}
-                <ChevronRight color="rgb(0, 122, 255)" />
+                <ChevronRight />
               </View>
             </Pressable>
           </Link>
@@ -90,7 +90,7 @@ export default function Dashboard() {
         <Text className="w-full p-1 text-2xl font-bold text-foreground">
           Upload Settings
         </Text>
-        <View className="flex w-full flex-row items-center justify-between gap-8 rounded-lg bg-white px-4 py-2 dark:bg-accent">
+        <View className="flex w-full flex-row items-center justify-between gap-8 rounded-lg bg-card px-4 py-2">
           <Text>Image Quality</Text>
           <View className="flex flex-1 flex-row items-center justify-center gap-2">
             <Text className="text-foreground">
@@ -110,7 +110,11 @@ export default function Dashboard() {
           </View>
         </View>
         <Divider orientation="horizontal" />
-        <Button onPress={logout}>
+        <Button
+          androidRootClassName="w-full"
+          onPress={logout}
+          variant="destructive"
+        >
           <Text>Log Out</Text>
         </Button>
       </View>

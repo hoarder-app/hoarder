@@ -58,7 +58,7 @@ export default function BookmarkDefaultViewSettings() {
   return (
     <CustomSafeAreaView>
       <View className="flex h-full w-full items-center px-4 py-2">
-        <View className="w-full rounded-lg bg-white px-4 py-2 dark:bg-accent">
+        <View className="w-full rounded-lg bg-card bg-card px-4 py-2">
           {options}
         </View>
       </View>
