@@ -25,6 +25,7 @@ import { Button } from "@/components/ui/Button";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Input } from "@/components/ui/Input";
+import { Text } from "@/components/ui/Text";
 import { useToast } from "@/components/ui/Toast";
 import { useAssetUrl } from "@/lib/hooks";
 import useAppSettings from "@/lib/settings";
@@ -296,15 +297,17 @@ function BookmarkTextView({ bookmark }: { bookmark: ZBookmark }) {
     <View className="flex-1">
       {isEditing && (
         <View className="absolute right-0 top-0 z-10 m-4 flex flex-row gap-1">
-          <Button label="Save" variant="default" onPress={Keyboard.dismiss} />
+          <Button onPress={Keyboard.dismiss}>
+            <Text>Save</Text>
+          </Button>
           <Button
-            label="Discard"
-            variant="destructive"
             onPress={() => {
               setContent(initialText);
               setIsEditing(false);
             }}
-          />
+          >
+            <Text>Discard</Text>
+          </Button>
         </View>
       )}
       <ScrollView className="flex bg-background p-2">

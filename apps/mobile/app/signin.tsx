@@ -4,18 +4,17 @@ import {
   KeyboardAvoidingView,
   Platform,
   Pressable,
-  Text,
   TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { Redirect, useRouter } from "expo-router";
 import Logo from "@/components/Logo";
 import { TailwindResolver } from "@/components/TailwindResolver";
-import { Button, buttonVariants } from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Text } from "@/components/ui/Text";
 import useAppSettings from "@/lib/settings";
 import { api } from "@/lib/trpc";
-import { cn } from "@/lib/utils";
 import { Bug } from "lucide-react-native";
 
 enum LoginType {
@@ -193,18 +192,17 @@ export default function Signin() {
 
           <View className="flex flex-row items-center justify-between gap-2">
             <Button
-              className="flex-1"
-              label="Sign In"
+              size="lg"
+              androidRootClassName="flex-1"
               onPress={onSignin}
               disabled={
                 userNamePasswordRequestIsPending || apiKeyValueRequestIsPending
               }
-            />
-            <Pressable
-              className={cn(
-                buttonVariants({ variant: "default" }),
-                !settings.address && "bg-gray-500",
-              )}
+            >
+              <Text>Sign In</Text>
+            </Button>
+            <Button
+              size="icon"
               onPress={() => router.push("/test-connection")}
               disabled={!settings.address}
             >
@@ -214,7 +212,7 @@ export default function Signin() {
                 )}
                 className="text-background"
               />
-            </Pressable>
+            </Button>
           </View>
           <Pressable onPress={toggleLoginType}>
             <Text className="mt-2 text-center text-gray-500">
