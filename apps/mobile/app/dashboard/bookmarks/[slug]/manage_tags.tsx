@@ -1,11 +1,11 @@
 import React, { useMemo } from "react";
 import { Pressable, SectionList, TouchableOpacity, View } from "react-native";
 import { Stack, useLocalSearchParams } from "expo-router";
-import { TailwindResolver } from "@/components/TailwindResolver";
 import CustomSafeAreaView from "@/components/ui/CustomSafeAreaView";
 import FullPageSpinner from "@/components/ui/FullPageSpinner";
 import { Text } from "@/components/ui/Text";
 import { useToast } from "@/components/ui/Toast";
+import { useColorScheme } from "@/lib/useColorScheme";
 import { Check, Plus } from "lucide-react-native";
 
 import {
@@ -17,6 +17,7 @@ import { api } from "@karakeep/shared-react/trpc";
 const NEW_TAG_ID = "new-tag";
 
 const ListPickerPage = () => {
+  const { colors } = useColorScheme();
   const { slug: bookmarkId } = useLocalSearchParams();
 
   const [search, setSearch] = React.useState("");
@@ -208,16 +209,10 @@ const ListPickerPage = () => {
           >
             <View className="mx-2 flex flex-row items-center gap-2 rounded-xl border border-input bg-card px-4 py-2">
               {t.section.title == "Existing Tags" && (
-                <TailwindResolver
-                  className="text-accent-foreground"
-                  comp={(s) => <Check color={s?.color} />}
-                />
+                <Check color={colors.foreground} />
               )}
               {t.section.title == "All Tags" && t.item.id == NEW_TAG_ID && (
-                <TailwindResolver
-                  className="text-accent-foreground"
-                  comp={(s) => <Plus color={s?.color} />}
-                />
+                <Plus color={colors.foreground} />
               )}
               <Text>
                 {t.item.id == NEW_TAG_ID
