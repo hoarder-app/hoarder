@@ -1,12 +1,36 @@
 import * as React from "react";
-import { Platform } from "react-native";
+import {
+  Appearance,
+  Platform,
+  useColorScheme as useRNColorScheme,
+} from "react-native";
 import * as NavigationBar from "expo-navigation-bar";
+import useAppSettings from "@/lib/settings";
 import { COLORS } from "@/theme/colors";
 import { useColorScheme as useNativewindColorScheme } from "nativewind";
 
 function useColorScheme() {
+  const { settings, isLoading } = useAppSettings();
+  const rnColorScheme = useRNColorScheme();
   const { colorScheme, setColorScheme: setNativewindColorScheme } =
     useNativewindColorScheme();
+
+  // Sync user settings with native color scheme
+  React.useEffect(() => {
+    let theme = settings.theme;
+    if (theme === "system") {
+      theme = Appearance.getColorScheme() ?? "light";
+    }
+    setColorScheme(theme);
+  }, [settings.theme, isLoading]);
+
+  // Sync system settings with native color scheme
+  React.useEffect(() => {
+    if (settings.theme === "system") {
+      setColorScheme(rnColorScheme ?? "light");
+      return;
+    }
+  }, [rnColorScheme]);
 
   async function setColorScheme(colorScheme: "light" | "dark") {
     setNativewindColorScheme(colorScheme);
@@ -21,7 +45,6 @@ function useColorScheme() {
   return {
     colorScheme: colorScheme ?? "light",
     isDarkColorScheme: colorScheme === "dark",
-    setColorScheme,
     colors: COLORS[colorScheme ?? "light"],
   };
 }
