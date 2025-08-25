@@ -1,9 +1,5 @@
 import * as React from "react";
-import {
-  Appearance,
-  Platform,
-  useColorScheme as useRNColorScheme,
-} from "react-native";
+import { Platform } from "react-native";
 import * as NavigationBar from "expo-navigation-bar";
 import useAppSettings from "@/lib/settings";
 import { COLORS } from "@/theme/colors";
@@ -11,36 +7,21 @@ import { useColorScheme as useNativewindColorScheme } from "nativewind";
 
 function useColorScheme() {
   const { settings, isLoading } = useAppSettings();
-  const rnColorScheme = useRNColorScheme();
   const { colorScheme, setColorScheme: setNativewindColorScheme } =
     useNativewindColorScheme();
 
   // Sync user settings with native color scheme
   React.useEffect(() => {
-    let theme = settings.theme;
-    if (theme === "system") {
-      theme = Appearance.getColorScheme() ?? "light";
-    }
-    setColorScheme(theme);
+    setNativewindColorScheme(settings.theme);
   }, [settings.theme, isLoading]);
 
-  // Sync system settings with native color scheme
   React.useEffect(() => {
-    if (settings.theme === "system") {
-      setColorScheme(rnColorScheme ?? "light");
-      return;
+    if (Platform.OS === "android") {
+      setNavigationBar(colorScheme ?? "light").catch((error) => {
+        console.error('useColorScheme.tsx", "setColorScheme', error);
+      });
     }
-  }, [rnColorScheme]);
-
-  async function setColorScheme(colorScheme: "light" | "dark") {
-    setNativewindColorScheme(colorScheme);
-    if (Platform.OS !== "android") return;
-    try {
-      await setNavigationBar(colorScheme);
-    } catch (error) {
-      console.error('useColorScheme.tsx", "setColorScheme', error);
-    }
-  }
+  }, [colorScheme]);
 
   return {
     colorScheme: colorScheme ?? "light",
