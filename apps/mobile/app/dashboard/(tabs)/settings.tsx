@@ -52,7 +52,7 @@ export default function Dashboard() {
             <Pressable className="flex flex-row justify-between">
               <Text>Theme</Text>
               <View className="flex flex-row items-center gap-2">
-                <Text>
+                <Text className="text-muted-foreground">
                   {
                     { light: "Light", dark: "Dark", system: "System" }[
                       settings.theme
@@ -76,7 +76,7 @@ export default function Dashboard() {
                 {isSettingsLoading ? (
                   <ActivityIndicator size="small" />
                 ) : (
-                  <Text className="text-lg text-muted-foreground">
+                  <Text className="text-muted-foreground">
                     {settings.defaultBookmarkView === "reader"
                       ? "Reader"
                       : "Browser"}
