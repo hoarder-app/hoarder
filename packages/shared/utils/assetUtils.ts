@@ -21,3 +21,17 @@ export function humanFriendlyNameForAssertType(type: ZAssetType) {
   };
   return map[type];
 }
+
+const ASSET_URL_REGEX = /\/api\/assets\/([^)\s"'<>]+)/g;
+
+/**
+ * Extracts the ids of all assets referenced via getAssetUrl-style URLs
+ * (e.g. images embedded in note markdown) from a piece of text content.
+ */
+export function getAssetIdsFromContent(content: string): Set<string> {
+  const ids = new Set<string>();
+  for (const match of content.matchAll(ASSET_URL_REGEX)) {
+    ids.add(match[1]);
+  }
+  return ids;
+}
