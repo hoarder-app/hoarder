@@ -13,7 +13,8 @@ import ChevronRight from "@/components/ui/ChevronRight";
 import { Text } from "@/components/ui/Text";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { cn } from "@/lib/utils";
-import { Check } from "lucide-react-native";
+import { MenuView } from "@react-native-menu/menu";
+import { Check, ChevronsUpDown } from "lucide-react-native";
 
 function SettingsScreen({
   children,
@@ -154,6 +155,57 @@ function SettingsToggleRow({
   );
 }
 
+function SettingsMenuRow<T extends string | number>({
+  label,
+  onSelect,
+  options,
+  value,
+}: {
+  label: string;
+  onSelect: (value: T) => void;
+  options: readonly { label: string; value: T }[];
+  value: T;
+}) {
+  const { colors } = useColorScheme();
+  const selected = options.find((option) => option.value === value);
+
+  return (
+    <MenuView
+      actions={options.map((option) => ({
+        id: String(option.value),
+        title: option.label,
+        state: option.value === value ? "on" : "off",
+      }))}
+      onPressAction={({ nativeEvent }) => {
+        const option = options.find(
+          (candidate) => String(candidate.value) === nativeEvent.event,
+        );
+        if (option) {
+          onSelect(option.value);
+        }
+      }}
+      shouldOpenOnLongPress={false}
+    >
+      <View
+        accessible
+        accessibilityLabel={`${label}: ${selected?.label ?? ""}`}
+        accessibilityRole="button"
+        className="min-h-10 flex-row items-center px-4 py-1"
+      >
+        <Text className="mr-3 flex-1" numberOfLines={1}>
+          {label}
+        </Text>
+        {selected ? (
+          <Text color="tertiary" className="mr-1.5" numberOfLines={1}>
+            {selected.label}
+          </Text>
+        ) : null}
+        <ChevronsUpDown color={colors.grey} size={15} strokeWidth={2.25} />
+      </View>
+    </MenuView>
+  );
+}
+
 function SettingsChoiceRow({
   description,
   disabled = false,
@@ -267,6 +319,7 @@ export {
   SettingsActionRow,
   SettingsChoiceRow,
   SettingsGroup,
+  SettingsMenuRow,
   SettingsNavigationRow,
   SettingsScreen,
   SettingsSeparator,
