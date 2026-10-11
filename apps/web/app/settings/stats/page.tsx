@@ -4,6 +4,7 @@ import { useState } from "react";
 import { SettingsPage } from "@/components/settings/SettingsPage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { normalizeI18nLanguage } from "@/lib/date-format";
 import { useTranslation } from "@/lib/i18n/client";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -55,7 +56,7 @@ function formatNumber(num: number): string {
   return num.toString();
 }
 
-function getDayNames(locale: string): string[] {
+function getDayNames(locale: string | undefined): string[] {
   const formatter = new Intl.DateTimeFormat(locale, {
     weekday: "short",
     timeZone: "UTC",
@@ -66,7 +67,7 @@ function getDayNames(locale: string): string[] {
   );
 }
 
-function getHourLabels(locale: string): string[] {
+function getHourLabels(locale: string | undefined): string[] {
   const formatter = new Intl.DateTimeFormat(locale, {
     hour: "numeric",
     timeZone: "UTC",
@@ -343,8 +344,9 @@ export default function StatsPage() {
     );
   }
 
-  const dayNames = getDayNames(i18n.language);
-  const hourLabels = getHourLabels(i18n.language);
+  const locale = normalizeI18nLanguage(i18n.language);
+  const dayNames = getDayNames(locale);
+  const hourLabels = getHourLabels(locale);
   const activityByDay = dayNames.map(
     (_, day) =>
       stats.bookmarkingActivity.byDayOfWeek.find((d) => d.day === day)?.count ??
