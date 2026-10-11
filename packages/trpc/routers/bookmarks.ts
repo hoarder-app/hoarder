@@ -28,6 +28,7 @@ import {
   QuotaService,
   SUPPORTED_BOOKMARK_ASSET_TYPES,
   triggerSearchReindex,
+  VideoWorkerQueue,
 } from "@karakeep/shared-server";
 import serverConfig from "@karakeep/shared/config";
 import {
@@ -847,6 +848,49 @@ export const bookmarksAppRouter = router({
         .update(bookmarkLinks)
         .set({ crawlStatus: "pending" })
         .where(eq(bookmarkLinks.id, input.bookmarkId));
+    }),
+  preserveVideo: bookmarksProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "bookmarks.preserveVideo",
+        windowMs: 30 * 60 * 1000,
+        maxRequests: 50,
+      }),
+    )
+    .input(
+      z.object({
+        bookmarkId: z.string(),
+      }),
+    )
+    .use(ensureBookmarkOwnership)
+    .mutation(async ({ input, ctx }) => {
+      if (!serverConfig.crawler.downloadVideoOnDemand) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "On-demand video downloads are disabled on this server",
+        });
+      }
+      const link = await ctx.db.query.bookmarkLinks.findFirst({
+        where: eq(bookmarkLinks.id, input.bookmarkId),
+        columns: { url: true },
+      });
+      if (!link) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Videos can only be preserved for link bookmarks",
+        });
+      }
+      await VideoWorkerQueue.enqueue(
+        {
+          bookmarkId: input.bookmarkId,
+          url: link.url,
+          onDemand: true,
+        },
+        {
+          groupId: ctx.user.id,
+          idempotencyKey: `video:${input.bookmarkId}`,
+        },
+      );
     }),
   updateReadingProgress: bookmarksProcedure
     .input(

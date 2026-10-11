@@ -9,6 +9,7 @@ import {
   users,
 } from "@karakeep/db/schema";
 import * as sharedServer from "@karakeep/shared-server";
+import serverConfig from "@karakeep/shared/config";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import { WebhooksService } from "../models/webhooks.service";
@@ -1138,6 +1139,73 @@ describe("Bookmark Routes", () => {
       .where(eq(bookmarkLinks.id, brokenBookmark.id));
     const emptyResult = await api.getBrokenLinks();
     expect(emptyResult.bookmarks.length).toEqual(0);
+  });
+
+  describe("preserveVideo", () => {
+    test<CustomTestContext>("is rejected when on-demand video downloads are disabled", async ({
+      apiCallers,
+    }) => {
+      const api = apiCallers[0].bookmarks;
+      const bookmark = await api.createBookmark({
+        url: "https://youtube.com/watch?v=abc",
+        type: BookmarkTypes.LINK,
+      });
+      const enqueueMock = getTestQueueMocks().videoWorkerEnqueue;
+      enqueueMock.mockClear();
+
+      const originalValue = serverConfig.crawler.downloadVideoOnDemand;
+      serverConfig.crawler.downloadVideoOnDemand = false;
+      try {
+        await expect(
+          api.preserveVideo({ bookmarkId: bookmark.id }),
+        ).rejects.toThrow(/disabled/);
+      } finally {
+        serverConfig.crawler.downloadVideoOnDemand = originalValue;
+      }
+      expect(enqueueMock).not.toHaveBeenCalled();
+    });
+
+    test<CustomTestContext>("enqueues an on-demand video download for links", async ({
+      apiCallers,
+    }) => {
+      const api = apiCallers[0].bookmarks;
+      const bookmark = await api.createBookmark({
+        url: "https://youtube.com/watch?v=abc",
+        type: BookmarkTypes.LINK,
+      });
+      const textBookmark = await api.createBookmark({
+        text: "hello",
+        type: BookmarkTypes.TEXT,
+      });
+      const enqueueMock = getTestQueueMocks().videoWorkerEnqueue;
+      enqueueMock.mockClear();
+
+      const originalValue = serverConfig.crawler.downloadVideoOnDemand;
+      serverConfig.crawler.downloadVideoOnDemand = true;
+      try {
+        await api.preserveVideo({ bookmarkId: bookmark.id });
+        expect(enqueueMock).toHaveBeenCalledWith(
+          {
+            bookmarkId: bookmark.id,
+            url: "https://youtube.com/watch?v=abc",
+            onDemand: true,
+          },
+          expect.objectContaining({ groupId: expect.any(String) }),
+        );
+
+        await expect(
+          api.preserveVideo({ bookmarkId: textBookmark.id }),
+        ).rejects.toThrow(/link bookmarks/);
+
+        // Users can't trigger downloads for bookmarks they don't own
+        await expect(
+          apiCallers[1].bookmarks.preserveVideo({ bookmarkId: bookmark.id }),
+        ).rejects.toThrow();
+      } finally {
+        serverConfig.crawler.downloadVideoOnDemand = originalValue;
+      }
+      expect(enqueueMock).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("Bookmark Quotas", () => {

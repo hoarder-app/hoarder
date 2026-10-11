@@ -23,6 +23,7 @@ import {
   Download,
   FileDown,
   FileText,
+  FileVideo,
   ImagePlus,
   Link,
   List,
@@ -47,6 +48,7 @@ import {
 import { useBookmarkGridContext } from "@karakeep/shared-react/hooks/bookmark-grid-context";
 import { useBookmarkListContext } from "@karakeep/shared-react/hooks/bookmark-list-context";
 import {
+  usePreserveBookmarkVideo,
   useRecrawlBookmark,
   useUpdateBookmark,
 } from "@karakeep/shared-react/hooks/bookmarks";
@@ -101,7 +103,8 @@ export default function BookmarkOptions({
   const linkId = bookmark.id;
   const { data: session } = useSession();
 
-  const demoMode = !!useClientConfig().demoMode;
+  const clientConfig = useClientConfig();
+  const demoMode = !!clientConfig.demoMode;
 
   // Check if the current user owns this bookmark
   const isOwner = session?.user?.id === bookmark.userId;
@@ -210,6 +213,13 @@ export default function BookmarkOptions({
   const preservePdfMutator = useRecrawlBookmark({
     onSuccess: () => {
       toast.success(t("toasts.bookmarks.preserve_pdf"));
+    },
+    onError,
+  });
+
+  const preserveVideoMutator = usePreserveBookmarkVideo({
+    onSuccess: () => {
+      toast.success(t("toasts.bookmarks.preserve_video"));
     },
     onError,
   });
@@ -398,6 +408,16 @@ export default function BookmarkOptions({
                 bookmarkId: bookmark.id,
                 storePdf: true,
               });
+            },
+          },
+          {
+            id: "preserve-video",
+            title: t("actions.preserve_video"),
+            icon: <FileVideo className="size-4" />,
+            visible: clientConfig.crawler.videoDownloadOnDemand,
+            disabled: demoMode,
+            onClick: () => {
+              preserveVideoMutator.mutate({ bookmarkId: bookmark.id });
             },
           },
           {
