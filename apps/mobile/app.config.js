@@ -12,7 +12,7 @@ export default {
           scheme: "karakeep",
         }),
     slug: "hoarder",
-    version: "1.11.1",
+    version: "1.12.0",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "automatic",
@@ -47,7 +47,7 @@ export default {
           NSAllowsArbitraryLoads: true,
         },
       },
-      buildNumber: "47",
+      buildNumber: "49",
     },
     android: {
       adaptiveIcon: {
@@ -68,7 +68,7 @@ export default {
       package: IS_DEV
         ? "app.hoarder.hoardermobile.dev"
         : "app.hoarder.hoardermobile",
-      versionCode: 47,
+      versionCode: 49,
     },
     plugins: [
       "./plugins/trust-local-certs.js",
@@ -105,6 +105,11 @@ export default {
             usesCleartextTraffic: true,
             targetSdkVersion: 36,
             ndkVersion: "27.1.12297006",
+          },
+          ios: {
+            // Apps built with the iOS 27 SDK (Xcode 27) must use the UIScene
+            // lifecycle. Can be removed on SDK 58+, where it's the default.
+            enableSceneSupport: true,
           },
         },
       ],
