@@ -112,7 +112,7 @@ function SettingsNavigationRow({
     <Pressable
       accessibilityHint={`Opens ${label} settings`}
       accessibilityRole="button"
-      className="flex-row items-center px-4 py-1 active:bg-muted/10"
+      className="min-h-10 flex-row items-center px-4 py-1 active:bg-muted/10"
       onPress={onPress}
     >
       <Text className="mr-3 flex-1" numberOfLines={1}>
@@ -142,7 +142,7 @@ function SettingsToggleRow({
   value: boolean;
 }) {
   return (
-    <View className="flex-row items-center px-4 py-1">
+    <View className="min-h-10 flex-row items-center px-4 py-1">
       <Text className="mr-3 flex-1">{label}</Text>
       <Switch
         accessibilityLabel={label}
@@ -177,7 +177,7 @@ function SettingsChoiceRow({
       accessibilityState={{ checked: selected, disabled }}
       className={cn(
         "flex-row items-center px-4 active:bg-muted/10",
-        description ? "min-h-16 py-2" : "py-1",
+        description ? "min-h-16 py-2" : "min-h-10 py-1",
       )}
       disabled={disabled}
       onPress={onPress}
@@ -201,13 +201,14 @@ function SettingsChoiceRow({
 
 function SettingsValueRow({ label, value }: { label: string; value: string }) {
   return (
-    <View className="flex-row items-center gap-4 px-4 py-1">
-      <Text className="flex-1">{label}</Text>
+    <View className="min-h-10 flex-row items-center gap-4 px-4 py-1">
+      <Text>{label}</Text>
       <Text
         selectable
         color="tertiary"
-        className="max-w-[60%] text-right"
-        numberOfLines={2}
+        className="flex-1 text-right"
+        ellipsizeMode="middle"
+        numberOfLines={1}
       >
         {value}
       </Text>
@@ -244,7 +245,7 @@ function SettingsActionRow({
     <Pressable
       accessibilityRole="button"
       className={cn(
-        "flex-row items-center gap-2 px-4 py-1 active:bg-muted/10",
+        "min-h-10 flex-row items-center gap-2 px-4 py-1 active:bg-muted/10",
         centered ? "justify-center" : undefined,
       )}
       disabled={disabled}
