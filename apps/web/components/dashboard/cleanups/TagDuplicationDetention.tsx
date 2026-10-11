@@ -102,13 +102,13 @@ function ApplyAllButton({ suggestions }: { suggestions: Suggestion[] }) {
           variant="destructive"
           onClick={() => applyAll(setDialogOpen)}
         >
-          <Check className="mr-2 size-4" />
+          <Check className="size-4" />
           {t("actions.apply_all")}
         </ActionButton>
       )}
     >
       <Button variant="destructive">
-        <Check className="mr-2 size-4" />
+        <Check className="size-4" />
         {t("actions.apply_all")}
       </Button>
     </ActionConfirmingDialog>
@@ -183,7 +183,7 @@ function SuggestionRow({
             })
           }
         >
-          <Combine className="mr-2 size-4" />
+          <Combine className="size-4" />
           {t("actions.merge")}
         </ActionButton>
 
@@ -191,7 +191,7 @@ function SuggestionRow({
           variant={"secondary"}
           onClick={() => deleteSuggestion(suggestion)}
         >
-          <X className="mr-2 size-4" />
+          <X className="size-4" />
           {t("actions.ignore")}
         </Button>
       </TableCell>

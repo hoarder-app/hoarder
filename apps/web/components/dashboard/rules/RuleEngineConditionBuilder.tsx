@@ -295,7 +295,7 @@ export function ConditionBuilder({
                 });
               }}
             >
-              <PlusCircle className="mr-2 h-4 w-4" />
+              <PlusCircle className="h-4 w-4" />
               Add Condition
             </Button>
           </div>
@@ -373,7 +373,11 @@ export function ConditionBuilder({
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <CollapsibleTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-7 w-7 p-1">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-1 has-[>svg]:px-1"
+                  >
                     {isOpen ? (
                       <ChevronDown className="h-4 w-4" />
                     ) : (
@@ -393,7 +397,7 @@ export function ConditionBuilder({
                   variant="ghost"
                   size="sm"
                   onClick={onRemove}
-                  className="h-7 w-7 p-0"
+                  className="h-7 w-7 p-0 has-[>svg]:px-0"
                 >
                   <Trash2 className="h-4 w-4 text-red-500" />
                 </Button>
@@ -415,7 +419,7 @@ export function ConditionBuilder({
                   variant="ghost"
                   size="sm"
                   onClick={onRemove}
-                  className="h-7 w-7 p-0"
+                  className="h-7 w-7 p-0 has-[>svg]:px-0"
                 >
                   <Trash2 className="h-4 w-4 text-red-500" />
                 </Button>

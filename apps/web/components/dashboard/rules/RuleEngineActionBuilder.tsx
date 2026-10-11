@@ -192,7 +192,7 @@ export function ActionBuilder({ value, onChange }: ActionBuilderProps) {
                   variant="ghost"
                   size="sm"
                   onClick={() => handleRemoveAction(index)}
-                  className="h-7 w-7 p-0"
+                  className="h-7 w-7 p-0 has-[>svg]:px-0"
                 >
                   <Trash2 className="h-4 w-4 text-red-500" />
                 </Button>
@@ -209,7 +209,7 @@ export function ActionBuilder({ value, onChange }: ActionBuilderProps) {
         onClick={handleAddAction}
         className="w-full"
       >
-        <PlusCircle className="mr-2 h-4 w-4" />
+        <PlusCircle className="h-4 w-4" />
         Add Action
       </Button>
     </div>

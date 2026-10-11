@@ -388,7 +388,7 @@ export function TagsEditor({
                         variant="ghost"
                         size="sm"
                         onClick={createTag}
-                        className="h-auto p-1"
+                        className="h-auto p-1 has-[>svg]:px-1"
                       >
                         <Plus className="h-4 w-4" />
                       </Button>

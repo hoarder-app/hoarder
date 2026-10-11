@@ -326,7 +326,7 @@ export function EditListModal({
                           form.setValue("parentId", "");
                         }}
                       >
-                        <X />
+                        <X className="size-6" />
                       </Button>
                     </div>
                     <FormMessage />
