@@ -220,15 +220,15 @@ export class CrawlerWorker {
     if (!hasBrowserBackend) {
       throw new Error(
         "[adhoc] No browser backend configured — refusing to run. crawlPage() " +
-          "would silently fall back to a plain HTTP fetch. Set BROWSER_WEB_URL " +
-          "or BROWSER_WEBSOCKET_URL to a reachable Chrome.",
+          "would silently fall back to a plain HTTP fetch. Set BROWSER_CDP_URL, " +
+          "BROWSER_WEBSOCKET_URL, or BROWSER_WEB_URL to a reachable browser.",
       );
     }
     if (!serverConfig.crawler.browserConnectOnDemand && !getGlobalBrowser()) {
       throw new Error(
         "[adhoc] Browser failed to connect — refusing to run. crawlPage() would " +
-          "silently fall back to a plain HTTP fetch. Check that BROWSER_WEB_URL / " +
-          "BROWSER_WEBSOCKET_URL points at a reachable Chrome.",
+          "silently fall back to a plain HTTP fetch. Check that BROWSER_CDP_URL / " +
+          "BROWSER_WEBSOCKET_URL / BROWSER_WEB_URL points at a reachable browser.",
       );
     }
   }
