@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ActionButton } from "@/components/ui/action-button";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonWithTooltip } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
 import {
   Tooltip,
@@ -8,11 +8,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useTranslation } from "@/lib/i18n/client";
-import { Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 
 import type { ZBookmark } from "@karakeep/shared/types/bookmarks";
 import { useUpdateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
 
+import BookmarkOptions from "../bookmarks/BookmarkOptions";
 import DeleteBookmarkConfirmationDialog from "../bookmarks/DeleteBookmarkConfirmationDialog";
 import { EditBookmarkDialog } from "../bookmarks/EditBookmarkDialog";
 import { ArchivedActionIcon, FavouritedActionIcon } from "../bookmarks/icons";
@@ -144,6 +145,22 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
         </TooltipTrigger>
         <TooltipContent side="bottom">{t("actions.delete")}</TooltipContent>
       </Tooltip>
+      <BookmarkOptions
+        bookmark={bookmark}
+        // Already available as buttons in this bar (or irrelevant outside the grid)
+        hiddenActions={["select", "edit", "favorite", "archive", "delete"]}
+        trigger={
+          <ButtonWithTooltip
+            tooltip={t("actions.more")}
+            delayDuration={0}
+            variant="ghost"
+            size="none"
+            className="size-8 rounded-md"
+          >
+            <MoreHorizontal className="size-[18px]" strokeWidth={1.5} />
+          </ButtonWithTooltip>
+        }
+      />
     </div>
   );
 }

@@ -87,7 +87,16 @@ function isSubsectionItem(item: ActionItemType): item is SubsectionItem {
   return "items" in item;
 }
 
-export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
+export default function BookmarkOptions({
+  bookmark,
+  hiddenActions,
+  trigger,
+}: {
+  bookmark: ZBookmark;
+  // Ids of top-level actions to leave out of the menu
+  hiddenActions?: string[];
+  trigger?: React.ReactNode;
+}) {
   const { t } = useTranslation();
   const linkId = bookmark.id;
   const { data: session } = useSession();
@@ -481,6 +490,9 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
   const visibleGroups = actionGroups
     .map((group) =>
       group.filter((item) => {
+        if (hiddenActions?.includes(item.id)) {
+          return false;
+        }
         if (isSubsectionItem(item)) {
           return item.visible && item.items.some((subItem) => subItem.visible);
         }
@@ -514,12 +526,14 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="px-1 focus-visible:ring-0 has-[>svg]:px-1"
-          >
-            <MoreHorizontal className="size-6" />
-          </Button>
+          {trigger ?? (
+            <Button
+              variant="ghost"
+              className="px-1 focus-visible:ring-0 has-[>svg]:px-1"
+            >
+              <MoreHorizontal className="size-6" />
+            </Button>
+          )}
         </DropdownMenuTrigger>
         <DropdownMenuContent
           className="min-w-44"
