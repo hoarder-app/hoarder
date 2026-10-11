@@ -182,11 +182,7 @@ function ColumnChart({
                 style={{
                   height: `${maxValue > 0 ? Math.max(2, (value / maxValue) * 100) : 2}%`,
                   opacity:
-                    activeIndex !== null && activeIndex !== index
-                      ? 0.3
-                      : value > 0
-                        ? 0.4 + (value / maxValue) * 0.6
-                        : 1,
+                    activeIndex !== null && activeIndex !== index ? 0.3 : 1,
                 }}
               />
             </div>
