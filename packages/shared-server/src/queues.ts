@@ -271,6 +271,9 @@ export async function triggerSearchReindex(
 export const zvideoRequestSchema = z.object({
   bookmarkId: z.string(),
   url: z.string(),
+  // Explicitly requested by the user (e.g. "Preserve Video"), as opposed to
+  // the automatic download after a crawl.
+  onDemand: z.boolean().optional(),
 });
 export type ZVideoRequest = z.infer<typeof zvideoRequestSchema>;
 
