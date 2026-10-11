@@ -67,7 +67,7 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
               setEditBookmarkDialogOpen(true);
             }}
           >
-            <Pencil size={18} strokeWidth={1.5} />
+            <Pencil className="size-[18px]" size={18} strokeWidth={1.5} />
           </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom">{t("actions.edit")}</TooltipContent>
@@ -87,6 +87,7 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             }}
           >
             <FavouritedActionIcon
+              className="size-[18px]"
               favourited={bookmark.favourited}
               size={18}
               strokeWidth={1.5}
@@ -114,6 +115,7 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             }}
           >
             <ArchivedActionIcon
+              className="size-[18px]"
               archived={bookmark.archived}
               size={18}
               strokeWidth={1.5}
@@ -137,7 +139,7 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             size="none"
             onClick={() => setDeleteBookmarkDialogOpen(true)}
           >
-            <Trash2 size={18} strokeWidth={1.5} />
+            <Trash2 className="size-[18px]" size={18} strokeWidth={1.5} />
           </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom">{t("actions.delete")}</TooltipContent>

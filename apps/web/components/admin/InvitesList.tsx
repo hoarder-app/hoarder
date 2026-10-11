@@ -103,7 +103,7 @@ export default function InvitesList() {
                         onClick={() => resendInvite({ inviteId: invite.id })}
                         disabled={isResendPending}
                       >
-                        <Mail size={14} />
+                        <Mail className="size-3.5" size={14} />
                       </ButtonWithTooltip>
                       <ActionConfirmingDialog
                         title="Revoke Invite"
@@ -126,7 +126,7 @@ export default function InvitesList() {
                           variant="outline"
                           size="sm"
                         >
-                          <MailX size={14} color="red" />
+                          <MailX className="size-3.5" size={14} color="red" />
                         </ButtonWithTooltip>
                       </ActionConfirmingDialog>
                     </>

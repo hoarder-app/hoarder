@@ -107,7 +107,7 @@ export function ChangePassword() {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent has-[>svg]:px-3 dark:hover:bg-transparent"
                     aria-label={
                       showCurrentPassword ? "Hide password" : "Show password"
                     }
@@ -153,7 +153,7 @@ export function ChangePassword() {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent has-[>svg]:px-3 dark:hover:bg-transparent"
                       aria-label={
                         showNewPassword ? "Hide password" : "Show password"
                       }
@@ -198,7 +198,7 @@ export function ChangePassword() {
                       type="button"
                       variant="ghost"
                       size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent has-[>svg]:px-3 dark:hover:bg-transparent"
                       aria-label={
                         showConfirmPassword ? "Hide password" : "Show password"
                       }

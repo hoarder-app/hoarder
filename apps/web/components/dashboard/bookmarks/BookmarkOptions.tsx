@@ -514,8 +514,11 @@ export default function BookmarkOptions({ bookmark }: { bookmark: ZBookmark }) {
       />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="px-1 focus-visible:ring-0">
-            <MoreHorizontal />
+          <Button
+            variant="ghost"
+            className="px-1 focus-visible:ring-0 has-[>svg]:px-1"
+          >
+            <MoreHorizontal className="size-6" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
