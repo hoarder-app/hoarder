@@ -117,7 +117,7 @@ export function TagAutocomplete({
                 >
                   <Check
                     className={cn(
-                      "mr-2 h-4 w-4",
+                      "h-4 w-4",
                       selectedTag?.id === tag.id ? "opacity-100" : "opacity-0",
                     )}
                   />

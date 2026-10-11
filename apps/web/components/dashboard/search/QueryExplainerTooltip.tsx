@@ -260,7 +260,7 @@ export default function QueryExplainerTooltip({
   const body = (
     <>
       {header}
-      <Table>
+      <Table className="[&_tr:hover]:bg-transparent">
         <TableBody>
           {parsedSearchQuery.text && (
             <TableRow>
