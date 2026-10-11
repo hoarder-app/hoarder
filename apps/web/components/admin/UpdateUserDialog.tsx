@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,7 +8,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -43,18 +42,19 @@ interface UpdateUserDialogProps {
   currentRole: "user" | "admin";
   currentQuota: number | null;
   currentStorageQuota: number | null;
-  children?: React.ReactNode;
+  open: boolean;
+  setOpen: (open: boolean) => void;
 }
 export default function UpdateUserDialog({
   userId,
   currentRole,
   currentQuota,
   currentStorageQuota,
-  children,
+  open: isOpen,
+  setOpen: onOpenChange,
 }: UpdateUserDialogProps) {
   const api = useTRPC();
   const queryClient = useQueryClient();
-  const [isOpen, onOpenChange] = useState(false);
   const defaultValues = {
     userId,
     role: currentRole,
@@ -98,9 +98,7 @@ export default function UpdateUserDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
-        <DialogTrigger asChild></DialogTrigger>
         <DialogHeader>
           <DialogTitle>Edit User</DialogTitle>
         </DialogHeader>

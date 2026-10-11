@@ -1,5 +1,6 @@
 "use client";
 
+import { memo, useCallback, useState } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
@@ -18,9 +19,12 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+import { TFunction } from "i18next";
 import { KeyRound, Pencil, Trash, UserPlus } from "lucide-react";
+import { z } from "zod";
 
 import { useTRPC } from "@karakeep/shared-react/trpc";
+import { zAdminUserSchema } from "@karakeep/shared/types/admin";
 
 import ActionConfirmingDialog from "../ui/action-confirming-dialog";
 import AddUserDialog from "./AddUserDialog";
@@ -35,6 +39,71 @@ function toHumanReadableSize(size: number) {
   return (size / Math.pow(1024, i)).toFixed(2) + " " + sizes[i];
 }
 
+type AdminUser = z.infer<typeof zAdminUserSchema>;
+type UserDialog = "delete" | "resetPassword" | "edit";
+
+// Rows are memoized and don't own any dialogs/forms/mutations. With thousands
+// of users, mounting those per row makes the page extremely heavy.
+const UserRow = memo(function UserRow({
+  user: u,
+  stats,
+  isSelf,
+  t,
+  openDialog,
+}: {
+  user: AdminUser;
+  stats: { numBookmarks: number; assetSizes: number };
+  isSelf: boolean;
+  t: TFunction;
+  openDialog: (dialog: UserDialog, user: AdminUser) => void;
+}) {
+  return (
+    <TableRow>
+      <TableCell className="py-1">{u.name}</TableCell>
+      <TableCell className="py-1">{u.email}</TableCell>
+      <TableCell className="py-1">
+        {stats.numBookmarks} /{" "}
+        {u.bookmarkQuota ?? t("admin.users_list.unlimited")}
+      </TableCell>
+      <TableCell className="py-1">
+        {toHumanReadableSize(stats.assetSizes)} /{" "}
+        {u.storageQuota
+          ? toHumanReadableSize(u.storageQuota)
+          : t("admin.users_list.unlimited")}
+      </TableCell>
+      <TableCell className="py-1">
+        {u.role && t(`common.roles.${u.role}`)}
+      </TableCell>
+      <TableCell className="flex gap-1 py-1">
+        <ButtonWithTooltip
+          tooltip={t("admin.users_list.delete_user")}
+          variant="outline"
+          disabled={isSelf}
+          onClick={() => openDialog("delete", u)}
+        >
+          <Trash size={16} color="red" />
+        </ButtonWithTooltip>
+        <ButtonWithTooltip
+          tooltip={t("admin.users_list.reset_password")}
+          variant="outline"
+          disabled={isSelf}
+          onClick={() => openDialog("resetPassword", u)}
+        >
+          <KeyRound size={16} color="red" />
+        </ButtonWithTooltip>
+        <ButtonWithTooltip
+          tooltip="Edit User"
+          variant="outline"
+          disabled={isSelf}
+          onClick={() => openDialog("edit", u)}
+        >
+          <Pencil size={16} color="red" />
+        </ButtonWithTooltip>
+      </TableCell>
+    </TableRow>
+  );
+});
+
 export default function UsersSection() {
   const api = useTRPC();
   const queryClient = useQueryClient();
@@ -46,6 +115,17 @@ export default function UsersSection() {
   const { data: userStats } = useSuspenseQuery(
     api.admin.userStats.queryOptions(),
   );
+  // The selected user is kept around after the dialog closes so that the
+  // closing animation still has content to render.
+  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
+  const [activeDialog, setActiveDialog] = useState<UserDialog | null>(null);
+  const openDialog = useCallback((dialog: UserDialog, user: AdminUser) => {
+    setSelectedUser(user);
+    setActiveDialog(dialog);
+  }, []);
+  const setDialogOpen = (dialog: UserDialog) => (open: boolean) =>
+    setActiveDialog(open ? dialog : null);
+
   const { mutateAsync: deleteUser, isPending: isDeletionPending } = useMutation(
     api.users.delete.mutationOptions({
       onSuccess: () => {
@@ -88,81 +168,57 @@ export default function UsersSection() {
           </TableHeader>
           <TableBody>
             {users.map((u) => (
-              <TableRow key={u.id}>
-                <TableCell className="py-1">{u.name}</TableCell>
-                <TableCell className="py-1">{u.email}</TableCell>
-                <TableCell className="py-1">
-                  {userStats[u.id].numBookmarks} /{" "}
-                  {u.bookmarkQuota ?? t("admin.users_list.unlimited")}
-                </TableCell>
-                <TableCell className="py-1">
-                  {toHumanReadableSize(userStats[u.id].assetSizes)} /{" "}
-                  {u.storageQuota
-                    ? toHumanReadableSize(u.storageQuota)
-                    : t("admin.users_list.unlimited")}
-                </TableCell>
-                <TableCell className="py-1">
-                  {u.role && t(`common.roles.${u.role}`)}
-                </TableCell>
-                <TableCell className="flex gap-1 py-1">
-                  <ActionConfirmingDialog
-                    title={t("admin.users_list.delete_user")}
-                    description={t(
-                      "admin.users_list.delete_user_confirm_description",
-                      {
-                        name: u.name ?? "this user",
-                      },
-                    )}
-                    actionButton={(setDialogOpen) => (
-                      <ActionButton
-                        variant="destructive"
-                        loading={isDeletionPending}
-                        onClick={async () => {
-                          await deleteUser({ userId: u.id });
-                          setDialogOpen(false);
-                        }}
-                      >
-                        Delete
-                      </ActionButton>
-                    )}
-                  >
-                    <ButtonWithTooltip
-                      tooltip={t("admin.users_list.delete_user")}
-                      variant="outline"
-                      disabled={session!.user.id == u.id}
-                    >
-                      <Trash size={16} color="red" />
-                    </ButtonWithTooltip>
-                  </ActionConfirmingDialog>
-                  <ResetPasswordDialog userId={u.id}>
-                    <ButtonWithTooltip
-                      tooltip={t("admin.users_list.reset_password")}
-                      variant="outline"
-                      disabled={session!.user.id == u.id}
-                    >
-                      <KeyRound size={16} color="red" />
-                    </ButtonWithTooltip>
-                  </ResetPasswordDialog>
-                  <UpdateUserDialog
-                    userId={u.id}
-                    currentRole={u.role!}
-                    currentQuota={u.bookmarkQuota}
-                    currentStorageQuota={u.storageQuota}
-                  >
-                    <ButtonWithTooltip
-                      tooltip="Edit User"
-                      variant="outline"
-                      disabled={session!.user.id == u.id}
-                    >
-                      <Pencil size={16} color="red" />
-                    </ButtonWithTooltip>
-                  </UpdateUserDialog>
-                </TableCell>
-              </TableRow>
+              <UserRow
+                key={u.id}
+                user={u}
+                stats={userStats[u.id]}
+                isSelf={session!.user.id == u.id}
+                t={t}
+                openDialog={openDialog}
+              />
             ))}
           </TableBody>
         </Table>
       </div>
+      {selectedUser && (
+        <>
+          <ActionConfirmingDialog
+            open={activeDialog === "delete"}
+            setOpen={setDialogOpen("delete")}
+            title={t("admin.users_list.delete_user")}
+            description={t("admin.users_list.delete_user_confirm_description", {
+              name: selectedUser.name ?? "this user",
+            })}
+            actionButton={(setOpen) => (
+              <ActionButton
+                variant="destructive"
+                loading={isDeletionPending}
+                onClick={async () => {
+                  await deleteUser({ userId: selectedUser.id });
+                  setOpen(false);
+                }}
+              >
+                Delete
+              </ActionButton>
+            )}
+          />
+          <ResetPasswordDialog
+            key={`reset-${selectedUser.id}`}
+            userId={selectedUser.id}
+            open={activeDialog === "resetPassword"}
+            setOpen={setDialogOpen("resetPassword")}
+          />
+          <UpdateUserDialog
+            key={`edit-${selectedUser.id}`}
+            userId={selectedUser.id}
+            currentRole={selectedUser.role!}
+            currentQuota={selectedUser.bookmarkQuota}
+            currentStorageQuota={selectedUser.storageQuota}
+            open={activeDialog === "edit"}
+            setOpen={setDialogOpen("edit")}
+          />
+        </>
+      )}
     </AdminCard>
   );
 }
