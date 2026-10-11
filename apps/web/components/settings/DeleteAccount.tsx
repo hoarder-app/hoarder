@@ -190,7 +190,7 @@ export function DeleteAccount() {
           </ActionButton>
         )}
       >
-        <Button variant="destructive" className="w-full">
+        <Button variant="destructiveOutline">
           <Trash2 className="mr-2 h-4 w-4" />
           Delete Account
         </Button>
