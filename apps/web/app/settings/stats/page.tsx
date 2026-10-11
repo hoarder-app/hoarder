@@ -120,27 +120,41 @@ function ColumnChart({
   data,
   labels,
   axisLabels,
+  summary,
 }: {
   title: string;
   data: number[];
   labels: string[];
   axisLabels: string[];
+  // When set, counts are shown on hover with this as the default text.
+  // Otherwise every count is shown above its bar.
+  summary?: string;
 }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const maxValue = Math.max(...data, 0);
-  const shownIndex = activeIndex ?? data.indexOf(maxValue);
+  const showValues = summary === undefined;
   return (
     <div className="space-y-3">
       <div className="flex items-baseline justify-between gap-3">
         <h4 className="text-sm font-medium">{title}</h4>
-        <span className="text-xs text-muted-foreground">
-          {labels[shownIndex]}{" "}
-          <span className="font-medium tabular-nums text-foreground">
-            {data[shownIndex]}
+        {!showValues && (
+          <span className="text-xs text-muted-foreground">
+            {activeIndex !== null ? (
+              <>
+                {labels[activeIndex]}{" "}
+                <span className="font-medium tabular-nums text-foreground">
+                  {data[activeIndex]}
+                </span>
+              </>
+            ) : (
+              summary
+            )}
           </span>
-        </span>
+        )}
       </div>
       <div
+        role={showValues ? undefined : "img"}
+        aria-label={showValues ? undefined : summary}
         className={cn(
           "flex h-32 items-end",
           data.length > 12 ? "gap-1" : "gap-3",
@@ -148,32 +162,34 @@ function ColumnChart({
         onMouseLeave={() => setActiveIndex(null)}
       >
         {data.map((value, index) => (
-          <button
+          <div
             key={index}
-            type="button"
-            aria-label={`${labels[index]}: ${value}`}
-            className="flex h-full flex-1 items-end justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-            onMouseEnter={() => setActiveIndex(index)}
-            onFocus={() => setActiveIndex(index)}
-            onBlur={() => setActiveIndex(null)}
-            onClick={() => setActiveIndex(index)}
+            className="flex h-full flex-1 flex-col items-center gap-1"
+            onMouseEnter={showValues ? undefined : () => setActiveIndex(index)}
           >
-            <div
-              className={cn(
-                "w-full max-w-8 rounded-t-sm transition-opacity",
-                value > 0 ? "bg-primary" : "bg-muted",
-              )}
-              style={{
-                height: `${maxValue > 0 ? Math.max(2, (value / maxValue) * 100) : 2}%`,
-                opacity:
-                  activeIndex !== null && activeIndex !== index
-                    ? 0.3
-                    : value > 0
-                      ? 0.4 + (value / maxValue) * 0.6
-                      : 1,
-              }}
-            />
-          </button>
+            {showValues && (
+              <span className="text-xs tabular-nums text-muted-foreground">
+                {value}
+              </span>
+            )}
+            <div className="flex w-full flex-1 items-end justify-center">
+              <div
+                className={cn(
+                  "w-full max-w-8 rounded-t-sm transition-opacity",
+                  value > 0 ? "bg-primary" : "bg-muted",
+                )}
+                style={{
+                  height: `${maxValue > 0 ? Math.max(2, (value / maxValue) * 100) : 2}%`,
+                  opacity:
+                    activeIndex !== null && activeIndex !== index
+                      ? 0.3
+                      : value > 0
+                        ? 0.4 + (value / maxValue) * 0.6
+                        : 1,
+                }}
+              />
+            </div>
+          </div>
         ))}
       </div>
       <div
@@ -338,6 +354,9 @@ export default function StatsPage() {
     (_, hour) =>
       stats.bookmarkingActivity.byHour.find((h) => h.hour === hour)?.count ?? 0,
   );
+  const maxHourCount = Math.max(...activityByHour);
+  const busiestHour =
+    maxHourCount > 0 ? activityByHour.indexOf(maxHourCount) : undefined;
   const typeCounts = [
     {
       label: t("settings.stats.bookmark_types.links"),
@@ -470,6 +489,13 @@ export default function StatsPage() {
                 data={activityByHour}
                 labels={hourLabels}
                 axisLabels={[0, 6, 12, 18].map((hour) => hourLabels[hour])}
+                summary={
+                  busiestHour !== undefined
+                    ? t("settings.stats.activity_patterns.busiest_around", {
+                        hour: hourLabels[busiestHour],
+                      })
+                    : ""
+                }
               />
             </div>
           </div>
