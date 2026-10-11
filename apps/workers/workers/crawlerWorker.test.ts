@@ -13,9 +13,15 @@ import serverConfig from "@karakeep/shared/config";
 import logger from "@karakeep/shared/logger";
 import { QuotaApproved } from "@karakeep/shared/storageQuota";
 
-import { archiveWebpage } from "./assetStorage";
+import { archiveWebpage, crawlLogger } from "./crawlerWorker";
 
 vi.mock("@karakeep/db", () => ({ db: {} }));
+vi.mock("metrics", () => ({}));
+vi.mock("utils", () => ({}));
+vi.mock("workerTracing", () => ({}));
+vi.mock("workerUtils", () => ({}));
+vi.mock("./utils/browser", () => ({}));
+vi.mock("@karakeep/trpc/models/webhooks.service", () => ({}));
 vi.mock("network", () => ({
   fetchWithProxy: vi.fn(),
   getBookmarkDomain: (url: string) => new URL(url).hostname,
@@ -33,6 +39,7 @@ vi.mock("@karakeep/shared/config", () => ({
   },
 }));
 vi.mock("@karakeep/shared-server", () => ({
+  ASSET_TYPES: { TEXT_HTML: "text/html" },
   getTracer: vi.fn(),
   withSpan: (
     _tracer: unknown,
@@ -55,7 +62,9 @@ const path = require("node:path");
 const args = process.argv.slice(2);
 const output = args[args.indexOf("-o") + 1];
 fs.writeFileSync(path.join(os.tmpdir(), "monolith-" + path.basename(output)), "cached media");
-fs.writeFileSync(output, "<html>archived page</html>");
+if (process.env.ARCHIVE_TEST_MODE !== "no-output") {
+  fs.writeFileSync(output, "<html>archived page</html>");
+}
 fs.writeFileSync(path.join(process.env.ARCHIVE_TEST_READY, path.basename(output)), output);
 if (process.env.ARCHIVE_TEST_MODE === "fail") process.exit(1);
 if (process.env.ARCHIVE_TEST_MODE === "wait") setInterval(() => {}, 1000);
@@ -68,12 +77,22 @@ let assetsDir: string;
 
 function archive(signal = new AbortController().signal) {
   return archiveWebpage(
+    {
+      jobId: "job",
+      bookmarkId: "bookmark",
+      userId: "user",
+      url: "https://example.com",
+      abortSignal: signal,
+      runProxy: {
+        httpProxy: undefined,
+        httpsProxy: undefined,
+        noProxy: undefined,
+      },
+      browserCrawlingEnabled: false,
+      log: crawlLogger("job"),
+    },
     "<html>page</html>",
     "https://example.com",
-    "user",
-    "job",
-    signal,
-    { httpProxy: undefined, httpsProxy: undefined, noProxy: undefined },
   );
 }
 
@@ -126,30 +145,58 @@ describe("archiveWebpage temporary files", () => {
     expect(await fs.readdir(tempDir)).toEqual([]);
   });
 
-  it("cleans up and propagates nonzero subprocess exits", async () => {
+  it("cleans up and returns null for nonzero subprocess exits", async () => {
     vi.stubEnv("ARCHIVE_TEST_MODE", "fail");
-    await expect(archive()).rejects.toMatchObject({ exitCode: 1 });
+    await expect(archive()).resolves.toBeNull();
+    expect(logger.error).toHaveBeenCalledWith(
+      expect.stringContaining("Failed to archive the page:"),
+    );
     expect(saveAssetFromFile).not.toHaveBeenCalled();
     expect(await fs.readdir(tempDir)).toEqual([]);
   });
 
-  it("cleans up when canceled after the child writes temporary files", async () => {
-    vi.stubEnv("ARCHIVE_TEST_MODE", "wait");
-    const controller = new AbortController();
-    const rejected = expect(archive(controller.signal)).rejects.toMatchObject({
-      isCanceled: true,
-    });
-    try {
-      await vi.waitFor(async () =>
-        expect(await fs.readdir(readyDir)).toHaveLength(1),
-      );
-    } finally {
-      controller.abort();
-      await rejected;
-    }
+  it("cleans up and returns null when Monolith cannot be spawned", async () => {
+    await fs.rm(path.join(scratch, "bin", "monolith"));
+    vi.stubEnv("PATH", path.join(scratch, "bin"));
+    await expect(archive()).resolves.toBeNull();
     expect(saveAssetFromFile).not.toHaveBeenCalled();
     expect(await fs.readdir(tempDir)).toEqual([]);
   });
+
+  it("cleans up when the archive output is missing", async () => {
+    vi.stubEnv("ARCHIVE_TEST_MODE", "no-output");
+    await expect(archive()).rejects.toMatchObject({ code: "ENOENT" });
+    expect(saveAssetFromFile).not.toHaveBeenCalled();
+    expect(await fs.readdir(tempDir)).toEqual([]);
+  });
+
+  it("preserves an already aborted signal's reason and cleans up", async () => {
+    const reason = new Error("job canceled");
+    await expect(archive(AbortSignal.abort(reason))).rejects.toBe(reason);
+    expect(saveAssetFromFile).not.toHaveBeenCalled();
+    expect(await fs.readdir(tempDir)).toEqual([]);
+  });
+
+  it.each(["AbortError", "TimeoutError"])(
+    "cleans up after %s once the child writes temporary files",
+    async (name) => {
+      vi.stubEnv("ARCHIVE_TEST_MODE", "wait");
+      const controller = new AbortController();
+      const reason = new DOMException("job interrupted", name);
+      const rejected = expect(archive(controller.signal)).rejects.toBe(reason);
+      try {
+        await vi.waitFor(
+          async () => expect(await fs.readdir(readyDir)).toHaveLength(1),
+          { timeout: 3000 },
+        );
+      } finally {
+        controller.abort(reason);
+        await rejected;
+      }
+      expect(saveAssetFromFile).not.toHaveBeenCalled();
+      expect(await fs.readdir(tempDir)).toEqual([]);
+    },
+  );
 
   it("cleans up if saving the archive throws", async () => {
     const error = new Error("storage unavailable");
@@ -213,12 +260,12 @@ describe("archiveWebpage temporary files", () => {
   it("keeps concurrent archives isolated while one is canceled", async () => {
     vi.stubEnv("ARCHIVE_TEST_MODE", "wait");
     const controller = new AbortController();
-    const rejected = expect(archive(controller.signal)).rejects.toMatchObject({
-      isCanceled: true,
-    });
+    const reason = new Error("job timeout");
+    const rejected = expect(archive(controller.signal)).rejects.toBe(reason);
     try {
-      await vi.waitFor(async () =>
-        expect(await fs.readdir(readyDir)).toHaveLength(1),
+      await vi.waitFor(
+        async () => expect(await fs.readdir(readyDir)).toHaveLength(1),
+        { timeout: 3000 },
       );
       const [runningId] = await fs.readdir(readyDir);
       const runningPath = await fs.readFile(
@@ -235,7 +282,7 @@ describe("archiveWebpage temporary files", () => {
         path.basename(path.dirname(runningPath)),
       ]);
     } finally {
-      controller.abort();
+      controller.abort(reason);
       await rejected;
     }
     expect(await fs.readdir(tempDir)).toEqual([]);

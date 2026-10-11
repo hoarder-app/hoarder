@@ -185,6 +185,20 @@ export default function Dashboard() {
         }}
       />
       <Stack.Screen
+        name="lists/[slug]/sharing"
+        options={{
+          ...formSheetSurfaceOptions,
+          headerTitle: "Sharing & Access",
+          headerLargeTitle: false,
+          headerTransparent: false,
+          presentation: Platform.select({
+            ios: "formSheet" as const,
+            default: "modal" as const,
+          }),
+          sheetGrabberVisible: true,
+        }}
+      />
+      <Stack.Screen
         name="lists/select-parent"
         options={{
           headerTitle: "Parent List",

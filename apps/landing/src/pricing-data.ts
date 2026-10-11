@@ -30,8 +30,8 @@ export const PRICING_TIERS: readonly PricingTier[] = [
     period: "",
     description: "Trying Karakeep out",
     features: [
-      "10 bookmarks",
-      "20MB storage",
+      "50 bookmarks",
+      "100MB storage",
       "Mobile & web apps",
       "Browser extensions",
     ],

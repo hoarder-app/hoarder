@@ -4,6 +4,7 @@
 // contexts so leaked ones eventually get closed.
 import * as dns from "dns";
 import { promises as fs } from "fs";
+import { createRequire } from "node:module";
 import * as path from "node:path";
 import * as os from "os";
 import { PlaywrightBlocker } from "@ghostery/adblocker-playwright";
@@ -11,9 +12,14 @@ import { Mutex } from "async-mutex";
 import { exitAbortController } from "exit";
 import { fetchWithProxy } from "network";
 import type { RunProxyConfig } from "network";
-import { Browser, BrowserContext, BrowserContextOptions } from "playwright";
-import { chromium } from "playwright-extra";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
+// patchright is a drop-in Playwright fork that drives Chrome without enabling
+// the CDP Runtime domain, the most widely checked automation signal.
+import {
+  Browser,
+  BrowserContext,
+  BrowserContextOptions,
+  chromium,
+} from "patchright";
 import { raceWith, timeoutRace } from "utils";
 import { z } from "zod";
 
@@ -23,7 +29,10 @@ import { setUrlHostnameFromResolvedAddress } from "@karakeep/shared/utils/url";
 import { tryCatch } from "@karakeep/shared/tryCatch";
 
 import { loadAutoconsent } from "./autoconsent";
-import { redactUrlCredentials } from "./utils";
+import {
+  normalizeBrowserUserAgent,
+  redactUrlCredentials,
+} from "./crawlerUtils";
 
 interface Cookie {
   name: string;
@@ -104,6 +113,36 @@ export function getPlaywrightProxyConfig(
   };
 }
 
+const browserUserAgents = new WeakMap<Browser, Promise<string | undefined>>();
+
+/**
+ * Returns the user agent to use for crawl contexts, derived from the connected
+ * browser so it always matches the browser's real version, platform, and
+ * client hints. Resolves to undefined (keep the browser's default) if the
+ * browser can't be queried.
+ */
+export function getBrowserUserAgent(
+  browser: Browser,
+): Promise<string | undefined> {
+  let userAgent = browserUserAgents.get(browser);
+  if (!userAgent) {
+    userAgent = (async () => {
+      const session = await browser.newBrowserCDPSession();
+      try {
+        const version = await session.send("Browser.getVersion");
+        return normalizeBrowserUserAgent(version.userAgent);
+      } finally {
+        await session.detach().catch(() => undefined);
+      }
+    })().catch((e: unknown) => {
+      logger.warn(`[Crawler] Failed to read the browser's user agent: ${e}`);
+      return undefined;
+    });
+    browserUserAgents.set(browser, userAgent);
+  }
+  return userAgent;
+}
+
 /**
  * Reaps browser contexts that have been open longer than the max job timeout.
  * This is a safety net for cases where context.close() hangs or is never called.
@@ -160,6 +199,21 @@ function startContextReaper() {
   );
 }
 
+/**
+ * The user agent to send when connecting to a remote Playwright server.
+ * Playwright servers (and browserless, which picks the server version to run
+ * from it) read the client's version from a `Playwright/<x.y.z>` user agent,
+ * but patchright's version carries a "v" prefix ("v1.59.4") that defeats both:
+ * browserless falls back to its newest, protocol-incompatible Playwright and
+ * every crawl hangs. Advertise the bare Playwright version patchright tracks.
+ */
+function getPlaywrightClientUserAgent(): string {
+  const { version } = createRequire(import.meta.url)(
+    "patchright/package.json",
+  ) as { version: string };
+  return `Playwright/${version.replace(/^v/, "")}`;
+}
+
 export async function startBrowserInstance() {
   if (serverConfig.crawler.browserWebSocketUrl) {
     logger.info(
@@ -167,6 +221,7 @@ export async function startBrowserInstance() {
     );
     return await chromium.connect(serverConfig.crawler.browserWebSocketUrl, {
       timeout: 5000,
+      headers: { "User-Agent": getPlaywrightClientUserAgent() },
     });
   } else if (serverConfig.crawler.browserWebUrl) {
     logger.info(
@@ -267,12 +322,11 @@ async function loadCookiesFromFile(): Promise<void> {
 }
 
 /**
- * One-time setup of the crawler's browser environment: stealth plugin,
- * adblocker, the shared browser connection (unless connecting on demand),
- * cookies, and the stale-context reaper.
+ * One-time setup of the crawler's browser environment: adblocker, the shared
+ * browser connection (unless connecting on demand), cookies, and the
+ * stale-context reaper.
  */
 export async function initializeBrowserEnvironment(): Promise<void> {
-  chromium.use(StealthPlugin());
   await loadAdblocker();
   loadAutoconsent();
   if (!serverConfig.crawler.browserConnectOnDemand) {
