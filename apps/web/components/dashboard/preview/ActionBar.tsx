@@ -5,6 +5,7 @@ import { toast } from "@/components/ui/sonner";
 import {
   Tooltip,
   TooltipContent,
+  TooltipPortal,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useTranslation } from "@/lib/i18n/client";
@@ -71,7 +72,9 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             <Pencil className="size-[18px]" size={18} strokeWidth={1.5} />
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="bottom">{t("actions.edit")}</TooltipContent>
+        <TooltipPortal>
+          <TooltipContent>{t("actions.edit")}</TooltipContent>
+        </TooltipPortal>
       </Tooltip>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
@@ -95,11 +98,13 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             />
           </ActionButton>
         </TooltipTrigger>
-        <TooltipContent side="bottom">
-          {bookmark.favourited
-            ? t("actions.unfavorite")
-            : t("actions.favorite")}
-        </TooltipContent>
+        <TooltipPortal>
+          <TooltipContent>
+            {bookmark.favourited
+              ? t("actions.unfavorite")
+              : t("actions.favorite")}
+          </TooltipContent>
+        </TooltipPortal>
       </Tooltip>
       <Tooltip delayDuration={0}>
         <TooltipTrigger asChild>
@@ -123,9 +128,11 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             />
           </ActionButton>
         </TooltipTrigger>
-        <TooltipContent side="bottom">
-          {bookmark.archived ? t("actions.unarchive") : t("actions.archive")}
-        </TooltipContent>
+        <TooltipPortal>
+          <TooltipContent>
+            {bookmark.archived ? t("actions.unarchive") : t("actions.archive")}
+          </TooltipContent>
+        </TooltipPortal>
       </Tooltip>
       <Tooltip delayDuration={0}>
         <DeleteBookmarkConfirmationDialog
@@ -143,7 +150,9 @@ export default function ActionBar({ bookmark }: { bookmark: ZBookmark }) {
             <Trash2 className="size-[18px]" size={18} strokeWidth={1.5} />
           </Button>
         </TooltipTrigger>
-        <TooltipContent side="bottom">{t("actions.delete")}</TooltipContent>
+        <TooltipPortal>
+          <TooltipContent>{t("actions.delete")}</TooltipContent>
+        </TooltipPortal>
       </Tooltip>
       <BookmarkOptions
         bookmark={bookmark}
