@@ -312,7 +312,7 @@ export function ConditionBuilder({
 
   const conditionSelector = (
     <Select value={value.type} onValueChange={handleTypeChange}>
-      <SelectTrigger className="ml-2 h-8 border-none bg-transparent px-2">
+      <SelectTrigger className="ml-2 h-8 border-none bg-transparent px-2 shadow-none dark:bg-transparent dark:hover:bg-transparent">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
