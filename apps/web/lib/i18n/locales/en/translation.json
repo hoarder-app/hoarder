@@ -784,6 +784,7 @@
     }
   },
   "options": {
+    "theme": "Theme",
     "dark_mode": "Dark Mode",
     "light_mode": "Light Mode",
     "system_mode": "System Mode",

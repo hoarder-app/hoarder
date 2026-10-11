@@ -3,7 +3,6 @@
 import { useMemo } from "react";
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
-import { useToggleTheme } from "@/components/theme-provider";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,6 +16,7 @@ import { useSession } from "@/lib/auth/client";
 import { useTranslation } from "@/lib/i18n/client";
 import { useInBookmarkGridStore } from "@/lib/store/useInBookmarkGridStore";
 import { useKeyboardNavigationStore } from "@/lib/store/useKeyboardNavigationStore";
+import { cn } from "@/lib/utils";
 import {
   BookOpen,
   Keyboard,
@@ -28,6 +28,7 @@ import {
   Settings,
   Shield,
   Sun,
+  SunMoon,
   Twitter,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -36,37 +37,51 @@ import { useWhoAmI } from "@karakeep/shared-react/hooks/users";
 
 import { AdminNoticeBadge } from "../../admin/AdminNotices";
 
-function DarkModeToggle() {
-  const { t } = useTranslation();
-  const { theme } = useTheme();
+const THEME_OPTIONS = [
+  { value: "light", icon: Sun, label: "options.light_mode" },
+  { value: "dark", icon: Moon, label: "options.dark_mode" },
+  { value: "system", icon: Laptop, label: "options.system_mode" },
+] as const;
 
-  if (theme == "system") {
-    return (
-      <>
-        <Sun className="size-4" />
-        <span>{t("options.light_mode")}</span>
-      </>
-    );
-  } else if (theme == "light") {
-    return (
-      <>
-        <Moon className="size-4" />
-        <span>{t("options.dark_mode")}</span>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <Laptop className="size-4" />
-        <span>{t("options.system_mode")}</span>
-      </>
-    );
-  }
+function ThemeSelector() {
+  const { t } = useTranslation();
+  const { theme, setTheme } = useTheme();
+
+  return (
+    <div className="flex items-center justify-between gap-2 px-2 py-1 text-sm">
+      <div className="flex items-center gap-2">
+        <SunMoon className="size-4 text-muted-foreground" />
+        {t("options.theme")}
+      </div>
+      <div className="flex items-center gap-0.5 rounded-md bg-muted p-0.5">
+        {THEME_OPTIONS.map(({ value, icon: Icon, label }) => (
+          <DropdownMenuItem
+            key={value}
+            role="menuitemradio"
+            aria-checked={theme === value}
+            aria-label={t(label)}
+            title={t(label)}
+            // Keep the menu open so the change can be previewed
+            onSelect={(e) => {
+              e.preventDefault();
+              setTheme(value);
+            }}
+            className={cn(
+              "rounded px-2 py-1 focus:bg-background/60",
+              theme === value &&
+                "bg-background shadow-sm focus:bg-background [&_svg]:text-foreground",
+            )}
+          >
+            <Icon className="size-3.5" />
+          </DropdownMenuItem>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default function SidebarProfileOptions() {
   const { t } = useTranslation();
-  const toggleTheme = useToggleTheme();
   const { data: session } = useSession();
   const { data: whoami } = useWhoAmI();
   const router = useRouter();
@@ -136,9 +151,7 @@ export default function SidebarProfileOptions() {
             {t("cleanups.cleanups")}
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={toggleTheme}>
-          <DarkModeToggle />
-        </DropdownMenuItem>
+        <ThemeSelector />
         {inBookmarkGrid && (
           <DropdownMenuItem onClick={() => setShortcutsDialogOpen(true)}>
             <Keyboard className="size-4" />
