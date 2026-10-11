@@ -33,6 +33,7 @@ interface ResetPasswordDialogProps {
   userId: string;
   open: boolean;
   setOpen: (open: boolean) => void;
+  onCloseAutoFocus?: (e: Event) => void;
 }
 
 type ResetPasswordSchema = z.infer<typeof resetPasswordSchema>;
@@ -41,6 +42,7 @@ export default function ResetPasswordDialog({
   userId,
   open: isOpen,
   setOpen: onOpenChange,
+  onCloseAutoFocus,
 }: ResetPasswordDialogProps) {
   const api = useTRPC();
   const form = useForm<ResetPasswordSchema>({
@@ -83,7 +85,7 @@ export default function ResetPasswordDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent onCloseAutoFocus={onCloseAutoFocus}>
         <DialogHeader>
           <DialogTitle>Reset Password</DialogTitle>
         </DialogHeader>

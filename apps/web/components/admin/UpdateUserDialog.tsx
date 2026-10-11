@@ -44,6 +44,7 @@ interface UpdateUserDialogProps {
   currentStorageQuota: number | null;
   open: boolean;
   setOpen: (open: boolean) => void;
+  onCloseAutoFocus?: (e: Event) => void;
 }
 export default function UpdateUserDialog({
   userId,
@@ -52,6 +53,7 @@ export default function UpdateUserDialog({
   currentStorageQuota,
   open: isOpen,
   setOpen: onOpenChange,
+  onCloseAutoFocus,
 }: UpdateUserDialogProps) {
   const api = useTRPC();
   const queryClient = useQueryClient();
@@ -98,7 +100,7 @@ export default function UpdateUserDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent onCloseAutoFocus={onCloseAutoFocus}>
         <DialogHeader>
           <DialogTitle>Edit User</DialogTitle>
         </DialogHeader>

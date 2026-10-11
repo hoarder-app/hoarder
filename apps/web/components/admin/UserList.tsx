@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useRef, useState } from "react";
 import { ActionButton } from "@/components/ui/action-button";
 import { ButtonWithTooltip } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
@@ -55,7 +55,11 @@ const UserRow = memo(function UserRow({
   stats: { numBookmarks: number; assetSizes: number };
   isSelf: boolean;
   t: TFunction;
-  openDialog: (dialog: UserDialog, user: AdminUser) => void;
+  openDialog: (
+    dialog: UserDialog,
+    user: AdminUser,
+    trigger: HTMLElement,
+  ) => void;
 }) {
   return (
     <TableRow>
@@ -79,7 +83,7 @@ const UserRow = memo(function UserRow({
           tooltip={t("admin.users_list.delete_user")}
           variant="outline"
           disabled={isSelf}
-          onClick={() => openDialog("delete", u)}
+          onClick={(e) => openDialog("delete", u, e.currentTarget)}
         >
           <Trash size={16} color="red" />
         </ButtonWithTooltip>
@@ -87,7 +91,7 @@ const UserRow = memo(function UserRow({
           tooltip={t("admin.users_list.reset_password")}
           variant="outline"
           disabled={isSelf}
-          onClick={() => openDialog("resetPassword", u)}
+          onClick={(e) => openDialog("resetPassword", u, e.currentTarget)}
         >
           <KeyRound size={16} color="red" />
         </ButtonWithTooltip>
@@ -95,7 +99,7 @@ const UserRow = memo(function UserRow({
           tooltip="Edit User"
           variant="outline"
           disabled={isSelf}
-          onClick={() => openDialog("edit", u)}
+          onClick={(e) => openDialog("edit", u, e.currentTarget)}
         >
           <Pencil size={16} color="red" />
         </ButtonWithTooltip>
@@ -118,13 +122,36 @@ export default function UsersSection() {
   // The selected user is kept around after the dialog closes so that the
   // closing animation still has content to render.
   const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
-  const [activeDialog, setActiveDialog] = useState<UserDialog | null>(null);
-  const openDialog = useCallback((dialog: UserDialog, user: AdminUser) => {
-    setSelectedUser(user);
-    setActiveDialog(dialog);
+  const [activeDialog, setActiveDialog] = useState<{
+    type: UserDialog;
+    userId: string;
+  } | null>(null);
+  // The dialogs aren't rendered with a trigger, so focus has to be returned
+  // to the row button manually when they close.
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const openDialog = useCallback(
+    (dialog: UserDialog, user: AdminUser, trigger: HTMLElement) => {
+      triggerRef.current = trigger;
+      setSelectedUser(user);
+      setActiveDialog({ type: dialog, userId: user.id });
+    },
+    [],
+  );
+  // Mutations can resolve after the admin moved on to another dialog, so only
+  // close the dialog if it's still the one this callback was created for.
+  const setDialogOpen =
+    (dialog: UserDialog, userId: string) => (open: boolean) =>
+      setActiveDialog((cur) =>
+        open
+          ? { type: dialog, userId }
+          : cur?.type === dialog && cur.userId === userId
+            ? null
+            : cur,
+      );
+  const restoreFocus = useCallback((e: Event) => {
+    e.preventDefault();
+    triggerRef.current?.focus();
   }, []);
-  const setDialogOpen = (dialog: UserDialog) => (open: boolean) =>
-    setActiveDialog(open ? dialog : null);
 
   const { mutateAsync: deleteUser, isPending: isDeletionPending } = useMutation(
     api.users.delete.mutationOptions({
@@ -183,8 +210,9 @@ export default function UsersSection() {
       {selectedUser && (
         <>
           <ActionConfirmingDialog
-            open={activeDialog === "delete"}
-            setOpen={setDialogOpen("delete")}
+            open={activeDialog?.type === "delete"}
+            setOpen={setDialogOpen("delete", selectedUser.id)}
+            onCloseAutoFocus={restoreFocus}
             title={t("admin.users_list.delete_user")}
             description={t("admin.users_list.delete_user_confirm_description", {
               name: selectedUser.name ?? "this user",
@@ -205,8 +233,9 @@ export default function UsersSection() {
           <ResetPasswordDialog
             key={`reset-${selectedUser.id}`}
             userId={selectedUser.id}
-            open={activeDialog === "resetPassword"}
-            setOpen={setDialogOpen("resetPassword")}
+            open={activeDialog?.type === "resetPassword"}
+            setOpen={setDialogOpen("resetPassword", selectedUser.id)}
+            onCloseAutoFocus={restoreFocus}
           />
           <UpdateUserDialog
             key={`edit-${selectedUser.id}`}
@@ -214,8 +243,9 @@ export default function UsersSection() {
             currentRole={selectedUser.role!}
             currentQuota={selectedUser.bookmarkQuota}
             currentStorageQuota={selectedUser.storageQuota}
-            open={activeDialog === "edit"}
-            setOpen={setDialogOpen("edit")}
+            open={activeDialog?.type === "edit"}
+            setOpen={setDialogOpen("edit", selectedUser.id)}
+            onCloseAutoFocus={restoreFocus}
           />
         </>
       )}
