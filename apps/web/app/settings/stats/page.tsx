@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { SettingsPage } from "@/components/settings/SettingsPage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -127,65 +126,39 @@ function ColumnChart({
   data: number[];
   labels: string[];
   axisLabels: string[];
-  // When set, counts are shown on hover with this as the default text.
-  // Otherwise every count is shown above its bar.
   summary?: string;
 }) {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const maxValue = Math.max(...data, 0);
-  const showValues = summary === undefined;
   return (
     <div className="space-y-3">
       <div className="flex items-baseline justify-between gap-3">
         <h4 className="text-sm font-medium">{title}</h4>
-        {!showValues && (
-          <span className="text-xs text-muted-foreground">
-            {activeIndex !== null ? (
-              <>
-                {labels[activeIndex]}{" "}
-                <span className="font-medium tabular-nums text-foreground">
-                  {data[activeIndex]}
-                </span>
-              </>
-            ) : (
-              summary
-            )}
-          </span>
+        {summary && (
+          <span className="text-xs text-muted-foreground">{summary}</span>
         )}
       </div>
       <div
-        role={showValues ? undefined : "img"}
-        aria-label={showValues ? undefined : summary}
+        role="img"
+        aria-label={`${title}: ${data.map((value, index) => `${labels[index]} ${value}`).join(", ")}`}
         className={cn(
           "flex h-32 items-end",
           data.length > 12 ? "gap-1" : "gap-3",
         )}
-        onMouseLeave={() => setActiveIndex(null)}
       >
         {data.map((value, index) => (
           <div
             key={index}
-            className="flex h-full flex-1 flex-col items-center gap-1"
-            onMouseEnter={showValues ? undefined : () => setActiveIndex(index)}
+            className="flex h-full flex-1 items-end justify-center"
           >
-            {showValues && (
-              <span className="text-xs tabular-nums text-muted-foreground">
-                {value}
-              </span>
-            )}
-            <div className="flex w-full flex-1 items-end justify-center">
-              <div
-                className={cn(
-                  "w-full max-w-8 rounded-t-sm transition-opacity",
-                  value > 0 ? "bg-primary" : "bg-muted",
-                )}
-                style={{
-                  height: `${maxValue > 0 ? Math.max(2, (value / maxValue) * 100) : 2}%`,
-                  opacity:
-                    activeIndex !== null && activeIndex !== index ? 0.3 : 1,
-                }}
-              />
-            </div>
+            <div
+              className={cn(
+                "w-full max-w-8 rounded-t-sm",
+                value > 0 ? "bg-primary" : "bg-muted",
+              )}
+              style={{
+                height: `${maxValue > 0 ? Math.max(2, (value / maxValue) * 100) : 2}%`,
+              }}
+            />
           </div>
         ))}
       </div>
@@ -492,7 +465,7 @@ export default function StatsPage() {
                     ? t("settings.stats.activity_patterns.busiest_around", {
                         hour: hourLabels[busiestHour],
                       })
-                    : ""
+                    : undefined
                 }
               />
             </div>
