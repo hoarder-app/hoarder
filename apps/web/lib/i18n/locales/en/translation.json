@@ -236,7 +236,8 @@
       },
       "activity_patterns": {
         "activity_by_hour": "Activity by Hour",
-        "activity_by_day": "Activity by Day"
+        "activity_by_day": "Activity by Day",
+        "busiest_around": "Busiest around {{hour}}"
       },
       "storage_breakdown": {
         "title": "Storage Breakdown"
