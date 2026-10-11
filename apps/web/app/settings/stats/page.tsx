@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { SettingsPage } from "@/components/settings/SettingsPage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -54,10 +55,26 @@ function formatNumber(num: number): string {
   return num.toString();
 }
 
-const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const hourLabels = Array.from({ length: 24 }, (_, i) =>
-  i === 0 ? "12 AM" : i < 12 ? `${i} AM` : i === 12 ? "12 PM" : `${i - 12} PM`,
-);
+function getDayNames(locale: string): string[] {
+  const formatter = new Intl.DateTimeFormat(locale, {
+    weekday: "short",
+    timeZone: "UTC",
+  });
+  // 2023-01-01 was a Sunday, matching the stats API's day 0.
+  return Array.from({ length: 7 }, (_, day) =>
+    formatter.format(Date.UTC(2023, 0, 1 + day)),
+  );
+}
+
+function getHourLabels(locale: string): string[] {
+  const formatter = new Intl.DateTimeFormat(locale, {
+    hour: "numeric",
+    timeZone: "UTC",
+  });
+  return Array.from({ length: 24 }, (_, hour) =>
+    formatter.format(Date.UTC(2023, 0, 1, hour)),
+  );
+}
 
 function formatSourceName(source: BookmarkSource | null): string {
   if (!source) return "Unknown";
@@ -99,40 +116,64 @@ function getSourceIcon(source: BookmarkSource | null): React.ReactNode {
 }
 
 function ColumnChart({
+  title,
   data,
   labels,
   axisLabels,
 }: {
+  title: string;
   data: number[];
   labels: string[];
   axisLabels: string[];
 }) {
+  const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const maxValue = Math.max(...data, 0);
+  const shownIndex = activeIndex ?? data.indexOf(maxValue);
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
+      <div className="flex items-baseline justify-between gap-3">
+        <h4 className="text-sm font-medium">{title}</h4>
+        <span className="text-xs text-muted-foreground">
+          {labels[shownIndex]}{" "}
+          <span className="font-medium tabular-nums text-foreground">
+            {data[shownIndex]}
+          </span>
+        </span>
+      </div>
       <div
         className={cn(
           "flex h-32 items-end",
           data.length > 12 ? "gap-1" : "gap-3",
         )}
+        onMouseLeave={() => setActiveIndex(null)}
       >
         {data.map((value, index) => (
-          <div
+          <button
             key={index}
-            title={`${labels[index]}: ${value}`}
-            className="flex h-full flex-1 items-end justify-center"
+            type="button"
+            aria-label={`${labels[index]}: ${value}`}
+            className="flex h-full flex-1 items-end justify-center rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            onMouseEnter={() => setActiveIndex(index)}
+            onFocus={() => setActiveIndex(index)}
+            onBlur={() => setActiveIndex(null)}
+            onClick={() => setActiveIndex(index)}
           >
             <div
               className={cn(
-                "w-full max-w-8 rounded-t-sm",
+                "w-full max-w-8 rounded-t-sm transition-opacity",
                 value > 0 ? "bg-primary" : "bg-muted",
               )}
               style={{
                 height: `${maxValue > 0 ? Math.max(2, (value / maxValue) * 100) : 2}%`,
-                opacity: value > 0 ? 0.4 + (value / maxValue) * 0.6 : 1,
+                opacity:
+                  activeIndex !== null && activeIndex !== index
+                    ? 0.3
+                    : value > 0
+                      ? 0.4 + (value / maxValue) * 0.6
+                      : 1,
               }}
             />
-          </div>
+          </button>
         ))}
       </div>
       <div
@@ -249,7 +290,7 @@ const sectionIconClass = "h-4 w-4 text-muted-foreground";
 
 export default function StatsPage() {
   const api = useTRPC();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { data: stats, isLoading } = useQuery(api.users.stats.queryOptions());
   const { data: userSettings } = useQuery(api.users.settings.queryOptions());
 
@@ -286,6 +327,8 @@ export default function StatsPage() {
     );
   }
 
+  const dayNames = getDayNames(i18n.language);
+  const hourLabels = getHourLabels(i18n.language);
   const activityByDay = dayNames.map(
     (_, day) =>
       stats.bookmarkingActivity.byDayOfWeek.find((d) => d.day === day)?.count ??
@@ -413,24 +456,20 @@ export default function StatsPage() {
             ))}
           </div>
           <div className="grid gap-8 md:grid-cols-5">
-            <div className="space-y-3 md:col-span-2">
-              <h4 className="text-sm font-medium">
-                {t("settings.stats.activity_patterns.activity_by_day")}
-              </h4>
+            <div className="md:col-span-2">
               <ColumnChart
+                title={t("settings.stats.activity_patterns.activity_by_day")}
                 data={activityByDay}
                 labels={dayNames}
                 axisLabels={dayNames}
               />
             </div>
-            <div className="space-y-3 md:col-span-3">
-              <h4 className="text-sm font-medium">
-                {t("settings.stats.activity_patterns.activity_by_hour")}
-              </h4>
+            <div className="md:col-span-3">
               <ColumnChart
+                title={t("settings.stats.activity_patterns.activity_by_hour")}
                 data={activityByHour}
                 labels={hourLabels}
-                axisLabels={["12 AM", "6 AM", "12 PM", "6 PM"]}
+                axisLabels={[0, 6, 12, 18].map((hour) => hourLabels[hour])}
               />
             </div>
           </div>
