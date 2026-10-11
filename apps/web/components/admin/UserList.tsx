@@ -83,6 +83,7 @@ const UserRow = memo(function UserRow({
           tooltip={t("admin.users_list.delete_user")}
           variant="outline"
           disabled={isSelf}
+          aria-haspopup="dialog"
           onClick={(e) => openDialog("delete", u, e.currentTarget)}
         >
           <Trash size={16} color="red" />
@@ -91,6 +92,7 @@ const UserRow = memo(function UserRow({
           tooltip={t("admin.users_list.reset_password")}
           variant="outline"
           disabled={isSelf}
+          aria-haspopup="dialog"
           onClick={(e) => openDialog("resetPassword", u, e.currentTarget)}
         >
           <KeyRound size={16} color="red" />
@@ -99,6 +101,7 @@ const UserRow = memo(function UserRow({
           tooltip="Edit User"
           variant="outline"
           disabled={isSelf}
+          aria-haspopup="dialog"
           onClick={(e) => openDialog("edit", u, e.currentTarget)}
         >
           <Pencil size={16} color="red" />
