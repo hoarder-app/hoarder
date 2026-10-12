@@ -33,7 +33,10 @@ export class LocalFileSystemAssetStore implements AssetStore {
     asset: Buffer;
     metadata: AssetMetadata;
   }) {
-    if (!SUPPORTED_ASSET_TYPES.has(metadata.contentType)) {
+    if (
+      !metadata.downloadOnly &&
+      !SUPPORTED_ASSET_TYPES.has(metadata.contentType)
+    ) {
       throw new Error("Unsupported asset type");
     }
     const assetDir = this.getAssetDir(userId, assetId);
@@ -59,7 +62,10 @@ export class LocalFileSystemAssetStore implements AssetStore {
     assetPath: string;
     metadata: AssetMetadata;
   }) {
-    if (!SUPPORTED_ASSET_TYPES.has(metadata.contentType)) {
+    if (
+      !metadata.downloadOnly &&
+      !SUPPORTED_ASSET_TYPES.has(metadata.contentType)
+    ) {
       throw new Error("Unsupported asset type");
     }
     const assetDir = this.getAssetDir(userId, assetId);
