@@ -33,6 +33,9 @@ patchedDependencies:
   # Android: don't drop shares that arrive while the app is being recreated after
   # process death, and don't replay the task's launch share on reopen (#513).
   expo-share-intent@8.0.1: patches/expo-share-intent@8.0.1.patch
+  # Detach service worker targets that Chrome reports without a browserContextId
+  # instead of failing an assertion that crashes connectOverCDP().
+  patchright-core@1.59.4: patches/patchright-core@1.59.4.patch
 
 # Docker builds can prune packages that use one of the root patches.
 allowUnusedPatches: true
