@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
-import { accounts, apiKeys } from "@karakeep/db/schema";
+import { accounts, apiKeys, mobilePairingTokens } from "@karakeep/db/schema";
 import { API_KEY_FULL_ACCESS_SCOPE } from "@karakeep/shared/types/apiKeys";
 
 import type { CustomTestContext } from "../testUtils";
@@ -756,6 +756,74 @@ describe("API Keys Routes", () => {
       const result = await api.validate({ apiKey: key });
 
       expect(result.success).toBe(true);
+    });
+  });
+
+  describe("mobile pairing", () => {
+    async function seedUser(db: CustomTestContext["db"], email: string) {
+      return await createTestUser(db, {
+        name: "Mobile User",
+        email,
+        password: "password123",
+      });
+    }
+
+    test<CustomTestContext>("a pairing token redeems for a working key once", async ({
+      db,
+      unauthedAPICaller,
+    }) => {
+      const user = await seedUser(db, "pair@test.com");
+
+      const { token } = await getApiCaller(
+        db,
+        user.id,
+        user.email,
+      ).apiKeys.createMobilePairingToken();
+      expect(token).toBeTruthy();
+
+      const created = await unauthedAPICaller.apiKeys.redeemMobilePairingToken({
+        token,
+      });
+      expect(created.key).toMatch(/^ak2_/);
+      expect(created.name).toBe("Mobile App");
+
+      // Single use.
+      await expect(
+        unauthedAPICaller.apiKeys.redeemMobilePairingToken({ token }),
+      ).rejects.toThrow();
+
+      // The issued key authenticates as the user.
+      const keyCaller = await getApiKeyCallerForPlainKey(db, created.key);
+      expect((await keyCaller.users.whoami()).id).toBe(user.id);
+    });
+
+    test<CustomTestContext>("unknown tokens are rejected", async ({
+      unauthedAPICaller,
+    }) => {
+      await expect(
+        unauthedAPICaller.apiKeys.redeemMobilePairingToken({
+          token: "not-a-real-token",
+        }),
+      ).rejects.toThrow();
+    });
+
+    test<CustomTestContext>("expired tokens are rejected", async ({
+      db,
+      unauthedAPICaller,
+    }) => {
+      const user = await seedUser(db, "pair-expired@test.com");
+      const { token } = await getApiCaller(
+        db,
+        user.id,
+        user.email,
+      ).apiKeys.createMobilePairingToken();
+
+      await db
+        .update(mobilePairingTokens)
+        .set({ expires: new Date(Date.now() - 1000) });
+      await expect(
+        unauthedAPICaller.apiKeys.redeemMobilePairingToken({ token }),
+      ).rejects.toThrow();
     });
   });
 });

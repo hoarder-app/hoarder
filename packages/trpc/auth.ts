@@ -35,6 +35,17 @@ function generateApiKeySecret() {
   };
 }
 
+// One-time token handed to a native app via a deep link after the user signs in
+// in a browser. Stored hashed; the plaintext only exists in the redirect.
+export function generateMobilePairingToken() {
+  const token = randomBytes(32).toString("base64url");
+  return { token, tokenHash: hashMobilePairingToken(token) };
+}
+
+export function hashMobilePairingToken(token: string) {
+  return createHash("sha256").update(token).digest("base64");
+}
+
 export async function regenerateApiKey(
   id: string,
   userId: string,

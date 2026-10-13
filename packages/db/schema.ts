@@ -297,6 +297,27 @@ export const passkeys = sqliteTable(
   ],
 );
 
+// One-time tokens used to hand an API key back to a native app after the user
+// authenticates in a browser (e.g. with a passkey), instead of putting the key
+// itself in a deep link. Single use and short lived.
+export const mobilePairingTokens = sqliteTable(
+  "mobilePairingToken",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    tokenHash: text("tokenHash").notNull().unique(),
+    expires: integer("expires", { mode: "timestamp" }).notNull(),
+    usedAt: integer("usedAt", { mode: "timestamp" }),
+    createdAt: createdAtField(),
+  },
+  (t) => [index("mobilePairingToken_userId_idx").on(t.userId)],
+);
+
 export const bookmarks = sqliteTable(
   "bookmarks",
   {
@@ -1243,6 +1264,16 @@ export const passkeysRelations = relations(passkeys, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export const mobilePairingTokensRelations = relations(
+  mobilePairingTokens,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [mobilePairingTokens.userId],
+      references: [users.id],
+    }),
+  }),
+);
 
 export const bookmarkListsRelations = relations(
   bookmarkLists,

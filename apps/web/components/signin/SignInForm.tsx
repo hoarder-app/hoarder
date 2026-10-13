@@ -15,7 +15,11 @@ import CredentialsForm from "./CredentialsForm";
 import OAuthAutoRedirect from "./OAuthAutoRedirect";
 import SignInProviderButton from "./SignInProviderButton";
 
-export default async function SignInForm() {
+export default async function SignInForm({
+  redirectTo = "/",
+}: {
+  redirectTo?: string;
+} = {}) {
   const providerValues = oauthProviders;
 
   return (
@@ -43,7 +47,7 @@ export default async function SignInForm() {
             </Alert>
           )}
 
-          <CredentialsForm />
+          <CredentialsForm redirectTo={redirectTo} />
 
           {providerValues && providerValues.length > 0 && (
             <>
@@ -57,6 +61,7 @@ export default async function SignInForm() {
                   <SignInProviderButton
                     key={provider.id}
                     provider={{ id: provider.id, name: provider.name }}
+                    redirectTo={redirectTo}
                   />
                 ))}
               </div>

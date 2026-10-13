@@ -680,6 +680,13 @@
       "when": 1791899078629,
       "tag": "0096_add_passkeys",
       "breakpoints": true
+    },
+    {
+      "idx": 97,
+      "version": "6",
+      "when": 1791901345199,
+      "tag": "0097_add_mobile_pairing_tokens",
+      "breakpoints": true
     }
   ]
 }

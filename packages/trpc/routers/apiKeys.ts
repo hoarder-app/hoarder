@@ -1,8 +1,8 @@
 import { TRPCError } from "@trpc/server";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 
-import { apiKeys } from "@karakeep/db/schema";
+import { apiKeys, mobilePairingTokens } from "@karakeep/db/schema";
 import { addLogFields, logEvent } from "@karakeep/shared-server";
 import serverConfig from "@karakeep/shared/config";
 import {
@@ -13,6 +13,8 @@ import {
 import {
   authenticateApiKey,
   generateApiKey,
+  generateMobilePairingToken,
+  hashMobilePairingToken,
   regenerateApiKey,
   validatePassword,
 } from "../auth";
@@ -32,6 +34,10 @@ const zApiKeySchema = z.object({
   createdAt: z.date(),
   scopes: zApiKeyScopesSchema,
 });
+
+// Short lived: the native app redeems it seconds after the browser redirects
+// back to its deep link.
+const MOBILE_PAIRING_TOKEN_TTL_MS = 5 * 60 * 1000;
 
 export const apiKeysAppRouter = router({
   create: sessionProcedure
@@ -204,6 +210,84 @@ export const apiKeysAppRouter = router({
         user.id,
         ctx.db,
         scopes,
+      );
+      addLogFields<"apiKey.create">({ "apiKey.id": created.id });
+      return created;
+    }),
+  // Mints a single-use token that a native app exchanges for an API key after
+  // the user signs in in a browser (e.g. with a passkey). Session-only: the
+  // browser must already be authenticated.
+  createMobilePairingToken: sessionProcedure
+    .output(z.object({ token: z.string(), expires: z.date() }))
+    .mutation(async ({ ctx }) => {
+      const { token, tokenHash } = generateMobilePairingToken();
+      const expires = new Date(Date.now() + MOBILE_PAIRING_TOKEN_TTL_MS);
+      await ctx.db.insert(mobilePairingTokens).values({
+        userId: ctx.user.id,
+        tokenHash,
+        expires,
+      });
+      return { token, expires };
+    }),
+  // Redeems a pairing token for an API key. Public because the app has no
+  // credentials yet; the token itself is the credential, is single use, and
+  // expires quickly.
+  redeemMobilePairingToken: publicProcedure
+    .use(
+      createRateLimitMiddleware({
+        name: "apiKey.redeemMobilePairing",
+        windowMs: 15 * 60 * 1000,
+        maxRequests: 20,
+      }),
+    )
+    .use(createEventLogMiddleware("apiKey.create"))
+    .input(
+      z.object({
+        token: z.string(),
+        keyName: z.string().optional(),
+      }),
+    )
+    .output(zApiKeySchema)
+    .mutation(async ({ input, ctx }) => {
+      const record = await ctx.db.query.mobilePairingTokens.findFirst({
+        where: eq(
+          mobilePairingTokens.tokenHash,
+          hashMobilePairingToken(input.token),
+        ),
+      });
+      if (!record || record.usedAt || record.expires < new Date()) {
+        throw new TRPCError({
+          message: "Invalid or expired pairing token",
+          code: "UNAUTHORIZED",
+        });
+      }
+      // Consume it: the conditional update makes the redemption atomic, so two
+      // concurrent requests can't both get a key.
+      const consumed = await ctx.db
+        .update(mobilePairingTokens)
+        .set({ usedAt: new Date() })
+        .where(
+          and(
+            eq(mobilePairingTokens.id, record.id),
+            isNull(mobilePairingTokens.usedAt),
+          ),
+        );
+      if (consumed.changes === 0) {
+        throw new TRPCError({
+          message: "Invalid or expired pairing token",
+          code: "UNAUTHORIZED",
+        });
+      }
+
+      addLogFields<"apiKey.create">({
+        "apiKey.source": "mobile_pairing",
+        "user.id": record.userId,
+      });
+      const created = await generateApiKey(
+        input.keyName ?? "Mobile App",
+        record.userId,
+        ctx.db,
+        [API_KEY_FULL_ACCESS_SCOPE],
       );
       addLogFields<"apiKey.create">({ "apiKey.id": created.id });
       return created;

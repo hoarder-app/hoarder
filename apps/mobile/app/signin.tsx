@@ -3,6 +3,7 @@ import { forwardRef, useRef, useState } from "react";
 import { ActivityIndicator, Pressable, TextInput, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import { Redirect, useRouter } from "expo-router";
+import * as Linking from "expo-linking";
 import * as WebBrowser from "expo-web-browser";
 import Logo from "@/components/Logo";
 import { TailwindResolver } from "@/components/TailwindResolver";
@@ -101,13 +102,55 @@ export default function Signin() {
       }),
     );
 
+  // Trades the one-time token from the browser sign-in deep link for an API key.
+  const { mutate: redeemPairingToken, isPending: pairingRequestIsPending } =
+    useMutation(
+      api.apiKeys.redeemMobilePairingToken.mutationOptions({
+        onSuccess: (resp) => {
+          setSettings({ ...settings, apiKey: resp.key, apiKeyId: resp.id });
+        },
+        onError: (e) => {
+          setError(getLoginErrorMessage(e, "Sign in failed"));
+        },
+      }),
+    );
+
   if (settings.apiKey) {
     return <Redirect href="dashboard" />;
   }
 
   const isPending =
-    userNamePasswordRequestIsPending || apiKeyValueRequestIsPending;
+    userNamePasswordRequestIsPending ||
+    apiKeyValueRequestIsPending ||
+    pairingRequestIsPending;
   const serverAddress = settings.address ?? DEFAULT_SERVER_ADDRESS;
+
+  // Opens the server's sign-in page in a browser so the user can authenticate
+  // with a passkey (or anything else). The page redirects back to the app's
+  // deep link with a one-time token that we exchange for an API key.
+  const onBrowserSignin = async () => {
+    if (!settings.address) {
+      setError("Server address is required");
+      return;
+    }
+    setError(undefined);
+    const url = `${serverAddress}/mobile-auth?redirectUrl=${encodeURIComponent(
+      "karakeep://signin",
+    )}`;
+    const result = await WebBrowser.openAuthSessionAsync(
+      url,
+      "karakeep://signin",
+    );
+    if (result.type !== "success") {
+      return;
+    }
+    const token = Linking.parse(result.url).queryParams?.pairingToken;
+    if (typeof token !== "string" || !token) {
+      return;
+    }
+    const randStr = (Math.random() + 1).toString(36).substring(5);
+    redeemPairingToken({ token, keyName: `Mobile App: (${randStr})` });
+  };
 
   const onSignUp = async () => {
     const signupUrl = `${serverAddress}/signup?redirectUrl=${encodeURIComponent("karakeep://signin")}&skipSessionRedirect=1`;
@@ -299,6 +342,17 @@ export default function Signin() {
               {loginType === LoginType.Password
                 ? "Use an API key instead"
                 : "Use your password instead"}
+            </Text>
+          </Pressable>
+          <Pressable
+            accessibilityRole="button"
+            onPress={onBrowserSignin}
+            disabled={isPending}
+            hitSlop={8}
+            className="active:opacity-60"
+          >
+            <Text className="text-sm text-muted-foreground">
+              Sign in with a passkey
             </Text>
           </Pressable>
           <Pressable

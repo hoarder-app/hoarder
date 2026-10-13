@@ -167,7 +167,7 @@ type EventLogInternal =
   | {
       ["event.name"]: "apiKey.create";
       "apiKey.id"?: string;
-      "apiKey.source"?: "session" | "exchange";
+      "apiKey.source"?: "session" | "exchange" | "mobile_pairing";
     }
   | {
       ["event.name"]: "search.query";

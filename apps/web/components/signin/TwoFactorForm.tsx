@@ -27,7 +27,11 @@ const codeSchema = z.object({
 // Shown after a password is accepted for an account with a second factor
 // enrolled. The two-factor cookie set by the sign-in call authorizes the
 // challenge, so no credentials are needed here.
-export default function TwoFactorForm() {
+export default function TwoFactorForm({
+  redirectTo = "/",
+}: {
+  redirectTo?: string;
+} = {}) {
   const { t } = useTranslation();
   const [error, setError] = useState("");
   const [useBackupCode, setUseBackupCode] = useState(false);
@@ -63,7 +67,7 @@ export default function TwoFactorForm() {
             }
             // The session cookie is set by the verification call; a full reload
             // makes sure every client picks it up.
-            router.replace("/");
+            router.replace(redirectTo);
             router.refresh();
           })}
           className="space-y-4"

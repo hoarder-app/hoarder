@@ -33,7 +33,11 @@ const signInSchema = z.object({
 const SIGNIN_FAILED = "Incorrect email or password";
 const OAUTH_FAILED = "OAuth login failed: ";
 
-export default function CredentialsForm() {
+export default function CredentialsForm({
+  redirectTo = "/",
+}: {
+  redirectTo?: string;
+} = {}) {
   const [signinError, setSigninError] = useState("");
   const [twoFactorRequired, setTwoFactorRequired] = useState(false);
   const router = useRouter();
@@ -55,7 +59,7 @@ export default function CredentialsForm() {
   });
 
   if (twoFactorRequired) {
-    return <TwoFactorForm />;
+    return <TwoFactorForm redirectTo={redirectTo} />;
   }
 
   if (clientConfig.auth.disablePasswordAuth) {
@@ -104,7 +108,7 @@ export default function CredentialsForm() {
               }
               return;
             }
-            router.replace("/");
+            router.replace(redirectTo);
           })}
           className="space-y-4"
         >
@@ -185,7 +189,7 @@ export default function CredentialsForm() {
             setSigninError(resp.error ?? t("signin.passkey_failed"));
             return;
           }
-          router.replace("/");
+          router.replace(redirectTo);
           router.refresh();
         }}
       >
