@@ -41,6 +41,19 @@ function writeOpenListIdsToStorage(ids: Set<string>): void {
   }
 }
 
+function collectSubtreeIds(node: ZBookmarkListTreeNode): string[] {
+  return node.children.flatMap((l) => [l.item.id, ...collectSubtreeIds(l)]);
+}
+
+function hasStoredOpenDescendant(
+  node: ZBookmarkListTreeNode,
+  ids: Set<string>,
+): boolean {
+  return node.children.some(
+    (l) => ids.has(l.item.id) || hasStoredOpenDescendant(l, ids),
+  );
+}
+
 function ListItem({
   node,
   render,
@@ -75,6 +88,9 @@ function ListItem({
 
   // clicks persist (storage), route derivations dont: the effect below
   // may open rows for the current route without writing anything.
+  // folding a row also forgets its subtree: a stored-open descendant
+  // would otherwise force this row back open on the next load,
+  // against the explicit fold.
   const handleOpenChange = (next: boolean) => {
     setOpen(next);
     const ids = readOpenListIdsFromStorage();
@@ -82,15 +98,21 @@ function ListItem({
       ids.add(node.item.id);
     } else {
       ids.delete(node.item.id);
+      for (const id of collectSubtreeIds(node)) {
+        ids.delete(id);
+      }
     }
     writeOpenListIdsToStorage(ids);
   };
-
   useEffect(() => {
+    const ids = readOpenListIdsFromStorage();
     setOpen(
       (curr) =>
         curr ||
-        readOpenListIdsFromStorage().has(node.item.id) ||
+        ids.has(node.item.id) ||
+        // a stored-open descendant implies its ancestors were open too:
+        // reopening them rebuilds the tree exactly as the user left it.
+        hasStoredOpenDescendant(node, ids) ||
         isAnyChildOpen(node, isOpenFunc),
     );
   }, [node, isOpenFunc]);
