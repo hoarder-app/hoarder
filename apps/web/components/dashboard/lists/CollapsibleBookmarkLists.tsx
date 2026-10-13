@@ -18,6 +18,29 @@ type RenderFunc = (params: {
 
 type IsOpenFunc = (list: ZBookmarkListTreeNode) => boolean;
 
+const OPEN_LISTS_STORAGE_KEY = "karakeep-open-lists";
+
+function readOpenListIdsFromStorage(): Set<string> {
+  if (typeof window === "undefined") return new Set();
+  try {
+    const stored = localStorage.getItem(OPEN_LISTS_STORAGE_KEY);
+    const parsed: unknown = stored ? JSON.parse(stored) : [];
+    if (!Array.isArray(parsed)) return new Set();
+    return new Set(parsed.filter((id): id is string => typeof id === "string"));
+  } catch {
+    return new Set();
+  }
+}
+
+function writeOpenListIdsToStorage(ids: Set<string>): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(OPEN_LISTS_STORAGE_KEY, JSON.stringify([...ids]));
+  } catch {
+    // storage full or unavailable -> fall back to session-only behavior.
+  }
+}
+
 function ListItem({
   node,
   render,
@@ -45,18 +68,44 @@ function ListItem({
     }
     return node.children.some((l) => isAnyChildOpen(l, isOpenFunc));
   };
+
+  // Initial render must match the server (which can't read localStorage),
+  // so stored opens are applied in the effect below, after hydration.
   const [open, setOpen] = useState(false);
+
+  // clicks persist (storage), route derivations dont: the effect below
+  // may open rows for the current route without writing anything.
+  const handleOpenChange = (next: boolean) => {
+    setOpen(next);
+    const ids = readOpenListIdsFromStorage();
+    if (next) {
+      ids.add(node.item.id);
+    } else {
+      ids.delete(node.item.id);
+    }
+    writeOpenListIdsToStorage(ids);
+  };
+
   useEffect(() => {
-    setOpen((curr) => curr || isAnyChildOpen(node, isOpenFunc));
+    setOpen(
+      (curr) =>
+        curr ||
+        readOpenListIdsFromStorage().has(node.item.id) ||
+        isAnyChildOpen(node, isOpenFunc),
+    );
   }, [node, isOpenFunc]);
 
   return (
-    <Collapsible open={open} onOpenChange={setOpen} className={className}>
+    <Collapsible
+      open={open}
+      onOpenChange={handleOpenChange}
+      className={className}
+    >
       {render({
         node,
         level: level + indentOffset,
         open,
-        onOpenChange: setOpen,
+        onOpenChange: handleOpenChange,
         numBookmarks: listStats?.get(node.item.id),
       })}
       <CollapsibleContent>
