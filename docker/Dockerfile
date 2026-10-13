@@ -63,13 +63,13 @@ COPY . .
 FROM base AS db_migrations_builder
 
 RUN cd packages/db && \
-    pnpm exec ncc build migrate.ts -o /db_migrations && \
+    pnpm --config.verify-deps-before-run=false exec ncc build migrate.ts -o /db_migrations && \
     cp -R drizzle /db_migrations
 
 ################# Web Builder ##############
 FROM base AS web_builder
 
-RUN (cd apps/web && pnpm exec next build --experimental-build-mode compile)
+RUN (cd apps/web && pnpm --config.verify-deps-before-run=false exec next build --experimental-build-mode compile)
 
 ################# Workers Builder ##############
 FROM base AS workers_builder

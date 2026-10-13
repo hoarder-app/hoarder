@@ -9,13 +9,16 @@ import { z } from "zod";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
-import { genericOAuth } from "better-auth/plugins";
+import { passkey } from "@better-auth/passkey";
+import { genericOAuth, twoFactor } from "better-auth/plugins";
 import type { GenericOAuthConfig } from "better-auth/plugins";
 
 import { db } from "@karakeep/db";
 import {
   accounts,
+  passkeys,
   sessions,
+  twoFactor as twoFactorTable,
   users,
   verificationTokens,
 } from "@karakeep/db/schema";
@@ -65,6 +68,23 @@ const ALLOWED_PATHS = new Set([
   "/change-password",
   "/sign-in/oauth2",
   "/oauth2/callback/:providerId",
+  // Two-factor (TOTP + backup codes) endpoints from the better-auth plugin.
+  "/two-factor/enable",
+  "/two-factor/disable",
+  "/two-factor/get-totp-uri",
+  "/two-factor/generate-backup-codes",
+  "/two-factor/verify-totp",
+  "/two-factor/verify-otp",
+  "/two-factor/verify-backup-code",
+  "/two-factor/send-otp",
+  // Passkey (WebAuthn) endpoints from the @better-auth/passkey plugin.
+  "/passkey/generate-register-options",
+  "/passkey/verify-registration",
+  "/passkey/generate-authenticate-options",
+  "/passkey/verify-authentication",
+  "/passkey/list-user-passkeys",
+  "/passkey/delete-passkey",
+  "/passkey/update-passkey",
 ]);
 
 const PASSWORD_PATHS = new Set([
@@ -86,6 +106,11 @@ const SESSION_PATHS = new Set([
   "/sign-out",
   "/sign-in/oauth2",
   "/oauth2/callback/:providerId",
+  // Completing a two-factor challenge finishes the login and creates a session.
+  "/two-factor/verify-totp",
+  "/two-factor/verify-backup-code",
+  // Verifying a passkey assertion creates a session.
+  "/passkey/verify-authentication",
 ]);
 
 const RATE_LIMITS: Record<string, RateLimitConfig> = {
@@ -124,6 +149,23 @@ const RATE_LIMITS: Record<string, RateLimitConfig> = {
     windowMs: 15 * 60 * 1000,
     maxRequests: 5,
   },
+  // The plugin also locks an account after repeated failures; this is the
+  // per-IP guard on top of that.
+  "/two-factor/verify-totp": {
+    name: "auth.verifyTotp",
+    windowMs: 15 * 60 * 1000,
+    maxRequests: 10,
+  },
+  "/two-factor/verify-backup-code": {
+    name: "auth.verifyBackupCode",
+    windowMs: 15 * 60 * 1000,
+    maxRequests: 10,
+  },
+  "/passkey/verify-authentication": {
+    name: "auth.verifyPasskey",
+    windowMs: 15 * 60 * 1000,
+    maxRequests: 10,
+  },
 };
 
 const zSignUpBody = z.object({
@@ -141,6 +183,7 @@ export interface AuthSession {
     email: string;
     image?: string | null;
     role: "admin" | "user";
+    twoFactorEnabled: boolean;
   };
   expires: string;
 }
@@ -427,6 +470,8 @@ export const auth = betterAuth({
       account: accounts,
       session: sessions,
       verificationToken: verificationTokens,
+      twoFactor: twoFactorTable,
+      passkey: passkeys,
     },
   }),
   session: {
@@ -586,7 +631,21 @@ export const auth = betterAuth({
   onAPIError: {
     errorURL: "/signin",
   },
-  plugins: oauthConfig ? [genericOAuth({ config: [oauthConfig] })] : [],
+  plugins: [
+    ...(oauthConfig ? [genericOAuth({ config: [oauthConfig] })] : []),
+    // TOTP 2FA + backup codes. Enrollment is verified before it's enabled, and
+    // the plugin locks an account after repeated failed second-factor attempts.
+    twoFactor({
+      issuer: "Karakeep",
+    }),
+    // WebAuthn passkeys. rpID/origin are pinned to the public URL so passkeys
+    // are scoped to Karakeep's own origin rather than defaulting to localhost.
+    passkey({
+      rpID: new URL(serverConfig.publicUrl).hostname,
+      rpName: "Karakeep",
+      origin: serverConfig.publicUrl,
+    }),
+  ],
 });
 
 async function fetchServerAuthSession(): Promise<AuthSession | null> {
@@ -618,6 +677,11 @@ async function fetchServerAuthSession(): Promise<AuthSession | null> {
       email: session.user.email,
       image: session.user.image,
       role: session.user.role === "admin" ? "admin" : "user",
+      // Added to the user model by the two-factor plugin; the plugin's type
+      // augmentation doesn't reach better-auth's session return type here.
+      twoFactorEnabled:
+        (session.user as { twoFactorEnabled?: boolean }).twoFactorEnabled ??
+        false,
     },
     expires: session.session.expiresAt.toISOString(),
   };

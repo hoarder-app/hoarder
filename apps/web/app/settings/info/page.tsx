@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import { ChangePassword } from "@/components/settings/ChangePassword";
 import { DeleteAccount } from "@/components/settings/DeleteAccount";
 import ReaderSettings from "@/components/settings/ReaderSettings";
+import PasskeySettings from "@/components/settings/PasskeySettings";
 import { SettingsPage } from "@/components/settings/SettingsPage";
 import UserAvatar from "@/components/settings/UserAvatar";
 import UserDetails from "@/components/settings/UserDetails";
+import TwoFactorSettings from "@/components/settings/TwoFactorSettings";
 import UserOptions from "@/components/settings/UserOptions";
 import { useTranslation } from "@/lib/i18n/server";
+import { getServerAuthSession } from "@/server/auth";
 
 export async function generateMetadata(): Promise<Metadata> {
   // oxlint-disable-next-line rules-of-hooks
@@ -19,11 +22,14 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function InfoPage() {
   // oxlint-disable-next-line rules-of-hooks
   const { t } = await useTranslation();
+  const session = await getServerAuthSession();
   return (
     <SettingsPage title={t("settings.info.user_info")}>
       <UserAvatar />
       <UserDetails />
       <ChangePassword />
+      <TwoFactorSettings enabled={session?.user.twoFactorEnabled ?? false} />
+      <PasskeySettings />
       <UserOptions />
       <ReaderSettings />
       <DeleteAccount />

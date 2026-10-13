@@ -1,3 +1,4 @@
+import { createHmac } from "node:crypto";
 import os from "node:os";
 import path from "node:path";
 import { isCuid } from "@paralleldrive/cuid2";
@@ -71,8 +72,13 @@ async function setup(env: Record<string, string> = {}) {
     );
     const text = await res.text();
     const json: unknown = text ? JSON.parse(text) : null;
-    const cookie = (res.headers.get("set-cookie") ?? "").split(";")[0];
-    return { status: res.status, json, cookie };
+    const setCookies = res.headers.getSetCookie().map((c) => c.split(";")[0]);
+    return {
+      status: res.status,
+      json,
+      cookie: setCookies[0] ?? "",
+      setCookies,
+    };
   }
 
   async function signUp(
@@ -99,6 +105,43 @@ function errorCode(json: unknown) {
 
 function tokenFromUrl(url: string) {
   return new URL(url).searchParams.get("token") ?? "";
+}
+
+// Minimal RFC 6238 TOTP (SHA-1, 6 digits, 30s) so the tests can produce codes
+// for the secret better-auth hands back.
+function base32Decode(input: string): Buffer {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = 0;
+  let value = 0;
+  const bytes: number[] = [];
+  for (const char of input.replace(/=+$/, "").toUpperCase()) {
+    const index = alphabet.indexOf(char);
+    if (index === -1) {
+      continue;
+    }
+    value = (value << 5) | index;
+    bits += 5;
+    if (bits >= 8) {
+      bytes.push((value >>> (bits - 8)) & 0xff);
+      bits -= 8;
+    }
+  }
+  return Buffer.from(bytes);
+}
+
+function totp(secret: string, at: number = Date.now()): string {
+  const counter = Buffer.alloc(8);
+  counter.writeBigInt64BE(BigInt(Math.floor(at / 1000 / 30)));
+  const digest = createHmac("sha1", base32Decode(secret))
+    .update(counter)
+    .digest();
+  const offset = digest[digest.length - 1] & 0x0f;
+  const code =
+    ((digest[offset] & 0x7f) << 24) |
+    ((digest[offset + 1] & 0xff) << 16) |
+    ((digest[offset + 2] & 0xff) << 8) |
+    (digest[offset + 3] & 0xff);
+  return (code % 1_000_000).toString().padStart(6, "0");
 }
 
 afterEach(() => {
@@ -282,6 +325,92 @@ describe("better-auth configuration", () => {
       body: { email: "user@example.com" },
     });
     expect(res.status).toBe(400);
+  });
+
+  test("two-factor can be enrolled and is enforced at sign in", async () => {
+    const { db, call, signUp, signIn } = await setup();
+    const { cookie } = await signUp("user@example.com");
+
+    const enable = await call("/two-factor/enable", {
+      cookie,
+      body: { password: "password123" },
+    });
+    expect(enable.status).toBe(200);
+    const setupBody = enable.json as {
+      totpURI: string;
+      backupCodes: string[];
+    };
+    expect(setupBody.totpURI).toMatch(/^otpauth:\/\/totp\//);
+    expect(setupBody.backupCodes.length).toBeGreaterThan(0);
+    const secret = new URL(setupBody.totpURI).searchParams.get("secret") ?? "";
+
+    // Enrollment isn't complete until a code is verified.
+    const verified = await call("/two-factor/verify-totp", {
+      cookie,
+      body: { code: totp(secret) },
+    });
+    expect(verified.status).toBe(200);
+    expect((await db.query.users.findFirst())?.twoFactorEnabled).toBe(true);
+
+    // A fresh sign-in now stops at the second factor instead of returning a
+    // session.
+    const challenged = await signIn("user@example.com");
+    expect(challenged.status).toBe(200);
+    expect(
+      (challenged.json as { twoFactorRedirect?: boolean }).twoFactorRedirect,
+    ).toBe(true);
+    // The sign-in sets a short-lived two-factor cookie instead of a session.
+    const twoFactorCookie = challenged.setCookies.find((c) =>
+      c.includes("two_factor="),
+    );
+    expect(twoFactorCookie).toBeTruthy();
+    // The session cookie is cleared, not issued, until 2FA is completed.
+    const sessionCookie =
+      challenged.setCookies.find((c) => c.includes("session_token=")) ?? "";
+    expect(sessionCookie.split("=").pop()).toBe("");
+
+    const completed = await call("/two-factor/verify-totp", {
+      cookie: twoFactorCookie ?? "",
+      body: { code: totp(secret) },
+    });
+    expect(completed.status).toBe(200);
+    expect(completed.cookie).toMatch(/session_token=.+/);
+
+    // A wrong code doesn't complete the challenge.
+    const rejectedChallenge = await signIn("user@example.com");
+    const rejected = await call("/two-factor/verify-totp", {
+      cookie:
+        rejectedChallenge.setCookies.find((c) => c.includes("two_factor=")) ??
+        "",
+      body: { code: totp(secret, Date.now() + 90_000) },
+    });
+    expect(rejected.status).not.toBe(200);
+  });
+
+  test("passkey endpoints are wired and registration requires a session", async () => {
+    const { call, signUp } = await setup();
+
+    // Not in the allowlist would be a 404 here; it's a real endpoint that just
+    // needs a session.
+    const anonymous = await call("/passkey/generate-register-options");
+    expect(anonymous.status).toBe(401);
+
+    const { cookie } = await signUp("user@example.com");
+    const registerOptions = await call("/passkey/generate-register-options", {
+      cookie,
+    });
+    expect(registerOptions.status).toBe(200);
+    const options = registerOptions.json as {
+      challenge?: string;
+      rp?: { id?: string };
+    };
+    expect(options.challenge).toBeTruthy();
+    // rp.id comes from the passkey plugin's rpID, i.e. the public URL's host.
+    expect(options.rp?.id).toBe("localhost");
+
+    // Sign-in options are available without a session.
+    const authOptions = await call("/passkey/generate-authenticate-options");
+    expect(authOptions.status).toBe(200);
   });
 });
 

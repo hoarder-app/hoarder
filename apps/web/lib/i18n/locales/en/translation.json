@@ -1,4 +1,18 @@
 {
+  "signin": {
+    "sign_in_with_passkey": "Sign in with a passkey",
+    "passkey_failed": "Passkey sign-in failed",
+    "two_factor_code_prompt": "Enter the 6-digit code from your authenticator app",
+    "two_factor_backup_prompt": "Enter one of your backup codes",
+    "two_factor_code_label": "Authentication code",
+    "two_factor_backup_label": "Backup code",
+    "two_factor_code_placeholder": "123456",
+    "two_factor_backup_placeholder": "Backup code",
+    "two_factor_verify": "Verify",
+    "two_factor_invalid_code": "Invalid or expired code",
+    "two_factor_use_backup": "Use a backup code instead",
+    "two_factor_use_authenticator": "Use an authenticator code instead"
+  },
   "common": {
     "default": "Default",
     "id": "ID",
@@ -124,6 +138,44 @@
     "no_highlights": "You don't have any highlights yet."
   },
   "settings": {
+    "two_factor": {
+      "title": "Two-factor authentication",
+      "description": "Add a second step to your sign-in using a time-based one-time code from an authenticator app.",
+      "enabled": "Two-factor authentication is enabled for your account.",
+      "password": "Password",
+      "confirm_password": "Confirm your password",
+      "enable": "Enable two-factor authentication",
+      "scan_qr": "Scan this QR code with your authenticator app (Google Authenticator, 1Password, Aegis, …), then enter the code it shows to finish enabling two-factor authentication.",
+      "manual_key": "Can't scan? Enter this key manually:",
+      "backup_codes_new": "Backup codes — save them now, they won't be shown again:",
+      "backup_codes_saved": "Save these backup codes somewhere safe. Each can be used once if you lose access to your authenticator.",
+      "authentication_code": "Authentication code",
+      "verify_and_enable": "Verify & enable",
+      "cancel": "Cancel",
+      "regenerate_backup_codes": "Regenerate backup codes",
+      "disable": "Disable",
+      "enabled_toast": "Two-factor authentication enabled",
+      "disabled_toast": "Two-factor authentication disabled",
+      "invalid_code": "Invalid code",
+      "start_error": "Could not start two-factor setup",
+      "disable_error": "Could not disable two-factor authentication",
+      "regenerate_error": "Could not generate backup codes"
+    },
+    "passkeys": {
+      "title": "Passkeys",
+      "description": "Sign in without a password using Face ID, Touch ID, Windows Hello, or a security key.",
+      "default_name": "Passkey",
+      "empty": "No passkeys registered yet.",
+      "loading": "Loading…",
+      "remove": "Remove passkey",
+      "name_label": "Name (optional)",
+      "name_placeholder": "e.g. MacBook Pro",
+      "add": "Add a passkey",
+      "added_toast": "Passkey added",
+      "removed_toast": "Passkey removed",
+      "add_error": "Could not add passkey",
+      "remove_error": "Could not remove passkey"
+    },
     "back_to_app": "Back To App",
     "user_settings": "User Settings",
     "info": {

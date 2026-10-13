@@ -666,6 +666,20 @@
       "when": 1785711744217,
       "tag": "0094_migrate_to_better_auth",
       "breakpoints": true
+    },
+    {
+      "idx": 95,
+      "version": "6",
+      "when": 1791897493880,
+      "tag": "0095_add_two_factor_2fa",
+      "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "6",
+      "when": 1791899078629,
+      "tag": "0096_add_passkeys",
+      "breakpoints": true
     }
   ]
 }

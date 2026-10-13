@@ -122,6 +122,13 @@ export const users = sqliteTable("user", {
   }).default("titlecase-spaces"),
   curatedTagIds: text("curatedTagIds", { mode: "json" }).$type<string[]>(),
   inferredTagLang: text("inferredTagLang"),
+
+  // Two-factor authentication. Flips to true once a TOTP factor is enrolled and
+  // verified. Managed by the better-auth two-factor plugin, which requires this
+  // column on the user model.
+  twoFactorEnabled: integer("twoFactorEnabled", { mode: "boolean" })
+    .notNull()
+    .default(false),
 });
 
 export const accounts = sqliteTable(
@@ -231,6 +238,63 @@ export const apiKeys = sqliteTable(
       .references(() => users.id, { onDelete: "cascade" }),
   },
   (ak) => [unique().on(ak.name, ak.userId)],
+);
+
+// TOTP secret + hashed backup codes for the better-auth two-factor plugin.
+// One row per user, created when they enroll (and removed when they disable).
+// The column set mirrors better-auth's two-factor plugin schema.
+export const twoFactor = sqliteTable(
+  "twoFactor",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    secret: text("secret").notNull(),
+    backupCodes: text("backupCodes").notNull(),
+    verified: integer("verified", { mode: "boolean" }).notNull().default(true),
+    failedVerificationCount: integer("failedVerificationCount")
+      .notNull()
+      .default(0),
+    lockedUntil: integer("lockedUntil", { mode: "timestamp" }),
+  },
+  (tf) => [
+    index("twoFactor_userId_idx").on(tf.userId),
+    index("twoFactor_secret_idx").on(tf.secret),
+  ],
+);
+
+// WebAuthn/passkey credentials for the @better-auth/passkey plugin. One row per
+// registered passkey. Column set mirrors the plugin's schema.
+export const passkeys = sqliteTable(
+  "passkey",
+  {
+    id: text("id")
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => createId()),
+    name: text("name"),
+    publicKey: text("publicKey").notNull(),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    credentialID: text("credentialID").notNull(),
+    counter: integer("counter").notNull(),
+    deviceType: text("deviceType").notNull(),
+    backedUp: integer("backedUp", { mode: "boolean" }).notNull(),
+    transports: text("transports"),
+    createdAt: integer("createdAt", { mode: "timestamp_ms" }).$defaultFn(
+      () => new Date(),
+    ),
+    aaguid: text("aaguid"),
+  },
+  (pk) => [
+    index("passkey_userId_idx").on(pk.userId),
+    index("passkey_credentialID_idx").on(pk.credentialID),
+  ],
 );
 
 export const bookmarks = sqliteTable(
@@ -1162,6 +1226,20 @@ export const tagsOnBookmarksRelations = relations(
 export const apiKeyRelations = relations(apiKeys, ({ one }) => ({
   user: one(users, {
     fields: [apiKeys.userId],
+    references: [users.id],
+  }),
+}));
+
+export const twoFactorRelations = relations(twoFactor, ({ one }) => ({
+  user: one(users, {
+    fields: [twoFactor.userId],
+    references: [users.id],
+  }),
+}));
+
+export const passkeysRelations = relations(passkeys, ({ one }) => ({
+  user: one(users, {
+    fields: [passkeys.userId],
     references: [users.id],
   }),
 }));

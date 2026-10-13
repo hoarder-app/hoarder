@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ActionButton } from "@/components/ui/action-button";
 import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -14,12 +15,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signIn } from "@/lib/auth/client";
+import { signIn, signInWithPasskey } from "@/lib/auth/client";
 import { useClientConfig } from "@/lib/clientConfig";
+import { useTranslation } from "@/lib/i18n/client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, Lock } from "lucide-react";
+import { AlertCircle, KeyRound, Lock } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
+import TwoFactorForm from "./TwoFactorForm";
 
 const signInSchema = z.object({
   email: z.string().email(),
@@ -31,9 +35,11 @@ const OAUTH_FAILED = "OAuth login failed: ";
 
 export default function CredentialsForm() {
   const [signinError, setSigninError] = useState("");
+  const [twoFactorRequired, setTwoFactorRequired] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
   const clientConfig = useClientConfig();
+  const { t } = useTranslation();
 
   const oAuthError = searchParams.get("error");
   if (oAuthError && !signinError) {
@@ -47,6 +53,10 @@ export default function CredentialsForm() {
       password: "",
     },
   });
+
+  if (twoFactorRequired) {
+    return <TwoFactorForm />;
+  }
 
   if (clientConfig.auth.disablePasswordAuth) {
     return (
@@ -78,6 +88,10 @@ export default function CredentialsForm() {
               email: value.email.trim(),
               password: value.password,
             });
+            if (resp.twoFactorRedirect) {
+              setTwoFactorRequired(true);
+              return;
+            }
             if (!resp.ok) {
               if (resp.code === "INVALID_EMAIL_OR_PASSWORD") {
                 setSigninError(SIGNIN_FAILED);
@@ -159,6 +173,25 @@ export default function CredentialsForm() {
           </div>
         </form>
       </Form>
+
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full"
+        onClick={async () => {
+          setSigninError("");
+          const resp = await signInWithPasskey();
+          if (!resp.ok) {
+            setSigninError(resp.error ?? t("signin.passkey_failed"));
+            return;
+          }
+          router.replace("/");
+          router.refresh();
+        }}
+      >
+        <KeyRound className="mr-2 h-4 w-4" />
+        {t("signin.sign_in_with_passkey")}
+      </Button>
 
       <div className="text-center">
         <p className="text-sm text-gray-600">

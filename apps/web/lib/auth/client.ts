@@ -5,9 +5,11 @@ import type { auth } from "@/server/auth";
 import { createContext, createElement, useContext } from "react";
 import { TURNSTILE_TOKEN_HEADER } from "@/lib/auth/constants";
 import { createAuthClient } from "better-auth/react";
+import { passkeyClient } from "@better-auth/passkey/client";
 import {
   genericOAuthClient,
   inferAdditionalFields,
+  twoFactorClient,
 } from "better-auth/client/plugins";
 
 export interface Session {
@@ -22,7 +24,12 @@ export interface Session {
 }
 
 const authClient = createAuthClient({
-  plugins: [genericOAuthClient(), inferAdditionalFields<typeof auth>()],
+  plugins: [
+    genericOAuthClient(),
+    inferAdditionalFields<typeof auth>(),
+    twoFactorClient(),
+    passkeyClient(),
+  ],
 });
 
 type ClientSessionData = NonNullable<
@@ -72,6 +79,10 @@ export interface AuthResult {
   error?: string;
   // better-auth's error code, e.g. "EMAIL_NOT_VERIFIED".
   code?: string;
+  // Set when the account has a second factor enrolled: the password was
+  // accepted, but the caller must complete a two-factor challenge before a
+  // session is created.
+  twoFactorRedirect?: boolean;
 }
 
 function toAuthResult(result: {
@@ -96,13 +107,19 @@ export async function signIn(
     if (!options.email || options.password === undefined) {
       return { ok: false, error: "Email and password are required" };
     }
-    return toAuthResult(
-      await authClient.signIn.email({
-        email: options.email,
-        password: options.password,
-        callbackURL: options.callbackUrl,
-      }),
-    );
+    const result = await authClient.signIn.email({
+      email: options.email,
+      password: options.password,
+      callbackURL: options.callbackUrl,
+    });
+    // The two-factor plugin augments the sign-in response with
+    // twoFactorRedirect, but that augmentation doesn't reach this inferred
+    // return type.
+    const data = result.data as { twoFactorRedirect?: boolean } | null;
+    return {
+      ...toAuthResult(result),
+      twoFactorRedirect: !!data?.twoFactorRedirect,
+    };
   }
 
   return toAuthResult(
@@ -180,6 +197,87 @@ export async function changePassword(input: {
     await authClient.changePassword({
       ...input,
       revokeOtherSessions: true,
+    }),
+  );
+}
+
+// --- Two-factor authentication (TOTP) ---
+
+export interface TwoFactorSetup {
+  totpURI: string;
+  backupCodes: string[];
+}
+
+// Starts enrollment: returns the otpauth:// URI (for the QR code) and a fresh
+// set of backup codes. 2FA is not active until the first code is verified.
+export async function enableTwoFactor(
+  password?: string,
+): Promise<AuthResult & { setup?: TwoFactorSetup }> {
+  const result = await authClient.twoFactor.enable({ password });
+  return { ...toAuthResult(result), setup: result.data ?? undefined };
+}
+
+export async function getTotpUri(
+  password?: string,
+): Promise<AuthResult & { totpURI?: string }> {
+  const result = await authClient.twoFactor.getTotpUri({ password });
+  return { ...toAuthResult(result), totpURI: result.data?.totpURI };
+}
+
+// Completes enrollment by proving the authenticator works.
+export async function verifyTotp(code: string): Promise<AuthResult> {
+  return toAuthResult(await authClient.twoFactor.verifyTotp({ code }));
+}
+
+export async function verifyBackupCode(code: string): Promise<AuthResult> {
+  return toAuthResult(await authClient.twoFactor.verifyBackupCode({ code }));
+}
+
+export async function disableTwoFactor(password?: string): Promise<AuthResult> {
+  return toAuthResult(await authClient.twoFactor.disable({ password }));
+}
+
+export async function generateBackupCodes(
+  password?: string,
+): Promise<AuthResult & { backupCodes?: string[] }> {
+  const result = await authClient.twoFactor.generateBackupCodes({ password });
+  return { ...toAuthResult(result), backupCodes: result.data?.backupCodes };
+}
+
+// --- Passkeys (WebAuthn) ---
+
+export interface PasskeyInfo {
+  id: string;
+  name?: string | null;
+  createdAt?: string | null;
+}
+
+// Sign in with a discoverable passkey — no email/password needed.
+export async function signInWithPasskey(): Promise<AuthResult> {
+  return toAuthResult(await authClient.signIn.passkey());
+}
+
+// Register a passkey for the signed-in user. The browser drives the WebAuthn
+// ceremony; the name only labels the credential in the UI.
+export async function addPasskey(name?: string): Promise<AuthResult> {
+  return toAuthResult(await authClient.passkey.addPasskey({ name }));
+}
+
+export async function listPasskeys(): Promise<
+  AuthResult & { passkeys: PasskeyInfo[] }
+> {
+  const result = await authClient.$fetch<PasskeyInfo[]>(
+    "/passkey/list-user-passkeys",
+    { method: "GET" },
+  );
+  return { ...toAuthResult(result), passkeys: result.data ?? [] };
+}
+
+export async function deletePasskey(id: string): Promise<AuthResult> {
+  return toAuthResult(
+    await authClient.$fetch("/passkey/delete-passkey", {
+      method: "POST",
+      body: { id },
     }),
   );
 }
