@@ -112,7 +112,7 @@ function ListSelectorComponent({
                   >
                     <Check
                       className={cn(
-                        "mr-2 h-4 w-4",
+                        "h-4 w-4",
                         isItemSelected(l.id) ? "opacity-100" : "opacity-0",
                       )}
                     />
@@ -170,7 +170,7 @@ function BookmarkListSingleSelector({
         disabled={disabled}
       >
         {selectedListName || placeholder}
-        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
       </Button>
     </ListSelectorComponent>
   );

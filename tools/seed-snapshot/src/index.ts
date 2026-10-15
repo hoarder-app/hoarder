@@ -347,27 +347,27 @@ async function createLists(
   const root = await client.lists.create.mutate({
     name: dataset.lists.root,
     description: "Seed snapshot root manual list",
-    icon: "book",
+    icon: "📚",
     type: "manual",
   });
   const child = await client.lists.create.mutate({
     name: dataset.lists.child,
     description: "Seed snapshot nested manual list",
-    icon: "folder",
+    icon: "📁",
     type: "manual",
     parentId: root.id,
   });
   const smartTag = await client.lists.create.mutate({
     name: dataset.lists.smartTag,
     description: "Seed snapshot smart list by tag",
-    icon: "tag",
+    icon: "🏷️",
     type: "smart",
     query: `tag:${dataset.tagNames[0]}`,
   });
   const smartFav = await client.lists.create.mutate({
     name: dataset.lists.smartFav,
     description: "Seed snapshot smart list by state",
-    icon: "star",
+    icon: "😍",
     type: "smart",
     query: dataset.lists.smartFav.includes("Archived")
       ? "is:archived"

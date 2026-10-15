@@ -314,6 +314,24 @@ export default function Dashboard() {
         }}
       />
       <Stack.Screen
+        name="settings/offline-lists"
+        options={{
+          ...settingsScreenOptions,
+          title: "Lists",
+          headerTitle: "Keep Lists Offline",
+          headerBackTitle: "Back",
+        }}
+      />
+      <Stack.Screen
+        name="settings/offline-articles"
+        options={{
+          ...settingsScreenOptions,
+          title: "Downloaded Articles",
+          headerTitle: "Downloaded Articles",
+          headerBackTitle: "Back",
+        }}
+      />
+      <Stack.Screen
         name="settings/usage"
         options={{
           ...settingsScreenOptions,

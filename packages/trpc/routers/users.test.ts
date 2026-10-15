@@ -180,6 +180,32 @@ describe("User Routes", () => {
     await expect(() => user2Caller.users.list()).rejects.toThrow(/FORBIDDEN/);
   });
 
+  test<CustomTestContext>("admins can't delete their own account", async ({
+    db,
+  }) => {
+    const adminUser = await createTestUser(db, {
+      name: "Test User",
+      email: "test123@test.com",
+      password: "pass1234",
+    });
+    assert(adminUser.role == "admin");
+
+    const adminCaller = getApiCaller(
+      db,
+      adminUser.id,
+      adminUser.email,
+      "admin",
+    );
+    await expect(() =>
+      adminCaller.users.delete({ userId: adminUser.id }),
+    ).rejects.toThrow(/Cannot delete own account/);
+
+    const remaining = await db.query.users.findFirst({
+      where: eq(users.id, adminUser.id),
+    });
+    expect(remaining).toBeDefined();
+  });
+
   test<CustomTestContext>("get/update user settings", async ({ db }) => {
     const user = await createTestUser(db, {
       name: "Test User",
@@ -581,6 +607,59 @@ describe("User Routes", () => {
         (d) => typeof d.day === "number" && d.day >= 0 && d.day <= 6,
       ),
     ).toBe(true);
+  });
+
+  test<CustomTestContext>("bookmark counts", async ({ db }) => {
+    const user1 = await createTestUser(db, {
+      name: "User 1",
+      email: "counts1@test.com",
+      password: "pass1234",
+    });
+    const user2 = await createTestUser(db, {
+      name: "User 2",
+      email: "counts2@test.com",
+      password: "pass1234",
+    });
+    const caller = getApiCaller(db, user1.id);
+
+    expect(await caller.users.bookmarkCounts()).toEqual({
+      numBookmarks: 0,
+      numFavorites: 0,
+      numArchived: 0,
+    });
+
+    await db.insert(bookmarks).values([
+      {
+        userId: user1.id,
+        type: BookmarkTypes.LINK,
+        archived: false,
+        favourited: true,
+      },
+      {
+        userId: user1.id,
+        type: BookmarkTypes.LINK,
+        archived: true,
+        favourited: true,
+      },
+      {
+        userId: user1.id,
+        type: BookmarkTypes.LINK,
+        archived: false,
+        favourited: false,
+      },
+      {
+        userId: user2.id,
+        type: BookmarkTypes.LINK,
+        archived: true,
+        favourited: true,
+      },
+    ]);
+
+    expect(await caller.users.bookmarkCounts()).toEqual({
+      numBookmarks: 3,
+      numFavorites: 2,
+      numArchived: 1,
+    });
   });
 
   describe("Delete Account", () => {

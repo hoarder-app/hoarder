@@ -4,7 +4,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@karakeep/shared-react/trpc";
 
 import { clearPersistedCache } from "./offlineCache";
+import { clearOfflineDownloadStorage } from "./offlineDownloadPrefs";
 import { clearOfflineLibrary } from "./offlineLibrary";
+import { resetOfflineDownloads } from "./offlineSync";
 import useAppSettings from "./settings";
 
 export function useSession() {
@@ -24,6 +26,10 @@ export function useSession() {
     queryClient.clear();
     clearPersistedCache();
     clearOfflineLibrary();
+    clearOfflineDownloadStorage();
+    // After clearing: it notifies the download status screen, which reloads
+    // from storage.
+    resetOfflineDownloads();
   }, [deleteKey, queryClient, settings, setSettings]);
 
   return {

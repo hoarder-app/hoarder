@@ -2,9 +2,11 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { addLogFields } from "@karakeep/shared-server";
+import { zAdminUserSchema } from "@karakeep/shared/types/admin";
 import {
   zUpdateUserSettingsSchema,
   zUserSettingsSchema,
+  zUserBookmarkCountsResponseSchema,
   zUserStatsResponseSchema,
   zWhoAmIResponseSchema,
   zWrappedStatsResponseSchema,
@@ -25,16 +27,7 @@ export const usersAppRouter = router({
   list: adminUsersProcedure
     .output(
       z.object({
-        users: z.array(
-          z.object({
-            id: z.string(),
-            name: z.string(),
-            email: z.string(),
-            role: z.enum(["user", "admin"]).nullable(),
-            bookmarkQuota: z.number().nullable(),
-            storageQuota: z.number().nullable(),
-          }),
-        ),
+        users: z.array(zAdminUserSchema),
       }),
     )
     .query(async ({ ctx }) => {
@@ -51,6 +44,12 @@ export const usersAppRouter = router({
       }),
     )
     .mutation(async ({ input, ctx }) => {
+      if (ctx.user.id == input.userId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot delete own account as an admin",
+        });
+      }
       addLogFields<"user.delete">({
         "user.deleted_id": input.userId,
         "user.deleted_by": "admin",
@@ -78,29 +77,29 @@ export const usersAppRouter = router({
       const user = await User.fromCtx(ctx);
       return await user.asWhoAmI();
     }),
+  bookmarkCounts: usersProcedure
+    .output(zUserBookmarkCountsResponseSchema)
+    .query(async ({ ctx }) => {
+      const user = await User.fromCtx(ctx);
+      return await user.getBookmarkCounts();
+    }),
   stats: usersProcedure
     .output(zUserStatsResponseSchema)
     .query(async ({ ctx }) => {
       const user = await User.fromCtx(ctx);
       return await user.getStats();
     }),
-  wrapped: usersProcedure
-    .output(zWrappedStatsResponseSchema)
-    .query(async ({ ctx }) => {
-      throw new TRPCError({
-        code: "BAD_REQUEST",
-        message: "This endpoint is currently disabled",
-      });
-      const user = await User.fromCtx(ctx);
-      return await user.getWrappedStats(2025);
-    }),
-  hasWrapped: usersProcedure.output(z.boolean()).query(async ({ ctx }) => {
+  wrapped: usersProcedure.output(zWrappedStatsResponseSchema).query(() => {
     throw new TRPCError({
       code: "BAD_REQUEST",
       message: "This endpoint is currently disabled",
     });
-    const user = await User.fromCtx(ctx);
-    return await user.hasWrapped();
+  }),
+  hasWrapped: usersProcedure.output(z.boolean()).query(() => {
+    throw new TRPCError({
+      code: "BAD_REQUEST",
+      message: "This endpoint is currently disabled",
+    });
   }),
   settings: usersProcedure
     .output(zUserSettingsSchema)
