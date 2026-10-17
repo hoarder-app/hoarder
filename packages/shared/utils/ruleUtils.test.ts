@@ -19,7 +19,7 @@ function toQuery(condition: RuleEngineCondition) {
 describe("ruleConditionToSearchQuery", () => {
   it("translates simple conditions", () => {
     expect(toQuery({ type: "urlContains", str: "example.com" })).toBe(
-      'url:"example.com"',
+      'is:link url:"example.com"',
     );
     expect(toQuery({ type: "titleDoesNotContain", str: "draft" })).toBe(
       '-title:"draft"',
@@ -56,7 +56,9 @@ describe("ruleConditionToSearchQuery", () => {
         },
       ],
     });
-    expect(query).toBe('#"important" and (url:"github.com" or is:fav)');
+    expect(query).toBe(
+      '#"important" and ((is:link url:"github.com") or is:fav)',
+    );
     expect(parseSearchQuery(query!)).toEqual({
       result: "full",
       text: "",
@@ -67,7 +69,13 @@ describe("ruleConditionToSearchQuery", () => {
           {
             type: "or",
             matchers: [
-              { type: "url", url: "github.com", inverse: false },
+              {
+                type: "and",
+                matchers: [
+                  { type: "type", typeName: "link", inverse: false },
+                  { type: "url", url: "github.com", inverse: false },
+                ],
+              },
               { type: "favourited", favourited: true },
             ],
           },
@@ -104,6 +112,14 @@ describe("ruleConditionToSearchQuery", () => {
       }),
     ).toBeNull();
     expect(toQuery({ type: "titleContains", str: 'it"s' })).toBe('title:it"s');
+    // Unquoted values that the parser would read as something else
+    expect(toQuery({ type: "titleContains", str: '#todo"mark"' })).toBeNull();
+    expect(toQuery({ type: "titleContains", str: '!important"' })).toBeNull();
+    expect(toQuery({ type: "titleContains", str: 'url:"x"' })).toBeNull();
+    expect(toQuery({ type: "titleContains", str: '-a"' })).toBeNull();
+    // An empty "or" matches nothing, an empty "and" everything
+    expect(toQuery({ type: "or", conditions: [] })).toBeNull();
+    expect(toQuery({ type: "and", conditions: [] })).toBe("");
   });
 });
 

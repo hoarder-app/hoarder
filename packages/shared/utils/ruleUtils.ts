@@ -1,15 +1,23 @@
 import type { RuleEngineCondition } from "../types/rules";
+import { parseSearchQuery } from "../searchQueryParser";
 
-function quote(value: string): string | null {
-  if (value.length === 0) {
+function withQualifier(
+  prefix: string,
+  value: string | undefined,
+): string | null {
+  if (!value) {
     return null;
   }
   if (!value.includes('"')) {
-    return `"${value}"`;
+    return `${prefix}"${value}"`;
   }
   // Quoted strings can't contain quotes, so this only works for values that
-  // can be written unquoted.
-  return /^[^\s()"-][^\s()]*$/.test(value) ? value : null;
+  // the parser reads back as a single unquoted word.
+  const query = `${prefix}${value}`;
+  const parsed = parseSearchQuery(query);
+  return parsed.result === "full" && parsed.matcher && parsed.text === ""
+    ? query
+    : null;
 }
 
 /**
@@ -51,21 +59,15 @@ export function ruleConditionToSearchQuery(
     feeds: Record<string, string>;
   },
 ): string | null {
-  const withQualifier = (prefix: string, value: string | undefined) => {
-    if (value === undefined) {
-      return null;
-    }
-    const quoted = quote(value);
-    return quoted === null ? null : `${prefix}${quoted}`;
-  };
-
   switch (condition.type) {
     case "alwaysTrue":
       return "";
-    case "urlContains":
-      return withQualifier("url:", condition.str);
+    // The url rules only match links, while url: also matches assets
+    case "urlContains": {
+      const q = withQualifier("url:", condition.str);
+      return q === null ? null : `is:link ${q}`;
+    }
     case "urlDoesNotContain": {
-      // The rule only matches links
       const q = withQualifier("-url:", condition.str);
       return q === null ? null : `is:link ${q}`;
     }
@@ -91,6 +93,10 @@ export function ruleConditionToSearchQuery(
       return "is:archived";
     case "and":
     case "or": {
+      if (condition.type === "or" && condition.conditions.length === 0) {
+        // An empty "or" matches nothing
+        return null;
+      }
       const parts: string[] = [];
       for (const c of condition.conditions) {
         const q = ruleConditionToSearchQuery(c, names);
