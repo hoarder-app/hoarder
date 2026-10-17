@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { beforeEach, describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -5,6 +6,7 @@ import {
   BookmarkTypes,
   zNewBookmarkRequestSchema,
 } from "@karakeep/shared/types/bookmarks";
+import { bookmarkLists } from "@karakeep/db/schema";
 import { zNewBookmarkListSchema } from "@karakeep/shared/types/lists";
 
 import type { APICallerType, CustomTestContext } from "../testUtils";
@@ -735,6 +737,95 @@ describe("recursive delete", () => {
     expect(lists.lists.find((l) => l.id === grandparent.id)).toBeDefined();
     expect(lists.lists.find((l) => l.id === parent.id)).toBeUndefined();
     expect(lists.lists.find((l) => l.id === child.id)).toBeUndefined();
+  });
+});
+
+describe("list hierarchy validation", () => {
+  test<CustomTestContext>("rejects edits that would create a cycle", async ({
+    apiCallers,
+  }) => {
+    const api = apiCallers[0].lists;
+
+    const listA = await api.create({ name: "A", type: "manual", icon: "📂" });
+    const listB = await api.create({
+      name: "B",
+      parentId: listA.id,
+      type: "manual",
+      icon: "📂",
+    });
+    const listC = await api.create({
+      name: "C",
+      parentId: listB.id,
+      type: "manual",
+      icon: "📂",
+    });
+
+    await expect(
+      api.edit({ listId: listA.id, parentId: listB.id }),
+    ).rejects.toThrow(/descendants/);
+    await expect(
+      api.edit({ listId: listA.id, parentId: listC.id }),
+    ).rejects.toThrow(/descendants/);
+
+    // Moving a list elsewhere in the tree is still allowed
+    await api.edit({ listId: listC.id, parentId: listA.id });
+    const updated = await api.get({ listId: listC.id });
+    expect(updated.parentId).toEqual(listA.id);
+  });
+
+  test<CustomTestContext>("rejects parents owned by other users", async ({
+    apiCallers,
+  }) => {
+    const api = apiCallers[0].lists;
+    const otherList = await apiCallers[1].lists.create({
+      name: "Other user's list",
+      type: "manual",
+      icon: "📂",
+    });
+
+    await expect(
+      api.create({
+        name: "Child",
+        parentId: otherList.id,
+        type: "manual",
+        icon: "📂",
+      }),
+    ).rejects.toThrow(/Parent list not found/);
+
+    const ownList = await api.create({
+      name: "Own",
+      type: "manual",
+      icon: "📂",
+    });
+    await expect(
+      api.edit({ listId: ownList.id, parentId: otherList.id }),
+    ).rejects.toThrow(/Parent list not found/);
+  });
+
+  test<CustomTestContext>("recursive delete terminates on pre-existing cycles", async ({
+    apiCallers,
+    db,
+  }) => {
+    const api = apiCallers[0].lists;
+
+    const listA = await api.create({ name: "A", type: "manual", icon: "📂" });
+    const listB = await api.create({
+      name: "B",
+      parentId: listA.id,
+      type: "manual",
+      icon: "📂",
+    });
+    // Simulate a cycle that predates the validation
+    await db
+      .update(bookmarkLists)
+      .set({ parentId: listB.id })
+      .where(eq(bookmarkLists.id, listA.id));
+
+    await api.delete({ listId: listA.id, deleteChildren: true });
+
+    const lists = await api.list();
+    expect(lists.lists.find((l) => l.id === listA.id)).toBeUndefined();
+    expect(lists.lists.find((l) => l.id === listB.id)).toBeUndefined();
   });
 });
 

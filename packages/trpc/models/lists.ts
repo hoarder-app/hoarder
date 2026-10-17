@@ -257,10 +257,49 @@ export abstract class List {
     };
   }
 
+  /**
+   * Ensures that the parent is a list owned by the user, and that making it
+   * the parent of `listId` doesn't introduce a cycle in the hierarchy.
+   */
+  private static async ensureValidParent(
+    ctx: AuthedContext,
+    parentId: string,
+    listId?: string,
+  ) {
+    const lists = await ctx.db
+      .select({ id: bookmarkLists.id, parentId: bookmarkLists.parentId })
+      .from(bookmarkLists)
+      .where(eq(bookmarkLists.userId, ctx.user.id));
+    const parentById = new Map(lists.map((l) => [l.id, l.parentId]));
+    if (!parentById.has(parentId)) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Parent list not found",
+      });
+    }
+    // Walk up the ancestors of the new parent. The visited set guards
+    // against cycles that might already exist in the data.
+    const visited = new Set<string>();
+    let current: string | null | undefined = parentId;
+    while (current && !visited.has(current)) {
+      if (current === listId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "A list can't be nested under one of its descendants",
+        });
+      }
+      visited.add(current);
+      current = parentById.get(current);
+    }
+  }
+
   static async create(
     ctx: AuthedContext,
     input: z.infer<typeof zNewBookmarkListSchema>,
   ): Promise<ManualList | SmartList> {
+    if (input.parentId) {
+      await this.ensureValidParent(ctx, input.parentId);
+    }
     const [result] = await ctx.db
       .insert(bookmarkLists)
       .values({
@@ -623,11 +662,17 @@ export abstract class List {
 
     const resultIds: string[] = [];
     const queue: string[] = [this.list.id];
+    // Guard against cycles in the hierarchy
+    const visited = new Set<string>([this.list.id]);
 
     while (queue.length > 0) {
       const id = queue.pop()!;
       const children = adjecencyList.get(id) ?? [];
       children.forEach((childId) => {
+        if (visited.has(childId)) {
+          return;
+        }
+        visited.add(childId);
         queue.push(childId);
         resultIds.push(childId);
       });
@@ -640,6 +685,9 @@ export abstract class List {
     input: z.infer<typeof zEditBookmarkListSchemaWithValidation>,
   ): Promise<void> {
     this.ensureCanManage();
+    if (input.parentId) {
+      await List.ensureValidParent(this.ctx, input.parentId, this.list.id);
+    }
     const result = await this.ctx.db
       .update(bookmarkLists)
       .set({
