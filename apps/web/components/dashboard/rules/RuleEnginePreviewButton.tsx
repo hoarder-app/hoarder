@@ -33,8 +33,17 @@ export function PreviewMatchesButton({
   const { data: feeds } = useQuery(
     api.feeds.list.queryOptions(undefined, {
       enabled: feedIds.length > 0,
+      // Search can only filter feeds by name, so leave out the names that
+      // more than one feed shares and the preview stays disabled for them.
       select: (data) =>
-        Object.fromEntries(data.feeds.map((feed) => [feed.id, feed.name])),
+        Object.fromEntries(
+          data.feeds
+            .filter(
+              (feed) =>
+                data.feeds.filter((f) => f.name === feed.name).length === 1,
+            )
+            .map((feed) => [feed.id, feed.name]),
+        ),
     }),
   );
 
@@ -52,9 +61,9 @@ export function PreviewMatchesButton({
     );
   }
 
-  const href = query
-    ? `/dashboard/search?q=${encodeURIComponent(query)}`
-    : "/dashboard/bookmarks";
+  // An empty query lists everything, including the archived bookmarks that
+  // the home page hides
+  const href = `/dashboard/search?q=${encodeURIComponent(query)}`;
   return (
     <Button type="button" variant="ghost" size="sm" asChild>
       <a href={href} target="_blank" rel="noreferrer">
