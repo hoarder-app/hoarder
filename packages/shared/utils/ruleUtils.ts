@@ -1,9 +1,11 @@
 import type { RuleEngineCondition } from "../types/rules";
+import type { Matcher } from "../types/search";
 import { parseSearchQuery } from "../searchQueryParser";
 
 function withQualifier(
   prefix: string,
   value: string | undefined,
+  toMatcher: (value: string) => Matcher,
 ): string | null {
   if (!value) {
     return null;
@@ -12,10 +14,17 @@ function withQualifier(
     return `${prefix}"${value}"`;
   }
   // Quoted strings can't contain quotes, so this only works for values that
-  // the parser reads back as a single unquoted word.
+  // the parser reads back as exactly the matcher we meant.
   const query = `${prefix}${value}`;
   const parsed = parseSearchQuery(query);
-  return parsed.result === "full" && parsed.matcher && parsed.text === ""
+  if (parsed.result !== "full" || parsed.text !== "" || !parsed.matcher) {
+    return null;
+  }
+  const expected: Record<string, unknown> = toMatcher(value);
+  const actual: Record<string, unknown> = parsed.matcher;
+  const keys = Object.keys(expected);
+  return keys.length === Object.keys(actual).length &&
+    keys.every((k) => actual[k] === expected[k])
     ? query
     : null;
 }
@@ -64,19 +73,43 @@ export function ruleConditionToSearchQuery(
       return "";
     // The url rules only match links, while url: also matches assets
     case "urlContains": {
-      const q = withQualifier("url:", condition.str);
+      const q = withQualifier("url:", condition.str, (url) => ({
+        type: "url",
+        url,
+        inverse: false,
+      }));
       return q === null ? null : `is:link ${q}`;
     }
     case "urlDoesNotContain": {
-      const q = withQualifier("-url:", condition.str);
+      const q = withQualifier("-url:", condition.str, (url) => ({
+        type: "url",
+        url,
+        inverse: true,
+      }));
       return q === null ? null : `is:link ${q}`;
     }
     case "titleContains":
-      return withQualifier("title:", condition.str);
+      return withQualifier("title:", condition.str, (title) => ({
+        type: "title",
+        title,
+        inverse: false,
+      }));
     case "titleDoesNotContain":
-      return withQualifier("-title:", condition.str);
+      return withQualifier("-title:", condition.str, (title) => ({
+        type: "title",
+        title,
+        inverse: true,
+      }));
     case "importedFromFeed":
-      return withQualifier("feed:", names.feeds[condition.feedId]);
+      return withQualifier(
+        "feed:",
+        names.feeds[condition.feedId],
+        (feedName) => ({
+          type: "rssFeedName",
+          feedName,
+          inverse: false,
+        }),
+      );
     case "bookmarkTypeIs":
       return {
         link: "is:link",
@@ -86,7 +119,11 @@ export function ruleConditionToSearchQuery(
     case "bookmarkSourceIs":
       return `source:${condition.source}`;
     case "hasTag":
-      return withQualifier("#", names.tags[condition.tagId]);
+      return withQualifier("#", names.tags[condition.tagId], (tagName) => ({
+        type: "tagName",
+        tagName,
+        inverse: false,
+      }));
     case "isFavourited":
       return "is:fav";
     case "isArchived":

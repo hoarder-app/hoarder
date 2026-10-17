@@ -117,6 +117,18 @@ describe("ruleConditionToSearchQuery", () => {
     expect(toQuery({ type: "titleContains", str: '!important"' })).toBeNull();
     expect(toQuery({ type: "titleContains", str: 'url:"x"' })).toBeNull();
     expect(toQuery({ type: "titleContains", str: '-a"' })).toBeNull();
+    // Values that would read back as more than one matcher
+    for (const str of [
+      'x" is:fav',
+      'x" or is:fav',
+      'x" url:"github.com"',
+      'x" #tag',
+    ]) {
+      expect(toQuery({ type: "titleContains", str })).toBeNull();
+    }
+    expect(toQuery({ type: "urlDoesNotContain", str: 'a"b' })).toBe(
+      'is:link -url:a"b',
+    );
     // An empty "or" matches nothing, an empty "and" everything
     expect(toQuery({ type: "or", conditions: [] })).toBeNull();
     expect(toQuery({ type: "and", conditions: [] })).toBe("");
