@@ -21,6 +21,8 @@ const mocks = vi.hoisted(() => ({
   updateMutateAsync: vi.fn(),
   deleteMutate: vi.fn(),
   deleteMutateAsync: vi.fn(),
+  permanentlyDeleteMutate: vi.fn(),
+  permanentlyDeleteMutateAsync: vi.fn(),
   recrawlMutateAsync: vi.fn(),
   removeFromListMutateAsync: vi.fn(),
   toastSuccess: vi.fn(),
@@ -66,6 +68,11 @@ vi.mock("@karakeep/shared-react/hooks/bookmarks", () => ({
   useDeleteBookmark: () => ({
     mutate: mocks.deleteMutate,
     mutateAsync: mocks.deleteMutateAsync,
+    isPending: false,
+  }),
+  usePermanentlyDeleteBookmark: () => ({
+    mutate: mocks.permanentlyDeleteMutate,
+    mutateAsync: mocks.permanentlyDeleteMutateAsync,
     isPending: false,
   }),
   useRecrawlBookmark: () => ({
