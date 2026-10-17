@@ -317,6 +317,33 @@ describe("useBookmarkKeyboardNavigation", () => {
     });
   });
 
+  it("flags deleting a trashed bookmark as permanent", () => {
+    useKeyboardNavigationStore.setState({
+      focusedIndex: 0,
+      isNavigating: true,
+    });
+
+    const { result } = renderKeyboardHook([
+      { ...bookmark("trashed"), deleteAt: new Date() },
+    ]);
+    expect(result.current.isPermanentDelete).toBe(false);
+
+    act(() => {
+      hotkey("shift+3,delete").callback();
+    });
+    expect(result.current.deleteDialogOpen).toBe(true);
+    expect(result.current.isPermanentDelete).toBe(true);
+
+    act(() => {
+      void result.current.confirmDelete();
+    });
+    expect(mocks.permanentlyDeleteMutate).toHaveBeenCalledWith(
+      { bookmarkId: "trashed" },
+      expect.any(Object),
+    );
+    expect(mocks.deleteMutate).not.toHaveBeenCalled();
+  });
+
   it("falls back to the focused bookmark when bulk selection is not actionable", () => {
     const bookmarks = [bookmark("current", { favourited: false })];
     useBulkActionsStore.setState({

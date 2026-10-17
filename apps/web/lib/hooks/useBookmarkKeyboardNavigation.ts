@@ -518,6 +518,12 @@ function useBookmarkDeleteHotkeys({
 
   const isBulkDelete = deleteDialogOpen && modalBookmarkRef.current === null;
   const deleteCount = isBulkDelete ? selectedOwnedBookmarks().length : 1;
+  // Bookmarks that are already in the trash get deleted permanently
+  const isPermanentDelete =
+    deleteDialogOpen &&
+    (isBulkDelete
+      ? selectedOwnedBookmarks().some((b) => b.deleteAt)
+      : !!modalBookmarkRef.current?.deleteAt);
 
   const confirmDelete = useCallback(async () => {
     if (isBulkDelete) {
@@ -569,6 +575,7 @@ function useBookmarkDeleteHotkeys({
     setDeleteDialogOpen,
     isBulkDelete,
     deleteCount,
+    isPermanentDelete,
     confirmDelete,
     isDeletePending:
       deleteBookmarkMutator.isPending ||
@@ -741,6 +748,7 @@ export function useBookmarkKeyboardNavigation({
     focusedBookmark: focusNavigation.focusedBookmark,
     isBulkDelete: deletion.isBulkDelete,
     deleteCount: deletion.deleteCount,
+    isPermanentDelete: deletion.isPermanentDelete,
     confirmDelete: deletion.confirmDelete,
     isDeletePending: deletion.isDeletePending,
   };
