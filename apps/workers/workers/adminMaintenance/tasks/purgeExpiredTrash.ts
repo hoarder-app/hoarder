@@ -73,13 +73,11 @@ export async function runPurgeExpiredTrashTask(
       }
       try {
         const bookmark = await Bookmark.fromId(ctx, id, false);
-        // The user might have restored it in the meantime.
-        const { deleteAt } = bookmark.asZBookmark();
-        if (!deleteAt || deleteAt > now) {
-          continue;
+        // The user might have restored it in the meantime, so the expiry is
+        // checked again as part of the delete itself.
+        if (await bookmark.delete({ trashedBefore: now })) {
+          deletedCount++;
         }
-        await bookmark.delete();
-        deletedCount++;
       } catch (e) {
         if (e instanceof TRPCError && e.code === "NOT_FOUND") {
           continue;

@@ -1075,7 +1075,11 @@ export class Bookmark extends BareBookmark {
     });
   }
 
-  async delete() {
+  /**
+   * When `trashedBefore` is set, the bookmark is only deleted if it's still in
+   * the trash and expired by then. Returns whether the bookmark got deleted.
+   */
+  async delete({ trashedBefore }: { trashedBefore?: Date } = {}) {
     this.ensureOwnership();
     const deleted = await this.ctx.db
       .delete(bookmarks)
@@ -1083,8 +1087,13 @@ export class Bookmark extends BareBookmark {
         and(
           eq(bookmarks.userId, this.ctx.user.id),
           eq(bookmarks.id, this.bookmark.id),
+          trashedBefore ? lte(bookmarks.deleteAt, trashedBefore) : undefined,
         ),
       );
+    if (trashedBefore && deleted.changes === 0) {
+      // It got restored in the meantime
+      return false;
+    }
 
     await SearchIndexingQueue.enqueue(
       {
@@ -1117,5 +1126,6 @@ export class Bookmark extends BareBookmark {
     if (deleted.changes > 0) {
       await this.cleanupAssets();
     }
+    return deleted.changes > 0;
   }
 }

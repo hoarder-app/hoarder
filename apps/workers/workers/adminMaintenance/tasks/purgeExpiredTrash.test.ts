@@ -5,6 +5,7 @@ import type { ZAdminMaintenanceTask } from "@karakeep/shared-server";
 import type { DequeuedJob } from "@karakeep/shared/queueing";
 import { bookmarks, users } from "@karakeep/db/schema";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
+import { Bookmark } from "@karakeep/trpc/models/bookmarks";
 
 import { runPurgeExpiredTrashTask } from "./purgeExpiredTrash";
 
@@ -122,6 +123,34 @@ describe("purge_expired_trash", () => {
 
     expect(await remainingBookmarkIds(user.id)).toHaveLength(2);
     expect(mocks.adminMaintenanceEnqueue).toHaveBeenCalledWith(task);
+  });
+
+  test("doesn't delete a bookmark that gets restored mid-purge", async () => {
+    const { user, bookmarkIds } = await createUserWithBookmarks([
+      new Date(Date.now() - DAY),
+    ]);
+    const fromId = Bookmark.fromId.bind(Bookmark);
+    const spy = vi
+      .spyOn(Bookmark, "fromId")
+      .mockImplementation(async (...args) => {
+        const bookmark = await fromId(...args);
+        // The user restores it right after the purge loaded it
+        await db
+          .update(bookmarks)
+          .set({ deleteAt: null })
+          .where(eq(bookmarks.id, args[1]));
+        return bookmark;
+      });
+
+    try {
+      await runPurgeExpiredTrashTask(buildJob(), fastOpts);
+    } finally {
+      spy.mockRestore();
+    }
+
+    expect(await remainingBookmarkIds(user.id)).toEqual(bookmarkIds);
+    expect(mocks.searchIndexingEnqueue).not.toHaveBeenCalled();
+    expect(mocks.embeddingsEnqueue).not.toHaveBeenCalled();
   });
 
   test("stops when the job is aborted", async () => {
