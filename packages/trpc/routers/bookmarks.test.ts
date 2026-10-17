@@ -441,6 +441,22 @@ describe("Bookmark Routes", () => {
         (await collaboratorApi.bookmarks.getBookmarks({ listId: list.id }))
           .bookmarks,
       ).toHaveLength(0);
+      expect(
+        (
+          await collaboratorApi.bookmarks.getBookmarks({
+            listId: list.id,
+            trashed: true,
+          })
+        ).bookmarks,
+      ).toHaveLength(0);
+      expect(
+        (
+          await ownerApi.bookmarks.getBookmarks({
+            listId: list.id,
+            trashed: true,
+          })
+        ).bookmarks,
+      ).toHaveLength(1);
     });
   });
 

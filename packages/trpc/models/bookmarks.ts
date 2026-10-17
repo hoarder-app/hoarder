@@ -513,8 +513,9 @@ export class Bookmark extends BareBookmark {
       input.favourited !== undefined
         ? eq(bookmarks.favourited, input.favourited)
         : undefined,
+      // Only the owner can see the bookmarks in their trash, even in shared lists
       input.trashed
-        ? isNotNull(bookmarks.deleteAt)
+        ? and(isNotNull(bookmarks.deleteAt), eq(bookmarks.userId, ctx.user.id))
         : isNull(bookmarks.deleteAt),
       input.ids ? inArray(bookmarks.id, input.ids) : undefined,
     ];
