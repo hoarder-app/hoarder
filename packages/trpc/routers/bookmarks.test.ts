@@ -233,6 +233,8 @@ describe("Bookmark Routes", () => {
         text: "trashed",
         favourited: true,
       });
+      const queueMocks = getTestQueueMocks();
+      queueMocks.triggerSearchReindex.mockClear();
       await api.deleteBookmark({ bookmarkId: trashed.id });
 
       const live = await api.getBookmarks({});
@@ -249,7 +251,13 @@ describe("Bookmark Routes", () => {
         60 * 1000,
       );
 
-      expect(getTestQueueMocks().searchIndexingEnqueue).toHaveBeenCalledWith(
+      // A reindex drops it from the index, while staying safe to race with a
+      // restore
+      expect(queueMocks.triggerSearchReindex).toHaveBeenCalledWith(
+        trashed.id,
+        expect.anything(),
+      );
+      expect(queueMocks.searchIndexingEnqueue).not.toHaveBeenCalledWith(
         { bookmarkId: trashed.id, type: "delete" },
         expect.anything(),
       );

@@ -1048,15 +1048,11 @@ export class Bookmark extends BareBookmark {
           isNull(bookmarks.deleteAt),
         ),
       );
-    await SearchIndexingQueue.enqueue(
-      {
-        bookmarkId: this.bookmark.id,
-        type: "delete",
-      },
-      {
-        groupId: this.ctx.user.id,
-      },
-    );
+    // A reindex (rather than a delete) looks at the current state when it
+    // runs, so it can't undo a restore that happens right after this.
+    await triggerSearchReindex(this.bookmark.id, {
+      groupId: this.ctx.user.id,
+    });
   }
 
   async restoreFromTrash() {
