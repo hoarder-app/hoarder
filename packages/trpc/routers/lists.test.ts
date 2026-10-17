@@ -21,6 +21,21 @@ async function createTestBookmark(api: APICallerType) {
   return createdBookmark.id;
 }
 
+async function shareList(
+  ownerApi: APICallerType,
+  collaboratorApi: APICallerType,
+  listId: string,
+  role: "viewer" | "editor",
+) {
+  const collaborator = await collaboratorApi.users.whoami();
+  const { invitationId } = await ownerApi.lists.addCollaborator({
+    listId,
+    email: collaborator.email!,
+    role,
+  });
+  await collaboratorApi.lists.acceptInvitation({ invitationId });
+}
+
 async function getRuleByName(api: APICallerType, name: string) {
   const { rules } = await api.rules.list();
   return rules.find((rule) => rule.name === name);
@@ -773,6 +788,22 @@ describe("list hierarchy validation", () => {
     expect(updated.parentId).toEqual(listA.id);
   });
 
+  test<CustomTestContext>("rejects concurrent moves that would form a cycle", async ({
+    apiCallers,
+  }) => {
+    const api = apiCallers[0].lists;
+
+    const listA = await api.create({ name: "A", type: "manual", icon: "📂" });
+    const listB = await api.create({ name: "B", type: "manual", icon: "📂" });
+
+    const results = await Promise.allSettled([
+      api.edit({ listId: listA.id, parentId: listB.id }),
+      api.edit({ listId: listB.id, parentId: listA.id }),
+    ]);
+    expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+    expect(results.filter((r) => r.status === "rejected")).toHaveLength(1);
+  });
+
   test<CustomTestContext>("rejects parents owned by other users", async ({
     apiCallers,
   }) => {
@@ -800,6 +831,42 @@ describe("list hierarchy validation", () => {
     await expect(
       api.edit({ listId: ownList.id, parentId: otherList.id }),
     ).rejects.toThrow(/Parent list not found/);
+
+    // Sharing the list doesn't make it a valid parent either
+    await shareList(apiCallers[1], apiCallers[0], otherList.id, "editor");
+    await expect(
+      api.edit({ listId: ownList.id, parentId: otherList.id }),
+    ).rejects.toThrow(/Parent list not found/);
+  });
+
+  test<CustomTestContext>("keeps lists with legacy parent links editable", async ({
+    apiCallers,
+    db,
+  }) => {
+    const api = apiCallers[0].lists;
+    const otherList = await apiCallers[1].lists.create({
+      name: "Other user's list",
+      type: "manual",
+      icon: "📂",
+    });
+    const child = await api.create({
+      name: "Child",
+      type: "manual",
+      icon: "📂",
+    });
+    // Simulate a parent link that predates the validation
+    await db
+      .update(bookmarkLists)
+      .set({ parentId: otherList.id })
+      .where(eq(bookmarkLists.id, child.id));
+
+    // Edit forms resubmit the unchanged parent
+    const updated = await api.edit({
+      listId: child.id,
+      name: "Renamed",
+      parentId: otherList.id,
+    });
+    expect(updated.name).toEqual("Renamed");
   });
 
   test<CustomTestContext>("recursive delete terminates on pre-existing cycles", async ({

@@ -314,6 +314,8 @@ export function EditListModal({
                         <BookmarkListSelector
                           // Hide the current list from the list of parents
                           hideSubtreeOf={list ? list.id : undefined}
+                          // Lists can only be nested under lists you own
+                          ownedOnly
                           value={field.value}
                           onChange={field.onChange}
                           placeholder={t("lists.no_parent")}

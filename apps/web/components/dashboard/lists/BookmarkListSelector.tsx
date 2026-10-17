@@ -55,6 +55,7 @@ interface MultiSelectionProps {
 interface SelectionProps {
   hideSubtreeOf?: string;
   hideBookmarkIds?: string[];
+  ownedOnly?: boolean;
   listTypes?: ZBookmarkList["type"][];
   disabled?: boolean;
 }
@@ -277,6 +278,7 @@ export function BookmarkListSelector(props: BookmarkListSelectorProps) {
   const {
     hideSubtreeOf,
     hideBookmarkIds = [],
+    ownedOnly = false,
     listTypes = ["manual", "smart"],
     ...selectorProps
   } = props;
@@ -291,6 +293,9 @@ export function BookmarkListSelector(props: BookmarkListSelectorProps) {
     }
     // Hide lists where user is a viewer (can't add/remove bookmarks)
     if (lastItem.userRole === "viewer") {
+      return false;
+    }
+    if (ownedOnly && lastItem.userRole !== "owner") {
       return false;
     }
     if (!hideSubtreeOf) {

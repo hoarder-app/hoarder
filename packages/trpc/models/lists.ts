@@ -258,19 +258,27 @@ export abstract class List {
   }
 
   /**
-   * Ensures that the parent is a list owned by the user, and that making it
-   * the parent of `listId` doesn't introduce a cycle in the hierarchy.
+   * Ensures that the parent is a list owned by the user, and that
+   * making it the parent of `listId` doesn't introduce a cycle in the
+   * hierarchy. Must run in the same transaction as the write it guards.
    */
-  private static async ensureValidParent(
-    ctx: AuthedContext,
+  private static ensureValidParent(
+    tx: KarakeepDBTransaction,
+    userId: string,
     parentId: string,
     listId?: string,
   ) {
-    const lists = await ctx.db
+    const lists = tx
       .select({ id: bookmarkLists.id, parentId: bookmarkLists.parentId })
       .from(bookmarkLists)
-      .where(eq(bookmarkLists.userId, ctx.user.id));
+      .where(eq(bookmarkLists.userId, userId))
+      .all();
     const parentById = new Map(lists.map((l) => [l.id, l.parentId]));
+    // Keeping the current parent can't introduce a new cycle. Skipping the
+    // check also keeps lists with legacy parent links editable.
+    if (listId && parentById.get(listId) === parentId) {
+      return;
+    }
     if (!parentById.has(parentId)) {
       throw new TRPCError({
         code: "BAD_REQUEST",
@@ -297,21 +305,27 @@ export abstract class List {
     ctx: AuthedContext,
     input: z.infer<typeof zNewBookmarkListSchema>,
   ): Promise<ManualList | SmartList> {
-    if (input.parentId) {
-      await this.ensureValidParent(ctx, input.parentId);
-    }
-    const [result] = await ctx.db
-      .insert(bookmarkLists)
-      .values({
-        name: input.name,
-        description: input.description,
-        icon: input.icon,
-        userId: ctx.user.id,
-        parentId: input.parentId,
-        type: input.type,
-        query: input.query,
-      })
-      .returning();
+    const result = await ctx.db.transaction(
+      (tx) => {
+        if (input.parentId) {
+          this.ensureValidParent(tx, ctx.user.id, input.parentId);
+        }
+        return tx
+          .insert(bookmarkLists)
+          .values({
+            name: input.name,
+            description: input.description,
+            icon: input.icon,
+            userId: ctx.user.id,
+            parentId: input.parentId,
+            type: input.type,
+            query: input.query,
+          })
+          .returning()
+          .get();
+      },
+      { behavior: "immediate" },
+    );
     return this.fromData(
       ctx,
       {
@@ -685,26 +699,39 @@ export abstract class List {
     input: z.infer<typeof zEditBookmarkListSchemaWithValidation>,
   ): Promise<void> {
     this.ensureCanManage();
-    if (input.parentId) {
-      await List.ensureValidParent(this.ctx, input.parentId, this.list.id);
-    }
-    const result = await this.ctx.db
-      .update(bookmarkLists)
-      .set({
-        name: input.name,
-        description: input.description,
-        icon: input.icon,
-        parentId: input.parentId,
-        query: input.query,
-        public: input.public,
-      })
-      .where(
-        and(
-          eq(bookmarkLists.id, this.list.id),
-          eq(bookmarkLists.userId, this.ctx.user.id),
-        ),
-      )
-      .returning();
+    // The ancestry check and the write share an immediate transaction so
+    // that concurrent moves can't both pass the check and form a cycle.
+    const result = await this.ctx.db.transaction(
+      (tx) => {
+        if (input.parentId) {
+          List.ensureValidParent(
+            tx,
+            this.ctx.user.id,
+            input.parentId,
+            this.list.id,
+          );
+        }
+        return tx
+          .update(bookmarkLists)
+          .set({
+            name: input.name,
+            description: input.description,
+            icon: input.icon,
+            parentId: input.parentId,
+            query: input.query,
+            public: input.public,
+          })
+          .where(
+            and(
+              eq(bookmarkLists.id, this.list.id),
+              eq(bookmarkLists.userId, this.ctx.user.id),
+            ),
+          )
+          .returning()
+          .all();
+      },
+      { behavior: "immediate" },
+    );
     if (result.length == 0) {
       throw new TRPCError({ code: "NOT_FOUND" });
     }
