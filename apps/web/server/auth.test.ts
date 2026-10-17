@@ -603,4 +603,17 @@ describe("oauth token endpoint authentication", () => {
     expect(form.get("client_id")).toBe("karakeep");
     expect(form.get("client_secret")).toBe("a+b/c=%41 d");
   });
+
+  test("public clients authenticate with PKCE only", async () => {
+    const { callback, tokenRequests } = await signInWithOAuth({
+      OAUTH_CLIENT_SECRET: "",
+    });
+    expect(callback.headers.get("location")).toBe("/");
+    const [request] = tokenRequests;
+    expect(request.headers.get("authorization")).toBeNull();
+    const form = new URLSearchParams(await request.text());
+    expect(form.get("client_id")).toBe("karakeep");
+    expect(form.has("client_secret")).toBe(false);
+    expect(form.get("code_verifier")).toBeTruthy();
+  });
 });

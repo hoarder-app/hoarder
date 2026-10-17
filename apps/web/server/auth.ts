@@ -358,7 +358,10 @@ function createOAuthConfig(): GenericOAuthConfig | null {
     // configurations keep working.
     redirectURI: `${serverConfig.publicUrl}/api/auth/callback/${CUSTOM_OAUTH_PROVIDER_ID}`,
     pkce: true,
-    tokenEndpointAuth: { method: oauth.tokenEndpointAuthMethod },
+    // Without a secret, it's a public client that relies on PKCE alone.
+    tokenEndpointAuth: oauth.clientSecret
+      ? { method: oauth.tokenEndpointAuthMethod }
+      : { method: "none" },
     disableSignUp: serverConfig.auth.disableSignups,
     // Existing accounts were linked by this id, so keep deriving it the same
     // way rather than relying on better-auth's default (`sub` only).
