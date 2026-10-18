@@ -298,14 +298,11 @@ export default function AllTagsView() {
                   variant="outline"
                   className="flex-shrink-0 bg-background"
                 >
-                  <ArrowDownAZ className="mr-2 size-4" />
-                  <span className="mr-1 text-sm">
-                    {t("actions.sort.title")}
-                  </span>
+                  <ArrowDownAZ className="size-4" />
                   <span className="hidden text-sm font-medium sm:inline">
                     {sortLabels[sortBy]}
                   </span>
-                  <ChevronDown className="ml-2 size-4" />
+                  <ChevronDown className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
