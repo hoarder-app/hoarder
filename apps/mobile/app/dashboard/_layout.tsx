@@ -20,8 +20,16 @@ export default function Dashboard() {
   const router = useRouter();
   const { colors } = useColorScheme();
   const formSheetSurfaceOptions = getFormSheetSurfaceOptions(colors.background);
+  // Settings sub-pages need an explicit formSheet presentation. Otherwise they
+  // default to "modal" (they follow a sheet), which ignores sheetGrabberVisible.
   const settingsScreenOptions = {
+    ...formSheetSurfaceOptions,
     headerLargeTitle: false,
+    headerTransparent: false,
+    presentation: Platform.select({
+      ios: "formSheet" as const,
+      default: "modal" as const,
+    }),
     sheetGrabberVisible: true,
   };
 
@@ -185,6 +193,20 @@ export default function Dashboard() {
         }}
       />
       <Stack.Screen
+        name="lists/[slug]/sharing"
+        options={{
+          ...formSheetSurfaceOptions,
+          headerTitle: "Sharing & Access",
+          headerLargeTitle: false,
+          headerTransparent: false,
+          presentation: Platform.select({
+            ios: "formSheet" as const,
+            default: "modal" as const,
+          }),
+          sheetGrabberVisible: true,
+        }}
+      />
+      <Stack.Screen
         name="lists/select-parent"
         options={{
           headerTitle: "Parent List",
@@ -234,14 +256,8 @@ export default function Dashboard() {
       <Stack.Screen
         name="settings/index"
         options={{
-          ...formSheetSurfaceOptions,
           ...settingsScreenOptions,
           headerTitle: "Settings",
-          headerTransparent: false,
-          presentation: Platform.select({
-            ios: "formSheet" as const,
-            default: "modal" as const,
-          }),
           title: "Settings",
         }}
       />
@@ -296,6 +312,24 @@ export default function Dashboard() {
           ...settingsScreenOptions,
           title: "Downloads",
           headerTitle: "Downloads",
+          headerBackTitle: "Back",
+        }}
+      />
+      <Stack.Screen
+        name="settings/offline-lists"
+        options={{
+          ...settingsScreenOptions,
+          title: "Lists",
+          headerTitle: "Keep Lists Offline",
+          headerBackTitle: "Back",
+        }}
+      />
+      <Stack.Screen
+        name="settings/offline-articles"
+        options={{
+          ...settingsScreenOptions,
+          title: "Downloaded Articles",
+          headerTitle: "Downloaded Articles",
           headerBackTitle: "Back",
         }}
       />
