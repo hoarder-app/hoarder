@@ -663,15 +663,22 @@
     {
       "idx": 94,
       "version": "6",
-      "when": 1789667823579,
-      "tag": "0094_github_stars",
+      "when": 1785711744217,
+      "tag": "0094_migrate_to_better_auth",
       "breakpoints": true
     },
     {
       "idx": 95,
       "version": "6",
-      "when": 1789769102060,
-      "tag": "0095_github_stars_connections",
+      "when": 1792360758504,
+      "tag": "0095_github_stars",
+      "breakpoints": true
+    },
+    {
+      "idx": 96,
+      "version": "6",
+      "when": 1792384069843,
+      "tag": "0096_github_stars_connections",
       "breakpoints": true
     }
   ]

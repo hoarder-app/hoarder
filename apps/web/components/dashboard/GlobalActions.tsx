@@ -10,7 +10,7 @@ export default function GlobalActions() {
     (state) => state.inBookmarkGrid,
   );
   return (
-    <div className="flex min-w-max shrink-0 overflow-hidden">
+    <div className="flex min-w-max flex-wrap overflow-hidden">
       {inBookmarkGrid && <ViewOptions />}
       {inBookmarkGrid && <BulkBookmarksAction />}
       {inBookmarkGrid && <SortOrderToggle />}

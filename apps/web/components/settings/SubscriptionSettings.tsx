@@ -273,7 +273,7 @@ export default function SubscriptionSettings() {
                       className="shadow-md transition-all hover:scale-[1.02] hover:shadow-lg active:scale-[0.98]"
                     >
                       {isLoading && (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                       )}
                       {t("settings.subscription.subscribe_now")}
                     </Button>
@@ -288,9 +288,7 @@ export default function SubscriptionSettings() {
                     disabled={isLoading}
                     variant="outline"
                   >
-                    {isLoading && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
+                    {isLoading && <Loader2 className="h-4 w-4 animate-spin" />}
                     {t("settings.subscription.manage_billing")}
                   </Button>
                 </div>

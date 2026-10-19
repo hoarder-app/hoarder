@@ -1,12 +1,33 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "523590ce-36c8-458f-933a-899de45c317b",
-  "prevId": "104522bb-1a2b-4092-8a9c-841b1754e2e0",
+  "id": "4a9572ca-dc91-4241-b7ad-cd89b07d3e20",
+  "prevId": "09931183-1ed7-40d8-ad30-3b30edf74266",
   "tables": {
     "account": {
       "name": "account",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "accountId": {
+          "name": "accountId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "providerId": {
+          "name": "providerId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "userId": {
           "name": "userId",
           "type": "text",
@@ -14,51 +35,37 @@
           "notNull": true,
           "autoincrement": false
         },
-        "type": {
-          "name": "type",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "provider": {
-          "name": "provider",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "providerAccountId": {
-          "name": "providerAccountId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "refresh_token": {
-          "name": "refresh_token",
+        "accessToken": {
+          "name": "accessToken",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "access_token": {
-          "name": "access_token",
+        "refreshToken": {
+          "name": "refreshToken",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "expires_at": {
-          "name": "expires_at",
+        "idToken": {
+          "name": "idToken",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "accessTokenExpiresAt": {
+          "name": "accessTokenExpiresAt",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "token_type": {
-          "name": "token_type",
-          "type": "text",
+        "refreshTokenExpiresAt": {
+          "name": "refreshTokenExpiresAt",
+          "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
@@ -70,22 +77,45 @@
           "notNull": false,
           "autoincrement": false
         },
-        "id_token": {
-          "name": "id_token",
+        "password": {
+          "name": "password",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "session_state": {
-          "name": "session_state",
-          "type": "text",
+        "createdAt": {
+          "name": "createdAt",
+          "type": "integer",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "accounts_userId_idx": {
+          "name": "accounts_userId_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        },
+        "accounts_providerId_accountId_unique": {
+          "name": "accounts_providerId_accountId_unique",
+          "columns": [
+            "providerId",
+            "accountId"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {
         "account_userId_user_id_fk": {
           "name": "account_userId_user_id_fk",
@@ -101,15 +131,7 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {
-        "account_provider_providerAccountId_pk": {
-          "columns": [
-            "provider",
-            "providerAccountId"
-          ],
-          "name": "account_provider_providerAccountId_pk"
-        }
-      },
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
@@ -1465,118 +1487,6 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "githubStarsAuthorizations": {
-      "name": "githubStarsAuthorizations",
-      "columns": {
-        "userId": {
-          "name": "userId",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "stateHash": {
-          "name": "stateHash",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "verifier": {
-          "name": "verifier",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "expiresAt": {
-          "name": "expiresAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "githubStarsAuthorizations_userId_user_id_fk": {
-          "name": "githubStarsAuthorizations_userId_user_id_fk",
-          "tableFrom": "githubStarsAuthorizations",
-          "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "githubStarsConnections": {
-      "name": "githubStarsConnections",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "userId": {
-          "name": "userId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "login": {
-          "name": "login",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "credentials": {
-          "name": "credentials",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "githubStarsConnections_userId_unique": {
-          "name": "githubStarsConnections_userId_unique",
-          "columns": [
-            "userId"
-          ],
-          "isUnique": true
-        }
-      },
-      "foreignKeys": {
-        "githubStarsConnections_userId_user_id_fk": {
-          "name": "githubStarsConnections_userId_user_id_fk",
-          "tableFrom": "githubStarsConnections",
-          "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
     "githubStarsSubscriptions": {
       "name": "githubStarsSubscriptions",
       "columns": {
@@ -1592,13 +1502,6 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
-        },
-        "connectionId": {
-          "name": "connectionId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false
         },
         "username": {
@@ -1699,19 +1602,6 @@
           "tableTo": "user",
           "columnsFrom": [
             "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "githubStarsSubscriptions_connectionId_githubStarsConnections_id_fk": {
-          "name": "githubStarsSubscriptions_connectionId_githubStarsConnections_id_fk",
-          "tableFrom": "githubStarsSubscriptions",
-          "tableTo": "githubStarsConnections",
-          "columnsFrom": [
-            "connectionId"
           ],
           "columnsTo": [
             "id"
@@ -2633,80 +2523,6 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "passwordResetToken": {
-      "name": "passwordResetToken",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "userId": {
-          "name": "userId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "token": {
-          "name": "token",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "expires": {
-          "name": "expires",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "createdAt": {
-          "name": "createdAt",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "passwordResetToken_token_unique": {
-          "name": "passwordResetToken_token_unique",
-          "columns": [
-            "token"
-          ],
-          "isUnique": true
-        },
-        "passwordResetTokens_userId_idx": {
-          "name": "passwordResetTokens_userId_idx",
-          "columns": [
-            "userId"
-          ],
-          "isUnique": false
-        }
-      },
-      "foreignKeys": {
-        "passwordResetToken_userId_user_id_fk": {
-          "name": "passwordResetToken_userId_user_id_fk",
-          "tableFrom": "passwordResetToken",
-          "tableTo": "user",
-          "columnsFrom": [
-            "userId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
     "rssFeedImports": {
       "name": "rssFeedImports",
       "columns": {
@@ -3153,10 +2969,17 @@
     "session": {
       "name": "session",
       "columns": {
-        "sessionToken": {
-          "name": "sessionToken",
+        "id": {
+          "name": "id",
           "type": "text",
           "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "token": {
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
@@ -3167,15 +2990,58 @@
           "notNull": true,
           "autoincrement": false
         },
-        "expires": {
-          "name": "expires",
+        "expiresAt": {
+          "name": "expiresAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "ipAddress": {
+          "name": "ipAddress",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "userAgent": {
+          "name": "userAgent",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "session_token_unique": {
+          "name": "session_token_unique",
+          "columns": [
+            "token"
+          ],
+          "isUnique": true
+        },
+        "sessions_userId_idx": {
+          "name": "sessions_userId_idx",
+          "columns": [
+            "userId"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "session_userId_user_id_fk": {
           "name": "session_userId_user_id_fk",
@@ -3556,21 +3422,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "password": {
-          "name": "password",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "salt": {
-          "name": "salt",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "''"
-        },
         "role": {
           "name": "role",
           "type": "text",
@@ -3578,6 +3429,20 @@
           "notNull": false,
           "autoincrement": false,
           "default": "'user'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "bookmarkQuota": {
           "name": "bookmarkQuota",
@@ -3730,6 +3595,13 @@
     "verificationToken": {
       "name": "verificationToken",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
         "identifier": {
           "name": "identifier",
           "type": "text",
@@ -3737,32 +3609,54 @@
           "notNull": true,
           "autoincrement": false
         },
-        "token": {
-          "name": "token",
+        "value": {
+          "name": "value",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "expires": {
-          "name": "expires",
+        "expiresAt": {
+          "name": "expiresAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updatedAt": {
+          "name": "updatedAt",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         }
       },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {
-        "verificationToken_identifier_token_pk": {
+      "indexes": {
+        "verificationTokens_identifier_idx": {
+          "name": "verificationTokens_identifier_idx",
+          "columns": [
+            "identifier"
+          ],
+          "isUnique": false
+        },
+        "verificationTokens_identifier_value_unique": {
+          "name": "verificationTokens_identifier_value_unique",
           "columns": [
             "identifier",
-            "token"
+            "value"
           ],
-          "name": "verificationToken_identifier_token_pk"
+          "isUnique": true
         }
       },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
     },

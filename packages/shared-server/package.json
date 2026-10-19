@@ -19,12 +19,13 @@
     "@opentelemetry/semantic-conventions": "^1.38.0",
     "@opentelemetry/winston-transport": "^0.23.0",
     "@trpc/server": "^11.9.0",
+    "sharp": "^0.35.5",
     "winston": "^3.11.0"
   },
   "devDependencies": {
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "vite-tsconfig-paths": "^6.1.1",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.11"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
