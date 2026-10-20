@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import { TRPCError } from "@trpc/server";
-import { and, count, eq, inArray, or, sql } from "drizzle-orm";
+import { and, count, eq, inArray, ne, notInArray, or, sql } from "drizzle-orm";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 
@@ -10,6 +10,7 @@ import {
   bookmarks,
   bookmarksInLists,
   listCollaborators,
+  listInvitations,
   ruleEngineRulesTable,
   users,
 } from "@karakeep/db/schema";
@@ -898,6 +899,43 @@ export abstract class List {
         message: "Collaborator not found",
       });
     }
+  }
+
+  /**
+   * Suggest only users successfully invited by this owner on their other lists.
+   * Using current memberships avoids exposing an instance-wide user directory
+   * or retaining collaboration history after users leave.
+   */
+  async getCollaboratorSuggestions() {
+    this.ensureCanManage();
+
+    return await this.ctx.db
+      .selectDistinct({ id: users.id, name: users.name, email: users.email })
+      .from(listCollaborators)
+      .innerJoin(users, eq(users.id, listCollaborators.userId))
+      .innerJoin(bookmarkLists, eq(bookmarkLists.id, listCollaborators.listId))
+      .where(
+        and(
+          eq(bookmarkLists.userId, this.ctx.user.id),
+          eq(listCollaborators.addedBy, this.ctx.user.id),
+          ne(users.id, this.ctx.user.id),
+          notInArray(
+            users.id,
+            this.ctx.db
+              .select({ userId: listCollaborators.userId })
+              .from(listCollaborators)
+              .where(eq(listCollaborators.listId, this.list.id)),
+          ),
+          notInArray(
+            users.id,
+            this.ctx.db
+              .select({ userId: listInvitations.userId })
+              .from(listInvitations)
+              .where(eq(listInvitations.listId, this.list.id)),
+          ),
+        ),
+      )
+      .orderBy(users.name, users.email);
   }
 
   /**

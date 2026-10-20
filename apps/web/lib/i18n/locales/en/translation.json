@@ -898,6 +898,7 @@
       "add": "Add Collaborator",
       "current": "Current Collaborators",
       "enter_email": "Enter email address",
+      "choose_previous": "Choose a previous collaborator",
       "please_enter_email": "Please enter an email address",
       "added_successfully": "Collaborator added successfully",
       "invitation_sent": "Invitation sent successfully",

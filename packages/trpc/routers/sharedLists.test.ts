@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test } from "vitest";
 
+import { listCollaborators } from "@karakeep/db/schema";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
 import type { APICallerType, CustomTestContext } from "../testUtils";
@@ -32,6 +33,170 @@ async function addAndAcceptCollaborator(
 }
 
 describe("Shared Lists", () => {
+  describe("Collaborator suggestions", () => {
+    test<CustomTestContext>("suggests distinct users successfully invited by the owner", async ({
+      apiCallers,
+    }) => {
+      const [owner, collaborator] = apiCallers;
+      const target = await owner.lists.create({ name: "Target", icon: "📚" });
+      for (const name of ["First", "Second"]) {
+        const source = await owner.lists.create({ name, icon: "📚" });
+        await addAndAcceptCollaborator(
+          owner,
+          collaborator,
+          source.id,
+          "viewer",
+        );
+      }
+      const user = await collaborator.users.whoami();
+
+      expect(
+        await owner.lists.getCollaboratorSuggestions({ listId: target.id }),
+      ).toEqual([{ id: user.id, name: user.name, email: user.email }]);
+    });
+
+    test<CustomTestContext>("does not suggest unknown users or unaccepted invitations", async ({
+      apiCallers,
+    }) => {
+      const [owner, pending, declined] = apiCallers;
+      const target = await owner.lists.create({ name: "Target", icon: "📚" });
+      const source = await owner.lists.create({ name: "Source", icon: "📚" });
+      const suggestions = () =>
+        owner.lists.getCollaboratorSuggestions({ listId: target.id });
+      expect(await suggestions()).toEqual([]);
+
+      for (const collaborator of [pending, declined]) {
+        const user = await collaborator.users.whoami();
+        const invitation = await owner.lists.addCollaborator({
+          listId: source.id,
+          email: user.email!,
+          role: "viewer",
+        });
+        if (collaborator === declined) {
+          await collaborator.lists.declineInvitation(invitation);
+        }
+      }
+      expect(await suggestions()).toEqual([]);
+    });
+
+    test<CustomTestContext>("does not suggest relationships on another owner's lists", async ({
+      apiCallers,
+    }) => {
+      const [owner, otherOwner, collaborator] = apiCallers;
+      const target = await owner.lists.create({ name: "Target", icon: "📚" });
+      const source = await otherOwner.lists.create({
+        name: "Source",
+        icon: "📚",
+      });
+      await addAndAcceptCollaborator(otherOwner, owner, source.id, "editor");
+      await addAndAcceptCollaborator(
+        otherOwner,
+        collaborator,
+        source.id,
+        "viewer",
+      );
+
+      expect(
+        await owner.lists.getCollaboratorSuggestions({ listId: target.id }),
+      ).toEqual([]);
+    });
+
+    test<CustomTestContext>("requires the caller to have invited the user, even on an owned list", async ({
+      apiCallers,
+      db,
+    }) => {
+      const [owner, collaborator, otherInviter] = apiCallers;
+      const target = await owner.lists.create({ name: "Target", icon: "📚" });
+      const source = await owner.lists.create({ name: "Source", icon: "📚" });
+      const user = await collaborator.users.whoami();
+      const inviter = await otherInviter.users.whoami();
+      const ownerUser = await owner.users.whoami();
+      await db.insert(listCollaborators).values([
+        {
+          listId: source.id,
+          userId: user.id,
+          addedBy: inviter.id,
+          role: "viewer",
+        },
+        {
+          listId: source.id,
+          userId: ownerUser.id,
+          addedBy: ownerUser.id,
+          role: "viewer",
+        },
+      ]);
+
+      expect(
+        await owner.lists.getCollaboratorSuggestions({ listId: target.id }),
+      ).toEqual([]);
+    });
+
+    for (const status of ["accepted", "pending", "declined"] as const) {
+      test<CustomTestContext>(`excludes users already ${status} on the target list`, async ({
+        apiCallers,
+      }) => {
+        const [owner, collaborator] = apiCallers;
+        const target = await owner.lists.create({ name: "Target", icon: "📚" });
+        const source = await owner.lists.create({ name: "Source", icon: "📚" });
+        await addAndAcceptCollaborator(
+          owner,
+          collaborator,
+          source.id,
+          "viewer",
+        );
+        const user = await collaborator.users.whoami();
+        const invitation = await owner.lists.addCollaborator({
+          listId: target.id,
+          email: user.email!,
+          role: "viewer",
+        });
+        if (status === "accepted")
+          await collaborator.lists.acceptInvitation(invitation);
+        if (status === "declined")
+          await collaborator.lists.declineInvitation(invitation);
+
+        expect(
+          await owner.lists.getCollaboratorSuggestions({ listId: target.id }),
+        ).toEqual([]);
+      });
+    }
+
+    test<CustomTestContext>("stops suggesting a user after the last collaboration ends", async ({
+      apiCallers,
+    }) => {
+      const [owner, collaborator] = apiCallers;
+      const target = await owner.lists.create({ name: "Target", icon: "📚" });
+      const source = await owner.lists.create({ name: "Source", icon: "📚" });
+      await addAndAcceptCollaborator(owner, collaborator, source.id, "viewer");
+      await collaborator.lists.leaveList({ listId: source.id });
+
+      expect(
+        await owner.lists.getCollaboratorSuggestions({ listId: target.id }),
+      ).toEqual([]);
+    });
+
+    test<CustomTestContext>("only allows the target list owner to request suggestions", async ({
+      apiCallers,
+      unauthedAPICaller,
+    }) => {
+      const [owner, editor, stranger] = apiCallers;
+      const target = await owner.lists.create({ name: "Target", icon: "📚" });
+      await addAndAcceptCollaborator(owner, editor, target.id, "editor");
+
+      await expect(
+        editor.lists.getCollaboratorSuggestions({ listId: target.id }),
+      ).rejects.toMatchObject({ code: "FORBIDDEN" });
+      await expect(
+        stranger.lists.getCollaboratorSuggestions({ listId: target.id }),
+      ).rejects.toMatchObject({ code: "NOT_FOUND" });
+      await expect(
+        unauthedAPICaller.lists.getCollaboratorSuggestions({
+          listId: target.id,
+        }),
+      ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    });
+  });
+
   describe("List Collaboration Management", () => {
     test<CustomTestContext>("should allow owner to add a collaborator by email", async ({
       apiCallers,

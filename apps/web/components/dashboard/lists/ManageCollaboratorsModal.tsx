@@ -71,6 +71,9 @@ export function ManageCollaboratorsModal({
         api.lists.getCollaborators.queryFilter({ listId: list.id }),
       ),
       queryClient.invalidateQueries(
+        api.lists.getCollaboratorSuggestions.queryFilter({ listId: list.id }),
+      ),
+      queryClient.invalidateQueries(
         api.lists.get.queryFilter({ listId: list.id }),
       ),
       queryClient.invalidateQueries(api.lists.list.pathFilter()),
@@ -87,6 +90,13 @@ export function ManageCollaboratorsModal({
     api.lists.getCollaborators.queryOptions(
       { listId: list.id },
       { enabled: open },
+    ),
+  );
+
+  const { data: suggestions } = useQuery(
+    api.lists.getCollaboratorSuggestions.queryOptions(
+      { listId: list.id },
+      { enabled: open && !readOnly },
     ),
   );
 
@@ -205,13 +215,46 @@ export function ManageCollaboratorsModal({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           {/* Add Collaborator Section */}
           {!readOnly && (
             <div className="space-y-3">
               <Label>{t("lists.collaborators.add")}</Label>
+              {suggestions && suggestions.length > 0 && (
+                <Select
+                  value={
+                    suggestions.some(
+                      (user) => user.email === newCollaboratorEmail,
+                    )
+                      ? newCollaboratorEmail
+                      : ""
+                  }
+                  onValueChange={setNewCollaboratorEmail}
+                >
+                  <SelectTrigger
+                    aria-label={t("lists.collaborators.choose_previous")}
+                  >
+                    <SelectValue
+                      placeholder={t("lists.collaborators.choose_previous")}
+                    />
+                  </SelectTrigger>
+                  <SelectContent className="w-[var(--radix-select-trigger-width)]">
+                    {suggestions.map((user) => (
+                      <SelectItem
+                        key={user.id}
+                        value={user.email}
+                        className="[&>span:last-child]:min-w-0"
+                      >
+                        <span className="truncate">
+                          {user.name} ({user.email})
+                        </span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
               <div className="flex gap-2">
-                <div className="flex-1">
+                <div className="min-w-0 flex-1">
                   <Input
                     type="email"
                     placeholder={t("lists.collaborators.enter_email")}
@@ -244,6 +287,7 @@ export function ManageCollaboratorsModal({
                 </Select>
                 <Button
                   onClick={handleAddCollaborator}
+                  aria-label={t("lists.collaborators.add")}
                   disabled={addCollaborator.isPending}
                 >
                   {addCollaborator.isPending ? (
