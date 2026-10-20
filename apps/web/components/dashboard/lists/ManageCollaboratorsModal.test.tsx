@@ -45,21 +45,33 @@ function renderModal({
   open = true,
   readOnly = false,
   suggestions = [suggestion],
+  handleRequest,
+}: {
+  open?: boolean;
+  readOnly?: boolean;
+  suggestions?: (typeof suggestion)[];
+  handleRequest?: (path: string, input: unknown) => unknown;
 } = {}) {
-  const request = vi.fn((path: string, _input: unknown) => {
-    switch (path) {
-      case "lists.getCollaborators":
-        return { collaborators: [], owner: null };
-      case "lists.getCollaboratorSuggestions":
-        return suggestions;
-      case "lists.addCollaborator":
-        return { invitationId: "invitation-1" };
-      default:
-        throw new Error(`Unexpected request: ${path}`);
-    }
-  });
+  const request = vi.fn(
+    handleRequest ??
+      ((path: string, _input: unknown) => {
+        switch (path) {
+          case "lists.getCollaborators":
+            return { collaborators: [], owner: null };
+          case "lists.getCollaboratorSuggestions":
+            return suggestions;
+          case "lists.addCollaborator":
+            return { invitationId: "invitation-1" };
+          default:
+            throw new Error(`Unexpected request: ${path}`);
+        }
+      }),
+  );
   const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    defaultOptions: {
+      queries: { retry: false, staleTime: 60 * 1000 },
+      mutations: { retry: false },
+    },
   });
   const trpcClient = createTRPCClient<AppRouter>({
     links: [
@@ -71,19 +83,24 @@ function renderModal({
           }),
     ],
   });
-  render(
+  const modal = (modalList = list, modalOpen = open) => (
     <QueryClientProvider client={queryClient}>
       <TRPCProvider trpcClient={trpcClient} queryClient={queryClient}>
         <ManageCollaboratorsModal
-          list={list}
-          open={open}
+          list={modalList}
+          open={modalOpen}
           setOpen={vi.fn()}
           readOnly={readOnly}
         />
       </TRPCProvider>
-    </QueryClientProvider>,
+    </QueryClientProvider>
   );
-  return request;
+  const { rerender } = render(modal());
+  return {
+    request,
+    rerenderModal: (modalList: ZBookmarkList, modalOpen: boolean) =>
+      rerender(modal(modalList, modalOpen)),
+  };
 }
 
 afterEach(cleanup);
@@ -97,7 +114,7 @@ beforeEach(() => {
 
 describe("ManageCollaboratorsModal", () => {
   it("fills the email from a previous collaborator and sends a normal invitation", async () => {
-    const request = renderModal();
+    const { request } = renderModal();
     const selector = await screen.findByRole("combobox", {
       name: "lists.collaborators.choose_previous",
     });
@@ -138,7 +155,7 @@ describe("ManageCollaboratorsModal", () => {
   });
 
   it("keeps manual email entry when there are no suggestions", async () => {
-    const request = renderModal({ suggestions: [] });
+    const { request } = renderModal({ suggestions: [] });
     const input = screen.getByPlaceholderText(
       "lists.collaborators.enter_email",
     );
@@ -158,8 +175,77 @@ describe("ManageCollaboratorsModal", () => {
     ).toBeNull();
   });
 
+  it("refreshes cached suggestions on another list after removing the last membership", async () => {
+    const source = { ...list, id: "list-2", name: "Source" };
+    let hasMembership = true;
+    const { request, rerenderModal } = renderModal({
+      handleRequest: (path, input) => {
+        const { listId } = input as { listId: string };
+        switch (path) {
+          case "lists.getCollaboratorSuggestions":
+            return listId === list.id && hasMembership ? [suggestion] : [];
+          case "lists.getCollaborators":
+            return {
+              owner: null,
+              collaborators:
+                listId === source.id && hasMembership
+                  ? [
+                      {
+                        id: "membership-1",
+                        userId: suggestion.id,
+                        role: "viewer",
+                        status: "accepted",
+                        user: { ...suggestion, image: null },
+                      },
+                    ]
+                  : [],
+            };
+          case "lists.removeCollaborator":
+            hasMembership = false;
+            return;
+          default:
+            throw new Error(`Unexpected request: ${path}`);
+        }
+      },
+    });
+    await screen.findByRole("combobox", {
+      name: "lists.collaborators.choose_previous",
+    });
+    rerenderModal(list, false);
+    rerenderModal(source, true);
+    await screen.findByText(suggestion.email);
+    fireEvent.click(screen.getByRole("button", { name: "" }));
+    await waitFor(() =>
+      expect(request).toHaveBeenCalledWith("lists.removeCollaborator", {
+        listId: source.id,
+        userId: suggestion.id,
+      }),
+    );
+    await waitFor(() =>
+      expect(screen.queryByText(suggestion.email)).toBeNull(),
+    );
+    rerenderModal(source, false);
+    rerenderModal(list, true);
+    await waitFor(() =>
+      expect(
+        request.mock.calls.filter(
+          ([path, input]) =>
+            path === "lists.getCollaboratorSuggestions" &&
+            (input as { listId: string }).listId === list.id,
+        ),
+      ).toHaveLength(2),
+    );
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("combobox", {
+          name: "lists.collaborators.choose_previous",
+        }),
+      ).toBeNull(),
+    );
+  });
+
   it("does not fetch or show suggestions in read-only mode", async () => {
-    const request = renderModal({ readOnly: true });
+    const { request } = renderModal({ readOnly: true });
     await screen.findByText("lists.collaborators.no_collaborators_readonly");
     expect(request.mock.calls.map(([path]) => path)).toEqual([
       "lists.getCollaborators",
@@ -172,7 +258,7 @@ describe("ManageCollaboratorsModal", () => {
   });
 
   it("does not fetch suggestions while closed", () => {
-    const request = renderModal({ open: false });
+    const { request } = renderModal({ open: false });
     expect(request).not.toHaveBeenCalled();
   });
 });

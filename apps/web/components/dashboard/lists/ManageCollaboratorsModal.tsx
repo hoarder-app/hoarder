@@ -70,8 +70,9 @@ export function ManageCollaboratorsModal({
       queryClient.invalidateQueries(
         api.lists.getCollaborators.queryFilter({ listId: list.id }),
       ),
+      // Suggestions depend on accepted memberships across all owned lists.
       queryClient.invalidateQueries(
-        api.lists.getCollaboratorSuggestions.queryFilter({ listId: list.id }),
+        api.lists.getCollaboratorSuggestions.pathFilter(),
       ),
       queryClient.invalidateQueries(
         api.lists.get.queryFilter({ listId: list.id }),
