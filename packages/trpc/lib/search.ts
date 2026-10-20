@@ -15,6 +15,7 @@ import {
   notInArray,
   notLike,
   or,
+  SQL,
 } from "drizzle-orm";
 
 import {
@@ -25,6 +26,7 @@ import {
   bookmarksInLists,
   bookmarkTags,
   highlights,
+  listCollaborators,
   rssFeedImportsTable,
   rssFeedsTable,
   tagsOnBookmarks,
@@ -33,10 +35,79 @@ import { Matcher } from "@karakeep/shared/types/search";
 import { toAbsoluteDate } from "@karakeep/shared/utils/relativeDateUtils";
 
 import { AuthedContext } from "..";
+import { visibleBookmarksCondition } from "./bookmarkAccess";
 
 interface BookmarkQueryReturnType {
   id: string;
 }
+
+type DB = AuthedContext["db"];
+
+/**
+ * Lists the user can resolve by name: the ones they own, plus the ones shared
+ * with them through an accepted invitation.
+ */
+function visibleLists(db: DB, userId: string): SQL {
+  return or(
+    eq(bookmarkLists.userId, userId),
+    exists(
+      db
+        .select({ id: listCollaborators.id })
+        .from(listCollaborators)
+        .where(
+          and(
+            eq(listCollaborators.listId, bookmarkLists.id),
+            eq(listCollaborators.userId, userId),
+          ),
+        ),
+    ),
+  )!;
+}
+
+/**
+ * Bookmarks the user may view but doesn't own. Search uses these to widen the
+ * index filter, which is otherwise scoped to the bookmark's owner.
+ */
+export async function getSharedBookmarkIds(ctx: AuthedContext) {
+  const { db } = ctx;
+  const userId = ctx.user.id;
+
+  // A bookmark owned by someone else is only reachable through a list that both
+  // users can see, so a user who neither collaborates on a list nor shares one
+  // of their own has nothing to find. Checking that first keeps the common case
+  // off the bookmarks table entirely.
+  const involvedInCollaboration = await db
+    .select({ listId: listCollaborators.listId })
+    .from(listCollaborators)
+    .innerJoin(bookmarkLists, eq(bookmarkLists.id, listCollaborators.listId))
+    .where(
+      or(
+        eq(listCollaborators.userId, userId),
+        eq(bookmarkLists.userId, userId),
+      ),
+    )
+    .limit(1);
+  if (involvedInCollaboration.length === 0) {
+    return [];
+  }
+
+  const rows = await db
+    .selectDistinct({ id: bookmarks.id })
+    .from(bookmarks)
+    .where(
+      and(visibleBookmarksCondition(db, userId), ne(bookmarks.userId, userId)),
+    );
+  return rows.map((r) => r.id);
+}
+
+/**
+ * Which bookmarks a matcher is allowed to range over.
+ *
+ * - `owned`: only the caller's bookmarks. This is what smart lists evaluate
+ *   against, and what matchers over owner-private state use.
+ * - `visible`: also bookmarks reachable through a list shared with the caller.
+ */
+export type BookmarkScope = "owned" | "visible";
 
 function intersect(
   vals: BookmarkQueryReturnType[][],
@@ -94,10 +165,25 @@ function union(vals: BookmarkQueryReturnType[][]): BookmarkQueryReturnType[] {
 async function getIds(
   ctx: AuthedContext,
   matcher: Matcher,
+  scope: BookmarkScope,
   visitedListIds = new Set<string>(),
 ): Promise<BookmarkQueryReturnType[]> {
   const { db } = ctx;
   const userId = ctx.user.id;
+
+  // The bookmark set that content-level matchers range over.
+  //
+  // Matchers over owner-private state (`tagName`, `tagged`, `hasNotes`,
+  // `hasHighlights`, `archived`, `favourited`, `rssFeedName`) deliberately keep
+  // using `eq(bookmarks.userId, userId)` even under the `visible` scope:
+  // collaborators can't set tags, notes or highlights on a bookmark they don't
+  // own, and `asZBookmark()` hides the archived/favourited/note fields from
+  // them, so matching on those would return rows whose displayed state
+  // contradicts the query.
+  const scoped =
+    scope === "visible"
+      ? visibleBookmarksCondition(db, userId)
+      : eq(bookmarks.userId, userId);
 
   switch (matcher.type) {
     case "tagName": {
@@ -162,10 +248,14 @@ async function getIds(
         );
     }
     case "listName": {
-      // First, look up the list by name
+      // First, look up the list by name. When searching over visible
+      // bookmarks, lists shared with the user resolve here too, not just the
+      // ones they own.
       const lists = await db.query.bookmarkLists.findMany({
         where: and(
-          eq(bookmarkLists.userId, userId),
+          scope === "visible"
+            ? visibleLists(db, userId)
+            : eq(bookmarkLists.userId, userId),
           eq(bookmarkLists.name, matcher.listName),
         ),
       });
@@ -196,7 +286,7 @@ async function getIds(
           return db
             .selectDistinct({ id: bookmarks.id })
             .from(bookmarks)
-            .where(eq(bookmarks.userId, userId));
+            .where(scoped);
         }
         return [];
       }
@@ -206,7 +296,7 @@ async function getIds(
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            scoped,
             matcher.inverse
               ? notInArray(bookmarks.id, listBookmarkIds)
               : inArray(bookmarks.id, listBookmarkIds),
@@ -220,7 +310,7 @@ async function getIds(
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            scoped,
             comp(
               db
                 .select()
@@ -274,12 +364,7 @@ async function getIds(
         .select({ id: bookmarkLinks.id })
         .from(bookmarkLinks)
         .leftJoin(bookmarks, eq(bookmarks.id, bookmarkLinks.id))
-        .where(
-          and(
-            eq(bookmarks.userId, userId),
-            comp(bookmarkLinks.url, `%${matcher.url}%`),
-          ),
-        )
+        .where(and(scoped, comp(bookmarkLinks.url, `%${matcher.url}%`)))
         .union(
           db
             .select({ id: bookmarkAssets.id })
@@ -287,7 +372,7 @@ async function getIds(
             .leftJoin(bookmarks, eq(bookmarks.id, bookmarkAssets.id))
             .where(
               and(
-                eq(bookmarks.userId, userId),
+                scoped,
                 // When a user is asking for a link, the inverse matcher should match only assets with URLs.
                 isNotNull(bookmarkAssets.sourceUrl),
                 comp(bookmarkAssets.sourceUrl, `%${matcher.url}%`),
@@ -304,7 +389,7 @@ async function getIds(
           .leftJoin(bookmarkLinks, eq(bookmarks.id, bookmarkLinks.id))
           .where(
             and(
-              eq(bookmarks.userId, userId),
+              scoped,
               or(
                 isNull(bookmarks.title),
                 comp(bookmarks.title, `%${matcher.title}%`),
@@ -320,22 +405,14 @@ async function getIds(
       return db
         .select({ id: bookmarks.id })
         .from(bookmarks)
-        .where(
-          and(
-            eq(bookmarks.userId, userId),
-            comp(bookmarks.title, `%${matcher.title}%`),
-          ),
-        )
+        .where(and(scoped, comp(bookmarks.title, `%${matcher.title}%`)))
         .union(
           db
             .select({ id: bookmarkLinks.id })
             .from(bookmarkLinks)
             .leftJoin(bookmarks, eq(bookmarks.id, bookmarkLinks.id))
             .where(
-              and(
-                eq(bookmarks.userId, userId),
-                comp(bookmarkLinks.title, `%${matcher.title}%`),
-              ),
+              and(scoped, comp(bookmarkLinks.title, `%${matcher.title}%`)),
             ),
         );
     }
@@ -390,24 +467,14 @@ async function getIds(
       return db
         .select({ id: bookmarks.id })
         .from(bookmarks)
-        .where(
-          and(
-            eq(bookmarks.userId, userId),
-            comp(bookmarks.createdAt, matcher.dateAfter),
-          ),
-        );
+        .where(and(scoped, comp(bookmarks.createdAt, matcher.dateAfter)));
     }
     case "dateBefore": {
       const comp = matcher.inverse ? gt : lte;
       return db
         .select({ id: bookmarks.id })
         .from(bookmarks)
-        .where(
-          and(
-            eq(bookmarks.userId, userId),
-            comp(bookmarks.createdAt, matcher.dateBefore),
-          ),
-        );
+        .where(and(scoped, comp(bookmarks.createdAt, matcher.dateBefore)));
     }
     case "age": {
       const comp = matcher.relativeDate.direction === "newer" ? gte : lt;
@@ -416,7 +483,7 @@ async function getIds(
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            scoped,
             comp(bookmarks.createdAt, toAbsoluteDate(matcher.relativeDate)),
           ),
         );
@@ -426,12 +493,7 @@ async function getIds(
       return db
         .select({ id: bookmarks.id })
         .from(bookmarks)
-        .where(
-          and(
-            eq(bookmarks.userId, userId),
-            comp(bookmarks.type, matcher.typeName),
-          ),
-        );
+        .where(and(scoped, comp(bookmarks.type, matcher.typeName)));
     }
     case "brokenLinks": {
       // Only applies to bookmarks of type LINK
@@ -441,7 +503,7 @@ async function getIds(
         .leftJoin(bookmarks, eq(bookmarks.id, bookmarkLinks.id))
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            scoped,
             matcher.brokenLinks
               ? or(
                   eq(bookmarkLinks.crawlStatus, "failure"),
@@ -462,7 +524,7 @@ async function getIds(
         .from(bookmarks)
         .where(
           and(
-            eq(bookmarks.userId, userId),
+            scoped,
             matcher.inverse
               ? or(
                   ne(bookmarks.source, matcher.source),
@@ -474,13 +536,13 @@ async function getIds(
     }
     case "and": {
       const vals = await Promise.all(
-        matcher.matchers.map((m) => getIds(ctx, m, visitedListIds)),
+        matcher.matchers.map((m) => getIds(ctx, m, scope, visitedListIds)),
       );
       return intersect(vals);
     }
     case "or": {
       const vals = await Promise.all(
-        matcher.matchers.map((m) => getIds(ctx, m, visitedListIds)),
+        matcher.matchers.map((m) => getIds(ctx, m, scope, visitedListIds)),
       );
       return union(vals);
     }
@@ -494,8 +556,9 @@ async function getIds(
 export async function getBookmarkIdsFromMatcher(
   ctx: AuthedContext,
   matcher: Matcher,
+  scope: BookmarkScope = "owned",
   visitedListIds = new Set<string>(),
 ): Promise<string[]> {
-  const results = await getIds(ctx, matcher, visitedListIds);
+  const results = await getIds(ctx, matcher, scope, visitedListIds);
   return results.map((r) => r.id);
 }

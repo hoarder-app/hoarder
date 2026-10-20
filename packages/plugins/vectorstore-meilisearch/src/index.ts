@@ -24,7 +24,7 @@ interface MeiliVectorDocument {
   };
 }
 
-function filterToMeiliSearchFilter(filter: VectorFilterQuery): string {
+export function filterToMeiliSearchFilter(filter: VectorFilterQuery): string {
   switch (filter.type) {
     case "eq":
       return `${filter.field} = ${JSON.stringify(filter.value)}`;
@@ -32,6 +32,12 @@ function filterToMeiliSearchFilter(filter: VectorFilterQuery): string {
       return `${filter.field} IN [${filter.values
         .map((v) => JSON.stringify(v))
         .join(",")}]`;
+    case "or":
+      // Parenthesize so the group binds tighter than the implicit AND that
+      // Meilisearch applies between the top-level filter entries.
+      return `(${filter.filters
+        .map((f) => filterToMeiliSearchFilter(f))
+        .join(" OR ")})`;
     default: {
       const exhaustiveCheck: never = filter;
       throw new Error(`Unhandled filter type: ${exhaustiveCheck}`);

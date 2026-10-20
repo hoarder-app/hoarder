@@ -15,15 +15,21 @@ import { PluginProvider } from "@karakeep/shared/plugins";
 import { envConfig } from "./env";
 import { BatchingDocumentQueue } from "../../lib/batchingDocumentQueue";
 
-function filterToMeiliSearchFilter(filter: FilterQuery): string {
+export function filterToMeiliSearchFilter(filter: FilterQuery): string {
   switch (filter.type) {
     case "eq":
       return `${filter.field} = "${filter.value}"`;
     case "in":
       return `${filter.field} IN [${filter.values.join(",")}]`;
+    case "or":
+      // Parenthesize so the group binds tighter than the implicit AND that
+      // Meilisearch applies between the top-level filter entries.
+      return `(${filter.filters
+        .map((f) => filterToMeiliSearchFilter(f))
+        .join(" OR ")})`;
     default: {
       const exhaustiveCheck: never = filter;
-      throw new Error(`Unhandled color case: ${exhaustiveCheck}`);
+      throw new Error(`Unhandled filter type: ${exhaustiveCheck}`);
     }
   }
 }

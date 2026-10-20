@@ -38,6 +38,11 @@ export type FilterQuery =
       type: "in";
       field: FilterableAttributes;
       values: string[];
+    }
+  | {
+      // Matches when any of the nested filters matches.
+      type: "or";
+      filters: FilterQuery[];
     };
 
 export interface SearchResult {

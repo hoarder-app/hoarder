@@ -76,7 +76,7 @@ import {
   router,
 } from "../index";
 import { RuleEngine } from "../lib/ruleEngine";
-import { getBookmarkIdsFromMatcher } from "../lib/search";
+import { getBookmarkIdsFromMatcher, getSharedBookmarkIds } from "../lib/search";
 import { reciprocalRankFusion } from "../lib/searchRanking";
 import { Asset } from "../models/assets";
 import { BareBookmark, Bookmark } from "../models/bookmarks";
@@ -91,6 +91,21 @@ const HYBRID_CANDIDATES_PER_SOURCE = MAX_NUM_BOOKMARKS_PER_PAGE;
  * `(1 + cosine) / 2`), so this drops anything below ~0.2 cosine similarity.
  */
 const SEMANTIC_SCORE_THRESHOLD = 0.6;
+
+/**
+ * The search and vector store filter dialects are identical, but they're
+ * separate nominal types, so the conversion has to be explicit.
+ */
+function toVectorFilterQuery(filter: FilterQuery): VectorFilterQuery {
+  switch (filter.type) {
+    case "eq":
+      return { type: "eq", field: filter.field, value: filter.value };
+    case "in":
+      return { type: "in", field: filter.field, values: filter.values };
+    case "or":
+      return { type: "or", filters: filter.filters.map(toVectorFilterQuery) };
+  }
+}
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: AuthedContext;
@@ -1019,13 +1034,27 @@ export const bookmarksAppRouter = router({
         const bookmarkIds = await getBookmarkIdsFromMatcher(
           ctx,
           parsedQuery.matcher,
+          "visible",
         );
-        filter = [
-          { type: "in", field: "id", values: bookmarkIds },
-          { type: "eq", field: "userId", value: ctx.user.id },
-        ];
+        // The matcher already resolved which bookmarks the user can see, so
+        // narrowing by owner here would drop the ones shared through a list.
+        filter = [{ type: "in", field: "id", values: bookmarkIds }];
       } else {
-        filter = [{ type: "eq", field: "userId", value: ctx.user.id }];
+        // Bookmarks the user can view but doesn't own, reached through a list
+        // shared with them. The index only stores the bookmark's owner, so
+        // these have to be listed explicitly.
+        const sharedBookmarkIds = await getSharedBookmarkIds(ctx);
+        filter = sharedBookmarkIds.length
+          ? [
+              {
+                type: "or",
+                filters: [
+                  { type: "eq", field: "userId", value: ctx.user.id },
+                  { type: "in", field: "id", values: sharedBookmarkIds },
+                ],
+              },
+            ]
+          : [{ type: "eq", field: "userId", value: ctx.user.id }];
       }
 
       /**
@@ -1122,11 +1151,8 @@ export const bookmarksAppRouter = router({
             });
           }
 
-          const vectorFilter: VectorFilterQuery[] = filter.map((item) =>
-            item.type === "eq"
-              ? { type: "eq", field: item.field, value: item.value }
-              : { type: "in", field: item.field, values: item.values },
-          );
+          const vectorFilter: VectorFilterQuery[] =
+            filter.map(toVectorFilterQuery);
 
           const semanticSearch = async (limit: number) => {
             const embeddingResponse =

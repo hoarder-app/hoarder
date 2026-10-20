@@ -21,6 +21,11 @@ export type VectorFilterQuery =
       type: "in";
       field: VectorFilterableAttributes;
       values: string[];
+    }
+  | {
+      // Matches when any of the nested filters matches.
+      type: "or";
+      filters: VectorFilterQuery[];
     };
 
 export interface VectorSearchResult {

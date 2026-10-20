@@ -1,9 +1,10 @@
 import { afterAll, beforeEach, describe, expect, test, vi } from "vitest";
 
+import type { FilterQuery } from "@karakeep/shared/search";
 import serverConfig from "@karakeep/shared/config";
 import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 
-import type { CustomTestContext } from "../testUtils";
+import type { CustomTestContext, APICallerType } from "../testUtils";
 import { defaultBeforeEach } from "../testUtils";
 import { createSemanticSearchRateLimitMiddleware } from "./bookmarks";
 
@@ -72,6 +73,51 @@ function mockEmbeddingInfra() {
     generateEmbeddingFromText,
   });
   return generateEmbeddingFromText;
+}
+
+/**
+ * A stand-in for the search backend that applies the filters it's given to a
+ * fixed set of indexed documents, so tests can assert on the access control the
+ * router builds rather than on the backend's ranking.
+ */
+function mockIndexedBookmarks(docs: { id: string; userId: string }[]) {
+  const matches = (
+    doc: { id: string; userId: string },
+    filter: FilterQuery,
+  ): boolean => {
+    switch (filter.type) {
+      case "eq":
+        return doc[filter.field] === filter.value;
+      case "in":
+        return filter.values.includes(doc[filter.field]);
+      case "or":
+        return filter.filters.some((f) => matches(doc, f));
+    }
+  };
+
+  searchMocks.search.mockImplementation(
+    async (options: {
+      filter?: FilterQuery[];
+      limit?: number;
+      offset?: number;
+    }) => {
+      const matched = docs.filter((doc) =>
+        (options.filter ?? []).every((filter) => matches(doc, filter)),
+      );
+      const offset = options.offset ?? 0;
+      const limit = options.limit ?? matched.length;
+      const page = matched.slice(offset, offset + limit);
+      return {
+        hits: page.map((doc, i) => ({
+          id: doc.id,
+          // Rank by position in the full result set, so a page keeps its order.
+          score: matched.length - offset - i,
+        })),
+        totalHits: matched.length,
+        processingTimeMs: 1,
+      };
+    },
+  );
 }
 
 describe("bookmark search modes", () => {
@@ -457,5 +503,364 @@ describe("bookmark search modes", () => {
       expect.objectContaining({ rankingScoreThreshold: 0.6 }),
     );
     expect(searchMocks.search).not.toHaveBeenCalled();
+  });
+});
+
+describe("bookmark search across shared lists", () => {
+  interface SharedListFixture {
+    listId: string;
+    ownerBookmarkId: string;
+    collaboratorBookmarkId: string;
+    unrelatedBookmarkId: string;
+    userIds: [string, string, string];
+  }
+
+  /**
+   * Reproduces the setup from the bug report: user 1 creates "OurSharedList",
+   * shares it with user 2, and both add a bookmark to it. User 3 shares nothing.
+   *
+   * Adding to a list requires editing it, which is why the collaborator is
+   * shared in as an editor.
+   */
+  async function seedSharedList(
+    apiCallers: APICallerType[],
+  ): Promise<SharedListFixture> {
+    const [ownerApi, collaboratorApi, unrelatedApi] = apiCallers;
+
+    const { id: listId } = await ownerApi.lists.create({
+      name: "OurSharedList",
+      icon: "🤝",
+      type: "manual",
+    });
+
+    const collaboratorEmail = (await collaboratorApi.users.whoami()).email!;
+    const { invitationId } = await ownerApi.lists.addCollaborator({
+      listId,
+      email: collaboratorEmail,
+      role: "editor",
+    });
+    await collaboratorApi.lists.acceptInvitation({ invitationId });
+
+    const [ownerBookmark, collaboratorBookmark, unrelatedBookmark] =
+      await Promise.all([
+        ownerApi.bookmarks.createBookmark({
+          type: BookmarkTypes.TEXT,
+          text: "the owner's bookmark",
+        }),
+        collaboratorApi.bookmarks.createBookmark({
+          type: BookmarkTypes.TEXT,
+          text: "the collaborator's bookmark",
+        }),
+        unrelatedApi.bookmarks.createBookmark({
+          type: BookmarkTypes.TEXT,
+          text: "an unrelated user's bookmark",
+        }),
+      ]);
+
+    // Each user adds their own bookmark to the shared list.
+    await ownerApi.lists.addToList({ listId, bookmarkId: ownerBookmark.id });
+    await collaboratorApi.lists.addToList({
+      listId,
+      bookmarkId: collaboratorBookmark.id,
+    });
+
+    const [ownerUser, collaboratorUser, unrelatedUser] = await Promise.all(
+      apiCallers.map((api) => api.users.whoami()),
+    );
+
+    return {
+      listId,
+      ownerBookmarkId: ownerBookmark.id,
+      collaboratorBookmarkId: collaboratorBookmark.id,
+      unrelatedBookmarkId: unrelatedBookmark.id,
+      userIds: [ownerUser.id, collaboratorUser.id, unrelatedUser.id],
+    };
+  }
+
+  function indexed(fixture: SharedListFixture) {
+    return [
+      { id: fixture.ownerBookmarkId, userId: fixture.userIds[0] },
+      { id: fixture.collaboratorBookmarkId, userId: fixture.userIds[1] },
+      { id: fixture.unrelatedBookmarkId, userId: fixture.userIds[2] },
+    ];
+  }
+
+  test<CustomTestContext>("returns the other user's bookmark to an editor of the shared list", async ({
+    apiCallers,
+  }) => {
+    const fixture = await seedSharedList(apiCallers);
+    mockIndexedBookmarks(indexed(fixture));
+
+    const result = await apiCallers[1].bookmarks.searchBookmarks({
+      text: "bookmark",
+    });
+
+    expect(new Set(result.bookmarks.map((b) => b.id))).toEqual(
+      new Set([fixture.ownerBookmarkId, fixture.collaboratorBookmarkId]),
+    );
+  });
+
+  test<CustomTestContext>("returns the other user's bookmark to a viewer of the shared list", async ({
+    apiCallers,
+  }) => {
+    const [ownerApi, viewerApi] = apiCallers;
+    const { id: listId } = await ownerApi.lists.create({
+      name: "OurSharedList",
+      icon: "🤝",
+      type: "manual",
+    });
+    const viewerEmail = (await viewerApi.users.whoami()).email!;
+    const { invitationId } = await ownerApi.lists.addCollaborator({
+      listId,
+      email: viewerEmail,
+      role: "viewer",
+    });
+    await viewerApi.lists.acceptInvitation({ invitationId });
+
+    const ownerBookmark = await ownerApi.bookmarks.createBookmark({
+      type: BookmarkTypes.TEXT,
+      text: "the owner's bookmark",
+    });
+    await ownerApi.lists.addToList({ listId, bookmarkId: ownerBookmark.id });
+
+    const [ownerUser, viewerUser] = await Promise.all([
+      ownerApi.users.whoami(),
+      viewerApi.users.whoami(),
+    ]);
+    mockIndexedBookmarks([{ id: ownerBookmark.id, userId: ownerUser.id }]);
+
+    const result = await viewerApi.bookmarks.searchBookmarks({
+      text: "bookmark",
+    });
+
+    expect(result.bookmarks.map((b) => b.id)).toEqual([ownerBookmark.id]);
+    expect(viewerUser.id).not.toBe(ownerUser.id);
+  });
+
+  test<CustomTestContext>("keeps owner-only search working", async ({
+    apiCallers,
+  }) => {
+    const fixture = await seedSharedList(apiCallers);
+    mockIndexedBookmarks(indexed(fixture));
+
+    const result = await apiCallers[0].bookmarks.searchBookmarks({
+      text: "bookmark",
+    });
+
+    expect(new Set(result.bookmarks.map((b) => b.id))).toEqual(
+      new Set([fixture.ownerBookmarkId, fixture.collaboratorBookmarkId]),
+    );
+  });
+
+  test<CustomTestContext>("never returns a bookmark of a user who shared nothing", async ({
+    apiCallers,
+  }) => {
+    const fixture = await seedSharedList(apiCallers);
+    mockIndexedBookmarks(indexed(fixture));
+
+    const result = await apiCallers[0].bookmarks.searchBookmarks({
+      text: "bookmark",
+    });
+
+    expect(result.bookmarks.map((b) => b.id)).not.toContain(
+      fixture.unrelatedBookmarkId,
+    );
+  });
+
+  test<CustomTestContext>("rejects unauthorized hits returned by the search backend", async ({
+    apiCallers,
+  }) => {
+    const fixture = await seedSharedList(apiCallers);
+    searchMocks.search.mockResolvedValue({
+      hits: [
+        { id: fixture.ownerBookmarkId, score: 1 },
+        { id: fixture.unrelatedBookmarkId, score: 0.9 },
+      ],
+      totalHits: 2,
+      processingTimeMs: 1,
+    });
+
+    const result = await apiCallers[1].bookmarks.searchBookmarks({
+      text: "bookmark",
+    });
+
+    expect(result.bookmarks.map((b) => b.id)).toEqual([
+      fixture.ownerBookmarkId,
+    ]);
+  });
+
+  test<CustomTestContext>('resolves list:"OurSharedList" for the collaborator', async ({
+    apiCallers,
+  }) => {
+    const fixture = await seedSharedList(apiCallers);
+    mockIndexedBookmarks(indexed(fixture));
+
+    const result = await apiCallers[1].bookmarks.searchBookmarks({
+      text: 'list:"OurSharedList"',
+    });
+
+    expect(new Set(result.bookmarks.map((b) => b.id))).toEqual(
+      new Set([fixture.ownerBookmarkId, fixture.collaboratorBookmarkId]),
+    );
+  });
+
+  test<CustomTestContext>("does not resolve a list the caller has no access to", async ({
+    apiCallers,
+  }) => {
+    const fixture = await seedSharedList(apiCallers);
+    mockIndexedBookmarks(indexed(fixture));
+
+    const result = await apiCallers[2].bookmarks.searchBookmarks({
+      text: 'list:"OurSharedList"',
+    });
+
+    expect(result.bookmarks).toEqual([]);
+  });
+
+  test<CustomTestContext>("stops returning a shared bookmark once the invitation is revoked", async ({
+    apiCallers,
+  }) => {
+    const fixture = await seedSharedList(apiCallers);
+    mockIndexedBookmarks(indexed(fixture));
+
+    const collaboratorUser = await apiCallers[1].users.whoami();
+    await apiCallers[0].lists.removeCollaborator({
+      listId: fixture.listId,
+      userId: collaboratorUser.id,
+    });
+
+    const result = await apiCallers[1].bookmarks.searchBookmarks({
+      text: "bookmark",
+    });
+
+    expect(result.bookmarks.map((b) => b.id)).toEqual([
+      fixture.collaboratorBookmarkId,
+    ]);
+  });
+
+  test<CustomTestContext>("does not return a shared bookmark while the invitation is pending", async ({
+    apiCallers,
+  }) => {
+    const [ownerApi, collaboratorApi] = apiCallers;
+    const { id: listId } = await ownerApi.lists.create({
+      name: "OurSharedList",
+      icon: "🤝",
+      type: "manual",
+    });
+    const collaboratorEmail = (await collaboratorApi.users.whoami()).email!;
+    await ownerApi.lists.addCollaborator({
+      listId,
+      email: collaboratorEmail,
+      role: "viewer",
+    });
+
+    const ownerBookmark = await ownerApi.bookmarks.createBookmark({
+      type: BookmarkTypes.TEXT,
+      text: "the owner's bookmark",
+    });
+    await ownerApi.lists.addToList({ listId, bookmarkId: ownerBookmark.id });
+
+    mockIndexedBookmarks([
+      {
+        id: ownerBookmark.id,
+        userId: (await apiCallers[0].users.whoami()).id,
+      },
+    ]);
+
+    const result = await collaboratorApi.bookmarks.searchBookmarks({
+      text: "bookmark",
+    });
+
+    expect(result.bookmarks).toEqual([]);
+  });
+
+  test<CustomTestContext>("paginates shared results across pages", async ({
+    apiCallers,
+  }) => {
+    const [ownerApi, collaboratorApi] = apiCallers;
+    const ownerUserId = (await ownerApi.users.whoami()).id;
+    const { id: listId } = await ownerApi.lists.create({
+      name: "OurSharedList",
+      icon: "🤝",
+      type: "manual",
+    });
+    const collaboratorEmail = (await collaboratorApi.users.whoami()).email!;
+    const { invitationId } = await ownerApi.lists.addCollaborator({
+      listId,
+      email: collaboratorEmail,
+      role: "viewer",
+    });
+    await collaboratorApi.lists.acceptInvitation({ invitationId });
+
+    const ownerBookmarks = [];
+    for (let i = 0; i < 3; i++) {
+      const b = await ownerApi.bookmarks.createBookmark({
+        type: BookmarkTypes.TEXT,
+        text: `owner bookmark ${i}`,
+      });
+      await ownerApi.lists.addToList({ listId, bookmarkId: b.id });
+      ownerBookmarks.push(b);
+    }
+
+    // Only the first page of the index is requested; the shared ids must reach
+    // the filter so the collaborator sees all of them across pages.
+    const docs = ownerBookmarks.map((b) => ({
+      id: b.id,
+      userId: ownerUserId,
+    }));
+    mockIndexedBookmarks(docs);
+
+    const firstPage = await collaboratorApi.bookmarks.searchBookmarks({
+      text: "bookmark",
+      limit: 2,
+    });
+    expect(firstPage.bookmarks.length).toBe(2);
+    expect(firstPage.nextCursor).toBeDefined();
+
+    const secondPage = await collaboratorApi.bookmarks.searchBookmarks({
+      text: "bookmark",
+      limit: 2,
+      cursor: firstPage.nextCursor!,
+    });
+    expect(secondPage.bookmarks.map((b) => b.id)).toEqual([
+      ownerBookmarks[2].id,
+    ]);
+    expect(secondPage.nextCursor).toBeNull();
+  });
+
+  test<CustomTestContext>("passes the widened filter to semantic search", async ({
+    apiCallers,
+  }) => {
+    const fixture = await seedSharedList(apiCallers);
+    mockEmbeddingInfra();
+    searchMocks.vectorSearch.mockResolvedValue({
+      hits: [
+        { id: fixture.ownerBookmarkId, score: 0.9 },
+        { id: fixture.collaboratorBookmarkId, score: 0.8 },
+      ],
+      processingTimeMs: 1,
+    });
+
+    const result = await apiCallers[1].bookmarks.searchBookmarks({
+      text: "meaningful query",
+      searchMode: "semantic",
+    });
+
+    expect(new Set(result.bookmarks.map((b) => b.id))).toEqual(
+      new Set([fixture.ownerBookmarkId, fixture.collaboratorBookmarkId]),
+    );
+    expect(searchMocks.vectorSearch).toHaveBeenCalledWith(
+      expect.objectContaining({
+        filter: [
+          {
+            type: "or",
+            filters: [
+              { type: "eq", field: "userId", value: fixture.userIds[1] },
+              { type: "in", field: "id", values: [fixture.ownerBookmarkId] },
+            ],
+          },
+        ],
+      }),
+    );
   });
 });

@@ -10,6 +10,7 @@ import {
   bookmarkTags,
   bookmarkTexts,
   highlights,
+  listCollaborators,
   rssFeedImportsTable,
   rssFeedsTable,
   tagsOnBookmarks,
@@ -19,7 +20,7 @@ import { BookmarkTypes } from "@karakeep/shared/types/bookmarks";
 import { Matcher } from "@karakeep/shared/types/search";
 
 import { AuthedContext } from "../..";
-import { getBookmarkIdsFromMatcher } from "../search";
+import { getBookmarkIdsFromMatcher, getSharedBookmarkIds } from "../search";
 
 let mockCtx: AuthedContext;
 let testUserId: string;
@@ -635,5 +636,217 @@ describe("getBookmarkIdsFromMatcher", () => {
     await expect(getBookmarkIdsFromMatcher(mockCtx, matcher)).rejects.toThrow(
       "Unknown matcher type",
     );
+  });
+});
+
+describe("getBookmarkIdsFromMatcher with shared lists", () => {
+  /**
+   * `other-user` owns "SharedList", which contains their bookmark `b7` and is
+   * shared with the test user. `third-user` owns "PrivateList" with `b8`, which
+   * is shared with nobody.
+   */
+  beforeEach(async () => {
+    await mockCtx.db.insert(users).values({
+      id: "third-user",
+      name: "Third User",
+      email: "third@example.com",
+      role: "user",
+    });
+    await mockCtx.db.insert(bookmarks).values({
+      id: "b8",
+      type: BookmarkTypes.LINK,
+      userId: "third-user",
+      archived: false,
+      favourited: false,
+      createdAt: new Date("2024-01-08"),
+      title: "a private page",
+    });
+    await mockCtx.db.insert(bookmarkLinks).values([
+      { id: "b7", url: "https://shared.example/page7", title: "shared link" },
+      { id: "b8", url: "https://private.example/page8", title: "private link" },
+    ]);
+    await mockCtx.db.insert(bookmarkLists).values([
+      {
+        id: "l-shared",
+        userId: "other-user",
+        name: "SharedList",
+        icon: "🤝",
+        type: "manual",
+      },
+      {
+        id: "l-private",
+        userId: "third-user",
+        name: "PrivateList",
+        icon: "🔒",
+        type: "manual",
+      },
+    ]);
+    await mockCtx.db.insert(bookmarksInLists).values([
+      { bookmarkId: "b7", listId: "l-shared" },
+      { bookmarkId: "b8", listId: "l-private" },
+    ]);
+    await mockCtx.db.insert(listCollaborators).values({
+      id: "collab-1",
+      listId: "l-shared",
+      userId: testUserId,
+      role: "viewer",
+    });
+  });
+
+  describe("list: qualifier", () => {
+    it("resolves a list shared with the user in the visible scope", async () => {
+      const result = await getBookmarkIdsFromMatcher(
+        mockCtx,
+        { type: "listName", listName: "SharedList", inverse: false },
+        "visible",
+      );
+      expect(result).toEqual(["b7"]);
+    });
+
+    it("does not resolve a shared list in the default owned scope", async () => {
+      const result = await getBookmarkIdsFromMatcher(mockCtx, {
+        type: "listName",
+        listName: "SharedList",
+        inverse: false,
+      });
+      expect(result).toEqual([]);
+    });
+
+    it("never resolves a list the user has no access to", async () => {
+      const result = await getBookmarkIdsFromMatcher(
+        mockCtx,
+        { type: "listName", listName: "PrivateList", inverse: false },
+        "visible",
+      );
+      expect(result).toEqual([]);
+    });
+
+    it("excludes the shared list's bookmarks for an inverse qualifier", async () => {
+      const result = await getBookmarkIdsFromMatcher(
+        mockCtx,
+        { type: "listName", listName: "SharedList", inverse: true },
+        "visible",
+      );
+      expect(result.sort()).toEqual(["b1", "b2", "b3", "b4", "b5", "b6"]);
+    });
+  });
+
+  describe("content qualifiers", () => {
+    it("matches a shared bookmark by title", async () => {
+      const result = await getBookmarkIdsFromMatcher(
+        mockCtx,
+        { type: "title", title: "shared", inverse: false },
+        "visible",
+      );
+      expect(result).toEqual(["b7"]);
+    });
+
+    it("matches a shared bookmark by url", async () => {
+      const result = await getBookmarkIdsFromMatcher(
+        mockCtx,
+        { type: "url", url: "shared.example", inverse: false },
+        "visible",
+      );
+      expect(result).toEqual(["b7"]);
+    });
+
+    it("matches a shared bookmark by inlist", async () => {
+      const result = await getBookmarkIdsFromMatcher(
+        mockCtx,
+        { type: "inlist", inList: true },
+        "visible",
+      );
+      expect(result).toContain("b7");
+    });
+
+    it("does not match shared bookmarks in the owned scope", async () => {
+      const result = await getBookmarkIdsFromMatcher(mockCtx, {
+        type: "title",
+        title: "shared",
+        inverse: false,
+      });
+      expect(result).toEqual([]);
+    });
+
+    it("never matches bookmarks of users who shared nothing", async () => {
+      for (const matcher of [
+        { type: "title", title: "private", inverse: false },
+        { type: "url", url: "private.example", inverse: false },
+        { type: "inlist", inList: true },
+      ] as Matcher[]) {
+        const result = await getBookmarkIdsFromMatcher(
+          mockCtx,
+          matcher,
+          "visible",
+        );
+        expect(result).not.toContain("b8");
+      }
+    });
+  });
+
+  describe("owner-private qualifiers", () => {
+    it("does not match shared bookmarks by tag", async () => {
+      await mockCtx.db.insert(bookmarkTags).values({
+        id: "t-other",
+        userId: "other-user",
+        name: "others-tag",
+      });
+      await mockCtx.db.insert(tagsOnBookmarks).values({
+        bookmarkId: "b7",
+        tagId: "t-other",
+        attachedBy: "human",
+      });
+
+      const result = await getBookmarkIdsFromMatcher(
+        mockCtx,
+        { type: "tagName", tagName: "others-tag", inverse: false },
+        "visible",
+      );
+      expect(result).toEqual([]);
+    });
+
+    it("does not match shared bookmarks by archived or favourited", async () => {
+      for (const matcher of [
+        { type: "archived", archived: false },
+        { type: "favourited", favourited: false },
+      ] as Matcher[]) {
+        const result = await getBookmarkIdsFromMatcher(
+          mockCtx,
+          matcher,
+          "visible",
+        );
+        expect(result).not.toContain("b7");
+      }
+    });
+  });
+
+  describe("getSharedBookmarkIds", () => {
+    it("returns visible bookmarks the user does not own", async () => {
+      expect(await getSharedBookmarkIds(mockCtx)).toEqual(["b7"]);
+    });
+
+    it("returns nothing when nothing is shared with the user", async () => {
+      await mockCtx.db.delete(listCollaborators);
+      expect(await getSharedBookmarkIds(mockCtx)).toEqual([]);
+    });
+
+    it("returns a collaborator's bookmark from a list the user owns", async () => {
+      // A list owner has no row of their own in listCollaborators, but must
+      // still see the bookmarks a collaborator put into their list.
+      await mockCtx.db.delete(listCollaborators);
+      await mockCtx.db.insert(listCollaborators).values({
+        id: "collab-2",
+        listId: "l1",
+        userId: "other-user",
+        role: "editor",
+      });
+      // l1 is owned by the test user; b7 is owned by other-user.
+      await mockCtx.db.insert(bookmarksInLists).values({
+        bookmarkId: "b7",
+        listId: "l1",
+      });
+
+      expect(await getSharedBookmarkIds(mockCtx)).toEqual(["b7"]);
+    });
   });
 });

@@ -62,6 +62,7 @@ import { htmlToPlainText } from "@karakeep/shared/utils/htmlUtils";
 
 import { AuthedContext } from "..";
 import { mapDBAssetTypeToUserType } from "../lib/attachments";
+import { visibleBookmarksCondition } from "../lib/bookmarkAccess";
 import { getPreferredLinkPreview } from "../lib/linkPreview";
 import { Asset } from "./assets";
 import { List } from "./lists";
@@ -504,6 +505,13 @@ export class Bookmark extends BareBookmark {
       input.ids ? inArray(bookmarks.id, input.ids) : undefined,
     ];
 
+    const buildOwnershipFilter = (): SQL =>
+      input.ids
+        ? // Search index results are candidates, not authorization decisions.
+          // Recheck visibility in the database before hydrating returned IDs.
+          visibleBookmarksCondition(ctx.db, ctx.user.id)
+        : eq(bookmarks.userId, ctx.user.id);
+
     // Build ORDER BY clause
     const buildOrderBy = () =>
       [
@@ -583,7 +591,7 @@ export class Bookmark extends BareBookmark {
           .from(bookmarks)
           .where(
             and(
-              eq(bookmarks.userId, ctx.user.id),
+              buildOwnershipFilter(),
               ...buildCommonFilters(),
               buildCursorCondition(bookmarks.createdAt, bookmarks.id),
             ),
