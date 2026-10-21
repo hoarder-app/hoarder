@@ -830,17 +830,10 @@ describe("getBookmarkIdsFromMatcher with shared lists", () => {
       expect(await getSharedBookmarkIds(mockCtx)).toEqual([]);
     });
 
-    it("returns a collaborator's bookmark from a list the user owns", async () => {
-      // A list owner has no row of their own in listCollaborators, but must
-      // still see the bookmarks a collaborator put into their list.
+    it("returns a non-owned bookmark copied into an owned list after the source collaboration is deleted", async () => {
+      // A merge can copy another user's bookmark into an owned target list and
+      // then delete the source list, cascading its last collaborator row.
       await mockCtx.db.delete(listCollaborators);
-      await mockCtx.db.insert(listCollaborators).values({
-        id: "collab-2",
-        listId: "l1",
-        userId: "other-user",
-        role: "editor",
-      });
-      // l1 is owned by the test user; b7 is owned by other-user.
       await mockCtx.db.insert(bookmarksInLists).values({
         bookmarkId: "b7",
         listId: "l1",

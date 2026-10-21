@@ -72,30 +72,27 @@ export async function getSharedBookmarkIds(ctx: AuthedContext) {
   const { db } = ctx;
   const userId = ctx.user.id;
 
-  // A bookmark owned by someone else is only reachable through a list that both
-  // users can see, so a user who neither collaborates on a list nor shares one
-  // of their own has nothing to find. Checking that first keeps the common case
-  // off the bookmarks table entirely.
-  const involvedInCollaboration = await db
-    .select({ listId: listCollaborators.listId })
-    .from(listCollaborators)
-    .innerJoin(bookmarkLists, eq(bookmarkLists.id, listCollaborators.listId))
-    .where(
-      or(
+  // Start from list membership rather than scanning every bookmark on the
+  // server. Besides using the list-first index, this also covers bookmarks
+  // copied into a list the caller owns after the source shared list (and its
+  // collaborator rows) has been deleted.
+  const rows = await db
+    .selectDistinct({ id: bookmarksInLists.bookmarkId })
+    .from(bookmarksInLists)
+    .innerJoin(bookmarkLists, eq(bookmarkLists.id, bookmarksInLists.listId))
+    .innerJoin(bookmarks, eq(bookmarks.id, bookmarksInLists.bookmarkId))
+    .leftJoin(
+      listCollaborators,
+      and(
+        eq(listCollaborators.listId, bookmarkLists.id),
         eq(listCollaborators.userId, userId),
-        eq(bookmarkLists.userId, userId),
       ),
     )
-    .limit(1);
-  if (involvedInCollaboration.length === 0) {
-    return [];
-  }
-
-  const rows = await db
-    .selectDistinct({ id: bookmarks.id })
-    .from(bookmarks)
     .where(
-      and(visibleBookmarksCondition(db, userId), ne(bookmarks.userId, userId)),
+      and(
+        ne(bookmarks.userId, userId),
+        or(eq(bookmarkLists.userId, userId), isNotNull(listCollaborators.id)),
+      ),
     );
   return rows.map((r) => r.id);
 }
