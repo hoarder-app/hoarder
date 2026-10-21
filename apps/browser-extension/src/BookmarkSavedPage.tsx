@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRightFromSquare, Trash } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
@@ -14,11 +15,24 @@ import Spinner from "./Spinner";
 import { cn } from "./utils/css";
 import usePluginSettings from "./utils/settings";
 import { MessageType } from "./utils/type";
+import { useTRPC } from "./utils/trpc";
 
 export default function BookmarkSavedPage() {
   const { bookmarkId } = useParams();
   const navigate = useNavigate();
   const [error, setError] = useState("");
+  const api = useTRPC();
+  const bookmark = useQuery(
+    api.bookmarks.getBookmark.queryOptions(
+      { bookmarkId: bookmarkId ?? "" },
+      {
+        enabled: !!bookmarkId,
+        staleTime: 0,
+        refetchOnMount: "always",
+        retry: false,
+      },
+    ),
+  );
 
   const { mutate: deleteBookmark, isPending } = useDeleteBookmark({
     onSuccess: async () => {
@@ -46,6 +60,29 @@ export default function BookmarkSavedPage() {
 
   if (!bookmarkId) {
     return <div>NOT FOUND</div>;
+  }
+
+  if (bookmark.isPending) {
+    return (
+      <div role="status">
+        Loading bookmark... <Spinner />
+      </div>
+    );
+  }
+  if (bookmark.isError) {
+    return (
+      <div className="flex flex-col gap-2" role="alert">
+        <p className="text-red-500">
+          Could not load this bookmark. It may have been deleted or you may need
+          to sign in again.
+        </p>
+        <Button onClick={() => bookmark.refetch()}>Try Again</Button>
+        {bookmark.error.data?.code === "UNAUTHORIZED" && (
+          <Link to="/signin">Sign in</Link>
+        )}
+        <Link to="/">Check current page</Link>
+      </div>
+    );
   }
 
   return (
