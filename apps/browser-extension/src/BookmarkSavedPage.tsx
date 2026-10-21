@@ -69,24 +69,31 @@ export default function BookmarkSavedPage() {
       </div>
     );
   }
-  if (bookmark.isError) {
-    return (
-      <div className="flex flex-col gap-2" role="alert">
-        <p className="text-red-500">
-          Could not load this bookmark. It may have been deleted or you may need
-          to sign in again.
-        </p>
-        <Button onClick={() => bookmark.refetch()}>Try Again</Button>
-        {bookmark.error.data?.code === "UNAUTHORIZED" && (
-          <Link to="/signin">Sign in</Link>
-        )}
-        <Link to="/">Check current page</Link>
-      </div>
-    );
-  }
+  const errorCode = bookmark.error?.data?.code;
+  const blockEditors =
+    !bookmark.data ||
+    errorCode === "UNAUTHORIZED" ||
+    errorCode === "FORBIDDEN" ||
+    errorCode === "NOT_FOUND";
+  const bookmarkError = bookmark.isError ? (
+    <div className="flex flex-col gap-2" role="alert">
+      <p className="text-red-500">
+        {blockEditors
+          ? "Could not load this bookmark. It may have been deleted or you may need to sign in again."
+          : "Could not refresh this bookmark. You can keep editing and try again."}
+      </p>
+      <Button onClick={() => bookmark.refetch()}>Try Again</Button>
+      {errorCode === "UNAUTHORIZED" && <Link to="/signin">Sign in</Link>}
+      {blockEditors && <Link to="/">Check current page</Link>}
+    </div>
+  ) : null;
+  // A temporary refetch error retains data. Keep the editors and their drafts
+  // mounted unless the initial load failed or the server reports lost access.
+  if (bookmark.isError && blockEditors) return bookmarkError;
 
   return (
     <div className="flex flex-col gap-2">
+      {bookmarkError}
       {error && <p className="text-red-500">{error}</p>}
       <div className="flex items-center justify-between gap-2">
         <p className="text-xl">Hoarded!</p>

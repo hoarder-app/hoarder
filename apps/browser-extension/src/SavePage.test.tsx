@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   act,
   cleanup,
@@ -6,6 +7,7 @@ import {
   screen,
   waitFor,
 } from "@testing-library/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import superjson from "superjson";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -49,6 +51,7 @@ import {
   uploadSingleFileAsset,
 } from "./utils/singlefile";
 import { hasHostPermission } from "./utils/permissions";
+import { useTRPC } from "./utils/trpc";
 
 const url = "https://example.com/article/#section";
 const currentTab = {
@@ -99,9 +102,27 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
+let refreshBookmark: () => Promise<unknown>;
+
+function BookmarkRefreshControl() {
+  const queryClient = useQueryClient();
+  const api = useTRPC();
+  useEffect(() => {
+    refreshBookmark = () =>
+      queryClient.fetchQuery(
+        api.bookmarks.getBookmark.queryOptions(
+          { bookmarkId: "saved-id" },
+          { staleTime: 0, retry: false },
+        ),
+      );
+  }, [api, queryClient]);
+  return null;
+}
+
 function mount() {
   return render(
     <Providers>
+      <BookmarkRefreshControl />
       <HashRouter>
         <Routes>
           <Route path="/" element={<SavePage />} />
@@ -193,15 +214,23 @@ beforeEach(() => {
             const result = await respond(path, body, authorization);
             return { result: { data: superjson.serialize(result) } };
           } catch (error) {
-            const missing =
-              (error as Error & { code?: string }).code === "NOT_FOUND";
+            const code =
+              (error as Error & { code?: string }).code ?? "UNAUTHORIZED";
+            const errors: Record<string, { code: number; httpStatus: number }> =
+              {
+                UNAUTHORIZED: { code: -32001, httpStatus: 401 },
+                FORBIDDEN: { code: -32003, httpStatus: 403 },
+                NOT_FOUND: { code: -32004, httpStatus: 404 },
+                INTERNAL_SERVER_ERROR: { code: -32603, httpStatus: 500 },
+              };
+            const status = errors[code];
             return {
               error: superjson.serialize({
                 message: (error as Error).message,
-                code: missing ? -32004 : -32001,
+                code: status.code,
                 data: {
-                  code: missing ? "NOT_FOUND" : "UNAUTHORIZED",
-                  httpStatus: missing ? 404 : 401,
+                  code,
+                  httpStatus: status.httpStatus,
                   path,
                 },
               }),
@@ -419,6 +448,101 @@ describe("opening the extension", () => {
     expect(screen.queryByRole("link", { name: "Sign in" })).toBeNull();
     expect(mutations()).toEqual([]);
   });
+
+  it.each(["server", "network"])(
+    "keeps an unsaved note and its editors mounted after a temporary %s refresh failure",
+    async (failure) => {
+      mount();
+      const notes = await screen.findByDisplayValue(saved.note);
+      const tags = await screen.findByText("Add Tags...");
+      const lists = await screen.findByText("📚 Reading");
+      fireEvent.change(notes, { target: { value: "Keep my unsaved note" } });
+      const original = respond;
+      if (failure === "server") {
+        respond = (path, input, auth) => {
+          if (path === "bookmarks.getBookmark")
+            throw Object.assign(new Error("Temporary refresh outage"), {
+              code: "INTERNAL_SERVER_ERROR",
+            });
+          return original(path, input, auth);
+        };
+      } else {
+        vi.mocked(fetch).mockRejectedValueOnce(
+          new TypeError("Failed to fetch"),
+        );
+      }
+      await act(async () => {
+        await expect(refreshBookmark()).rejects.toThrow();
+      });
+      expect(await screen.findByRole("alert")).toBeTruthy();
+      expect(screen.getByDisplayValue("Keep my unsaved note")).toBe(notes);
+      expect(screen.getByText("Add Tags...")).toBe(tags);
+      expect(screen.getByText("📚 Reading")).toBe(lists);
+      expect(mutations()).toEqual([]);
+
+      respond = (path, input, auth) =>
+        path === "bookmarks.getBookmark"
+          ? { ...saved, note: "A refreshed server note" }
+          : original(path, input, auth);
+      fireEvent.click(screen.getByRole("button", { name: "Try Again" }));
+      await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
+      expect(screen.getByDisplayValue("Keep my unsaved note")).toBe(notes);
+      fireEvent.click(screen.getByRole("button", { name: "Save Note" }));
+      await waitFor(() =>
+        expect(mutations()).toEqual([
+          expect.objectContaining({
+            path: "bookmarks.updateBookmark",
+            input: { bookmarkId: "saved-id", note: "Keep my unsaved note" },
+          }),
+        ]),
+      );
+    },
+  );
+
+  it.each(["INTERNAL_SERVER_ERROR", "UNAUTHORIZED", "FORBIDDEN"])(
+    "blocks editors when the initial bookmark load fails with %s",
+    async (code) => {
+      const original = respond;
+      respond = (path, input, auth) => {
+        if (path === "bookmarks.getBookmark")
+          throw Object.assign(new Error("Initial bookmark unavailable"), {
+            code,
+          });
+        return original(path, input, auth);
+      };
+      mount();
+      expect(await screen.findByRole("alert")).toBeTruthy();
+      expect(screen.queryByRole("textbox")).toBeNull();
+      expect(screen.queryByText("Add Tags...")).toBeNull();
+      expect(mutations()).toEqual([]);
+    },
+  );
+
+  it.each(["UNAUTHORIZED", "FORBIDDEN", "NOT_FOUND"])(
+    "blocks cached editors after a refresh reports %s",
+    async (code) => {
+      mount();
+      const notes = await screen.findByDisplayValue(saved.note);
+      fireEvent.change(notes, { target: { value: "Inaccessible draft" } });
+      const original = respond;
+      respond = (path, input, auth) => {
+        if (path === "bookmarks.getBookmark")
+          throw Object.assign(new Error("Bookmark access lost"), { code });
+        return original(path, input, auth);
+      };
+      await act(async () => {
+        await expect(refreshBookmark()).rejects.toThrow();
+      });
+      expect(await screen.findByRole("alert")).toBeTruthy();
+      expect(screen.queryByRole("textbox")).toBeNull();
+      expect(screen.queryByText("Add Tags...")).toBeNull();
+      expect(screen.queryByText("📚 Reading")).toBeNull();
+      expect(!!screen.queryByRole("link", { name: "Sign in" })).toBe(
+        code === "UNAUTHORIZED",
+      );
+      expect(mutations()).toEqual([]);
+    },
+  );
 
   it("looks up the requested context-menu link rather than the active page", async () => {
     const contextUrl = "https://example.org/linked";
