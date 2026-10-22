@@ -1,4 +1,7 @@
 {
+  "actions": {
+    "retry": "Spróbuj ponownie"
+  },
   "app": {
     "error_title": "Błąd!",
     "back": "Wstecz"
@@ -108,14 +111,14 @@
   },
   "tags_tab": {
     "search_tags": "Szukaj tagów...",
-    "bookmarks_one": "zakładka",
-    "bookmarks_other": "zakładki",
+    "bookmarks_one": "{{count}} zakładka",
+    "bookmarks_other": "{{count}} zakładki",
     "loading_more": "Ładowanie kolejnych...",
     "no_tags_title": "Brak tagów",
     "no_tags_subtitle": "Tagi pojawią się, gdy zaczniesz porządkować zakładki",
     "create_tag": "Utwórz tag",
-    "bookmarks_few": "zakładki",
-    "bookmarks_many": "zakładek"
+    "bookmarks_few": "{{count}} zakładki",
+    "bookmarks_many": "{{count}} zakładek"
   },
   "search": {
     "recent_searches": "Ostatnie wyszukiwania",
@@ -463,10 +466,6 @@
     "tags": "Tagi",
     "lists": "Listy",
     "highlights": "Wyróżnienia",
-    "morning_12am": "12 w nocy",
-    "morning_6am": "6 rano",
-    "noon_12pm": "12 w południe",
-    "evening_6pm": "18:00",
     "source_api": "API",
     "source_web": "Internet",
     "source_cli": "CLI",

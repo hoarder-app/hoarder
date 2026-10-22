@@ -1,4 +1,7 @@
 {
+  "actions": {
+    "retry": "Retry"
+  },
   "app": {
     "error_title": "Error!",
     "back": "Back"
@@ -73,7 +76,7 @@
   "connection_test": {
     "running": "Running connection test ...",
     "network_failed": "Network connection failed: ",
-    "non_success_code": "Recieve non success error code: ",
+    "non_success_code": "Received non-success error code: ",
     "got_response": "Got the following response:",
     "server_unhealthy": "Server is not healthy: ",
     "all_good": "ALL GOOD",
@@ -108,14 +111,14 @@
   },
   "tags_tab": {
     "search_tags": "Search tags...",
-    "bookmarks_one": "bookmark",
-    "bookmarks_other": "bookmarks",
+    "bookmarks_one": "{{count}} bookmark",
+    "bookmarks_other": "{{count}} bookmarks",
     "loading_more": "Loading more...",
     "no_tags_title": "No Tags",
     "no_tags_subtitle": "Tags will appear as you organize your bookmarks",
     "create_tag": "Create tag",
-    "bookmarks_few": "bookmarks",
-    "bookmarks_many": "bookmarks"
+    "bookmarks_few": "{{count}} bookmarks",
+    "bookmarks_many": "{{count}} bookmarks"
   },
   "search": {
     "recent_searches": "Recent Searches",
@@ -463,10 +466,6 @@
     "tags": "Tags",
     "lists": "Lists",
     "highlights": "Highlights",
-    "morning_12am": "12 AM",
-    "morning_6am": "6 AM",
-    "noon_12pm": "12 PM",
-    "evening_6pm": "6 PM",
     "source_api": "API",
     "source_web": "Web",
     "source_cli": "CLI",

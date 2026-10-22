@@ -104,7 +104,7 @@ export default function HighlightCard({
         {highlight.note && (
           <View className="rounded-lg bg-muted/50 p-2">
             <Text className="text-sm text-muted-foreground">
-              Note: {highlight.note}
+              {t("bookmarks.note_title")}: {highlight.note}
             </Text>
           </View>
         )}

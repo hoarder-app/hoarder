@@ -13,7 +13,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { TailwindResolver } from "@/components/TailwindResolver";
 import { Text } from "@/components/ui/Text";
-import { useTranslation } from "@/lib/i18n/hooks";
+import { useSharedTranslation, useTranslation } from "@/lib/i18n/hooks";
 import { cn } from "@/lib/utils";
 import { useAugmentedRef, useControllableState } from "@rn-primitives/hooks";
 import { SearchIcon } from "lucide-react-native";
@@ -47,9 +47,10 @@ const SearchInput = React.forwardRef<
   ) => {
     const inputRef = useAugmentedRef({ ref, methods: { focus, blur, clear } });
     const { t } = useTranslation();
+    const { t: tShared } = useSharedTranslation();
     // Default labels are translated; explicit props still win.
     const placeholder = placeholderProp ?? t("search.placeholder_keyword");
-    const cancelText = cancelTextProp ?? t("search.close");
+    const cancelText = cancelTextProp ?? tShared("actions.cancel");
     const [showCancel, setShowCancel] = React.useState(false);
     const cancelButtonWidth = useSharedValue(cancelText.length * 11.2);
     const cancelButtonVisibility = useSharedValue(0);

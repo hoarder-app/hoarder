@@ -207,15 +207,15 @@ describe("Polish pluralization", () => {
 describe("UI plural forms", () => {
   // i18next picks `key_<category>` from Intl.PluralRules for the language.
   it.each([
-    ["pl", 1, "zakładka"],
-    ["pl", 2, "zakładki"],
-    ["pl", 4, "zakładki"],
-    ["pl", 5, "zakładek"],
-    ["pl", 22, "zakładki"],
-    ["pl", 25, "zakładek"],
-    ["en", 1, "bookmark"],
-    ["en", 2, "bookmarks"],
-    ["en", 5, "bookmarks"],
+    ["pl", 1, "1 zakładka"],
+    ["pl", 2, "2 zakładki"],
+    ["pl", 4, "4 zakładki"],
+    ["pl", 5, "5 zakładek"],
+    ["pl", 22, "22 zakładki"],
+    ["pl", 25, "25 zakładek"],
+    ["en", 1, "1 bookmark"],
+    ["en", 2, "2 bookmarks"],
+    ["en", 5, "5 bookmarks"],
   ])("tags_tab.bookmarks in %s for %i → %s", async (lang, count, expected) => {
     await i18n.changeLanguage(lang);
     const t = i18n.getFixedT(lang, "mobile");

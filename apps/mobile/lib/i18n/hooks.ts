@@ -47,6 +47,7 @@ export function useAppTranslation() {
  */
 export function useCommonActions() {
   const { t } = useSharedTranslation();
+  const { t: tMobile } = useTranslation();
   return useMemo(
     () => ({
       t,
@@ -65,7 +66,7 @@ export function useCommonActions() {
       favorite: t("actions.favorite"),
       unfavorite: t("actions.unfavorite"),
       refresh: t("actions.refresh"),
-      retry: t("actions.refresh"),
+      retry: tMobile("actions.retry"),
       more: t("actions.more"),
       manageLists: t("actions.manage_lists"),
       removeFromList: t("actions.remove_from_list"),
@@ -79,7 +80,7 @@ export function useCommonActions() {
       selectAll: t("actions.select_all"),
       unselectAll: t("actions.unselect_all"),
     }),
-    [t],
+    [t, tMobile],
   );
 }
 
