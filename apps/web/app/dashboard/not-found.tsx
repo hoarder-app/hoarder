@@ -29,13 +29,13 @@ export default function NotFound() {
         {/* Action Buttons */}
         <div className="space-y-3">
           <Button className="w-full" onClick={() => window.history.back()}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="h-4 w-4" />
             Go Back
           </Button>
 
           <Link href="/" className="block">
             <Button variant="outline" className="w-full">
-              <Home className="mr-2 h-4 w-4" />
+              <Home className="h-4 w-4" />
               Go Home
             </Button>
           </Link>

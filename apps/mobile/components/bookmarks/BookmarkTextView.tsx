@@ -9,6 +9,7 @@ import {
   useCommonStrings,
   useTranslation,
 } from "@/lib/i18n/hooks";
+import { READABLE_CONTENT_MAX_WIDTH } from "@/lib/responsive";
 import { useColorScheme } from "nativewind";
 
 import { useUpdateBookmark } from "@karakeep/shared-react/hooks/bookmarks";
@@ -63,7 +64,10 @@ export default function BookmarkTextView({ bookmark }: BookmarkTextViewProps) {
 
   if (isEditing) {
     return (
-      <View className="flex-1 p-4">
+      <View
+        className="w-full flex-1 self-center p-4"
+        style={{ maxWidth: READABLE_CONTENT_MAX_WIDTH }}
+      >
         <View className="flex-row justify-end gap-2 px-4 py-2">
           <Button
             size="sm"
@@ -104,17 +108,22 @@ export default function BookmarkTextView({ bookmark }: BookmarkTextViewProps) {
   }
 
   return (
-    <ScrollView className="m-4 flex-1 rounded-lg border border-border bg-card p-2">
-      <Pressable onPress={() => setIsEditing(true)}>
-        <View className="min-h-[200px] rounded-xl p-4">
-          <BookmarkTextMarkdown text={content} />
-          {content.trim() === "" && (
-            <Text className="italic text-muted-foreground">
-              {t("bookmarks.tap_to_add_text")}
-            </Text>
-          )}
-        </View>
-      </Pressable>
-    </ScrollView>
+    <View
+      className="w-full flex-1 self-center"
+      style={{ maxWidth: READABLE_CONTENT_MAX_WIDTH }}
+    >
+      <ScrollView className="m-4 flex-1 rounded-lg border border-border bg-card p-2">
+        <Pressable onPress={() => setIsEditing(true)}>
+          <View className="min-h-[200px] rounded-xl p-4">
+            <BookmarkTextMarkdown text={content} />
+            {content.trim() === "" && (
+              <Text className="italic text-muted-foreground">
+                {t("bookmarks.tap_to_add_text")}
+              </Text>
+            )}
+          </View>
+        </Pressable>
+      </ScrollView>
+    </View>
   );
 }

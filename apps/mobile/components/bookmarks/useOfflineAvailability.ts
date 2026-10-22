@@ -7,6 +7,10 @@ import { useTRPC } from "@karakeep/shared-react/trpc";
 import { useCommonActions, useTranslation } from "@/lib/i18n/hooks";
 import { useToast } from "../ui/Toast";
 import {
+  excludeFromOfflineDownloads,
+  includeInOfflineDownloads,
+} from "../../lib/offlineDownloadPrefs";
+import {
   getOfflineLibraryScope,
   OFFLINE_LIBRARY_SCHEMA_VERSION,
   removeOfflineArticle,
@@ -58,6 +62,7 @@ export function useOfflineAvailability(bookmarkId: string) {
         savedAt: Date.now(),
         bookmark,
       });
+      includeInOfflineDownloads(scope, bookmarkId);
       toast({
         message: isAvailableOffline
           ? t("bookmark_actions.offline_saved_updated")
@@ -87,6 +92,7 @@ export function useOfflineAvailability(bookmarkId: string) {
           text: actions.remove,
           style: "destructive",
           onPress: () => {
+            excludeFromOfflineDownloads(scope, bookmarkId);
             removeOfflineArticle(scope, bookmarkId);
             toast({ message: t("bookmark_actions.offline_removed") });
           },

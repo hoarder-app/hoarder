@@ -26,13 +26,13 @@ export default function ErrorFallback() {
 
         <div className="space-y-3">
           <Button className="w-full" onClick={() => window.location.reload()}>
-            <RefreshCw className="mr-2 h-4 w-4" />
+            <RefreshCw className="h-4 w-4" />
             Try Again
           </Button>
 
           <Link href="/" className="block">
             <Button variant="outline" className="w-full">
-              <Home className="mr-2 h-4 w-4" />
+              <Home className="h-4 w-4" />
               Go Home
             </Button>
           </Link>

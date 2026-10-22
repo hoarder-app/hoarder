@@ -13,6 +13,7 @@ import {
 } from "react-native-keyboard-controller";
 import * as Haptics from "expo-haptics";
 import { router, Stack, useLocalSearchParams } from "expo-router";
+import AttachmentBox from "@/components/bookmarks/AttachmentBox";
 import BookmarkTextMarkdown from "@/components/bookmarks/BookmarkTextMarkdown";
 import TagPill from "@/components/bookmarks/TagPill";
 import QueryPageState from "@/components/QueryPageState";
@@ -608,23 +609,22 @@ const ViewBookmarkPage = () => {
           isPending={isEditPending}
           disabled={!isOwner}
         />
+        {isOwner && <BookmarkActionsSection bookmark={bookmark} />}
+        <AttachmentBox bookmark={bookmark} />
         {isOwner && (
-          <>
-            <BookmarkActionsSection bookmark={bookmark} />
-            <GroupedSection>
-              <Pressable
-                onPress={handleDeleteBookmark}
-                disabled={isDeletionPending}
-                className="items-center px-4 py-3 active:opacity-70"
-              >
-                <Text className="text-destructive" numberOfLines={1}>
-                  {isDeletionPending
-                    ? t("bookmarks.deleting")
-                    : t("bookmarks.delete_bookmark")}
-                </Text>
-              </Pressable>
-            </GroupedSection>
-          </>
+          <GroupedSection>
+            <Pressable
+              onPress={handleDeleteBookmark}
+              disabled={isDeletionPending}
+              className="items-center px-4 py-3 active:opacity-70"
+            >
+              <Text className="text-destructive" numberOfLines={1}>
+                {isDeletionPending
+                  ? t("bookmarks.deleting")
+                  : t("bookmarks.delete_bookmark")}
+              </Text>
+            </Pressable>
+          </GroupedSection>
         )}
         <View className="items-center gap-1 pt-2">
           <Text variant="caption1" color="tertiary" selectable>

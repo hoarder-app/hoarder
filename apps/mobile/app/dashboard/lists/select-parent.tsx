@@ -39,7 +39,8 @@ export default function SelectListParentPage() {
       .filter((path) => {
         const list = path[path.length - 1];
         return (
-          list.userRole !== "viewer" &&
+          // Lists can only be nested under lists you own
+          list.userRole === "owner" &&
           (!hideSubtreeOf || !path.some((item) => item.id === hideSubtreeOf))
         );
       })

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "@karakeep/sdk",
-  "version": "0.33.0",
+  "version": "0.34.0",
   "description": "Typescript SDK for Karakeep",
   "license": "GNU Affero General Public License version 3",
   "keywords": [
@@ -21,9 +21,9 @@
     "@karakeep/tsconfig": "workspace:^0.1.0",
     "@tsconfig/node22": "^22.0.0",
     "openapi-typescript": "^7.6.1",
-    "tsx": "^4.8.1",
-    "vite": "^8.0.13",
-    "vite-plugin-dts": "^4.4.0"
+    "tsx": "^4.23.13",
+    "vite": "^8.3.0",
+    "vite-plugin-dts": "^4.5.4"
   },
   "scripts": {
     "build": "vite build",
