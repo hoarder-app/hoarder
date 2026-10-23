@@ -1,16 +1,18 @@
 import { load } from "cheerio";
 import { Response } from "node-fetch";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock("network", () => ({
   fetchWithProxy: vi.fn(),
 }));
 
+const mockConfig = vi.hoisted(() => ({
+  reddit: {} as { clientId?: string; clientSecret?: string },
+  proxy: {},
+}));
+
 vi.mock("@karakeep/shared/config", () => ({
-  default: {
-    reddit: {},
-    proxy: {},
-  },
+  default: mockConfig,
 }));
 
 import { fetchWithProxy } from "network";
@@ -339,5 +341,84 @@ describe("anonymous challenge flow", () => {
 
     expect(mockedFetch).toHaveBeenCalledTimes(1);
     expect(html).toBe("<p>vector&lt;T&gt; &amp; friends</p>");
+  });
+});
+
+describe("OAuth path", () => {
+  const readable = metascraperReddit()
+    .readableContentHtml as unknown as (input: {
+    url: string;
+    htmlDom: ReturnType<typeof load>;
+  }) => Promise<string | null | undefined>;
+
+  const listing = [
+    {
+      data: {
+        children: [
+          {
+            kind: "t3",
+            data: {
+              title: "Post",
+              author: "alice",
+              selftext_html:
+                "&lt;div class=&quot;md&quot;&gt;&lt;p&gt;oauth body&lt;/p&gt;&lt;/div&gt;",
+            },
+          },
+        ],
+      },
+    },
+    {
+      data: {
+        children: [
+          {
+            kind: "t1",
+            data: {
+              author: "bob",
+              body: "c1",
+              body_html: "&lt;p&gt;oauth comment&lt;/p&gt;",
+              score: 3,
+            },
+          },
+        ],
+      },
+    },
+  ];
+
+  beforeEach(() => {
+    mockedFetch.mockReset();
+    mockConfig.reddit = { clientId: "id", clientSecret: "secret" };
+  });
+
+  afterEach(() => {
+    mockConfig.reddit = {};
+  });
+
+  test("requests the canonical post, so comment permalinks share one result", async () => {
+    mockedFetch
+      .mockResolvedValueOnce(
+        response(JSON.stringify({ access_token: "tok", expires_in: 3600 })),
+      )
+      .mockResolvedValueOnce(response(JSON.stringify(listing)));
+
+    const emptyDom = load("<html><body></body></html>");
+    const first = await readable({
+      url: "https://www.reddit.com/r/cpp/comments/oau123/slug/cmt999/",
+      htmlDom: emptyDom,
+    });
+
+    expect(mockedFetch).toHaveBeenCalledTimes(2);
+    expect(mockedFetch.mock.calls[1][0]).toBe(
+      "https://oauth.reddit.com/comments/oau123.json?sort=top&limit=25&depth=1",
+    );
+    expect(first).toContain("oauth body");
+    expect(first).toContain("oauth comment");
+
+    // A different permalink of the same post reuses the cached result.
+    const second = await readable({
+      url: "https://www.reddit.com/r/cpp/comments/oau123/slug/other77/",
+      htmlDom: emptyDom,
+    });
+    expect(mockedFetch).toHaveBeenCalledTimes(2);
+    expect(second).toBe(first);
   });
 });

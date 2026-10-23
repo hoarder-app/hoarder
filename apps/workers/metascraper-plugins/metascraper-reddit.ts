@@ -215,17 +215,12 @@ const getRedditAccessToken = async (): Promise<string | null> => {
   return redditAccessTokenPromise;
 };
 
-const buildOauthJsonUrl = (url: string): string => {
-  const urlObj = new URL(url);
-
-  if (!urlObj.pathname.endsWith(".json")) {
-    urlObj.pathname = urlObj.pathname.replace(/\/?$/, ".json");
-  }
-
-  urlObj.hostname = "oauth.reddit.com";
-
-  return urlObj.toString();
-};
+// Always request the post itself (not the bookmarked permalink), so a comment
+// permalink returns the same post + top-level top comments as the post URL.
+// raw_json is deliberately not set: selftext_html/body_html stay entity-encoded
+// and are decoded once when the response is parsed.
+const buildOauthJsonUrl = (postId: string): string =>
+  `https://oauth.reddit.com/comments/${postId}.json?sort=top&limit=25&depth=1`;
 
 // Anonymous Reddit crawling (no OAuth credentials): Reddit serves a lightweight
 // "please wait" JS challenge to cold requests. The page embeds
@@ -403,13 +398,13 @@ const solveRedditChallenge = async (
 // are no credentials or the request did not succeed, in which case the caller
 // falls back to anonymous crawling.
 const fetchRedditOauthJson = async (
-  url: string,
+  postId: string,
   accessToken: string | null,
 ): Promise<FetchResponse | undefined> => {
   if (!accessToken) {
     return undefined;
   }
-  const response = await fetchWithProxy(buildOauthJsonUrl(url), {
+  const response = await fetchWithProxy(buildOauthJsonUrl(postId), {
     headers: {
       accept: "application/json",
       Authorization: `Bearer ${accessToken}`,
@@ -727,14 +722,14 @@ const shredditToFetchResult = (
 });
 
 const fetchRedditOauthPostData = async (
-  url: string,
+  postId: string,
 ): Promise<RedditFetchResult | undefined> => {
   let response: FetchResponse | undefined;
   try {
-    response = await fetchRedditOauthJson(url, await getRedditAccessToken());
+    response = await fetchRedditOauthJson(postId, await getRedditAccessToken());
   } catch (error) {
     logger.warn(
-      `[MetascraperReddit] Failed to fetch Reddit JSON for ${url}`,
+      `[MetascraperReddit] Failed to fetch Reddit JSON for post ${postId}`,
       error,
     );
     return undefined;
@@ -748,7 +743,7 @@ const fetchRedditOauthPostData = async (
     payload = await response.json();
   } catch (error) {
     logger.warn(
-      `[MetascraperReddit] Failed to parse Reddit JSON for ${url}`,
+      `[MetascraperReddit] Failed to parse Reddit JSON for post ${postId}`,
       error,
     );
     return undefined;
@@ -814,7 +809,7 @@ const fetchRedditPostData = async (
   }
 
   const promise = (async (): Promise<RedditFetchResult> => {
-    const oauthResult = await fetchRedditOauthPostData(url);
+    const oauthResult = await fetchRedditOauthPostData(postId);
     if (oauthResult) {
       return oauthResult;
     }
