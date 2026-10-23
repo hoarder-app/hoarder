@@ -589,6 +589,11 @@ const MAX_REDDIT_COMMENTS = 10;
 const escapeHtml = (value: string): string =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+// readableContentHtml is HTML, so a bare title like `vector<T>` must be
+// escaped or the sanitiser would eat it as a tag.
+const titleToHtml = (title?: string): string | undefined =>
+  title ? `<p>${escapeHtml(title)}</p>` : undefined;
+
 const buildCommentsHtml = (comments?: RedditComment[]): string => {
   if (!comments || comments.length === 0) {
     return "";
@@ -945,7 +950,7 @@ const metascraperReddit = () => {
         // top comments so the reader view and tagger have real content. Fall
         // back to the title if the post has neither body nor comments.
         const content = [body, commentsHtml].filter(Boolean).join("");
-        return (content || result.post.title) ?? null;
+        return (content || titleToHtml(result.post.title)) ?? null;
       }
       // Guard: the JSON fetch failed (e.g. Reddit rate-limited us). Returning
       // undefined here would let the generic readability pass scrape the
@@ -954,7 +959,7 @@ const metascraperReddit = () => {
       // title from the DOM so we store something meaningful; a later re-crawl
       // can still recover the full body once the JSON fetch succeeds.
       const domTitle = fallbackDomTitle({ htmlDom });
-      return domTitle ?? undefined;
+      return domTitle ? titleToHtml(domTitle) : undefined;
     }) as unknown as RulesOptions,
   };
 
