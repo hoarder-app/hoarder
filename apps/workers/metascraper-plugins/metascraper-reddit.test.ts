@@ -47,6 +47,8 @@ const POST_HTML = `
 </shreddit-comment>
 </body></html>`;
 
+const postHtmlFor = (id: string) => POST_HTML.replaceAll("abc123", id);
+
 const challengePage = (tokenField: string, tokenValue = "a".repeat(64)) => `
 <html><body>
 <form hidden method="GET" action="/comments/abc123/">
@@ -70,7 +72,7 @@ const requestHeaders = (callIndex: number) =>
 
 describe("extractFromShreddit", () => {
   test("extracts post fields, body, image and top-level comments", () => {
-    const data = extractFromShreddit(load(POST_HTML));
+    const data = extractFromShreddit(load(POST_HTML), "abc123");
 
     expect(data).toBeDefined();
     expect(data?.title).toBe("vector<T> question");
@@ -92,23 +94,35 @@ describe("extractFromShreddit", () => {
 
   test("prefers a gallery image, then an i.redd.it content-href", () => {
     const gallery = extractFromShreddit(
-      load(`<shreddit-post post-title="g" content-href="https://i.redd.it/x.jpg">
+      load(`<shreddit-post id="t3_g1" post-title="g" content-href="https://i.redd.it/x.jpg">
         <gallery-carousel><img class="media-lightbox-img" src="https://preview.redd.it/g1.jpg"></gallery-carousel>
       </shreddit-post>`),
+      "g1",
     );
     expect(gallery?.image).toBe("https://preview.redd.it/g1.jpg");
 
     const direct = extractFromShreddit(
       load(
-        `<shreddit-post post-title="d" content-href="https://i.redd.it/x.jpg"></shreddit-post>`,
+        `<shreddit-post id="t3_d1" post-title="d" content-href="https://i.redd.it/x.jpg"></shreddit-post>`,
       ),
+      "d1",
     );
     expect(direct?.image).toBe("https://i.redd.it/x.jpg");
   });
 
+  test("only accepts the shreddit-post matching the requested post id", () => {
+    const feed = load(`<html><body>
+      <shreddit-post id="t3_first1" post-title="First feed item" author="x"></shreddit-post>
+      <shreddit-post id="t3_want22" post-title="Wanted" author="y"></shreddit-post>
+    </body></html>`);
+
+    expect(extractFromShreddit(feed, "want22")?.title).toBe("Wanted");
+    expect(extractFromShreddit(feed, "nope33")).toBeUndefined();
+  });
+
   test("returns undefined when the page has no shreddit-post", () => {
     expect(
-      extractFromShreddit(load("<html><body>blocked</body></html>")),
+      extractFromShreddit(load("<html><body>blocked</body></html>"), "abc123"),
     ).toBeUndefined();
   });
 });
@@ -240,7 +254,9 @@ describe("anonymous challenge flow", () => {
         ]),
       )
       .mockResolvedValueOnce(
-        response(POST_HTML, 200, [["set-cookie", "token_v2=tok2; Path=/"]]),
+        response(postHtmlFor("xyz789"), 200, [
+          ["set-cookie", "token_v2=tok2; Path=/"],
+        ]),
       );
 
     const html = await readable({
@@ -256,11 +272,54 @@ describe("anonymous challenge flow", () => {
   test("uses the crawled DOM without any request when it has the post", async () => {
     const html = await readable({
       url: "https://www.reddit.com/r/cpp/comments/dom111/slug/",
-      htmlDom: load(POST_HTML),
+      htmlDom: load(postHtmlFor("dom111")),
     });
 
     expect(mockedFetch).not.toHaveBeenCalled();
     expect(html).toContain("top comment");
+  });
+
+  test("ignores feed pages: no post data from non-post URLs", async () => {
+    const dom = load(
+      `<html><body><shreddit-post id="t3_feed01" post-title="Unrelated feed item" author="x"></shreddit-post></body></html>`,
+    );
+    for (const url of [
+      "https://www.reddit.com/r/cpp/",
+      "https://www.reddit.com/user/alice/",
+      "https://www.reddit.com/",
+    ]) {
+      for (const rule of [
+        rules.readableContentHtml,
+        rules.title,
+        rules.image,
+        rules.author,
+        rules.publisher,
+        rules.datePublished,
+      ]) {
+        const fn = rule as unknown as (input: {
+          url: string;
+          htmlDom: typeof dom;
+        }) => Promise<unknown>;
+        expect(await fn({ url, htmlDom: dom })).toBeUndefined();
+      }
+    }
+    expect(mockedFetch).not.toHaveBeenCalled();
+  });
+
+  test("does not use an unrelated shreddit-post from the crawled DOM", async () => {
+    mockedFetch.mockResolvedValueOnce(
+      response("<html><body>blocked by network security</body></html>", 403),
+    );
+
+    const html = await readable({
+      url: "https://www.reddit.com/r/cpp/comments/post44/slug/",
+      htmlDom: load(
+        `<html><body><shreddit-post id="t3_other9" author="x"></shreddit-post></body></html>`,
+      ),
+    });
+
+    expect(mockedFetch).toHaveBeenCalledTimes(1);
+    expect(html).toBeUndefined();
   });
 
   test("returns the escaped DOM title when Reddit blocks the request", async () => {

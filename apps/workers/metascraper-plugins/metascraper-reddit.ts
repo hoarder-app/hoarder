@@ -437,20 +437,28 @@ const fetchRedditOauthJson = async (
 
 const REDDIT_BLOCKED_MARKER = /blocked by network security/i;
 
-// Reduces any Reddit post URL (slug, slugless, comment permalink, with query or
-// fragment) to the canonical https://www.reddit.com/comments/<id>/ form. That
-// URL redirects to the slug URL and works as the challenge target.
-export const normalizeRedditPostUrl = (url: string): string | undefined => {
+// Returns the (lower-case) post id of a Reddit post URL (slug, slugless,
+// comment permalink, with query or fragment), or undefined for any other URL
+// (subreddit, profile, home feed, non-Reddit hosts, ...).
+export const extractRedditPostId = (url: string): string | undefined => {
   try {
     const urlObj = new URL(url);
     if (!isRedditHost(urlObj.hostname)) {
       return undefined;
     }
     const match = /\/comments\/([a-z0-9]+)(?:\/|$)/i.exec(urlObj.pathname);
-    return match ? `https://www.reddit.com/comments/${match[1]}/` : undefined;
+    return match ? match[1].toLowerCase() : undefined;
   } catch {
     return undefined;
   }
+};
+
+// Reduces any Reddit post URL to the canonical
+// https://www.reddit.com/comments/<id>/ form. That URL redirects to the slug
+// URL and works as the challenge target.
+export const normalizeRedditPostUrl = (url: string): string | undefined => {
+  const postId = extractRedditPostId(url);
+  return postId ? `https://www.reddit.com/comments/${postId}/` : undefined;
 };
 
 // Fetches the rendered post page anonymously: GET (collecting cookies), solve
@@ -647,11 +655,16 @@ const extractImageFromShreddit = (
 // Extracts a post and its top-level comments from Reddit's rendered markup
 // (<shreddit-post> / <shreddit-comment> web components). Bodies are already
 // HTML, so they are not entity-decoded. Returns undefined when the page has no
-// <shreddit-post> (not a post page, challenge page, block page, ...).
+// <shreddit-post> for the requested post (not a post page, a feed page showing
+// other posts, challenge page, block page, ...).
 export const extractFromShreddit = (
   $: CheerioAPI,
+  postId: string,
 ): ShredditExtraction | undefined => {
-  const post = $("shreddit-post").first();
+  // Feed pages hold many shreddit-post elements; only the bookmarked post counts.
+  const post = $("shreddit-post")
+    .filter((_, el) => $(el).attr("id")?.toLowerCase() === `t3_${postId}`)
+    .first();
   if (post.length === 0) {
     return undefined;
   }
@@ -692,7 +705,7 @@ export const extractFromShreddit = (
       (subredditName ? `r/${subredditName}` : undefined),
     createdUtc: Number.isNaN(createdAt) ? undefined : createdAt / 1000,
     bodyHtml:
-      $('[id^="t3_"][id$="-post-rtjson-content"]').first().html()?.trim() ?? "",
+      $(`[id="t3_${postId}-post-rtjson-content"]`).first().html()?.trim() ?? "",
     image: extractImageFromShreddit($, post),
     comments,
   };
@@ -783,8 +796,14 @@ const fetchRedditPostData = async (
   url: string,
   htmlDom: CheerioAPI,
 ): Promise<RedditFetchResult> => {
-  const postUrl = normalizeRedditPostUrl(url);
-  const cacheKey = postUrl ?? url;
+  const postId = extractRedditPostId(url);
+  if (!postId) {
+    // Not a post URL (subreddit, profile, feed, ...): the page holds unrelated
+    // posts, so leave it to the generic metascraper rules.
+    return { fetched: false };
+  }
+  const postUrl = `https://www.reddit.com/comments/${postId}/`;
+  const cacheKey = postId;
   const cached = redditJsonCache.get(cacheKey);
   const now = Date.now();
 
@@ -802,17 +821,16 @@ const fetchRedditPostData = async (
 
     // Anonymous: the browser-rendered page we already crawled may carry the
     // post, which needs no extra requests.
-    const fromDom = extractFromShreddit(htmlDom);
+    const fromDom = extractFromShreddit(htmlDom, postId);
     if (fromDom) {
       return shredditToFetchResult(fromDom);
     }
 
-    if (!postUrl) {
-      return { fetched: false };
-    }
     try {
       const html = await fetchRedditPostHtml(postUrl);
-      const fromHtml = html ? extractFromShreddit(load(html)) : undefined;
+      const fromHtml = html
+        ? extractFromShreddit(load(html), postId)
+        : undefined;
       if (fromHtml) {
         return shredditToFetchResult(fromHtml);
       }
@@ -868,6 +886,9 @@ const metascraperReddit = () => {
     pkgName: "metascraper-reddit",
     test,
     image: (async ({ url, htmlDom }: { url: string; htmlDom: CheerioAPI }) => {
+      if (!extractRedditPostId(url)) {
+        return undefined;
+      }
       const result = await fetchRedditPostData(url, htmlDom);
       const redditImage =
         result.image ??
@@ -885,6 +906,9 @@ const metascraperReddit = () => {
       return fallbackDomImage({ htmlDom });
     }) as unknown as RulesOptions,
     title: (async ({ url, htmlDom }: { url: string; htmlDom: CheerioAPI }) => {
+      if (!extractRedditPostId(url)) {
+        return undefined;
+      }
       const result = await fetchRedditPostData(url, htmlDom);
       if (result.post) {
         const redditTitle = extractTitleFromPost(result.post);
@@ -942,6 +966,9 @@ const metascraperReddit = () => {
       url: string;
       htmlDom: CheerioAPI;
     }) => {
+      if (!extractRedditPostId(url)) {
+        return undefined;
+      }
       const result = await fetchRedditPostData(url, htmlDom);
       if (result.post) {
         const body = result.bodyHtml ?? "";
