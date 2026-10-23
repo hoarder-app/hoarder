@@ -1,4 +1,5 @@
 import type { CheerioAPI } from "cheerio";
+import { load } from "cheerio";
 import type { Rules, RulesOptions } from "metascraper";
 import { decode as decodeHtmlEntities } from "html-entities";
 import { fetchWithProxy } from "network";
@@ -208,16 +209,20 @@ const buildJsonUrl = (url: string, useOauth: boolean): string => {
   return urlObj.toString();
 };
 
-// Anonymous Reddit crawling (no OAuth credentials): Reddit gates the public
-// JSON API behind a lightweight "please wait" JS challenge. A browser-like
-// User-Agent gets served the challenge page instead of a hard block; the page
-// embeds (async e=>e+e)("<seed>") so the solution is just the seed repeated
-// twice. Submitting the hidden form earns clearance cookies that carry into
-// the .json request. Implemented against fetchWithProxy (node-fetch, no cookie
-// jar) so cookies are threaded manually.
+// Anonymous Reddit crawling (no OAuth credentials): Reddit serves a lightweight
+// "please wait" JS challenge to cold requests. The page embeds
+// (async e=>e+e)("<seed>") so the solution is just the seed repeated twice.
+// Submitting the hidden form (GET) answers with a 301 to the canonical URL and
+// sets the clearance cookies (token_v2, loid, ...) on that redirect hop. Only
+// the final, rendered page has the content, so cookies must be captured from
+// every hop. Implemented against fetchWithProxy (node-fetch, no cookie jar) in
+// manual-redirect mode so each hop still goes through its SSRF validation.
 // Technique: https://gist.github.com/Richard-Weiss/00b9cfdbd8d94ab22430d8859587db5d
 const REDDIT_BROWSER_UA =
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:140.0) Gecko/20100101 Firefox/140.0";
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:149.0) Gecko/20100101 Firefox/149.0";
+const REDDIT_HTML_ACCEPT =
+  "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+const MAX_REDDIT_HOPS = 5;
 
 type FetchResponse = Awaited<ReturnType<typeof fetchWithProxy>>;
 type CookieJar = Map<string, string>;
@@ -231,10 +236,21 @@ const storeSetCookies = (response: FetchResponse, jar: CookieJar): void => {
       ? (headers.raw()["set-cookie"] ?? [])
       : [];
   for (const setCookie of list) {
-    const pair = setCookie.split(";")[0];
+    const [pair, ...attributes] = setCookie.split(";");
     const eq = pair.indexOf("=");
-    if (eq > 0) {
-      jar.set(pair.slice(0, eq).trim(), pair.slice(eq + 1).trim());
+    if (eq <= 0) {
+      continue;
+    }
+    const name = pair.slice(0, eq).trim();
+    const value = pair.slice(eq + 1).trim();
+    const expired = attributes.some(
+      (attribute) => attribute.trim().toLowerCase() === "max-age=0",
+    );
+    if (!value || expired) {
+      // Reddit deletes cookies (e.g. `theme`) by sending them back empty.
+      jar.delete(name);
+    } else {
+      jar.set(name, value);
     }
   }
 };
@@ -244,54 +260,124 @@ const cookieHeader = (jar: CookieJar): string =>
     .map(([name, value]) => `${name}=${value}`)
     .join("; ");
 
+const isRedirectStatus = (status: number): boolean =>
+  status === 301 ||
+  status === 302 ||
+  status === 303 ||
+  status === 307 ||
+  status === 308;
+
+const isRedditHost = (hostname: string): boolean =>
+  hostname === "reddit.com" || hostname.endsWith(".reddit.com");
+
+// GET with a browser-like fingerprint, following redirects manually so that
+// Set-Cookie headers from intermediate hops are captured and replayed.
+// Redirects off reddit.com are not followed (the redirect response is returned)
+// so the cookie jar never leaks to another site. With `omitCookiesOnFirstHop`
+// the first request is sent without a Cookie header (later hops use the jar).
 const browserGet = async (
   url: string,
   accept: string,
   jar: CookieJar,
+  { omitCookiesOnFirstHop = false }: { omitCookiesOnFirstHop?: boolean } = {},
 ): Promise<FetchResponse> => {
-  const headers: Record<string, string> = {
-    "User-Agent": REDDIT_BROWSER_UA,
-    Accept: accept,
-    "Accept-Language": "en-US,en;q=0.5",
-  };
-  const cookie = cookieHeader(jar);
-  if (cookie) {
-    headers["Cookie"] = cookie;
+  let currentUrl = url;
+  for (let hop = 0; ; hop++) {
+    const headers: Record<string, string> = {
+      "User-Agent": REDDIT_BROWSER_UA,
+      Accept: accept,
+      "Accept-Language": "en-US,en;q=0.5",
+    };
+    const cookie = cookieHeader(jar);
+    if (cookie && !(omitCookiesOnFirstHop && hop === 0)) {
+      headers["Cookie"] = cookie;
+    }
+    const response = await fetchWithProxy(currentUrl, {
+      headers,
+      redirect: "manual",
+    });
+    storeSetCookies(response, jar);
+
+    const location = response.headers.get("location");
+    if (!isRedirectStatus(response.status) || !location) {
+      return response;
+    }
+    const nextUrl = new URL(location, currentUrl);
+    if (hop >= MAX_REDDIT_HOPS || !isRedditHost(nextUrl.hostname)) {
+      return response;
+    }
+    // Release the connection before following the redirect.
+    await response.text().catch(() => undefined);
+    currentUrl = nextUrl.toString();
   }
-  const response = await fetchWithProxy(url, { headers });
-  storeSetCookies(response, jar);
-  return response;
 };
 
+interface RedditChallenge {
+  submitUrl: string;
+}
+
+// Parses the JS challenge page. Reddit renamed the hidden token field from
+// `token` to `jsc_token` (~2026-09), so accept either and send the token back
+// under whichever name the form used.
+export const parseRedditChallenge = (
+  html: string,
+  baseUrl = "https://www.reddit.com/",
+): RedditChallenge | undefined => {
+  const seed = /\(async\s*\(?(\w+)\)?\s*=>\s*\1\s*\+\s*\1\)\("([^"]+)"\)/.exec(
+    html,
+  );
+  if (!seed) {
+    return undefined;
+  }
+  const $ = load(html);
+  const form = $("form")
+    .filter((_, el) => $(el).find('input[name="js_challenge"]').length > 0)
+    .first();
+  const action = form.attr("action");
+  const tokenInput = form
+    .find('input[name="jsc_token"], input[name="token"]')
+    .first();
+  const tokenName = tokenInput.attr("name");
+  const tokenValue = tokenInput.attr("value");
+  if (!action || !tokenName || !tokenValue) {
+    // Not a solvable challenge page (or the format changed).
+    return undefined;
+  }
+  const params = new URLSearchParams({
+    solution: seed[2] + seed[2],
+    js_challenge: "1",
+    [tokenName]: tokenValue,
+    jsc_orig_r: form.find('input[name="jsc_orig_r"]').attr("value") ?? "",
+  });
+  // action may be a relative path, absolute URL, or protocol-relative URL;
+  // resolve against the page URL so we never build a malformed submit URL.
+  const submitUrl = new URL(action, baseUrl);
+  submitUrl.search = params.toString();
+  return { submitUrl: submitUrl.toString() };
+};
+
+// Submits the challenge form and returns the final response of the submit
+// chain. The submit must carry NO Cookie header: the warmup response sets
+// `edgebucket`, and echoing it back makes Reddit answer 403 instead of issuing
+// token_v2. The submit either 301s to the canonical URL (cookies are set on
+// that hop) or answers 200 directly with the cookies and the rendered page, so
+// callers must handle both.
 const solveRedditChallenge = async (
   html: string,
   jar: CookieJar,
-): Promise<void> => {
-  const seed = /\(async e=>e\+e\)\("([0-9a-f]+)"\)/.exec(html);
-  const token = /name="token"\s+value="([0-9a-f]+)"/.exec(html);
-  const action = /<form[^>]*action="([^"]+)"/.exec(html);
-  if (!seed || !token || !action) {
-    // Not a solvable challenge page (or the format changed) - nothing to do.
-    return;
+  baseUrl?: string,
+): Promise<FetchResponse | undefined> => {
+  const challenge = parseRedditChallenge(html, baseUrl);
+  if (!challenge) {
+    return undefined;
   }
-  const params = new URLSearchParams({
-    solution: seed[1] + seed[1],
-    js_challenge: "1",
-    token: token[1],
-    jsc_orig_r: "",
-  });
-  // action may be a relative path, absolute URL, or protocol-relative URL;
-  // resolve against reddit.com so we never build a malformed submit URL.
-  const submitUrl = new URL(action[1], "https://www.reddit.com");
-  submitUrl.search = params.toString();
   try {
-    await browserGet(
-      submitUrl.toString(),
-      "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-      jar,
-    );
+    return await browserGet(challenge.submitUrl, REDDIT_HTML_ACCEPT, jar, {
+      omitCookiesOnFirstHop: true,
+    });
   } catch (error) {
     logger.warn("[MetascraperReddit] Failed to submit Reddit challenge", error);
+    return undefined;
   }
 };
 
@@ -331,14 +417,11 @@ const fetchRedditJson = async (
   const jsonUrl = buildJsonUrl(url, false);
   const jar: CookieJar = new Map();
   const htmlUrl = jsonUrl.replace(/\.json(\?.*)?$/, "$1");
-  const warmup = await browserGet(
-    htmlUrl,
-    "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    jar,
-  );
+  const warmup = await browserGet(htmlUrl, REDDIT_HTML_ACCEPT, jar);
   const warmupBody = await warmup.text();
   if (warmupBody.includes("js_challenge") || warmupBody.includes("e=>e+e")) {
-    await solveRedditChallenge(warmupBody, jar);
+    const solved = await solveRedditChallenge(warmupBody, jar);
+    await solved?.text().catch(() => undefined);
   }
   return browserGet(jsonUrl, "application/json, text/plain, */*", jar);
 };
