@@ -34,9 +34,13 @@ import logger from "@karakeep/shared/logger";
  * will return 'undefined' and the next plugin
  * should continue to attempt to extract images.
  *
- * We also attempt to fetch the Reddit JSON response
- * (by appending '.json' to the URL) to grab the
- * title and preview images directly from the API.
+ * Post data (title, author, body, top comments, image)
+ * comes from, in order: the Reddit OAuth JSON API (when
+ * REDDIT_CLIENT_ID/SECRET are configured), the
+ * <shreddit-post> markup in the crawled page, or an
+ * anonymous fetch of the rendered post page (solving
+ * Reddit's JS challenge). Reddit blocks the anonymous
+ * '.json' endpoints, so those are not used.
  **/
 
 const redditPreviewImageSchema = z.object({
@@ -94,14 +98,30 @@ const redditResponseSchema = z.array(
 
 interface RedditComment {
   author?: string;
+  // Plain text of the comment.
   body?: string;
+  // Ready-to-use HTML of the comment (already entity-decoded).
   bodyHtml?: string;
   score: number;
+}
+
+interface ShredditExtraction {
+  title?: string;
+  author?: string;
+  subredditPrefixed?: string;
+  createdUtc?: number;
+  bodyHtml: string;
+  image?: string;
+  comments: RedditComment[];
 }
 
 interface RedditFetchResult {
   fetched: boolean;
   post?: RedditPostData;
+  // Ready-to-use HTML of the post body (already entity-decoded).
+  bodyHtml?: string;
+  // Image taken from the rendered page; the OAuth JSON path derives it from post.
+  image?: string;
   comments?: RedditComment[];
 }
 
@@ -195,16 +215,14 @@ const getRedditAccessToken = async (): Promise<string | null> => {
   return redditAccessTokenPromise;
 };
 
-const buildJsonUrl = (url: string, useOauth: boolean): string => {
+const buildOauthJsonUrl = (url: string): string => {
   const urlObj = new URL(url);
 
   if (!urlObj.pathname.endsWith(".json")) {
     urlObj.pathname = urlObj.pathname.replace(/\/?$/, ".json");
   }
 
-  if (useOauth) {
-    urlObj.hostname = "oauth.reddit.com";
-  }
+  urlObj.hostname = "oauth.reddit.com";
 
   return urlObj.toString();
 };
@@ -381,49 +399,90 @@ const solveRedditChallenge = async (
   }
 };
 
-const fetchRedditJson = async (
+// Authenticated path (OAuth client credentials). Returns undefined when there
+// are no credentials or the request did not succeed, in which case the caller
+// falls back to anonymous crawling.
+const fetchRedditOauthJson = async (
   url: string,
   accessToken: string | null,
-): Promise<FetchResponse> => {
-  if (accessToken) {
-    // Authenticated path (OAuth client credentials) - no challenge needed.
-    const response = await fetchWithProxy(buildJsonUrl(url, true), {
-      headers: {
-        accept: "application/json",
-        Authorization: `Bearer ${accessToken}`,
-        "User-Agent": "KarakeepBot/1.0",
-      },
-    });
-    if (response.ok) {
-      return response;
+): Promise<FetchResponse | undefined> => {
+  if (!accessToken) {
+    return undefined;
+  }
+  const response = await fetchWithProxy(buildOauthJsonUrl(url), {
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${accessToken}`,
+      "User-Agent": "KarakeepBot/1.0",
+    },
+  });
+  if (response.ok) {
+    return response;
+  }
+  // Any non-OK OAuth response falls through to the anonymous path, which works
+  // without credentials and may succeed even when OAuth does not (e.g. a 429
+  // rate limit or a transient 5xx from oauth.reddit.com). Only drop the cached
+  // token on an auth failure (401/403, i.e. revoked, early-expired, or
+  // insufficient scope) - a rate limit or server error does not mean the token
+  // is invalid, so keep it for later requests.
+  logger.warn(
+    `[MetascraperReddit] OAuth request failed (${response.status}); falling back to anonymous crawling`,
+  );
+  if (response.status === 401 || response.status === 403) {
+    redditAccessToken = null;
+    redditAccessTokenExpiresAt = 0;
+  }
+  return undefined;
+};
+
+const REDDIT_BLOCKED_MARKER = /blocked by network security/i;
+
+// Reduces any Reddit post URL (slug, slugless, comment permalink, with query or
+// fragment) to the canonical https://www.reddit.com/comments/<id>/ form. That
+// URL redirects to the slug URL and works as the challenge target.
+export const normalizeRedditPostUrl = (url: string): string | undefined => {
+  try {
+    const urlObj = new URL(url);
+    if (!isRedditHost(urlObj.hostname)) {
+      return undefined;
     }
-    // Any non-OK OAuth response falls through to the anonymous challenge path,
-    // which works without credentials and may succeed even when OAuth does not
-    // (e.g. a 429 rate limit or a transient 5xx from oauth.reddit.com). Only
-    // drop the cached token on an auth failure (401/403, i.e. revoked,
-    // early-expired, or insufficient scope) - a rate limit or server error
-    // does not mean the token is invalid, so keep it for later requests.
-    logger.warn(
-      `[MetascraperReddit] OAuth request failed (${response.status}); falling back to anonymous crawling`,
-    );
-    if (response.status === 401 || response.status === 403) {
-      redditAccessToken = null;
-      redditAccessTokenExpiresAt = 0;
-    }
+    const match = /\/comments\/([a-z0-9]+)(?:\/|$)/i.exec(urlObj.pathname);
+    return match ? `https://www.reddit.com/comments/${match[1]}/` : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
+// Fetches the rendered post page anonymously: GET (collecting cookies), solve
+// the JS challenge if one is served, and return the HTML of the final page.
+const fetchRedditPostHtml = async (
+  postUrl: string,
+): Promise<string | undefined> => {
+  const jar: CookieJar = new Map();
+  const warmup = await browserGet(postUrl, REDDIT_HTML_ACCEPT, jar);
+  let html = await warmup.text();
+  if (REDDIT_BLOCKED_MARKER.test(html)) {
+    return undefined;
+  }
+  if (html.includes("<shreddit-post")) {
+    return html;
   }
 
-  // Anonymous path: warm up on the HTML page to solve the JS challenge, then
-  // reuse the clearance cookies for the JSON request.
-  const jsonUrl = buildJsonUrl(url, false);
-  const jar: CookieJar = new Map();
-  const htmlUrl = jsonUrl.replace(/\.json(\?.*)?$/, "$1");
-  const warmup = await browserGet(htmlUrl, REDDIT_HTML_ACCEPT, jar);
-  const warmupBody = await warmup.text();
-  if (warmupBody.includes("js_challenge") || warmupBody.includes("e=>e+e")) {
-    const solved = await solveRedditChallenge(warmupBody, jar);
-    await solved?.text().catch(() => undefined);
+  const solved = await solveRedditChallenge(html, jar, postUrl);
+  if (!solved) {
+    return undefined;
   }
-  return browserGet(jsonUrl, "application/json, text/plain, */*", jar);
+  html = await solved.text();
+  if (REDDIT_BLOCKED_MARKER.test(html)) {
+    return undefined;
+  }
+  if (!html.includes("<shreddit-post") && jar.size > 0) {
+    // The submit did not land on the rendered page (e.g. it only set the
+    // clearance cookies); request the page again with them.
+    const page = await browserGet(postUrl, REDDIT_HTML_ACCEPT, jar);
+    html = await page.text();
+  }
+  return html;
 };
 
 const extractImageFromMediaMetadata = (
@@ -543,11 +602,10 @@ const buildCommentsHtml = (comments?: RedditComment[]): string => {
   }
   const items = top
     .map((comment) => {
-      // Reddit's body_html is entity-encoded HTML; decode it like selftext_html.
-      // Fall back to the plain body (escaped) if body_html is absent.
-      const bodyHtml = comment.bodyHtml
-        ? decodeHtmlEntities(comment.bodyHtml)
-        : `<p>${escapeHtml(comment.body ?? "")}</p>`;
+      // bodyHtml is ready-to-use HTML (decoded at the source). Fall back to the
+      // plain body (escaped) if it is absent.
+      const bodyHtml =
+        comment.bodyHtml || `<p>${escapeHtml(comment.body ?? "")}</p>`;
       const author = escapeHtml(comment.author ?? "[deleted]");
       return `<div class="reddit-comment"><p><strong>u/${author}</strong> (${comment.score} points)</p>${bodyHtml}</div>`;
     })
@@ -555,8 +613,174 @@ const buildCommentsHtml = (comments?: RedditComment[]): string => {
   return `<hr /><h2>Top comments</h2>${items}`;
 };
 
-const fetchRedditPostData = async (url: string): Promise<RedditFetchResult> => {
-  const cached = redditJsonCache.get(url);
+const cleanAttr = (value: string | undefined): string | undefined =>
+  value?.trim() || undefined;
+
+const extractImageFromShreddit = (
+  $: CheerioAPI,
+  post: ReturnType<CheerioAPI>,
+): string | undefined => {
+  const galleryImage = cleanAttr(
+    post.find("gallery-carousel img.media-lightbox-img").first().attr("src"),
+  );
+  if (galleryImage) {
+    return galleryImage;
+  }
+
+  const contentHref = cleanAttr(post.attr("content-href"));
+  if (contentHref && isRedditImageHost(contentHref)) {
+    return contentHref;
+  }
+
+  return post
+    .find('img[src*="preview.redd.it"]')
+    .map((_, el) => $(el).attr("src"))
+    .get()
+    .find((src) => src && !src.includes("snoovatar"));
+};
+
+// Extracts a post and its top-level comments from Reddit's rendered markup
+// (<shreddit-post> / <shreddit-comment> web components). Bodies are already
+// HTML, so they are not entity-decoded. Returns undefined when the page has no
+// <shreddit-post> (not a post page, challenge page, block page, ...).
+export const extractFromShreddit = (
+  $: CheerioAPI,
+): ShredditExtraction | undefined => {
+  const post = $("shreddit-post").first();
+  if (post.length === 0) {
+    return undefined;
+  }
+
+  const subredditName = cleanAttr(post.attr("subreddit-name"));
+  const createdAt = Date.parse(post.attr("created-timestamp") ?? "");
+
+  const comments: RedditComment[] = [];
+  $("shreddit-comment").each((_, el) => {
+    const comment = $(el);
+    if ((comment.attr("depth") ?? "0") !== "0") {
+      return;
+    }
+    const thingId = comment.attr("thingid");
+    const content = (
+      thingId && /^[\w-]+$/.test(thingId)
+        ? comment.find(`[id="${thingId}-post-rtjson-content"]`)
+        : comment.find('[id^="t1_"][id$="-post-rtjson-content"]')
+    ).first();
+    const text = content.text().trim();
+    if (!text) {
+      return;
+    }
+    const score = Number.parseInt(comment.attr("score") ?? "", 10);
+    comments.push({
+      author: cleanAttr(comment.attr("author")),
+      body: text,
+      bodyHtml: content.html()?.trim() || undefined,
+      score: Number.isNaN(score) ? 0 : score,
+    });
+  });
+
+  return {
+    title: cleanAttr(post.attr("post-title")),
+    author: cleanAttr(post.attr("author")),
+    subredditPrefixed:
+      cleanAttr(post.attr("subreddit-prefixed-name")) ??
+      (subredditName ? `r/${subredditName}` : undefined),
+    createdUtc: Number.isNaN(createdAt) ? undefined : createdAt / 1000,
+    bodyHtml:
+      $('[id^="t3_"][id$="-post-rtjson-content"]').first().html()?.trim() ?? "",
+    image: extractImageFromShreddit($, post),
+    comments,
+  };
+};
+
+const shredditToFetchResult = (
+  data: ShredditExtraction,
+): RedditFetchResult => ({
+  fetched: true,
+  post: {
+    title: data.title,
+    author: data.author,
+    created_utc: data.createdUtc,
+    subreddit_name_prefixed: data.subredditPrefixed,
+  },
+  bodyHtml: data.bodyHtml,
+  image: data.image,
+  comments: data.comments,
+});
+
+const fetchRedditOauthPostData = async (
+  url: string,
+): Promise<RedditFetchResult | undefined> => {
+  let response: FetchResponse | undefined;
+  try {
+    response = await fetchRedditOauthJson(url, await getRedditAccessToken());
+  } catch (error) {
+    logger.warn(
+      `[MetascraperReddit] Failed to fetch Reddit JSON for ${url}`,
+      error,
+    );
+    return undefined;
+  }
+  if (!response) {
+    return undefined;
+  }
+
+  let payload: unknown;
+  try {
+    payload = await response.json();
+  } catch (error) {
+    logger.warn(
+      `[MetascraperReddit] Failed to parse Reddit JSON for ${url}`,
+      error,
+    );
+    return undefined;
+  }
+
+  const parsed = redditResponseSchema.safeParse(payload);
+  if (!parsed.success) {
+    logger.warn(
+      "[MetascraperReddit] Reddit JSON schema validation failed",
+      parsed.error,
+    );
+    return undefined;
+  }
+
+  const firstListingWithChildren = parsed.data.find(
+    (listing) => (listing.data.children?.length ?? 0) > 0,
+  );
+  const post = firstListingWithChildren?.data.children?.[0]?.data;
+
+  // Top-level comments (kind "t1") live in the second listing. Nested
+  // replies are under each comment's `replies`, so iterating the listings'
+  // direct children yields only top-level comments, which is what we want.
+  // Reddit's selftext_html/body_html are entity-encoded HTML; decode them here.
+  const comments: RedditComment[] = parsed.data
+    .flatMap((listing) => listing.data.children ?? [])
+    .filter((child) => child.kind === "t1" && !!child.data.body)
+    .map((child) => ({
+      author: child.data.author ?? undefined,
+      body: child.data.body ?? undefined,
+      bodyHtml: child.data.body_html
+        ? decodeHtmlEntities(child.data.body_html)
+        : undefined,
+      score: typeof child.data.score === "number" ? child.data.score : 0,
+    }));
+
+  return {
+    fetched: true,
+    post,
+    bodyHtml: decodeHtmlEntities(post?.selftext_html ?? ""),
+    comments,
+  };
+};
+
+const fetchRedditPostData = async (
+  url: string,
+  htmlDom: CheerioAPI,
+): Promise<RedditFetchResult> => {
+  const postUrl = normalizeRedditPostUrl(url);
+  const cacheKey = postUrl ?? url;
+  const cached = redditJsonCache.get(cacheKey);
   const now = Date.now();
 
   purgeExpiredCacheEntries(now);
@@ -565,77 +789,38 @@ const fetchRedditPostData = async (url: string): Promise<RedditFetchResult> => {
     return cached.promise;
   }
 
-  const promise = (async () => {
-    const accessToken = await getRedditAccessToken();
+  const promise = (async (): Promise<RedditFetchResult> => {
+    const oauthResult = await fetchRedditOauthPostData(url);
+    if (oauthResult) {
+      return oauthResult;
+    }
 
-    let response;
+    // Anonymous: the browser-rendered page we already crawled may carry the
+    // post, which needs no extra requests.
+    const fromDom = extractFromShreddit(htmlDom);
+    if (fromDom) {
+      return shredditToFetchResult(fromDom);
+    }
+
+    if (!postUrl) {
+      return { fetched: false };
+    }
     try {
-      response = await fetchRedditJson(url, accessToken);
+      const html = await fetchRedditPostHtml(postUrl);
+      const fromHtml = html ? extractFromShreddit(load(html)) : undefined;
+      if (fromHtml) {
+        return shredditToFetchResult(fromHtml);
+      }
     } catch (error) {
       logger.warn(
-        `[MetascraperReddit] Failed to fetch Reddit JSON for ${url}`,
+        `[MetascraperReddit] Failed to fetch Reddit post page for ${url}`,
         error,
       );
-      return { fetched: false };
     }
-
-    if (response.status === 403) {
-      // API forbidden; fall back to DOM scraping.
-      return { fetched: false };
-    }
-
-    if (!response.ok) {
-      logger.warn(
-        `[MetascraperReddit] Reddit JSON request failed for ${url} with status ${response.status}`,
-      );
-      return { fetched: false };
-    }
-
-    let payload: unknown;
-    try {
-      payload = await response.json();
-    } catch (error) {
-      logger.warn(
-        `[MetascraperReddit] Failed to parse Reddit JSON for ${url}`,
-        error,
-      );
-      return { fetched: false };
-    }
-
-    const parsed = redditResponseSchema.safeParse(payload);
-    if (!parsed.success) {
-      logger.warn(
-        "[MetascraperReddit] Reddit JSON schema validation failed",
-        parsed.error,
-      );
-      return { fetched: false };
-    }
-
-    const firstListingWithChildren = parsed.data.find(
-      (listing) => (listing.data.children?.length ?? 0) > 0,
-    );
-
-    // Top-level comments (kind "t1") live in the second listing. Nested
-    // replies are under each comment's `replies`, so iterating the listings'
-    // direct children yields only top-level comments, which is what we want.
-    const comments: RedditComment[] = parsed.data
-      .flatMap((listing) => listing.data.children ?? [])
-      .filter((child) => child.kind === "t1" && !!child.data.body)
-      .map((child) => ({
-        author: child.data.author ?? undefined,
-        body: child.data.body ?? undefined,
-        bodyHtml: child.data.body_html ?? undefined,
-        score: typeof child.data.score === "number" ? child.data.score : 0,
-      }));
-
-    return {
-      fetched: true,
-      post: firstListingWithChildren?.data.children?.[0]?.data,
-      comments,
-    };
+    return { fetched: false };
   })();
 
-  redditJsonCache.set(url, {
+  redditJsonCache.set(cacheKey, {
     promise,
     expiresAt: now + REDDIT_CACHE_TTL_MS,
   });
@@ -678,12 +863,12 @@ const metascraperReddit = () => {
     pkgName: "metascraper-reddit",
     test,
     image: (async ({ url, htmlDom }: { url: string; htmlDom: CheerioAPI }) => {
-      const result = await fetchRedditPostData(url);
-      if (result.post) {
-        const redditImage = extractImageFromPost(result.post);
-        if (redditImage) {
-          return redditImage;
-        }
+      const result = await fetchRedditPostData(url, htmlDom);
+      const redditImage =
+        result.image ??
+        (result.post ? extractImageFromPost(result.post) : undefined);
+      if (redditImage) {
+        return redditImage;
       }
 
       // If we successfully fetched JSON but found no Reddit image,
@@ -695,7 +880,7 @@ const metascraperReddit = () => {
       return fallbackDomImage({ htmlDom });
     }) as unknown as RulesOptions,
     title: (async ({ url, htmlDom }: { url: string; htmlDom: CheerioAPI }) => {
-      const result = await fetchRedditPostData(url);
+      const result = await fetchRedditPostData(url, htmlDom);
       if (result.post) {
         const redditTitle = extractTitleFromPost(result.post);
         if (redditTitle) {
@@ -705,29 +890,41 @@ const metascraperReddit = () => {
 
       return fallbackDomTitle({ htmlDom });
     }) as unknown as RulesOptions,
-    author: (async ({ url }: { url: string }) => {
-      const result = await fetchRedditPostData(url);
+    author: (async ({ url, htmlDom }: { url: string; htmlDom: CheerioAPI }) => {
+      const result = await fetchRedditPostData(url, htmlDom);
       if (result.post) {
         return extractAuthorFromPost(result.post);
       }
       return undefined;
     }) as unknown as RulesOptions,
-    datePublished: (async ({ url }: { url: string }) => {
-      const result = await fetchRedditPostData(url);
+    datePublished: (async ({
+      url,
+      htmlDom,
+    }: {
+      url: string;
+      htmlDom: CheerioAPI;
+    }) => {
+      const result = await fetchRedditPostData(url, htmlDom);
       if (result.post) {
         return extractDateFromPost(result.post);
       }
       return undefined;
     }) as unknown as RulesOptions,
-    publisher: (async ({ url }: { url: string }) => {
-      const result = await fetchRedditPostData(url);
+    publisher: (async ({
+      url,
+      htmlDom,
+    }: {
+      url: string;
+      htmlDom: CheerioAPI;
+    }) => {
+      const result = await fetchRedditPostData(url, htmlDom);
       if (result.post) {
         return extractPublisherFromPost(result.post);
       }
       return undefined;
     }) as unknown as RulesOptions,
-    logo: (async ({ url }: { url: string }) => {
-      const result = await fetchRedditPostData(url);
+    logo: (async ({ url, htmlDom }: { url: string; htmlDom: CheerioAPI }) => {
+      const result = await fetchRedditPostData(url, htmlDom);
       if (result.post) {
         return REDDIT_LOGO_URL;
       }
@@ -740,9 +937,9 @@ const metascraperReddit = () => {
       url: string;
       htmlDom: CheerioAPI;
     }) => {
-      const result = await fetchRedditPostData(url);
+      const result = await fetchRedditPostData(url, htmlDom);
       if (result.post) {
-        const body = decodeHtmlEntities(result.post.selftext_html ?? "");
+        const body = result.bodyHtml ?? "";
         const commentsHtml = buildCommentsHtml(result.comments);
         // Combine the post body (often empty on link/discussion posts) with the
         // top comments so the reader view and tagger have real content. Fall
