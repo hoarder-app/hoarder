@@ -246,6 +246,22 @@ export const listsAppRouter = router({
     }),
 
   // Collaboration endpoints
+  getCollaboratorSuggestions: listsProcedure
+    .input(z.object({ listId: z.string() }))
+    .output(
+      z.array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          email: z.string(),
+        }),
+      ),
+    )
+    .use(ensureListAtLeastViewer)
+    .use(ensureListAtLeastOwner)
+    .query(async ({ ctx }) => {
+      return await ctx.list.getCollaboratorSuggestions();
+    }),
   addCollaborator: listsProcedure
     .input(
       z.object({
