@@ -89,6 +89,10 @@ jobs:
         working-directory: apps/workers
         run: pnpm test
 
+      - name: Mobile Tests
+        working-directory: apps/mobile
+        run: pnpm test
+
       # - name: Plugins Tests
       #   working-directory: packages/plugins
       #   run: pnpm test
