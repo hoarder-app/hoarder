@@ -1,4 +1,8 @@
-# Hostinger
+---
+sidebar_label: "Hostinger"
+---
+
+# Host Karakeep on Hostinger
 
 :::info
 Note: Hostinger shares some of its revenue from hosting Karakeep with the maintainer of this project.
