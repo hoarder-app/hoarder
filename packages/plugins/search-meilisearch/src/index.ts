@@ -23,9 +23,22 @@ function filterToMeiliSearchFilter(filter: FilterQuery): string {
       return `${filter.field} IN [${filter.values.join(",")}]`;
     default: {
       const exhaustiveCheck: never = filter;
-      throw new Error(`Unhandled color case: ${exhaustiveCheck}`);
+      throw new Error(`Unhandled filter type: ${exhaustiveCheck}`);
     }
   }
+}
+
+export function toMeiliSearchOptions(options: SearchOptions) {
+  return {
+    filter: options.filter?.map((f) => filterToMeiliSearchFilter(f)),
+    limit: options.limit,
+    offset: options.offset,
+    sort: options.sort?.map((s) => `${s.field}:${s.order}`),
+    attributesToRetrieve: ["id", "createdAt"],
+    attributesToSearchOn: options.attributesToSearchOn,
+    showRankingScore: true,
+    matchingStrategy: "all" as const,
+  };
 }
 
 class MeiliSearchIndexClient implements SearchIndexClient {
@@ -83,20 +96,16 @@ class MeiliSearchIndexClient implements SearchIndexClient {
   }
 
   async search(options: SearchOptions): Promise<SearchResponse> {
-    const result = await this.index.search(options.query, {
-      filter: options.filter?.map((f) => filterToMeiliSearchFilter(f)),
-      limit: options.limit,
-      offset: options.offset,
-      sort: options.sort?.map((s) => `${s.field}:${s.order}`),
-      attributesToRetrieve: ["id"],
-      showRankingScore: true,
-      matchingStrategy: "all",
-    });
+    const result = await this.index.search(
+      options.query,
+      toMeiliSearchOptions(options),
+    );
 
     return {
       hits: result.hits.map((hit) => ({
         id: hit.id,
         score: hit._rankingScore,
+        createdAt: hit.createdAt,
       })),
       totalHits: result.estimatedTotalHits ?? 0,
       processingTimeMs: result.processingTimeMs,

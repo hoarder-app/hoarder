@@ -23,6 +23,10 @@ export const zBookmarkSearchDocument = z.object({
 });
 
 export type BookmarkSearchDocument = z.infer<typeof zBookmarkSearchDocument>;
+export type SearchableAttribute = Exclude<
+  keyof BookmarkSearchDocument,
+  "id" | "userId" | "createdAt"
+>;
 
 export type SortOrder = "asc" | "desc";
 export type SortableAttributes = "createdAt";
@@ -43,6 +47,7 @@ export type FilterQuery =
 export interface SearchResult {
   id: string;
   score?: number;
+  createdAt?: string | null;
 }
 
 export interface SearchOptions {
@@ -52,6 +57,7 @@ export interface SearchOptions {
   limit?: number;
   offset?: number;
   sort?: { field: SortableAttributes; order: SortOrder }[];
+  attributesToSearchOn?: SearchableAttribute[];
 }
 
 export interface SearchResponse {

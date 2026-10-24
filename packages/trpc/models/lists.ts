@@ -1067,6 +1067,10 @@ export class SmartList extends List {
     return await getBookmarkIdsFromMatcher(
       this.ctx,
       parsedQuery.matcher,
+      // A smart list is defined by its owner over their own bookmarks. Sharing
+      // isn't supported for smart lists, so the visible scope would only add
+      // unrelated bookmarks.
+      "owned",
       newVisitedListIds,
     );
   }

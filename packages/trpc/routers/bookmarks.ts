@@ -39,7 +39,12 @@ import logger from "@karakeep/shared/logger";
 import { buildSummaryPrompt } from "@karakeep/shared/prompts.server";
 import { EnqueueOptions } from "@karakeep/shared/queueing";
 import { getRateLimitClient } from "@karakeep/shared/ratelimiting";
-import { FilterQuery, getSearchClient } from "@karakeep/shared/search";
+import { getSearchClient } from "@karakeep/shared/search";
+import type {
+  FilterQuery,
+  SearchableAttribute,
+  SearchResponse,
+} from "@karakeep/shared/search";
 import { parseSearchQuery } from "@karakeep/shared/searchQueryParser";
 import type {
   ZBookmarkContent,
@@ -64,7 +69,10 @@ import type { ZBookmarkTags } from "@karakeep/shared/types/tags";
 import { ANCHOR_TEXT_MAX_LENGTH } from "@karakeep/shared/utils/reading-progress-dom";
 import { normalizeTagName } from "@karakeep/shared/utils/tag";
 import { getVectorStoreClient } from "@karakeep/shared/vectorStore";
-import type { VectorFilterQuery } from "@karakeep/shared/vectorStore";
+import type {
+  VectorFilterQuery,
+  VectorSearchResponse,
+} from "@karakeep/shared/vectorStore";
 import { bookmarkCreationCounter } from "../stats";
 
 import type { AuthedContext } from "../index";
@@ -76,7 +84,7 @@ import {
   router,
 } from "../index";
 import { RuleEngine } from "../lib/ruleEngine";
-import { getBookmarkIdsFromMatcher } from "../lib/search";
+import { getBookmarkIdsFromMatcher, getSharedBookmarkIds } from "../lib/search";
 import { reciprocalRankFusion } from "../lib/searchRanking";
 import { Asset } from "../models/assets";
 import { BareBookmark, Bookmark } from "../models/bookmarks";
@@ -84,6 +92,115 @@ import { WebhooksService } from "../models/webhooks.service";
 
 const bookmarksProcedure = createScopedAuthedProcedure("bookmarks");
 const HYBRID_CANDIDATES_PER_SOURCE = MAX_NUM_BOOKMARKS_PER_PAGE;
+const SEARCH_FILTER_ID_CHUNK_SIZE = 500;
+const SEARCH_SCOPE_CONCURRENCY = 4;
+const SHARED_SEARCHABLE_ATTRIBUTES = [
+  "url",
+  "title",
+  "linkTitle",
+  "description",
+  "content",
+  "metadata",
+  "fileName",
+  "summary",
+  "tags",
+  "publisher",
+  "author",
+  "datePublished",
+  "dateModified",
+] satisfies SearchableAttribute[];
+
+interface FullTextSearchScope {
+  access: "owned" | "shared";
+  filter: FilterQuery[];
+  attributesToSearchOn?: SearchableAttribute[];
+}
+
+function chunks<T>(values: T[], size: number): T[][] {
+  const result: T[][] = [];
+  for (let i = 0; i < values.length; i += size) {
+    result.push(values.slice(i, i + size));
+  }
+  return result;
+}
+
+async function mapInBatches<T, R>(
+  values: T[],
+  concurrency: number,
+  fn: (value: T) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = [];
+  for (let i = 0; i < values.length; i += concurrency) {
+    results.push(
+      ...(await Promise.all(values.slice(i, i + concurrency).map(fn))),
+    );
+  }
+  return results;
+}
+
+function mergeFullTextResponses(
+  responses: SearchResponse[],
+  offset: number,
+  limit: number,
+  sortOrder: "relevance" | "asc" | "desc",
+): SearchResponse {
+  const hitsById = new Map<string, SearchResponse["hits"][number]>();
+  for (const hit of responses.flatMap((response) => response.hits)) {
+    const previous = hitsById.get(hit.id);
+    if (!previous || (hit.score ?? 0) > (previous.score ?? 0)) {
+      hitsById.set(hit.id, hit);
+    }
+  }
+  const hits = [...hitsById.values()];
+  hits.sort((a, b) => {
+    if (sortOrder === "relevance") {
+      return (b.score ?? 0) - (a.score ?? 0) || a.id.localeCompare(b.id);
+    }
+
+    const createdAtComparison = (a.createdAt ?? "").localeCompare(
+      b.createdAt ?? "",
+    );
+    return (
+      (sortOrder === "asc" ? createdAtComparison : -createdAtComparison) ||
+      a.id.localeCompare(b.id)
+    );
+  });
+
+  return {
+    hits: hits.slice(offset, offset + limit),
+    totalHits: responses.reduce(
+      (total, response) => total + response.totalHits,
+      0,
+    ),
+    processingTimeMs: responses.reduce(
+      (total, response) => total + response.processingTimeMs,
+      0,
+    ),
+  };
+}
+
+function mergeVectorResponses(
+  responses: VectorSearchResponse[],
+  limit: number,
+): VectorSearchResponse {
+  const hitsById = new Map<string, VectorSearchResponse["hits"][number]>();
+  for (const hit of responses.flatMap((response) => response.hits)) {
+    const previous = hitsById.get(hit.id);
+    if (!previous || hit.score > previous.score) {
+      hitsById.set(hit.id, hit);
+    }
+  }
+
+  return {
+    hits: [...hitsById.values()]
+      .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
+      .slice(0, limit),
+    processingTimeMs: responses.reduce(
+      (total, response) => total + response.processingTimeMs,
+      0,
+    ),
+  };
+}
 /**
  * Vector search always returns as many hits as it's asked for, so without a
  * floor an unrelated query still fills a whole page with noise. Vector stores
@@ -91,6 +208,19 @@ const HYBRID_CANDIDATES_PER_SOURCE = MAX_NUM_BOOKMARKS_PER_PAGE;
  * `(1 + cosine) / 2`), so this drops anything below ~0.2 cosine similarity.
  */
 const SEMANTIC_SCORE_THRESHOLD = 0.6;
+
+/**
+ * The search and vector store filter dialects are identical, but they're
+ * separate nominal types, so the conversion has to be explicit.
+ */
+function toVectorFilterQuery(filter: FilterQuery): VectorFilterQuery {
+  switch (filter.type) {
+    case "eq":
+      return { type: "eq", field: filter.field, value: filter.value };
+    case "in":
+      return { type: "in", field: filter.field, values: filter.values };
+  }
+}
 
 export const ensureBookmarkOwnership = experimental_trpcMiddleware<{
   ctx: AuthedContext;
@@ -1014,18 +1144,56 @@ export const bookmarksAppRouter = router({
         });
       }
 
-      let filter: FilterQuery[];
-      if (parsedQuery.matcher) {
-        const bookmarkIds = await getBookmarkIdsFromMatcher(
-          ctx,
-          parsedQuery.matcher,
-        );
-        filter = [
-          { type: "in", field: "id", values: bookmarkIds },
-          { type: "eq", field: "userId", value: ctx.user.id },
-        ];
-      } else {
-        filter = [{ type: "eq", field: "userId", value: ctx.user.id }];
+      const matcherBookmarkIds = parsedQuery.matcher
+        ? await getBookmarkIdsFromMatcher(ctx, parsedQuery.matcher, "visible")
+        : null;
+      const sharedBookmarkIds = await getSharedBookmarkIds(ctx);
+      const sharedBookmarkIdSet = new Set(sharedBookmarkIds);
+      const matchedSharedBookmarkIds = matcherBookmarkIds
+        ? matcherBookmarkIds.filter((id) => sharedBookmarkIdSet.has(id))
+        : sharedBookmarkIds;
+
+      // Search owned and shared documents independently. The search document
+      // contains owner-private notes, so shared documents must use an explicit
+      // public attribute allowlist. Chunking the id filters prevents large
+      // shared lists or broad matchers from producing one unbounded filter.
+      const fullTextSearchScopes: FullTextSearchScope[] = matcherBookmarkIds
+        ? chunks(matcherBookmarkIds, SEARCH_FILTER_ID_CHUNK_SIZE).map(
+            (bookmarkIds) => ({
+              access: "owned",
+              filter: [
+                { type: "in", field: "id", values: bookmarkIds },
+                { type: "eq", field: "userId", value: ctx.user.id },
+              ],
+            }),
+          )
+        : [
+            {
+              access: "owned",
+              filter: [{ type: "eq", field: "userId", value: ctx.user.id }],
+            },
+          ];
+      fullTextSearchScopes.push(
+        ...chunks(matchedSharedBookmarkIds, SEARCH_FILTER_ID_CHUNK_SIZE).map(
+          (bookmarkIds) => ({
+            access: "shared" as const,
+            filter: [
+              {
+                type: "in" as const,
+                field: "id" as const,
+                values: bookmarkIds,
+              },
+            ],
+            attributesToSearchOn: SHARED_SEARCHABLE_ATTRIBUTES,
+          }),
+        ),
+      );
+
+      if (fullTextSearchScopes.length === 0) {
+        fullTextSearchScopes.push({
+          access: "owned",
+          filter: [{ type: "in", field: "id", values: [] }],
+        });
       }
 
       /**
@@ -1046,13 +1214,44 @@ export const bookmarksAppRouter = router({
             message: "Search functionality is not configured",
           });
         }
-        return client.search({
-          query: parsedQuery.text,
-          filter,
-          sort: [{ field: "createdAt", order: createdAtSortOrder }],
+
+        if (fullTextSearchScopes.length === 1) {
+          const scope = fullTextSearchScopes[0];
+          return client.search({
+            query: parsedQuery.text,
+            filter: scope.filter,
+            sort: [{ field: "createdAt", order: createdAtSortOrder }],
+            limit,
+            ...(searchOffset !== undefined ? { offset: searchOffset } : {}),
+            ...(scope.attributesToSearchOn
+              ? { attributesToSearchOn: scope.attributesToSearchOn }
+              : {}),
+          });
+        }
+
+        const requestedOffset = searchOffset ?? 0;
+        const candidateLimit = requestedOffset + limit;
+        const responses = await mapInBatches(
+          fullTextSearchScopes,
+          SEARCH_SCOPE_CONCURRENCY,
+          (scope) =>
+            client.search({
+              query: parsedQuery.text,
+              filter: scope.filter,
+              sort: [{ field: "createdAt", order: createdAtSortOrder }],
+              limit: candidateLimit,
+              offset: 0,
+              ...(scope.attributesToSearchOn
+                ? { attributesToSearchOn: scope.attributesToSearchOn }
+                : {}),
+            }),
+        );
+        return mergeFullTextResponses(
+          responses,
+          requestedOffset,
           limit,
-          ...(searchOffset !== undefined ? { offset: searchOffset } : {}),
-        });
+          sortOrder,
+        );
       };
 
       const fullTextPage = (
@@ -1122,11 +1321,13 @@ export const bookmarksAppRouter = router({
             });
           }
 
-          const vectorFilter: VectorFilterQuery[] = filter.map((item) =>
-            item.type === "eq"
-              ? { type: "eq", field: item.field, value: item.value }
-              : { type: "in", field: item.field, values: item.values },
-          );
+          // Existing embeddings contain owner-private notes and tags. Until a
+          // separate public embedding exists, semantic search must stay
+          // owner-only. Hybrid search can still return shared bookmarks from
+          // its public-field full-text branch.
+          const vectorFilters: VectorFilterQuery[][] = fullTextSearchScopes
+            .filter((scope) => scope.access === "owned")
+            .map((scope) => scope.filter.map(toVectorFilterQuery));
 
           const semanticSearch = async (limit: number) => {
             const embeddingResponse =
@@ -1140,12 +1341,42 @@ export const bookmarksAppRouter = router({
                 message: "Embedding provider returned no query embedding",
               });
             }
-            return vectorStoreClient.search({
-              vector,
-              filter: vectorFilter,
-              limit,
-              rankingScoreThreshold: SEMANTIC_SCORE_THRESHOLD,
-            });
+            const responses = await mapInBatches(
+              vectorFilters,
+              SEARCH_SCOPE_CONCURRENCY,
+              (filter) =>
+                vectorStoreClient.search({
+                  vector,
+                  filter,
+                  limit,
+                  rankingScoreThreshold: SEMANTIC_SCORE_THRESHOLD,
+                }),
+            );
+            const mergedResponse = mergeVectorResponses(responses, limit);
+            if (mergedResponse.hits.length === 0) {
+              return mergedResponse;
+            }
+
+            // Treat the vector store as an untrusted projection. A stale or
+            // misbehaving backend must not smuggle a shared bookmark whose
+            // embedding includes private owner metadata into the response.
+            const ownedRows = await ctx.db
+              .select({ id: bookmarks.id })
+              .from(bookmarks)
+              .where(
+                and(
+                  eq(bookmarks.userId, ctx.user.id),
+                  inArray(
+                    bookmarks.id,
+                    mergedResponse.hits.map((hit) => hit.id),
+                  ),
+                ),
+              );
+            const ownedIds = new Set(ownedRows.map((row) => row.id));
+            return {
+              ...mergedResponse,
+              hits: mergedResponse.hits.filter((hit) => ownedIds.has(hit.id)),
+            };
           };
 
           if (input.searchMode === "semantic") {
