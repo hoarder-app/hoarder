@@ -48,7 +48,7 @@ export default function OpenSource() {
         <div className="mt-14 flex flex-wrap items-center justify-center gap-10 text-sm">
           <div className="text-center">
             <div className="font-display text-[32px] font-bold text-white">
-              28k+
+              30k+
             </div>
             <div className="mt-1 text-neutral-400">GitHub Stars</div>
           </div>

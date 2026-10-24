@@ -1,8 +1,6 @@
 ---
 import { Image } from "astro:assets";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { CLOUD_SIGNUP_LINK, DEMO_LINK, GITHUB_LINK } from "../constants";
+import { GITHUB_LINK } from "../constants";
 import heroDashboard from "../assets/hero-dashboard.webp";
 import iosHome from "../assets/ios-home.webp";
 ---
@@ -22,7 +20,7 @@ import iosHome from "../assets/ios-home.webp";
       class="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm text-neutral-700 shadow-sm transition-all hover:border-neutral-300 hover:shadow-md"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 fill-yellow-400 text-yellow-400"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-      <span class="font-semibold text-neutral-900">28k+</span>
+      <span class="font-semibold text-neutral-900">30k+</span>
       <span class="text-neutral-500">stars on GitHub</span>
     </a>
     <h1
@@ -39,22 +37,6 @@ import iosHome from "../assets/ios-home.webp";
       tag them for you using AI for faster retrieval. Built for the data
       hoarders out there!
     </p>
-    <div class="mt-9 flex w-full flex-col items-center justify-center gap-4 sm:flex-row">
-      <a
-        href={CLOUD_SIGNUP_LINK}
-        class={cn("w-full px-9 shadow-[0_1px_2px_rgba(28,22,56,0.2),0_8px_24px_-8px_rgba(28,22,56,0.4)] sm:w-auto", buttonVariants({ variant: "brand", size: "lg" }))}
-      >
-        Sign Up
-      </a>
-      <a
-        href={DEMO_LINK}
-        target="_blank"
-        class={cn("w-full px-9 sm:w-auto", buttonVariants({ variant: "outline", size: "lg" }))}
-        rel="noreferrer"
-      >
-        Try Demo
-      </a>
-    </div>
   </div>
 
   <!-- Hero screenshot in a browser frame -->
