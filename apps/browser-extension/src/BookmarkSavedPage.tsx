@@ -77,7 +77,7 @@ export default function BookmarkSavedPage() {
     errorCode === "NOT_FOUND";
   const bookmarkError = bookmark.isError ? (
     <div className="flex flex-col gap-2" role="alert">
-      <p className="text-red-500">
+      <p className="text-red-700 dark:text-red-400">
         {blockEditors
           ? "Could not load this bookmark. It may have been deleted or you may need to sign in again."
           : "Could not refresh this bookmark. You can keep editing and try again."}
