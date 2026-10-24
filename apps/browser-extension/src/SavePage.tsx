@@ -167,7 +167,7 @@ export default function SavePage() {
   if (error) {
     return (
       <div className="flex flex-col gap-2" role="alert">
-        <p className="text-red-500">{error}</p>
+        <p className="text-red-700 dark:text-red-400">{error}</p>
         <Button onClick={() => setAttempt((value) => value + 1)}>
           Try Again
         </Button>
@@ -359,7 +359,7 @@ function SaveBookmark({
   }
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="text-red-700 dark:text-red-400">{error}</div>;
   }
 
   if (isCapturing) {
@@ -373,7 +373,7 @@ function SaveBookmark({
 
   switch (status) {
     case "error": {
-      return <div className="text-red-500">{error}</div>;
+      return <div className="text-red-700 dark:text-red-400">{error}</div>;
     }
     case "success": {
       return <Navigate to={`/bookmark/${data.id}`} />;

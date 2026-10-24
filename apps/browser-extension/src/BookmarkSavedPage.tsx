@@ -94,7 +94,7 @@ export default function BookmarkSavedPage() {
   return (
     <div className="flex flex-col gap-2">
       {bookmarkError}
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <p className="text-red-700 dark:text-red-400">{error}</p>}
       <div className="flex items-center justify-between gap-2">
         <p className="text-xl">Hoarded!</p>
         <div className="flex gap-2">
