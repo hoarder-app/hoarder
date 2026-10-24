@@ -101,6 +101,12 @@ Translations live in [`apps/web/lib/i18n/locales`](apps/web/lib/i18n/locales), o
 
 If you're not comfortable with self-hosting, you can use our managed Karakeep cloud at [cloud.karakeep.app](https://cloud.karakeep.app). Cloud subscriptions support the development of Karakeep.
 
+## One-click Deployment 🚀
+
+Want to self-host without setting up a server by hand? Hostinger has a one-click Karakeep template that deploys the full stack on your own VPS. Use the code `KARAKEEP10` for 10% off annual plans. Check out the [Hostinger guide](https://docs.karakeep.app/Installation/hostinger) for a walkthrough. Hostinger shares some of its revenue with the maintainer.
+
+[![Deploy on Hostinger](https://assets.hostinger.com/vps/deploy.svg)](https://www.hostg.xyz/aff_c?offer_id=815&aff_id=243872&url_id=6969)
+
 ## Support
 
 If you're enjoying using Karakeep, drop a ⭐️ on the repo!
